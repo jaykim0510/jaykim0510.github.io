@@ -4,7 +4,7 @@ title:  Strive not to be a success, but rather to be of value
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-11-10 15:01:35 +0300
 image:  '/images/09.jpg'
-tags:   [python, Computer Science, backend]
+tags:   [python, Computer_Science, backend]
 ---
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace [Colton Duke](https://unsplash.com/photos/QRU0i5AqEJA) diversity and empowerment.
 

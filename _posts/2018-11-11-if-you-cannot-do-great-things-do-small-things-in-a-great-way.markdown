@@ -4,7 +4,7 @@ title:  If you cannot do great things, do small things in a great way
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-11-11 15:01:35 +0300
 image:  '/images/04.jpg'
-tags:   [python, Computer Science, backend]
+tags:   [python, Computer_Science, backend]
 ---
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace [Dino Reichmuth](https://unsplash.com/photos/A5rCN8626Ck) diversity and empowerment.
 
