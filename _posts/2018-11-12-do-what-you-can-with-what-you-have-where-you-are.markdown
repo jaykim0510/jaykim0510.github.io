@@ -4,7 +4,7 @@ title:  Do what you can, with what you have, where you are
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-11-12 15:01:35 +0300
 image:  '/images/07.jpg'
-tags:   [lifestyle, travel, story]
+tags:   [python, Computer Science, backend, Data Engineering]
 ---
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace [Jared Rice](https://unsplash.com/photos/AhiUnolb7cg) diversity and empowerment.
 
