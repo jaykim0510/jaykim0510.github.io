@@ -49,7 +49,7 @@ permalink: /tags/
                 </div>
                 <h2 class="tag__name" id="{{ this_word | cgi_escape }}">{{ this_word }}</h2>
               </div>
-              <a class="top__link" href="#top">Return to top</a>
+              <a href="{{ site.baseurl }}/{{ tag_words[item] }}/" class="section__link">See all</a>
             </div>
           </div>
         </div>
@@ -59,7 +59,7 @@ permalink: /tags/
         <div class="row">
           <div class="col col-12">
             <div class="row">
-            {% for post in site.tags[this_word] %}
+            {% for post in site.tags[this_word] reversed limit:6 %}
               {% if post.title != null %}
                 {% include article.html %}
               {% endif %}
