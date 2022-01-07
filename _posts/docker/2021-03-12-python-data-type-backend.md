@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Python data type Backend
+title:  'Docker Series [Part1]: Docker Intro'
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-04-23 15:01:35 +0300
 image:  '/images/backend_logo_1.png'

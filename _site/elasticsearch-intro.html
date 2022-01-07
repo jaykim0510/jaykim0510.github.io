@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kafka Series [Part2]: Main elements of Kafka</title>
+  <title>ElasticSearch Series [Part1]: What is ElasticSearch</title>
   <meta name='description' content='Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.'>
 
-  <link rel="canonical" href="http://localhost:4000/kafka-element">
+  <link rel="canonical" href="http://localhost:4000/elasticsearch-intro">
   <link rel="alternate" type="application/rss+xml" title="Jay Tech" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kafka Series [Part2]: Main elements of Kafka – Jay Tech">
+  <meta name="twitter:title" content="ElasticSearch Series [Part1]: What is ElasticSearch – Jay Tech">
   <meta name="twitter:description" content="Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/kafka_logo_1.svg">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/elasticsearch_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kafka Series [Part2]: Main elements of Kafka – Jay Tech">
+  <meta property="og:title" content="ElasticSearch Series [Part1]: What is ElasticSearch – Jay Tech">
   <meta property="og:description" content="Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.">
-  <meta property="og:image" content="http://localhost:4000/images/kafka_logo_1.svg">
+  <meta property="og:image" content="http://localhost:4000/images/elasticsearch_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -190,7 +190,7 @@
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kafka_logo_1.svg" alt="Kafka Series [Part2]: Main elements of Kafka">
+          <img class="lazy" data-src="/images/elasticsearch_logo.png" alt="ElasticSearch Series [Part1]: What is ElasticSearch">
         </div>
       </div>
       
@@ -209,7 +209,7 @@
             </div>
           
   
-          <h1 class="post__title">Kafka Series [Part2]: Main elements of Kafka</h1>
+          <h1 class="post__title">ElasticSearch Series [Part1]: What is ElasticSearch</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -218,7 +218,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2021-01-04T21:01:35+09:00">04 Jan 2021</time>
+              <time class="post__date" datetime="2021-01-03T21:01:35+09:00">03 Jan 2021</time>
             </div>
           </div>
   
@@ -234,20 +234,53 @@
   <article class="post">
 
     <div class="post__content">
-      <h1 id="kafka의-주요-구성요소">Kafka의 주요 구성요소</h1>
+      <h1 id="apache-kafka란-무엇인가">Apache Kafka란 무엇인가</h1>
 <p>모든 기업에게 있어 데이터는 중요합니다. 특히나 요즘과 같이 데이터를 이용해 새로운 비즈니스를 창출하는 시대에는 더더욱 중요합니다. 이러한 데이터는, 로그 메세지가 될 수도 있고, 사용자의 정보나 활동 그 밖에 모든 것들이 데이터가 될 수 있습니다. Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다. 그럼 지금부터 저희는 Event는 무엇을 말하고, Kafka가 다른 platform(RabbitMQ, Pulsar)에 비해 어떤 점에서 더 뛰어난지 한 번 알아보겠습니다.</p>
 
 <p><img src="/images/kafka_2.png" alt="" /></p>
 
-<h2 id="producer">Producer</h2>
+<h1 id="event">Event</h1>
 
-<h2 id="broker">Broker</h2>
+<p>Kafka에서는 Event, Data, Record, Message를 모두 혼용해서 쓰고 있습니다. Event는 어떠한 행동이나, 사건도 모두 될 수 있습니다. 다음과 같은 것 들이 있습니다.</p>
 
-<h2 id="consumer">Consumer</h2>
+<ul>
+  <li>웹 사이트에서 무언가를 클릭하는 것</li>
+  <li>센서의 온도/압력 데이터</li>
+  <li>청구서</li>
+  <li>배송 물건의 위치 정보</li>
+</ul>
 
-<h2 id="eventfeatpartition">Event(feat.Partition)</h2>
+<p>이렇게 세상에 있는 모든 정보를 실시간으로 저장하고, 처리하기 위해서는 높은 throughput, 낮은 latency가 요구됩니다. Kafka는 최대 600MB/s의 throughput과 200MB에 대해 5ms의 낮은 latency를 제공하고 있습니다.</p>
 
-<h1 id="kafka-동작-원리">Kafka 동작 원리</h1>
+<p><img src="/images/kafka_3.png" alt="" />
+<a href="https://www.confluent.io/blog/kafka-fastest-messaging-system/">Benchmarking Kafka vs. Pulsar vs. RabbitMQ: Which is Fastest?</a></p>
+
+<p>지금까지는 Kafka가 높은 throughput과 낮은 latency로 엄청난 양의 데이터를 실시간으로 처리해주는 플랫폼이라고 배웠습니다. 이제 이러한 개념을 가지고 조금 더 앞으로 나가보겠습니다. 다음은 Kafka를 설명하는 좋은 문장이라고 생각되어 가져와 봤습니다. <a href="https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002">(Apache Kafka Series [Part 1]: Introduction to Apache Kafka)</a></p>
+
+<blockquote>
+  <p>Apache Kafka is an open-source distributed publish-subscribe messaging platform that has been purpose-built to handle real-time streaming data for distributed streaming, pipelining, and replay of data feeds for fast, scalable operations.</p>
+</blockquote>
+
+<ul>
+  <li>Distributed publish-subscribe messaging platform</li>
+  <li>Handle real-time streaming data</li>
+</ul>
+
+<blockquote>
+  <p>Publish/subscribe messaging is a pattern that is characterized by that a piece of data (message) of the sender (publisher) is not directing to certain receiver. Instead, the publisher classifies the message somehow, and that receiver (subscriber) subscribes to receive certain classes of messages. Pub/sub systems often have a broker, a central point where messages are published, to facilitate this.</p>
+</blockquote>
+
+<p>Kafka를 이용하면 특정 Source에서 특정 Destination으로 데이터를 흘려보내는 것이 아니라, Publisher들이 실시간으로 언제든 데이터를 저장할 수 있으며, Subscriber는 어떠한 데이터라도 가져올 수 있습니다. 이러한 구조를 Pub/Sub 모델이라고 합니다.</p>
+
+<p><img src="/images/kafka_4.png" alt="" /></p>
+
+<h1 id="정리">정리</h1>
+<ul>
+  <li>Kafka는 Pub/sub모델의 실시간 데이터 처리 플랫폼이다.</li>
+  <li>데이터를 분산처리하여 높은 throughput과 낮은 latency를 제공한다.</li>
+</ul>
+
+<p>다음 포스트에서는 Kafka의 주요 구성 요소에 대해 알아보겠습니다.</p>
 
     </div>
 
@@ -255,22 +288,22 @@
       <ul class="share__list list-reset">
         <li class="share__item">
           <a class="share__link share__twitter"
-            href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part2]:%20Main%20elements%20of%20Kafka&url=http://localhost:4000/kafka-element"
+            href="https://twitter.com/intent/tweet?text=ElasticSearch%20Series%20[Part1]:%20What%20is%20ElasticSearch&url=http://localhost:4000/elasticsearch-intro"
             onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
             title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/kafka-element"
+          <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/elasticsearch-intro"
             onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
             title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-element&amp;media=http://localhost:4000/images/kafka_logo_1.svg&amp;description=Kafka%20Series%20[Part2]:%20Main%20elements%20of%20Kafka"
+          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/elasticsearch-intro&amp;media=http://localhost:4000/images/elasticsearch_logo.png&amp;description=ElasticSearch%20Series%20[Part1]:%20What%20is%20ElasticSearch"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
           rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-element&title=Kafka%20Series%20[Part2]:%20Main%20elements%20of%20Kafka&summary=Kafka%EB%8A%94%20%EC%9D%B4%EB%9F%AC%ED%95%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%88%98%EC%A7%91,%20%EA%B0%80%EA%B3%B5,%20%EC%A0%80%EC%9E%A5%ED%95%B4%EC%A3%BC%EB%8A%94%20Event%20streaming%20platform%EC%9E%85%EB%8B%88%EB%8B%A4.&source=Jay%20Tech"
+          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/elasticsearch-intro&title=ElasticSearch%20Series%20[Part1]:%20What%20is%20ElasticSearch&summary=Kafka%EB%8A%94%20%EC%9D%B4%EB%9F%AC%ED%95%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC%20%EC%88%98%EC%A7%91,%20%EA%B0%80%EA%B3%B5,%20%EC%A0%80%EC%9E%A5%ED%95%B4%EC%A3%BC%EB%8A%94%20Event%20streaming%20platform%EC%9E%85%EB%8B%88%EB%8B%A4.&source=Jay%20Tech"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
         </li>
       </ul>
@@ -371,25 +404,18 @@
             
       
             
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2021-01-03T21:01:35+09:00">03 Jan 2021</time>
+      <time class="article__date" datetime="2021-01-04T21:01:35+09:00">04 Jan 2021</time>
 
       
 
       
-      <a class="article__image" href="/kafka-intro">
-        <img class="lazy" data-src="/images/kafka_logo_1.svg" alt="Kafka Series [Part1]: What is Kafka">
+      <a class="article__image" href="/kafka-element">
+        <img class="lazy" data-src="/images/kafka_logo_1.svg" alt="Kafka Series [Part2]: Main elements of Kafka">
       </a>
       
 
@@ -398,7 +424,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/kafka-intro">Kafka Series [Part1]: What is Kafka</a>
+        <a href="/kafka-element">Kafka Series [Part2]: Main elements of Kafka</a>
       </h2>
 
       
@@ -429,8 +455,8 @@
       
 
       
-      <a class="article__image" href="/elasticsearch-intro">
-        <img class="lazy" data-src="/images/elasticsearch_logo.png" alt="ElasticSearch Series [Part1]: What is ElasticSearch">
+      <a class="article__image" href="/kafka-intro">
+        <img class="lazy" data-src="/images/kafka_logo_1.svg" alt="Kafka Series [Part1]: What is Kafka">
       </a>
       
 
@@ -439,7 +465,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/elasticsearch-intro">ElasticSearch Series [Part1]: What is ElasticSearch</a>
+        <a href="/kafka-intro">Kafka Series [Part1]: What is Kafka</a>
       </h2>
 
       
