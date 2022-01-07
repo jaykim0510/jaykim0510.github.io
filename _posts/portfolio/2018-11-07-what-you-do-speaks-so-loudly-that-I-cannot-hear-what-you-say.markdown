@@ -4,7 +4,6 @@ title:  Korean-to-French Translation
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-11-07 15:01:35 +0300
 image:  '/images/08.jpg'
-tags:   [python, backend]
 portfolio: true
 ---
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace [Sam Bark](https://unsplash.com/photos/ag51iExrb0U) diversity and empowerment.

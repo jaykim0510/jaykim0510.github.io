@@ -1,10 +1,10 @@
 ---
 layout: post
-title:  Python data type number
+title:  Python data type string
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-04-23 15:01:35 +0300
-image:  '/images/15.jpg'
-tags:   [python, backend]
+image:  '/images/python_logo.jpg'
+tags:   python
 ---
 
 ## 1. 문자열 자료형의 특징
