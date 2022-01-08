@@ -1,10 +1,10 @@
 ---
 layout: post
-title:  'ElasticSearch Series [Part1]: ElasticSearch Installation'
-description: Elasticsearch는 정형 및 비정형 데이터 등 모든 유형의 데이터를 위한 무료 검색 및 분석 엔진
+title:  'Network Series [Part1]: Network Intro'
+description: Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.
 date:   2022-01-03 15:01:35 +0300
-image:  '/images/elasticsearch_logo.png'
-tags:   Data_Engineering
+image:  '/images/cs_logo.jpeg'
+tags:   Computer_Science
 ---
 
 

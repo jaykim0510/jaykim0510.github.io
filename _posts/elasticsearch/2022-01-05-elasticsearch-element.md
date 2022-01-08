@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'ElasticSearch Series [Part2]: ElasticSearch에 관한 중요한 개념'
-description: Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.
+description: Elasticsearch에서 데이터는 인덱스 안의 특정 타입에 문서로 저장되는데..
 date:   2022-01-05 15:01:35 +0300
 image:  '/images/elasticsearch_logo.png'
 tags:   Data_Engineering
