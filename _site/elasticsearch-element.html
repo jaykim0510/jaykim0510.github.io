@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>ElasticSearch Series [Part2]: ElasticSearch에 관한 중요한 개념</title>
+  <title>ElasticSearch Series [Part2]: ElasticSearch에서 사용되는 간단한 용어와 파이썬 코드</title>
   <meta name='description' content='Elasticsearch에서 데이터는 인덱스 안의 특정 타입에 문서로 저장되는데..'>
 
   <link rel="canonical" href="http://localhost:4000/elasticsearch-element">
@@ -14,12 +14,12 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="ElasticSearch Series [Part2]: ElasticSearch에 관한 중요한 개념 – Jay Tech">
+  <meta name="twitter:title" content="ElasticSearch Series [Part2]: ElasticSearch에서 사용되는 간단한 용어와 파이썬 코드 – Jay Tech">
   <meta name="twitter:description" content="Elasticsearch에서 데이터는 인덱스 안의 특정 타입에 문서로 저장되는데..">
   <meta name="twitter:image:src" content="http://localhost:4000/images/elasticsearch_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="ElasticSearch Series [Part2]: ElasticSearch에 관한 중요한 개념 – Jay Tech">
+  <meta property="og:title" content="ElasticSearch Series [Part2]: ElasticSearch에서 사용되는 간단한 용어와 파이썬 코드 – Jay Tech">
   <meta property="og:description" content="Elasticsearch에서 데이터는 인덱스 안의 특정 타입에 문서로 저장되는데..">
   <meta property="og:image" content="http://localhost:4000/images/elasticsearch_logo.png">
 
@@ -192,7 +192,7 @@
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/elasticsearch_logo.png" alt="ElasticSearch Series [Part2]: ElasticSearch에 관한 중요한 개념">
+          <img class="lazy" data-src="/images/elasticsearch_logo.png" alt="ElasticSearch Series [Part2]: ElasticSearch에서 사용되는 간단한 용어와 파이썬 코드">
         </div>
       </div>
       
@@ -211,7 +211,7 @@
             </div>
           
   
-          <h1 class="post__title">ElasticSearch Series [Part2]: ElasticSearch에 관한 중요한 개념</h1>
+          <h1 class="post__title">ElasticSearch Series [Part2]: ElasticSearch에서 사용되는 간단한 용어와 파이썬 코드</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -238,7 +238,7 @@
     <div class="post__content">
       <h1 id="elasticsearch를-구성하는-개념">Elasticsearch를 구성하는 개념</h1>
 <p>“Elasticsearch에서 데이터는 <strong>인덱스</strong> 안의 특정 <strong>타입</strong> 에 <strong>문서</strong> 로 저장되는데 이 때 문서는 <strong>필드</strong> 를 가지고 있으며, 이러한 필드는 <strong>매핑</strong> 프로세스로 정의된 이름과 속성을 보통 따른다. 그리고 이 때 모든 문서들은 정의된 <strong>샤드</strong> 의 개수에 각각 골고루 분배되어 분산처리된다. 또한 장애를 대비해 <strong>레플리카</strong> 의 개수만큼 복제해 놓기도 한다.”<br />
-위의 내용은 Elasticsearch의 데이터 저장방식에 관한 글이다. 하지만 Elasticsearch가 익숙하지 않은 사람에게는 낯선 용어들도 있고 익숙하지만 이해하기 힘든 용어들도 있다. 그래도 Elasticsearch에서 사용하는 용어와 RDBMS에서 사용하는 용어를 비교하며 살펴보고 다시 한번 읽어보면 조금 더 이해가 갈 것입니다.</p>
+위의 내용은 Elasticsearch의 데이터 저장방식에 관한 글입니다. 하지만 Elasticsearch가 익숙하지 않은 사람에게는 낯선 용어들도 있고 익숙하지만 이해하기 힘든 용어들도 있습니다. 그래도 Elasticsearch에서 사용하는 용어와 RDBMS에서 사용하는 용어를 비교하며 살펴보고 다시 한번 읽어보면 조금 더 이해가 갈 것입니다.</p>
 
 <table>
   <tbody>
@@ -297,11 +297,236 @@
 
 <h1 id="elasticsearch에서-제공하는-주요-api">Elasticsearch에서 제공하는 주요 API</h1>
 
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
+
+<span class="n">ES_URL</span> <span class="o">=</span> <span class="s">'localhost:9200'</span>
+<span class="n">ES_INDEX</span> <span class="o">=</span> <span class="s">'first_index'</span>
+<span class="n">DOC_TYPE</span> <span class="o">=</span> <span class="s">'_doc'</span>
+
+<span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">(</span><span class="n">ES_URL</span><span class="p">)</span>
+</code></pre></div></div>
+
 <h2 id="인덱스-관련-api">인덱스 관련 API</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 인덱스 메타데이터, 매핑 정의
+</span><span class="n">index_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'settings'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'number_of_shards'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s">'number_of_replicas'</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="s">'mappings'</span><span class="p">:</span> <span class="p">{</span> 
+        <span class="s">'properties'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'name'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'age'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'long'</span><span class="p">},</span>
+            <span class="s">'gender'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'company'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'email'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'address'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'phone'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">}</span>
+        <span class="p">}</span>
+        
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># 인덱스 생성
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="o">**</span><span class="n">index_settings</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s">'shards_acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s">'index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">}</span>
+
+<span class="c1"># 인덱스 메타 데이터 확인
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">get_settings</span><span class="p">()</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'first_index'</span><span class="p">:</span> <span class="p">{</span><span class="s">'settings'</span><span class="p">:</span> <span class="p">{</span><span class="s">'index'</span><span class="p">:</span> <span class="p">{</span><span class="s">'routing'</span><span class="p">:</span> <span class="p">{</span><span class="s">'allocation'</span><span class="p">:</span> <span class="p">{</span><span class="s">'include'</span><span class="p">:</span> <span class="p">{</span><span class="s">'_tier_preference'</span><span class="p">:</span> <span class="s">'data_content'</span><span class="p">}}},</span>
+    <span class="s">'number_of_shards'</span><span class="p">:</span> <span class="s">'2'</span><span class="p">,</span>
+    <span class="s">'provided_name'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+    <span class="s">'creation_date'</span><span class="p">:</span> <span class="s">'1641728644368'</span><span class="p">,</span>
+    <span class="s">'number_of_replicas'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+    <span class="s">'uuid'</span><span class="p">:</span> <span class="s">'3QtIZXthRcGtCdV40WmUCg'</span><span class="p">,</span>
+    <span class="s">'version'</span><span class="p">:</span> <span class="p">{</span><span class="s">'created'</span><span class="p">:</span> <span class="s">'7160299'</span><span class="p">}}}}}</span>
+
+<span class="c1"># 인덱스 매핑 확인
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">get_mapping</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'first_index'</span><span class="p">:</span> <span class="p">{</span><span class="s">'mappings'</span><span class="p">:</span> <span class="p">{</span><span class="s">'properties'</span><span class="p">:</span> <span class="p">{</span><span class="s">'address'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'age'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'long'</span><span class="p">},</span>
+    <span class="s">'company'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'gender'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'phone'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">}}}}}</span>
+
+<span class="c1"># 인덱스 삭제
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+
+<span class="c1"># 인덱스 존재 유무
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="bp">True</span>
+
+<span class="c1"># 매핑 업데이트
+</span><span class="n">new_field</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">"properties"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">"school"</span> <span class="p">:</span> <span class="p">{</span>
+      <span class="s">"type"</span><span class="p">:</span> <span class="s">"text"</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">put_mapping</span><span class="p">(</span><span class="n">new_field</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+</code></pre></div></div>
 
 <h2 id="문서-관련-api">문서 관련 API</h2>
 
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 문서 삽입
+</span><span class="n">unit_document</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jay Kim'</span><span class="p">,</span>
+    <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+    <span class="s">'gender'</span><span class="p">:</span> <span class="s">'male'</span><span class="p">,</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="s">'abc@gmail.com'</span><span class="p">,</span>
+    <span class="s">'address'</span><span class="p">:</span> <span class="s">'부산 해운대 앞바다'</span><span class="p">,</span>
+    <span class="s">'phone'</span><span class="p">:</span> <span class="s">'010-1234-5678'</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="n">doc_type</span><span class="o">=</span><span class="n">DOC_TYPE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">document</span><span class="o">=</span><span class="n">unit_document</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'created'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="c1"># 문서 정보 확인
+</span><span class="n">es</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="n">doc_type</span><span class="o">=</span><span class="n">DOC_TYPE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">-----------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'found'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+ <span class="s">'_source'</span><span class="p">:</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'Jay Kim'</span><span class="p">,</span>
+  <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+  <span class="s">'gender'</span><span class="p">:</span> <span class="s">'male'</span><span class="p">,</span>
+  <span class="s">'email'</span><span class="p">:</span> <span class="s">'abc@gmail.com'</span><span class="p">,</span>
+  <span class="s">'address'</span><span class="p">:</span> <span class="s">'부산 해운대 앞바다'</span><span class="p">,</span>
+  <span class="s">'phone'</span><span class="p">:</span> <span class="s">'010-1234-5678'</span><span class="p">}}</span>
+
+<span class="c1"># 문서를 가지는 인덱스 생성 (이미 있으면 삽입)
+</span><span class="n">unit_document</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jae yeong Kim'</span><span class="p">,</span>
+    <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+    <span class="s">'gender'</span><span class="p">:</span> <span class="s">'male'</span><span class="p">,</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="s">'abc@gmail.com'</span><span class="p">,</span>
+    <span class="s">'address'</span><span class="p">:</span> <span class="s">'경북 구미 형곡동'</span><span class="p">,</span>
+    <span class="s">'phone'</span><span class="p">:</span> <span class="s">'010-3321-5668'</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">unit_document</span><span class="p">)</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'2'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'created'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="c1"># 문서 삭제
+</span><span class="n">es</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'2'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'deleted'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="c1"># query로 삭제
+</span><span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'query'</span><span class="p">:{</span>
+        <span class="s">'match_all'</span><span class="p">:{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">delete_by_query</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+<span class="o">----------------------------------------------</span>
+<span class="p">{</span><span class="s">'took'</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+ <span class="s">'timed_out'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+ <span class="s">'total'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'deleted'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'batches'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'version_conflicts'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'noops'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'retries'</span><span class="p">:</span> <span class="p">{</span><span class="s">'bulk'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'search'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'throttled_millis'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'requests_per_second'</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>
+ <span class="s">'throttled_until_millis'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'failures'</span><span class="p">:</span> <span class="p">[]}</span>
+
+<span class="c1"># 문서 수정
+# ""doc"" is essentially Elasticsearch's ""_source"" field
+</span>
+<span class="n">update_document</span> <span class="o">=</span> <span class="p">{</span><span class="s">'doc'</span><span class="p">:</span> <span class="p">{</span>
+         <span class="s">'address'</span><span class="p">:</span> <span class="s">'경북 구미 송정동'</span><span class="p">,</span>
+         <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+         <span class="s">'email'</span><span class="p">:</span> <span class="s">'ziont0510@gmail.com'</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">update_document</span><span class="p">)</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'updated'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</code></pre></div></div>
+
 <h2 id="검색-api">검색 API</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 매칭되는 문서 개수
+</span><span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'query'</span><span class="p">:{</span>
+        <span class="s">'match_all'</span><span class="p">:{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'count'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'skipped'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">}}</span>
+
+<span class="c1"># 문서 검색
+</span><span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'size'</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+    <span class="s">'query'</span><span class="p">:{</span>
+        <span class="s">'match_all'</span><span class="p">:{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+    
+<span class="n">es</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">-------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'took'</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+ <span class="s">'timed_out'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'skipped'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'hits'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="p">{</span><span class="s">'value'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'relation'</span><span class="p">:</span> <span class="s">'eq'</span><span class="p">},</span>
+  <span class="s">'max_score'</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+  <span class="s">'hits'</span><span class="p">:</span> <span class="p">[]}}</span>
+</code></pre></div></div>
 
 <h2 id="집계-api">집계 API</h2>
 
@@ -312,7 +537,7 @@
       <ul class="share__list list-reset">
         <li class="share__item">
           <a class="share__link share__twitter"
-            href="https://twitter.com/intent/tweet?text=ElasticSearch%20Series%20[Part2]:%20ElasticSearch%EC%97%90%20%EA%B4%80%ED%95%9C%20%EC%A4%91%EC%9A%94%ED%95%9C%20%EA%B0%9C%EB%85%90&url=http://localhost:4000/elasticsearch-element"
+            href="https://twitter.com/intent/tweet?text=ElasticSearch%20Series%20[Part2]:%20ElasticSearch%EC%97%90%EC%84%9C%20%EC%82%AC%EC%9A%A9%EB%90%98%EB%8A%94%20%EA%B0%84%EB%8B%A8%ED%95%9C%20%EC%9A%A9%EC%96%B4%EC%99%80%20%ED%8C%8C%EC%9D%B4%EC%8D%AC%20%EC%BD%94%EB%93%9C&url=http://localhost:4000/elasticsearch-element"
             onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
             title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
         </li>
@@ -322,12 +547,12 @@
             title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/elasticsearch-element&amp;media=http://localhost:4000/images/elasticsearch_logo.png&amp;description=ElasticSearch%20Series%20[Part2]:%20ElasticSearch%EC%97%90%20%EA%B4%80%ED%95%9C%20%EC%A4%91%EC%9A%94%ED%95%9C%20%EA%B0%9C%EB%85%90"
+          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/elasticsearch-element&amp;media=http://localhost:4000/images/elasticsearch_logo.png&amp;description=ElasticSearch%20Series%20[Part2]:%20ElasticSearch%EC%97%90%EC%84%9C%20%EC%82%AC%EC%9A%A9%EB%90%98%EB%8A%94%20%EA%B0%84%EB%8B%A8%ED%95%9C%20%EC%9A%A9%EC%96%B4%EC%99%80%20%ED%8C%8C%EC%9D%B4%EC%8D%AC%20%EC%BD%94%EB%93%9C"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
           rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/elasticsearch-element&title=ElasticSearch%20Series%20[Part2]:%20ElasticSearch%EC%97%90%20%EA%B4%80%ED%95%9C%20%EC%A4%91%EC%9A%94%ED%95%9C%20%EA%B0%9C%EB%85%90&summary=Elasticsearch%EC%97%90%EC%84%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%8A%94%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%95%88%EC%9D%98%20%ED%8A%B9%EC%A0%95%20%ED%83%80%EC%9E%85%EC%97%90%20%EB%AC%B8%EC%84%9C%EB%A1%9C%20%EC%A0%80%EC%9E%A5%EB%90%98%EB%8A%94%EB%8D%B0..&source=Jay%20Tech"
+          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/elasticsearch-element&title=ElasticSearch%20Series%20[Part2]:%20ElasticSearch%EC%97%90%EC%84%9C%20%EC%82%AC%EC%9A%A9%EB%90%98%EB%8A%94%20%EA%B0%84%EB%8B%A8%ED%95%9C%20%EC%9A%A9%EC%96%B4%EC%99%80%20%ED%8C%8C%EC%9D%B4%EC%8D%AC%20%EC%BD%94%EB%93%9C&summary=Elasticsearch%EC%97%90%EC%84%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%8A%94%20%EC%9D%B8%EB%8D%B1%EC%8A%A4%20%EC%95%88%EC%9D%98%20%ED%8A%B9%EC%A0%95%20%ED%83%80%EC%9E%85%EC%97%90%20%EB%AC%B8%EC%84%9C%EB%A1%9C%20%EC%A0%80%EC%9E%A5%EB%90%98%EB%8A%94%EB%8D%B0..&source=Jay%20Tech"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
         </li>
       </ul>
@@ -391,7 +616,7 @@
 
       
       <a class="article__image" href="/elasticsearch-search">
-        <img class="lazy" data-src="/images/elasticsearch_logo.png" alt="ElasticSearch Series [Part4]: ElasticSearch Search">
+        <img class="lazy" data-src="/images/elasticsearch_logo.png" alt="ElasticSearch Series [Part4]: ElasticSearch 검색">
       </a>
       
 
@@ -400,7 +625,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/elasticsearch-search">ElasticSearch Series [Part4]: ElasticSearch Search</a>
+        <a href="/elasticsearch-search">ElasticSearch Series [Part4]: ElasticSearch 검색</a>
       </h2>
 
       
