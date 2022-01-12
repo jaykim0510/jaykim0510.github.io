@@ -1,0 +1,80 @@
+I"`<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#쿠버네티스의-배포형태오브젝트" id="markdown-toc-쿠버네티스의-배포형태오브젝트">쿠버네티스의 배포형태(오브젝트)</a>    <ul>
+      <li><a href="#pod" id="markdown-toc-pod">Pod</a>        <ul>
+          <li><a href="#pod를-생성하기-위한-yaml파일" id="markdown-toc-pod를-생성하기-위한-yaml파일">Pod를 생성하기 위한 YAML파일</a></li>
+        </ul>
+      </li>
+      <li><a href="#controller" id="markdown-toc-controller">Controller</a>        <ul>
+          <li><a href="#replicaset" id="markdown-toc-replicaset">ReplicaSet</a></li>
+          <li><a href="#deployment" id="markdown-toc-deployment">Deployment</a></li>
+        </ul>
+      </li>
+      <li><a href="#volume" id="markdown-toc-volume">Volume</a></li>
+      <li><a href="#service" id="markdown-toc-service">Service</a></li>
+      <li><a href="#ingress" id="markdown-toc-ingress">Ingress</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="쿠버네티스의-배포형태오브젝트">쿠버네티스의 배포형태(오브젝트)</h1>
+
+<p><img src="/images/kube_10.png" alt="" /></p>
+
+<h2 id="pod">Pod</h2>
+
+<p><img src="/images/kube_11.png" alt="" /></p>
+
+<p>쿠버네티스에서 배포할 수 있는 가장 작은 단위의 오브젝트로 한 개 이상의 컨테이너와 스토리지, 네트워크 속성을 가집니다. Pod에 속한 컨테이너는 스토리지와 네트워크를 공유하고 서로 localhost로 접근할 수 있습니다. 컨테이너를 하나만 사용하는 경우도 반드시 Pod으로 감싸서 관리합니다.</p>
+
+<p>Pod가 생성되는 과정은 다음과 같습니다.</p>
+
+<p><img src="/images/kube_12.png" alt="" /></p>
+
+<p>Scheduler는 계속 할당할 새로운 Pod가 있는지 체크하고 있으면 노드에 할당합니다. 그러면 노드에 있는 Kubelet은 컨테이너를 생성하고 결과를 API서버에 보고합니다.</p>
+
+<h3 id="pod를-생성하기-위한-yaml파일">Pod를 생성하기 위한 YAML파일</h3>
+
+<p>Pod를 포함해 쿠버네티스의 오브젝트를 만들기 위해서는 YAML파일이 필요합니다. YAML파일에 오브젝트를 위한 설정들을 작성할 수 있는데, 이 때 필수적으로 사용되는 key값들이 있습니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Key</strong></td>
+      <td><strong>설명</strong></td>
+      <td><strong>예</strong></td>
+    </tr>
+    <tr>
+      <td>version</td>
+      <td>오브젝트 버전</td>
+      <td>v1, app/v1, ..</td>
+    </tr>
+    <tr>
+      <td>kind</td>
+      <td>오브젝트 종류</td>
+      <td>Pod, ReplicaSet, Deployment, ..</td>
+    </tr>
+    <tr>
+      <td>metadata</td>
+      <td>메타데이터</td>
+      <td>name, label, ..</td>
+    </tr>
+    <tr>
+      <td>spec</td>
+      <td>오브젝트 별 상세 설정</td>
+      <td>오브젝트마다 다름</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="controller">Controller</h2>
+<h3 id="replicaset">ReplicaSet</h3>
+<h3 id="deployment">Deployment</h3>
+<h2 id="volume">Volume</h2>
+
+<h2 id="service">Service</h2>
+
+<h2 id="ingress">Ingress</h2>
+:ET

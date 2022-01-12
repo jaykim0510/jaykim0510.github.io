@@ -3,8 +3,8 @@ layout: post
 title:  'Docker Series [Part1]: Docker Intro'
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2022-01-08 15:01:35 +0300
-image:  '/images/backend_logo_1.png'
-tags:   backend
+image:  '/images/docker_logo.png'
+tags:   'devops'
 ---
 
 
