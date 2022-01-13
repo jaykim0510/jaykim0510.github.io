@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Kubernetes Series [Part2]: Kubernetes Object'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+description: Pod는 쿠버네티스에서 배포할 수 있는 가장 작은 단위의 오브젝트로 한 개 이상의 컨테이너와 스토리지, 네트워크 속성을 가집니다.  
 date:   2022-01-08 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
 tags:   'devops'

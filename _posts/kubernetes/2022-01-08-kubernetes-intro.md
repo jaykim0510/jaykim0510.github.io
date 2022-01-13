@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Kubernetes Series [Part1]: Kubernetes Intro'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+description: 쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리를 자동화해주는 오픈소스 플랫폼입니다.  
 date:   2022-01-08 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
 tags:   'devops'
@@ -36,7 +36,7 @@ tags:   'devops'
 
 # Kubernetes
 
-## 쿠버네티스란
+## 쿠버네티스 소개
 
 __쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리를 자동화해주는 오픈소스 플랫폼입니다.__  
 

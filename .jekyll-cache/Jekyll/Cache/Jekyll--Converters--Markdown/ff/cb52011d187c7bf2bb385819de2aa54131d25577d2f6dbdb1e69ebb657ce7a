@@ -1,0 +1,69 @@
+I"Z<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#github-actions-소개" id="markdown-toc-github-actions-소개">Github Actions 소개</a></li>
+  <li><a href="#github-actions-주요-구성요소" id="markdown-toc-github-actions-주요-구성요소">Github Actions 주요 구성요소</a>    <ul>
+      <li><a href="#workflow" id="markdown-toc-workflow">Workflow</a></li>
+      <li><a href="#event" id="markdown-toc-event">Event</a></li>
+      <li><a href="#job" id="markdown-toc-job">Job</a></li>
+      <li><a href="#action" id="markdown-toc-action">Action</a></li>
+      <li><a href="#runner" id="markdown-toc-runner">Runner</a></li>
+    </ul>
+  </li>
+  <li><a href="#workflow-예제" id="markdown-toc-workflow-예제">Workflow 예제</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="github-actions-소개">Github Actions 소개</h1>
+<p>GitHub Actions은 CI/CD 플랫폼으로 build, test, deployment 파이프라인을 자동화 시켜줍니다. Github Actions은 Github repository에서 어떤 event(ex. push, pull request)가 발생했을 때 설정한 workflow를 실행하도록 할 수 있습니다. 이러한 workflow를 실행하기 위해 Github에서는 Linux, Windows, macOS와 같은 주요 운영체제 기반의 가상머신을 제공해주고, 원한다면 self-hosted runner를 이용할 수도 있습니다.</p>
+
+<h1 id="github-actions-주요-구성요소">Github Actions 주요 구성요소</h1>
+<p>You can configure a GitHub Actions workflow to be triggered when an event occurs in your repository, such as a pull request being opened or an issue being created. Your workflow contains one or more jobs which can run in sequential order or in parallel. Each job will run inside its own virtual machine runner, or inside a container, and has one or more steps that either run a script that you define or run an action, which is a reusable extension that can simplify your workflow.<br />
+<a href="https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions">(Github Actions 공식문서 참고)</a></p>
+
+<p><img src="../images/../../images/github-actions_1.png" alt="" /></p>
+
+<h2 id="workflow">Workflow</h2>
+<p>자동화된 전체 프로세스. 하나 이상의 Job으로 구성되고, Event에 의해 예약되거나 트리거될 수 있는 자동화된 절차를 말한다.
+Workflow 파일은 YAML으로 작성되고, Github Repository의 <code class="language-plaintext highlighter-rouge">.github/workflows</code> 폴더 아래에 저장된다. Github에게 YAML 파일로 정의한 자동화 동작을 전달하면, Github Actions는 해당 파일을 기반으로 그대로 실행시킨다.</p>
+
+<h2 id="event">Event</h2>
+<p>Workflow를 트리거(실행)하는 특정 사건. 예를 들어, pull, push, creating issue와 같은 것들로 Workflow를 실행시킬 수 있다.</p>
+
+<h2 id="job">Job</h2>
+<p>Job은 여러 Step으로 구성되고, 단일 가상 환경에서 실행된다. 다른 Job에 의존 관계를 가질 수도 있고, 독립적으로 병렬로 실행될 수도 있다. Step에서는 shell script를 실행시킬 수도 있고, action을 실행시킬 수도 있다.</p>
+
+<h2 id="action">Action</h2>
+<p>Action은 반복적인 코드를 하나로 묶어 재사용 가능하도록 만들어 놓은 블럭입니다. Action을 직접 커스텀하여 사용할 수도 있고, Github Marketplace에 올라와 있는 것을 사용해도 됩니다.</p>
+
+<h2 id="runner">Runner</h2>
+<p>Runner는 Gitbub Action Runner 어플리케이션이 설치된 머신으로, Workflow가 실행될 인스턴스입니다.</p>
+
+<h1 id="workflow-예제">Workflow 예제</h1>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">name</span><span class="pi">:</span> <span class="s">learn-github-actions</span>
+<span class="na">on</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">push</span><span class="pi">]</span>
+<span class="na">jobs</span><span class="pi">:</span>
+  <span class="na">check-bats-version</span><span class="pi">:</span>
+    <span class="na">runs-on</span><span class="pi">:</span> <span class="s">ubuntu-latest</span>
+    <span class="na">steps</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/checkout@v2</span>
+      <span class="pi">-</span> <span class="na">uses</span><span class="pi">:</span> <span class="s">actions/setup-node@v2</span>
+        <span class="na">with</span><span class="pi">:</span>
+          <span class="na">node-version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">14'</span>
+      <span class="pi">-</span> <span class="na">run</span><span class="pi">:</span> <span class="s">npm install -g bats</span>
+      <span class="pi">-</span> <span class="na">run</span><span class="pi">:</span> <span class="s">bats -v</span>
+</code></pre></div></div>
+
+<p><img src="../images/../../images/github-actions_2.png" alt="" /></p>
+
+<p><img src="../images/../../images/github-actions_3.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions">Github Actions 공식문서</a></li>
+  <li><a href="https://velog.io/@ggong/Github-Action에-대한-소개와-사용법">ggong.log 블로그</a></li>
+</ul>
+:ET
