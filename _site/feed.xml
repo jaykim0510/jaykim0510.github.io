@@ -5,9 +5,189 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Fri, 14 Jan 2022 00:18:10 +0900</pubDate>
-        <lastBuildDate>Fri, 14 Jan 2022 00:18:10 +0900</lastBuildDate>
+        <pubDate>Sun, 16 Jan 2022 14:13:22 +0900</pubDate>
+        <lastBuildDate>Sun, 16 Jan 2022 14:13:22 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Apache Spark Series [Part1]: Apache Spark Introduction</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#spark-introduction&quot; id=&quot;markdown-toc-spark-introduction&quot;&gt;Spark Introduction&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#rdd&quot; id=&quot;markdown-toc-rdd&quot;&gt;RDD&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#파티션partition&quot; id=&quot;markdown-toc-파티션partition&quot;&gt;파티션(Partition)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#불변성immutable&quot; id=&quot;markdown-toc-불변성immutable&quot;&gt;불변성(Immutable)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#게으른-연산lazy-operation&quot; id=&quot;markdown-toc-게으른-연산lazy-operation&quot;&gt;게으른 연산(Lazy Operation)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#cluster-mode&quot; id=&quot;markdown-toc-cluster-mode&quot;&gt;Cluster Mode&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#드라이버-프로그램&quot; id=&quot;markdown-toc-드라이버-프로그램&quot;&gt;드라이버 프로그램&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#클러스터-매니저&quot; id=&quot;markdown-toc-클러스터-매니저&quot;&gt;클러스터 매니저&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#워커-노드&quot; id=&quot;markdown-toc-워커-노드&quot;&gt;워커 노드&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#알아두면-좋은-것들&quot; id=&quot;markdown-toc-알아두면-좋은-것들&quot;&gt;알아두면 좋은 것들&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#shuffling&quot; id=&quot;markdown-toc-shuffling&quot;&gt;Shuffling&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#passing-functions-to-spark&quot; id=&quot;markdown-toc-passing-functions-to-spark&quot;&gt;Passing Functions to Spark&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#질문&quot; id=&quot;markdown-toc-질문&quot;&gt;질문&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;spark-introduction&quot;&gt;Spark Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;스파크는 클러스터 기반의 분산 처리 기능을 제공하는 오픈소스 프레임워크입니다.&lt;/strong&gt; 쉽게 말해 대용량 데이터를 여러 컴퓨터에 나누어서 동시에 처리한다고 할 수 있습니다. 이런 방법이 스파크 이전에 없었던 것은 아닙니다. 스파크 이전에 하둡(Hadoop)이 이와 유사한 기능을 제공했었습니다. 
+참고로 하둡은 더그 커팅(Doug Cutting)이라는 사람이 구글이 발표했던 두 개의 논문(&lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf&quot;&gt;&lt;strong&gt;The Google File System_2003&lt;/strong&gt;&lt;/a&gt;, &lt;a href=&quot;https://dl.acm.org/doi/10.1145/1327452.1327492&quot;&gt;&lt;strong&gt;MapReduce: simplified data processing on large clusters_2008&lt;/strong&gt;&lt;/a&gt;)을 직접 구현해 만든 프레임워크입니다. 이처럼 구글에서는 예전부터 대용량의 데이터를 고속 분산처리 하기 위해 노력했었고, 현재 스파크는 대부분의 기업들이 사용하고 있는 소프트웨어입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;지금부터는 스파크와 하둡을 비교하며 스파크의 특징에 어떤 것이 있는지 알아보겠습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;차이점&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;하둡&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;스파크&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;기반&lt;/td&gt;
+      &lt;td&gt;디스크 기반&lt;/td&gt;
+      &lt;td&gt;메모리 기반&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;처리방식&lt;/td&gt;
+      &lt;td&gt;Map-Reduce&lt;/td&gt;
+      &lt;td&gt;RDD&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;프로그래밍언어&lt;/td&gt;
+      &lt;td&gt;자바&lt;/td&gt;
+      &lt;td&gt;스칼라, 자바, 파이썬, R&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;라이브러리&lt;/td&gt;
+      &lt;td&gt;-&lt;/td&gt;
+      &lt;td&gt;다양한 라이브러리(Spark streaming, MLlib, GraphX 등) 제공&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;처리방식에 대해 조금 더 이야기 해보겠습니다. 맵리듀스(MapReduce)는 2004년 구글에서 대용량 데이터 처리를 분산환경에서 처리하기 위한 목적의 소프트웨어 프레임워크입니다. 맵리듀스는 함수형 프로그래밍에서 일반적으로 사용되는 Map과 Reduce라는 함수를 기반으로 만들어졌습니다. Map은 각각의 분산된 환경에서 독립적으로 실행되는 함수의 일종, Reduce는 분산 환경에서의 데이터를 하나로 모으는 함수라고 생각할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;맵리듀스는 분산된 환경에서 데이터가 처리되는데 필요한 많은 함수들을 제공해주지만, 현업에서 필요한 기능들을 모두 커버하기에는 무리가 있었습니다. 그래서 이러한 단점을 보완하기 위해 2009년 UC Berkeley 대학에서 연구를 시작해 2012년 미국 NSDI 학회에서 스파크의 핵심 개념인 &lt;strong&gt;RDD(Resilient Distributed Dataset)&lt;/strong&gt; 에 대한 논문을 발표하였습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;rdd&quot;&gt;RDD&lt;/h1&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;RDD is a fault-tolerant collection of elements that can be operated on in parallel.&lt;br /&gt;
+&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#resilient-distributed-datasets-rdds&quot;&gt;(아파치 스파크 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;다시 말하면 RDD란 스파크에서 정의한 &lt;strong&gt;분산 데이터 모델로서 병렬 처리가 가능한 요소&lt;/strong&gt; 로 구성되며 데이터를 처리하는 과정에서 &lt;strong&gt;장애가 발생하더라도 스스로 복구할 수 있는 능력&lt;/strong&gt; 을 가진 &lt;strong&gt;데이터 모델&lt;/strong&gt; 이라는 뜻입니다. RDD는 분산 데이터에 대한 모델로서 단순히 값으로 표현되는 데이터만 가리키는 것이 아니고, 분산된 &lt;strong&gt;데이터를 다루는 방법까지 포함&lt;/strong&gt; 하는 일종의 클래스와 같은 개념입니다.&lt;/p&gt;
+
+&lt;p&gt;RDD에서 중요한 특징은 다음과 같습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;파티션(Partition)&lt;/li&gt;
+  &lt;li&gt;불변성&lt;/li&gt;
+  &lt;li&gt;게으른 연산(Lazy operation)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;파티션partition&quot;&gt;파티션(Partition)&lt;/h2&gt;
+&lt;p&gt;RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서 분산 데이터 요소를 파티션이라고 합니다. 스파크는 작업을 수행할 때 바로 이 파티션 단위로 나눠서 병렬로 처리합니다. 여기서 제가 헷갈렸던 것은 파티션이 분산처리와 병렬처리 중 어떤 것을 기준으로 나뉘어진 단위인가 라는 것 이었습니다. 공식문서&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#parallelized-collections&quot;&gt;(아파치 스파크 공식문서 참고)&lt;/a&gt;를 살펴본 결과 파티션은 병렬 처리가 되는 기준이었습니다. 여러 서버에 분산할 때 보통 하나의 서버 당 2~4개 정도의 파티션을 설정합니다. 이 기준은 개인의 클러스터 환경에 따라 기본 설정 값이 다르며 이 값은 원하는 값으로 바꿀 수 있습니다. 구글에서 이미지를 살펴보았을 때는 다들 task당 한개의 파티션이라고 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;불변성immutable&quot;&gt;불변성(Immutable)&lt;/h2&gt;
+&lt;p&gt;한 개의 RDD가 여러 개의 파티션으로 나뉘고 다수의 서버에서 처리되다 보니 작업 도중 일부 파티션 처리에 장애가 발생해 파티션 처리 결과가 유실될 수 있습니다. 하지만 스파크에서 RDD는 불변성이기 때문에 생성 과정에 사용되었던 연산들을 다시 실행하여 장애를 해결할 수 있습니다. 여기서 불변성이라는 말은 RDD에서 어떤 연산을 적용해 다른 RDD가 될 때 &lt;strong&gt;무조건 새로 RDD를 생성합니다(RDD는 불변이다).&lt;/strong&gt; 이러한 방식 덕분에 장애가 발생해도 기존의 RDD 데이터에 다시 연산을 적용해 장애를 해결할 수 있는 것입니다(RDD는 회복 탄력성이 좋다(resilient)).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;게으른-연산lazy-operation&quot;&gt;게으른 연산(Lazy Operation)&lt;/h2&gt;
+
+&lt;p&gt;RDD의 연산은 크게 &lt;strong&gt;트랜스포메이션&lt;/strong&gt; 과 &lt;strong&gt;액션&lt;/strong&gt; 이라는 두 종류로 나눌 수 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;트랜스포메이션: RDD1 -&amp;gt; RDD2 이런식으로 새로운 RDD를 만들어내는 연산, 대표적으로 map 함수&lt;/li&gt;
+  &lt;li&gt;액션: RDD -&amp;gt; 다른 형태의 데이터를 만들어내는 연산, 대표적으로 reduce 함수&lt;br /&gt;
+&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#transformations&quot;&gt;(아파치 공식문서 참고)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;트랜스포메이션 연산은 보통 분산된 서버 각각에서 독립적으로 수행할 수 있는 연산입니다. 그리고 액션은 분산된 서버에 있는 데이터가 서로를 참조해야 하는 연산입니다. 그래서 액션은 서버 네트워크간의 이동이 발생하게 됩니다. 이런 현상을 셔플링(Shuffling)이라고 하고, 보통 네트워크에서 읽어오는 연산은 메모리에 비해 100만배 정도 느립니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;그렇기 때문에 셔플링이 발생하는 연산을 할 때에는 그 전에 최대한 데이터를 간추리는 것이 중요한데 스파크의 중요한 특징 중 하나가 바로 게으른 연산을 한다는 것입니다. 게으른 연산이라는 말은 RDD가 액션연산을 수행할 때에 비로소 모든 연산이 한꺼번에 실행된다는 것입니다. 이러한 방식의 장점은 데이터를 본격적으로 처리하기 전에 어떤 연산들이 사용되었는지 알 수 있고, 이를 통해 최종적으로 실행이 필요한 시점에 누적된 변환 연산을 분석하고 그중에서 가장 최적의 방법을 찾아 변환 연산을 실행할 수 있습니다. 이렇게 되면 셔플링이 최대한 작은 사이즈로 발생할 수 있도록 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;스파크는 RDD를 사용함으로써 처리 속도도 높이고, 장애 복구도 가능해졌다
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;cluster-mode&quot;&gt;Cluster Mode&lt;/h1&gt;
+&lt;p&gt;이번에는 스파크를 구동시키는 환경에 대해서 알아보겠습니다. 스파크는 단일 서버로 동작시키는 로컬 모드와, 클러스터 환경에서 동작시키는 클러스터 모드가 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;로컬 모드는 위의 클러스터 환경에 있는 구성 요소들을 모두 하나의 서버에 놓는 것(Executor는 1개)과 같기 때문에 여기서는 분산 처리를 가능하게 해주는 클러스터 모드에 대해서 조금 더 자세히 알아보겠습니다. 구성 요소는 크게 다음과 같습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;드라이버 프로그램&lt;/li&gt;
+  &lt;li&gt;클러스터 매니저&lt;/li&gt;
+  &lt;li&gt;워커 노드&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;여기서 드라이버 프로그램과 워커 노드를 보통 애플리케이션이라고 하고, 클러스터 매니저는 외부 서비스로 애플리케이션과 연동합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;드라이버-프로그램&quot;&gt;드라이버 프로그램&lt;/h2&gt;
+&lt;p&gt;드라이버 프로그램의 역할은 다음과 같습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;클러스터 매니저와의 connection을 위한 스파크 컨텍스트 객체를 생성&lt;/li&gt;
+  &lt;li&gt;스파크 컨텍스트를 이용해 RDD 생성&lt;/li&gt;
+  &lt;li&gt;스파크 컨텍스트를 이용해 연산 정의&lt;/li&gt;
+  &lt;li&gt;정의된 연산은 DAG 스케줄러에게 전달되고 스케줄러는 연산 실행 계획 수립 후 클러스터 매니저에 전달&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;클러스터-매니저&quot;&gt;클러스터 매니저&lt;/h2&gt;
+&lt;p&gt;클러스터 매니저에는 다음과 같은 것들이 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Standalone&lt;/strong&gt;: a simple cluster manager included with Spark that makes it easy to set up a cluster&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;YARN&lt;/strong&gt;: the resource manager in Hadoop 2&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Kubernetes&lt;/strong&gt;: an open-source system for automating deployment, scaling, and management of containerized applications&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;클러스터 매니저의 종류마다 지원하는 범위가 세부적으로 다르지만 대략적인 역할은 다음과 같습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;스파크 컨텍스트 생성시 설정된 Executer의 개수, Executer의 메모리를 바탕으로 자원을 할당&lt;/li&gt;
+  &lt;li&gt;이용 가능한 워커에 태스크를 할당하기 위해 노드를 모니터링&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;워커-노드&quot;&gt;워커 노드&lt;/h2&gt;
+&lt;p&gt;스파크 컨텍스트는 워커 노드에 Executer를 생성하도록 클러스터 매니저에 요청을 하고 클러스터는 그에 맞춰 Executer를 생성합니다. Executer가 생성되면 드라이버 프로그램은 정의된 연산을 수행합니다. 이 때 작업을 실제로 수행하는 것은 아니고 액션 연산의 수만큼 잡(Job)을 생성하고 잡은 셔플링이 최대한 적게 일어나는 방향으로 스테이지(Stage)를 나눕니다. 나누어진 스테이지는 다시 여러 개의 태스크(Task)로 나누어진 후 워커 노드에 생성된 Executer에 할당됩니다.&lt;br /&gt;
+워커 노드는 Executer를 이용해 태스크를 처리하고, 데이터를 나중에 재사용 할 수 있도록 메모리에 저장도 합니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;알아두면-좋은-것들&quot;&gt;알아두면 좋은 것들&lt;/h1&gt;
+
+&lt;h2 id=&quot;shuffling&quot;&gt;Shuffling&lt;/h2&gt;
+
+&lt;h2 id=&quot;passing-functions-to-spark&quot;&gt;Passing Functions to Spark&lt;/h2&gt;
+
+&lt;h1 id=&quot;질문&quot;&gt;질문&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;RDD가 파티션으로 나뉘어지는 시점은 RDD가 생성되는 순간일까 아니면 연산이 실행되는 순간일까?&lt;/li&gt;
+  &lt;li&gt;어떤 기준으로 RDD를 파티셔닝할까?&lt;/li&gt;
+  &lt;li&gt;셔플링은 액션 연산에서만 발생할까?&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Sat, 15 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/spark-series1</link>
+                <guid isPermaLink="true">http://localhost:4000/spark-series1</guid>
+                
+                <category>DE</category>
+                
+                
+            </item>
         
             <item>
                 <title>Github Actions Series [Part1]: Understanding GitHub Actions</title>
@@ -69,9 +249,8 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
       &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bats -v&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;../images/../../images/github-actions_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../images/../../images/github-actions_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../images/../../images/github-actions_2.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;../images/../../images/github-actions_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yaml 파일&lt;/code&gt; 하나가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Workflow&lt;/code&gt;이다&lt;/li&gt;
@@ -562,7 +741,7 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
   &lt;li&gt;&lt;a href=&quot;https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/&quot;&gt;Rancher 공식문서&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-                <pubDate>Sat, 08 Jan 2022 21:01:35 +0900</pubDate>
+                <pubDate>Sun, 09 Jan 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/kubernetes-series2</link>
                 <guid isPermaLink="true">http://localhost:4000/kubernetes-series2</guid>
                 
@@ -1001,19 +1180,93 @@ service elasticsearch restart
         
             <item>
                 <title>ElasticSearch Series [Part3]: ElasticSearch Modeling</title>
-                <description>&lt;h1 id=&quot;elasticsearch를-구성하는-개념&quot;&gt;Elasticsearch를 구성하는 개념&lt;/h1&gt;
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#elasticsearch-모델링&quot; id=&quot;markdown-toc-elasticsearch-모델링&quot;&gt;Elasticsearch 모델링&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#데이터-타입&quot; id=&quot;markdown-toc-데이터-타입&quot;&gt;데이터 타입&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#keyword-데이터-타입&quot; id=&quot;markdown-toc-keyword-데이터-타입&quot;&gt;Keyword 데이터 타입&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#text-데이터-타입&quot; id=&quot;markdown-toc-text-데이터-타입&quot;&gt;Text 데이터 타입&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#매핑-파라미터&quot; id=&quot;markdown-toc-매핑-파라미터&quot;&gt;매핑 파라미터&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;h1 id=&quot;elasticsearch에서-제공하는-주요-api&quot;&gt;Elasticsearch에서 제공하는 주요 API&lt;/h1&gt;
+&lt;hr /&gt;
 
-&lt;h2 id=&quot;인덱스-관련-api&quot;&gt;인덱스 관련 API&lt;/h2&gt;
+&lt;h1 id=&quot;elasticsearch-모델링&quot;&gt;Elasticsearch 모델링&lt;/h1&gt;
+&lt;p&gt;엘라스틱서치에서 문서(데이터)를 어떤 형태로 색인할 것인지 설정하는 것을 모델링이라고 합니다. 엘라스틱서치에서 모델링할 때에 중요한 요소는 다음과 같습니다.&lt;/p&gt;
 
-&lt;h2 id=&quot;문서-관련-api&quot;&gt;문서 관련 API&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;필드에 지정할 데이터 타입&lt;/li&gt;
+  &lt;li&gt;필드별 매핑 파라미터&lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;h2 id=&quot;검색-api&quot;&gt;검색 API&lt;/h2&gt;
+&lt;p&gt;예를 들어, 영화 정보를 엘라스틱서치를 이용해 저장하고 싶다면,&lt;/p&gt;
 
-&lt;h2 id=&quot;집계-api&quot;&gt;집계 API&lt;/h2&gt;
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필드명&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;필드 타입&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;movieTitle&lt;/td&gt;
+      &lt;td&gt;text&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;jenre&lt;/td&gt;
+      &lt;td&gt;keyword&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;nation&lt;/td&gt;
+      &lt;td&gt;keyword&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;produceYear&lt;/td&gt;
+      &lt;td&gt;integer&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;releaseDate&lt;/td&gt;
+      &lt;td&gt;date&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;actor&lt;/td&gt;
+      &lt;td&gt;keyword&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/kafka_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;이렇게 필드별로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;keyword&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;integer&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;date&lt;/code&gt; 등의 데이터 타입을 설정할 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;데이터-타입&quot;&gt;데이터 타입&lt;/h2&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 대표적인 데이터 타입
+- 문자열 관련한 데이터 타입: keyword, text
+- 일반적인 데이터 타입: integer, long, double, boolean
+- 특수한 데이터 타입: date, ip, geo_point, geo_shape
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;keyword-데이터-타입&quot;&gt;Keyword 데이터 타입&lt;/h3&gt;
+&lt;p&gt;Keyword 데이터 타입은 문자열 데이터를 색인할 때 자주 사용하는 타입 중 하나로, 별도의 분석기 없이 원문 그대로가 저장된다는 것이 특징입니다. 예를 들어 ‘elastic search’라는 문자열을 keyword 타입으로 저장한다면, ‘elastic’이나 ‘search’로는 검색이 되지 않고 정확히 ‘elastic search’라고해야만 검색됩니다. 이러한 데이터 타입은 주로 카테고리형 데이터의 필드 타입으로 적절하며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;문자열을 필터링, 정렬, 집계&lt;/code&gt;할 때는 keyword타입을 이용해야 합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;text-데이터-타입&quot;&gt;Text 데이터 타입&lt;/h3&gt;
+&lt;p&gt;반지의 제왕 영화 시리즈에는 ‘반지의 제왕: 반지 원정대’, ‘반지의 제왕: 두 개의 탑’, ‘반지의 제왕: 왕의 귀환’이 있습니다. 근데 저는 부제목까지는 기억이 안나고 ‘반지의 제왕’만 기억이 납니다. 그래서 저는 ‘반지의 제왕’이라고만 검색해도 위의 영화들이 나왔으면 좋겠습니다. 이럴 때는 text데이터 타입을 이용합니다. Text타입은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;전문 검색&lt;/code&gt;이 가a능하다는 점이 가장 큰 특징입니다. Text타입으로 데이터를 색인하면 전체 텍스트가 토큰화되어 역색인(inverted index)됩니다.&lt;/p&gt;
+
+&lt;p&gt;더 자세한 내용은 공식문서를 참고해주시면 좋을 것 같습니다. &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html&quot;&gt;(엘라스틱서치 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;매핑-파라미터&quot;&gt;매핑 파라미터&lt;/h2&gt;
+&lt;p&gt;문서를 색인하는 과정은 당연 엘라스틱서치에서 가장 중요한 부분입니다. 그렇기 때문에 엘라스틱서치에서는 매핑 파라미터를 통해 색인 과정을 커스텀하도록 도와줍니다. 예를 들어 어떤 영화 데이터는 장르가 없다고 하면 색인할 때 필드를 생성하지 않습니다. 이럴 때 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null_value&lt;/code&gt;를 ‘데이터 없음’이라고 설정했다면, 필드가 생성 되고 값에 ‘데이터 없음’이라는 값이 들어갑니다. 또 다른 예시는 특정 필드를 색인에 포함할지 말지를 결정하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;enabled&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index&lt;/code&gt; 파라미터도 있습니다. &lt;a href=&quot;https://stackoverflow.com/questions/50836504/elasticsearch-mapping-parameters-index-vs-enabled&quot;&gt;(둘의 차이는 stack overflow 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 매핑 파라미터
+- 문자열에 자주 사용: analyzer, search_analyzer, similarity, term_vector, normalizer
+- 저장 관련: enabled, index, store, copy_to, doc_values
+- 색인 방식과 관련: ignore_above, ignore_malformed, coerce, dynamic, null_value
+- 필드 안의 필드를 정의할 때 사용: properties, fields
+- 그 밖: position_increment_gap, format
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-params.html&quot;&gt;(엘라스틱서치 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 </description>
                 <pubDate>Thu, 06 Jan 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/elasticsearch-modeling</link>
@@ -1446,187 +1699,6 @@ service elasticsearch restart
                 <guid isPermaLink="true">http://localhost:4000/mongodb-intro</guid>
                 
                 <category>backend</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>Network Series [Part1]: Network Intro</title>
-                <description>&lt;h1 id=&quot;elasticsearch-소개&quot;&gt;Elasticsearch 소개&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;Elasticsearch는 정형 및 비정형 데이터 등 모든 유형의 데이터를 위한 무료 검색 및 분석 엔진&lt;/li&gt;
-  &lt;li&gt;Apache Lucene을 기반으로 구축&lt;/li&gt;
-  &lt;li&gt;Elastic Stack의 핵심 구성요소(Elasticsearch, Logstash, Kibana)&lt;/li&gt;
-  &lt;li&gt;기본적으로는 검색엔진이지만, MongoDB나 HBase처럼 대용량 스토리지로도 활용&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/elastic_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;elasticsearch를-사용하는-이유&quot;&gt;Elasticsearch를 사용하는 이유&lt;/h2&gt;
-
-&lt;h3 id=&quot;elasticsearch는-빠릅니다&quot;&gt;Elasticsearch는 빠릅니다&lt;/h3&gt;
-&lt;p&gt;Elasticsearch는 Lucene을 기반으로 구축되기 때문에, 전문(Full-text) 검색에 뛰어납니다. Elasticsearch는 또한 거의 실시간 검색 플랫폼입니다. 이것은 문서가 색인될 때부터 검색 가능해질 때까지의 대기 시간이 아주 짧다는 뜻입니다. 이 대기 시간은 보통 1초입니다. 결과적으로, Elasticsearch는 보안 분석, 인프라 모니터링 같은 시간이 중요한 사용 사례에 이상적입니다.&lt;/p&gt;
-
-&lt;p&gt;🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;전문 검색&lt;/code&gt;: 내용 전체를 색인해서 특정 단어가 포함된 문서를 검색하는 것&lt;br /&gt;
-🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Lucene기반의 검색 엔진&lt;/code&gt;: 역색인을 지원하는 검색 엔진으로 보통 책 마지막 부분의 단어별 페이지 수를 적어놓은 것과 비슷&lt;/p&gt;
-
-&lt;h3 id=&quot;elasticsearch는-본질상-분산적입니다&quot;&gt;Elasticsearch는 본질상 분산적입니다.&lt;/h3&gt;
-&lt;p&gt;Elasticsearch에 저장된 문서는 샤드라고 하는 여러 다른 컨테이너에 걸쳐 분산되며, 이 샤드는 복제되어 하드웨어 장애 시에 중복되는 데이터 사본을 제공합니다. Elasticsearch의 분산적인 특징은 수백 개(심지어 수천 개)의 서버까지 확장하고 페타바이트의 데이터를 처리할 수 있게 해줍니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;elasticsearch는-광범위한-기능-세트와-함께-제공됩니다&quot;&gt;Elasticsearch는 광범위한 기능 세트와 함께 제공됩니다.&lt;/h3&gt;
-&lt;p&gt;속도, 확장성, 복원력뿐 아니라, Elasticsearch에는 데이터 롤업, 인덱스 수명 주기 관리 등과 같이 데이터를 훨씬 더 효율적으로 저장하고 검색할 수 있게 해주는 강력한 기본 기능이 다수 탑재되어 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;그-밖에-restful-api-멀티-테넌시-등을-지원합니다&quot;&gt;그 밖에, RESTful API, 멀티 테넌시 등을 지원합니다.&lt;/h3&gt;
-&lt;p&gt;RESTful API를 지원하고, 요청과 응답에 JSON 형식을 사용해, 개발 언어에 관계없이 이용 가능하며, 서로 다른 인덱스(테이블)일지라도 필드명(컬럼)만 같으면 한번에 여러 개의 인덱스(테이블)을 조회할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Elasticsearch의 약점&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;완전한 실시간이 아니다&lt;/li&gt;
-  &lt;li&gt;롤백 기능을 제공하지 않는다&lt;/li&gt;
-  &lt;li&gt;업데이트 될 때마다 문서를 새로 생성한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/elastic_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;elasticsearch-설치&quot;&gt;Elasticsearch 설치&lt;/h1&gt;
-
-&lt;p&gt;🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;사용환경&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Macbook M1&lt;/li&gt;
-  &lt;li&gt;Docker on mac&lt;/li&gt;
-  &lt;li&gt;Local python 3.8.9&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;docker를-이용한-설치&quot;&gt;Docker를 이용한 설치&lt;/h2&gt;
-
-&lt;p&gt;먼저 Elasticsearch 이미지를 Dockerhub에서 다운 받아옵니다. &lt;a href=&quot;https://hub.docker.com/_/elasticsearch?tab=tags&amp;amp;page=1&quot;&gt;(참고: Dockerhub)&lt;/a&gt;&lt;br /&gt;
-제가 사용하고 있는 맥북의 M1칩은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;linux/arm64/v8&lt;/code&gt; OS architecture만 지원하기 때문에 7.16.2 버전의 이미지를 가져오려고 합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker pull elasticsearch:7.16.2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;이제 이미지를 가지고 컨테이너를 생성합니다. Elasticsearch는 보통 성능상의 이유로 분산환경에서 실행하는 것을 권장하지만 단순 테스트 또는 공부를 목적으로 한다면 단일 노드 환경에서 실행하여도 문제가 없습니다. Elasticsearch 문서에서는 두 가지 방법에 대한 도커 명령어를 제공하므로, 사용 목적에 맞게 실행시키면 됩니다. &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html&quot;&gt;(참고: Elasticsearch 공식 문서)&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Single-node
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker run -p 127.0.0.1:9200:9200 -p 127.0.0.1:9300:9300 -e &quot;discovery.type=single-node&quot; docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Multi-node&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# Create a docker-compose.yml file
-
-version: '2.2'
-services:
-  es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-    container_name: es01
-    environment:
-      - node.name=es01
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es02,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data01:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-    networks:
-      - elastic
-  es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-    container_name: es02
-    environment:
-      - node.name=es02
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es01,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data02:/usr/share/elasticsearch/data
-    networks:
-      - elastic
-  es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-    container_name: es03
-    environment:
-      - node.name=es03
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es01,es02
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data03:/usr/share/elasticsearch/data
-    networks:
-      - elastic
-
-volumes:
-  data01:
-    driver: local
-  data02:
-    driver: local
-  data03:
-    driver: local
-
-networks:
-  elastic:
-    driver: bridge
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;이렇게 하고나면 Elasticsearch 설치가 완료되었습니다. localhost의 9200번 포트로 Elasticsearch에 접근할 수 있습니다. 이제 클라이언트 모드로 Elasticsearch를 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;github--docker를-이용한-설치&quot;&gt;github + Docker를 이용한 설치&lt;/h2&gt;
-&lt;p&gt;깃허브에 Elasticsearch뿐만 아니라, Kibana와 Logstash를 함께 설치해주는 코드가 있어서 공유드립니다.&lt;br /&gt;
-&lt;a href=&quot;https://github.com/deviantony/docker-elk&quot;&gt;(참고: deviantony/docker-elk)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;linux에-직접-설치&quot;&gt;Linux에 직접 설치&lt;/h2&gt;
-&lt;p&gt;이 방법은 제가 전에 부스트캠프에서 프로젝트를 진행할 때 팀원 중 한 분이 공유해주셨었는데, 잘 동작하여서 공유드립니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get update &amp;amp;&amp;amp; apt-get install -y gnupg2
-wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
-apt-get install apt-transport-https
-echo &quot;deb https://artifacts.elastic.co/packages/7.x/apt stable main&quot; | tee /etc/apt/sources.list.d/elastic-7.x.list
-apt-get update &amp;amp;&amp;amp; apt-get install elasticsearch
-service elasticsearch start
-cd /usr/share/elasticsearch
-bin/elasticsearch-plugin install analysis-nori
-service elasticsearch restart
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;마치며&quot;&gt;마치며&lt;/h2&gt;
-
-&lt;p&gt;Elasticsearch에서는 다양한 프로그래밍 언어로 Elasticsearch Client API를 제공하고 있습니다.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Java&lt;/li&gt;
-  &lt;li&gt;Python&lt;/li&gt;
-  &lt;li&gt;Node.js&lt;/li&gt;
-  &lt;li&gt;C#&lt;/li&gt;
-  &lt;li&gt;Go&lt;/li&gt;
-  &lt;li&gt;Ruby&lt;/li&gt;
-  &lt;li&gt;PHP&lt;/li&gt;
-  &lt;li&gt;Perl&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;다음 포스트부터는 파이썬으로 Client API를 사용해 실습과 함께 포스트를 작성하도록 하겠습니다.&lt;/p&gt;
-</description>
-                <pubDate>Mon, 03 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/network-intro</link>
-                <guid isPermaLink="true">http://localhost:4000/network-intro</guid>
-                
-                <category>CS</category>
                 
                 
             </item>

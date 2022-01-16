@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Github Actions Series [Part1]: Understanding GitHub Actions'
-description: Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.
+description: GitHub Actions은 CI/CD 플랫폼으로 build, test, deployment 파이프라인을 자동화 시켜줍니다.
 date:   2022-01-13 15:01:35 +0300
 image:  '/images/github-actions_logo.png'
 tags:   devops
@@ -58,7 +58,6 @@ jobs:
 ```
 
 ![](../images/../../images/github-actions_2.png)
-
 ![](../images/../../images/github-actions_3.png)  
 
 - `yaml 파일` 하나가 `Workflow`이다
