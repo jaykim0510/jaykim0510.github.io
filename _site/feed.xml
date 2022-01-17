@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 16 Jan 2022 14:13:22 +0900</pubDate>
-        <lastBuildDate>Sun, 16 Jan 2022 14:13:22 +0900</lastBuildDate>
+        <pubDate>Tue, 18 Jan 2022 01:09:59 +0900</pubDate>
+        <lastBuildDate>Tue, 18 Jan 2022 01:09:59 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -398,10 +398,10 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
 &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;matchLabels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;matchLabels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# app: echo이고 tier: app인 label을 가지는 파드를 관리&lt;/span&gt;
       &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo&lt;/span&gt;
       &lt;span class=&quot;na&quot;&gt;tier&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;app&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# replicaset이 만드는 pod의 템플릿&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
       &lt;span class=&quot;na&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
         &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo&lt;/span&gt;
@@ -434,6 +434,11 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
 &lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo-deploy&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;strategy&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;RollingUpdate&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;rollingUpdate&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;maxSurge&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;maxUnavailable&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;4&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;matchLabels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
@@ -481,9 +486,9 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
   &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;redis&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;6379&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;6379&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# clusterIP의 포트 (targetPort따로 없으면 targetPort(pod의 포트)도 6379가 됨)&lt;/span&gt;
       &lt;span class=&quot;na&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TCP&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# 어떤pod로 트래픽을 전달할지 결정&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;counter&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;tier&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;db&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -496,9 +501,9 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
 &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;NodePort&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3000&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3000&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# ClusterIP, Pod IP의 포트&lt;/span&gt;
       &lt;span class=&quot;na&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TCP&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;nodePort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;31000&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;nodePort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;31000&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# Node IP의 포트&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;counter&lt;/span&gt;
     &lt;span class=&quot;na&quot;&gt;tier&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;app&lt;/span&gt;
@@ -526,14 +531,16 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
 
 &lt;p&gt;Ingress는 경로 기반 라우팅 서비스를 제공해주는 오브젝트입니다.&lt;/p&gt;
 
-&lt;p&gt;LoadBalancer는 단점이 있습니다. LoadBalancer는 한 개의 IP주소로 한 개의 서비스만 핸들링할 수 있습니다. 그래서 만약 N개의 서비스를 실행 중이라면 N개의 LoadBalancer가 필요합니다.&lt;br /&gt;
-하지만 Ingress는 경로 기반 라우팅 서비스를 통해 N개의 service를 하나의 IP주소를 이용하더라도 경로를 통해 분기할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;LoadBalancer는 단점이 있습니다. LoadBalancer는 한 개의 IP주소로 한 개의 서비스만 핸들링할 수 있습니다. 그래서 만약 N개의 서비스를 실행 중이라면 N개의 LoadBalancer가 필요합니다. 또한 보통 클라우드 프로바이더(AWS, GCP 등)의 로드밸런서를 생성해 사용하기 때문에 로컬서버에서는 사용이 어렵습니다.&lt;/p&gt;
+
+&lt;p&gt;Ingress는 경로 기반 라우팅 서비스를 통해 N개의 service를 하나의 IP주소를 이용하더라도 경로를 통해 분기할 수 있습니다.&lt;/p&gt;
 
 &lt;p&gt;Ingress는 Pod, ReplicaSet, Deployment, Service와 달리 별도의 컨트롤러를 설치해야 합니다. 컨트롤러에는 대표적으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nginx&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;haproxy&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;traefik&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;alb&lt;/code&gt;등이 있습니다.&lt;/p&gt;
 
 &lt;p&gt;minikube를 이용할 경우 다음 명령어로 설치할 수 있습니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;minikube addons &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;ingress
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# nginx ingress controller&lt;/span&gt;
+minikube addons &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;ingress
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;networking.k8s.io/v1&lt;/span&gt;
@@ -552,25 +559,29 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
                 &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo-v1&lt;/span&gt;
                 &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
                   &lt;span class=&quot;na&quot;&gt;number&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;3000&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# 들어오는 요청의 host가 v1.echo.192.168.64.5.sslip.io이면 host echo-v1이라는 서비스가 가지는 IP 주소의 3000번 포트로 보내라&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rules&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultBackend&lt;/code&gt; 등이 있습니다.&lt;br /&gt;
+&lt;p&gt;spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rules&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultBackend&lt;/code&gt;(어느 rule에도 속하지 않을 경우) 등이 있습니다.&lt;br /&gt;
 &lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/&quot;&gt;(Ingress 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;config-and-storage관련-오브젝트&quot;&gt;Config and Storage관련 오브젝트&lt;/h2&gt;
 
 &lt;h3 id=&quot;configmap&quot;&gt;ConfigMap&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kube_22.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
 &lt;p&gt;ConfigMap은 설정, 환경 변수들을 담는 오브젝트입니다. 예를 들어 개발/운영에 따라 환경 변수값이 다른 경우, ConfigMap 을 활용해 Pod 생성시 넣어줄 수 있습니다.&lt;/p&gt;
 
 &lt;p&gt;ConfigMap을 다양한 방법으로 만들 수 있습니다.&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;ConfigMap yaml 파일로 오브젝트 생성&lt;/li&gt;
-  &lt;li&gt;환경 변수 설정을 담고 있는데 yaml파일을 ConfigMap 오브젝트로 생성&lt;/li&gt;
+  &lt;li&gt;환경 변수 설정을 담고 있는 yaml파일을 ConfigMap 오브젝트로 생성&lt;/li&gt;
   &lt;li&gt;그냥 환경 변수를 담고 있는 임의의 파일을 ConfigMap 오브젝트로 생성&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# ConfigMap yaml파일&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# 참고로 v1이면 core API group&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ConfigMap&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;my-config&lt;/span&gt;
@@ -819,10 +830,10 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 
 &lt;ul&gt;
   &lt;li&gt;컨트롤러: 자신이 맡은 오브젝트의 상태를 계속 체크하고 상태를 유지, API서버 요청 처리&lt;/li&gt;
-  &lt;li&gt;스케줄러: 새로 생성되는 POD(컨테이너와 비슷)가 있는지 계속 체크, 생성되면 가장 절절한 노드 선택&lt;/li&gt;
+  &lt;li&gt;스케줄러: 새로 생성되는 Pod(컨테이너와 비슷)가 있는지 계속 체크, 생성되면 가장 절절한 노드 선택&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;컨트롤러는 자신이 맡고 있는 오브젝트의 상태를 계속 체크하고 상태를 유지합니다. 또한 API 서버에서 어떤 새로운 상태를 요구할 경우, 맞춰서 또 상태를 바꿔서 유지하고 이 때 새롭게 POD가 생성되거나 삭제되면 스케줄러가 그에 맞춰서 노드에서 삭제, 할당합니다.&lt;/p&gt;
+&lt;p&gt;컨트롤러는 자신이 맡고 있는 오브젝트의 상태를 계속 체크하고 상태를 유지합니다. 또한 API 서버에서 어떤 새로운 상태를 요구할 경우, 맞춰서 또 상태를 바꿔서 유지하고 이 때 새롭게 Pod가 생성되거나 삭제되면 스케줄러가 그에 맞춰서 노드에서 삭제, 할당합니다.&lt;/p&gt;
 
 &lt;h2 id=&quot;desired-state&quot;&gt;Desired State&lt;/h2&gt;
 

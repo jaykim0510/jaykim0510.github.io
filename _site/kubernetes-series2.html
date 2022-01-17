@@ -355,10 +355,10 @@
 <span class="na">spec</span><span class="pi">:</span>
   <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
   <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span> <span class="c1"># app: echo이고 tier: app인 label을 가지는 파드를 관리</span>
       <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
       <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
-  <span class="na">template</span><span class="pi">:</span>
+  <span class="na">template</span><span class="pi">:</span> <span class="c1"># replicaset이 만드는 pod의 템플릿</span>
     <span class="na">metadata</span><span class="pi">:</span>
       <span class="na">labels</span><span class="pi">:</span>
         <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
@@ -391,6 +391,11 @@
 <span class="na">metadata</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">echo-deploy</span>
 <span class="na">spec</span><span class="pi">:</span>
+  <span class="na">strategy</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
+    <span class="na">rollingUpdate</span><span class="pi">:</span>
+      <span class="na">maxSurge</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">maxUnavailable</span><span class="pi">:</span> <span class="m">0</span>
   <span class="na">replicas</span><span class="pi">:</span> <span class="m">4</span>
   <span class="na">selector</span><span class="pi">:</span>
     <span class="na">matchLabels</span><span class="pi">:</span>
@@ -438,9 +443,9 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
   <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
 <span class="na">spec</span><span class="pi">:</span>
   <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">6379</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">6379</span> <span class="c1"># clusterIP의 포트 (targetPort따로 없으면 targetPort(pod의 포트)도 6379가 됨)</span>
       <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
-  <span class="na">selector</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span> <span class="c1"># 어떤pod로 트래픽을 전달할지 결정</span>
     <span class="na">app</span><span class="pi">:</span> <span class="s">counter</span>
     <span class="na">tier</span><span class="pi">:</span> <span class="s">db</span>
 </code></pre></div></div>
@@ -453,9 +458,9 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
 <span class="na">spec</span><span class="pi">:</span>
   <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
   <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3000</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3000</span> <span class="c1"># ClusterIP, Pod IP의 포트</span>
       <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
-      <span class="na">nodePort</span><span class="pi">:</span> <span class="m">31000</span>
+      <span class="na">nodePort</span><span class="pi">:</span> <span class="m">31000</span> <span class="c1"># Node IP의 포트</span>
   <span class="na">selector</span><span class="pi">:</span>
     <span class="na">app</span><span class="pi">:</span> <span class="s">counter</span>
     <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
@@ -483,14 +488,16 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
 
 <p>Ingress는 경로 기반 라우팅 서비스를 제공해주는 오브젝트입니다.</p>
 
-<p>LoadBalancer는 단점이 있습니다. LoadBalancer는 한 개의 IP주소로 한 개의 서비스만 핸들링할 수 있습니다. 그래서 만약 N개의 서비스를 실행 중이라면 N개의 LoadBalancer가 필요합니다.<br />
-하지만 Ingress는 경로 기반 라우팅 서비스를 통해 N개의 service를 하나의 IP주소를 이용하더라도 경로를 통해 분기할 수 있습니다.</p>
+<p>LoadBalancer는 단점이 있습니다. LoadBalancer는 한 개의 IP주소로 한 개의 서비스만 핸들링할 수 있습니다. 그래서 만약 N개의 서비스를 실행 중이라면 N개의 LoadBalancer가 필요합니다. 또한 보통 클라우드 프로바이더(AWS, GCP 등)의 로드밸런서를 생성해 사용하기 때문에 로컬서버에서는 사용이 어렵습니다.</p>
+
+<p>Ingress는 경로 기반 라우팅 서비스를 통해 N개의 service를 하나의 IP주소를 이용하더라도 경로를 통해 분기할 수 있습니다.</p>
 
 <p>Ingress는 Pod, ReplicaSet, Deployment, Service와 달리 별도의 컨트롤러를 설치해야 합니다. 컨트롤러에는 대표적으로 <code class="language-plaintext highlighter-rouge">nginx</code>, <code class="language-plaintext highlighter-rouge">haproxy</code>, <code class="language-plaintext highlighter-rouge">traefik</code>, <code class="language-plaintext highlighter-rouge">alb</code>등이 있습니다.</p>
 
 <p>minikube를 이용할 경우 다음 명령어로 설치할 수 있습니다.</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minikube addons <span class="nb">enable </span>ingress
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># nginx ingress controller</span>
+minikube addons <span class="nb">enable </span>ingress
 </code></pre></div></div>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
@@ -509,25 +516,29 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
                 <span class="na">name</span><span class="pi">:</span> <span class="s">echo-v1</span>
                 <span class="na">port</span><span class="pi">:</span>
                   <span class="na">number</span><span class="pi">:</span> <span class="m">3000</span>
+<span class="c1"># 들어오는 요청의 host가 v1.echo.192.168.64.5.sslip.io이면 host echo-v1이라는 서비스가 가지는 IP 주소의 3000번 포트로 보내라</span>
 </code></pre></div></div>
 
-<p>spec에는 <code class="language-plaintext highlighter-rouge">rules</code>, <code class="language-plaintext highlighter-rouge">defaultBackend</code> 등이 있습니다.<br />
+<p>spec에는 <code class="language-plaintext highlighter-rouge">rules</code>, <code class="language-plaintext highlighter-rouge">defaultBackend</code>(어느 rule에도 속하지 않을 경우) 등이 있습니다.<br />
 <a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/">(Ingress 공식문서 참고)</a></p>
 
 <h2 id="config-and-storage관련-오브젝트">Config and Storage관련 오브젝트</h2>
 
 <h3 id="configmap">ConfigMap</h3>
+
+<p><img src="/images/kube_22.png" alt="" /></p>
+
 <p>ConfigMap은 설정, 환경 변수들을 담는 오브젝트입니다. 예를 들어 개발/운영에 따라 환경 변수값이 다른 경우, ConfigMap 을 활용해 Pod 생성시 넣어줄 수 있습니다.</p>
 
 <p>ConfigMap을 다양한 방법으로 만들 수 있습니다.</p>
 <ul>
   <li>ConfigMap yaml 파일로 오브젝트 생성</li>
-  <li>환경 변수 설정을 담고 있는데 yaml파일을 ConfigMap 오브젝트로 생성</li>
+  <li>환경 변수 설정을 담고 있는 yaml파일을 ConfigMap 오브젝트로 생성</li>
   <li>그냥 환경 변수를 담고 있는 임의의 파일을 ConfigMap 오브젝트로 생성</li>
 </ul>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ConfigMap yaml파일</span>
-<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span> <span class="c1"># 참고로 v1이면 core API group</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">ConfigMap</span>
 <span class="na">metadata</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">my-config</span>

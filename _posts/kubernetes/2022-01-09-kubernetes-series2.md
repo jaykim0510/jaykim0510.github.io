@@ -81,10 +81,10 @@ metadata:
 spec:
   replicas: 3
   selector:
-    matchLabels:
+    matchLabels: # app: echo이고 tier: app인 label을 가지는 파드를 관리
       app: echo
       tier: app
-  template:
+  template: # replicaset이 만드는 pod의 템플릿
     metadata:
       labels:
         app: echo
@@ -118,6 +118,11 @@ kind: Deployment
 metadata:
   name: echo-deploy
 spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   replicas: 4
   selector:
     matchLabels:
@@ -163,9 +168,9 @@ metadata:
   name: redis
 spec:
   ports:
-    - port: 6379
+    - port: 6379 # clusterIP의 포트 (targetPort따로 없으면 targetPort(pod의 포트)도 6379가 됨)
       protocol: TCP
-  selector:
+  selector: # 어떤pod로 트래픽을 전달할지 결정
     app: counter
     tier: db
 ```
@@ -179,9 +184,9 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 3000
+    - port: 3000 # ClusterIP, Pod IP의 포트
       protocol: TCP
-      nodePort: 31000
+      nodePort: 31000 # Node IP의 포트
   selector:
     app: counter
     tier: app
@@ -210,14 +215,16 @@ spec:
 
 Ingress는 경로 기반 라우팅 서비스를 제공해주는 오브젝트입니다.  
 
-LoadBalancer는 단점이 있습니다. LoadBalancer는 한 개의 IP주소로 한 개의 서비스만 핸들링할 수 있습니다. 그래서 만약 N개의 서비스를 실행 중이라면 N개의 LoadBalancer가 필요합니다.  
-하지만 Ingress는 경로 기반 라우팅 서비스를 통해 N개의 service를 하나의 IP주소를 이용하더라도 경로를 통해 분기할 수 있습니다.  
+LoadBalancer는 단점이 있습니다. LoadBalancer는 한 개의 IP주소로 한 개의 서비스만 핸들링할 수 있습니다. 그래서 만약 N개의 서비스를 실행 중이라면 N개의 LoadBalancer가 필요합니다. 또한 보통 클라우드 프로바이더(AWS, GCP 등)의 로드밸런서를 생성해 사용하기 때문에 로컬서버에서는 사용이 어렵습니다.   
+
+Ingress는 경로 기반 라우팅 서비스를 통해 N개의 service를 하나의 IP주소를 이용하더라도 경로를 통해 분기할 수 있습니다.  
 
 Ingress는 Pod, ReplicaSet, Deployment, Service와 달리 별도의 컨트롤러를 설치해야 합니다. 컨트롤러에는 대표적으로 `nginx`, `haproxy`, `traefik`, `alb`등이 있습니다.
 
 minikube를 이용할 경우 다음 명령어로 설치할 수 있습니다.  
 
 ```sh
+# nginx ingress controller
 minikube addons enable ingress
 ```
 
@@ -238,24 +245,28 @@ spec:
                 name: echo-v1
                 port:
                   number: 3000
+# 들어오는 요청의 host가 v1.echo.192.168.64.5.sslip.io이면 host echo-v1이라는 서비스가 가지는 IP 주소의 3000번 포트로 보내라
 ```
 
-spec에는 `rules`, `defaultBackend` 등이 있습니다.  
+spec에는 `rules`, `defaultBackend`(어느 rule에도 속하지 않을 경우) 등이 있습니다.  
 [(Ingress 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/)
 
 ## Config and Storage관련 오브젝트
 
-### ConfigMap
+### ConfigMap  
+
+![](/images/kube_22.png)  
+
 ConfigMap은 설정, 환경 변수들을 담는 오브젝트입니다. 예를 들어 개발/운영에 따라 환경 변수값이 다른 경우, ConfigMap 을 활용해 Pod 생성시 넣어줄 수 있습니다.  
 
 ConfigMap을 다양한 방법으로 만들 수 있습니다.  
 - ConfigMap yaml 파일로 오브젝트 생성
-- 환경 변수 설정을 담고 있는데 yaml파일을 ConfigMap 오브젝트로 생성
+- 환경 변수 설정을 담고 있는 yaml파일을 ConfigMap 오브젝트로 생성
 - 그냥 환경 변수를 담고 있는 임의의 파일을 ConfigMap 오브젝트로 생성
 
 ```yaml
 # ConfigMap yaml파일
-apiVersion: v1
+apiVersion: v1 # 참고로 v1이면 core API group
 kind: ConfigMap
 metadata:
   name: my-config
