@@ -1,10 +1,12 @@
 ---
 layout: post
 title:  Real Dubbing using Tacotron
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
-date:   2020-04-23 15:01:35 +0300
+description: 실제 배역 주인공의 목소리를 이용해 더빙을 합니다.
+start:   2020/11/07
 image:  '/images/15.jpg'
 portfolio: true
+status: Finished
+skill: Kubernetes, Kafka, Flink, Elasticsearch
 ---
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace [Jeroen Bendeler](https://unsplash.com/photos/_w7CkrJdn1Q) diversity and empowerment.
 

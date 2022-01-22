@@ -1,10 +1,12 @@
 ---
 layout: post
 title:  Korean-to-French Translation
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
-date:   2020-11-07 15:01:35 +0300
+description: 한국어를 프랑스어로 번역해줍니다.
+start:   2022/01/12
 image:  '/images/08.jpg'
 portfolio: true
+status: In progress
+skill: Kubernetes, Kafka, Flink, Elasticsearch, Spark
 ---
 Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace [Sam Bark](https://unsplash.com/photos/ag51iExrb0U) diversity and empowerment.
 
