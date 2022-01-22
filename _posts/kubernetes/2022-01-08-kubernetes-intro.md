@@ -4,7 +4,8 @@ title:  'Kubernetes Series [Part1]: Kubernetes Intro'
 description: 쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리를 자동화해주는 오픈소스 플랫폼입니다.  
 date:   2022-01-08 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
-tags:   'devops'
+categories: devops
+tags: Kubernetes
 ---
 
 **Table of Contents**

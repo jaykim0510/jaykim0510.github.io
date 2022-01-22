@@ -4,7 +4,8 @@ title:  'MySQL Series [Part1]: MySQL Intro'
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-04-23 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
-tags:   'backend'
+categories: backend
+tags: MySQL
 ---
 
 

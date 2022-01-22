@@ -4,7 +4,8 @@ title:  'ElasticSearch Series [Part1]: ElasticSearch Installation'
 description: Elasticsearch는 정형 및 비정형 데이터 등 모든 유형의 데이터를 위한 무료 검색 및 분석 엔진
 date:   2022-01-03 15:01:35 +0300
 image:  '/images/elastic_logo.png'
-tags:   DE
+categories: DE
+tags: Elasticsearch
 ---
 
 
@@ -51,7 +52,7 @@ RESTful API를 지원하고, 요청과 응답에 JSON 형식을 사용해, 개�
 ## Docker를 이용한 설치
 
 먼저 Elasticsearch 이미지를 Dockerhub에서 다운 받아옵니다. [(참고: Dockerhub)](https://hub.docker.com/_/elasticsearch?tab=tags&page=1)  
-제가 사용하고 있는 맥북의 M1칩은 `linux/arm64/v8` OS architecture만 지원하기 때문에 7.16.2 버전의 이미지를 가져오려고 합니다.  
+제가 사용하고 있는 맥북의 M1칩은 `linux/arm64` OS architecture을 지원하기 때문에 7.16.2 버전의 이미지를 가져오려고 합니다.  
 ```
 docker pull elasticsearch:7.16.2
 ```

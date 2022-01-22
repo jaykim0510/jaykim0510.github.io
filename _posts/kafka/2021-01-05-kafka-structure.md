@@ -4,7 +4,8 @@ title:  'Kafka Series [Part3]: Structure of Kafka'
 description: Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.
 date:   2021-01-04 15:01:35 +0300
 image:  '/images/kafka_logo.png'
-tags:   DE
+categories:   DE
+tags: Kafka
 ---
 
 

@@ -4,7 +4,8 @@ title:  'Apache Spark Series [Part1]: Apache Spark Introduction'
 description: Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.
 date:   2022-01-15 15:01:35 +0300
 image:  '/images/spark_logo.png'
-tags:   DE
+categories: DE
+tags: Spark
 ---
 **Table of Contents**
 {: #toc }

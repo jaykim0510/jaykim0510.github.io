@@ -4,7 +4,8 @@ title:  'Github Actions Series [Part1]: Understanding GitHub Actions'
 description: GitHub Actions은 CI/CD 플랫폼으로 build, test, deployment 파이프라인을 자동화 시켜줍니다.
 date:   2022-01-13 15:01:35 +0300
 image:  '/images/github-actions_logo.png'
-tags:   devops
+categories:   devops
+tags: Git
 ---
 
 **Table of Contents**
