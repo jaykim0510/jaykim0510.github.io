@@ -16,7 +16,7 @@ tags: Kafka
 ---
 
 # Apache Kafka 소개
-모든 기업에게 있어 데이터는 중요합니다. 특히나 요즘과 같이 데이터를 이용해 새로운 비즈니스를 창출하는 시대에는 더더욱 중요합니다. 이러한 데이터는, 로그 메세지가 될 수도 있고, 사용자의 정보나 활동 그 밖에 모든 것들이 데이터가 될 수 있습니다. Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming 플랫폼입니다. 그럼 지금부터 저희는 Event는 무엇을 말하고, Kafka가 다른 플랫폼(RabbitMQ, Pulsar)에 비해 어떤 점에서 더 뛰어난지 한 번 알아보겠습니다. 
+모든 기업에게 있어 데이터는 중요한 자산입니다. 특히나 요즘과 같이 데이터를 이용해 새로운 비즈니스를 창출하는 시대에는 그 가치가 더욱 큽니다. 이러한 데이터에는, 로그 메세지가 될 수도 있고, 사용자의 정보나 활동(배송, 결제, 송금 등) 그 밖에 모든 것들이 데이터가 될 수 있습니다. Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming 플랫폼입니다. 그럼 지금부터 저희는 Event는 무엇을 말하고, Kafka가 다른 플랫폼(RabbitMQ, Pulsar)에 비해 어떤 점에서 더 뛰어난지 한 번 알아보겠습니다. 
 
 ![](/images/kafka_2.png)
 
@@ -43,7 +43,7 @@ Kafka에서는 Event, Data, Record, Message를 모두 혼용해서 쓰고 있습
 
 > Publish/subscribe messaging is a pattern that is characterized by that a piece of data (message) of the sender (publisher) is not directing to certain receiver. Instead, the publisher classifies the message somehow, and that receiver (subscriber) subscribes to receive certain classes of messages. Pub/sub systems often have a broker, a central point where messages are published, to facilitate this.
 
-Kafka를 이용하면 특정 Source에서 특정 Destination으로 데이터를 흘려보내는 것이 아니라, Publisher들이 실시간으로 언제든 데이터를 저장할 수 있으며, Subscriber는 어떠한 데이터라도 가져올 수 있습니다. 이러한 구조를 Pub/Sub 모델이라고 합니다. Pub/sub은 Messaging platform의 architecture를 훨씬 간단하게 만들고, 확장성을 용이하게 해줍니다.
+Kafka를 이용하면 특정 Source에서 특정 Destination으로 데이터를 흘려보내는 것이 아니라, Publisher들이 실시간으로 언제든 데이터를 저장할 수 있으며, Subscriber는 언제든 저장된 데이터를 가지고 올 수 있습니다. 이러한 구조를 Pub/Sub 모델이라고 합니다. Pub/sub은 Messaging platform의 architecture를 훨씬 간단하게 만들고, 확장성을 용이하게 해줍니다.
 
 ![](/images/kafka_4.png)  
 
