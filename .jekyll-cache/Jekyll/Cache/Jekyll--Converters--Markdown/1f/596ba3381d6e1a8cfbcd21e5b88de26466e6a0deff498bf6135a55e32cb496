@@ -1,0 +1,18 @@
+I"M<h1 id="fault-tolerance-in-kafka">Fault tolerance in Kafka</h1>
+<p>카프카는 데이터 파이프라인의 중앙에 위치하는 메인 허브 역할을 합니다. 그래서 만약 하드웨어의 문제나 네트워크의 장애로 인해 정상적으로 동작하지 못한다면, 카프카에 연결된 모든 파이프라인에 심각한 영향을 미치게 됩니다. 이러한 이유로 카프카는 초기 설계 단계에서부터 장애가 발생하더라도 안정적인 서비스를 제공할 수 있도록 구상됐습니다.</p>
+
+<h2 id="카프카-리플리케이션replication">카프카 리플리케이션(Replication)</h2>
+<p>카프카는 데이터를 저장할 때 하나의 브로커에만 저장하지 않고, 다른 브로커에 파티션을 복제해놓음으로써 임의의 브로커 장애에 대비할 수 있습니다. 만약 N개의 리플리케이션이 있을 경우, N-1개의 브로커에 장애가 발생하더라도 손실되지 않고 데이터를 주고 받을 수 있습니다.</p>
+
+<p><img src="/images/kafka_14.png" alt="" />
+<a href="https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf">(shwitha B G 블로그 참고)</a></p>
+
+<p>그런데 만약 같은 데이터를 여러 브로커에서 읽게되면 어떻게 될까요? 아마 불필요한 데이터 전송으로 처리량이 낮아지고, 중복 처리를 해야하는 불필요한 오버헤드가 생길 것입니다. 이런 문제를 해결하고자 카프카에는 <code class="language-plaintext highlighter-rouge">리더와 팔로워</code>가 있습니다.</p>
+
+<h2 id="리더leader와-팔로워follower">리더(Leader)와 팔로워(Follower)</h2>
+
+<h1 id="참고자료">참고자료</h1>
+<ul>
+  <li><a href="https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf">Ashwitha B G 블로그</a></li>
+</ul>
+:ET

@@ -1,0 +1,52 @@
+I"�<h1 id="kafka의-주요-구성요소">Kafka의 주요 구성요소</h1>
+<p>Kafka는 크게 3가지로 이루어 있습니다.</p>
+<ul>
+  <li>Producer: Kafka로 메시지를 보내는 모든 클라이언트</li>
+  <li>Broker: 메시지를 분산 저장 및 관리하는 Kafka 애플리케이션이 설치된 서버</li>
+  <li>Consumer: Kafka에서 메시지를 꺼내서 사용하는 모든 클라이언트</li>
+</ul>
+
+<p><img src="/images/kafka_7.png" alt="" />
+<a href="https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html">(참고: cloudkarafka)</a></p>
+
+<h2 id="topic-partition-segment">Topic, Partition, Segment</h2>
+<p>Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으로 구성, 저장되는지에 대해 짚고 넘어가려고 합니다.</p>
+<ul>
+  <li>Topic: 메시지가 저장될 카테고리 이름 (논리적인 저장소)</li>
+  <li>Partition: 병렬 처리를 위해 Topic을 여러 개로 나눈 것 (Server 디스크에 저장된 디렉토리)</li>
+  <li>Segment: 메시지가 실제로 저장되는 파일</li>
+</ul>
+
+<p><img src="/images/kafka_8.png" alt="" /></p>
+
+<p><img src="/images/kafka_9.png" alt="" /></p>
+
+<p><img src="/images/kafka_6.png" alt="" /><br />
+<a href="https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html">(참고: cloudkarafka)</a></p>
+
+<h2 id="producer">Producer</h2>
+<p>프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.</p>
+
+<p><img src="/images/kafka_13.webp" alt="" /></p>
+
+<h2 id="broker">Broker</h2>
+<p>브로커는 Topic내의 Partition들을 분산 저장, 관리해줍니다. 하나의 브로커에는 Topic의 모든 데이터를 가지고 있지 않고, 일부분(Partition)만 가지게 됩니다. 보통 Broker를 최소 3대 이상으로 구성해 Kafka cluster를 형성합니다.</p>
+
+<h2 id="consumer">Consumer</h2>
+<p>컨슈머는 브로커에 저장되어 있는 메시지를 가져오는 역할을 합니다. 그러나 단순히 가져오는 역할만 하지는 않고, 조금 더 자세히 들여다 보면 컨슈머 그룹을 만들고, 그룹 내 모든 컨슈머가 파티션을 골고루 가져오도록 하는 리밸런싱과 같은 역할도 합니다.</p>
+
+<p><img src="/images/kafka_10.png" alt="" /></p>
+
+<p>컨슈머 그룹 내에 있는 컨슈머들은 서로 협력하여 메시지를 처리합니다. 이 때 Partition은 같은 그룹에 있는 컨슈머 중 한 개의 컨슈머에 의해서만 소비됩니다. (같은 그룹에 있는 여러 컨슈머가 한 개의 Partition을 소비하면 메시지 중복 문제를 해결하는데 또 비용이 든다) 컨슈머에서 고려해야 할 사항에는 다음과 같은 것들이 있습니다.</p>
+<ul>
+  <li>파티션 할당 전략</li>
+  <li>프로듀서가 브로커에 메세지를 저장하는 속도와 컨슈머가 읽어가는 속도가 비슷한가</li>
+  <li>컨슈머의 개수가 파티션보다 많지는 않은가</li>
+  <li>컨슈머 그룹 내에 장애가 발생한 컨슈머가 생기면 어떻게 처리할 것인가</li>
+</ul>
+
+<h1 id="마치며">마치며</h1>
+<p>Kafka를 구성하는 요소에는 크게 Producer, Broker, Consumer가 있었고, 이 밖에도 Broker에 관한 정보를 저장하고 관리하는 Zookeeper가 있습니다. 각 요소에 대해서는 조금 더 공부를 해서 나중에 더 정리를 하도록 하겠습니다.</p>
+
+<p>위의 글을 보면 각 요소별로 고려해야할 것들이 많습니다. 보통 이런 것들은 Kafka를 구성할 때 옵션으로 값을 줘서 설정하게 됩니다. 옵션에 대해서는 나중에 따로 포스트를 정리할 계획입니다.</p>
+:ET

@@ -3,7 +3,7 @@ layout: post
 title:  Real Dubbing using Tacotron
 description: 실제 배역 주인공의 목소리를 이용해 더빙을 합니다.
 start:   2020/11/07
-image:  '/images/15.jpg'
+image:  '/images/grafana_1.webp'
 portfolio: true
 status: Finished
 skill: Kubernetes, Kafka, Flink, Elasticsearch

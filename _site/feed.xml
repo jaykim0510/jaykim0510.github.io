@@ -5,9 +5,342 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 23 Jan 2022 18:43:06 +0900</pubDate>
-        <lastBuildDate>Sun, 23 Jan 2022 18:43:06 +0900</lastBuildDate>
+        <pubDate>Tue, 25 Jan 2022 00:58:21 +0900</pubDate>
+        <lastBuildDate>Tue, 25 Jan 2022 00:58:21 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Kafka Series [Part4]: Consumer</title>
+                <description>&lt;h1 id=&quot;kafka의-주요-option&quot;&gt;Kafka의 주요 Option&lt;/h1&gt;
+&lt;p&gt;모든 기업에게 있어 데이터는 중요합니다. 특히나 요즘과 같이 데이터를 이용해 새로운 비즈니스를 창출하는 시대에는 더더욱 중요합니다. 이러한 데이터는, 로그 메세지가 될 수도 있고, 사용자의 정보나 활동 그 밖에 모든 것들이 데이터가 될 수 있습니다. Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다. 그럼 지금부터 저희는 Event는 무엇을 말하고, Kafka가 다른 platform(RabbitMQ, Pulsar)에 비해 어떤 점에서 더 뛰어난지 한 번 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;producer&quot;&gt;Producer&lt;/h2&gt;
+
+&lt;h2 id=&quot;broker&quot;&gt;Broker&lt;/h2&gt;
+
+&lt;h2 id=&quot;consumer&quot;&gt;Consumer&lt;/h2&gt;
+
+&lt;h2 id=&quot;replication&quot;&gt;Replication&lt;/h2&gt;
+
+&lt;h2 id=&quot;rebalance&quot;&gt;Rebalance&lt;/h2&gt;
+</description>
+                <pubDate>Mon, 24 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/kafka-series4</link>
+                <guid isPermaLink="true">http://localhost:4000/kafka-series4</guid>
+                
+                <category>Kafka</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>Kafka Series [Part3]: Fault tolerance in Kafka</title>
+                <description>&lt;h1 id=&quot;fault-tolerance-in-kafka&quot;&gt;Fault tolerance in Kafka&lt;/h1&gt;
+&lt;p&gt;카프카는 데이터 파이프라인의 중앙에 위치하는 메인 허브 역할을 합니다. 그래서 만약 하드웨어의 문제나 네트워크의 장애로 인해 정상적으로 동작하지 못한다면, 카프카에 연결된 모든 파이프라인에 심각한 영향을 미치게 됩니다. 이러한 이유로 카프카는 초기 설계 단계에서부터 장애가 발생하더라도 안정적인 서비스를 제공할 수 있도록 구상됐습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;카프카-리플리케이션replication&quot;&gt;카프카 리플리케이션(Replication)&lt;/h2&gt;
+&lt;p&gt;카프카는 데이터를 저장할 때 하나의 브로커에만 저장하지 않고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;다른 브로커에 파티션을 복제&lt;/code&gt;해놓음으로써 임의의 브로커 장애에 대비할 수 있습니다. 만약 N개의 리플리케이션이 있을 경우, N-1개의 브로커에 장애가 발생하더라도 손실되지 않고 데이터를 주고 받을 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;그런데 만약 같은 데이터를 여러 브로커에서 읽게되면 어떻게 될까요? 아마 불필요한 데이터 전송으로 처리량이 낮아지고, 중복 처리를 해야하는 불필요한 오버헤드가 생길 것입니다. 이런 문제를 해결하고자 카프카에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;리더와 팔로워&lt;/code&gt;가 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_14.png&quot; alt=&quot;&quot; /&gt;
+&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;리더leader와-팔로워follower&quot;&gt;리더(Leader)와 팔로워(Follower)&lt;/h2&gt;
+&lt;p&gt;카프카는 내부적으로 리플리케이션들을 리더와 팔로워로 구분하고, 파티션에 대한 쓰기와 읽기는 모두 리더 파티션을 통해서만 가능합니다. 다시 말해, 프로듀서는 리더 파티션에만 메시지를 전송하고, 컨슈머도 리더를 통해서만 메시지를 가져옵니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_15.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;그렇다면 팔로워는 어떤 역할을 할까요? 팔로워는 리더에 문제가 발생할 경우를 대비해 언제든지 새로운 리더가 될 수 있도록 준비를 하고 있어야합니다. 그러기 위해 팔로워들은 리더에게 새로운 메시지가 있는지 요청하고 있다면 메시지를 리더로부터 복제합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;컨트롤러controller&quot;&gt;컨트롤러(Controller)&lt;/h2&gt;
+&lt;p&gt;리더를 뽑기 위해서는 리더 선정을 담당하는 무엇인가가 카프카 클러스터에 있어야 합니다. 여기서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;컨트롤러&lt;/code&gt;라는 개념이 등장합니다. 컨트롤러는 카프카 클러스터 중 하나의 브로커가 컨트롤러 역할을 하게됩니다. 그래서 이러한 역할을 하는 브로커를 컨트롤러 브로커라고도 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_16.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;컨트롤러가 새로운 리더를 임명하는 과정을 살펴보겠습니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;주키퍼(Zookeeper)&lt;/code&gt; 개념이 잠깐 등장합니다.&lt;br /&gt;
+(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Zookeeper&lt;/code&gt; is the centralized service for storing metadata of topic, partition, and broker)&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;주키퍼는 카프카의 모든 브로커들과 하트비트(Heartbeat)를 주고 받으며 브로커가 살아있는지 체크합니다.&lt;/li&gt;
+  &lt;li&gt;브로커와 관련하여 어떤 이벤트가 발생하면 주키퍼는 이를 감지하고 자신을 subscribe하고 있는 브로커들에게 알립니다&lt;/li&gt;
+  &lt;li&gt;컨트롤러는 알림을 받고 어떤 파티션을 새로운 리더로 임명할지 결정합니다.&lt;/li&gt;
+  &lt;li&gt;컨트롤러는 어떤 브로커가 새로운 리더를 할당받을지 결정하고, 파티션을 리밸런싱합니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;리플리케이션-과정&quot;&gt;리플리케이션 과정&lt;/h2&gt;
+&lt;p&gt;마지막으로 리더와 팔로워간의 리플리케이션 과정을 살펴보고 포스트를 마치도록 하겠습니다.&lt;br /&gt;
+먼저 리더와 팔로워에 대해 조금 더 알아보겠습니다. 리더와 몇몇의 팔로워는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ISR(InSyncReplica)&lt;/code&gt;이라는 논리적 그룹으로 묶여 있습니다. 이렇게 ISR 그룹안에 속하는 팔로워만이 리더가 될 수 있는 후보입니다.&lt;br /&gt;
+ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지속적으로 리더의 데이터를 따라가게 되고, 리더는 ISR내의 팔로워가 모두 메세지를 받을 때까지 기다립니다.&lt;/p&gt;
+
+&lt;p&gt;그러나 만약 팔로워를 가지는 브로커가 장애로 데이터를 리플리케이션하지 못하게 되면 더이상 리더와의 데이터가 일치하지 않게되므로 해당 파티션은 ISR 그룹에서 제외되게 됩니다. (리더 파티션을 가지는 브로커에 장애가 발생하면 리더 재선출 및 파티션 재할당, 팔로워의 경우 ISR그룹에서 제외)&lt;/p&gt;
+
+&lt;p&gt;ISR 내에서 모든 팔로워의 복제가 완료되면, 리더는 내부적으로 커밋되었다는 표시를 하게됩니다. 이 때 마지막 커밋의 오프셋 위치를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;하이워터마크(high water mark)&lt;/code&gt;라고 부릅니다. 즉 커밋되었다는 것은 모든 팔로워가 리더의 데이터를 저장했음을 의미합니다. 그리고 이렇게 커밋된 메시지만 컨슈머가 읽어갈 수 있도록 함으로써 메시지의 일관성을 유지하게 됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_17.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;만약 커밋되지 않은 메시지를 컨슈머가 읽어갈 수 있게 되면 어떻게 될까요? 위의 그림으로 설명을 해보겠습니다. 어떤 컨슈머가 Leader가 가지고 있던 아직 커밋되지 않은 Message 3을 읽어갔습니다. 그런데 갑자기 Leader 파티션을 가지고 있던 브로커에 장애가 발생해 Follower가 새로운 Leader가 되었습니다. 이렇게 되면 아까 컨슈머는 message 3을 읽어갔지만, 이제는 더이상 message 3을 읽어갈 수 없게 됩니다. 이러한 메세지 불일치 현상을 막고자 카프카는 커밋된 메세지만 읽어갈 수 있도록 한 것입니다.&lt;/p&gt;
+&lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://hackernoon.com/apache-kafkas-distributed-system-firefighter-the-controller-broker-1afca1eae302&quot;&gt;Hackernoon 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot;&gt;Ashwitha B G 블로그&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Mon, 24 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/kafka-series3</link>
+                <guid isPermaLink="true">http://localhost:4000/kafka-series3</guid>
+                
+                <category>Kafka</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+</description>
+                <pubDate>Sun, 23 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/kubernetes-series4</link>
+                <guid isPermaLink="true">http://localhost:4000/kubernetes-series4</guid>
+                
+                <category>Kubernetes</category>
+                
+                
+                <category>devops</category>
+                
+            </item>
+        
+            <item>
+                <title>Kubernetes Series [Part3]: Kubernetes Service</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+</description>
+                <pubDate>Sun, 23 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/kubernetes-series3</link>
+                <guid isPermaLink="true">http://localhost:4000/kubernetes-series3</guid>
+                
+                <category>Kubernetes</category>
+                
+                
+                <category>devops</category>
+                
+            </item>
+        
+            <item>
+                <title>Kafka Series [Part2]: Main elements of Kafka</title>
+                <description>&lt;h1 id=&quot;kafka의-주요-구성요소&quot;&gt;Kafka의 주요 구성요소&lt;/h1&gt;
+&lt;p&gt;Kafka는 크게 3가지로 이루어 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Producer: Kafka로 메시지를 보내는 모든 클라이언트&lt;/li&gt;
+  &lt;li&gt;Broker: 메시지를 분산 저장 및 관리하는 Kafka 애플리케이션이 설치된 서버&lt;/li&gt;
+  &lt;li&gt;Consumer: Kafka에서 메시지를 꺼내서 사용하는 모든 클라이언트&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_7.png&quot; alt=&quot;&quot; /&gt;
+&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;topic-partition-segment&quot;&gt;Topic, Partition, Segment&lt;/h2&gt;
+&lt;p&gt;Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으로 구성, 저장되는지에 대해 짚고 넘어가려고 합니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Topic: 메시지가 저장될 카테고리 이름 (논리적인 저장소)&lt;/li&gt;
+  &lt;li&gt;Partition: 병렬 처리를 위해 Topic을 여러 개로 나눈 것 (Server 디스크에 저장된 디렉토리)&lt;/li&gt;
+  &lt;li&gt;Segment: 메시지가 실제로 저장되는 파일&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_6.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;producer&quot;&gt;Producer&lt;/h2&gt;
+&lt;p&gt;프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_13.webp&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot;&gt;(Dzone 블로그 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;프로듀서가 카프카의 브로커로 데이터를 전송할 때에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ProducerRecord&lt;/code&gt;라고 하는 형태로 전송되며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Topic&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Value&lt;/code&gt;는 필수값이며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Partition&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Key&lt;/code&gt;는 선택값입니다. 프로듀서는 카프카로 레코드를 전송할 때, 카프카의 특정 토픽으로 메세지를 전송합니다. 전송 과정은&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;프로듀서에서 send() 메소드 호출&lt;/li&gt;
+  &lt;li&gt;Serializer는 JSON, String, Avro 등의 object를 bytes로 변환&lt;/li&gt;
+  &lt;li&gt;ProducerRecord에 target Partition이 있으면 해당 파티션으로 레코드 전달&lt;/li&gt;
+  &lt;li&gt;Partition이 지정되지 않았을 때, Key값이 지정되었다면 Partitioner가 Key값을 바탕으로 해당 파티션에 전달&lt;/li&gt;
+  &lt;li&gt;Partition, Key값이 모두 없으면 라운드 로빈(Round-Robbin)방식으로 메세지를 파티션에 할당&lt;/li&gt;
+  &lt;li&gt;파티션에 세그먼트 파일 형태로 저장된 레코드는 바로 전송할 수도 있고, 프로듀서의 버퍼 메모리 영역에 잠시 저장해두고 배치로 전송할 수도 있음&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;broker&quot;&gt;Broker&lt;/h2&gt;
+&lt;p&gt;브로커는 Topic내의 Partition들을 분산 저장, 관리해줍니다. 하나의 브로커에는 Topic의 모든 데이터를 가지고 있지 않고, 일부분(Partition)만 가지게 됩니다. 보통 Broker를 최소 3대 이상으로 구성해 Kafka cluster를 형성합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;consumer&quot;&gt;Consumer&lt;/h2&gt;
+&lt;p&gt;컨슈머는 브로커에 저장되어 있는 메시지를 가져오는 역할을 합니다. 그러나 단순히 가져오는 역할만 하지는 않고, 조금 더 자세히 들여다 보면 컨슈머 그룹을 만들고, 그룹 내 모든 컨슈머가 파티션을 골고루 가져오도록 하는 리밸런싱과 같은 역할도 합니다. 컨슈머 수는 파티션 수보다 작거나 같도록 하는 것이 바람직합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_10.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;컨슈머 그룹 내에 있는 컨슈머들은 서로 협력하여 메시지를 처리합니다. 이 때 Partition은 같은 그룹에 있는 컨슈머 중 한 개의 컨슈머에 의해서만 소비됩니다. (같은 그룹에 있는 여러 컨슈머가 한 개의 Partition을 소비하면 메시지 중복 문제를 해결하는데 또 비용이 든다) 컨슈머에서 고려해야 할 사항에는 다음과 같은 것들이 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;파티션 할당 전략&lt;/li&gt;
+  &lt;li&gt;프로듀서가 브로커에 메세지를 저장하는 속도와 컨슈머가 읽어가는 속도가 비슷한가&lt;/li&gt;
+  &lt;li&gt;컨슈머의 개수가 파티션보다 많지는 않은가&lt;/li&gt;
+  &lt;li&gt;컨슈머 그룹 내에 장애가 발생한 컨슈머가 생기면 어떻게 처리할 것인가&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;마치며&quot;&gt;마치며&lt;/h1&gt;
+&lt;p&gt;이번 포스트에서는 카프카에서 중요한 개념들에 대해 간단히 살펴보았습니다. 프로듀서는 메세지의 전송, 브로커는 저장, 컨슈머는 읽어가는 역할을 담당합니다. 또한 카프카에서 주고 받는 데이터는 토픽, 파티션, 세그먼트라는 단위로 나뉘어 처리, 저장됩니다.&lt;/p&gt;
+
+&lt;p&gt;카프카는 데이터 파이프라인의 중심에 위치하는 허브 역할을 합니다. 그렇기 때문에 카프카는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;장애 발생에 대처 가능한 안정적인 서비스를 제공&lt;/code&gt;해 줄 수 있어야 하고, 각 서비스들의 원활한 이용을 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;높은 처리량&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;데이터 유실, 중복을 해결함으로써 각 서비스에서의 이용을 원활&lt;/code&gt;하게 해주는 것이 좋습니다.&lt;/p&gt;
+
+&lt;p&gt;다음 포스트에서는 이러한 역할을 어떤 방식으로 제공해주었는지 살펴보며 그 과정에서 필요한 개념들을 하나씩 배워가도록 하겠습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791189909345&quot;&gt;실전 카프카 개발부터 운영까지 책&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot;&gt;Dzone 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot;&gt;CodeX 블로그&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Sun, 23 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/kafka-series2</link>
+                <guid isPermaLink="true">http://localhost:4000/kafka-series2</guid>
+                
+                <category>Kafka</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>Kafka Series [Part1]: What is Kafka</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#apache-kafka-소개&quot; id=&quot;markdown-toc-apache-kafka-소개&quot;&gt;Apache Kafka 소개&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#event&quot; id=&quot;markdown-toc-event&quot;&gt;Event&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#기업-사례-잘란도zalando&quot; id=&quot;markdown-toc-기업-사례-잘란도zalando&quot;&gt;기업 사례: 잘란도(Zalando)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#kafka의-핵심-기능&quot; id=&quot;markdown-toc-kafka의-핵심-기능&quot;&gt;Kafka의 핵심 기능&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#--순서-보장&quot; id=&quot;markdown-toc---순서-보장&quot;&gt;- 순서 보장&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#--적어도-한-번-전송-방식&quot; id=&quot;markdown-toc---적어도-한-번-전송-방식&quot;&gt;- 적어도 한 번 전송 방식&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#--pull-based-approach&quot; id=&quot;markdown-toc---pull-based-approach&quot;&gt;- Pull based approach&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#--강력한-partitioning&quot; id=&quot;markdown-toc---강력한-partitioning&quot;&gt;- 강력한 Partitioning&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#--비동기식-방식&quot; id=&quot;markdown-toc---비동기식-방식&quot;&gt;- 비동기식 방식&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#정리&quot; id=&quot;markdown-toc-정리&quot;&gt;정리&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고자료&quot; id=&quot;markdown-toc-참고자료&quot;&gt;참고자료&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;apache-kafka-소개&quot;&gt;Apache Kafka 소개&lt;/h1&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Apache Kafka is an open-source distributed publish-subscribe messaging platform that has been purpose-built to handle real-time streaming data for distributed streaming, pipelining, and replay of data feeds for fast, scalable operations.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;실시간 데이터를 스트리밍하는 분산환경의 publish-subscribe 메시지 플랫폼&lt;/li&gt;
+  &lt;li&gt;복잡한 데이터 파이프라인 구조를 간단하게 해주며 파이프라인의 확장성을 높여준다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;event&quot;&gt;Event&lt;/h1&gt;
+
+&lt;p&gt;모든 기업에게 있어 데이터는 중요한 자산입니다. 특히나 요즘과 같이 데이터를 이용해 새로운 비즈니스를 창출하는 시대에는 그 가치가 더욱 큽니다. 이러한 데이터에는, 로그 메세지가 될 수도 있고, 사용자의 정보나 활동(배송, 결제, 송금 등) 그 밖에 모든 것들이 데이터가 될 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;Kafka에서는 Event, Data, Record, Message를 모두 혼용해서 쓰고 있습니다. Event는 어떠한 행동이나, 사건도 모두 될 수 있습니다. 다음과 같은 것 들이 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;웹 사이트에서 무언가를 클릭하는 것&lt;/li&gt;
+  &lt;li&gt;센서의 온도/압력 데이터&lt;/li&gt;
+  &lt;li&gt;청구서&lt;/li&gt;
+  &lt;li&gt;배송 물건의 위치 정보&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;이렇게 세상에 있는 모든 정보를 실시간으로 저장하고, 처리하기 위해서는 높은 throughput, 낮은 latency가 요구됩니다. Kafka는 최대 600MB/s의 throughput과 200MB에 대해 5ms의 낮은 latency를 제공하고 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_3.png&quot; alt=&quot;&quot; /&gt;
+&lt;a href=&quot;https://www.confluent.io/blog/kafka-fastest-messaging-system/&quot;&gt;(Benchmarking Kafka vs. Pulsar vs. RabbitMQ: Which is Fastest? 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;지금까지는 Kafka가 높은 throughput과 낮은 latency로 엄청난 양의 데이터를 실시간으로 처리해주는 플랫폼이라고 배웠습니다. 이제 이러한 개념을 가지고 조금 더 앞으로 나가보겠습니다. 다음은 Kafka를 설명하는 좋은 문장이라고 생각되어 가져와 봤습니다. &lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot;&gt;(Apache Kafka Series [Part 1]: Introduction to Apache Kafka)&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Publish/subscribe messaging is a pattern that is characterized by that a piece of data (message) of the sender (publisher) is not directing to certain receiver. Instead, the publisher classifies the message somehow, and that receiver (subscriber) subscribes to receive certain classes of messages. Pub/sub systems often have a broker, a central point where messages are published, to facilitate this.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Kafka를 이용하면 특정 Source에서 특정 Destination으로 데이터를 흘려보내는 것이 아니라, Publisher들이 실시간으로 언제든 데이터를 저장할 수 있으며, Subscriber는 언제든 저장된 데이터를 가지고 올 수 있습니다. 이러한 구조를 Pub/Sub 모델이라고 합니다. Pub/sub은 Messaging platform의 architecture를 훨씬 간단하게 만들고, 확장성을 용이하게 해줍니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;기업-사례-잘란도zalando&quot;&gt;기업 사례: 잘란도(Zalando)&lt;/h1&gt;
+
+&lt;p&gt;Kafka는 현재 Fortune 100대 기업 중 80% 이상이 사용하고 있는 데이터 플랫폼의 핵심 기술입니다. 해외의 링크드인, 트위터, 아마존, 넷플릭스, 우버를 포함해 국내에서는 대표적으로 카카오와 라인 등이 Kafka를 이용하고 있습니다. 제가 여기서 소개드릴 사례는 유럽의 대표 온라인 쇼핑몰 잘란도(Zalando)입니다. &lt;a href=&quot;https://engineering.zalando.com/posts/2017/10/event-first-development---moving-towards-kafka-pipeline-applications.html&quot;&gt;(참고: Event First Development - Moving Towards Kafka Pipeline Applications)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;잘란도는 회사의 규모가 점점 커지고 사업이 다각화되면서 내부적으로 데이터에 대한 문제가 점점 대두되었습니다. 처리해야 할 데이터 양의 증가, 복잡해져가는 데이터 파이프라인(데이터를 Produce하는 곳과 Consume하는 곳의 다양화), 데이터 수집 장애로 인한 신뢰도 하락과 같은 문제로 잘란도에서는 이벤트 드리븐 시스템을 도입하기로 결정하였습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The aim here was the democratization of data for all potential users on the new platform.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_5.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://realtimeapi.io/hub/event-driven-apis/&quot;&gt;(참고: https://realtimeapi.io/hub/event-driven-apis/)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;결과적으로 잘란도는 Kafka를 도입함으로써 내부의 데이터 처리 파이프라인을 간소화하고, 확장을 용이하게 했으며, 스트림 데이터 처리량을 높일 수 있었습니다. 이러한 결과를 얻을 수 있었던 것은 Kafka에서 제공하는 몇 가지 핵심 기능 덕분이었습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;kafka의-핵심-기능&quot;&gt;Kafka의 핵심 기능&lt;/h1&gt;
+
+&lt;h2 id=&quot;--순서-보장&quot;&gt;- 순서 보장&lt;/h2&gt;
+&lt;p&gt;이벤트 처리 순서가 보장되면서, 엔티티 간의 유효성 검사나 동시 수정 같은 무수한 복잡성들이 제거됨으로써 구조 또한 매우 간결해졌습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;--적어도-한-번-전송-방식&quot;&gt;- 적어도 한 번 전송 방식&lt;/h2&gt;
+&lt;p&gt;분산된 여러 네트워크 환경에서의 데이터 처리에서 중요한 것은 멱등성(itempotence)입니다. 멱등성이란 동일한 작업을 여러 번 수행하더라도 결과가 달라지지 않는 것을 의미합니다. 하지만 실시간 대용량 데이터 스트림에서 이를 완벽히 지켜내기란 쉽지 않습니다. 그래서 차선책으로 데이터가 중복은 되더라도, 손실은 일어나지 않도록 하는 방식이 ‘적어도 한 번’ 전송 방식입니다. 만약 백엔드 시스템에서 중복 메세지만 처리해준다면 멱등성을 위한 시스템 복잡도를 기존에 비해 훨씬 낮출 수 있게 되고, 처리량 또한 더욱 높아집니다. 최근에는 ‘정확히 한 번’ 전송 방식이 도입되어 카프카내에서 중복성을 제거하는 방법이 많이 사용되고 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;--pull-based-approach&quot;&gt;- Pull based approach&lt;/h2&gt;
+&lt;p&gt;카프카에서 데이터를 소비하는 클라이언트는 풀 방식으로 동작합니다. 풀 방식의 장점은 자기 자신의 속도로 데이터를 처리할 수 있다는 점입니다. 푸시 방식은 브로커가 보내주는 속도에 의존해야 한다는 한계가 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;--강력한-partitioning&quot;&gt;- 강력한 Partitioning&lt;/h2&gt;
+&lt;p&gt;파티셔닝을 통해 확장성이 용이한 분산 처리 환경을 제공합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;--비동기식-방식&quot;&gt;- 비동기식 방식&lt;/h2&gt;
+&lt;p&gt;데이터를 제공하는 Producer와 데이터를 소비하는 Consumer가 서로 각기 원하는 시점에 동작을 수행할 수 있습니다. (데이터를 보내줬다고 해서 반드시 바로 받을 필요가 없습니다)&lt;/p&gt;
+
+&lt;h1 id=&quot;정리&quot;&gt;정리&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;Kafka는 Pub/sub모델의 실시간 데이터 처리 플랫폼이다.&lt;/li&gt;
+  &lt;li&gt;데이터를 분산처리하여 높은 throughput과 낮은 latency를 제공한다.&lt;/li&gt;
+  &lt;li&gt;심플한 데이터 처리 파이프라인과 용이한 확장성을 제공한다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;다음 포스트에서는 Kafka의 주요 구성 요소에 대해 알아보겠습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791189909345&quot;&gt;실전 카프카 개발부터 운영까지 책&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot;&gt;CodeX 블로그&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Mon, 17 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/kafka-series1</link>
+                <guid isPermaLink="true">http://localhost:4000/kafka-series1</guid>
+                
+                <category>Kafka</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
         
             <item>
                 <title>Apache Spark Series [Part1]: Apache Spark Introduction</title>
@@ -284,22 +617,22 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
             </item>
         
             <item>
-                <title>Kubernetes Series [Part2]: Kubernetes Object</title>
+                <title>Kubernetes Series [Part2]: Kubernetes Resource</title>
                 <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#쿠버네티스의-오브젝트&quot; id=&quot;markdown-toc-쿠버네티스의-오브젝트&quot;&gt;쿠버네티스의 오브젝트&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#workloads관련-오브젝트&quot; id=&quot;markdown-toc-workloads관련-오브젝트&quot;&gt;Workloads관련 오브젝트&lt;/a&gt;        &lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#쿠버네티스의-리소스&quot; id=&quot;markdown-toc-쿠버네티스의-리소스&quot;&gt;쿠버네티스의 리소스&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#workload-resources&quot; id=&quot;markdown-toc-workload-resources&quot;&gt;Workload Resources&lt;/a&gt;        &lt;ul&gt;
           &lt;li&gt;&lt;a href=&quot;#pod&quot; id=&quot;markdown-toc-pod&quot;&gt;Pod&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#replicaset&quot; id=&quot;markdown-toc-replicaset&quot;&gt;ReplicaSet&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#deployment&quot; id=&quot;markdown-toc-deployment&quot;&gt;Deployment&lt;/a&gt;&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#service관련-오브젝트&quot; id=&quot;markdown-toc-service관련-오브젝트&quot;&gt;Service관련 오브젝트&lt;/a&gt;        &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#service관련-리소스&quot; id=&quot;markdown-toc-service관련-리소스&quot;&gt;Service관련 리소스&lt;/a&gt;        &lt;ul&gt;
           &lt;li&gt;&lt;a href=&quot;#service&quot; id=&quot;markdown-toc-service&quot;&gt;Service&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#ingress&quot; id=&quot;markdown-toc-ingress&quot;&gt;Ingress&lt;/a&gt;&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#config-and-storage관련-오브젝트&quot; id=&quot;markdown-toc-config-and-storage관련-오브젝트&quot;&gt;Config and Storage관련 오브젝트&lt;/a&gt;        &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#config-and-storage관련-리소스&quot; id=&quot;markdown-toc-config-and-storage관련-리소스&quot;&gt;Config and Storage관련 리소스&lt;/a&gt;        &lt;ul&gt;
           &lt;li&gt;&lt;a href=&quot;#configmap&quot; id=&quot;markdown-toc-configmap&quot;&gt;ConfigMap&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#volume&quot; id=&quot;markdown-toc-volume&quot;&gt;Volume&lt;/a&gt;&lt;/li&gt;
         &lt;/ul&gt;
@@ -311,9 +644,9 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
 
 &lt;hr /&gt;
 
-&lt;h1 id=&quot;쿠버네티스의-오브젝트&quot;&gt;쿠버네티스의 오브젝트&lt;/h1&gt;
+&lt;h1 id=&quot;쿠버네티스의-리소스&quot;&gt;쿠버네티스의 리소스&lt;/h1&gt;
 
-&lt;h2 id=&quot;workloads관련-오브젝트&quot;&gt;Workloads관련 오브젝트&lt;/h2&gt;
+&lt;h2 id=&quot;workload-resources&quot;&gt;Workload Resources&lt;/h2&gt;
 &lt;blockquote&gt;
   &lt;p&gt;Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -462,7 +795,7 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
 &lt;p&gt;spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;replicas&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;selector&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;template&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strategy&lt;/code&gt;  등이 있습니다.&lt;br /&gt;
 &lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec&quot;&gt;(Deployment 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;service관련-오브젝트&quot;&gt;Service관련 오브젝트&lt;/h2&gt;
+&lt;h2 id=&quot;service관련-리소스&quot;&gt;Service관련 리소스&lt;/h2&gt;
 &lt;blockquote&gt;
   &lt;p&gt;In many use cases, a workload has to be accessed by other workloads in the cluster or exposed to the outside world.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -569,7 +902,7 @@ minikube addons &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;ingress
 &lt;p&gt;spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rules&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultBackend&lt;/code&gt;(어느 rule에도 속하지 않을 경우) 등이 있습니다.&lt;br /&gt;
 &lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/&quot;&gt;(Ingress 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;config-and-storage관련-오브젝트&quot;&gt;Config and Storage관련 오브젝트&lt;/h2&gt;
+&lt;h2 id=&quot;config-and-storage관련-리소스&quot;&gt;Config and Storage관련 리소스&lt;/h2&gt;
 
 &lt;h3 id=&quot;configmap&quot;&gt;ConfigMap&lt;/h3&gt;
 
@@ -869,868 +1202,13 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 &lt;/ul&gt;
 </description>
                 <pubDate>Sat, 08 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/kubernetes-intro</link>
-                <guid isPermaLink="true">http://localhost:4000/kubernetes-intro</guid>
+                <link>http://localhost:4000/kubernetes-series1</link>
+                <guid isPermaLink="true">http://localhost:4000/kubernetes-series1</guid>
                 
                 <category>Kubernetes</category>
                 
                 
                 <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>Docker Series [Part1]: Docker Intro</title>
-                <description>&lt;h2 id=&quot;파이썬-데이터는-객체다&quot;&gt;파이썬 데이터는 객체다&lt;/h2&gt;
-&lt;p&gt;컴퓨터 메모리를 일련의 긴 선반으로 생각할 수 있습니다. 해 당 메모리 선반 중 각 슬롯은 폭이 1바이트 입니다. 파이썬 프로그램은 운영체제에서 컴퓨터의 일부 메모리에 접근할 수 있습니다. 이 메모리는 프로그램 자체의 코드와 데이터를 위해 사용될 수 있습니다. 파이썬은 값을 직접 처리하는 대신, 메모리에 객체로 래핑합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/object.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;타입&quot;&gt;타입&lt;/h2&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;이름&lt;/th&gt;
-      &lt;th&gt;타입&lt;/th&gt;
-      &lt;th&gt;가변&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;불리언&lt;/td&gt;
-      &lt;td&gt;bool&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;정수&lt;/td&gt;
-      &lt;td&gt;int&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;부동소수점&lt;/td&gt;
-      &lt;td&gt;float&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;복소수&lt;/td&gt;
-      &lt;td&gt;complex&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;문자열&lt;/td&gt;
-      &lt;td&gt;str&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;튜플&lt;/td&gt;
-      &lt;td&gt;tuple&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;바이트&lt;/td&gt;
-      &lt;td&gt;bytes&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;프로즌 셋&lt;/td&gt;
-      &lt;td&gt;frozenset&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;리스트&lt;/td&gt;
-      &lt;td&gt;list&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;바이트 배열&lt;/td&gt;
-      &lt;td&gt;bytearray&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;셋&lt;/td&gt;
-      &lt;td&gt;set&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;딕셔너리&lt;/td&gt;
-      &lt;td&gt;dict&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&quot;가변성&quot;&gt;가변성&lt;/h2&gt;
-&lt;p&gt;값을 변경할 수 있는 경우를 가변성이라고 합니다. 그러나 파이썬은 강타입 언어이기 때문에 타입을 변경할 수는 없습니다. 즉 객체가 가변성인 경우 값은 변경 가능하지만, 타입은 변경할 수 없습니다. (타입 변경을 하면 무조건 새로운 메모리에 객체가 새로 생성된다는 얘기입니다)&lt;/p&gt;
-
-&lt;h2 id=&quot;참조&quot;&gt;참조&lt;/h2&gt;
-&lt;p&gt;변수에 값을 할당할 때 알아야 할 중요한 사실은 할당은 값을 복사하는 것이 아니라, 단지 객체에 이름을 붙이는 것입니다. 이를 변수를 통해 객체를 참조한다라고 합니다. 또 한가지 중요한 사실은 왼쪽 그림에서 b가 참조하고 있던 값을 변경하면 정수는 불변 객체이기 때문에 새로운 값이 메모리에 생성되고 b는 새로운 값을 참조하지만,오른쪽 그림과 같이 가변 객체는 말 그대로 값을 변경할 수 있기 때문에 자신이 참조하고 있던 값을 변경해도 새로운 메모리에 값이 생성되는 것이 아니라 데이터 값을 그 자리에서 바꾸게 됩니다.&lt;br /&gt;
-&lt;img src=&quot;/images/참조.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그럼 만약 불변 객체는 값을 바꿀 때 마다 메모리에 새로운 데이터를 생성하게 되는데 그러면 메모리가 엄청 낭비되지 않을까 라는 생각을 할 수 있습니다. 이를 해결해 주기 위해 파이썬에는 가비지 컬렉터가 있고 이는 더 이상 참조되지 않는 객체를 메모리에서 삭제될 수 있도록 도와줍니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;복사&quot;&gt;복사&lt;/h2&gt;
-
-&lt;h3 id=&quot;변수의-대입을-통한-복사&quot;&gt;변수의 대입을 통한 복사&lt;/h3&gt;
-&lt;p&gt;immutable한 객체인 숫자, 부울, 문자열, 튜플 등의 경우에는 변수의 대입을 통해 복사가 가능합니다.&lt;br /&gt;
-&lt;img src=&quot;/images/복사.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;하지만 다음과 같이 mutable한 객체의 경우에는 복사가 안되고 값이 같이 변경되게 됩니다.&lt;br /&gt;
-&lt;img src=&quot;/images/복사_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;얕은-복사&quot;&gt;얕은 복사&lt;/h3&gt;
-&lt;p&gt;또 하나의 가능한 복사 방법은 얕은 복사입니다. 얕은 복사는 mmutable한 객체에 대해서도 복사가 됩니다. 하지만 이 또한 문제가 발생하는 경우가 있습니다.  &lt;br /&gt;
-&lt;img src=&quot;/images/shallow.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;예를 들어 리스트와 같은 가변 객체 안에 또 가변 객체가 있게 되고 그 원소를 수정하려고 하면 진짜 복사가 아니었던 것이 드러나게 됩니다. 
-밑에 그림을 보게 되면  가변 객체 안에 있는 가변 객체 원소를 수정하게 되면 새로운 메모리에 할당하지 않고 그냥 바꾸기 때문에 가만히 있던 변수까지 참조하고 있는 객체의 값이 덩달아 바뀌게 됩니다.&lt;br /&gt;
-&lt;img src=&quot;/images/shallow_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;깊은-복사&quot;&gt;깊은 복사&lt;/h3&gt;
-&lt;p&gt;따라서 이러한 경우에 필요한 것이 바로 깊은 복사입니다.&lt;br /&gt;
-&lt;img src=&quot;/images/deepcopy.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Sat, 08 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/docker-intro</link>
-                <guid isPermaLink="true">http://localhost:4000/docker-intro</guid>
-                
-                <category>Docker</category>
-                
-                
-                <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>ElasticSearch Series [Part4]: ElasticSearch 검색</title>
-                <description>&lt;h1 id=&quot;검색-api&quot;&gt;검색 API&lt;/h1&gt;
-
-&lt;h1 id=&quot;query-dsl&quot;&gt;Query DSL&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Fri, 07 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/elasticsearch-search</link>
-                <guid isPermaLink="true">http://localhost:4000/elasticsearch-search</guid>
-                
-                <category>Elasticsearch</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>AWS Series [Part1]: AWS Intro</title>
-                <description>&lt;h1 id=&quot;elasticsearch-소개&quot;&gt;Elasticsearch 소개&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;Elasticsearch는 정형 및 비정형 데이터 등 모든 유형의 데이터를 위한 무료 검색 및 분석 엔진&lt;/li&gt;
-  &lt;li&gt;Apache Lucene을 기반으로 구축&lt;/li&gt;
-  &lt;li&gt;Elastic Stack의 핵심 구성요소(Elasticsearch, Logstash, Kibana)&lt;/li&gt;
-  &lt;li&gt;기본적으로는 검색엔진이지만, MongoDB나 HBase처럼 대용량 스토리지로도 활용&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/elastic_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;elasticsearch를-사용하는-이유&quot;&gt;Elasticsearch를 사용하는 이유&lt;/h2&gt;
-
-&lt;h3 id=&quot;elasticsearch는-빠릅니다&quot;&gt;Elasticsearch는 빠릅니다&lt;/h3&gt;
-&lt;p&gt;Elasticsearch는 Lucene을 기반으로 구축되기 때문에, 전문(Full-text) 검색에 뛰어납니다. Elasticsearch는 또한 거의 실시간 검색 플랫폼입니다. 이것은 문서가 색인될 때부터 검색 가능해질 때까지의 대기 시간이 아주 짧다는 뜻입니다. 이 대기 시간은 보통 1초입니다. 결과적으로, Elasticsearch는 보안 분석, 인프라 모니터링 같은 시간이 중요한 사용 사례에 이상적입니다.&lt;/p&gt;
-
-&lt;p&gt;🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;전문 검색&lt;/code&gt;: 내용 전체를 색인해서 특정 단어가 포함된 문서를 검색하는 것&lt;br /&gt;
-🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Lucene기반의 검색 엔진&lt;/code&gt;: 역색인을 지원하는 검색 엔진으로 보통 책 마지막 부분의 단어별 페이지 수를 적어놓은 것과 비슷&lt;/p&gt;
-
-&lt;h3 id=&quot;elasticsearch는-본질상-분산적입니다&quot;&gt;Elasticsearch는 본질상 분산적입니다.&lt;/h3&gt;
-&lt;p&gt;Elasticsearch에 저장된 문서는 샤드라고 하는 여러 다른 컨테이너에 걸쳐 분산되며, 이 샤드는 복제되어 하드웨어 장애 시에 중복되는 데이터 사본을 제공합니다. Elasticsearch의 분산적인 특징은 수백 개(심지어 수천 개)의 서버까지 확장하고 페타바이트의 데이터를 처리할 수 있게 해줍니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;elasticsearch는-광범위한-기능-세트와-함께-제공됩니다&quot;&gt;Elasticsearch는 광범위한 기능 세트와 함께 제공됩니다.&lt;/h3&gt;
-&lt;p&gt;속도, 확장성, 복원력뿐 아니라, Elasticsearch에는 데이터 롤업, 인덱스 수명 주기 관리 등과 같이 데이터를 훨씬 더 효율적으로 저장하고 검색할 수 있게 해주는 강력한 기본 기능이 다수 탑재되어 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;그-밖에-restful-api-멀티-테넌시-등을-지원합니다&quot;&gt;그 밖에, RESTful API, 멀티 테넌시 등을 지원합니다.&lt;/h3&gt;
-&lt;p&gt;RESTful API를 지원하고, 요청과 응답에 JSON 형식을 사용해, 개발 언어에 관계없이 이용 가능하며, 서로 다른 인덱스(테이블)일지라도 필드명(컬럼)만 같으면 한번에 여러 개의 인덱스(테이블)을 조회할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Elasticsearch의 약점&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;완전한 실시간이 아니다&lt;/li&gt;
-  &lt;li&gt;롤백 기능을 제공하지 않는다&lt;/li&gt;
-  &lt;li&gt;업데이트 될 때마다 문서를 새로 생성한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/elastic_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;elasticsearch-설치&quot;&gt;Elasticsearch 설치&lt;/h1&gt;
-
-&lt;p&gt;🐱 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;사용환경&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Macbook M1&lt;/li&gt;
-  &lt;li&gt;Docker on mac&lt;/li&gt;
-  &lt;li&gt;Local python 3.8.9&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;docker를-이용한-설치&quot;&gt;Docker를 이용한 설치&lt;/h2&gt;
-
-&lt;p&gt;먼저 Elasticsearch 이미지를 Dockerhub에서 다운 받아옵니다. &lt;a href=&quot;https://hub.docker.com/_/elasticsearch?tab=tags&amp;amp;page=1&quot;&gt;(참고: Dockerhub)&lt;/a&gt;&lt;br /&gt;
-제가 사용하고 있는 맥북의 M1칩은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;linux/arm64/v8&lt;/code&gt; OS architecture만 지원하기 때문에 7.16.2 버전의 이미지를 가져오려고 합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker pull elasticsearch:7.16.2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;이제 이미지를 가지고 컨테이너를 생성합니다. Elasticsearch는 보통 성능상의 이유로 분산환경에서 실행하는 것을 권장하지만 단순 테스트 또는 공부를 목적으로 한다면 단일 노드 환경에서 실행하여도 문제가 없습니다. Elasticsearch 문서에서는 두 가지 방법에 대한 도커 명령어를 제공하므로, 사용 목적에 맞게 실행시키면 됩니다. &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html&quot;&gt;(참고: Elasticsearch 공식 문서)&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Single-node
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker run -p 127.0.0.1:9200:9200 -p 127.0.0.1:9300:9300 -e &quot;discovery.type=single-node&quot; docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Multi-node&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# Create a docker-compose.yml file
-
-version: '2.2'
-services:
-  es01:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-    container_name: es01
-    environment:
-      - node.name=es01
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es02,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data01:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-    networks:
-      - elastic
-  es02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-    container_name: es02
-    environment:
-      - node.name=es02
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es01,es03
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data02:/usr/share/elasticsearch/data
-    networks:
-      - elastic
-  es03:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
-    container_name: es03
-    environment:
-      - node.name=es03
-      - cluster.name=es-docker-cluster
-      - discovery.seed_hosts=es01,es02
-      - cluster.initial_master_nodes=es01,es02,es03
-      - bootstrap.memory_lock=true
-      - &quot;ES_JAVA_OPTS=-Xms512m -Xmx512m&quot;
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - data03:/usr/share/elasticsearch/data
-    networks:
-      - elastic
-
-volumes:
-  data01:
-    driver: local
-  data02:
-    driver: local
-  data03:
-    driver: local
-
-networks:
-  elastic:
-    driver: bridge
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;이렇게 하고나면 Elasticsearch 설치가 완료되었습니다. localhost의 9200번 포트로 Elasticsearch에 접근할 수 있습니다. 이제 클라이언트 모드로 Elasticsearch를 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;github--docker를-이용한-설치&quot;&gt;github + Docker를 이용한 설치&lt;/h2&gt;
-&lt;p&gt;깃허브에 Elasticsearch뿐만 아니라, Kibana와 Logstash를 함께 설치해주는 코드가 있어서 공유드립니다.&lt;br /&gt;
-&lt;a href=&quot;https://github.com/deviantony/docker-elk&quot;&gt;(참고: deviantony/docker-elk)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;linux에-직접-설치&quot;&gt;Linux에 직접 설치&lt;/h2&gt;
-&lt;p&gt;이 방법은 제가 전에 부스트캠프에서 프로젝트를 진행할 때 팀원 중 한 분이 공유해주셨었는데, 잘 동작하여서 공유드립니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt-get update &amp;amp;&amp;amp; apt-get install -y gnupg2
-wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
-apt-get install apt-transport-https
-echo &quot;deb https://artifacts.elastic.co/packages/7.x/apt stable main&quot; | tee /etc/apt/sources.list.d/elastic-7.x.list
-apt-get update &amp;amp;&amp;amp; apt-get install elasticsearch
-service elasticsearch start
-cd /usr/share/elasticsearch
-bin/elasticsearch-plugin install analysis-nori
-service elasticsearch restart
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;마치며&quot;&gt;마치며&lt;/h2&gt;
-
-&lt;p&gt;Elasticsearch에서는 다양한 프로그래밍 언어로 Elasticsearch Client API를 제공하고 있습니다.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Java&lt;/li&gt;
-  &lt;li&gt;Python&lt;/li&gt;
-  &lt;li&gt;Node.js&lt;/li&gt;
-  &lt;li&gt;C#&lt;/li&gt;
-  &lt;li&gt;Go&lt;/li&gt;
-  &lt;li&gt;Ruby&lt;/li&gt;
-  &lt;li&gt;PHP&lt;/li&gt;
-  &lt;li&gt;Perl&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;다음 포스트부터는 파이썬으로 Client API를 사용해 실습과 함께 포스트를 작성하도록 하겠습니다.&lt;/p&gt;
-</description>
-                <pubDate>Fri, 07 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/aws-intro</link>
-                <guid isPermaLink="true">http://localhost:4000/aws-intro</guid>
-                
-                <category>AWS</category>
-                
-                
-                <category>Cloud</category>
-                
-            </item>
-        
-            <item>
-                <title>ElasticSearch Series [Part3]: ElasticSearch Modeling</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#elasticsearch-모델링&quot; id=&quot;markdown-toc-elasticsearch-모델링&quot;&gt;Elasticsearch 모델링&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#데이터-타입&quot; id=&quot;markdown-toc-데이터-타입&quot;&gt;데이터 타입&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#keyword-데이터-타입&quot; id=&quot;markdown-toc-keyword-데이터-타입&quot;&gt;Keyword 데이터 타입&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#text-데이터-타입&quot; id=&quot;markdown-toc-text-데이터-타입&quot;&gt;Text 데이터 타입&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#매핑-파라미터&quot; id=&quot;markdown-toc-매핑-파라미터&quot;&gt;매핑 파라미터&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;elasticsearch-모델링&quot;&gt;Elasticsearch 모델링&lt;/h1&gt;
-&lt;p&gt;엘라스틱서치에서 문서(데이터)를 어떤 형태로 색인할 것인지 설정하는 것을 모델링이라고 합니다. 엘라스틱서치에서 모델링할 때에 중요한 요소는 다음과 같습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;필드에 지정할 데이터 타입&lt;/li&gt;
-  &lt;li&gt;필드별 매핑 파라미터&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;예를 들어, 영화 정보를 엘라스틱서치를 이용해 저장하고 싶다면,&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;strong&gt;필드명&lt;/strong&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;strong&gt;필드 타입&lt;/strong&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;movieTitle&lt;/td&gt;
-      &lt;td&gt;text&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;jenre&lt;/td&gt;
-      &lt;td&gt;keyword&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;nation&lt;/td&gt;
-      &lt;td&gt;keyword&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;produceYear&lt;/td&gt;
-      &lt;td&gt;integer&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;releaseDate&lt;/td&gt;
-      &lt;td&gt;date&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;actor&lt;/td&gt;
-      &lt;td&gt;keyword&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;이렇게 필드별로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;keyword&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;integer&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;date&lt;/code&gt; 등의 데이터 타입을 설정할 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;데이터-타입&quot;&gt;데이터 타입&lt;/h2&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 대표적인 데이터 타입
-- 문자열 관련한 데이터 타입: keyword, text
-- 일반적인 데이터 타입: integer, long, double, boolean
-- 특수한 데이터 타입: date, ip, geo_point, geo_shape
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;keyword-데이터-타입&quot;&gt;Keyword 데이터 타입&lt;/h3&gt;
-&lt;p&gt;Keyword 데이터 타입은 문자열 데이터를 색인할 때 자주 사용하는 타입 중 하나로, 별도의 분석기 없이 원문 그대로가 저장된다는 것이 특징입니다. 예를 들어 ‘elastic search’라는 문자열을 keyword 타입으로 저장한다면, ‘elastic’이나 ‘search’로는 검색이 되지 않고 정확히 ‘elastic search’라고해야만 검색됩니다. 이러한 데이터 타입은 주로 카테고리형 데이터의 필드 타입으로 적절하며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;문자열을 필터링, 정렬, 집계&lt;/code&gt;할 때는 keyword타입을 이용해야 합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;text-데이터-타입&quot;&gt;Text 데이터 타입&lt;/h3&gt;
-&lt;p&gt;반지의 제왕 영화 시리즈에는 ‘반지의 제왕: 반지 원정대’, ‘반지의 제왕: 두 개의 탑’, ‘반지의 제왕: 왕의 귀환’이 있습니다. 근데 저는 부제목까지는 기억이 안나고 ‘반지의 제왕’만 기억이 납니다. 그래서 저는 ‘반지의 제왕’이라고만 검색해도 위의 영화들이 나왔으면 좋겠습니다. 이럴 때는 text데이터 타입을 이용합니다. Text타입은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;전문 검색&lt;/code&gt;이 가a능하다는 점이 가장 큰 특징입니다. Text타입으로 데이터를 색인하면 전체 텍스트가 토큰화되어 역색인(inverted index)됩니다.&lt;/p&gt;
-
-&lt;p&gt;더 자세한 내용은 공식문서를 참고해주시면 좋을 것 같습니다. &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html&quot;&gt;(엘라스틱서치 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;매핑-파라미터&quot;&gt;매핑 파라미터&lt;/h2&gt;
-&lt;p&gt;문서를 색인하는 과정은 당연 엘라스틱서치에서 가장 중요한 부분입니다. 그렇기 때문에 엘라스틱서치에서는 매핑 파라미터를 통해 색인 과정을 커스텀하도록 도와줍니다. 예를 들어 어떤 영화 데이터는 장르가 없다고 하면 색인할 때 필드를 생성하지 않습니다. 이럴 때 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;null_value&lt;/code&gt;를 ‘데이터 없음’이라고 설정했다면, 필드가 생성 되고 값에 ‘데이터 없음’이라는 값이 들어갑니다. 또 다른 예시는 특정 필드를 색인에 포함할지 말지를 결정하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;enabled&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index&lt;/code&gt; 파라미터도 있습니다. &lt;a href=&quot;https://stackoverflow.com/questions/50836504/elasticsearch-mapping-parameters-index-vs-enabled&quot;&gt;(둘의 차이는 stack overflow 참고)&lt;/a&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 매핑 파라미터
-- 문자열에 자주 사용: analyzer, search_analyzer, similarity, term_vector, normalizer
-- 저장 관련: enabled, index, store, copy_to, doc_values
-- 색인 방식과 관련: ignore_above, ignore_malformed, coerce, dynamic, null_value
-- 필드 안의 필드를 정의할 때 사용: properties, fields
-- 그 밖: position_increment_gap, format
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-params.html&quot;&gt;(엘라스틱서치 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
-</description>
-                <pubDate>Thu, 06 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/elasticsearch-modeling</link>
-                <guid isPermaLink="true">http://localhost:4000/elasticsearch-modeling</guid>
-                
-                <category>Elasticsearch</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>ElasticSearch Series [Part2]: ElasticSearch에서 사용되는 간단한 용어와 파이썬 코드</title>
-                <description>&lt;h1 id=&quot;elasticsearch를-구성하는-개념&quot;&gt;Elasticsearch를 구성하는 개념&lt;/h1&gt;
-&lt;p&gt;“Elasticsearch에서 데이터는 &lt;strong&gt;인덱스&lt;/strong&gt; 안의 특정 &lt;strong&gt;타입&lt;/strong&gt; 에 &lt;strong&gt;문서&lt;/strong&gt; 로 저장되는데 이 때 문서는 &lt;strong&gt;필드&lt;/strong&gt; 를 가지고 있으며, 이러한 필드는 &lt;strong&gt;매핑&lt;/strong&gt; 프로세스로 정의된 이름과 속성을 보통 따른다. 그리고 이 때 모든 문서들은 정의된 &lt;strong&gt;샤드&lt;/strong&gt; 의 개수에 각각 골고루 분배되어 분산처리된다. 또한 장애를 대비해 &lt;strong&gt;레플리카&lt;/strong&gt; 의 개수만큼 복제해 놓기도 한다.”&lt;br /&gt;
-위의 내용은 Elasticsearch의 데이터 저장방식에 관한 글입니다. 하지만 Elasticsearch가 익숙하지 않은 사람에게는 낯선 용어들도 있고 익숙하지만 이해하기 힘든 용어들도 있습니다. 그래도 Elasticsearch에서 사용하는 용어와 RDBMS에서 사용하는 용어를 비교하며 살펴보고 다시 한번 읽어보면 조금 더 이해가 갈 것입니다.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;strong&gt;Elasticsearch&lt;/strong&gt;&lt;/td&gt;
-      &lt;td&gt;&lt;strong&gt;RDBMS&lt;/strong&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;인덱스&lt;/td&gt;
-      &lt;td&gt;데이터베이스&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;타입&lt;/td&gt;
-      &lt;td&gt;테이블&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;문서&lt;/td&gt;
-      &lt;td&gt;행&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;필드&lt;/td&gt;
-      &lt;td&gt;열&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;매핑&lt;/td&gt;
-      &lt;td&gt;스키마&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;샤드&lt;/td&gt;
-      &lt;td&gt;파티션&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&quot;인덱스&quot;&gt;인덱스&lt;/h2&gt;
-&lt;p&gt;인덱스는 논리적 데이터 저장 공간을 뜻하며, 하나의 물리적인 노드에 여러 개의 인덱스를 생성할 수도 있습니다. 이는 곧 멀티테넌시를 지원한다는 뜻이기도 합니다. 만약 Elasticsearch를 분산 환경으로 구성했다면 하나의 인덱스는 여러 노드에 분산 저장되며 검색 시 더 빠른 속도를 제공합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;샤드&quot;&gt;샤드&lt;/h2&gt;
-&lt;p&gt;분산 환경으로 저장되면 인덱스가 여러 노드에 분산 저장된다고 했는데, 이렇게 물리적으로 여러 공간에 나뉠 때의 단위를 샤드라고 합니다. 이 때 샤드는 레플리카의 단위가 되기도 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/elastic_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;타입&quot;&gt;타입&lt;/h2&gt;
-&lt;p&gt;타입은 보통 카테고리와 비슷한 의미로 노래를 K-pop, Classic, Rock처럼 장르별로 나누는 것과 같습니다. 하지만 6.1 버전 이후 인덱스 당 한 개의 타입만 지원하고 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;문서&quot;&gt;문서&lt;/h2&gt;
-&lt;p&gt;한 개의 데이터를 뜻하며, 기본적으로 JSON 형태로 저장됩니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;필드&quot;&gt;필드&lt;/h2&gt;
-&lt;p&gt;필드는 문서의 속성을 나타내며 데이터베이스의 컬럼과 비슷한 의미입니다. 다만 컬럼의 데이터 타입은 정적이고, 필드의 데이터 타입은 좀 더 동적이라고 할 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;매핑&quot;&gt;매핑&lt;/h2&gt;
-&lt;p&gt;매핑은 필드와, 필드의 타입을 정의하고 그에 따른 색인 방법을 정의하는 프로세스입니다.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;elasticsearch에서-제공하는-주요-api&quot;&gt;Elasticsearch에서 제공하는 주요 API&lt;/h1&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;elasticsearch&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Elasticsearch&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;ES_URL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'localhost:9200'&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;DOC_TYPE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'_doc'&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Elasticsearch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;인덱스-관련-api&quot;&gt;인덱스 관련 API&lt;/h2&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 인덱스 메타데이터, 매핑 정의
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_settings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'settings'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-        &lt;span class=&quot;s&quot;&gt;'number_of_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;s&quot;&gt;'number_of_replicas'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'mappings'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; 
-        &lt;span class=&quot;s&quot;&gt;'properties'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;s&quot;&gt;'name'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-            &lt;span class=&quot;s&quot;&gt;'age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'long'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-            &lt;span class=&quot;s&quot;&gt;'gender'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-            &lt;span class=&quot;s&quot;&gt;'company'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-            &lt;span class=&quot;s&quot;&gt;'email'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-            &lt;span class=&quot;s&quot;&gt;'address'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-            &lt;span class=&quot;s&quot;&gt;'phone'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-        
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 인덱스 생성
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_settings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'acknowledged'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'shards_acknowledged'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 인덱스 메타 데이터 확인
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_settings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'settings'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'routing'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'allocation'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'include'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'_tier_preference'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'data_content'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}}},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'number_of_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'provided_name'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'creation_date'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'1641728644368'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'number_of_replicas'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'uuid'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'3QtIZXthRcGtCdV40WmUCg'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'created'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'7160299'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}}}}}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 인덱스 매핑 확인
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_mapping&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'mappings'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'properties'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'address'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'long'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'company'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'email'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'gender'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'name'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'phone'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}}}}}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 인덱스 삭제
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'acknowledged'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 인덱스 존재 유무
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;exists&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 매핑 업데이트
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new_field&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;&quot;properties&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;school&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;s&quot;&gt;&quot;type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;text&quot;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;put_mapping&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new_field&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'acknowledged'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;문서-관련-api&quot;&gt;문서 관련 API&lt;/h2&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 문서 삽입
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unit_document&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'name'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'Jay Kim'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'gender'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'male'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'email'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'abc@gmail.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'address'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'부산 해운대 앞바다'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'phone'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'010-1234-5678'&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;doc_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DOC_TYPE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unit_document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'_doc'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_id'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'result'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'created'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'successful'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'failed'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_seq_no'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_primary_term'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 문서 정보 확인
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;doc_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DOC_TYPE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;-----------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'_doc'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_id'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_seq_no'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_primary_term'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'found'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_source'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'name'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'Jay Kim'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;'age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;'gender'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'male'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;'email'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'abc@gmail.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;'address'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'부산 해운대 앞바다'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;'phone'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'010-1234-5678'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 문서를 가지는 인덱스 생성 (이미 있으면 삽입)
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unit_document&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'name'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'Jae yeong Kim'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'gender'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'male'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'email'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'abc@gmail.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'address'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'경북 구미 형곡동'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'phone'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'010-3321-5668'&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;unit_document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;------------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'_doc'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_id'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'result'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'created'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'successful'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'failed'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_seq_no'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_primary_term'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 문서 삭제
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delete&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;---------------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'_doc'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_id'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'result'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'deleted'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'successful'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'failed'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_seq_no'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_primary_term'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# query로 삭제
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'query'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{&lt;/span&gt;
-        &lt;span class=&quot;s&quot;&gt;'match_all'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delete_by_query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;----------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'took'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;23&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'timed_out'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'deleted'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'batches'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'version_conflicts'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'noops'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'retries'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'bulk'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'search'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'throttled_millis'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'requests_per_second'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'throttled_until_millis'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'failures'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 문서 수정
-# &quot;&quot;doc&quot;&quot; is essentially Elasticsearch's &quot;&quot;_source&quot;&quot; field
-&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;update_document&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'doc'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-         &lt;span class=&quot;s&quot;&gt;'address'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'경북 구미 송정동'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-         &lt;span class=&quot;s&quot;&gt;'age'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;28&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-         &lt;span class=&quot;s&quot;&gt;'email'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'ziont0510@gmail.com'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update_document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;------------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'first_index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_type'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'_doc'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_id'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'1'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_version'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'result'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'updated'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'successful'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'failed'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_seq_no'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_primary_term'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;검색-api&quot;&gt;검색 API&lt;/h2&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 매칭되는 문서 개수
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'query'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{&lt;/span&gt;
-        &lt;span class=&quot;s&quot;&gt;'match_all'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;---------------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'count'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'successful'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'skipped'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'failed'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}}&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# 문서 검색
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'size'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;'query'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{&lt;/span&gt;
-        &lt;span class=&quot;s&quot;&gt;'match_all'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:{}&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-    
-&lt;span class=&quot;n&quot;&gt;es&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ES_INDEX&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;-------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'took'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'timed_out'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'_shards'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'successful'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'skipped'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'failed'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
- &lt;span class=&quot;s&quot;&gt;'hits'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'total'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'value'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'relation'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'eq'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;'max_score'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;s&quot;&gt;'hits'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]}}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;집계-api&quot;&gt;집계 API&lt;/h2&gt;
-
-</description>
-                <pubDate>Wed, 05 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/elasticsearch-element</link>
-                <guid isPermaLink="true">http://localhost:4000/elasticsearch-element</guid>
-                
-                <category>Elasticsearch</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>MongoDB Series [Part1]: MongoDB Intro</title>
-                <description>&lt;h2 id=&quot;파이썬-데이터는-객체다&quot;&gt;파이썬 데이터는 객체다&lt;/h2&gt;
-&lt;p&gt;컴퓨터 메모리를 일련의 긴 선반으로 생각할 수 있습니다. 해 당 메모리 선반 중 각 슬롯은 폭이 1바이트 입니다. 파이썬 프로그램은 운영체제에서 컴퓨터의 일부 메모리에 접근할 수 있습니다. 이 메모리는 프로그램 자체의 코드와 데이터를 위해 사용될 수 있습니다. 파이썬은 값을 직접 처리하는 대신, 메모리에 객체로 래핑합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/object.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;타입&quot;&gt;타입&lt;/h2&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;이름&lt;/th&gt;
-      &lt;th&gt;타입&lt;/th&gt;
-      &lt;th&gt;가변&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;불리언&lt;/td&gt;
-      &lt;td&gt;bool&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;정수&lt;/td&gt;
-      &lt;td&gt;int&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;부동소수점&lt;/td&gt;
-      &lt;td&gt;float&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;복소수&lt;/td&gt;
-      &lt;td&gt;complex&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;문자열&lt;/td&gt;
-      &lt;td&gt;str&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;튜플&lt;/td&gt;
-      &lt;td&gt;tuple&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;바이트&lt;/td&gt;
-      &lt;td&gt;bytes&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;프로즌 셋&lt;/td&gt;
-      &lt;td&gt;frozenset&lt;/td&gt;
-      &lt;td&gt;불변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;리스트&lt;/td&gt;
-      &lt;td&gt;list&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;바이트 배열&lt;/td&gt;
-      &lt;td&gt;bytearray&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;셋&lt;/td&gt;
-      &lt;td&gt;set&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;딕셔너리&lt;/td&gt;
-      &lt;td&gt;dict&lt;/td&gt;
-      &lt;td&gt;가변&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&quot;가변성&quot;&gt;가변성&lt;/h2&gt;
-&lt;p&gt;값을 변경할 수 있는 경우를 가변성이라고 합니다. 그러나 파이썬은 강타입 언어이기 때문에 타입을 변경할 수는 없습니다. 즉 객체가 가변성인 경우 값은 변경 가능하지만, 타입은 변경할 수 없습니다. (타입 변경을 하면 무조건 새로운 메모리에 객체가 새로 생성된다는 얘기입니다)&lt;/p&gt;
-
-&lt;h2 id=&quot;참조&quot;&gt;참조&lt;/h2&gt;
-&lt;p&gt;변수에 값을 할당할 때 알아야 할 중요한 사실은 할당은 값을 복사하는 것이 아니라, 단지 객체에 이름을 붙이는 것입니다. 이를 변수를 통해 객체를 참조한다라고 합니다. 또 한가지 중요한 사실은 왼쪽 그림에서 b가 참조하고 있던 값을 변경하면 정수는 불변 객체이기 때문에 새로운 값이 메모리에 생성되고 b는 새로운 값을 참조하지만,오른쪽 그림과 같이 가변 객체는 말 그대로 값을 변경할 수 있기 때문에 자신이 참조하고 있던 값을 변경해도 새로운 메모리에 값이 생성되는 것이 아니라 데이터 값을 그 자리에서 바꾸게 됩니다.&lt;br /&gt;
-&lt;img src=&quot;/images/참조.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그럼 만약 불변 객체는 값을 바꿀 때 마다 메모리에 새로운 데이터를 생성하게 되는데 그러면 메모리가 엄청 낭비되지 않을까 라는 생각을 할 수 있습니다. 이를 해결해 주기 위해 파이썬에는 가비지 컬렉터가 있고 이는 더 이상 참조되지 않는 객체를 메모리에서 삭제될 수 있도록 도와줍니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;복사&quot;&gt;복사&lt;/h2&gt;
-
-&lt;h3 id=&quot;변수의-대입을-통한-복사&quot;&gt;변수의 대입을 통한 복사&lt;/h3&gt;
-&lt;p&gt;immutable한 객체인 숫자, 부울, 문자열, 튜플 등의 경우에는 변수의 대입을 통해 복사가 가능합니다.&lt;br /&gt;
-&lt;img src=&quot;/images/복사.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;하지만 다음과 같이 mutable한 객체의 경우에는 복사가 안되고 값이 같이 변경되게 됩니다.&lt;br /&gt;
-&lt;img src=&quot;/images/복사_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;얕은-복사&quot;&gt;얕은 복사&lt;/h3&gt;
-&lt;p&gt;또 하나의 가능한 복사 방법은 얕은 복사입니다. 얕은 복사는 mmutable한 객체에 대해서도 복사가 됩니다. 하지만 이 또한 문제가 발생하는 경우가 있습니다.  &lt;br /&gt;
-&lt;img src=&quot;/images/shallow.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;예를 들어 리스트와 같은 가변 객체 안에 또 가변 객체가 있게 되고 그 원소를 수정하려고 하면 진짜 복사가 아니었던 것이 드러나게 됩니다. 
-밑에 그림을 보게 되면  가변 객체 안에 있는 가변 객체 원소를 수정하게 되면 새로운 메모리에 할당하지 않고 그냥 바꾸기 때문에 가만히 있던 변수까지 참조하고 있는 객체의 값이 덩달아 바뀌게 됩니다.&lt;br /&gt;
-&lt;img src=&quot;/images/shallow_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;깊은-복사&quot;&gt;깊은 복사&lt;/h3&gt;
-&lt;p&gt;따라서 이러한 경우에 필요한 것이 바로 깊은 복사입니다.&lt;br /&gt;
-&lt;img src=&quot;/images/deepcopy.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Tue, 04 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/mongodb-intro</link>
-                <guid isPermaLink="true">http://localhost:4000/mongodb-intro</guid>
-                
-                <category>MongoDB</category>
-                
-                
-                <category>backend</category>
                 
             </item>
         

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part2]: Kubernetes Object'
+title:  'Kubernetes Series [Part2]: Kubernetes Resource'
 description: Pod는 쿠버네티스에서 배포할 수 있는 가장 작은 단위의 오브젝트로 한 개 이상의 컨테이너와 스토리지, 네트워크 속성을 가집니다.  
 date:   2022-01-09 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
@@ -15,9 +15,9 @@ tags: Kubernetes
 
 ---
 
-# 쿠버네티스의 오브젝트
+# 쿠버네티스의 리소스
 
-## Workloads관련 오브젝트
+## Workload Resources
 > Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.  
 
 [(Rancher문서 참고)](https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/)
@@ -143,7 +143,7 @@ spec:
 spec에는 `replicas`, `selector`, `template`, `strategy`  등이 있습니다.  
 [(Deployment 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec)  
 
-## Service관련 오브젝트
+## Service관련 리소스
 > In many use cases, a workload has to be accessed by other workloads in the cluster or exposed to the outside world.
 
 ### Service  
@@ -252,7 +252,7 @@ spec:
 spec에는 `rules`, `defaultBackend`(어느 rule에도 속하지 않을 경우) 등이 있습니다.  
 [(Ingress 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/)
 
-## Config and Storage관련 오브젝트
+## Config and Storage관련 리소스
 
 ### ConfigMap  
 
