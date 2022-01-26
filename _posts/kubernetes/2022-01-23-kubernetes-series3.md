@@ -15,3 +15,12 @@ tags: Kubernetes
 
 ---
 
+# Kubernetes Network
+![](../../images/kube_25.png)
+# ClusterIP
+![](../../images/kube_26.png)
+# NodePort
+![](../../images/kube_27.png)
+# LoacBalancer
+![](../../images/kube_28.png)
+# Ingress
