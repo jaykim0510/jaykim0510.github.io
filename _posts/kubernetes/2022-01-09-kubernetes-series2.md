@@ -20,7 +20,7 @@ tags: Kubernetes
 ## Workload Resources
 > Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.  
 
-[(Rancher문서 참고)](https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/)
+[(Rancher문서 참고)](https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/){:target="_blank"}
 
 ![](/images/kube_10.png)  
 
@@ -60,7 +60,7 @@ spec:
 ```
 
 Pod의 spec에는 `containers`, `volumes`, `restartPolicy`, `hostname`, `hostNetwork` 등이 있습니다.  
-[(Pod공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/)
+[(Pod공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/){:target="_blank"}
 
 ### ReplicaSet
 
@@ -97,7 +97,7 @@ spec:
 ```
 
 ReplicaSet의 spec에는 `replicas`, `selector`, `template`, `minReadySeconds`가 있습니다.  
-[(ReplicaSet 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/#ReplicaSetSpec)
+[(ReplicaSet 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/#ReplicaSetSpec){:target="_blank"}
 
 ### Deployment  
 
@@ -141,7 +141,7 @@ spec:
 ```
 
 spec에는 `replicas`, `selector`, `template`, `strategy`  등이 있습니다.  
-[(Deployment 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec)  
+[(Deployment 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec){:target="_blank"}  
 
 ## Service관련 리소스
 > In many use cases, a workload has to be accessed by other workloads in the cluster or exposed to the outside world.
@@ -250,7 +250,7 @@ spec:
 ```
 
 spec에는 `rules`, `defaultBackend`(어느 rule에도 속하지 않을 경우) 등이 있습니다.  
-[(Ingress 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/)
+[(Ingress 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/){:target="_blank"}
 
 ## Config and Storage관련 리소스
 
@@ -421,7 +421,7 @@ spec:
 ```
 
 # 참고자료
-- [subicura님의 kubenetes안내서](https://subicura.com/2019/05/19/kubernetes-basic-1.html)
-- [하나씩 점을 찍어나가며 블로그](https://dailyheumsi.tistory.com/208#7.-configmap)
-- [Kubernetes 공식문서](https://kubernetes.io/docs/reference/kubernetes-api/)
-- [Rancher 공식문서](https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/)
+- [subicura님의 kubenetes안내서](https://subicura.com/2019/05/19/kubernetes-basic-1.html){:target="_blank"}
+- [하나씩 점을 찍어나가며 블로그](https://dailyheumsi.tistory.com/208#7.-configmap){:target="_blank"}
+- [Kubernetes 공식문서](https://kubernetes.io/docs/reference/kubernetes-api/){:target="_blank"}
+- [Rancher 공식문서](https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/){:target="_blank"}

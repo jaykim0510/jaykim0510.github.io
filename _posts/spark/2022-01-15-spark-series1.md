@@ -16,7 +16,7 @@ tags: Spark
 
 # Spark Introduction
 __스파크는 클러스터 기반의 분산 처리 기능을 제공하는 오픈소스 프레임워크입니다.__ 쉽게 말해 대용량 데이터를 여러 컴퓨터에 나누어서 동시에 처리한다고 할 수 있습니다. 이런 방법이 스파크 이전에 없었던 것은 아닙니다. 스파크 이전에 하둡(Hadoop)이 이와 유사한 기능을 제공했었습니다. 
-참고로 하둡은 더그 커팅(Doug Cutting)이라는 사람이 구글이 발표했던 두 개의 논문([__The Google File System_2003__](https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf), [__MapReduce: simplified data processing on large clusters_2008__](https://dl.acm.org/doi/10.1145/1327452.1327492))을 직접 구현해 만든 프레임워크입니다. 이처럼 구글에서는 예전부터 대용량의 데이터를 고속 분산처리 하기 위해 노력했었고, 현재 스파크는 대부분의 기업들이 사용하고 있는 소프트웨어입니다.  
+참고로 하둡은 더그 커팅(Doug Cutting)이라는 사람이 구글이 발표했던 두 개의 논문([__The Google File System_2003__](https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf){:target="_blank"}, [__MapReduce: simplified data processing on large clusters_2008__](https://dl.acm.org/doi/10.1145/1327452.1327492)){:target="_blank"}을 직접 구현해 만든 프레임워크입니다. 이처럼 구글에서는 예전부터 대용량의 데이터를 고속 분산처리 하기 위해 노력했었고, 현재 스파크는 대부분의 기업들이 사용하고 있는 소프트웨어입니다.  
 
 ![](../images/../../images/spark_6.png)  
 
@@ -36,7 +36,7 @@ __스파크는 클러스터 기반의 분산 처리 기능을 제공하는 오�
 
 # RDD
 > RDD is a fault-tolerant collection of elements that can be operated on in parallel.  
-[(아파치 스파크 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#resilient-distributed-datasets-rdds)
+[(아파치 스파크 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#resilient-distributed-datasets-rdds){:target="_blank"}
 
 다시 말하면 RDD란 스파크에서 정의한 __분산 데이터 모델로서 병렬 처리가 가능한 요소__ 로 구성되며 데이터를 처리하는 과정에서 __장애가 발생하더라도 스스로 복구할 수 있는 능력__ 을 가진 __데이터 모델__ 이라는 뜻입니다. RDD는 분산 데이터에 대한 모델로서 단순히 값으로 표현되는 데이터만 가리키는 것이 아니고, 분산된 __데이터를 다루는 방법까지 포함__ 하는 일종의 클래스와 같은 개념입니다.  
 
@@ -48,7 +48,7 @@ RDD에서 중요한 특징은 다음과 같습니다.
 
 
 ## 파티션(Partition)
-RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서 분산 데이터 요소를 파티션이라고 합니다. 스파크는 작업을 수행할 때 바로 이 파티션 단위로 나눠서 병렬로 처리합니다. 여기서 제가 헷갈렸던 것은 파티션이 분산처리와 병렬처리 중 어떤 것을 기준으로 나뉘어진 단위인가 라는 것 이었습니다. 공식문서[(아파치 스파크 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#parallelized-collections)를 살펴본 결과 파티션은 병렬 처리가 되는 기준이었습니다. 여러 서버에 분산할 때 보통 하나의 서버 당 2~4개 정도의 파티션을 설정합니다. 이 기준은 개인의 클러스터 환경에 따라 기본 설정 값이 다르며 이 값은 원하는 값으로 바꿀 수 있습니다. 구글에서 이미지를 살펴보았을 때는 다들 task당 한개의 파티션이라고 합니다.  
+RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서 분산 데이터 요소를 파티션이라고 합니다. 스파크는 작업을 수행할 때 바로 이 파티션 단위로 나눠서 병렬로 처리합니다. 여기서 제가 헷갈렸던 것은 파티션이 분산처리와 병렬처리 중 어떤 것을 기준으로 나뉘어진 단위인가 라는 것 이었습니다. 공식문서[(아파치 스파크 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#parallelized-collections){:target="_blank"}를 살펴본 결과 파티션은 병렬 처리가 되는 기준이었습니다. 여러 서버에 분산할 때 보통 하나의 서버 당 2~4개 정도의 파티션을 설정합니다. 이 기준은 개인의 클러스터 환경에 따라 기본 설정 값이 다르며 이 값은 원하는 값으로 바꿀 수 있습니다. 구글에서 이미지를 살펴보았을 때는 다들 task당 한개의 파티션이라고 합니다.  
 
 ![](../images/../../images/spark_2.png)  
 
@@ -62,7 +62,7 @@ RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서
 RDD의 연산은 크게 __트랜스포메이션__ 과 __액션__ 이라는 두 종류로 나눌 수 있습니다.  
 - 트랜스포메이션: RDD1 -> RDD2 이런식으로 새로운 RDD를 만들어내는 연산, 대표적으로 map 함수
 - 액션: RDD -> 다른 형태의 데이터를 만들어내는 연산, 대표적으로 reduce 함수  
-[(아파치 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#transformations)  
+[(아파치 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#transformations){:target="_blank"}  
 
 트랜스포메이션 연산은 보통 분산된 서버 각각에서 독립적으로 수행할 수 있는 연산입니다. 그리고 액션은 분산된 서버에 있는 데이터가 서로를 참조해야 하는 연산입니다. 그래서 액션은 서버 네트워크간의 이동이 발생하게 됩니다. 이런 현상을 셔플링(Shuffling)이라고 하고, 보통 네트워크에서 읽어오는 연산은 메모리에 비해 100만배 정도 느립니다.  
 

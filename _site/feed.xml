@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 26 Jan 2022 14:13:27 +0900</pubDate>
-        <lastBuildDate>Wed, 26 Jan 2022 14:13:27 +0900</lastBuildDate>
+        <pubDate>Wed, 26 Jan 2022 16:55:02 +0900</pubDate>
+        <lastBuildDate>Wed, 26 Jan 2022 16:55:02 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -48,7 +48,7 @@
 &lt;p&gt;그런데 만약 같은 데이터를 여러 브로커에서 읽게되면 어떻게 될까요? 아마 불필요한 데이터 전송으로 처리량이 낮아지고, 중복 처리를 해야하는 불필요한 오버헤드가 생길 것입니다. 이런 문제를 해결하고자 카프카에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;리더와 팔로워&lt;/code&gt;가 있습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_14.png&quot; alt=&quot;&quot; /&gt;
-&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;리더leader와-팔로워follower&quot;&gt;리더(Leader)와 팔로워(Follower)&lt;/h2&gt;
 &lt;p&gt;카프카는 내부적으로 리플리케이션들을 리더와 팔로워로 구분하고, 파티션에 대한 쓰기와 읽기는 모두 리더 파티션을 통해서만 가능합니다. 다시 말해, 프로듀서는 리더 파티션에만 메시지를 전송하고, 컨슈머도 리더를 통해서만 메시지를 가져옵니다.&lt;/p&gt;
@@ -61,7 +61,7 @@
 &lt;p&gt;리더를 뽑기 위해서는 리더 선정을 담당하는 무엇인가가 카프카 클러스터에 있어야 합니다. 여기서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;컨트롤러&lt;/code&gt;라는 개념이 등장합니다. 컨트롤러는 카프카 클러스터 중 하나의 브로커가 컨트롤러 역할을 하게됩니다. 그래서 이러한 역할을 하는 브로커를 컨트롤러 브로커라고도 합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_16.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;컨트롤러가 새로운 리더를 임명하는 과정을 살펴보겠습니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;주키퍼(Zookeeper)&lt;/code&gt; 개념이 잠깐 등장합니다.&lt;br /&gt;
 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Zookeeper&lt;/code&gt; is the centralized service for storing metadata of topic, partition, and broker)&lt;/p&gt;
@@ -86,8 +86,8 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;p&gt;만약 커밋되지 않은 메시지를 컨슈머가 읽어갈 수 있게 되면 어떻게 될까요? 위의 그림으로 설명을 해보겠습니다. 어떤 컨슈머가 Leader가 가지고 있던 아직 커밋되지 않은 Message 3을 읽어갔습니다. 그런데 갑자기 Leader 파티션을 가지고 있던 브로커에 장애가 발생해 Follower가 새로운 Leader가 되었습니다. 이렇게 되면 아까 컨슈머는 message 3을 읽어갔지만, 이제는 더이상 message 3을 읽어갈 수 없게 됩니다. 이러한 메세지 불일치 현상을 막고자 카프카는 커밋된 메세지만 읽어갈 수 있도록 한 것입니다.&lt;/p&gt;
 &lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://hackernoon.com/apache-kafkas-distributed-system-firefighter-the-controller-broker-1afca1eae302&quot;&gt;Hackernoon 블로그&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot;&gt;Ashwitha B G 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://hackernoon.com/apache-kafkas-distributed-system-firefighter-the-controller-broker-1afca1eae302&quot; target=&quot;_blank&quot;&gt;Hackernoon 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;Ashwitha B G 블로그&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Mon, 24 Jan 2022 21:01:35 +0900</pubDate>
@@ -104,9 +104,181 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
             <item>
                 <title>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기</title>
                 <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#로컬환경&quot; id=&quot;markdown-toc-로컬환경&quot;&gt;로컬환경&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#미니큐브minikube&quot; id=&quot;markdown-toc-미니큐브minikube&quot;&gt;미니큐브(minikube)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#docker-desktop&quot; id=&quot;markdown-toc-docker-desktop&quot;&gt;Docker Desktop&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#kindkubernetes-in-docker&quot; id=&quot;markdown-toc-kindkubernetes-in-docker&quot;&gt;kind(Kubernetes in Docker)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#클라우드환경&quot; id=&quot;markdown-toc-클라우드환경&quot;&gt;클라우드환경&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#gkegoogle-kubernetes-engine&quot; id=&quot;markdown-toc-gkegoogle-kubernetes-engine&quot;&gt;GKE(Google Kubernetes Engine)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ekselastic-kubernetes-service&quot; id=&quot;markdown-toc-ekselastic-kubernetes-service&quot;&gt;EKS(Elastic Kubernetes Service)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;hr /&gt;
+&lt;h1 id=&quot;로컬환경&quot;&gt;로컬환경&lt;/h1&gt;
+&lt;p&gt;쿠버네티스는 여러 플랫폼 환경에서 클러스터를 구성하여 사용할 수 있습니다. 로컬 쿠버네티스는 별다른 비용 발생 없이 간단하게 클러스터를 구축해 테스트해 볼 수 있어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;테스트, 개발 환경에 적합&lt;/code&gt;합니다.&lt;/p&gt;
 
+&lt;h2 id=&quot;미니큐브minikube&quot;&gt;미니큐브(minikube)&lt;/h2&gt;
+&lt;p&gt;미니큐브는 물리 머신에 로컬 쿠버네티스를 쉽게 구축하고 실행할 수 있는 도구입니다. 실행되는 쿠버네티스는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;단일 노드 구성&lt;/code&gt;이기 때문에 여러 대의 구성이 필요한 쿠버네티스 기능은 사용할 수 없습니다. 또한 미니큐브는 로컬 가상 머신 위에 쿠버네티스를 설치하기 때문에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;하이퍼바이저(Docer, Hyperkit, VirtualBox, ..)가 필요&lt;/code&gt;합니다. 제가 현재 사용하고 있는 맥 환경에서는 기본적으로 하이퍼킷이 설치되어 있습니다. 하지만 m1칩의 경우에는 아직 하이퍼킷을 지원하지 않기 때문에 먼저 도커를 설치, 실행한 후 미니큐브를 실행하셔야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;minikube
+
+minikube version
+&lt;span class=&quot;c&quot;&gt;# minikube version: v1.25.1&lt;/span&gt;
+
+minikube start &lt;span class=&quot;nt&quot;&gt;--driver&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;docker &lt;span class=&quot;c&quot;&gt;# --kubernetes-version 옵션으로 버전 선택 가능&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--------------------------------------------------------------------------------&lt;/span&gt;
+😄  Darwin 12.1 &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;arm64&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 의 minikube v1.25.1
+✨  유저 환경 설정 정보에 기반하여 docker 드라이버를 사용하는 중
+👍  minikube 클러스터의 minikube 컨트롤 플레인 노드를 시작하는 중
+🚜  베이스 이미지를 다운받는 중 ...
+💾  쿠버네티스 v1.23.1 을 다운로드 중 ...
+    &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; preloaded-images-k8s-v16-v1...: 417.88 MiB / 417.88 MiB  100.00% 9.58 MiB
+    &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; gcr.io/k8s-minikube/kicbase: 343.02 MiB / 343.02 MiB  100.00% 3.90 MiB p/
+🔥  Creating docker container &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CPUs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;2, &lt;span class=&quot;nv&quot;&gt;Memory&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;7903MB&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; ...
+🐳  쿠버네티스 v1.23.1 을 Docker 20.10.12 런타임으로 설치하는 중
+    ▪ kubelet.housekeeping-interval&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;5m
+    ▪ 인증서 및 키를 생성하는 중 ...
+    ▪ 컨트롤 플레인이 부팅...
+    ▪ RBAC 규칙을 구성하는 중 ...
+🔎  Kubernetes 구성 요소를 확인...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  애드온 활성화 : storage-provisioner, default-storageclass
+🏄  끝났습니다! kubectl이 &lt;span class=&quot;s2&quot;&gt;&quot;minikube&quot;&lt;/span&gt; 클러스터와 &lt;span class=&quot;s2&quot;&gt;&quot;default&quot;&lt;/span&gt; 네임스페이스를 기본적으로 사용하도록 구성되었습니다.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이제 도커로 띄운 가상머신 위에서 쿠버네티스가 돌아가고 있습니다. 한 번 확인해보겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;minikube status
+&lt;span class=&quot;nt&quot;&gt;--------------------&lt;/span&gt;
+minikube
+&lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+minikube ip
+&lt;span class=&quot;c&quot;&gt;# 192.168.49.2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;정지하고 삭제하는 명령어도 간단합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;minikube stop
+
+minikube delete
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;docker-desktop&quot;&gt;Docker Desktop&lt;/h2&gt;
+&lt;p&gt;Docker Desktop은 도커를 맥/윈도우에서 사용하기 위한 목적으로 만들어졌습니다. 그리고 Docker Desktop 버전 18.06.0부터는 쿠버네티스도 사용할 수 있도록 지원하고 있습니다. 사용 방법은 간단합니다. Docker Desktop을 설치, 실행한 뒤 Enable Kubernetes 목록을 클릭해줍니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/kube_24.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;kindkubernetes-in-docker&quot;&gt;kind(Kubernetes in Docker)&lt;/h2&gt;
+&lt;p&gt;minikube와 Docker Desktop은 단일 노드로 구성된 쿠버네티스였다면, kind는 도커 컨테이너를 여러 개 띄워서 컨테이너 각각을 노드로 사용함으로써 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;멀티 노드 클러스터&lt;/code&gt;를 구축할 수 있습니다.&lt;br /&gt;
+&lt;a href=&quot;https://kind.sigs.k8s.io&quot; target=&quot;_blank&quot;&gt;(kind 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;kind
+
+kind version
+&lt;span class=&quot;nt&quot;&gt;--------------------&lt;/span&gt;
+kind v0.11.1 go1.17.2 darwin/arm64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;잘 설치가 되었습니다. 이제 kind를 이용해 쿠버네티스에서 마스터와 워커 노드 역할을 하는 노드를 각각 3개씩 띄워 다음과 같이 멀티 노드 클러스터를 구축해보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;(실행 결과 리소스 부족으로 kindcluster-worker2를 만들다가 오류가)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kube_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# kind로 클러스터 구축을 위한 kind.yaml&lt;/span&gt;
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kind create cluster &lt;span class=&quot;nt&quot;&gt;--config&lt;/span&gt; kind.yaml &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; kindcluster
+&lt;span class=&quot;nt&quot;&gt;----------------------------------------------------------------------&lt;/span&gt;
+Creating cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/span&gt; ...
+ ✓ Ensuring node image &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kindest/node:v1.23.1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 🖼
+ ✓ Preparing nodes 📦 📦 📦 📦 📦 📦
+ ✓ Configuring the external load balancer ⚖️
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+ ✗ Joining worker nodes 🚜 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;실행 결과 리소스 부족으로 kindcluster-worker2를 만들다가 오류가 발생하여 마스터의 서버는 1개, 워커는 2개로 다시 구성해 실행해 보았습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kind create cluster &lt;span class=&quot;nt&quot;&gt;--config&lt;/span&gt; kind.yaml &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; kindcluster
+&lt;span class=&quot;nt&quot;&gt;----------------------------------------------------------------------&lt;/span&gt;
+Creating cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/span&gt; ...
+ ✓ Ensuring node image &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;kindest/node:v1.23.1&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; 🖼
+ ✓ Preparing nodes 📦 📦 📦
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+ ✓ Joining worker nodes 🚜
+Set kubectl context to &lt;span class=&quot;s2&quot;&gt;&quot;kind-kindcluster&quot;&lt;/span&gt;
+You can now use your cluster with:
+
+kubectl cluster-info &lt;span class=&quot;nt&quot;&gt;--context&lt;/span&gt; kind-kindcluster
+
+Have a &lt;span class=&quot;nb&quot;&gt;nice &lt;/span&gt;day! 👋
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;클러스터가 성공적으로 구축되었습니다.&lt;br /&gt;
+쿠버네티스에서 실행중인 노드를 확인해보겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl get nodes
+----------------------------------------------------------------------------
+NAME                        STATUS   ROLES                  AGE   VERSION
+kindcluster-control-plane   Ready    control-plane,master   58s   v1.23.1
+kindcluster-worker          Ready    &amp;lt;none&amp;gt;                 25s   v1.23.1
+kindcluster-worker2         Ready    &amp;lt;none&amp;gt;                 25s   v1.23.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;클러스터는 다음 명령어로 삭제하시면 됩니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kind delete cluster &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; kindcluster
+&lt;span class=&quot;nt&quot;&gt;------------------------------------------&lt;/span&gt;
+Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/span&gt; ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;클라우드환경&quot;&gt;클라우드환경&lt;/h1&gt;
+
+&lt;h2 id=&quot;gkegoogle-kubernetes-engine&quot;&gt;GKE(Google Kubernetes Engine)&lt;/h2&gt;
+
+&lt;h2 id=&quot;ekselastic-kubernetes-service&quot;&gt;EKS(Elastic Kubernetes Service)&lt;/h2&gt;
 </description>
                 <pubDate>Sun, 23 Jan 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/kubernetes-series4</link>
@@ -148,7 +320,7 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_7.png&quot; alt=&quot;&quot; /&gt;
-&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot; target=&quot;_blank&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;topic-partition-segment&quot;&gt;Topic, Partition, Segment&lt;/h2&gt;
 &lt;p&gt;Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으로 구성, 저장되는지에 대해 짚고 넘어가려고 합니다.&lt;/p&gt;
@@ -163,13 +335,13 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;p&gt;&lt;img src=&quot;/images/kafka_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_6.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot; target=&quot;_blank&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;producer&quot;&gt;Producer&lt;/h2&gt;
 &lt;p&gt;프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_13.webp&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot;&gt;(Dzone 블로그 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot; target=&quot;_blank&quot;&gt;(Dzone 블로그 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;프로듀서가 카프카의 브로커로 데이터를 전송할 때에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ProducerRecord&lt;/code&gt;라고 하는 형태로 전송되며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Topic&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Value&lt;/code&gt;는 필수값이며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Partition&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Key&lt;/code&gt;는 선택값입니다. 프로듀서는 카프카로 레코드를 전송할 때, 카프카의 특정 토픽으로 메세지를 전송합니다. 전송 과정은&lt;/p&gt;
 &lt;ul&gt;
@@ -206,9 +378,9 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 
 &lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791189909345&quot;&gt;실전 카프카 개발부터 운영까지 책&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot;&gt;Dzone 블로그&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot;&gt;CodeX 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791189909345&quot; target=&quot;_blank&quot;&gt;실전 카프카 개발부터 운영까지 책&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot; target=&quot;_blank&quot;&gt;Dzone 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot; target=&quot;_blank&quot;&gt;CodeX 블로그&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Sun, 23 Jan 2022 21:01:35 +0900</pubDate>
@@ -272,9 +444,9 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;p&gt;이렇게 세상에 있는 모든 정보를 실시간으로 저장하고, 처리하기 위해서는 높은 throughput, 낮은 latency가 요구됩니다. Kafka는 최대 600MB/s의 throughput과 200MB에 대해 5ms의 낮은 latency를 제공하고 있습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_3.png&quot; alt=&quot;&quot; /&gt;
-&lt;a href=&quot;https://www.confluent.io/blog/kafka-fastest-messaging-system/&quot;&gt;(Benchmarking Kafka vs. Pulsar vs. RabbitMQ: Which is Fastest? 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://www.confluent.io/blog/kafka-fastest-messaging-system/&quot; target=&quot;_blank&quot;&gt;(Benchmarking Kafka vs. Pulsar vs. RabbitMQ: Which is Fastest? 참고)&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;지금까지는 Kafka가 높은 throughput과 낮은 latency로 엄청난 양의 데이터를 실시간으로 처리해주는 플랫폼이라고 배웠습니다. 이제 이러한 개념을 가지고 조금 더 앞으로 나가보겠습니다. 다음은 Kafka를 설명하는 좋은 문장이라고 생각되어 가져와 봤습니다. &lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot;&gt;(Apache Kafka Series [Part 1]: Introduction to Apache Kafka)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;지금까지는 Kafka가 높은 throughput과 낮은 latency로 엄청난 양의 데이터를 실시간으로 처리해주는 플랫폼이라고 배웠습니다. 이제 이러한 개념을 가지고 조금 더 앞으로 나가보겠습니다. 다음은 Kafka를 설명하는 좋은 문장이라고 생각되어 가져와 봤습니다. &lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot; target=&quot;_blank&quot;&gt;(Apache Kafka Series [Part 1]: Introduction to Apache Kafka)&lt;/a&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;Publish/subscribe messaging is a pattern that is characterized by that a piece of data (message) of the sender (publisher) is not directing to certain receiver. Instead, the publisher classifies the message somehow, and that receiver (subscriber) subscribes to receive certain classes of messages. Pub/sub systems often have a broker, a central point where messages are published, to facilitate this.&lt;/p&gt;
@@ -286,7 +458,7 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 
 &lt;h1 id=&quot;기업-사례-잘란도zalando&quot;&gt;기업 사례: 잘란도(Zalando)&lt;/h1&gt;
 
-&lt;p&gt;Kafka는 현재 Fortune 100대 기업 중 80% 이상이 사용하고 있는 데이터 플랫폼의 핵심 기술입니다. 해외의 링크드인, 트위터, 아마존, 넷플릭스, 우버를 포함해 국내에서는 대표적으로 카카오와 라인 등이 Kafka를 이용하고 있습니다. 제가 여기서 소개드릴 사례는 유럽의 대표 온라인 쇼핑몰 잘란도(Zalando)입니다. &lt;a href=&quot;https://engineering.zalando.com/posts/2017/10/event-first-development---moving-towards-kafka-pipeline-applications.html&quot;&gt;(참고: Event First Development - Moving Towards Kafka Pipeline Applications)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Kafka는 현재 Fortune 100대 기업 중 80% 이상이 사용하고 있는 데이터 플랫폼의 핵심 기술입니다. 해외의 링크드인, 트위터, 아마존, 넷플릭스, 우버를 포함해 국내에서는 대표적으로 카카오와 라인 등이 Kafka를 이용하고 있습니다. 제가 여기서 소개드릴 사례는 유럽의 대표 온라인 쇼핑몰 잘란도(Zalando)입니다. &lt;a href=&quot;https://engineering.zalando.com/posts/2017/10/event-first-development---moving-towards-kafka-pipeline-applications.html&quot; target=&quot;_blank&quot;&gt;(참고: Event First Development - Moving Towards Kafka Pipeline Applications)&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;잘란도는 회사의 규모가 점점 커지고 사업이 다각화되면서 내부적으로 데이터에 대한 문제가 점점 대두되었습니다. 처리해야 할 데이터 양의 증가, 복잡해져가는 데이터 파이프라인(데이터를 Produce하는 곳과 Consume하는 곳의 다양화), 데이터 수집 장애로 인한 신뢰도 하락과 같은 문제로 잘란도에서는 이벤트 드리븐 시스템을 도입하기로 결정하였습니다.&lt;/p&gt;
 
@@ -295,7 +467,7 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;/blockquote&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_5.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://realtimeapi.io/hub/event-driven-apis/&quot;&gt;(참고: https://realtimeapi.io/hub/event-driven-apis/)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://realtimeapi.io/hub/event-driven-apis/&quot; target=&quot;_blank&quot;&gt;(참고: https://realtimeapi.io/hub/event-driven-apis/)&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;결과적으로 잘란도는 Kafka를 도입함으로써 내부의 데이터 처리 파이프라인을 간소화하고, 확장을 용이하게 했으며, 스트림 데이터 처리량을 높일 수 있었습니다. 이러한 결과를 얻을 수 있었던 것은 Kafka에서 제공하는 몇 가지 핵심 기능 덕분이었습니다.&lt;/p&gt;
 
@@ -327,8 +499,8 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 
 &lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791189909345&quot;&gt;실전 카프카 개발부터 운영까지 책&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot;&gt;CodeX 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791189909345&quot; target=&quot;_blank&quot;&gt;실전 카프카 개발부터 운영까지 책&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot; target=&quot;_blank&quot;&gt;CodeX 블로그&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Mon, 17 Jan 2022 21:01:35 +0900</pubDate>
@@ -371,7 +543,7 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 
 &lt;h1 id=&quot;spark-introduction&quot;&gt;Spark Introduction&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;스파크는 클러스터 기반의 분산 처리 기능을 제공하는 오픈소스 프레임워크입니다.&lt;/strong&gt; 쉽게 말해 대용량 데이터를 여러 컴퓨터에 나누어서 동시에 처리한다고 할 수 있습니다. 이런 방법이 스파크 이전에 없었던 것은 아닙니다. 스파크 이전에 하둡(Hadoop)이 이와 유사한 기능을 제공했었습니다. 
-참고로 하둡은 더그 커팅(Doug Cutting)이라는 사람이 구글이 발표했던 두 개의 논문(&lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf&quot;&gt;&lt;strong&gt;The Google File System_2003&lt;/strong&gt;&lt;/a&gt;, &lt;a href=&quot;https://dl.acm.org/doi/10.1145/1327452.1327492&quot;&gt;&lt;strong&gt;MapReduce: simplified data processing on large clusters_2008&lt;/strong&gt;&lt;/a&gt;)을 직접 구현해 만든 프레임워크입니다. 이처럼 구글에서는 예전부터 대용량의 데이터를 고속 분산처리 하기 위해 노력했었고, 현재 스파크는 대부분의 기업들이 사용하고 있는 소프트웨어입니다.&lt;/p&gt;
+참고로 하둡은 더그 커팅(Doug Cutting)이라는 사람이 구글이 발표했던 두 개의 논문(&lt;a href=&quot;https://static.googleusercontent.com/media/research.google.com/ko//archive/gfs-sosp2003.pdf&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;The Google File System_2003&lt;/strong&gt;&lt;/a&gt;, &lt;a href=&quot;https://dl.acm.org/doi/10.1145/1327452.1327492&quot;&gt;&lt;strong&gt;MapReduce: simplified data processing on large clusters_2008&lt;/strong&gt;&lt;/a&gt;){:target=”_blank”}을 직접 구현해 만든 프레임워크입니다. 이처럼 구글에서는 예전부터 대용량의 데이터를 고속 분산처리 하기 위해 노력했었고, 현재 스파크는 대부분의 기업들이 사용하고 있는 소프트웨어입니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../images/../../images/spark_6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -416,7 +588,7 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;h1 id=&quot;rdd&quot;&gt;RDD&lt;/h1&gt;
 &lt;blockquote&gt;
   &lt;p&gt;RDD is a fault-tolerant collection of elements that can be operated on in parallel.&lt;br /&gt;
-&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#resilient-distributed-datasets-rdds&quot;&gt;(아파치 스파크 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#resilient-distributed-datasets-rdds&quot; target=&quot;_blank&quot;&gt;(아파치 스파크 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;다시 말하면 RDD란 스파크에서 정의한 &lt;strong&gt;분산 데이터 모델로서 병렬 처리가 가능한 요소&lt;/strong&gt; 로 구성되며 데이터를 처리하는 과정에서 &lt;strong&gt;장애가 발생하더라도 스스로 복구할 수 있는 능력&lt;/strong&gt; 을 가진 &lt;strong&gt;데이터 모델&lt;/strong&gt; 이라는 뜻입니다. RDD는 분산 데이터에 대한 모델로서 단순히 값으로 표현되는 데이터만 가리키는 것이 아니고, 분산된 &lt;strong&gt;데이터를 다루는 방법까지 포함&lt;/strong&gt; 하는 일종의 클래스와 같은 개념입니다.&lt;/p&gt;
@@ -430,7 +602,7 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;파티션partition&quot;&gt;파티션(Partition)&lt;/h2&gt;
-&lt;p&gt;RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서 분산 데이터 요소를 파티션이라고 합니다. 스파크는 작업을 수행할 때 바로 이 파티션 단위로 나눠서 병렬로 처리합니다. 여기서 제가 헷갈렸던 것은 파티션이 분산처리와 병렬처리 중 어떤 것을 기준으로 나뉘어진 단위인가 라는 것 이었습니다. 공식문서&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#parallelized-collections&quot;&gt;(아파치 스파크 공식문서 참고)&lt;/a&gt;를 살펴본 결과 파티션은 병렬 처리가 되는 기준이었습니다. 여러 서버에 분산할 때 보통 하나의 서버 당 2~4개 정도의 파티션을 설정합니다. 이 기준은 개인의 클러스터 환경에 따라 기본 설정 값이 다르며 이 값은 원하는 값으로 바꿀 수 있습니다. 구글에서 이미지를 살펴보았을 때는 다들 task당 한개의 파티션이라고 합니다.&lt;/p&gt;
+&lt;p&gt;RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서 분산 데이터 요소를 파티션이라고 합니다. 스파크는 작업을 수행할 때 바로 이 파티션 단위로 나눠서 병렬로 처리합니다. 여기서 제가 헷갈렸던 것은 파티션이 분산처리와 병렬처리 중 어떤 것을 기준으로 나뉘어진 단위인가 라는 것 이었습니다. 공식문서&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#parallelized-collections&quot; target=&quot;_blank&quot;&gt;(아파치 스파크 공식문서 참고)&lt;/a&gt;를 살펴본 결과 파티션은 병렬 처리가 되는 기준이었습니다. 여러 서버에 분산할 때 보통 하나의 서버 당 2~4개 정도의 파티션을 설정합니다. 이 기준은 개인의 클러스터 환경에 따라 기본 설정 값이 다르며 이 값은 원하는 값으로 바꿀 수 있습니다. 구글에서 이미지를 살펴보았을 때는 다들 task당 한개의 파티션이라고 합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../images/../../images/spark_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -445,7 +617,7 @@ ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지�
 &lt;ul&gt;
   &lt;li&gt;트랜스포메이션: RDD1 -&amp;gt; RDD2 이런식으로 새로운 RDD를 만들어내는 연산, 대표적으로 map 함수&lt;/li&gt;
   &lt;li&gt;액션: RDD -&amp;gt; 다른 형태의 데이터를 만들어내는 연산, 대표적으로 reduce 함수&lt;br /&gt;
-&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#transformations&quot;&gt;(아파치 공식문서 참고)&lt;/a&gt;&lt;/li&gt;
+&lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#transformations&quot; target=&quot;_blank&quot;&gt;(아파치 공식문서 참고)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;트랜스포메이션 연산은 보통 분산된 서버 각각에서 독립적으로 수행할 수 있는 연산입니다. 그리고 액션은 분산된 서버에 있는 데이터가 서로를 참조해야 하는 연산입니다. 그래서 액션은 서버 네트워크간의 이동이 발생하게 됩니다. 이런 현상을 셔플링(Shuffling)이라고 하고, 보통 네트워크에서 읽어오는 연산은 메모리에 비해 100만배 정도 느립니다.&lt;/p&gt;
@@ -651,7 +823,7 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
   &lt;p&gt;Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;a href=&quot;https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/&quot;&gt;(Rancher문서 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/&quot; target=&quot;_blank&quot;&gt;(Rancher문서 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kube_10.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -714,7 +886,7 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Pod의 spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;containers&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;volumes&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;restartPolicy&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hostname&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hostNetwork&lt;/code&gt; 등이 있습니다.&lt;br /&gt;
-&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/&quot;&gt;(Pod공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/&quot; target=&quot;_blank&quot;&gt;(Pod공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;replicaset&quot;&gt;ReplicaSet&lt;/h3&gt;
 
@@ -750,7 +922,7 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;ReplicaSet의 spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;replicas&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;selector&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;template&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minReadySeconds&lt;/code&gt;가 있습니다.&lt;br /&gt;
-&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/#ReplicaSetSpec&quot;&gt;(ReplicaSet 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/#ReplicaSetSpec&quot; target=&quot;_blank&quot;&gt;(ReplicaSet 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;deployment&quot;&gt;Deployment&lt;/h3&gt;
 
@@ -793,7 +965,7 @@ Workflow 파일은 YAML으로 작성되고, Github Repository의 &lt;code class=
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;replicas&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;selector&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;template&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;strategy&lt;/code&gt;  등이 있습니다.&lt;br /&gt;
-&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec&quot;&gt;(Deployment 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec&quot; target=&quot;_blank&quot;&gt;(Deployment 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;service관련-리소스&quot;&gt;Service관련 리소스&lt;/h2&gt;
 &lt;blockquote&gt;
@@ -900,7 +1072,7 @@ minikube addons &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;ingress
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;spec에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rules&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;defaultBackend&lt;/code&gt;(어느 rule에도 속하지 않을 경우) 등이 있습니다.&lt;br /&gt;
-&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/&quot;&gt;(Ingress 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
+&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/&quot; target=&quot;_blank&quot;&gt;(Ingress 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;config-and-storage관련-리소스&quot;&gt;Config and Storage관련 리소스&lt;/h2&gt;
 
@@ -1083,10 +1255,10 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 
 &lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://subicura.com/2019/05/19/kubernetes-basic-1.html&quot;&gt;subicura님의 kubenetes안내서&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dailyheumsi.tistory.com/208#7.-configmap&quot;&gt;하나씩 점을 찍어나가며 블로그&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/&quot;&gt;Kubernetes 공식문서&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/&quot;&gt;Rancher 공식문서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://subicura.com/2019/05/19/kubernetes-basic-1.html&quot; target=&quot;_blank&quot;&gt;subicura님의 kubenetes안내서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dailyheumsi.tistory.com/208#7.-configmap&quot; target=&quot;_blank&quot;&gt;하나씩 점을 찍어나가며 블로그&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://kubernetes.io/docs/reference/kubernetes-api/&quot; target=&quot;_blank&quot;&gt;Kubernetes 공식문서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/&quot; target=&quot;_blank&quot;&gt;Rancher 공식문서&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Sun, 09 Jan 2022 21:01:35 +0900</pubDate>
@@ -1200,7 +1372,7 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 
 &lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://subicura.com/2019/05/19/kubernetes-basic-1.html&quot;&gt;subicura님의 kubenetes안내서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://subicura.com/2019/05/19/kubernetes-basic-1.html&quot; target=&quot;_blank&quot;&gt;subicura님의 kubenetes안내서&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Sat, 08 Jan 2022 21:01:35 +0900</pubDate>

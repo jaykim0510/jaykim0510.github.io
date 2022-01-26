@@ -91,4 +91,4 @@ __쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리
 
 
 # 참고자료  
-- [subicura님의 kubenetes안내서](https://subicura.com/2019/05/19/kubernetes-basic-1.html)
+- [subicura님의 kubenetes안내서](https://subicura.com/2019/05/19/kubernetes-basic-1.html){:target="_blank"}

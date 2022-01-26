@@ -38,9 +38,9 @@ Kafka에서는 Event, Data, Record, Message를 모두 혼용해서 쓰고 있습
 이렇게 세상에 있는 모든 정보를 실시간으로 저장하고, 처리하기 위해서는 높은 throughput, 낮은 latency가 요구됩니다. Kafka는 최대 600MB/s의 throughput과 200MB에 대해 5ms의 낮은 latency를 제공하고 있습니다.  
 
 ![](/images/kafka_3.png)
-[(Benchmarking Kafka vs. Pulsar vs. RabbitMQ: Which is Fastest? 참고)](https://www.confluent.io/blog/kafka-fastest-messaging-system/)
+[(Benchmarking Kafka vs. Pulsar vs. RabbitMQ: Which is Fastest? 참고)](https://www.confluent.io/blog/kafka-fastest-messaging-system/){:target="_blank"}
 
-지금까지는 Kafka가 높은 throughput과 낮은 latency로 엄청난 양의 데이터를 실시간으로 처리해주는 플랫폼이라고 배웠습니다. 이제 이러한 개념을 가지고 조금 더 앞으로 나가보겠습니다. 다음은 Kafka를 설명하는 좋은 문장이라고 생각되어 가져와 봤습니다. [(Apache Kafka Series [Part 1]: Introduction to Apache Kafka)](https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002)
+지금까지는 Kafka가 높은 throughput과 낮은 latency로 엄청난 양의 데이터를 실시간으로 처리해주는 플랫폼이라고 배웠습니다. 이제 이러한 개념을 가지고 조금 더 앞으로 나가보겠습니다. 다음은 Kafka를 설명하는 좋은 문장이라고 생각되어 가져와 봤습니다. [(Apache Kafka Series [Part 1]: Introduction to Apache Kafka)](https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002){:target="_blank"}
 
 
 > Publish/subscribe messaging is a pattern that is characterized by that a piece of data (message) of the sender (publisher) is not directing to certain receiver. Instead, the publisher classifies the message somehow, and that receiver (subscriber) subscribes to receive certain classes of messages. Pub/sub systems often have a broker, a central point where messages are published, to facilitate this.
@@ -51,14 +51,14 @@ Kafka를 이용하면 특정 Source에서 특정 Destination으로 데이터를 
 
 # 기업 사례: 잘란도(Zalando)
 
-Kafka는 현재 Fortune 100대 기업 중 80% 이상이 사용하고 있는 데이터 플랫폼의 핵심 기술입니다. 해외의 링크드인, 트위터, 아마존, 넷플릭스, 우버를 포함해 국내에서는 대표적으로 카카오와 라인 등이 Kafka를 이용하고 있습니다. 제가 여기서 소개드릴 사례는 유럽의 대표 온라인 쇼핑몰 잘란도(Zalando)입니다. [(참고: Event First Development - Moving Towards Kafka Pipeline Applications)](https://engineering.zalando.com/posts/2017/10/event-first-development---moving-towards-kafka-pipeline-applications.html)  
+Kafka는 현재 Fortune 100대 기업 중 80% 이상이 사용하고 있는 데이터 플랫폼의 핵심 기술입니다. 해외의 링크드인, 트위터, 아마존, 넷플릭스, 우버를 포함해 국내에서는 대표적으로 카카오와 라인 등이 Kafka를 이용하고 있습니다. 제가 여기서 소개드릴 사례는 유럽의 대표 온라인 쇼핑몰 잘란도(Zalando)입니다. [(참고: Event First Development - Moving Towards Kafka Pipeline Applications)](https://engineering.zalando.com/posts/2017/10/event-first-development---moving-towards-kafka-pipeline-applications.html){:target="_blank"}  
 
 잘란도는 회사의 규모가 점점 커지고 사업이 다각화되면서 내부적으로 데이터에 대한 문제가 점점 대두되었습니다. 처리해야 할 데이터 양의 증가, 복잡해져가는 데이터 파이프라인(데이터를 Produce하는 곳과 Consume하는 곳의 다양화), 데이터 수집 장애로 인한 신뢰도 하락과 같은 문제로 잘란도에서는 이벤트 드리븐 시스템을 도입하기로 결정하였습니다.  
 
 > The aim here was the democratization of data for all potential users on the new platform.
 
 ![](/images/kafka_5.png)  
-[(참고: https://realtimeapi.io/hub/event-driven-apis/)](https://realtimeapi.io/hub/event-driven-apis/)
+[(참고: https://realtimeapi.io/hub/event-driven-apis/)](https://realtimeapi.io/hub/event-driven-apis/){:target="_blank"}
 
 결과적으로 잘란도는 Kafka를 도입함으로써 내부의 데이터 처리 파이프라인을 간소화하고, 확장을 용이하게 했으며, 스트림 데이터 처리량을 높일 수 있었습니다. 이러한 결과를 얻을 수 있었던 것은 Kafka에서 제공하는 몇 가지 핵심 기능 덕분이었습니다.  
 
@@ -87,5 +87,5 @@ Kafka는 현재 Fortune 100대 기업 중 80% 이상이 사용하고 있는 데�
 다음 포스트에서는 Kafka의 주요 구성 요소에 대해 알아보겠습니다.  
 
 # 참고자료
-- [실전 카프카 개발부터 운영까지 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9791189909345)
-- [CodeX 블로그](https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002)
+- [실전 카프카 개발부터 운영까지 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9791189909345){:target="_blank"}
+- [CodeX 블로그](https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002){:target="_blank"}

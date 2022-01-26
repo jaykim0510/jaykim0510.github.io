@@ -1,0 +1,52 @@
+I"�<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#로컬환경" id="markdown-toc-로컬환경">로컬환경</a>    <ul>
+      <li><a href="#미니큐브minikube" id="markdown-toc-미니큐브minikube">미니큐브(minikube)</a></li>
+      <li><a href="#docker-desktop" id="markdown-toc-docker-desktop">Docker Desktop</a></li>
+      <li><a href="#kind" id="markdown-toc-kind">kind</a></li>
+    </ul>
+  </li>
+  <li><a href="#클라우드환경" id="markdown-toc-클라우드환경">클라우드환경</a>    <ul>
+      <li><a href="#gkegoogle-kubernetes-engine" id="markdown-toc-gkegoogle-kubernetes-engine">GKE(Google Kubernetes Engine)</a></li>
+      <li><a href="#ekselastic-kubernetes-service" id="markdown-toc-ekselastic-kubernetes-service">EKS(Elastic Kubernetes Service)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+<h1 id="로컬환경">로컬환경</h1>
+
+<h2 id="미니큐브minikube">미니큐브(minikube)</h2>
+<p>미니큐브는 물리 머신에 로컬 쿠버네티스를 쉽게 구축하고 실행할 수 있는 도구입니다. 실행되는 쿠버네티스는 <code class="language-plaintext highlighter-rouge">단일 노드 구성</code>이기 때문에 여러 대의 구성이 필요한 쿠버네티스 기능은 사용할 수 없습니다. 또한 미니큐브는 로컬 가상 머신 위에 쿠버네티스를 설치하기 때문에 <code class="language-plaintext highlighter-rouge">하이퍼바이저(Docer, Hyperkit, VirtualBox 등)</code>가 필요합니다. 제가 현재 사용하고 있는 맥 환경에서는 기본적으로 하이퍼킷이 설치되어 있습니다. 하지만 m1칩의 경우에는 아직 하이퍼킷을 지원하지 않기 때문에 먼저 도커를 설치, 실행한 후 미니큐브를 실행하셔야 합니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew <span class="nb">install </span>minikube
+
+minikube version
+<span class="c"># minikube version: v1.25.1</span>
+
+minikube start <span class="nt">--driver</span><span class="o">=</span>docker <span class="c"># --kubernetes-version 옵션으로 버전 선택 가능</span>
+</code></pre></div></div>
+
+<p><img src="../images/../../images/kube_23.png" alt="" /></p>
+
+<p>이제 도커로 띄운 가상머신 위에서 쿠버네티스가 돌아가고 있습니다. 한 번 확인해보겠습니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minikube status
+<span class="c"># minikube</span>
+<span class="c"># type: Control Plane</span>
+<span class="c"># host: Running</span>
+<span class="c"># kubelet: Running</span>
+<span class="c"># apiserver: Running</span>
+<span class="c"># kubeconfig: Configured</span>
+</code></pre></div></div>
+
+<h2 id="docker-desktop">Docker Desktop</h2>
+
+<h2 id="kind">kind</h2>
+
+<h1 id="클라우드환경">클라우드환경</h1>
+
+<h2 id="gkegoogle-kubernetes-engine">GKE(Google Kubernetes Engine)</h2>
+
+<h2 id="ekselastic-kubernetes-service">EKS(Elastic Kubernetes Service)</h2>
+:ET

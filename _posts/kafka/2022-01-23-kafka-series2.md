@@ -16,7 +16,7 @@ Kafka는 크게 3가지로 이루어 있습니다.
 - Consumer: Kafka에서 메시지를 꺼내서 사용하는 모든 클라이언트
 
 ![](/images/kafka_7.png)
-[(참고: cloudkarafka)](https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html)  
+[(참고: cloudkarafka)](https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html){:target="_blank"}  
 
 ## Topic, Partition, Segment
 Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으로 구성, 저장되는지에 대해 짚고 넘어가려고 합니다.
@@ -29,14 +29,14 @@ Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으�
 ![](/images/kafka_9.png)
 
 ![](/images/kafka_6.png)  
-[(참고: cloudkarafka)](https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html)  
+[(참고: cloudkarafka)](https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html){:target="_blank"}  
 
 
 ## Producer
 프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.  
 
 ![](/images/kafka_13.webp)  
-[(Dzone 블로그 참고)](https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api)  
+[(Dzone 블로그 참고)](https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api){:target="_blank"}  
 
 프로듀서가 카프카의 브로커로 데이터를 전송할 때에는 `ProducerRecord`라고 하는 형태로 전송되며, `Topic`과 `Value`는 필수값이며, `Partition`과 `Key`는 선택값입니다. 프로듀서는 카프카로 레코드를 전송할 때, 카프카의 특정 토픽으로 메세지를 전송합니다. 전송 과정은
 - 프로듀서에서 send() 메소드 호출
@@ -68,6 +68,6 @@ Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으�
 다음 포스트에서는 이러한 역할을 어떤 방식으로 제공해주었는지 살펴보며 그 과정에서 필요한 개념들을 하나씩 배워가도록 하겠습니다.  
 
 # 참고자료
-- [실전 카프카 개발부터 운영까지 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9791189909345)
-- [Dzone 블로그](https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api)
-- [CodeX 블로그](https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002)
+- [실전 카프카 개발부터 운영까지 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9791189909345){:target="_blank"}
+- [Dzone 블로그](https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api){:target="_blank"}
+- [CodeX 블로그](https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002){:target="_blank"}

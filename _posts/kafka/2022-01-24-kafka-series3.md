@@ -17,7 +17,7 @@ tags: Kafka
 그런데 만약 같은 데이터를 여러 브로커에서 읽게되면 어떻게 될까요? 아마 불필요한 데이터 전송으로 처리량이 낮아지고, 중복 처리를 해야하는 불필요한 오버헤드가 생길 것입니다. 이런 문제를 해결하고자 카프카에는 `리더와 팔로워`가 있습니다.  
 
 ![](/images/kafka_14.png)
-[(shwitha B G 블로그 참고)](https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf)  
+[(shwitha B G 블로그 참고)](https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf){:target="_blank"}  
 
 ## 리더(Leader)와 팔로워(Follower)
 카프카는 내부적으로 리플리케이션들을 리더와 팔로워로 구분하고, 파티션에 대한 쓰기와 읽기는 모두 리더 파티션을 통해서만 가능합니다. 다시 말해, 프로듀서는 리더 파티션에만 메시지를 전송하고, 컨슈머도 리더를 통해서만 메시지를 가져옵니다.
@@ -30,7 +30,7 @@ tags: Kafka
 리더를 뽑기 위해서는 리더 선정을 담당하는 무엇인가가 카프카 클러스터에 있어야 합니다. 여기서 `컨트롤러`라는 개념이 등장합니다. 컨트롤러는 카프카 클러스터 중 하나의 브로커가 컨트롤러 역할을 하게됩니다. 그래서 이러한 역할을 하는 브로커를 컨트롤러 브로커라고도 합니다.  
 
 ![](/images/kafka_16.png)  
-[(shwitha B G 블로그 참고)](https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf)  
+[(shwitha B G 블로그 참고)](https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf){:target="_blank"}  
 
 컨트롤러가 새로운 리더를 임명하는 과정을 살펴보겠습니다. `주키퍼(Zookeeper)` 개념이 잠깐 등장합니다.  
 (`Zookeeper` is the centralized service for storing metadata of topic, partition, and broker)
@@ -53,5 +53,5 @@ ISR 내에서 모든 팔로워의 복제가 완료되면, 리더는 내부적으
 
 만약 커밋되지 않은 메시지를 컨슈머가 읽어갈 수 있게 되면 어떻게 될까요? 위의 그림으로 설명을 해보겠습니다. 어떤 컨슈머가 Leader가 가지고 있던 아직 커밋되지 않은 Message 3을 읽어갔습니다. 그런데 갑자기 Leader 파티션을 가지고 있던 브로커에 장애가 발생해 Follower가 새로운 Leader가 되었습니다. 이렇게 되면 아까 컨슈머는 message 3을 읽어갔지만, 이제는 더이상 message 3을 읽어갈 수 없게 됩니다. 이러한 메세지 불일치 현상을 막고자 카프카는 커밋된 메세지만 읽어갈 수 있도록 한 것입니다.  
 # 참고자료
-- [Hackernoon 블로그](https://hackernoon.com/apache-kafkas-distributed-system-firefighter-the-controller-broker-1afca1eae302)
-- [Ashwitha B G 블로그](https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf)
+- [Hackernoon 블로그](https://hackernoon.com/apache-kafkas-distributed-system-firefighter-the-controller-broker-1afca1eae302){:target="_blank"}
+- [Ashwitha B G 블로그](https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf){:target="_blank"}
