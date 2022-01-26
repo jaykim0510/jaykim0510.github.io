@@ -184,3 +184,7 @@ Deleting cluster "kindcluster" ...
 ## GKE(Google Kubernetes Engine)
 
 ## EKS(Elastic Kubernetes Service)
+
+# 참고자료  
+- [쿠버네티스 완벽 가이드 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791165216283){:target="_blank"}  
+- [subicura님의 kubenetes안내서](https://subicura.com/k8s/guide/){:target="_blank"}

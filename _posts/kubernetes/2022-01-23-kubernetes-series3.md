@@ -54,3 +54,9 @@ LoadBalancer에서는 NodePort와 다르게 별도로 외부 로드 밸런서를
 
 Nginx 인그레스 컨트롤러는 이름은 컨트롤러이지만 L7 수준의 로드 밸런싱을 직접 처리하기도 합니다.  
 ![](../../images/kube_30.png)
+
+# 참고자료
+- [쿠버네티스 완벽 가이드 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791165216283){:target="_blank"}  
+- [subicura님의 kubenetes안내서](https://subicura.com/k8s/guide/){:target="_blank"}
+- [NodePort vs LoadBalancer stackoverflow](https://stackoverflow.com/questions/65887993/when-to-choose-loadbalancer-over-nodeport-service-typeor-vice-versa-in-kub){:target="_blank"}  
+- [Google Kubernetes Engine 가이드](https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview){:target="_blank"}  
