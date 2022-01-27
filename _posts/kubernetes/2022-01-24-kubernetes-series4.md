@@ -74,10 +74,12 @@ minikube delete
 ## Docker Desktop  
 Docker Desktop은 도커를 맥/윈도우에서 사용하기 위한 목적으로 만들어졌습니다. 그리고 Docker Desktop 버전 18.06.0부터는 쿠버네티스도 사용할 수 있도록 지원하고 있습니다. 사용 방법은 간단합니다. Docker Desktop을 설치, 실행한 뒤 Enable Kubernetes 목록을 클릭해줍니다.  
 
-![](../images/../../images/kube_24.png)
+![](../images/../../images/kube_24.png)  
+
+(쿠버네티스를 Docker Desktop으로 실행할 때는 도커에서 제공하는 가상 머신위에 쿠버네티스 클러스터를 구성하는 것 같다. 그래서 클러스터 외부에서 쿠버네티스에 접속하려 할 때, 먼저 도커의 가상 머신 안으로 엔드포인트로 접근해야 하는데 이를 도커에서 localhost로 접근하도록 해준다. 그래서 별도로 도커 가상머신의 IP주소를 알려고 할 필요가 없다. 뇌피셜)  
 
 ## kind(Kubernetes in Docker)
-minikube와 Docker Desktop은 단일 노드로 구성된 쿠버네티스였다면, kind는 도커 컨테이너를 여러 개 띄워서 컨테이너 각각을 노드로 사용함으로써 `멀티 노드 클러스터`를 구축할 수 있습니다.  
+minikube와 Docker Desktop은 단일 노드로 구성된 쿠버네티스였다면, kind는 도커 컨테이너를 여러 개 띄워서 컨테이너 각각을 노드로 사용함으로써 **멀티 노드 클러스터**를 구축할 수 있습니다.  
 [(kind 공식문서 참고)](https://kind.sigs.k8s.io){:target="_blank"}  
 
 ```sh

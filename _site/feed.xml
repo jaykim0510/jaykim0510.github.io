@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 27 Jan 2022 23:13:48 +0900</pubDate>
-        <lastBuildDate>Thu, 27 Jan 2022 23:13:48 +0900</lastBuildDate>
+        <pubDate>Fri, 28 Jan 2022 03:47:23 +0900</pubDate>
+        <lastBuildDate>Fri, 28 Jan 2022 03:47:23 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -29,9 +29,9 @@
 &lt;p&gt;카프카는 데이터 파이프라인의 중앙에 위치하는 메인 허브 역할을 합니다. 그래서 만약 하드웨어의 문제나 네트워크의 장애로 인해 정상적으로 동작하지 못한다면, 카프카에 연결된 모든 파이프라인에 심각한 영향을 미치게 됩니다. 이러한 이유로 카프카는 초기 설계 단계에서부터 장애가 발생하더라도 안정적인 서비스를 제공할 수 있도록 구상됐습니다.&lt;/p&gt;
 
 &lt;h2 id=&quot;카프카-리플리케이션replication&quot;&gt;카프카 리플리케이션(Replication)&lt;/h2&gt;
-&lt;p&gt;카프카는 데이터를 저장할 때 하나의 브로커에만 저장하지 않고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;다른 브로커에 파티션을 복제&lt;/code&gt;해놓음으로써 임의의 브로커 장애에 대비할 수 있습니다. 만약 N개의 리플리케이션이 있을 경우, N-1개의 브로커에 장애가 발생하더라도 손실되지 않고 데이터를 주고 받을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;카프카는 데이터를 저장할 때 하나의 브로커에만 저장하지 않고, &lt;strong&gt;다른 브로커에 파티션을 복제&lt;/strong&gt;해놓음으로써 임의의 브로커 장애에 대비할 수 있습니다. 만약 N개의 리플리케이션이 있을 경우, N-1개의 브로커에 장애가 발생하더라도 손실되지 않고 데이터를 주고 받을 수 있습니다.&lt;/p&gt;
 
-&lt;p&gt;그런데 만약 같은 데이터를 여러 브로커에서 읽게되면 어떻게 될까요? 아마 불필요한 데이터 전송으로 처리량이 낮아지고, 중복 처리를 해야하는 불필요한 오버헤드가 생길 것입니다. 이런 문제를 해결하고자 카프카에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;리더와 팔로워&lt;/code&gt;가 있습니다.&lt;/p&gt;
+&lt;p&gt;그런데 만약 같은 데이터를 여러 브로커에서 읽게되면 어떻게 될까요? 아마 불필요한 데이터 전송으로 처리량이 낮아지고, 중복 처리를 해야하는 불필요한 오버헤드가 생길 것입니다. 이런 문제를 해결하고자 카프카에는 &lt;strong&gt;리더와 팔로워&lt;/strong&gt;가 있습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_14.png&quot; alt=&quot;&quot; /&gt;
 &lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
@@ -44,13 +44,13 @@
 &lt;p&gt;그렇다면 팔로워는 어떤 역할을 할까요? 팔로워는 리더에 문제가 발생할 경우를 대비해 언제든지 새로운 리더가 될 수 있도록 준비를 하고 있어야합니다. 그러기 위해 팔로워들은 리더에게 새로운 메시지가 있는지 요청하고 있다면 메시지를 리더로부터 복제합니다.&lt;/p&gt;
 
 &lt;h2 id=&quot;컨트롤러controller&quot;&gt;컨트롤러(Controller)&lt;/h2&gt;
-&lt;p&gt;리더를 뽑기 위해서는 리더 선정을 담당하는 무엇인가가 카프카 클러스터에 있어야 합니다. 여기서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;컨트롤러&lt;/code&gt;라는 개념이 등장합니다. 컨트롤러는 카프카 클러스터 중 하나의 브로커가 컨트롤러 역할을 하게됩니다. 그래서 이러한 역할을 하는 브로커를 컨트롤러 브로커라고도 합니다.&lt;/p&gt;
+&lt;p&gt;리더를 뽑기 위해서는 리더 선정을 담당하는 무엇인가가 카프카 클러스터에 있어야 합니다. 여기서 &lt;strong&gt;컨트롤러&lt;/strong&gt;라는 개념이 등장합니다. 컨트롤러는 카프카 클러스터 중 하나의 브로커가 컨트롤러 역할을 하게됩니다. 그래서 이러한 역할을 하는 브로커를 컨트롤러 브로커라고도 합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_16.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
 &lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;컨트롤러가 새로운 리더를 임명하는 과정을 살펴보겠습니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;주키퍼(Zookeeper)&lt;/code&gt; 개념이 잠깐 등장합니다.&lt;br /&gt;
-(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Zookeeper&lt;/code&gt; is the centralized service for storing metadata of topic, partition, and broker)&lt;/p&gt;
+&lt;p&gt;컨트롤러가 새로운 리더를 임명하는 과정을 살펴보겠습니다. &lt;strong&gt;주키퍼(Zookeeper)&lt;/strong&gt; 개념이 잠깐 등장합니다.&lt;br /&gt;
+(&lt;strong&gt;Zookeeper&lt;/strong&gt; is the centralized service for storing metadata of topic, partition, and broker)&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;주키퍼는 카프카의 모든 브로커들과 하트비트(Heartbeat)를 주고 받으며 브로커가 살아있는지 체크합니다.&lt;/li&gt;
   &lt;li&gt;브로커와 관련하여 어떤 이벤트가 발생하면 주키퍼는 이를 감지하고 자신을 subscribe하고 있는 브로커들에게 알립니다&lt;/li&gt;
@@ -60,12 +60,12 @@
 
 &lt;h2 id=&quot;리플리케이션-과정&quot;&gt;리플리케이션 과정&lt;/h2&gt;
 &lt;p&gt;마지막으로 리더와 팔로워간의 리플리케이션 과정을 살펴보고 포스트를 마치도록 하겠습니다.&lt;br /&gt;
-먼저 리더와 팔로워에 대해 조금 더 알아보겠습니다. 리더와 몇몇의 팔로워는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ISR(InSyncReplica)&lt;/code&gt;이라는 논리적 그룹으로 묶여 있습니다. 이렇게 ISR 그룹안에 속하는 팔로워만이 리더가 될 수 있는 후보입니다.&lt;br /&gt;
+먼저 리더와 팔로워에 대해 조금 더 알아보겠습니다. 리더와 몇몇의 팔로워는 &lt;strong&gt;ISR(InSyncReplica)&lt;/strong&gt;이라는 논리적 그룹으로 묶여 있습니다. 이렇게 ISR 그룹안에 속하는 팔로워만이 리더가 될 수 있는 후보입니다.&lt;br /&gt;
 ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지속적으로 리더의 데이터를 따라가게 되고, 리더는 ISR내의 팔로워가 모두 메세지를 받을 때까지 기다립니다.&lt;/p&gt;
 
 &lt;p&gt;그러나 만약 팔로워를 가지는 브로커가 장애로 데이터를 리플리케이션하지 못하게 되면 더이상 리더와의 데이터가 일치하지 않게되므로 해당 파티션은 ISR 그룹에서 제외되게 됩니다. (리더 파티션을 가지는 브로커에 장애가 발생하면 리더 재선출 및 파티션 재할당, 팔로워의 경우 ISR그룹에서 제외)&lt;/p&gt;
 
-&lt;p&gt;ISR 내에서 모든 팔로워의 복제가 완료되면, 리더는 내부적으로 커밋되었다는 표시를 하게됩니다. 이 때 마지막 커밋의 오프셋 위치를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;하이워터마크(high water mark)&lt;/code&gt;라고 부릅니다. 즉 커밋되었다는 것은 모든 팔로워가 리더의 데이터를 저장했음을 의미합니다. 그리고 이렇게 커밋된 메시지만 컨슈머가 읽어갈 수 있도록 함으로써 메시지의 일관성을 유지하게 됩니다.&lt;/p&gt;
+&lt;p&gt;ISR 내에서 모든 팔로워의 복제가 완료되면, 리더는 내부적으로 커밋되었다는 표시를 하게됩니다. 이 때 마지막 커밋의 오프셋 위치를 &lt;strong&gt;하이워터마크(high water mark)&lt;/strong&gt;라고 부릅니다. 즉 커밋되었다는 것은 모든 팔로워가 리더의 데이터를 저장했음을 의미합니다. 그리고 이렇게 커밋된 메시지만 컨슈머가 읽어갈 수 있도록 함으로써 메시지의 일관성을 유지하게 됩니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kafka_17.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -255,8 +255,10 @@ minikube delete
 
 &lt;p&gt;&lt;img src=&quot;../images/../../images/kube_24.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
+&lt;p&gt;(쿠버네티스를 Docker Desktop으로 실행할 때는 도커에서 제공하는 가상 머신위에 쿠버네티스 클러스터를 구성하는 것 같다. 그래서 클러스터 외부에서 쿠버네티스에 접속하려 할 때, 먼저 도커의 가상 머신 안으로 엔드포인트로 접근해야 하는데 이를 도커에서 localhost로 접근하도록 해준다. 그래서 별도로 도커 가상머신의 IP주소를 알려고 할 필요가 없다. 뇌피셜)&lt;/p&gt;
+
 &lt;h2 id=&quot;kindkubernetes-in-docker&quot;&gt;kind(Kubernetes in Docker)&lt;/h2&gt;
-&lt;p&gt;minikube와 Docker Desktop은 단일 노드로 구성된 쿠버네티스였다면, kind는 도커 컨테이너를 여러 개 띄워서 컨테이너 각각을 노드로 사용함으로써 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;멀티 노드 클러스터&lt;/code&gt;를 구축할 수 있습니다.&lt;br /&gt;
+&lt;p&gt;minikube와 Docker Desktop은 단일 노드로 구성된 쿠버네티스였다면, kind는 도커 컨테이너를 여러 개 띄워서 컨테이너 각각을 노드로 사용함으로써 &lt;strong&gt;멀티 노드 클러스터&lt;/strong&gt;를 구축할 수 있습니다.&lt;br /&gt;
 &lt;a href=&quot;https://kind.sigs.k8s.io&quot; target=&quot;_blank&quot;&gt;(kind 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;kind
@@ -393,7 +395,7 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
 &lt;hr /&gt;
 
 &lt;h1 id=&quot;kubernetes-network&quot;&gt;Kubernetes Network&lt;/h1&gt;
-&lt;p&gt;쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;파드의 IP 주소&lt;/code&gt;로 통신하면 됩니다. 또한 노드 간의 통신은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;VXLAN이나 L2 Routing&lt;/code&gt;을 이용할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 &lt;strong&gt;localhost&lt;/strong&gt;로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 &lt;strong&gt;파드의 IP 주소&lt;/strong&gt;로 통신하면 됩니다. 또한 노드 간의 통신은 &lt;strong&gt;VXLAN이나 L2 Routing&lt;/strong&gt;을 이용할 수 있습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../images/kube_25.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -406,12 +408,12 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
 &lt;/ul&gt;
 
 &lt;h1 id=&quot;clusterip&quot;&gt;ClusterIP&lt;/h1&gt;
-&lt;p&gt;ClusterIP는 서비스의 기본 타입입니다. ClusterIP 서비스를 생성하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;클러스터 내부에서만 통신 가능한 가상 IP&lt;/code&gt;가 할당됩니다. kube-proxy는 노드 안에서 ClusterIP에서 들어온 트래픽을 원하는 파드로 전송합니다.&lt;/p&gt;
+&lt;p&gt;ClusterIP는 서비스의 기본 타입입니다. ClusterIP 서비스를 생성하면 &lt;strong&gt;클러스터 내부에서만 통신 가능한 가상 IP&lt;/strong&gt;가 할당됩니다. kube-proxy는 노드 안에서 ClusterIP에서 들어온 트래픽을 원하는 파드로 전송합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../images/kube_26.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;nodeport&quot;&gt;NodePort&lt;/h1&gt;
-&lt;p&gt;NodePort는 모든 노드의 IP주소:포트에서 수신한 트래픽을 컨테이너에 전송하는 형태로 외부와 통신할 수 있습니다. NodePort는 전체 노드 N개 중 임의의 노드의 IP주소를 외부에 노출합니다. 그럼에도 ClusterIP를 통해 다른 노드의 파드로 통신하는데에는 문제 없습니다. 그러나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;노출된 IP주소의 노드는 단일 장애점(Single Point of Failure)&lt;/code&gt;이 되기 때문에 NodePort만을 이용해 외부와 통신하는 것은 분명한 한계점이 있습니다. 또한 NodePort는 쿠버네티스에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지정한 범위(30000~32767)&lt;/code&gt; 안에서만 지정할 수 있기 때문에 서비스로 활용하기에는 포트 번호가 예쁘지는 않습니다. 노드 포트 번호는 범위 안에서 직접 지정 가능하지만 쿠버네티스에서는 노드 포트 번호를 직접 지정하는 것을 지양합니다.&lt;/p&gt;
+&lt;p&gt;NodePort는 모든 노드의 IP주소:포트에서 수신한 트래픽을 컨테이너에 전송하는 형태로 외부와 통신할 수 있습니다. NodePort는 전체 노드 N개 중 임의의 노드의 IP주소를 외부에 노출합니다. 그럼에도 ClusterIP를 통해 다른 노드의 파드로 통신하는데에는 문제 없습니다. 그러나 &lt;strong&gt;노출된 IP주소의 노드는 단일 장애점(Single Point of Failure)&lt;/strong&gt;이 되기 때문에 NodePort만을 이용해 외부와 통신하는 것은 분명한 한계점이 있습니다. 또한 NodePort는 쿠버네티스에서 &lt;strong&gt;지정한 범위(30000~32767)&lt;/strong&gt; 안에서만 지정할 수 있기 때문에 서비스로 활용하기에는 포트 번호가 예쁘지는 않습니다. 노드 포트 번호는 범위 안에서 직접 지정 가능하지만 쿠버네티스에서는 노드 포트 번호를 직접 지정하는 것을 지양합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../images/kube_27.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 &lt;h1 id=&quot;loacbalancer&quot;&gt;LoacBalancer&lt;/h1&gt;
@@ -526,14 +528,14 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
 &lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot; target=&quot;_blank&quot;&gt;(Dzone 블로그 참고)&lt;/a&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;메세지-전송과정&quot;&gt;메세지 전송과정&lt;/h3&gt;
-&lt;p&gt;프로듀서가 카프카의 브로커로 데이터를 전송할 때에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ProducerRecord&lt;/code&gt;라고 하는 형태로 전송되며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Topic&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Value&lt;/code&gt;는 필수값이며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Partition&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Key&lt;/code&gt;는 선택값입니다. 프로듀서는 카프카로 레코드를 전송할 때, 카프카의 특정 토픽으로 메세지를 전송합니다. 전송 과정은&lt;/p&gt;
+&lt;p&gt;프로듀서가 카프카의 브로커로 데이터를 전송할 때에는 &lt;strong&gt;ProducerRecord&lt;/strong&gt;라고 하는 형태로 전송되며, &lt;strong&gt;Topic&lt;/strong&gt;과 &lt;strong&gt;Value&lt;/strong&gt;는 필수값이며, &lt;strong&gt;Partition&lt;/strong&gt;과 &lt;strong&gt;Key&lt;/strong&gt;는 선택값입니다. 프로듀서는 카프카로 레코드를 전송할 때, 카프카의 특정 토픽으로 메세지를 전송합니다. 전송 과정은&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;프로듀서에서 send() 메소드 호출&lt;/li&gt;
   &lt;li&gt;Serializer는 JSON, String, Avro 등의 object를 bytes로 변환&lt;/li&gt;
   &lt;li&gt;ProducerRecord에 target Partition이 있으면 해당 파티션으로 레코드 전달&lt;/li&gt;
-  &lt;li&gt;Partition이 지정되지 않았을 때, Key값이 지정되었다면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Partitioner가 Key값을 바탕으로&lt;/code&gt; 해당 파티션에 전달&lt;/li&gt;
-  &lt;li&gt;Partition, Key값이 모두 없으면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;라운드 로빈(Round-Robbin)&lt;/code&gt;방식 또는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;스티키 파티셔닝(Sticky Partitioning)&lt;/code&gt; 방식으로 메세지를 파티션에 할당&lt;/li&gt;
-  &lt;li&gt;파티션에 세그먼트 파일 형태로 저장된 레코드는 바로 전송할 수도 있고, 프로듀서의 버퍼 메모리 영역에 잠시 저장해두고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;배치로 전송할 수도 있음&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Partition이 지정되지 않았을 때, Key값이 지정되었다면 &lt;strong&gt;Partitioner가 Key값을 바탕으로&lt;/strong&gt; 해당 파티션에 전달&lt;/li&gt;
+  &lt;li&gt;Partition, Key값이 모두 없으면 &lt;strong&gt;라운드 로빈(Round-Robbin)&lt;/strong&gt;방식 또는 &lt;strong&gt;스티키 파티셔닝(Sticky Partitioning)&lt;/strong&gt; 방식으로 메세지를 파티션에 할당&lt;/li&gt;
+  &lt;li&gt;파티션에 세그먼트 파일 형태로 저장된 레코드는 바로 전송할 수도 있고, 프로듀서의 버퍼 메모리 영역에 잠시 저장해두고 &lt;strong&gt;배치로 전송할 수도 있음&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h3 id=&quot;라운드-로빈round-robbin-방식&quot;&gt;라운드 로빈(Round-Robbin) 방식&lt;/h3&gt;
@@ -572,16 +574,16 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
 &lt;/ul&gt;
 
 &lt;h3 id=&quot;컨슈머-오프셋-관리&quot;&gt;컨슈머 오프셋 관리&lt;/h3&gt;
-&lt;p&gt;컨슈머의 동작 중 가장 핵심은 바로 오프셋 관리입니다. 이를 통해 마지막 고려사항인 컨슈머 장애 발생에 대응할 수 있습니다. 오프셋 관리는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;컨슈머가 메시지를 어디까지 가져왔는지를 표시하는 것&lt;/code&gt;이라고 할 수 있습니다. 예를 들어 컨슈머가 일시적으로 동작을 멈추고 재시작하거나, 컨슈머 서버에 문제가 발생해 새로운 컨슈머가 생성된 경우 새로운 컨슈머는 기존 컨슈머의 마지막 위치에서 메시지를 가져올 수 있어야 장애를 복구할 수 있습니다. 카프카에서는 메시지의 위치를 나타내는 숫자를 오프셋이라고 하고 이러한 오프셋 정보는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__consumer_offsets&lt;/code&gt;라는 별도의 토픽에 저장합니다. 이러한 정보는 컨슈머 그룹별로 기록됩니다.&lt;/p&gt;
+&lt;p&gt;컨슈머의 동작 중 가장 핵심은 바로 오프셋 관리입니다. 이를 통해 마지막 고려사항인 컨슈머 장애 발생에 대응할 수 있습니다. 오프셋 관리는 &lt;strong&gt;컨슈머가 메시지를 어디까지 가져왔는지를 표시하는 것&lt;/strong&gt;이라고 할 수 있습니다. 예를 들어 컨슈머가 일시적으로 동작을 멈추고 재시작하거나, 컨슈머 서버에 문제가 발생해 새로운 컨슈머가 생성된 경우 새로운 컨슈머는 기존 컨슈머의 마지막 위치에서 메시지를 가져올 수 있어야 장애를 복구할 수 있습니다. 카프카에서는 메시지의 위치를 나타내는 숫자를 오프셋이라고 하고 이러한 오프셋 정보는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__consumer_offsets&lt;/code&gt;라는 별도의 토픽에 저장합니다. 이러한 정보는 컨슈머 그룹별로 기록됩니다.&lt;/p&gt;
 
-&lt;p&gt;이렇게 __consumer_offsets 토픽에 정보를 기록해 두면 컨슈머의 변경이 발생했을 때 해당 컨슈머가 어디까지 읽었는지 추적할 수 있습니다. 여기서 주의할 점은 저장되는 오프셋값은 컨슈머가 마지막으로 읽은 위치가 아니라, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;컨슈머가 다음으로 읽어야 할 위치&lt;/code&gt;를 말합니다.&lt;/p&gt;
+&lt;p&gt;이렇게 __consumer_offsets 토픽에 정보를 기록해 두면 컨슈머의 변경이 발생했을 때 해당 컨슈머가 어디까지 읽었는지 추적할 수 있습니다. 여기서 주의할 점은 저장되는 오프셋값은 컨슈머가 마지막으로 읽은 위치가 아니라, &lt;strong&gt;컨슈머가 다음으로 읽어야 할 위치&lt;/strong&gt;를 말합니다.&lt;/p&gt;
 
 &lt;p&gt;참고로 __consumer_offsets 또한 하나의 토픽이기 때문에 파티션 수와 리플리케이션 팩터 수를 설정할 수 있습니다.&lt;/p&gt;
 
 &lt;h3 id=&quot;그룹-코디네이터&quot;&gt;그룹 코디네이터&lt;/h3&gt;
 &lt;p&gt;컨슈머 그룹 내의 각 컨슈머들은 서로 정보를 공유하며 하나의 공동체로 동작합니다. 컨슈머 그룹에는 컨슈머가 떠나거나 새로 합류하는 등 변화가 일어나기 때문에 이러한 변화가 일어날 때마다 컨슈머 리밸런싱을 통해 작업을 새로 균등하게 분배해야 합니다.&lt;/p&gt;
 
-&lt;p&gt;이렇게 컨슈머 그룹내의 변화를 감지하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;트래킹하는 것이 바로 그룹 코디네이터&lt;/code&gt;입니다. 그룹 코디네이터는 컨슈머 그룹 내의 컨슈머 리더와 통신을 하고, 실제로 파티션 할당 전략에 따라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;컨슈머들에게 파티션을 할당하는 것은 컨슈머 리더&lt;/code&gt;입니다. 리더 컨슈머가 작업을 마친 뒤 그룹 코디네이터에게 전달하면 그룹 코디네이터는 해당 정보를 캐시하고 그룹 내의 컨슈머들에게 성공을 알립니다. 할당을 마치고 나면 각 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;컨슈머들은 각자 할당받은 파티션으로부터 메시지를 가져옵니다.&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;이렇게 컨슈머 그룹내의 변화를 감지하기 위해 &lt;strong&gt;트래킹하는 것이 바로 그룹 코디네이터&lt;/strong&gt;입니다. 그룹 코디네이터는 컨슈머 그룹 내의 컨슈머 리더와 통신을 하고, 실제로 파티션 할당 전략에 따라 &lt;strong&gt;컨슈머들에게 파티션을 할당하는 것은 컨슈머 리더&lt;/strong&gt;입니다. 리더 컨슈머가 작업을 마친 뒤 그룹 코디네이터에게 전달하면 그룹 코디네이터는 해당 정보를 캐시하고 그룹 내의 컨슈머들에게 성공을 알립니다. 할당을 마치고 나면 각 &lt;strong&gt;컨슈머들은 각자 할당받은 파티션으로부터 메시지를 가져옵니다.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;그룹 코디네이터는 그룹 별로 하나씩 존재하며 브로커 중 하나에 위치합니다.&lt;/p&gt;
 
@@ -627,7 +629,7 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
 &lt;h1 id=&quot;마치며&quot;&gt;마치며&lt;/h1&gt;
 &lt;p&gt;이번 포스트에서는 카프카에서 중요한 개념들에 대해 간단히 살펴보았습니다. 프로듀서는 메세지의 전송, 브로커는 저장, 컨슈머는 읽어가는 역할을 담당합니다. 또한 카프카에서 주고 받는 데이터는 토픽, 파티션, 세그먼트라는 단위로 나뉘어 처리, 저장됩니다.&lt;/p&gt;
 
-&lt;p&gt;카프카는 데이터 파이프라인의 중심에 위치하는 허브 역할을 합니다. 그렇기 때문에 카프카는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;장애 발생에 대처 가능한 안정적인 서비스를 제공&lt;/code&gt;해 줄 수 있어야 하고, 각 서비스들의 원활한 이용을 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;높은 처리량&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;데이터 유실, 중복을 해결함으로써 각 서비스에서의 이용을 원활&lt;/code&gt;하게 해주는 것이 좋습니다.&lt;/p&gt;
+&lt;p&gt;카프카는 데이터 파이프라인의 중심에 위치하는 허브 역할을 합니다. 그렇기 때문에 카프카는 &lt;strong&gt;장애 발생에 대처 가능한 안정적인 서비스를 제공&lt;/strong&gt;해 줄 수 있어야 하고, 각 서비스들의 원활한 이용을 위한 &lt;strong&gt;높은 처리량&lt;/strong&gt;, &lt;strong&gt;데이터 유실, 중복을 해결함으로써 각 서비스에서의 이용을 원활&lt;/strong&gt;하게 해주는 것이 좋습니다.&lt;/p&gt;
 
 &lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
 &lt;ul&gt;
@@ -844,7 +846,7 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
 &lt;a href=&quot;https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#resilient-distributed-datasets-rdds&quot; target=&quot;_blank&quot;&gt;(아파치 스파크 공식문서 참고)&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;다시 말하면 RDD란 스파크에서 정의한 &lt;strong&gt;분산 데이터 모델로서 병렬 처리가 가능한 요소&lt;/strong&gt; 로 구성되며 데이터를 처리하는 과정에서 &lt;strong&gt;장애가 발생하더라도 스스로 복구할 수 있는 능력&lt;/strong&gt; 을 가진 &lt;strong&gt;데이터 모델&lt;/strong&gt; 이라는 뜻입니다. RDD는 분산 데이터에 대한 모델로서 단순히 값으로 표현되는 데이터만 가리키는 것이 아니고, 분산된 &lt;strong&gt;데이터를 다루는 방법까지 포함&lt;/strong&gt; 하는 일종의 클래스와 같은 개념입니다.&lt;/p&gt;
+&lt;p&gt;다시 말하면 RDD란 스파크에서 정의한 &lt;strong&gt;분산 데이터 모델로서 병렬 처리가 가능한 요소&lt;/strong&gt;로 구성되며 데이터를 처리하는 과정에서 &lt;strong&gt;장애가 발생하더라도 스스로 복구할 수 있는 능력&lt;/strong&gt;을 가진 &lt;strong&gt;데이터 모델&lt;/strong&gt;이라는 뜻입니다. RDD는 분산 데이터에 대한 모델로서 단순히 값으로 표현되는 데이터만 가리키는 것이 아니고, 분산된 &lt;strong&gt;데이터를 다루는 방법까지 포함&lt;/strong&gt;하는 일종의 클래스와 같은 개념입니다.&lt;/p&gt;
 
 &lt;p&gt;RDD에서 중요한 특징은 다음과 같습니다.&lt;/p&gt;
 
@@ -866,7 +868,7 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
 
 &lt;h2 id=&quot;게으른-연산lazy-operation&quot;&gt;게으른 연산(Lazy Operation)&lt;/h2&gt;
 
-&lt;p&gt;RDD의 연산은 크게 &lt;strong&gt;트랜스포메이션&lt;/strong&gt; 과 &lt;strong&gt;액션&lt;/strong&gt; 이라는 두 종류로 나눌 수 있습니다.&lt;/p&gt;
+&lt;p&gt;RDD의 연산은 크게 &lt;strong&gt;트랜스포메이션&lt;/strong&gt; 과 &lt;strong&gt;액션&lt;/strong&gt;이라는 두 종류로 나눌 수 있습니다.&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;트랜스포메이션: RDD1 -&amp;gt; RDD2 이런식으로 새로운 RDD를 만들어내는 연산, 대표적으로 map 함수&lt;/li&gt;
   &lt;li&gt;액션: RDD -&amp;gt; 다른 형태의 데이터를 만들어내는 연산, 대표적으로 reduce 함수&lt;br /&gt;
@@ -1550,10 +1552,10 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 &lt;h2 id=&quot;도커의-등장&quot;&gt;도커의 등장&lt;/h2&gt;
 &lt;p&gt;2013년 도커가 등장하기 전까지 서버 관리는 굉장히 어렵고 컨트롤하기 어려운 것으로 여겨졌습니다. 하나의 서비스를 제공하기 위해서는 보통 수십에서 수백개의 애플리케이션이 서로 연결되어 동작하는데, 이 때 오류가 나게 되면 어디서 문제가 생긴건지 파악하기가 쉽지 않았습니다.&lt;/p&gt;
 
-&lt;p&gt;이러한 문제를 해결하기 위해 사람들은 &lt;strong&gt;가상화 기술&lt;/strong&gt; 을 이용해 서버를 애플리케이션별로 격리시키고자 하였습니다. 이 때 크게 두가지 방법으로 접근할 수 있는데, 하나는 &lt;strong&gt;가상머신&lt;/strong&gt; 을 이용해 컴퓨팅 리소스를 따로 분리하여 사용하도록 하는 것이었습니다. 하지만 이 방법은 컴퓨팅 성능을 떨어트립니다.&lt;br /&gt;
-두 번째 방법은 LXC(LinuX Containers)라는 &lt;strong&gt;리눅스 커널 기술&lt;/strong&gt; 로 기존의 하드웨어 레벨에서 하던 방식을 운영체제 레벨에서 해결하도록 했습니다. 이렇게 하면 컴퓨팅 성능도 떨어트리지 않으면서, 파일시스템, 리소스(CPU, 메모리, 네트워크)를 분리할 수 있습니다. 하지만 이 방법은 사용하기에는 운영체제에 대한 깊은 이해를 필요로 해서 많은 개발자들이 쉽게 쓰기는 힘들었습니다.&lt;/p&gt;
+&lt;p&gt;이러한 문제를 해결하기 위해 사람들은 &lt;strong&gt;가상화 기술&lt;/strong&gt;을 이용해 서버를 애플리케이션별로 격리시키고자 하였습니다. 이 때 크게 두가지 방법으로 접근할 수 있는데, 하나는 &lt;strong&gt;가상머신&lt;/strong&gt;을 이용해 컴퓨팅 리소스를 따로 분리하여 사용하도록 하는 것이었습니다. 하지만 이 방법은 컴퓨팅 성능을 떨어트립니다.&lt;br /&gt;
+두 번째 방법은 LXC(LinuX Containers)라는 &lt;strong&gt;리눅스 커널 기술&lt;/strong&gt;로 기존의 하드웨어 레벨에서 하던 방식을 운영체제 레벨에서 해결하도록 했습니다. 이렇게 하면 컴퓨팅 성능도 떨어트리지 않으면서, 파일시스템, 리소스(CPU, 메모리, 네트워크)를 분리할 수 있습니다. 하지만 이 방법은 사용하기에는 운영체제에 대한 깊은 이해를 필요로 해서 많은 개발자들이 쉽게 쓰기는 힘들었습니다.&lt;/p&gt;
 
-&lt;p&gt;이 때 등장한 것이 바로 도커입니다. 도커가 등장하게 되면서 &lt;strong&gt;컨테이너 기술&lt;/strong&gt; 에 대한 접근성이 훨씬 좋아지게 되자, 개발자들은 이제 모든 애플리케이션을 컨테이너화하여 사용하기 시작했습니다. 이렇게 도커는 인프라 세계를 컨테이너 세상으로 바꿔버렸습니다. 수많은 애플리케이션이 컨테이너로 배포되고 도커파일을 만들어 이미지를 빌드하고 컨테이너를 배포하는 게 흔한 개발 프로세스가 되었습니다.&lt;/p&gt;
+&lt;p&gt;이 때 등장한 것이 바로 도커입니다. 도커가 등장하게 되면서 &lt;strong&gt;컨테이너 기술&lt;/strong&gt;에 대한 접근성이 훨씬 좋아지게 되자, 개발자들은 이제 모든 애플리케이션을 컨테이너화하여 사용하기 시작했습니다. 이렇게 도커는 인프라 세계를 컨테이너 세상으로 바꿔버렸습니다. 수많은 애플리케이션이 컨테이너로 배포되고 도커파일을 만들어 이미지를 빌드하고 컨테이너를 배포하는 게 흔한 개발 프로세스가 되었습니다.&lt;/p&gt;
 
 &lt;p&gt;(도커에 관한 더 자세한 내용은 &lt;a href=&quot;&quot;&gt;여기&lt;/a&gt;를 참고하시기 바랍니다)&lt;/p&gt;
 
@@ -1561,7 +1563,7 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 
 &lt;p&gt;&lt;img src=&quot;/images/kube_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;이렇게 서비스 하나를 배포하기 위해 수많은 컨테이너를 띄우고, 연결하고, 버전업을 해야하는 상황이 생긴겁니다. 그래서 개발자들은 이제 컨테이너들을 동시에 띄우고 관리까지 해주는 &lt;strong&gt;컨테이너 오케스트레이션&lt;/strong&gt; 기술이 필요해지게 되었습니다.&lt;/p&gt;
+&lt;p&gt;이렇게 서비스 하나를 배포하기 위해 수많은 컨테이너를 띄우고, 연결하고, 버전업을 해야하는 상황이 생긴겁니다. 그래서 개발자들은 이제 컨테이너들을 동시에 띄우고 관리까지 해주는 &lt;strong&gt;컨테이너 오케스트레이션&lt;/strong&gt;기술이 필요해지게 되었습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kube_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
@@ -1605,7 +1607,7 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 
 &lt;p&gt;&lt;img src=&quot;/images/kube_6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;쿠버네티스에서 가장 중요한 것은 &lt;strong&gt;desired state(원하는 상태)&lt;/strong&gt; 라는 개념입니다. 원하는 상태라 함은 관리자가 바라는 환경을 의미하고 좀 더 구체적으로는 얼마나 많은 웹서버가 떠 있으면 좋은지, 몇 번 포트로 서비스하기를 원하는지 등을 말합니다.&lt;br /&gt;
+&lt;p&gt;쿠버네티스에서 가장 중요한 것은 &lt;strong&gt;desired state(원하는 상태)&lt;/strong&gt;라는 개념입니다. 원하는 상태라 함은 관리자가 바라는 환경을 의미하고 좀 더 구체적으로는 얼마나 많은 웹서버가 떠 있으면 좋은지, 몇 번 포트로 서비스하기를 원하는지 등을 말합니다.&lt;br /&gt;
 쿠버네티스는 복잡하고 다양한 작업을 하지만 자세히 들여다보면 현재 상태current state를 모니터링하면서 관리자가 설정한 원하는 상태를 유지하려고 내부적으로 이런저런 작업을 하는 로직을 가지고 있습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/kube_7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
@@ -1620,7 +1622,7 @@ kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; env-config.yml
 
 &lt;p&gt;&lt;img src=&quot;/images/kube_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;다음 포스트에서는 서버가 넉넉하지 않은 상황에서 사용할 수 있는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minikube&lt;/code&gt;를 설치, 그리고 쿠버네티스에 명령어를 전달할 때 사용하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl&lt;/code&gt; 설치해보겠습니다.&lt;br /&gt;
+&lt;p&gt;다음 포스트에서는 서버가 넉넉하지 않은 상황에서 사용할 수 있는 &lt;strong&gt;minikube&lt;/strong&gt;를 설치, 그리고 쿠버네티스에 명령어를 전달할 때 사용하는 &lt;strong&gt;kubectl&lt;/strong&gt; 설치해보겠습니다.&lt;br /&gt;
 그리고 도커에서는 컨테이너를 띄우지만 쿠버네티스에서는 컨테이너를 관리할 수 있도록 조금 더 패키징한 다양한 오브젝트를 띄우게 되는데 이 때 어떠한 오브젝트들이 있는지도 배워보도록 하겠습니다.&lt;/p&gt;
 
 &lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
