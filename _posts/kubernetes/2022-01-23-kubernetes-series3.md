@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Kubernetes Series [Part3]: Kubernetes Service'
-description: 
+description: 쿠버네티스에서는 Service 리소스를 이용하면 다음과 같은 장점을 얻을 수 있습니다. 
 date:   2022-01-23 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
 categories: devops
