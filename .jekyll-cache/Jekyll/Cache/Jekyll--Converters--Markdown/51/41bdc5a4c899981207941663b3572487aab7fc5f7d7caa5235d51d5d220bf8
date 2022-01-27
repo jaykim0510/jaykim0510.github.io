@@ -1,0 +1,116 @@
+I"�)<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#kafka의-주요-구성요소" id="markdown-toc-kafka의-주요-구성요소">Kafka의 주요 구성요소</a>    <ul>
+      <li><a href="#topic-partition-segment" id="markdown-toc-topic-partition-segment">Topic, Partition, Segment</a></li>
+      <li><a href="#producer" id="markdown-toc-producer">Producer</a>        <ul>
+          <li><a href="#메세지-전송과정" id="markdown-toc-메세지-전송과정">메세지 전송과정</a></li>
+          <li><a href="#라운드-로빈round-robbin-방식" id="markdown-toc-라운드-로빈round-robbin-방식">라운드 로빈(Round-Robbin) 방식</a></li>
+          <li><a href="#스티키-파티셔닝sticky-partitioning-방식" id="markdown-toc-스티키-파티셔닝sticky-partitioning-방식">스티키 파티셔닝(Sticky Partitioning) 방식</a></li>
+          <li><a href="#중복-없는-전송" id="markdown-toc-중복-없는-전송">중복 없는 전송</a></li>
+          <li><a href="#정확히-한-번-전송" id="markdown-toc-정확히-한-번-전송">정확히 한 번 전송</a></li>
+        </ul>
+      </li>
+      <li><a href="#broker" id="markdown-toc-broker">Broker</a></li>
+      <li><a href="#consumer" id="markdown-toc-consumer">Consumer</a></li>
+    </ul>
+  </li>
+  <li><a href="#마치며" id="markdown-toc-마치며">마치며</a></li>
+  <li><a href="#참고자료" id="markdown-toc-참고자료">참고자료</a></li>
+</ul>
+
+<hr />
+
+<h1 id="kafka의-주요-구성요소">Kafka의 주요 구성요소</h1>
+<p>Kafka는 크게 3가지로 이루어 있습니다.</p>
+<ul>
+  <li>Producer: Kafka로 메시지를 보내는 모든 클라이언트</li>
+  <li>Broker: 메시지를 분산 저장 및 관리하는 Kafka 애플리케이션이 설치된 서버</li>
+  <li>Consumer: Kafka에서 메시지를 꺼내서 사용하는 모든 클라이언트</li>
+</ul>
+
+<p><img src="/images/kafka_7.png" alt="" />
+<a href="https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html" target="_blank">(참고: cloudkarafka)</a></p>
+
+<h2 id="topic-partition-segment">Topic, Partition, Segment</h2>
+<p>Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으로 구성, 저장되는지에 대해 짚고 넘어가려고 합니다.</p>
+<ul>
+  <li>Topic: 메시지가 저장될 카테고리 이름 (논리적인 저장소)</li>
+  <li>Partition: 병렬 처리를 위해 Topic을 여러 개로 나눈 것 (Server 디스크에 저장된 디렉토리)</li>
+  <li>Segment: 메시지가 실제로 저장되는 파일</li>
+</ul>
+
+<p><img src="/images/kafka_8.png" alt="" /></p>
+
+<p><img src="/images/kafka_9.png" alt="" /></p>
+
+<p><img src="/images/kafka_6.png" alt="" /><br />
+<a href="https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html" target="_blank">(참고: cloudkarafka)</a></p>
+
+<p>카프카를 실행하게 되면 보통 토픽을 가장 먼저 생성합니다. 그리고 토픽은 병렬 처리를 통한 성능 향상을 위해 파티션으로 나뉘어 구성됩니다. 그리고 프로듀서가 카프카로 전송한 메시지는 해당 토픽 내 각 파티션의 로그 세그먼트에 저장됩니다. 따라서 프로듀서는 토픽으로 메시지를 보낼 때 해당 토픽의 어느 파티션으로 메시지를 보낼지를 결정해야 합니다.</p>
+
+<h2 id="producer">Producer</h2>
+<p>프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.</p>
+
+<p><img src="/images/kafka_13.webp" alt="" /><br />
+<a href="https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api" target="_blank">(Dzone 블로그 참고)</a></p>
+
+<h3 id="메세지-전송과정">메세지 전송과정</h3>
+<p>프로듀서가 카프카의 브로커로 데이터를 전송할 때에는 <code class="language-plaintext highlighter-rouge">ProducerRecord</code>라고 하는 형태로 전송되며, <code class="language-plaintext highlighter-rouge">Topic</code>과 <code class="language-plaintext highlighter-rouge">Value</code>는 필수값이며, <code class="language-plaintext highlighter-rouge">Partition</code>과 <code class="language-plaintext highlighter-rouge">Key</code>는 선택값입니다. 프로듀서는 카프카로 레코드를 전송할 때, 카프카의 특정 토픽으로 메세지를 전송합니다. 전송 과정은</p>
+<ul>
+  <li>프로듀서에서 send() 메소드 호출</li>
+  <li>Serializer는 JSON, String, Avro 등의 object를 bytes로 변환</li>
+  <li>ProducerRecord에 target Partition이 있으면 해당 파티션으로 레코드 전달</li>
+  <li>Partition이 지정되지 않았을 때, Key값이 지정되었다면 <code class="language-plaintext highlighter-rouge">Partitioner가 Key값을 바탕으로</code> 해당 파티션에 전달</li>
+  <li>Partition, Key값이 모두 없으면 <code class="language-plaintext highlighter-rouge">라운드 로빈(Round-Robbin)</code>방식 또는 <code class="language-plaintext highlighter-rouge">스티키 파티셔닝(Sticky Partitioning)</code> 방식으로 메세지를 파티션에 할당</li>
+  <li>파티션에 세그먼트 파일 형태로 저장된 레코드는 바로 전송할 수도 있고, 프로듀서의 버퍼 메모리 영역에 잠시 저장해두고 <code class="language-plaintext highlighter-rouge">배치로 전송할 수도 있음</code></li>
+</ul>
+
+<h3 id="라운드-로빈round-robbin-방식">라운드 로빈(Round-Robbin) 방식</h3>
+<p>프로듀서의 메시지에서 키값은 필수값이 아니므로, 값이 null일 수도 있습니다. 그럴 경우 기본적인 메세지 할당 방식은 라운드 로빈 방식 입니다.</p>
+
+<p><img src="/images/kafka_30.png" alt="" /></p>
+
+<p>메시지를 위 그림과 같이 순차적으로 파티션에 할당합니다. 하지만 이 방법은 배치 전송을 할 경우 배치 사이즈가 3일 때, 메시지를 5개 보내는 동안에도 카프카로 전송되지 못한채 프로듀서의 버퍼 메모리 영역에서 대기하고 있습니다. 이러한 비효율적인 전송을 보완하기 위해 카프카에서는 스티키 파티셔닝 방식을 공개했습니다.</p>
+
+<h3 id="스티키-파티셔닝sticky-partitioning-방식">스티키 파티셔닝(Sticky Partitioning) 방식</h3>
+<p>라운드 로빈 방식의 비효율적인 전송을 개선하기 위해 아파치 카프카 2.4버전부터는 스티키 파티셔닝 방식을 사용하고 있습니다. 스키티 파티셔닝이란 하나의 파티션에 레코드를 먼저 채워 카프카로 빠르게 배치 전송하는 방식을 말합니다.</p>
+
+<p><img src="/images/kafka_29.png" alt="" /><br />
+이렇게 파티셔너는 배치를 위한 레코드 수에 도달할 때까지 파티션 한 곳에만 메시지를 담아놓습니다. 이러한 미묘한 변화가 프로듀서 성능을 높일 수 있는지 의구심이 들지만 컨플루언트에서는 블로그에서 약 30% 이상 지연시간이 감소되었다고 합니다.</p>
+
+<p><img src="/images/kafka_31.png" alt="" /><br />
+(linger.ms는 배치 전송을 위해 버퍼 메모리에서 메시지가 대기하는 최대시간입니다.)</p>
+<h3 id="중복-없는-전송">중복 없는 전송</h3>
+
+<h3 id="정확히-한-번-전송">정확히 한 번 전송</h3>
+
+<h2 id="broker">Broker</h2>
+<p>브로커는 Topic내의 Partition들을 분산 저장, 관리해줍니다. 하나의 브로커에는 Topic의 모든 데이터를 가지고 있지 않고, 일부분(Partition)만 가지게 됩니다. 보통 Broker를 최소 3대 이상으로 구성해 Kafka cluster를 형성합니다.</p>
+
+<h2 id="consumer">Consumer</h2>
+<p>컨슈머는 브로커에 저장되어 있는 메시지를 가져오는 역할을 합니다. 그러나 단순히 가져오는 역할만 하지는 않고, 조금 더 자세히 들여다 보면 컨슈머 그룹을 만들고, 그룹 내 모든 컨슈머가 파티션을 골고루 가져오도록 하는 리밸런싱과 같은 역할도 합니다. 컨슈머 수는 파티션 수보다 작거나 같도록 하는 것이 바람직합니다.</p>
+
+<p><img src="/images/kafka_10.png" alt="" /></p>
+
+<p>컨슈머 그룹 내에 있는 컨슈머들은 서로 협력하여 메시지를 처리합니다. 이 때 Partition은 같은 그룹에 있는 컨슈머 중 한 개의 컨슈머에 의해서만 소비됩니다. (같은 그룹에 있는 여러 컨슈머가 한 개의 Partition을 소비하면 메시지 중복 문제를 해결하는데 또 비용이 든다) 컨슈머에서 고려해야 할 사항에는 다음과 같은 것들이 있습니다.</p>
+<ul>
+  <li>파티션 할당 전략</li>
+  <li>프로듀서가 브로커에 메세지를 저장하는 속도와 컨슈머가 읽어가는 속도가 비슷한가</li>
+  <li>컨슈머의 개수가 파티션보다 많지는 않은가</li>
+  <li>컨슈머 그룹 내에 장애가 발생한 컨슈머가 생기면 어떻게 처리할 것인가</li>
+</ul>
+
+<h1 id="마치며">마치며</h1>
+<p>이번 포스트에서는 카프카에서 중요한 개념들에 대해 간단히 살펴보았습니다. 프로듀서는 메세지의 전송, 브로커는 저장, 컨슈머는 읽어가는 역할을 담당합니다. 또한 카프카에서 주고 받는 데이터는 토픽, 파티션, 세그먼트라는 단위로 나뉘어 처리, 저장됩니다.</p>
+
+<p>카프카는 데이터 파이프라인의 중심에 위치하는 허브 역할을 합니다. 그렇기 때문에 카프카는 <code class="language-plaintext highlighter-rouge">장애 발생에 대처 가능한 안정적인 서비스를 제공</code>해 줄 수 있어야 하고, 각 서비스들의 원활한 이용을 위한 <code class="language-plaintext highlighter-rouge">높은 처리량</code>, <code class="language-plaintext highlighter-rouge">데이터 유실, 중복을 해결함으로써 각 서비스에서의 이용을 원활</code>하게 해주는 것이 좋습니다.</p>
+
+<p>다음 포스트에서는 이러한 역할을 어떤 방식으로 제공해주었는지 살펴보며 그 과정에서 필요한 개념들을 하나씩 배워가도록 하겠습니다.</p>
+
+<h1 id="참고자료">참고자료</h1>
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;ejkGb=KOR&amp;barcode=9791189909345" target="_blank">실전 카프카 개발부터 운영까지 책</a></li>
+  <li><a href="https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api" target="_blank">Dzone 블로그</a></li>
+  <li><a href="https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002" target="_blank">CodeX 블로그</a></li>
+</ul>
+:ET

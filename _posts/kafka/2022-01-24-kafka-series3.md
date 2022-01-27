@@ -7,6 +7,12 @@ image:  '/images/kafka_logo.png'
 categories:   DE
 tags: Kafka
 ---
+**Table of Contents**
+{: #toc }
+*  TOC
+{:toc}
+
+---  
 
 # Fault tolerance in Kafka
 카프카는 데이터 파이프라인의 중앙에 위치하는 메인 허브 역할을 합니다. 그래서 만약 하드웨어의 문제나 네트워크의 장애로 인해 정상적으로 동작하지 못한다면, 카프카에 연결된 모든 파이프라인에 심각한 영향을 미치게 됩니다. 이러한 이유로 카프카는 초기 설계 단계에서부터 장애가 발생하더라도 안정적인 서비스를 제공할 수 있도록 구상됐습니다.  
