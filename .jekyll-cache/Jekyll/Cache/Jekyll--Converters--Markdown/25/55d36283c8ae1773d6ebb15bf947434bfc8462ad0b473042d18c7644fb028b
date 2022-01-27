@@ -1,0 +1,109 @@
+I"f0<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#kubernetes-basics" id="markdown-toc-kubernetes-basics">Kubernetes Basics</a></li>
+  <li><a href="#localhost-ip-address-127001" id="markdown-toc-localhost-ip-address-127001">Localhost (IP address 127.0.0.1)</a></li>
+  <li><a href="#pod-network" id="markdown-toc-pod-network">Pod network</a></li>
+  <li><a href="#service-network" id="markdown-toc-service-network">Service network</a></li>
+  <li><a href="#inside-and-outside-traffic" id="markdown-toc-inside-and-outside-traffic">Inside and outside traffic</a>    <ul>
+      <li><a href="#nodeport-type" id="markdown-toc-nodeport-type">NodePort type</a></li>
+      <li><a href="#loadbalancer-type" id="markdown-toc-loadbalancer-type">LoadBalancer type</a></li>
+      <li><a href="#ingress-resource" id="markdown-toc-ingress-resource">Ingress resource</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p><a href="https://developer.ibm.com/articles/kubernetes-networking-what-you-need-to-know/" target="_blank">원문: Kubernetes networking for developers - IBM developers</a></p>
+
+<p>불과 몇 년 전까지만 하더라도 개발자들이 네트워크에 대해 알아야 할 지식은 그렇게 많지 않았습니다. 그들은 그들의 코드를 작성하고 로컬에서 동작하는지 확인한 후 테스트나 서비스를 위한 서버에 배포할 수 있었으면 됐었습니다.</p>
+
+<p>그러나 시간이 지나면서 컨테이너 기술이 점점 발전되어가며 이런 추세가 약간 변하기 시작했습니다. 이번 글을 통해 컨테이너 기반의 배포환경에서 개발자들이 알아두면 좋은 네트워크 지식에 대해 알아보도록 하겠습니다.</p>
+
+<h1 id="kubernetes-basics">Kubernetes Basics</h1>
+
+<p>컨테이너는 한 개의 어플리케이션 또는 프로세스로 이들을 실행시키기 위해 필요한 모든 것들이 포함되어 있습니다. 어플리케이션 관점에서 컨테이너는 마치 서버위에 동작중인 하나의 운영체제처럼 보입니다. 컨테이너는 컨테이너만의 네트워크 인터페이스, 파일 시스템 등 필요한 모든 것들을 갖추고 있습니다.</p>
+
+<p>쿠버네티스는 이러한 컨테이너의 집합으로 컨테이너는 쿠버네티스의 워커 노드 안에서 돌아갑니다. 만약 항상 함께 설치되어야 하는 두 개의 어플리케이션이 있다면 이 두 개의 어플리케이션을 가진 컨테이너 두 개를 하나의 <strong>파드(Pod)</strong>로 정의할 수 있습니다. (파드는 확장가능한 단위로 보통 특정 노드에 장애가 발생할 경우 파드에 문제가 생기는 경우를 대비해, 여러 워커 노드에 파드를 분산 배포합니다.)</p>
+
+<p><img src="../../images/kube_31.png" alt="" /></p>
+
+<h1 id="localhost-ip-address-127001">Localhost (IP address 127.0.0.1)</h1>
+<p>같은 파드내에 있는 컨테이너들은 같은 노드 안에서 실행됩니다. 쿠버네티스는 이러한 구조의 장점을 이용해 파드에 <strong>공유되는 네트워크 네임스페이스</strong>를 각각 제공합니다. 네트워크 네임스페이스는 리눅스 커널의 특징 중 하나로 네트워크 자원들을 그룹으로 만들 수 있습니다.</p>
+
+<p>이러한 그룹내에서 실행되는 프로세스들은 그룹 안에 정의된 네트워크 리소스만 볼 수 있습니다. 예를 들어, 파드 A는 네트워크 네임스페이스가 A인 네트워크 리소스만 볼 수 있습니다. 이것이 바로 쿠버네티스가 파드들을 각각 독립시킬 수 있는 방법입니다. 예를 들어, 파드 A가 포트 80번으로 리스닝하고 있다면, 파드 B는 80번으로 리스닝하지 못하도록 막습니다.</p>
+
+<p><img src="../../images/kube_32.png" alt="" /></p>
+
+<p>Network namespaces matter because when all containers run in a pod, they all share the same network namespace. While containers inside the same pod can talk to each other over localhost, they can’t listen on the same port.</p>
+
+<h1 id="pod-network">Pod network</h1>
+<p>Much like how virtual servers can be assigned an IP address, pods are assigned an IP address. Containers running in a pod can bind to ports on the pod IP address, just like processes running on a virtual server can bind to ports on its IP address. In this way, a Kubernetes pod is very much like a virtual server from a networking perspective.</p>
+
+<p>The IP addresses used come from an addresses block known as the pod network. Each time a pod is spun up, Kubernetes pulls an available IP address from the pod network and assigns it to the pod before turning it on. Pods all appear to be on the same network and can communicate with each other over this network (by default). There are network policies that can limit what a pod can talk to, but by default they are free to talk to each other.</p>
+
+<p>From a development perspective, there are a couple of points to note here. An IP address that is assigned to a pod stays with the pod until the pod is deleted. Therefore, if a container crashes and restarts, it has the same IP address as it did before it crashed. In contrast, when a pod is deleted, it loses its IP address all together.</p>
+
+<p>It’s generally a bad development practice to depend on this behavior because pods are commonly deleted and created either during a scaling operation, or when rebalancing the pods in the cluster. Consider a common scenario: when a worker node dies, the pods that were running on the worker node are created again on another worker node, getting a new pod IP address.</p>
+
+<p>The bottom line here is your application needs to be completely independent of IP addresses, or be able to handle IP address changes of application instances. Do not depend on your application IP address to remain static.</p>
+
+<h1 id="service-network">Service network</h1>
+<p>The previous section described how pod IP addresses are dynamic, and change as pods are created and deleted. So how then are pods expected to know where other pods are and communicate with each other? The answer is a Kubernetes Service. A Kubernetes Service is a definition that describes a domain name and which pods traffic is directed to. For example:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">web</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">my-app</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">web-server</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">web</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div></div>
+
+<p>The previous service example would create a web.my-app.svc.cluster.local DNS entry that resolves to an IP address on the service network. The service network is similar to the pod network, except that the IPs are assigned to services, not pods. The IP address of the service stays with the service until the service is deleted. The service IP assigned balances the load of traffic to all pods that match the service’s spec.selector definition. In the previous example, any pod with metadata.labels.app equal to web-server, would be considered to send traffic to on port 80.</p>
+
+<p><img src="../../images/kube_33.png" alt="" /></p>
+
+<p>By default, services are the ClusterIP type. However, the following types are supported:</p>
+
+<ul>
+  <li>ClusterIP</li>
+  <li>NodePort</li>
+  <li>LoadBalancer</li>
+  <li>ExternalName</li>
+</ul>
+
+<p>Most likely, your application depends on external services or applications. Instead of the IP address of those endpoints, use domain names and let Kubernetes worry about the actual IP. So instead of configuring your application to talk to https://172.30.102.188/stuff, configure it to talk to https://web.my-app.svc.cluster.local/stuff and let Kubernetes address the other needed networking tasks.</p>
+
+<p>If your application exposes an endpoint, you should expect to create a Kubernetes service to expose it to the cluster. Also note that you can include any combination of ports and protocols in a single service in case you need to listen on multiple ports.</p>
+
+<h1 id="inside-and-outside-traffic">Inside and outside traffic</h1>
+<p>So far, this article dealt with traffic within a Kubernetes cluster. This section discusses how services can communicate outside the cluster. Both the pod network and service network are address spaces that only exist within the Kubernetes cluster. You can’t reach these addresses from the outside.</p>
+
+<p>In order to accommodate external traffic, Kubernetes created constructs that allow its services to join with real address spaces outside the cluster. These constructs build on one another and are denoted by the service type (such as ClusterIP, NodePort, LoadBalancer). A service of the type NodePort includes the functionality of the type ClusterIP. A service of the type LoadBalancer includes the functionality of the type NodePort. (The only exception is ExternalName, which is not discussed in this article.)</p>
+
+<h2 id="nodeport-type">NodePort type</h2>
+<p>Each worker node in the cluster has one or more IP addresses assigned to it. These IP addresses are the physical IPs (instead of the virtualized pod and service networks) that the worker nodes communicate over. Worker nodes have a private IP assigned, but if your cluster is exposed to the oustide world, it might have both a private and a public IP address assigned.</p>
+
+<p>When a service is of the type NodePort, it picks a random port with a range (default: 30000-32767) to expose the traffic on. This port is opened up on all worker nodes. When traffic hits that port, it balances the load of traffic to a pod, just like it does when the service is of type ClusterIP. NodePort. Effectively, it just binds a random port on all worker nodes to your service, allowing external services to communicate with it. Sending traffic to any worker node on that port gets the traffic to the right place.</p>
+
+<h2 id="loadbalancer-type">LoadBalancer type</h2>
+<p>While NodePort gets the job done, it’s not very useful by itself. It’s not great to tell users to talk to you service at http://some.external.domain:31633/stuff. Kubernetes allows external load balancers to integrate by creating the service of the type LoadBalancer. The options available for this type are dependent on the cloud provider. Basically, it allows you to define an external IP address on a port of your choosing, and have that traffic automatically directed to the auto-assigned port on the worker node.</p>
+
+<p>LoadBalancer type services are NodePort type services, except they orchestrate an external non-worker node IP to point to the randomly assigned port on the worker node.</p>
+
+<p><img src="../../images/kube_34.png" alt="" /></p>
+
+<p>Because the IP address used is external to the Kubernetes cluster, it doesn’t matter if that IP is a public IP or a private IP. The behavior is the same.</p>
+
+<h2 id="ingress-resource">Ingress resource</h2>
+<p>Ingress is not a type of Kubernetes Service, but it works in conjunction with them. An ingress is a Kubernetes resource that allows HTTP/HTTPS traffic to be routed to services based on the HTTP routes in the request. It allows you to route https://my-domain.com/service_a to service_a.my-app.svc.cluster.local, and https://my-domain.com/service_b to service_b.my-app.svc.cluster.local.</p>
+
+<p>For application design and development, the ingress resource can affect how you expose your applications to the outside world and affect the service architecture you decide to use.</p>
+:ET
