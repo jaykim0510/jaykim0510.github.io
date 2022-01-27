@@ -2,7 +2,7 @@
 layout: page
 title: About
 permalink: /about/
-image: '/images/01-2.jpg'
+image: '/images/her_logo_3.png'
 ---
 
 Leverage agile frameworks to provide a robust Hugo Sousa synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
