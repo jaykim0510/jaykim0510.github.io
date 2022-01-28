@@ -1,0 +1,226 @@
+I":<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#kafka-on-kubernetes" id="markdown-toc-kafka-on-kubernetes">Kafka on Kubernetes</a></li>
+  <li><a href="#쿠버네티스-클러스터-구축" id="markdown-toc-쿠버네티스-클러스터-구축">쿠버네티스 클러스터 구축</a>    <ul>
+      <li><a href="#단일-노드-클러스터" id="markdown-toc-단일-노드-클러스터">단일 노드 클러스터</a>        <ul>
+          <li><a href="#minikube" id="markdown-toc-minikube">minikube</a></li>
+          <li><a href="#docker-desktop" id="markdown-toc-docker-desktop">Docker Desktop</a></li>
+        </ul>
+      </li>
+      <li><a href="#멀티-노드-클러스터" id="markdown-toc-멀티-노드-클러스터">멀티 노드 클러스터</a>        <ul>
+          <li><a href="#kind" id="markdown-toc-kind">kind</a></li>
+          <li><a href="#클라우드-환경gke-eks" id="markdown-toc-클라우드-환경gke-eks">클라우드 환경(GKE, EKS)</a></li>
+        </ul>
+      </li>
+      <li><a href="#쿠버네티스-gui-도구-lens" id="markdown-toc-쿠버네티스-gui-도구-lens">쿠버네티스 GUI 도구: Lens</a></li>
+    </ul>
+  </li>
+  <li><a href="#카프카-메니페스트-작성" id="markdown-toc-카프카-메니페스트-작성">카프카 메니페스트 작성</a>    <ul>
+      <li><a href="#loadbalancer-생성" id="markdown-toc-loadbalancer-생성">LoadBalancer 생성</a></li>
+      <li><a href="#zookeeper-설치" id="markdown-toc-zookeeper-설치">zookeeper 설치</a></li>
+    </ul>
+  </li>
+  <li><a href="#카프카-클라이언트" id="markdown-toc-카프카-클라이언트">카프카 클라이언트</a></li>
+  <li><a href="#카프카-모니터링" id="markdown-toc-카프카-모니터링">카프카 모니터링</a></li>
+</ul>
+
+<hr />
+
+<h1 id="kafka-on-kubernetes">Kafka on Kubernetes</h1>
+
+<h1 id="쿠버네티스-클러스터-구축">쿠버네티스 클러스터 구축</h1>
+<p>쿠버네티스 클러스터를 구축하는 방법에 대해서는 <a href="http://jaykim0510.github.io/kubernetes-series4">Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기</a>를 참고하시면 됩니다.</p>
+
+<h2 id="단일-노드-클러스터">단일 노드 클러스터</h2>
+<h3 id="minikube">minikube</h3>
+<p>미니큐브는 물리 머신에 로컬 쿠버네티스를 쉽게 구축하고 실행할 수 있는 도구입니다. 실행되는 쿠버네티스는 <strong>단일 노드 구성</strong>이기 때문에 여러 대의 구성이 필요한 쿠버네티스 기능은 사용할 수 없습니다. 또한 미니큐브는 로컬 가상 머신 위에 쿠버네티스를 설치하기 때문에 <strong>하이퍼바이저(Docer, Hyperkit, VirtualBox, ..)가 필요</strong>합니다. 제가 현재 사용하고 있는 맥 환경에서는 기본적으로 하이퍼킷이 설치되어 있습니다. 하지만 m1칩의 경우에는 아직 하이퍼킷을 지원하지 않기 때문에 먼저 도커를 설치, 실행한 후 미니큐브를 실행하셔야 합니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew <span class="nb">install </span>minikube
+
+minikube version
+<span class="c"># minikube version: v1.25.1</span>
+
+minikube start <span class="nt">--driver</span><span class="o">=</span>docker <span class="c"># --kubernetes-version 옵션으로 버전 선택 가능</span>
+<span class="nt">--------------------------------------------------------------------------------</span>
+😄  Darwin 12.1 <span class="o">(</span>arm64<span class="o">)</span> 의 minikube v1.25.1
+✨  유저 환경 설정 정보에 기반하여 docker 드라이버를 사용하는 중
+👍  minikube 클러스터의 minikube 컨트롤 플레인 노드를 시작하는 중
+🚜  베이스 이미지를 다운받는 중 ...
+💾  쿠버네티스 v1.23.1 을 다운로드 중 ...
+    <span class="o">&gt;</span> preloaded-images-k8s-v16-v1...: 417.88 MiB / 417.88 MiB  100.00% 9.58 MiB
+    <span class="o">&gt;</span> gcr.io/k8s-minikube/kicbase: 343.02 MiB / 343.02 MiB  100.00% 3.90 MiB p/
+🔥  Creating docker container <span class="o">(</span><span class="nv">CPUs</span><span class="o">=</span>2, <span class="nv">Memory</span><span class="o">=</span>7903MB<span class="o">)</span> ...
+🐳  쿠버네티스 v1.23.1 을 Docker 20.10.12 런타임으로 설치하는 중
+    ▪ kubelet.housekeeping-interval<span class="o">=</span>5m
+    ▪ 인증서 및 키를 생성하는 중 ...
+    ▪ 컨트롤 플레인이 부팅...
+    ▪ RBAC 규칙을 구성하는 중 ...
+🔎  Kubernetes 구성 요소를 확인...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  애드온 활성화 : storage-provisioner, default-storageclass
+🏄  끝났습니다! kubectl이 <span class="s2">"minikube"</span> 클러스터와 <span class="s2">"default"</span> 네임스페이스를 기본적으로 사용하도록 구성되었습니다.
+</code></pre></div></div>
+
+<p>이제 도커로 띄운 가상머신 위에서 쿠버네티스가 돌아가고 있습니다. 한 번 확인해보겠습니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minikube status
+<span class="nt">--------------------</span>
+minikube
+<span class="nb">type</span>: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+minikube ip
+<span class="c"># 192.168.49.2</span>
+</code></pre></div></div>
+
+<p>정지하고 삭제하는 명령어도 간단합니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>minikube stop
+
+minikube delete
+</code></pre></div></div>
+
+<h3 id="docker-desktop">Docker Desktop</h3>
+<p>Docker Desktop은 도커를 맥/윈도우에서 사용하기 위한 목적으로 만들어졌습니다. 그리고 Docker Desktop 버전 18.06.0부터는 쿠버네티스도 사용할 수 있도록 지원하고 있습니다. 사용 방법은 간단합니다. Docker Desktop을 설치, 실행한 뒤 Enable Kubernetes 목록을 클릭해줍니다.</p>
+
+<p><img src="../images/../../images/kube_24.png" alt="" /></p>
+
+<p>(쿠버네티스를 Docker Desktop으로 실행할 때는 도커에서 제공하는 가상 머신위에 쿠버네티스 클러스터를 구성하는 것 같다. 그래서 클러스터 외부에서 쿠버네티스에 접속하려 할 때, 먼저 도커의 가상 머신 안으로 엔드포인트로 접근해야 하는데 이를 도커에서 localhost로 접근하도록 해준다. 그래서 별도로 도커 가상머신의 IP주소를 알려고 할 필요가 없다. 뇌피셜)</p>
+
+<h2 id="멀티-노드-클러스터">멀티 노드 클러스터</h2>
+
+<h3 id="kind">kind</h3>
+<p>kind는 도커 컨테이너를 여러 개 띄워서 컨테이너 각각을 노드로 사용함으로써 <strong>멀티 노드 클러스터</strong>를 구축할 수 있습니다.<br />
+<a href="https://kind.sigs.k8s.io" target="_blank">(kind 공식문서 참고)</a></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kind create cluster <span class="nt">--config</span> kind.yaml <span class="nt">--name</span> kindcluster
+<span class="nt">----------------------------------------------------------------------</span>
+Creating cluster <span class="s2">"kindcluster"</span> ...
+ ✓ Ensuring node image <span class="o">(</span>kindest/node:v1.23.1<span class="o">)</span> 🖼
+ ✓ Preparing nodes 📦 📦 📦
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+ ✓ Joining worker nodes 🚜
+Set kubectl context to <span class="s2">"kind-kindcluster"</span>
+You can now use your cluster with:
+
+kubectl cluster-info <span class="nt">--context</span> kind-kindcluster
+
+Have a <span class="nb">nice </span>day! 👋
+</code></pre></div></div>
+<p>클러스터가 성공적으로 구축되었습니다.<br />
+쿠버네티스에서 실행중인 노드를 확인해보겠습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes
+----------------------------------------------------------------------------
+NAME                        STATUS   ROLES                  AGE   VERSION
+kindcluster-control-plane   Ready    control-plane,master   58s   v1.23.1
+kindcluster-worker          Ready    &lt;none&gt;                 25s   v1.23.1
+kindcluster-worker2         Ready    &lt;none&gt;                 25s   v1.23.1
+</code></pre></div></div>
+
+<p>클러스터는 다음 명령어로 삭제하시면 됩니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kind delete cluster <span class="nt">--name</span> kindcluster
+<span class="nt">------------------------------------------</span>
+Deleting cluster <span class="s2">"kindcluster"</span> ...
+</code></pre></div></div>
+<h3 id="클라우드-환경gke-eks">클라우드 환경(GKE, EKS)</h3>
+
+<h2 id="쿠버네티스-gui-도구-lens">쿠버네티스 GUI 도구: Lens</h2>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew <span class="nb">install </span>lens
+</code></pre></div></div>
+
+<h1 id="카프카-메니페스트-작성">카프카 메니페스트 작성</h1>
+
+<h2 id="loadbalancer-생성">LoadBalancer 생성</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
+
+kubectl create -f ./metallb/configmap.yaml
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># configmap.yaml</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">ConfigMap</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">metallb-system</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">config</span>
+<span class="na">data</span><span class="pi">:</span>
+  <span class="na">config</span><span class="pi">:</span> <span class="pi">|</span>
+    <span class="s">address-pools:</span>
+    <span class="s">- name: default</span>
+      <span class="s">protocol: layer2</span>
+      <span class="s">addresses:</span>
+      <span class="s">- 192.168.72.102</span>
+</code></pre></div></div>
+
+<h2 id="zookeeper-설치">zookeeper 설치</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># deployment.yaml</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">zookeeper-deploy</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">zookeeper-1</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">zookeeper-1</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">zoo1</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">zookeeper:latest</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">2181</span>
+        <span class="na">env</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ZOOKEEPER_ID</span>
+          <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">1"</span>
+<span class="nn">---</span>
+<span class="c1"># zooservice.yaml</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">zookeeper-service</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">zookeeper-1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">client</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">2181</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">follower</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">2888</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">leader</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">3888</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">zookeeper-1</span>
+</code></pre></div></div>
+<h1 id="카프카-클라이언트">카프카 클라이언트</h1>
+
+<h1 id="카프카-모니터링">카프카 모니터링</h1>
+:ET
