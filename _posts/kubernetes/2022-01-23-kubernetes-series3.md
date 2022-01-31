@@ -60,3 +60,4 @@ Nginx 인그레스 컨트롤러는 이름은 컨트롤러이지만 L7 수준의 
 - [subicura님의 kubenetes안내서](https://subicura.com/k8s/guide/){:target="_blank"}
 - [NodePort vs LoadBalancer stackoverflow](https://stackoverflow.com/questions/65887993/when-to-choose-loadbalancer-over-nodeport-service-typeor-vice-versa-in-kub){:target="_blank"}  
 - [Google Kubernetes Engine 가이드](https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview){:target="_blank"}  
+- [Confluent 블로그](https://www.confluent.io/blog/kafka-listeners-explained/){:target="_blank"} 
