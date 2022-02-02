@@ -178,8 +178,33 @@ docker run --network=rmoff_kafka --rm --detach --name broker \
 
 위의 Scenario 2와 비교하여 클라이언트가 컨테이너화 되어 있다가 여기서는 따로 컨테이너화 되지 않고 로컬 머신 위에 있다. (이러한 차이로 위에서 하던 방식이 왜 안되는 건지 모르겠다...)
 
-로컬에 실행하는 클라이언트는 따로 네트워크가 구성되어 있지 않다. 그렇기 때문에 따로 특정 트래픽을 받기 위해서는 로컬의 포트를 열어 이를 통해 통신해야 한다. 아래 그림과 같이 9092:9092 포트를 열었다고 해보자. 클라이언트가 로컬의 9092포트 엔드포인트로 접근하기 위해서는 bootstrap_servers='localhost:9092'로 해야 한다. advertised.listeners는 broker:9092로 해야 한다(클라이언트와 localhost관계가 아니므로).  
+로컬에 실행하는 클라이언트는 따로 네트워크가 구성되어 있지 않다. 그렇기 때문에 따로 특정 트래픽을 받기 위해서는 로컬의 포트를 열어 이를 통해 통신해야 한다. 아래 그림과 같이 `9092:9092 포트`를 열었다고 해보자. 클라이언트가 로컬의 9092포트 엔드포인트로 접근하기 위해서는 `bootstrap_servers='localhost:9092'`로 해야 한다. `advertised.listeners`는 `broker:9092`로 해야 한다(클라이언트와 `localhost`관계가 아니므로).  
 
-문제는 클라이언트 입장에서 'broker:9092'는 resolvable하지 않다.  
+![](/images/kafka_50.png)  
+
+문제는 클라이언트 입장에서 `broker:9092`는 resolvable하지 않다.  
 
 ### Adding a new listener to the broker
+이 문제를 해결하는 방법은 다수의 리스너를 만드는 것이다.  
+
+```yaml
+...
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,CONNECTIONS_FROM_HOST://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT
+...
+```  
+
+![](/images/kafka_52.png)  
+
+## Scenario 4: Kafka running locally with a client in Docker container
+
+![](/images/kafka_53.png)  
+
+이런 상황이 잘 있지는 않지만, 어쨋든 이런 경우에 대한 해결책은 있다. 다만 좀 임시방편적일 뿐이다.  
+
+만약 맥에서 도커가 동작하고 있다면, `host.docker.internal`을 이용할 수 있다.  
+
+![](/images/kafka_54.png)  

@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 02 Feb 2022 23:17:31 +0900</pubDate>
-        <lastBuildDate>Wed, 02 Feb 2022 23:17:31 +0900</lastBuildDate>
+        <pubDate>Thu, 03 Feb 2022 05:39:59 +0900</pubDate>
+        <lastBuildDate>Thu, 03 Feb 2022 05:39:59 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -21,6 +21,7 @@
           &lt;li&gt;&lt;a href=&quot;#adding-a-new-listener-to-the-broker&quot; id=&quot;markdown-toc-adding-a-new-listener-to-the-broker&quot;&gt;Adding a new listener to the broker&lt;/a&gt;&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#scenario-4-kafka-running-locally-with-a-client-in-docker-container&quot; id=&quot;markdown-toc-scenario-4-kafka-running-locally-with-a-client-in-docker-container&quot;&gt;Scenario 4: Kafka running locally with a client in Docker container&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
@@ -181,11 +182,35 @@ docker run &lt;span class=&quot;nt&quot;&gt;--network&lt;/span&gt;&lt;span class
 
 &lt;p&gt;위의 Scenario 2와 비교하여 클라이언트가 컨테이너화 되어 있다가 여기서는 따로 컨테이너화 되지 않고 로컬 머신 위에 있다. (이러한 차이로 위에서 하던 방식이 왜 안되는 건지 모르겠다…)&lt;/p&gt;
 
-&lt;p&gt;로컬에 실행하는 클라이언트는 따로 네트워크가 구성되어 있지 않다. 그렇기 때문에 따로 특정 트래픽을 받기 위해서는 로컬의 포트를 열어 이를 통해 통신해야 한다. 아래 그림과 같이 9092:9092 포트를 열었다고 해보자. 클라이언트가 로컬의 9092포트 엔드포인트로 접근하기 위해서는 bootstrap_servers=’localhost:9092’로 해야 한다. advertised.listeners는 broker:9092로 해야 한다(클라이언트와 localhost관계가 아니므로).&lt;/p&gt;
+&lt;p&gt;로컬에 실행하는 클라이언트는 따로 네트워크가 구성되어 있지 않다. 그렇기 때문에 따로 특정 트래픽을 받기 위해서는 로컬의 포트를 열어 이를 통해 통신해야 한다. 아래 그림과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9092:9092 포트&lt;/code&gt;를 열었다고 해보자. 클라이언트가 로컬의 9092포트 엔드포인트로 접근하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bootstrap_servers='localhost:9092'&lt;/code&gt;로 해야 한다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;broker:9092&lt;/code&gt;로 해야 한다(클라이언트와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;관계가 아니므로).&lt;/p&gt;
 
-&lt;p&gt;문제는 클라이언트 입장에서 ‘broker:9092’는 resolvable하지 않다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/kafka_50.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;문제는 클라이언트 입장에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;broker:9092&lt;/code&gt;는 resolvable하지 않다.&lt;/p&gt;
 
 &lt;h3 id=&quot;adding-a-new-listener-to-the-broker&quot;&gt;Adding a new listener to the broker&lt;/h3&gt;
+&lt;p&gt;이 문제를 해결하는 방법은 다수의 리스너를 만드는 것이다.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;19092:19092&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT://broker:9092,CONNECTIONS_FROM_HOST://localhost:19092&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_52.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;scenario-4-kafka-running-locally-with-a-client-in-docker-container&quot;&gt;Scenario 4: Kafka running locally with a client in Docker container&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_53.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이런 상황이 잘 있지는 않지만, 어쨋든 이런 경우에 대한 해결책은 있다. 다만 좀 임시방편적일 뿐이다.&lt;/p&gt;
+
+&lt;p&gt;만약 맥에서 도커가 동작하고 있다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;host.docker.internal&lt;/code&gt;을 이용할 수 있다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_54.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Mon, 31 Jan 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/kafka-series6</link>
