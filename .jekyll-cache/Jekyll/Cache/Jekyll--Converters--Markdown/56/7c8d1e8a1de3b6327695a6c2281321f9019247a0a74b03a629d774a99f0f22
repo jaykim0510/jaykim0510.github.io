@@ -1,0 +1,110 @@
+I"�!<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#kafka-listeners" id="markdown-toc-kafka-listeners">Kafka Listeners</a></li>
+  <li><a href="#why-can-i-connect-to-the-broker-but-the-client-still-fails" id="markdown-toc-why-can-i-connect-to-the-broker-but-the-client-still-fails">Why can I connect to the broker, but the client still fails?</a></li>
+</ul>
+
+<hr />
+
+<p><a href="https://www.confluent.io/blog/kafka-listeners-explained/">원문: Confluent블로그</a></p>
+
+<h1 id="kafka-listeners">Kafka Listeners</h1>
+
+<p>카프카 클라이언트가 카프카에 연결되기 위해서는 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>(또는 도커 이미지를 사용할 경우 <code class="language-plaintext highlighter-rouge">KAFKA_ADVERTISED_LISTENERS</code>)를 <strong>external IP 주소</strong>로 설정해야 합니다.</p>
+
+<p><img src="/images/kafka_36.png" alt="" /></p>
+
+<p>아파치 카프카는 분산 시스템입니다. 데이터는 리더 파티션으로부터 쓰고 읽어지며 리더 파티션은 어떤 브로커에도 있을 수 있습니다. 그래서 클라이언트가 카프카에 연결되기 위해서는 해당 리더 파티션을 가지고 있는 브로커가 누구인지에 대한 메타데이터를 요청합니다. 이 메타데이터에는 리더 파티션을 가지는 브로커의 엔드포인트 정보를 포함하고 있으며 클라이언트는 이 정보를 이용해 카프카와 연결될 것입니다.</p>
+
+<p>만약 카프카가 도커와 같은 가상머신이 아닌 bare metal 위에서 동작한다면 이 엔드포인트는 그저 <code class="language-plaintext highlighter-rouge">hostname</code>이나 <code class="language-plaintext highlighter-rouge">localhost</code> 정도가 될 것입니다. 하지만 조금 더 복잡한 네트워크 환경 또는 멀티 노드 환경으로 오게 되면 조금 더 주의가 필요하게 됩니다.</p>
+
+<p>Let’s assume you have more than one network. This could be things like:</p>
+
+<p>Docker internal network(s) plus host machine
+Brokers in the cloud (e.g., AWS EC2) and on-premises machines locally (or even in another cloud)
+You need to tell Kafka how the brokers can reach each other but also make sure that external clients (producers/consumers) can reach the broker they need to reach.</p>
+
+<p>초기에 브로커가 연결되면 실제로 리더 파티션을 가지는 브로커의 host와 IP의 정보를 돌려줍니다. 이러한 과정은 단일 노드 환경에서도 마찬가지입니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>KAFKA_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
+KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">server.properties</code></p>
+
+<ul>
+  <li><strong>KAFKA_LISTENERS</strong>: 카프카가 리스닝하기 위해 노출하는 host/IP와 port</li>
+  <li><strong>KAFKA_ADVERTISED_LISTENERS</strong>: 클라이언트에게 알려주는 리스너의 host/IP와 port 리스트</li>
+  <li><strong>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</strong>: 각 리스너들이 사용하는 security protocol</li>
+  <li><strong>KAFKA_INTER_BROKER_LISTENER_NAME</strong>: 브로커들 간의 통신을 위해 사용하는 리스너</li>
+</ul>
+
+<p>브로커에 연결되면 연결된 리스너가 반환됩니다. <code class="language-plaintext highlighter-rouge">kafkacat</code>은 이러한 정보를 알아보는 유용한 툴입니다. <code class="language-plaintext highlighter-rouge">-L</code>을 이용하면 연결된 리스너에 관한 메타데이터를 얻을 수 있습니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 9092포트로 연결시, localhost:9092 리스너가 반환</span>
+<span class="nv">$ </span>kafkacat <span class="nt">-b</span> kafka0:9092 <span class="se">\</span>
+           <span class="nt">-L</span>
+Metadata <span class="k">for </span>all topics <span class="o">(</span>from broker <span class="nt">-1</span>: kafka0:9092/bootstrap<span class="o">)</span>:
+1 brokers:
+  broker 0 at localhost:9092
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 29092포트로 연결시, kafka0:29092 리스너가 반환</span>
+<span class="nv">$ </span>kafkacat <span class="nt">-b</span> kafka0:29092 <span class="se">\</span>
+           <span class="nt">-L</span>
+Metadata <span class="k">for </span>all topics <span class="o">(</span>from broker 0: kafka0:29092/0<span class="o">)</span>:
+1 brokers:
+  broker 0 at kafka0:29092
+</code></pre></div></div>
+
+<h1 id="why-can-i-connect-to-the-broker-but-the-client-still-fails">Why can I connect to the broker, but the client still fails?</h1>
+
+<p>초기 브로커 연결에 성공했다고 하더라도, 브로커가 반환하는 메타데이터 안에 있는 주소로 여전히 클라이언트가 접근하지 못하는 경우가 있습니다.</p>
+
+<ul>
+  <li>
+    <p>AWS EC2 인스턴스에 브로커를 만들어 로컬 머신에서 EC2에 있는 브로커로 메세지를 보내보려고 합니다. external hostname은 <code class="language-plaintext highlighter-rouge">ec2-54-191-84-122.us-west-2.compute.amazonaws.com</code>입니다. 로컬 머신과 EC2가 포트포워딩을 통해 연결되었는지 확인해보겠습니다.</p>
+  </li>
+  <li>
+    <p>우리의 로컬 머신은 <code class="language-plaintext highlighter-rouge">ec2-54-191-84-122.us-west-2.compute.amazonaws.com</code>을 <code class="language-plaintext highlighter-rouge">54.191.84.122</code>으로 성공적으로 리졸브(resolve) 합니다.</p>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ kafkacat -b ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 -L
+Metadata for all topics (from broker -1: ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092/bootstrap):
+1 brokers:
+  broker 0 at ip-172-31-18-160.us-west-2.compute.internal:9092
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>The broker receives the inbound connection on port 9092. It returns the metadata to the client, with the hostname <code class="language-plaintext highlighter-rouge">ip-172-31-18-160.us-west-2.compute.internal</code>, because this is the host name of the broker and the default value for listeners.</p>
+  </li>
+  <li>
+    <p>The client then tries to send data to the broker using the metadata it was given. Since ip-172-31-18-160.us-west-2.compute.internal is not resolvable from the internet, it fails.</p>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "test"|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&gt;&gt;[2018-07-30 15:08:41,932] ERROR Error when sending message to topic test with key: null, value: 4 bytes with error: (org.apache.kafka.clients.producer.internals.ErrorLoggingCallback)
+org.apache.kafka.common.errors.TimeoutException: Expiring 1 record(s) for test-0: 1547 ms has passed since batch creation plus linger time
+</code></pre></div></div>
+
+<ul>
+  <li>Puzzled, we try the same thing from the broker machine itself:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "foo"|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&gt;&gt;
+$ kafka-console-consumer --bootstrap-server ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test --from-beginning
+foo
+</code></pre></div></div>
+
+<p>It works fine! That’s because we are connecting to port 9092, which is configured as the internal listener and thus reports back its hostname as ip-172-31-18-160.us-west-2.compute.internal, which is resolvable from the broker machine (since it’s its own hostname!).</p>
+
+<ul>
+  <li>We can make life even easier by using kafkacat. Using the -L flag, we can see the metadata returned by the broker: Clear as day, the internal hostname is returned. This also makes this seemingly confusing error make a lot more sense—connecting to one hostname, getting a lookup error on another:</li>
+</ul>
+:ET

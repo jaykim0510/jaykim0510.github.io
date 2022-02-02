@@ -1,0 +1,49 @@
+I"�<p id="toc"><strong>Table of Contents</strong></p>
+
+<hr />
+
+<p><a href="https://www.confluent.io/blog/kafka-listeners-explained/">원문: Confluent블로그</a></p>
+
+<p>카프카 클라이언트가 카프카에 연결되기 위해서는 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>(또는 도커 이미지를 사용할 경우 <code class="language-plaintext highlighter-rouge">KAFKA_ADVERTISED_LISTENERS</code>)를 <strong>external IP 주소</strong>로 설정해야 합니다.</p>
+
+<p><img src="/images/kafka_36.png" alt="" /></p>
+
+<p>아파치 카프카는 분산 시스템입니다. 데이터는 리더 파티션으로부터 쓰고 읽어지며 리더 파티션은 어떤 브로커에도 있을 수 있습니다. 그래서 클라이언트가 카프카에 연결되기 위해서는 해당 리더 파티션을 가지고 있는 브로커가 누구인지에 대한 메타데이터를 요청합니다. 이 메타데이터에는 리더 파티션을 가지는 브로커의 엔드포인트 정보를 포함하고 있으며 클라이언트는 이 정보를 이용해 카프카와 연결될 것입니다.</p>
+
+<p>만약 카프카가 도커와 같은 가상머신이 아닌 bare metal 위에서 동작한다면 이 엔드포인트는 그저 <code class="language-plaintext highlighter-rouge">hostname</code>이나 <code class="language-plaintext highlighter-rouge">localhost</code> 정도가 될 것입니다. 하지만 조금 더 복잡한 네트워크 환경 또는 멀티 노드 환경으로 오게 되면 조금 더 주의가 필요하게 됩니다.</p>
+
+<p>Let’s assume you have more than one network. This could be things like:</p>
+
+<p>Docker internal network(s) plus host machine
+Brokers in the cloud (e.g., AWS EC2) and on-premises machines locally (or even in another cloud)
+You need to tell Kafka how the brokers can reach each other but also make sure that external clients (producers/consumers) can reach the broker they need to reach.</p>
+
+<p>초기에 브로커가 연결되면 실제로 리더 파티션을 가지는 브로커의 host와 IP의 정보를 돌려줍니다. 이러한 과정은 단일 노드 환경에서도 마찬가지입니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>KAFKA_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
+KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">server.properties</code></p>
+
+<ul>
+  <li>KAFKA_LISTENERS is a comma-separated list of listeners and the host/IP and port to which Kafka binds to for listening. For more complex networking, this might be an IP address associated with a given network interface on a machine. The default is 0.0.0.0, which means listening on all interfaces.
+listeners</li>
+  <li>KAFKA_ADVERTISED_LISTENERS is a comma-separated list of listeners with their host/IP and port. This is the metadata that’s passed back to clients.
+advertised.listeners</li>
+  <li>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP defines key/value pairs for the security protocol to use per listener name.
+listener.security.protocol.map
+Kafka brokers communicate between themselves, usually on the internal network (e.g., Docker network, AWS VPC, etc.). To define which listener to use, specify</li>
+  <li>KAFKA_INTER_BROKER_LISTENER_NAME(inter.broker.listener.name). The host/IP used must be accessible from the broker machine to others.</li>
+</ul>
+
+<p>Kafka clients may well not be local to the broker’s network, and this is where the additional listeners come in.</p>
+
+<p>Each listener will, when connected to, report back the address at which it can be reached. The address at which you reach a broker depends on the network used. If you’re connecting to the broker from an internal network, it’s going to be a different host/IP than when connecting externally.</p>
+
+<p>When connecting to a broker, the listener that will be returned to the client will be the listener to which you connected (based on the port).</p>
+
+<p>kafkacat is a useful tool for exploring this. Using -L, you can see the metadata for the listener to which you connected. Based on the same listener config as above (LISTENER_BOB/LISTENER_FRED), check out the respective entries for broker 0 at: -:</p>
+:ET

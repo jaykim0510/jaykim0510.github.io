@@ -1,0 +1,233 @@
+I"�K<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#kafka-listeners" id="markdown-toc-kafka-listeners">Kafka Listeners</a></li>
+  <li><a href="#why-can-i-connect-to-the-broker-but-the-client-still-fails" id="markdown-toc-why-can-i-connect-to-the-broker-but-the-client-still-fails">Why can I connect to the broker, but the client still fails?</a></li>
+  <li><a href="#how-to-connecting-to-kafka-on-docker" id="markdown-toc-how-to-connecting-to-kafka-on-docker">HOW TO: Connecting to Kafka on Docker</a></li>
+  <li><a href="#how-to-connecting-to-kafka-on-iaascloud" id="markdown-toc-how-to-connecting-to-kafka-on-iaascloud">HOW TO: Connecting to Kafka on IaaS/Cloud</a>    <ul>
+      <li><a href="#option-1-external-address-is-resolvable-locally" id="markdown-toc-option-1-external-address-is-resolvable-locally">Option 1: External address is resolvable locally</a></li>
+      <li><a href="#option-2-external-address-is-not-resolvable-locally" id="markdown-toc-option-2-external-address-is-not-resolvable-locally">Option 2: External address is NOT resolvable locally</a></li>
+    </ul>
+  </li>
+  <li><a href="#exploring-listeners-with-docker" id="markdown-toc-exploring-listeners-with-docker">Exploring listeners with Docker</a></li>
+</ul>
+
+<hr />
+
+<p><a href="https://www.confluent.io/blog/kafka-listeners-explained/">원문: Confluent블로그</a></p>
+
+<h1 id="kafka-listeners">Kafka Listeners</h1>
+
+<p>카프카 클라이언트가 카프카에 연결되기 위해서는 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>(또는 도커 이미지를 사용할 경우 <code class="language-plaintext highlighter-rouge">KAFKA_ADVERTISED_LISTENERS</code>)를 <strong>external IP 주소</strong>로 설정해야 합니다.</p>
+
+<p><img src="/images/kafka_36.png" alt="" /></p>
+
+<p>아파치 카프카는 분산 시스템입니다. 데이터는 리더 파티션으로부터 쓰고 읽어지며 리더 파티션은 어떤 브로커에도 있을 수 있습니다. 그래서 클라이언트가 카프카에 연결되기 위해서는 해당 리더 파티션을 가지고 있는 브로커가 누구인지에 대한 메타데이터를 요청합니다. 이 메타데이터에는 리더 파티션을 가지는 브로커의 엔드포인트 정보를 포함하고 있으며 클라이언트는 이 정보를 이용해 카프카와 연결될 것입니다.</p>
+
+<p>만약 카프카가 도커와 같은 가상머신이 아닌 bare metal 위에서 동작한다면 이 엔드포인트는 그저 <code class="language-plaintext highlighter-rouge">hostname</code>이나 <code class="language-plaintext highlighter-rouge">localhost</code> 정도가 될 것입니다. 하지만 조금 더 복잡한 네트워크 환경 또는 멀티 노드 환경으로 오게 되면 조금 더 주의가 필요하게 됩니다.</p>
+
+<p>초기에 브로커가 연결되면 실제로 리더 파티션을 가지는 브로커의 host와 IP의 정보를 돌려줍니다. 이러한 과정은 단일 노드 환경에서도 마찬가지입니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>KAFKA_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
+KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">server.properties</code></p>
+
+<ul>
+  <li><strong>KAFKA_LISTENERS</strong>: 카프카가 리스닝하기 위해 노출하는 host/IP와 port</li>
+  <li><strong>KAFKA_ADVERTISED_LISTENERS</strong>: 클라이언트에게 알려주는 리스너의 host/IP와 port 리스트</li>
+  <li><strong>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</strong>: 각 리스너들이 사용하는 security protocol</li>
+  <li><strong>KAFKA_INTER_BROKER_LISTENER_NAME</strong>: 브로커들 간의 통신을 위해 사용하는 리스너</li>
+</ul>
+
+<p>브로커에 연결되면 연결된 리스너가 반환됩니다. <code class="language-plaintext highlighter-rouge">kafkacat</code>은 이러한 정보를 알아보는 유용한 툴입니다. <code class="language-plaintext highlighter-rouge">-L</code>을 이용하면 연결된 리스너에 관한 메타데이터를 얻을 수 있습니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 9092포트로 연결시, localhost:9092 리스너가 반환</span>
+<span class="nv">$ </span>kafkacat <span class="nt">-b</span> kafka0:9092 <span class="se">\</span>
+           <span class="nt">-L</span>
+Metadata <span class="k">for </span>all topics <span class="o">(</span>from broker <span class="nt">-1</span>: kafka0:9092/bootstrap<span class="o">)</span>:
+1 brokers:
+  broker 0 at localhost:9092
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 29092포트로 연결시, kafka0:29092 리스너가 반환</span>
+<span class="nv">$ </span>kafkacat <span class="nt">-b</span> kafka0:29092 <span class="se">\</span>
+           <span class="nt">-L</span>
+Metadata <span class="k">for </span>all topics <span class="o">(</span>from broker 0: kafka0:29092/0<span class="o">)</span>:
+1 brokers:
+  broker 0 at kafka0:29092
+</code></pre></div></div>
+
+<h1 id="why-can-i-connect-to-the-broker-but-the-client-still-fails">Why can I connect to the broker, but the client still fails?</h1>
+
+<p>초기 브로커 연결에 성공했다고 하더라도, 브로커가 반환하는 메타데이터 안에 있는 주소로 여전히 클라이언트가 접근하지 못하는 경우가 있습니다.</p>
+
+<ul>
+  <li>
+    <p>AWS EC2 인스턴스에 브로커를 만들어 로컬 머신에서 EC2에 있는 브로커로 메세지를 보내보려고 합니다. external hostname은 <code class="language-plaintext highlighter-rouge">ec2-54-191-84-122.us-west-2.compute.amazonaws.com</code>입니다. 로컬 머신과 EC2가 포트포워딩을 통해 연결되었는지 확인해보겠습니다.</p>
+  </li>
+  <li>
+    <p>우리의 로컬 머신은 <code class="language-plaintext highlighter-rouge">ec2-54-191-84-122.us-west-2.compute.amazonaws.com</code>을 <code class="language-plaintext highlighter-rouge">54.191.84.122</code>으로 성공적으로 리졸브(resolve) 합니다.</p>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ kafkacat -b ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 -L
+Metadata for all topics (from broker -1: ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092/bootstrap):
+1 brokers:
+  broker 0 at ip-172-31-18-160.us-west-2.compute.internal:9092
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>hostname이 <code class="language-plaintext highlighter-rouge">ip-172-31-18-160.us-west-2.compute.internal</code>인 리스너를 반환합니다.</p>
+  </li>
+  <li>
+    <p>하지만 인터넷을 통해 <code class="language-plaintext highlighter-rouge">ip-172-31-18-160.us-west-2.compute.internal</code>은 not resolvable해서 클라이언트는 브로커에 메세지 전송을 실패합니다.</p>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "test"|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&gt;&gt;[2018-07-30 15:08:41,932] ERROR Error when sending message to topic test with key: null, value: 4 bytes with error: (org.apache.kafka.clients.producer.internals.ErrorLoggingCallback)
+org.apache.kafka.common.errors.TimeoutException: Expiring 1 record(s) for test-0: 1547 ms has passed since batch creation plus linger time
+</code></pre></div></div>
+
+<ul>
+  <li>브로커가 설치된 서버의 클라이언트로는 문제없이 동작한다.</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "foo"|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&gt;&gt;
+$ kafka-console-consumer --bootstrap-server ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test --from-beginning
+foo
+</code></pre></div></div>
+<p>이러한 일이 발생하는 이유는 9092포트로 연결하는 리스너가 내부 리스너이기 때문이라고 한다. 그래서 브로커가 설치된 서버의 내부에서만 resolvable한 hostname인 <code class="language-plaintext highlighter-rouge">ip-172-31-18-160.us-west-2.compute.internal</code>을 리턴한다.</p>
+
+<h1 id="how-to-connecting-to-kafka-on-docker">HOW TO: Connecting to Kafka on Docker</h1>
+
+<p><img src="/images/kafka_36.png" alt="" /></p>
+
+<p>도커에서 동작하기 위해서는 카프카의 두 개의 listener를 지정해야 한다.</p>
+
+<ul>
+  <li>
+    <p><strong>도커 네트워크 내에서의 통신</strong>: 이것은 브로커간의 통신 또는 도커 안의 다른 컴포넌트와의 통신을 의미한다. 이를 위해서는 도커 네트워크 안에 있는 컨테이너의 호스트네임을 사용해야 한다. 각각의 브로커는 컨테이너의 호스트네임을 통해 서로 통신하게 될 것이다.</p>
+  </li>
+  <li>
+    <p><strong>도커가 아닌 네트워크로부터의 트래픽</strong>: 이것은 도커를 실행하는 서버에서 로컬로 동작하는 클라이언트가 될 수 있다. 이러한 경우 도커를 실행하는 서버(<code class="language-plaintext highlighter-rouge">localhost</code>)에서 컨테이너의 포트에 연결할 수 있다. 아래의 도커 컴포즈 스니펫을 한 번 보자.</p>
+  </li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">[</span><span class="nv">…</span><span class="pi">]</span>
+
+<span class="na">kafka0</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">confluentinc/cp-enterprise-kafka:5.2.1"</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9092:9092'</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">29094:29094'</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">zookeeper</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">[</span><span class="nv">…</span><span class="pi">]</span>
+      <span class="c1"># For more details see See https://rmoff.net/2018/08/02/kafka-listeners-explained/</span>
+      <span class="na">KAFKA_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094</span>
+      <span class="na">KAFKA_ADVERTISED_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094</span>
+      <span class="na">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="pi">:</span> <span class="s">LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT</span>
+      <span class="na">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="pi">:</span> <span class="s">LISTENER_BOB</span>
+<span class="pi">[</span><span class="nv">…</span><span class="pi">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>도커 네트워크 내에 클라이언트가 있다면 클라이언트는 <code class="language-plaintext highlighter-rouge">호스트네임 kafka0</code>, <code class="language-plaintext highlighter-rouge">29092 포트</code>를 이용한 <code class="language-plaintext highlighter-rouge">BOB</code> 리스너를 통해 브로커와 통신할 것입니다. 각각의 컨테이너(클라이언트, 브로커)는 kafka0를 도커 내부 네트워크를 통해 resolve합니다.</p>
+  </li>
+  <li>
+    <p>도커를 실행하는 호스트 머신(VM)에 있는 외부 클라이언트의 경우, <code class="language-plaintext highlighter-rouge">호스트 네임 localhost</code>, <code class="language-plaintext highlighter-rouge">9092 포트</code>를 이용한 <code class="language-plaintext highlighter-rouge">FRED</code> 리스너를 통해 브로커와 통신한다.</p>
+  </li>
+  <li>
+    <p>도커를 실행하는 호스트 머신(VM) 밖에 있는 외부 클라이언트는 위의 리스너를 통해 통신할 수 없다. 왜냐하면 <code class="language-plaintext highlighter-rouge">kafka0</code>도 <code class="language-plaintext highlighter-rouge">localhost</code>도 모두 resolvable하지 않기 때문이다.</p>
+  </li>
+</ul>
+
+<h1 id="how-to-connecting-to-kafka-on-iaascloud">HOW TO: Connecting to Kafka on IaaS/Cloud</h1>
+
+<p>Exactly the same concepts apply here as with Docker. The main difference is that whilst with Docker, the external connections may well be just on localhost (as above), with cloud-hosted Kafka (such as on AWS), the external connection will be from a machine not local to the broker and that needs to be able to connect to the broker.</p>
+
+<p>도커와의 차이점은, 도커에서 외부의 연결은 단순히 localhost에서 이루어진 반면, 클라우드 호스트 기반의 카프카는 클라이언트가 localhost에 존재하지 않는다는 것이다.</p>
+
+<p>더 복잡한 것은 도커 네트워크가 호스트의 네트워크와는 크게 분리되어 있지만 IaaS에서는 외부 호스트 이름이 내부적으로 확인 가능한 경우가 많기 때문에 이러한 문제가 실제로 발생할 경우 호스트 이름이 잘못될 수 있다.</p>
+
+<p>브로커에 연결할 외부 주소가 브로커에게 로컬로 확인할 수 있는지 여부에 따라 두 가지 방법이 있다.</p>
+
+<h2 id="option-1-external-address-is-resolvable-locally">Option 1: External address is resolvable locally</h2>
+
+<p><img src="/images/kafka_37.png" alt="" /></p>
+
+<p>EC2 인스턴스의 IP 주소는 기본적으로 External IP. 만약 local에서 resolvable하다면, 로컬 내의 클라이언트, 외부 클라이언트 모두 이를 통해 통신 가능. 다만 외부 클라이언트는 밑의 설정만 추가해주면 된다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>advertised.listeners=PLAINTEXT://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
+</code></pre></div></div>
+
+<h2 id="option-2-external-address-is-not-resolvable-locally">Option 2: External address is NOT resolvable locally</h2>
+
+<p><img src="/images/kafka_38.png" alt="" /></p>
+
+<p>만약 로컬 내에서 resolvable하지 않다면, 두 가지 리스너가 필요하다.</p>
+
+<ul>
+  <li>VPC 내에서의 통신을 위해 local에서 resolvable한 Internal IP를 통해 내부에서 리슨한다</li>
+  <li>VPC 밖, 예를 들어 나의 노트북에서 접속하려는 경우 인스턴스의 External IP가 필요하다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>listeners=INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092
+listener.security.protocol.map=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+advertised.listeners=INTERNAL://ip-172-31-18-160.us-west-2.compute.internal:19092,EXTERNAL://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
+inter.broker.listener.name=INTERNAL
+</code></pre></div></div>
+
+<h1 id="exploring-listeners-with-docker">Exploring listeners with Docker</h1>
+
+<ul>
+  <li>Listener BOB (port 29092) for internal traffic on the Docker network</li>
+  <li>Listener FRED (port 9092) for traffic from the Docker host machine (localhost)</li>
+  <li>Listener ALICE (port 29094) for traffic from outside, reaching the Docker host on the DNS name never-gonna-give-you-up</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">zookeeper</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">confluentinc/cp-zookeeper:5.2.1"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">ZOOKEEPER_CLIENT_PORT</span><span class="pi">:</span> <span class="m">2181</span>
+      <span class="na">ZOOKEEPER_TICK_TIME</span><span class="pi">:</span> <span class="m">2000</span>
+
+<span class="c1"># This has three listeners you can experiment with. </span>
+<span class="c1"># BOB for internal traffic on the Docker network</span>
+<span class="c1"># FRED for traffic from the Docker-host machine (`localhost`)</span>
+<span class="c1"># ALICE for traffic from outside, reaching the Docker host on the DNS name `never-gonna-give-you-up`</span>
+<span class="c1"># Use </span>
+  <span class="na">kafka0</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">confluentinc/cp-enterprise-kafka:5.2.1"</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9092:9092'</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">29094:29094'</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">zookeeper</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">KAFKA_BROKER_ID</span><span class="pi">:</span> <span class="m">0</span>
+      <span class="na">KAFKA_ZOOKEEPER_CONNECT</span><span class="pi">:</span> <span class="s">zookeeper:2181</span>
+      <span class="na">KAFKA_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094</span>
+      <span class="na">KAFKA_ADVERTISED_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094</span>
+      <span class="na">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="pi">:</span> <span class="s">LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT</span>
+      <span class="na">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="pi">:</span> <span class="s">LISTENER_BOB</span>
+      <span class="na">KAFKA_AUTO_CREATE_TOPICS_ENABLE</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
+      <span class="na">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span class="pi">:</span> <span class="m">100</span>
+
+  <span class="na">kafkacat</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">confluentinc/cp-kafkacat</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">sleep infinity</span>
+</code></pre></div></div>
+:ET

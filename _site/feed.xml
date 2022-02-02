@@ -5,9 +5,249 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 31 Jan 2022 02:38:01 +0900</pubDate>
-        <lastBuildDate>Mon, 31 Jan 2022 02:38:01 +0900</lastBuildDate>
+        <pubDate>Wed, 02 Feb 2022 09:19:10 +0900</pubDate>
+        <lastBuildDate>Wed, 02 Feb 2022 09:19:10 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Kafka Series [Part5]: Kafka Listeners – Explained[번역]</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#kafka-listeners&quot; id=&quot;markdown-toc-kafka-listeners&quot;&gt;Kafka Listeners&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#why-can-i-connect-to-the-broker-but-the-client-still-fails&quot; id=&quot;markdown-toc-why-can-i-connect-to-the-broker-but-the-client-still-fails&quot;&gt;Why can I connect to the broker, but the client still fails?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#how-to-connecting-to-kafka-on-docker&quot; id=&quot;markdown-toc-how-to-connecting-to-kafka-on-docker&quot;&gt;HOW TO: Connecting to Kafka on Docker&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#how-to-connecting-to-kafka-on-iaascloud&quot; id=&quot;markdown-toc-how-to-connecting-to-kafka-on-iaascloud&quot;&gt;HOW TO: Connecting to Kafka on IaaS/Cloud&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#option-1-external-address-is-resolvable-locally&quot; id=&quot;markdown-toc-option-1-external-address-is-resolvable-locally&quot;&gt;Option 1: External address is resolvable locally&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#option-2-external-address-is-not-resolvable-locally&quot; id=&quot;markdown-toc-option-2-external-address-is-not-resolvable-locally&quot;&gt;Option 2: External address is NOT resolvable locally&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#exploring-listeners-with-docker&quot; id=&quot;markdown-toc-exploring-listeners-with-docker&quot;&gt;Exploring listeners with Docker&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-listeners-explained/&quot; target=&quot;_blank&quot;&gt;원문: Confluent블로그&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/?utm_source=github&amp;amp;utm_medium=rmoff&amp;amp;utm_campaign=ty.community.con.rmoff-listeners&amp;amp;utm_term=rmoff-devx&quot; target=&quot;_blank&quot;&gt;읽어보면 좋은 포스트&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;kafka-listeners&quot;&gt;Kafka Listeners&lt;/h1&gt;
+
+&lt;p&gt;카프카 클라이언트가 카프카에 연결되기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt;(또는 도커 이미지를 사용할 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/code&gt;)를 &lt;strong&gt;external IP 주소&lt;/strong&gt;로 설정해야 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_36.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;아파치 카프카는 분산 시스템입니다. 데이터는 리더 파티션으로부터 쓰고 읽어지며 리더 파티션은 어떤 브로커에도 있을 수 있습니다. 그래서 클라이언트가 카프카에 연결되기 위해서는 해당 리더 파티션을 가지고 있는 브로커가 누구인지에 대한 메타데이터를 요청합니다. 이 메타데이터에는 리더 파티션을 가지는 브로커의 엔드포인트 정보를 포함하고 있으며 클라이언트는 이 정보를 이용해 카프카와 연결될 것입니다.&lt;/p&gt;
+
+&lt;p&gt;만약 카프카가 도커와 같은 가상머신이 아닌 bare metal 위에서 동작한다면 이 엔드포인트는 그저 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hostname&lt;/code&gt;이나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt; 정도가 될 것입니다. 하지만 조금 더 복잡한 네트워크 환경 또는 멀티 노드 환경으로 오게 되면 조금 더 주의가 필요하게 됩니다.&lt;/p&gt;
+
+&lt;p&gt;초기에 브로커가 연결되면 실제로 리더 파티션을 가지는 브로커의 host와 IP의 정보를 돌려줍니다. 이러한 과정은 단일 노드 환경에서도 마찬가지입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;KAFKA_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
+KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;server.properties&lt;/code&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;KAFKA_LISTENERS&lt;/strong&gt;: 카프카가 리스닝하기 위해 노출하는 host/IP와 port&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;KAFKA_ADVERTISED_LISTENERS&lt;/strong&gt;: 클라이언트에게 알려주는 리스너의 host/IP와 port 리스트&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/strong&gt;: 각 리스너들이 사용하는 security protocol&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;KAFKA_INTER_BROKER_LISTENER_NAME&lt;/strong&gt;: 브로커들 간의 통신을 위해 사용하는 리스너&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;브로커에 연결되면 연결된 리스너가 반환됩니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kafkacat&lt;/code&gt;은 이러한 정보를 알아보는 유용한 툴입니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-L&lt;/code&gt;을 이용하면 연결된 리스너에 관한 메타데이터를 얻을 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 9092포트로 연결시, localhost:9092 리스너가 반환&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kafkacat &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; kafka0:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+           &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt;
+Metadata &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;all topics &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;from broker &lt;span class=&quot;nt&quot;&gt;-1&lt;/span&gt;: kafka0:9092/bootstrap&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
+1 brokers:
+  broker 0 at localhost:9092
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 29092포트로 연결시, kafka0:29092 리스너가 반환&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kafkacat &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; kafka0:29092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+           &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt;
+Metadata &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;all topics &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;from broker 0: kafka0:29092/0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
+1 brokers:
+  broker 0 at kafka0:29092
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;why-can-i-connect-to-the-broker-but-the-client-still-fails&quot;&gt;Why can I connect to the broker, but the client still fails?&lt;/h1&gt;
+
+&lt;p&gt;초기 브로커 연결에 성공했다고 하더라도, 브로커가 반환하는 메타데이터 안에 있는 주소로 여전히 클라이언트가 접근하지 못하는 경우가 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;AWS EC2 인스턴스에 브로커를 만들어 로컬 머신에서 EC2에 있는 브로커로 메세지를 보내보려고 합니다. external hostname은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ec2-54-191-84-122.us-west-2.compute.amazonaws.com&lt;/code&gt;입니다. 로컬 머신과 EC2가 포트포워딩을 통해 연결되었는지 확인해보겠습니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;우리의 로컬 머신은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ec2-54-191-84-122.us-west-2.compute.amazonaws.com&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;54.191.84.122&lt;/code&gt;으로 성공적으로 리졸브(resolve) 합니다.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ kafkacat -b ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 -L
+Metadata for all topics (from broker -1: ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092/bootstrap):
+1 brokers:
+  broker 0 at ip-172-31-18-160.us-west-2.compute.internal:9092
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;hostname이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip-172-31-18-160.us-west-2.compute.internal&lt;/code&gt;인 리스너를 반환합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;하지만 인터넷을 통해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip-172-31-18-160.us-west-2.compute.internal&lt;/code&gt;은 not resolvable해서 클라이언트는 브로커에 메세지 전송을 실패합니다.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo &quot;test&quot;|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&amp;gt;&amp;gt;[2018-07-30 15:08:41,932] ERROR Error when sending message to topic test with key: null, value: 4 bytes with error: (org.apache.kafka.clients.producer.internals.ErrorLoggingCallback)
+org.apache.kafka.common.errors.TimeoutException: Expiring 1 record(s) for test-0: 1547 ms has passed since batch creation plus linger time
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;브로커가 설치된 서버의 클라이언트로는 문제없이 동작한다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo &quot;foo&quot;|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&amp;gt;&amp;gt;
+$ kafka-console-consumer --bootstrap-server ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test --from-beginning
+foo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;이러한 일이 발생하는 이유는 9092포트로 연결하는 리스너가 내부 리스너이기 때문이라고 한다. 그래서 브로커가 설치된 서버의 내부에서만 resolvable한 hostname인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip-172-31-18-160.us-west-2.compute.internal&lt;/code&gt;을 리턴한다.&lt;/p&gt;
+
+&lt;h1 id=&quot;how-to-connecting-to-kafka-on-docker&quot;&gt;HOW TO: Connecting to Kafka on Docker&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_36.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;도커에서 동작하기 위해서는 카프카의 두 개의 listener를 지정해야 한다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;도커 네트워크 내에서의 통신&lt;/strong&gt;: 이것은 브로커간의 통신 또는 도커 안의 다른 컴포넌트와의 통신을 의미한다. 이를 위해서는 도커 네트워크 안에 있는 컨테이너의 호스트네임을 사용해야 한다. 각각의 브로커는 컨테이너의 호스트네임을 통해 서로 통신하게 될 것이다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;도커가 아닌 네트워크로부터의 트래픽&lt;/strong&gt;: 이것은 도커를 실행하는 서버에서 로컬로 동작하는 클라이언트가 될 수 있다. 이러한 경우 도커를 실행하는 서버(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;)에서 컨테이너의 포트에 연결할 수 있다. 아래의 도커 컴포즈 스니펫을 한 번 보자.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;kafka0&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;confluentinc/cp-enterprise-kafka:5.2.1&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;9092:9092'&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;29094:29094'&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;# For more details see See https://rmoff.net/2018/08/02/kafka-listeners-explained/&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_INTER_BROKER_LISTENER_NAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;도커 네트워크 내에 클라이언트가 있다면 클라이언트는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;호스트네임 kafka0&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;29092 포트&lt;/code&gt;를 이용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BOB&lt;/code&gt; 리스너를 통해 브로커와 통신할 것입니다. 각각의 컨테이너(클라이언트, 브로커)는 kafka0를 도커 내부 네트워크를 통해 resolve합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;도커를 실행하는 호스트 머신(VM)에 있는 외부 클라이언트의 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;호스트 네임 localhost&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9092 포트&lt;/code&gt;를 이용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FRED&lt;/code&gt; 리스너를 통해 브로커와 통신한다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;도커를 실행하는 호스트 머신(VM) 밖에 있는 외부 클라이언트는 위의 리스너를 통해 통신할 수 없다. 왜냐하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kafka0&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;도 모두 resolvable하지 않기 때문이다.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;how-to-connecting-to-kafka-on-iaascloud&quot;&gt;HOW TO: Connecting to Kafka on IaaS/Cloud&lt;/h1&gt;
+
+&lt;p&gt;도커와의 차이점은, 도커에서 외부의 연결은 단순히 localhost에서 이루어진 반면, 클라우드 호스트 기반의 카프카는 클라이언트가 localhost에 존재하지 않는다는 것이다.&lt;/p&gt;
+
+&lt;p&gt;더 복잡한 것은 도커 네트워크가 호스트의 네트워크와는 크게 분리되어 있지만 IaaS에서는 외부 호스트 이름이 내부적으로 확인 가능한 경우가 많기 때문에 이러한 문제가 실제로 발생할 경우 호스트 이름이 잘못될 수 있다.&lt;/p&gt;
+
+&lt;p&gt;브로커에 연결할 외부 주소가 브로커에게 로컬로 확인할 수 있는지 여부에 따라 두 가지 방법이 있다.&lt;/p&gt;
+
+&lt;h2 id=&quot;option-1-external-address-is-resolvable-locally&quot;&gt;Option 1: External address is resolvable locally&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_37.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;EC2 인스턴스의 IP 주소는 기본적으로 External IP. 만약 local에서 resolvable하다면, 로컬 내의 클라이언트, 외부 클라이언트 모두 이를 통해 통신 가능. 다만 외부 클라이언트는 밑의 설정만 추가해주면 된다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;advertised.listeners=PLAINTEXT://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;option-2-external-address-is-not-resolvable-locally&quot;&gt;Option 2: External address is NOT resolvable locally&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kafka_38.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;만약 로컬 내에서 resolvable하지 않다면, 두 가지 리스너가 필요하다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;VPC 내에서의 통신을 위해 local에서 resolvable한 Internal IP를 통해 내부에서 리슨한다&lt;/li&gt;
+  &lt;li&gt;VPC 밖, 예를 들어 나의 노트북에서 접속하려는 경우 인스턴스의 External IP가 필요하다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;listeners=INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092
+listener.security.protocol.map=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+advertised.listeners=INTERNAL://ip-172-31-18-160.us-west-2.compute.internal:19092,EXTERNAL://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
+inter.broker.listener.name=INTERNAL
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;exploring-listeners-with-docker&quot;&gt;Exploring listeners with Docker&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Listener BOB (port 29092) for &lt;strong&gt;internal traffic on the Docker network&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Listener FRED (port 9092) for &lt;strong&gt;traffic from the Docker host machine (localhost)&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Listener ALICE (port 29094) for &lt;strong&gt;traffic from outside&lt;/strong&gt;, reaching the Docker host on the DNS name never-gonna-give-you-up&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;2'&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;zookeeper&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;confluentinc/cp-zookeeper:5.2.1&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ZOOKEEPER_CLIENT_PORT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2181&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ZOOKEEPER_TICK_TIME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2000&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;kafka0&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;confluentinc/cp-enterprise-kafka:5.2.1&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;9092:9092'&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;29094:29094'&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_BROKER_ID&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_ZOOKEEPER_CONNECT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper:2181&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_INTER_BROKER_LISTENER_NAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_AUTO_CREATE_TOPICS_ENABLE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;false&quot;&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;100&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;kafkacat&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;confluentinc/cp-kafkacat&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sleep infinity&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+                <pubDate>Sun, 30 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/kafka-series5</link>
+                <guid isPermaLink="true">http://localhost:4000/kafka-series5</guid>
+                
+                <category>Kafka</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
         
             <item>
                 <title>Kubernetes Series [Part7]: StatefulSet</title>
@@ -220,6 +460,58 @@
                 
                 
                 <category>devops</category>
+                
+            </item>
+        
+            <item>
+                <title>OS Series [Part1]: 운영체제와 컴퓨터의 구조</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#운영체제-소개&quot; id=&quot;markdown-toc-운영체제-소개&quot;&gt;운영체제 소개&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#운영체제의-구조&quot; id=&quot;markdown-toc-운영체제의-구조&quot;&gt;운영체제의 구조&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#커널과-인터페이스&quot; id=&quot;markdown-toc-커널과-인터페이스&quot;&gt;커널과 인터페이스&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#컴퓨터의-기본-구성&quot; id=&quot;markdown-toc-컴퓨터의-기본-구성&quot;&gt;컴퓨터의 기본 구성&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#cpu와-메모리&quot; id=&quot;markdown-toc-cpu와-메모리&quot;&gt;CPU와 메모리&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#컴퓨터-성능-향상-기술&quot; id=&quot;markdown-toc-컴퓨터-성능-향상-기술&quot;&gt;컴퓨터 성능 향상 기술&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#병렬-처리&quot; id=&quot;markdown-toc-병렬-처리&quot;&gt;병렬 처리&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;h1 id=&quot;운영체제-소개&quot;&gt;운영체제 소개&lt;/h1&gt;
+&lt;p&gt;운영체제는 컴퓨터 전원을 켜면 가장 먼저 만나게 되는 소프트웨어로, 대표적인 예로 컴퓨터의 윈도우와 맥, 리눅스, 모바일의 iOS, 안드로이드가 있습니다. 이뿐만 아니라 스마트 워치, 스마트 TV에도 성능은 낮지만 임베디드 운영체제가 있습니다.&lt;/p&gt;
+
+&lt;p&gt;운영체제가 하는 역할은 크게 다음과 같습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;프로세스 관리&lt;/li&gt;
+  &lt;li&gt;자원(CPU, 메모리) 관리 및 분배&lt;/li&gt;
+  &lt;li&gt;파일시스템 관리&lt;/li&gt;
+  &lt;li&gt;사용자 인터페이스 제공 (CLI, GUI)&lt;/li&gt;
+  &lt;li&gt;하드웨어 인터페이스 제공&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;🦊 &lt;strong&gt;인터페이스&lt;/strong&gt;&lt;br /&gt;
+응용 프로그램이나 하드웨어는 굉장히 다양하고 어려운 분야이기에 사용자가 직접 접근하는 것은 어렵게 느껴집니다. 이러한 문제를 해결하고자 컴퓨터 분야에서는 인터페이스라는 것을 제공하고 있으며 운영체제라는 소프트웨어에도 인터페이스가 있습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;운영체제의-구조&quot;&gt;운영체제의 구조&lt;/h1&gt;
+&lt;h2 id=&quot;커널과-인터페이스&quot;&gt;커널과 인터페이스&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;../../images/os_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;h1 id=&quot;컴퓨터의-기본-구성&quot;&gt;컴퓨터의 기본 구성&lt;/h1&gt;
+
+&lt;h1 id=&quot;cpu와-메모리&quot;&gt;CPU와 메모리&lt;/h1&gt;
+
+&lt;h1 id=&quot;컴퓨터-성능-향상-기술&quot;&gt;컴퓨터 성능 향상 기술&lt;/h1&gt;
+
+&lt;h1 id=&quot;병렬-처리&quot;&gt;병렬 처리&lt;/h1&gt;
+</description>
+                <pubDate>Thu, 27 Jan 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/os-series1</link>
+                <guid isPermaLink="true">http://localhost:4000/os-series1</guid>
+                
+                <category>OS</category>
+                
+                
+                <category>CS</category>
                 
             </item>
         
@@ -1048,279 +1340,6 @@ Deleting cluster &lt;span class=&quot;s2&quot;&gt;&quot;kindcluster&quot;&lt;/sp
                 
                 
                 <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>Kubernetes Series [Part3]: Kubernetes Service</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#kubernetes-network&quot; id=&quot;markdown-toc-kubernetes-network&quot;&gt;Kubernetes Network&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#clusterip&quot; id=&quot;markdown-toc-clusterip&quot;&gt;ClusterIP&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#nodeport&quot; id=&quot;markdown-toc-nodeport&quot;&gt;NodePort&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#loacbalancer&quot; id=&quot;markdown-toc-loacbalancer&quot;&gt;LoacBalancer&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#ingress&quot; id=&quot;markdown-toc-ingress&quot;&gt;Ingress&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#클러스터-외부의-로드-밸런서만을-이용한-ingress&quot; id=&quot;markdown-toc-클러스터-외부의-로드-밸런서만을-이용한-ingress&quot;&gt;클러스터 외부의 로드 밸런서만을 이용한 Ingress&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#클러스터-내부의-ingress-파드를-곁들인-ingress&quot; id=&quot;markdown-toc-클러스터-내부의-ingress-파드를-곁들인-ingress&quot;&gt;클러스터 내부의 Ingress 파드를 곁들인 Ingress&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고자료&quot; id=&quot;markdown-toc-참고자료&quot;&gt;참고자료&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;kubernetes-network&quot;&gt;Kubernetes Network&lt;/h1&gt;
-&lt;p&gt;쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 &lt;strong&gt;localhost&lt;/strong&gt;로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 &lt;strong&gt;파드의 IP 주소&lt;/strong&gt;로 통신하면 됩니다. 또한 노드 간의 통신은 &lt;strong&gt;VXLAN이나 L2 Routing&lt;/strong&gt;을 이용할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_25.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이렇게 쿠버네티스에서는 클러스터 내부에서는 네트워크가 자동으로 구성되어 Service 리소스를 이용하지 않고도 파드 간 통신이 가능합니다. 그러나 Service 리소스를 이용하면 다음과 같은 장점을 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;로드 밸런싱&lt;/li&gt;
-  &lt;li&gt;서비스 디스커버리&lt;/li&gt;
-  &lt;li&gt;클러스터 내부 DNS&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;clusterip&quot;&gt;ClusterIP&lt;/h1&gt;
-&lt;p&gt;ClusterIP는 서비스의 기본 타입입니다. ClusterIP 서비스를 생성하면 &lt;strong&gt;클러스터 내부에서만 통신 가능한 가상 IP&lt;/strong&gt;가 할당됩니다. kube-proxy는 노드 안에서 ClusterIP에서 들어온 트래픽을 원하는 파드로 전송합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_26.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;nodeport&quot;&gt;NodePort&lt;/h1&gt;
-&lt;p&gt;NodePort는 모든 노드의 IP주소:포트에서 수신한 트래픽을 컨테이너에 전송하는 형태로 외부와 통신할 수 있습니다. NodePort는 전체 노드 N개 중 임의의 노드의 IP주소를 외부에 노출합니다. 그럼에도 ClusterIP를 통해 다른 노드의 파드로 통신하는데에는 문제 없습니다. 그러나 &lt;strong&gt;노출된 IP주소의 노드는 단일 장애점(Single Point of Failure)&lt;/strong&gt;이 되기 때문에 NodePort만을 이용해 외부와 통신하는 것은 분명한 한계점이 있습니다. 또한 NodePort는 쿠버네티스에서 &lt;strong&gt;지정한 범위(30000~32767)&lt;/strong&gt; 안에서만 지정할 수 있기 때문에 서비스로 활용하기에는 포트 번호가 예쁘지는 않습니다. 노드 포트 번호는 범위 안에서 직접 지정 가능하지만 쿠버네티스에서는 노드 포트 번호를 직접 지정하는 것을 지양합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_27.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-&lt;h1 id=&quot;loacbalancer&quot;&gt;LoacBalancer&lt;/h1&gt;
-&lt;p&gt;LoadBalancer에서는 NodePort와 다르게 별도로 외부 로드 밸런서를 사용하기 때문에 노드 장애가 발생해도 크게 문제가 되지 않습니다. 노드에 장애가 발생한 경우 해당 노드를 목적지에서 제외 처리하고 트래픽을 전송하지 않게됩니다. LoadBalancer서비스를 생성하면 컨테이너 내부에서의 통신을 위해 ClusterIP도 자동 할당됩니다. 실제 서비스 운영 환경에서는 외부로부터 요청을 수신하는 External IP 주소를 DNS 설정 등의 이유로 고정하는 것을 선호하고 LoadBalancer 서비스는 이를 지원합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_28.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;ingress&quot;&gt;Ingress&lt;/h1&gt;
-&lt;p&gt;인그레스는 L7(application layer) 로드 밸런싱을 제공하는 리소스입니다. 인그레스는 서비스들을 묶는 상위 객체로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kind: Ingress&lt;/code&gt;타입 리소스를 지정합니다. 인그레스를 이용하면 하나의 IP주소로 N개의 애플리케이션을 로드 밸런싱할 수 있습니다.&lt;/p&gt;
-&lt;h2 id=&quot;클러스터-외부의-로드-밸런서만을-이용한-ingress&quot;&gt;클러스터 외부의 로드 밸런서만을 이용한 Ingress&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;GKE 인그레스&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;외부 로드 밸런서로 인그레스를 사용한다면, 인그레스 리소스 생성만으로 충분합니다.&lt;br /&gt;
-&lt;img src=&quot;../../images/kube_29.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-&lt;h2 id=&quot;클러스터-내부의-ingress-파드를-곁들인-ingress&quot;&gt;클러스터 내부의 Ingress 파드를 곁들인 Ingress&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Nginx 인그레스&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;클러스터 내부에서 인그레스를 이용해 로드 밸런싱을 할 경우 인그레스용 파드를 클러스터 내부에 생성해야 합니다. 또 내부의 인그레스용 파드를 외부에서 접속할 수 있도록 하기 위해 별도의 LoadBalancer 서비스를 생성해야 합니다.&lt;/p&gt;
-
-&lt;p&gt;Nginx 인그레스 컨트롤러는 이름은 컨트롤러이지만 L7 수준의 로드 밸런싱을 직접 처리하기도 합니다.&lt;br /&gt;
-&lt;img src=&quot;../../images/kube_30.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;amp;mallGb=KOR&amp;amp;barcode=9791165216283&quot; target=&quot;_blank&quot;&gt;쿠버네티스 완벽 가이드 책&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://subicura.com/k8s/guide/&quot; target=&quot;_blank&quot;&gt;subicura님의 kubenetes안내서&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/65887993/when-to-choose-loadbalancer-over-nodeport-service-typeor-vice-versa-in-kub&quot; target=&quot;_blank&quot;&gt;NodePort vs LoadBalancer stackoverflow&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview&quot; target=&quot;_blank&quot;&gt;Google Kubernetes Engine 가이드&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Sun, 23 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/kubernetes-series3</link>
-                <guid isPermaLink="true">http://localhost:4000/kubernetes-series3</guid>
-                
-                <category>Kubernetes</category>
-                
-                
-                <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>Kafka Series [Part2]: Main elements of Kafka</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#kafka의-주요-구성요소&quot; id=&quot;markdown-toc-kafka의-주요-구성요소&quot;&gt;Kafka의 주요 구성요소&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#topic-partition-segment&quot; id=&quot;markdown-toc-topic-partition-segment&quot;&gt;Topic, Partition, Segment&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#producer&quot; id=&quot;markdown-toc-producer&quot;&gt;Producer&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#메세지-전송과정&quot; id=&quot;markdown-toc-메세지-전송과정&quot;&gt;메세지 전송과정&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#라운드-로빈round-robbin-방식&quot; id=&quot;markdown-toc-라운드-로빈round-robbin-방식&quot;&gt;라운드 로빈(Round-Robbin) 방식&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#스티키-파티셔닝sticky-partitioning-방식&quot; id=&quot;markdown-toc-스티키-파티셔닝sticky-partitioning-방식&quot;&gt;스티키 파티셔닝(Sticky Partitioning) 방식&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#중복-없는-전송&quot; id=&quot;markdown-toc-중복-없는-전송&quot;&gt;중복 없는 전송&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#정확히-한-번-전송&quot; id=&quot;markdown-toc-정확히-한-번-전송&quot;&gt;정확히 한 번 전송&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#broker&quot; id=&quot;markdown-toc-broker&quot;&gt;Broker&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#consumer&quot; id=&quot;markdown-toc-consumer&quot;&gt;Consumer&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#컨슈머-오프셋-관리&quot; id=&quot;markdown-toc-컨슈머-오프셋-관리&quot;&gt;컨슈머 오프셋 관리&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#그룹-코디네이터&quot; id=&quot;markdown-toc-그룹-코디네이터&quot;&gt;그룹 코디네이터&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#파티션-할당-전략&quot; id=&quot;markdown-toc-파티션-할당-전략&quot;&gt;파티션 할당 전략&lt;/a&gt;            &lt;ul&gt;
-              &lt;li&gt;&lt;a href=&quot;#라운드-로빈-파티션-할당-전략&quot; id=&quot;markdown-toc-라운드-로빈-파티션-할당-전략&quot;&gt;라운드 로빈 파티션 할당 전략&lt;/a&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;a href=&quot;#스티키-파티션-할당-전략&quot; id=&quot;markdown-toc-스티키-파티션-할당-전략&quot;&gt;스티키 파티션 할당 전략&lt;/a&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;a href=&quot;#협력적-스티키-파티션-할당-전략&quot; id=&quot;markdown-toc-협력적-스티키-파티션-할당-전략&quot;&gt;협력적 스티키 파티션 할당 전략&lt;/a&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#마치며&quot; id=&quot;markdown-toc-마치며&quot;&gt;마치며&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고자료&quot; id=&quot;markdown-toc-참고자료&quot;&gt;참고자료&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;kafka의-주요-구성요소&quot;&gt;Kafka의 주요 구성요소&lt;/h1&gt;
-&lt;p&gt;Kafka는 크게 3가지로 이루어 있습니다.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Producer: Kafka로 메시지를 보내는 모든 클라이언트&lt;/li&gt;
-  &lt;li&gt;Broker: 메시지를 분산 저장 및 관리하는 Kafka 애플리케이션이 설치된 서버&lt;/li&gt;
-  &lt;li&gt;Consumer: Kafka에서 메시지를 꺼내서 사용하는 모든 클라이언트&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_7.png&quot; alt=&quot;&quot; /&gt;
-&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot; target=&quot;_blank&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;topic-partition-segment&quot;&gt;Topic, Partition, Segment&lt;/h2&gt;
-&lt;p&gt;Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으로 구성, 저장되는지에 대해 짚고 넘어가려고 합니다.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Topic: 메시지가 저장될 카테고리 이름 (논리적인 저장소)&lt;/li&gt;
-  &lt;li&gt;Partition: 병렬 처리를 위해 Topic을 여러 개로 나눈 것 (Server 디스크에 저장된 디렉토리)&lt;/li&gt;
-  &lt;li&gt;Segment: 메시지가 실제로 저장되는 파일&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_6.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://www.cloudkarafka.com/blog/part1-kafka-for-beginners-what-is-apache-kafka.html&quot; target=&quot;_blank&quot;&gt;(참고: cloudkarafka)&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;카프카를 실행하게 되면 보통 토픽을 가장 먼저 생성합니다. 그리고 토픽은 병렬 처리를 통한 성능 향상을 위해 파티션으로 나뉘어 구성됩니다. 그리고 프로듀서가 카프카로 전송한 메시지는 해당 토픽 내 각 파티션의 로그 세그먼트에 저장됩니다. 따라서 프로듀서는 토픽으로 메시지를 보낼 때 해당 토픽의 어느 파티션으로 메시지를 보낼지를 결정해야 합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;producer&quot;&gt;Producer&lt;/h2&gt;
-&lt;p&gt;프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_13.webp&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot; target=&quot;_blank&quot;&gt;(Dzone 블로그 참고)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;메세지-전송과정&quot;&gt;메세지 전송과정&lt;/h3&gt;
-&lt;p&gt;프로듀서가 카프카의 브로커로 데이터를 전송할 때에는 &lt;strong&gt;ProducerRecord&lt;/strong&gt;라고 하는 형태로 전송되며, &lt;strong&gt;Topic&lt;/strong&gt;과 &lt;strong&gt;Value&lt;/strong&gt;는 필수값이며, &lt;strong&gt;Partition&lt;/strong&gt;과 &lt;strong&gt;Key&lt;/strong&gt;는 선택값입니다. 프로듀서는 카프카로 레코드를 전송할 때, 카프카의 특정 토픽으로 메세지를 전송합니다. 전송 과정은&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;프로듀서에서 send() 메소드 호출&lt;/li&gt;
-  &lt;li&gt;Serializer는 JSON, String, Avro 등의 object를 bytes로 변환&lt;/li&gt;
-  &lt;li&gt;ProducerRecord에 target Partition이 있으면 해당 파티션으로 레코드 전달&lt;/li&gt;
-  &lt;li&gt;Partition이 지정되지 않았을 때, Key값이 지정되었다면 &lt;strong&gt;Partitioner가 Key값을 바탕으로&lt;/strong&gt; 해당 파티션에 전달&lt;/li&gt;
-  &lt;li&gt;Partition, Key값이 모두 없으면 &lt;strong&gt;라운드 로빈(Round-Robbin)&lt;/strong&gt;방식 또는 &lt;strong&gt;스티키 파티셔닝(Sticky Partitioning)&lt;/strong&gt; 방식으로 메세지를 파티션에 할당&lt;/li&gt;
-  &lt;li&gt;파티션에 세그먼트 파일 형태로 저장된 레코드는 바로 전송할 수도 있고, 프로듀서의 버퍼 메모리 영역에 잠시 저장해두고 &lt;strong&gt;배치로 전송할 수도 있음&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;라운드-로빈round-robbin-방식&quot;&gt;라운드 로빈(Round-Robbin) 방식&lt;/h3&gt;
-&lt;p&gt;프로듀서의 메시지에서 키값은 필수값이 아니므로, 값이 null일 수도 있습니다. 그럴 경우 기본적인 메세지 할당 방식은 라운드 로빈 방식 입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_30.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;메시지를 위 그림과 같이 순차적으로 파티션에 할당합니다. 하지만 이 방법은 배치 전송을 할 경우 배치 사이즈가 3일 때, 메시지를 5개 보내는 동안에도 카프카로 전송되지 못한채 프로듀서의 버퍼 메모리 영역에서 대기하고 있습니다. 이러한 비효율적인 전송을 보완하기 위해 카프카에서는 스티키 파티셔닝 방식을 공개했습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;스티키-파티셔닝sticky-partitioning-방식&quot;&gt;스티키 파티셔닝(Sticky Partitioning) 방식&lt;/h3&gt;
-&lt;p&gt;라운드 로빈 방식의 비효율적인 전송을 개선하기 위해 아파치 카프카 2.4버전부터는 스티키 파티셔닝 방식을 사용하고 있습니다. 스키티 파티셔닝이란 하나의 파티션에 레코드를 먼저 채워 카프카로 빠르게 배치 전송하는 방식을 말합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_29.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-이렇게 파티셔너는 배치를 위한 레코드 수에 도달할 때까지 파티션 한 곳에만 메시지를 담아놓습니다. 이러한 미묘한 변화가 프로듀서 성능을 높일 수 있는지 의구심이 들지만 컨플루언트에서는 블로그에서 약 30% 이상 지연시간이 감소되었다고 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_31.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://www.confluent.io/en-gb/blog/apache-kafka-producer-improvements-sticky-partitioner/&quot; target=&quot;_blank&quot;&gt;(Confluent 블로그 참고, linger.ms는 배치 전송을 위해 버퍼 메모리에서 메시지가 대기하는 최대시간입니다.)&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&quot;중복-없는-전송&quot;&gt;중복 없는 전송&lt;/h3&gt;
-
-&lt;h3 id=&quot;정확히-한-번-전송&quot;&gt;정확히 한 번 전송&lt;/h3&gt;
-
-&lt;h2 id=&quot;broker&quot;&gt;Broker&lt;/h2&gt;
-&lt;p&gt;브로커는 Topic내의 Partition들을 분산 저장, 관리해줍니다. 하나의 브로커에는 Topic의 모든 데이터를 가지고 있지 않고, 일부분(Partition)만 가지게 됩니다. 보통 Broker를 최소 3대 이상으로 구성해 Kafka cluster를 형성합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;consumer&quot;&gt;Consumer&lt;/h2&gt;
-&lt;p&gt;컨슈머는 카프카에 저장되어 있는 메시지를 가져오는 역할을 합니다. 그러나 단순히 가져오는 역할만 하지는 않고, 조금 더 자세히 들여다 보면 컨슈머 그룹을 만들고, 그룹 내 모든 컨슈머가 파티션을 골고루 가져오도록 하는 리밸런싱과 같은 역할도 합니다. 컨슈머 수는 파티션 수보다 작거나 같도록 하는 것이 바람직합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_10.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;컨슈머 그룹 내에 있는 컨슈머들은 서로 협력하여 메시지를 처리합니다. 이 때 Partition은 같은 그룹에 있는 컨슈머 중 한 개의 컨슈머에 의해서만 소비됩니다. (같은 그룹에 있는 여러 컨슈머가 한 개의 Partition을 소비하면 메시지 중복 문제를 해결하는데 또 비용이 든다) 컨슈머에서 고려해야 할 사항에는 다음과 같은 것들이 있습니다.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;파티션 할당 전략&lt;/li&gt;
-  &lt;li&gt;프로듀서가 카프카에 메세지를 저장하는 속도와 컨슈머가 읽어가는 속도가 비슷한가&lt;/li&gt;
-  &lt;li&gt;컨슈머의 개수가 파티션보다 많지는 않은가&lt;/li&gt;
-  &lt;li&gt;컨슈머 그룹 내에 장애가 발생한 컨슈머가 생기면 어떻게 처리할 것인가&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;컨슈머-오프셋-관리&quot;&gt;컨슈머 오프셋 관리&lt;/h3&gt;
-&lt;p&gt;컨슈머의 동작 중 가장 핵심은 바로 오프셋 관리입니다. 이를 통해 마지막 고려사항인 컨슈머 장애 발생에 대응할 수 있습니다. 오프셋 관리는 &lt;strong&gt;컨슈머가 메시지를 어디까지 가져왔는지를 표시하는 것&lt;/strong&gt;이라고 할 수 있습니다. 예를 들어 컨슈머가 일시적으로 동작을 멈추고 재시작하거나, 컨슈머 서버에 문제가 발생해 새로운 컨슈머가 생성된 경우 새로운 컨슈머는 기존 컨슈머의 마지막 위치에서 메시지를 가져올 수 있어야 장애를 복구할 수 있습니다. 카프카에서는 메시지의 위치를 나타내는 숫자를 오프셋이라고 하고 이러한 오프셋 정보는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__consumer_offsets&lt;/code&gt;라는 별도의 토픽에 저장합니다. 이러한 정보는 컨슈머 그룹별로 기록됩니다.&lt;/p&gt;
-
-&lt;p&gt;이렇게 __consumer_offsets 토픽에 정보를 기록해 두면 컨슈머의 변경이 발생했을 때 해당 컨슈머가 어디까지 읽었는지 추적할 수 있습니다. 여기서 주의할 점은 저장되는 오프셋값은 컨슈머가 마지막으로 읽은 위치가 아니라, &lt;strong&gt;컨슈머가 다음으로 읽어야 할 위치&lt;/strong&gt;를 말합니다.&lt;/p&gt;
-
-&lt;p&gt;참고로 __consumer_offsets 또한 하나의 토픽이기 때문에 파티션 수와 리플리케이션 팩터 수를 설정할 수 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;그룹-코디네이터&quot;&gt;그룹 코디네이터&lt;/h3&gt;
-&lt;p&gt;컨슈머 그룹 내의 각 컨슈머들은 서로 정보를 공유하며 하나의 공동체로 동작합니다. 컨슈머 그룹에는 컨슈머가 떠나거나 새로 합류하는 등 변화가 일어나기 때문에 이러한 변화가 일어날 때마다 컨슈머 리밸런싱을 통해 작업을 새로 균등하게 분배해야 합니다.&lt;/p&gt;
-
-&lt;p&gt;이렇게 컨슈머 그룹내의 변화를 감지하기 위해 &lt;strong&gt;트래킹하는 것이 바로 그룹 코디네이터&lt;/strong&gt;입니다. 그룹 코디네이터는 컨슈머 그룹 내의 컨슈머 리더와 통신을 하고, 실제로 파티션 할당 전략에 따라 &lt;strong&gt;컨슈머들에게 파티션을 할당하는 것은 컨슈머 리더&lt;/strong&gt;입니다. 리더 컨슈머가 작업을 마친 뒤 그룹 코디네이터에게 전달하면 그룹 코디네이터는 해당 정보를 캐시하고 그룹 내의 컨슈머들에게 성공을 알립니다. 할당을 마치고 나면 각 &lt;strong&gt;컨슈머들은 각자 할당받은 파티션으로부터 메시지를 가져옵니다.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;그룹 코디네이터는 그룹 별로 하나씩 존재하며 브로커 중 하나에 위치합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_28.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그룹 코디네이터는 컨슈머와 주기적으로 하트비트를 주고받으며 컨슈머가 잘 동작하는지 확인합니다. 컨슈머는 그룹에서 빠져나가거나 새로 합류하게 되면 그룹 코디네이터에게 join, leave 요청을 보내고 그룹 코디네이터는 이러한 정보를 컨슈머 리더에게 전달해 새로 파티션을 할당하도록 합니다. 이 밖에도 컨슈머가 일정 시간(session.timeout.ms)이 지나도록 하트비트를 보내지 않으면 컨슈머에 문제가 발생한 것으로 간주하고 다시 컨슈머 리더에게 이러한 정보를 알려줍니다.&lt;/p&gt;
-
-&lt;p&gt;이렇게 컨슈머에 변화가 생길 때마다 파티션 리밸런싱이 일어나게 되는데 파티션 리밸런싱은 파티션을 골고루 분배해 성능을 향상시키기도 하지만 너무 자주 일어나게 되면 오히려 배보다 배꼽이 더 커지는 상황이 발생할 수 있습니다. 이러한 문제를 해결하기 위해 아파치 카프카에서는 몇가지의 파티션 할당 전략을 제공하고 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;파티션-할당-전략&quot;&gt;파티션 할당 전략&lt;/h3&gt;
-
-&lt;h4 id=&quot;라운드-로빈-파티션-할당-전략&quot;&gt;라운드 로빈 파티션 할당 전략&lt;/h4&gt;
-&lt;p&gt;라운드 로빈 방식은 파티션 할당 방법 중 가장 간단한 방법입니다. 할당해야할 모든 파티션과 컨슈머들을 나열한 후 하나씩 파티션과 컨슈머를 할당하는 방식입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_32.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이렇게 하면 파티션을 균등하게 분배할 수 있지만 컨슈머 리밸런싱이 일어날 때 마다 컨슈머가 작업하던 파티션이 계속 바뀌게 되는 문제점이 생깁니다. 예를 들어 컨슈머 1이 처음에는 파티션 0을 작업하고 있었으나 컨슈머 리밸런싱이 일어난 후 파티션 0은 컨슈머 2에게 가고 컨슈머 1은 다른 파티션을 작업해야 합니다. 이런 현상을 최대한 줄이고자 나오게 된 것이 바로 스티키 파티션 할당 전략입니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;스티키-파티션-할당-전략&quot;&gt;스티키 파티션 할당 전략&lt;/h4&gt;
-&lt;p&gt;스티키 파티션 할당 전략의 첫 번째 목적은 파티션을 균등하게 분배하는 것이고, 두 번째 목적은 재할당이 일어날 때 최대한 파티션의 이동이 적게 발생하도록 하는 것입니다. 우선순위는 첫 번째가 더 높습니다.&lt;/p&gt;
-
-&lt;p&gt;동작 방식은 먼저 문제가 없는 컨슈머에 연결된 파티션은 그대로 둡니다. 그리고 문제가 생긴 컨슈머에 할당된 파티션들만 다시 라운드 로빈 방식으로 재할당합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_33.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;마지막 할당 전략으로 넘어가기 전에 짚고 넘어갈 점이 있습니다. 위에서 배웠던 재할당 방식은 모두 EAGER라는 리밸런스 프로토콜을 사용했고, EAGER 프로토콜은 리밸런싱할 때 컨슈머에게 할당되었던 모든 파티션들을 할당 취소합니다. 스티키 파티션 할당 전략은 문제가 없는 컨슈머의 파티션은 그렇지 않을 것 같지만 스티키 파티션 할당 전략도 마찬가지로 모든 파티션을 할당 취소합니다. 이렇게 구현한 이유는 먼저 파티션은 그룹 내의 컨슈머에게 중복 할당 되어서는 안되기 때문에 이러한 로직을 쉽게 구현하고자 하였던 것입니다. 그러나 이렇게 모든 파티션을 할당 취소하게 되면 일시적으로 컨슈머가 일을 할 수 없게 됩니다. 이 때 소요되는 시간을 다운타임이라고 합니다. 즉 컨슈머의 다운타임 동안 LAG가 급격하게 증가합니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;협력적-스티키-파티션-할당-전략&quot;&gt;협력적 스티키 파티션 할당 전략&lt;/h4&gt;
-&lt;p&gt;이러한 이슈를 개선하고자 아파치 카프카 2.3 버전부터는 새로운 리밸런싱 프로토콜인 COOPERATIVE 프로토콜을 적용하기 시작했고, 이 프로토콜은 리밸런싱이 동작하기 전의 컨슈머 상태를 유지할 수 있게 했습니다.&lt;/p&gt;
-
-&lt;p&gt;이 방식은 컨슈머 리밸런싱이 트리거 될 때(컨슈머의 이탈 또는 합류) 모든 컨슈머들은 자신의 정보를 그룹 코디네이터에게 전송하고 그룹 코디네이터는 이를 조합해 컨슈머 리더에게 전달합니다. 리더는 이를 바탕으로 새로 파티션 할당 전략을 세우고 이를 컨슈머들에게 전달합니다. 컨슈머들은 이를 통해 기존의 할당 전략과 차이를 비교해보고 차이가 생긴 파티션만 따로 제외시킵니다. 그리고 제외된 파티션만을 이용해 다시 리밸런싱을 진행합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_35.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이런식으로 스티키 파티션 할당 전략은 리밸런싱이 여러번 일어나게 됩니다. 이 협력적 스티키 파티션 할당 전략은 아파치 카프카 2.5 버전에서 서비스가 안정화되어 본격적으로 이용되기 시작하면서 컨슈머 리밸런싱으로 인한 다운타임을 최소화 할 수 있게 되었습니다.&lt;/p&gt;
-
-&lt;p&gt;컨플루언트 블로그에서는 기존의 EAGER 방식과 COOPERATIVE 프로토콜 방식의 성능을 비교한 결과를 공개하였는데 COOPERATIE 방식이 더 빠른 시간 안에 짧은 다운타임을 가지고 리밸런싱을 할 수 있었습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_34.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.confluent.io/blog/incremental-cooperative-rebalancing-in-kafka/&quot; target=&quot;_blank&quot;&gt;(컨플루언트 블로그 참고)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;마치며&quot;&gt;마치며&lt;/h1&gt;
-&lt;p&gt;이번 포스트에서는 카프카에서 중요한 개념들에 대해 간단히 살펴보았습니다. 프로듀서는 메세지의 전송, 브로커는 저장, 컨슈머는 읽어가는 역할을 담당합니다. 또한 카프카에서 주고 받는 데이터는 토픽, 파티션, 세그먼트라는 단위로 나뉘어 처리, 저장됩니다.&lt;/p&gt;
-
-&lt;p&gt;카프카는 데이터 파이프라인의 중심에 위치하는 허브 역할을 합니다. 그렇기 때문에 카프카는 &lt;strong&gt;장애 발생에 대처 가능한 안정적인 서비스를 제공&lt;/strong&gt;해 줄 수 있어야 하고, 각 서비스들의 원활한 이용을 위한 &lt;strong&gt;높은 처리량&lt;/strong&gt;, &lt;strong&gt;데이터 유실, 중복을 해결함으로써 각 서비스에서의 이용을 원활&lt;/strong&gt;하게 해주는 것이 좋습니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791189909345&quot; target=&quot;_blank&quot;&gt;실전 카프카 개발부터 운영까지 책&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api&quot; target=&quot;_blank&quot;&gt;Dzone 블로그&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002&quot; target=&quot;_blank&quot;&gt;CodeX 블로그&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Sun, 23 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/kafka-series2</link>
-                <guid isPermaLink="true">http://localhost:4000/kafka-series2</guid>
-                
-                <category>Kafka</category>
-                
-                
-                <category>DE</category>
                 
             </item>
         

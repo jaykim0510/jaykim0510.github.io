@@ -36,6 +36,7 @@ __스파크는 클러스터 기반의 분산 처리 기능을 제공하는 오�
 
 # RDD
 > RDD is a fault-tolerant collection of elements that can be operated on in parallel.  
+
 [(아파치 스파크 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#resilient-distributed-datasets-rdds){:target="_blank"}
 
 다시 말하면 RDD란 스파크에서 정의한 **분산 데이터 모델로서 병렬 처리가 가능한 요소**로 구성되며 데이터를 처리하는 과정에서 **장애가 발생하더라도 스스로 복구할 수 있는 능력**을 가진 **데이터 모델**이라는 뜻입니다. RDD는 분산 데이터에 대한 모델로서 단순히 값으로 표현되는 데이터만 가리키는 것이 아니고, 분산된 **데이터를 다루는 방법까지 포함**하는 일종의 클래스와 같은 개념입니다.  
