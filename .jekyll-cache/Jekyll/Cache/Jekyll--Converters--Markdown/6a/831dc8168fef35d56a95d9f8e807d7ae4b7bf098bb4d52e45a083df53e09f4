@@ -1,0 +1,33 @@
+I",<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#connection-client-to-broker" id="markdown-toc-connection-client-to-broker">Connection Client To Broker</a></li>
+</ul>
+
+<hr />
+
+<p><a href="https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/?utm_source=github&amp;utm_medium=rmoff&amp;utm_campaign=ty.community.con.rmoff-listeners&amp;utm_term=rmoff-devx" target="_blank">원문: Confluent블로그</a></p>
+
+<h1 id="connection-client-to-broker">Connection Client To Broker</h1>
+
+<p>When a client wants to send or receive a message from Apache Kafka®, there are two types of connection that must succeed:
+클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다.</p>
+
+<ol>
+  <li>브로커와의 초기 연결. 연결이 되면 브로커는 클라이언트에게 연결 가능(resolvable and accessible from client machine)한 브로커의 엔드포인트 제공(<code class="language-plaintext highlighter-rouge">advertised.listeners</code>)</li>
+  <li>클라이언트와 연결 가능한 브로커와의 연결</li>
+</ol>
+
+<p>초기 연결은 <code class="language-plaintext highlighter-rouge">producer = KafkaProducer(bootstrap_servers=["localhost:9092"])</code> 와 같이 bootstrap_servers 중 하나의 서버와 초기 연결된다. 그러면 연결된 서버는 클라이언트에게 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>를 노출해 연결되도록 한다.</p>
+
+<p>예시로 클라이언트와 카프카가 서로 다른 머신에 있는 경우를 보자.</p>
+
+<p>연결이 성공되는 경우는 다음과 같다.</p>
+
+<p><img src="/images/kafka_39.png" alt="" /></p>
+
+<p>연결이 실패되는 경우는 다음과 같다.</p>
+
+<p><img src="/images/kafka_40.png" alt="" /></p>
+
+<p>이러한 경우에는 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>를 <code class="language-plaintext highlighter-rouge">localhost:9092</code>로 설정하면 안된다.</p>
+:ET
