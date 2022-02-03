@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  'Docker Series [Part1]: Dockerfile CMD vs ENTRYPOINT'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+title:  'Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT'
+description: CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.
 date:   2022-02-01 15:01:35 +0300
 image:  '/images/docker_logo.png'
 categories: devops
@@ -16,23 +16,10 @@ tags: Docker
 ---
 **Dockerfile instruction**
 
-- [ ] FROM
-- [ ] RUN
-- [x] CMD
-- [ ] LABEL
-- [ ] EXPOSE
-- [ ] ENV
-- [ ] ADD
-- [ ] COPY
-- [x] ENTRYPOINT
-- [ ] VOLUME
-- [ ] USER
-- [ ] WORKDIR
-- [ ] ARG
-- [ ] ONBUILD
-- [ ] STOPSIGNAL
-- [ ] HEALTHCHECK
-- [ ] SHELL  
+
+- [x] COPY
+- [x] VOLUME
+- [x] WORKDIR
 
 
 # CMD

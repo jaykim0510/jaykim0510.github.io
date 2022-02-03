@@ -1,0 +1,158 @@
+I"�%<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#cmd" id="markdown-toc-cmd">CMD</a></li>
+  <li><a href="#entrypoint" id="markdown-toc-entrypoint">ENTRYPOINT</a></li>
+  <li><a href="#cmd-vs-entrypoint" id="markdown-toc-cmd-vs-entrypoint">CMD vs ENTRYPOINT</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+<p><strong>Dockerfile instruction</strong></p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />COPY</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />VOLUME</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />WORKDIR</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />EXPOSE</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ADD</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />USER</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ARG</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ONBUILD</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />STOPSIGNAL</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />HEALTHCHECK</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />SHELL</li>
+</ul>
+
+<h1 id="cmd">CMD</h1>
+
+<p>CMD 명령어 작성요령은 다음과 같이 3가지 형태가 있습니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">CMD ["executable","param1","param2"]</code> (exec form, this is the preferred form)</li>
+  <li><code class="language-plaintext highlighter-rouge">CMD ["param1","param2"]</code> (as default parameters to ENTRYPOINT)</li>
+  <li><code class="language-plaintext highlighter-rouge">CMD command param1 param2</code> (shell form)</li>
+</ul>
+
+<p>CMD 명령어는 오직 한 개의 명령어만 효과가 있습니다. 만약 아래와 같이 여러 번에 걸쳐서 작성하면 마지막 명령어 <code class="language-plaintext highlighter-rouge">CMD echo "B"</code>만 실행됩니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CMD</span><span class="s"> echo "A" </span>
+<span class="k">CMD</span><span class="s"> echo "B" </span>
+</code></pre></div></div>
+
+<p>CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다. 예를 들어 설명해보겠습니다.</p>
+
+<ul>
+  <li><strong>exec form</strong>: <code class="language-plaintext highlighter-rouge">CMD ["executable","param1","param2"]</code></li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># executable과 params의 조합이 하나의 디폴트</span>
+<span class="k">CMD</span><span class="s"> ["/bin/bash", "-c", "echo", "Hello"] </span>
+
+--------------
+# 컨테이너를 실행할 때 별다른 명령어를 입력하지 않은 경우
+docker run -it --rm &lt;image-name&gt;
+-&gt; Hello
+
+<span class="c"># 명령어를 입력하면 CMD의 디폴트는 실행되지 않습니다</span>
+docker run -it --rm &lt;image-name&gt; echo "Good morning"
+-&gt; Good morning
+</code></pre></div></div>
+
+<p>참고로 <strong>exec form</strong>은 shell processsing을 지원하지 않습니다. 그래서 <code class="language-plaintext highlighter-rouge">CMD [ "echo", "$HOME" ]</code>은 $HOME을 대체해서 출력하지 않습니다.</p>
+
+<p>🦊<strong>shell processing</strong>이 필요한 경우 두 가지 방법이 있습니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># shell을 직접 실행한다</span>
+<span class="k">CMD</span><span class="s"> [ "/bin/bash", "-c", "echo $HOME" ]</span>
+
+<span class="c"># shell form을 사용한다</span>
+<span class="k">CMD</span><span class="s"> echo $HOME</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>only params</strong>: <code class="language-plaintext highlighter-rouge">CMD ["param1","param2"]</code></li>
+</ul>
+
+<p>이 경우에는 반드시 ENTRYPOINT 명령어를 명시해줘야 합니다. 왜냐하면 인자값만 줬을 뿐 아무런 실행 가능한 것도 표기하지 않았기 때문입니다. 이 방법은 ENTRYPOINT 명령어에 디폴트 파라미터를 제공하기 위한 것입니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENTRYPOINT</span><span class="s"> ["/bin/echo", "Hello"]</span>
+<span class="k">CMD</span><span class="s"> ["world"]</span>
+
+--------------  
+# 컨테이너를 실행할 때 디폴트 인자값 주지 않아 CMD 명령어가 실행된 경우 
+docker run -it --rm &lt;image-name&gt;
+-&gt; Hello world
+
+<span class="c"># 실행 시 인자 값을 주어 CMD 명령어가 실행되지 않은 경우</span>
+docker run -it --rm &lt;image-name&gt; ME
+-&gt; Hello ME
+</code></pre></div></div>
+
+<ul>
+  <li><strong>shell form</strong>: <code class="language-plaintext highlighter-rouge">CMD command param1 param2</code></li>
+</ul>
+
+<p><strong>shell form</strong>을 사용하면 <code class="language-plaintext highlighter-rouge">command</code>가 <code class="language-plaintext highlighter-rouge">/bin/sh -c</code> 를 통해 실행되게 됩니다. 그래서 만약 <code class="language-plaintext highlighter-rouge">.py</code>와 같은 파이썬 파일을 실행할 때는 shell form이 아닌 <strong>exec form</strong>을 사용해야 합니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CMD</span><span class="s"> echo "Hello"</span>
+
+--------------
+docker run -it --rm &lt;image-name&gt;
+-&gt; Hello
+
+docker run -it --rm &lt;image-name&gt; echo Bye
+-&gt; Bye
+</code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">CMD</code>는 보다시피 컨테이너 실행 시 디폴트 값을 줄 뿐 반드시 실행된다는 보장을 할 수 없다. 항상 실행을 보장하고 싶을 때에는 <code class="language-plaintext highlighter-rouge">ENTRYPOINT</code>를 사용하면 된다.</p>
+
+<h1 id="entrypoint">ENTRYPOINT</h1>
+
+<p>ENTRYPOINT에도 2가지 표현 방법이 있습니다.</p>
+
+<ul>
+  <li><strong>exec form</strong>: <code class="language-plaintext highlighter-rouge">ENTRYPOINT ["executable", "param1", "param2"]</code></li>
+  <li><strong>shell form</strong>: <code class="language-plaintext highlighter-rouge">ENTRYPOINT command param1 param2</code></li>
+</ul>
+
+<p>ENTRYPOINT 명령어는 <code class="language-plaintext highlighter-rouge">docker run --entrypoint</code>을 사용하는 경우를 제외하고는 오버라이딩 되지 않고 반드시 실행된다는 특징이 있습니다. 예를 들어 만약 <code class="language-plaintext highlighter-rouge">docker run &lt;image&gt; -d</code> 식으로 컨테이너를 실행했다면 <code class="language-plaintext highlighter-rouge">-d</code>는 ENTRYPOINT의 <strong>exec form</strong> 뒤에 붙게 됩니다.</p>
+
+<p><strong>shell form</strong>은 어떠한 CMD 명령어나 run 커맨드라인 인자값도 사용되지 않도록 합니다. 단점은 CMD의 경우와 마찬가지로 무조건 <code class="language-plaintext highlighter-rouge">/bin/sh -c</code>로 시작할 수 밖에 없다는 점입니다.</p>
+
+<p>ENTRYPOINT 명령어도 마지막 것만 실행됩니다.</p>
+
+<ul>
+  <li><strong>exec form</strong>: <code class="language-plaintext highlighter-rouge">ENTRYPOINT ["executable", "param1", "param2"]</code></li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> ubuntu</span>
+<span class="k">ENTRYPOINT</span><span class="s"> ["/bin/echo", "Hello"]</span>
+<span class="k">CMD</span><span class="s"> ["world"]</span>
+
+----------------------
+# ENTRYPOINT, CMD 모두 실행
+docker run -it --rm &lt;image-name&gt;
+-&gt; Hello world
+
+<span class="c"># ENTRYPOINT, run argument 실행</span>
+docker run -it --rm &lt;image-name&gt; ME
+-&gt; Hello ME
+</code></pre></div></div>
+
+<h1 id="cmd-vs-entrypoint">CMD vs ENTRYPOINT</h1>
+
+<ul>
+  <li>CMD, ENTRYPOINT 명령어는 마지막 하나만 실행된다</li>
+  <li>CMD 명령어는 도커 컨테이너 실행할 때 디폴트 값을 주기 때문에 오버라이딩 될 수 있다</li>
+  <li>항상 실행되는 명령어를 원한다면 ENTRYPOINT를 사용하자</li>
+  <li>항상 실행되는 명령어와 오버라이딩 되는 인자를 원한다면 CMD와 ENTRYPOINT를 함께 써보자</li>
+  <li>CMD와 ENTRYPOINT의 조합 결과는 다음과 같다<br />
+<img src="/images/docker_1.png" alt="" /></li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.docker.com/engine/reference/builder/#cmd" target="_blank">Docker 공식문서</a></li>
+  <li><a href="https://blog.leocat.kr/notes/2017/01/08/docker-run-vs-cmd-vs-entrypoint" target="_blank">스뎅(thDeng)님 블로그</a></li>
+</ul>
+:ET
