@@ -5,9 +5,152 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 03 Feb 2022 12:47:34 +0900</pubDate>
-        <lastBuildDate>Thu, 03 Feb 2022 12:47:34 +0900</lastBuildDate>
+        <pubDate>Fri, 04 Feb 2022 01:50:44 +0900</pubDate>
+        <lastBuildDate>Fri, 04 Feb 2022 01:50:44 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Docker Series [Part1]: Dockerfile CMD vs ENTRYPOINT</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#cmd&quot; id=&quot;markdown-toc-cmd&quot;&gt;CMD&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#entrypoint&quot; id=&quot;markdown-toc-entrypoint&quot;&gt;ENTRYPOINT&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#cmd-and-entrypoint&quot; id=&quot;markdown-toc-cmd-and-entrypoint&quot;&gt;CMD and ENTRYPOINT&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Dockerfile instruction&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul class=&quot;task-list&quot;&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;FROM&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;RUN&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; checked=&quot;checked&quot; /&gt;CMD&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;LABEL&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;EXPOSE&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;ENV&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;ADD&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;COPY&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; checked=&quot;checked&quot; /&gt;ENTRYPOINT&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;VOLUME&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;USER&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;WORKDIR&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;ARG&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;ONBUILD&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;STOPSIGNAL&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;HEALTHCHECK&lt;/li&gt;
+  &lt;li class=&quot;task-list-item&quot;&gt;&lt;input type=&quot;checkbox&quot; class=&quot;task-list-item-checkbox&quot; disabled=&quot;disabled&quot; /&gt;SHELL&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;cmd&quot;&gt;CMD&lt;/h1&gt;
+
+&lt;p&gt;CMD 명령어 작성요령은 다음과 같이 3가지 형태가 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD [&quot;executable&quot;,&quot;param1&quot;,&quot;param2&quot;]&lt;/code&gt; (exec form, this is the preferred form)&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD [&quot;param1&quot;,&quot;param2&quot;]&lt;/code&gt; (as default parameters to ENTRYPOINT)&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD command param1 param2&lt;/code&gt; (shell form)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;CMD 명령어는 오직 한 개의 명령어만 효과가 있습니다. 만약 아래와 같이 여러 번에 걸쳐서 작성하면 마지막 명령어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD echo &quot;B&quot;&lt;/code&gt;만 실행됩니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; echo &quot;A&quot; &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; echo &quot;B&quot; &lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다. 예를 들어 설명해보겠습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;exec form&lt;/strong&gt;: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD [&quot;executable&quot;,&quot;param1&quot;,&quot;param2&quot;]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# executable과 params의 조합이 하나의 디폴트&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo&quot;, &quot;Hello&quot;] &lt;/span&gt;
+
+--------------
+# 컨테이너를 실행할 때 별다른 명령어를 입력하지 않은 경우
+docker run -it --rm &amp;lt;image-name&amp;gt;
+-&amp;gt; Hello
+
+&lt;span class=&quot;c&quot;&gt;# 명령어를 입력하면 CMD의 디폴트는 실행되지 않습니다&lt;/span&gt;
+docker run -it --rm &amp;lt;image-name&amp;gt; echo &quot;Good morning&quot;
+-&amp;gt; Good morning
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;참고로 &lt;strong&gt;exec form&lt;/strong&gt;은 shell processsing을 지원하지 않습니다. 그래서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD [ &quot;echo&quot;, &quot;$HOME&quot; ]&lt;/code&gt;은 $HOME을 대체해서 출력하지 않습니다.&lt;/p&gt;
+
+&lt;p&gt;shell processing이 필요한 경우 두 가지 방법이 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# shell을 직접 실행한다&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [ &quot;/bin/bash&quot;, &quot;-c&quot;, &quot;echo $HOME&quot; ]&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# shell form을 사용한다&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; echo $HOME&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;only params&lt;/strong&gt;: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD [&quot;param1&quot;,&quot;param2&quot;]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;이 경우에는 반드시 ENTRYPOINT 명령어를 명시해줘야 합니다. 왜냐하면 인자값만 줬을 뿐 아무런 실행 가능한 것도 표기하지 않았기 때문입니다. 이 방법은 ENTRYPOINT 명령어에 디폴트 파라미터를 제공하기 위한 것입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/bin/echo&quot;, &quot;Hello&quot;]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;world&quot;]&lt;/span&gt;
+
+--------------  
+# 컨테이너를 실행할 때 디폴트 인자값 주지 않아 CMD 명령어가 실행된 경우 
+docker run -it --rm &amp;lt;image-name&amp;gt;
+-&amp;gt; Hello world
+
+&lt;span class=&quot;c&quot;&gt;# 실행 시 인자 값을 주어 CMD 명령어가 실행되지 않은 경우&lt;/span&gt;
+docker run -it --rm &amp;lt;image-name&amp;gt; ME
+-&amp;gt; Hello ME
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;shell form&lt;/strong&gt;: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD command param1 param2&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;shell form&lt;/strong&gt;을 사용하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;command&lt;/code&gt;가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/bin/sh -c&lt;/code&gt; 를 통해 실행되게 됩니다. 그래서 만약 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.py&lt;/code&gt;와 같은 파이썬 파일을 실행할 때는 shell form이 아닌 &lt;strong&gt;exec form&lt;/strong&gt;을 사용해야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; echo &quot;Hello&quot;&lt;/span&gt;
+
+--------------
+docker run -it --rm &amp;lt;image-name&amp;gt;
+-&amp;gt; Hello
+
+docker run -it --rm &amp;lt;image-name&amp;gt; echo Bye
+-&amp;gt; Bye
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CMD&lt;/code&gt;는 보다시피 컨테이너 실행 시 디폴트 값을 줄 뿐 반드시 실행된다는 보장을 할 수 없다. 항상 실행을 보장하고 싶을 때에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ENTRYPOINT&lt;/code&gt;를 사용하면 된다.&lt;/p&gt;
+
+&lt;h1 id=&quot;entrypoint&quot;&gt;ENTRYPOINT&lt;/h1&gt;
+
+&lt;h1 id=&quot;cmd-and-entrypoint&quot;&gt;CMD and ENTRYPOINT&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;CMD 명령어는 마지막 하나만 실행된다&lt;/li&gt;
+  &lt;li&gt;CMD 명령어는 도커 컨테이너 실행할 때 디폴트 값을 주기 때문에 오버라이딩 될 수 있다&lt;/li&gt;
+  &lt;li&gt;항상 실행되는 명령어를 원한다면 ENTRYPOINT를 사용하자&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/engine/reference/builder/#cmd&quot; target=&quot;_blank&quot;&gt;Docker 공식문서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.leocat.kr/notes/2017/01/08/docker-run-vs-cmd-vs-entrypoint&quot; target=&quot;_blank&quot;&gt;스뎅(thDeng)님 블로그&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Tue, 01 Feb 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/docker-series1</link>
+                <guid isPermaLink="true">http://localhost:4000/docker-series1</guid>
+                
+                <category>Docker</category>
+                
+                
+                <category>devops</category>
+                
+            </item>
         
             <item>
                 <title>Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]</title>
@@ -1358,84 +1501,6 @@ pip &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;kafka-python
                 <pubDate>Thu, 27 Jan 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/kafka-series4</link>
                 <guid isPermaLink="true">http://localhost:4000/kafka-series4</guid>
-                
-                <category>Kafka</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Kafka Series [Part3]: Fault tolerance in Kafka</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#fault-tolerance-in-kafka&quot; id=&quot;markdown-toc-fault-tolerance-in-kafka&quot;&gt;Fault tolerance in Kafka&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#카프카-리플리케이션replication&quot; id=&quot;markdown-toc-카프카-리플리케이션replication&quot;&gt;카프카 리플리케이션(Replication)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#리더leader와-팔로워follower&quot; id=&quot;markdown-toc-리더leader와-팔로워follower&quot;&gt;리더(Leader)와 팔로워(Follower)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#컨트롤러controller&quot; id=&quot;markdown-toc-컨트롤러controller&quot;&gt;컨트롤러(Controller)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#리플리케이션-과정&quot; id=&quot;markdown-toc-리플리케이션-과정&quot;&gt;리플리케이션 과정&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고자료&quot; id=&quot;markdown-toc-참고자료&quot;&gt;참고자료&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;fault-tolerance-in-kafka&quot;&gt;Fault tolerance in Kafka&lt;/h1&gt;
-&lt;p&gt;카프카는 데이터 파이프라인의 중앙에 위치하는 메인 허브 역할을 합니다. 그래서 만약 하드웨어의 문제나 네트워크의 장애로 인해 정상적으로 동작하지 못한다면, 카프카에 연결된 모든 파이프라인에 심각한 영향을 미치게 됩니다. 이러한 이유로 카프카는 초기 설계 단계에서부터 장애가 발생하더라도 안정적인 서비스를 제공할 수 있도록 구상됐습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;카프카-리플리케이션replication&quot;&gt;카프카 리플리케이션(Replication)&lt;/h2&gt;
-&lt;p&gt;카프카는 데이터를 저장할 때 하나의 브로커에만 저장하지 않고, &lt;strong&gt;다른 브로커에 파티션을 복제&lt;/strong&gt;해놓음으로써 임의의 브로커 장애에 대비할 수 있습니다. 만약 N개의 리플리케이션이 있을 경우, N-1개의 브로커에 장애가 발생하더라도 손실되지 않고 데이터를 주고 받을 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;그런데 만약 같은 데이터를 여러 브로커에서 읽게되면 어떻게 될까요? 아마 불필요한 데이터 전송으로 처리량이 낮아지고, 중복 처리를 해야하는 불필요한 오버헤드가 생길 것입니다. 이런 문제를 해결하고자 카프카에는 &lt;strong&gt;리더와 팔로워&lt;/strong&gt;가 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_14.png&quot; alt=&quot;&quot; /&gt;
-&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;리더leader와-팔로워follower&quot;&gt;리더(Leader)와 팔로워(Follower)&lt;/h2&gt;
-&lt;p&gt;카프카는 내부적으로 리플리케이션들을 리더와 팔로워로 구분하고, 파티션에 대한 쓰기와 읽기는 모두 리더 파티션을 통해서만 가능합니다. 다시 말해, 프로듀서는 리더 파티션에만 메시지를 전송하고, 컨슈머도 리더를 통해서만 메시지를 가져옵니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_15.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그렇다면 팔로워는 어떤 역할을 할까요? 팔로워는 리더에 문제가 발생할 경우를 대비해 언제든지 새로운 리더가 될 수 있도록 준비를 하고 있어야합니다. 그러기 위해 팔로워들은 리더에게 새로운 메시지가 있는지 요청하고 있다면 메시지를 리더로부터 복제합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;컨트롤러controller&quot;&gt;컨트롤러(Controller)&lt;/h2&gt;
-&lt;p&gt;리더를 뽑기 위해서는 리더 선정을 담당하는 무엇인가가 카프카 클러스터에 있어야 합니다. 여기서 &lt;strong&gt;컨트롤러&lt;/strong&gt;라는 개념이 등장합니다. 컨트롤러는 카프카 클러스터 중 하나의 브로커가 컨트롤러 역할을 하게됩니다. 그래서 이러한 역할을 하는 브로커를 컨트롤러 브로커라고도 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_16.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;(shwitha B G 블로그 참고)&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;컨트롤러가 새로운 리더를 임명하는 과정을 살펴보겠습니다. &lt;strong&gt;주키퍼(Zookeeper)&lt;/strong&gt; 개념이 잠깐 등장합니다.&lt;br /&gt;
-(&lt;strong&gt;Zookeeper&lt;/strong&gt; is the centralized service for storing metadata of topic, partition, and broker)&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;주키퍼는 카프카의 모든 브로커들과 하트비트(Heartbeat)를 주고 받으며 브로커가 살아있는지 체크합니다.&lt;/li&gt;
-  &lt;li&gt;브로커와 관련하여 어떤 이벤트가 발생하면 주키퍼는 이를 감지하고 자신을 subscribe하고 있는 브로커들에게 알립니다&lt;/li&gt;
-  &lt;li&gt;컨트롤러는 알림을 받고 어떤 파티션을 새로운 리더로 임명할지 결정합니다.&lt;/li&gt;
-  &lt;li&gt;컨트롤러는 어떤 브로커가 새로운 리더를 할당받을지 결정하고, 파티션을 리밸런싱합니다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;리플리케이션-과정&quot;&gt;리플리케이션 과정&lt;/h2&gt;
-&lt;p&gt;마지막으로 리더와 팔로워간의 리플리케이션 과정을 살펴보고 포스트를 마치도록 하겠습니다.&lt;br /&gt;
-먼저 리더와 팔로워에 대해 조금 더 알아보겠습니다. 리더와 몇몇의 팔로워는 &lt;strong&gt;ISR(InSyncReplica)&lt;/strong&gt;이라는 논리적 그룹으로 묶여 있습니다. 이렇게 ISR 그룹안에 속하는 팔로워만이 리더가 될 수 있는 후보입니다.&lt;br /&gt;
-ISR 내의 팔로워들은 리더와의 데이터를 일치시키기 위해 지속적으로 리더의 데이터를 따라가게 되고, 리더는 ISR내의 팔로워가 모두 메세지를 받을 때까지 기다립니다.&lt;/p&gt;
-
-&lt;p&gt;그러나 만약 팔로워를 가지는 브로커가 장애로 데이터를 리플리케이션하지 못하게 되면 더이상 리더와의 데이터가 일치하지 않게되므로 해당 파티션은 ISR 그룹에서 제외되게 됩니다. (리더 파티션을 가지는 브로커에 장애가 발생하면 리더 재선출 및 파티션 재할당, 팔로워의 경우 ISR그룹에서 제외)&lt;/p&gt;
-
-&lt;p&gt;ISR 내에서 모든 팔로워의 복제가 완료되면, 리더는 내부적으로 커밋되었다는 표시를 하게됩니다. 이 때 마지막 커밋의 오프셋 위치를 &lt;strong&gt;하이워터마크(high water mark)&lt;/strong&gt;라고 부릅니다. 즉 커밋되었다는 것은 모든 팔로워가 리더의 데이터를 저장했음을 의미합니다. 그리고 이렇게 커밋된 메시지만 컨슈머가 읽어갈 수 있도록 함으로써 메시지의 일관성을 유지하게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_17.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;만약 커밋되지 않은 메시지를 컨슈머가 읽어갈 수 있게 되면 어떻게 될까요? 위의 그림으로 설명을 해보겠습니다. 어떤 컨슈머가 Leader가 가지고 있던 아직 커밋되지 않은 Message 3을 읽어갔습니다. 그런데 갑자기 Leader 파티션을 가지고 있던 브로커에 장애가 발생해 Follower가 새로운 Leader가 되었습니다. 이렇게 되면 아까 컨슈머는 message 3을 읽어갔지만, 이제는 더이상 message 3을 읽어갈 수 없게 됩니다. 이러한 메세지 불일치 현상을 막고자 카프카는 커밋된 메세지만 읽어갈 수 있도록 한 것입니다.&lt;/p&gt;
-&lt;h1 id=&quot;참고자료&quot;&gt;참고자료&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://hackernoon.com/apache-kafkas-distributed-system-firefighter-the-controller-broker-1afca1eae302&quot; target=&quot;_blank&quot;&gt;Hackernoon 블로그&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://medium.com/@anchan.ashwithabg95/fault-tolerance-in-apache-kafka-d1f0444260cf&quot; target=&quot;_blank&quot;&gt;Ashwitha B G 블로그&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Mon, 24 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/kafka-series3</link>
-                <guid isPermaLink="true">http://localhost:4000/kafka-series3</guid>
                 
                 <category>Kafka</category>
                 
