@@ -70,7 +70,7 @@ docker run -it --rm <image-name> echo "Good morning"
 
 참고로 **exec form**은 shell processsing을 지원하지 않습니다. 그래서 `CMD [ "echo", "$HOME" ]`은 $HOME을 대체해서 출력하지 않습니다.  
 
-shell processing이 필요한 경우 두 가지 방법이 있습니다.  
+🦊**shell processing**이 필요한 경우 두 가지 방법이 있습니다.  
 
 ```dockerfile
 # shell을 직접 실행한다
@@ -116,13 +116,42 @@ docker run -it --rm <image-name> echo Bye
 
 # ENTRYPOINT
 
+ENTRYPOINT에도 2가지 표현 방법이 있습니다.  
 
+- **exec form**: `ENTRYPOINT ["executable", "param1", "param2"]`
+- **shell form**: `ENTRYPOINT command param1 param2`  
 
-# CMD and ENTRYPOINT
+ENTRYPOINT 명령어는 `docker run --entrypoint`을 사용하는 경우를 제외하고는 오버라이딩 되지 않고 반드시 실행된다는 특징이 있습니다. 예를 들어 만약 `docker run <image> -d` 식으로 컨테이너를 실행했다면 `-d`는 ENTRYPOINT의 **exec form** 뒤에 붙게 됩니다.  
 
-- CMD 명령어는 마지막 하나만 실행된다
+**shell form**은 어떠한 CMD 명령어나 run 커맨드라인 인자값도 사용되지 않도록 합니다. 단점은 CMD의 경우와 마찬가지로 무조건 `/bin/sh -c`로 시작할 수 밖에 없다는 점입니다. 
+
+ENTRYPOINT 명령어도 마지막 것만 실행됩니다.  
+
+- **exec form**: `ENTRYPOINT ["executable", "param1", "param2"]`  
+
+```dockerfile
+FROM ubuntu
+ENTRYPOINT ["/bin/echo", "Hello"]
+CMD ["world"]
+
+----------------------
+# ENTRYPOINT, CMD 모두 실행
+docker run -it --rm <image-name>
+-> Hello world
+
+# ENTRYPOINT, run argument 실행
+docker run -it --rm <image-name> ME
+-> Hello ME
+```
+
+# CMD vs ENTRYPOINT
+
+- CMD, ENTRYPOINT 명령어는 마지막 하나만 실행된다
 - CMD 명령어는 도커 컨테이너 실행할 때 디폴트 값을 주기 때문에 오버라이딩 될 수 있다
 - 항상 실행되는 명령어를 원한다면 ENTRYPOINT를 사용하자
+- 항상 실행되는 명령어와 오버라이딩 되는 인자를 원한다면 CMD와 ENTRYPOINT를 함께 써보자  
+- CMD와 ENTRYPOINT의 조합 결과는 다음과 같다  
+  ![](/images/docker_1.png)  
 
 # 참고
 

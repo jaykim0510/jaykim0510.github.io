@@ -1,4 +1,4 @@
-I"�<p id="toc"><strong>Table of Contents</strong></p>
+I"Q(<p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#cmd" id="markdown-toc-cmd">CMD</a></li>
   <li><a href="#entrypoint" id="markdown-toc-entrypoint">ENTRYPOINT</a></li>
@@ -66,7 +66,7 @@ docker run -it --rm &lt;image-name&gt; echo "Good morning"
 
 <p>참고로 <strong>exec form</strong>은 shell processsing을 지원하지 않습니다. 그래서 <code class="language-plaintext highlighter-rouge">CMD [ "echo", "$HOME" ]</code>은 $HOME을 대체해서 출력하지 않습니다.</p>
 
-<p>shell processing이 필요한 경우 두 가지 방법이 있습니다.</p>
+<p>🦊<strong>shell processing</strong>이 필요한 경우 두 가지 방법이 있습니다.</p>
 
 <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># shell을 직접 실행한다</span>
 <span class="k">CMD</span><span class="s"> [ "/bin/bash", "-c", "echo $HOME" ]</span>
@@ -113,12 +113,49 @@ docker run -it --rm &lt;image-name&gt; echo Bye
 
 <h1 id="entrypoint">ENTRYPOINT</h1>
 
+<p>ENTRYPOINT에도 2가지 표현 방법이 있습니다.</p>
+
+<ul>
+  <li><strong>exec form</strong>: <code class="language-plaintext highlighter-rouge">ENTRYPOINT ["executable", "param1", "param2"]</code></li>
+  <li><strong>shell form</strong>: <code class="language-plaintext highlighter-rouge">ENTRYPOINT command param1 param2</code></li>
+</ul>
+
+<p>ENTRYPOINT 명령어는 <code class="language-plaintext highlighter-rouge">docker run --entrypoint</code>을 사용하는 경우를 제외하고는 오버라이딩 되지 않고 반드시 실행된다는 특징이 있습니다. 예를 들어 만약 <code class="language-plaintext highlighter-rouge">docker run &lt;image&gt; -d</code> 식으로 컨테이너를 실행했다면 <code class="language-plaintext highlighter-rouge">-d</code>는 ENTRYPOINT의 <strong>exec form</strong> 뒤에 붙게 됩니다.</p>
+
+<p><strong>shell form</strong>은 어떠한 CMD 명령어나 run 커맨드라인 인자값도 사용되지 않도록 합니다. 단점은 CMD의 경우와 마찬가지로 무조건 <code class="language-plaintext highlighter-rouge">/bin/sh -c</code>로 시작할 수 밖에 없다는 점입니다.</p>
+
+<p>ENTRYPOINT 명령어도 마지막 것만 실행됩니다.</p>
+
+<ul>
+  <li><strong>exec form</strong>: <code class="language-plaintext highlighter-rouge">ENTRYPOINT ["executable", "param1", "param2"]</code></li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> ubuntu</span>
+<span class="k">ENTRYPOINT</span><span class="s"> ["/bin/echo", "Hello"]</span>
+<span class="k">CMD</span><span class="s"> ["world"]</span>
+
+----------------------
+# ENTRYPOINT, CMD 모두 실행
+docker run -it --rm &lt;image-name&gt;
+-&gt; Hello world
+
+<span class="c"># ENTRYPOINT, run argument 실행</span>
+docker run -it --rm &lt;image-name&gt; ME
+-&gt; Hello ME
+</code></pre></div></div>
+
 <h1 id="cmd-and-entrypoint">CMD and ENTRYPOINT</h1>
 
 <ul>
-  <li>CMD 명령어는 마지막 하나만 실행된다</li>
+  <li>CMD, ENTRYPOINT 명령어는 마지막 하나만 실행된다</li>
   <li>CMD 명령어는 도커 컨테이너 실행할 때 디폴트 값을 주기 때문에 오버라이딩 될 수 있다</li>
   <li>항상 실행되는 명령어를 원한다면 ENTRYPOINT를 사용하자</li>
+  <li>항상 실행되는 명령어와 오버라이딩 되는 인자를 원한다면 CMD와 ENTRYPOINT를 함께 써보자</li>
+  <li>
+    <p>CMD와 ENTRYPOINT의 조합 결과는 다음과 같다</p>
+
+    <p><img src="/images/docker_1.png" alt="" /></p>
+  </li>
 </ul>
 
 <h1 id="참고">참고</h1>
