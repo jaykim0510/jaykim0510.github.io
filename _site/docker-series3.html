@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT</title>
+  <title>Docker Series [Part3]: Dockerfile COPY VOLUME WORKDIR</title>
   <meta name='description' content='CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.'>
 
   <link rel="canonical" href="http://localhost:4000/docker-series3">
@@ -14,12 +14,12 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT – Jay Tech">
+  <meta name="twitter:title" content="Docker Series [Part3]: Dockerfile COPY VOLUME WORKDIR – Jay Tech">
   <meta name="twitter:description" content="CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.">
   <meta name="twitter:image:src" content="http://localhost:4000/images/docker_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT – Jay Tech">
+  <meta property="og:title" content="Docker Series [Part3]: Dockerfile COPY VOLUME WORKDIR – Jay Tech">
   <meta property="og:description" content="CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.">
   <meta property="og:image" content="http://localhost:4000/images/docker_logo.png">
 
@@ -173,6 +173,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -230,7 +232,7 @@
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT">
+          <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Series [Part3]: Dockerfile COPY VOLUME WORKDIR">
         </div>
       </div>
       
@@ -249,7 +251,7 @@
             </div>
           
   
-          <h1 class="post__title">Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT</h1>
+          <h1 class="post__title">Docker Series [Part3]: Dockerfile COPY VOLUME WORKDIR</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -258,7 +260,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-02-01T21:01:35+09:00">01 Feb 2022</time>
+              <time class="post__date" datetime="2022-02-02T21:01:35+09:00">02 Feb 2022</time>
             </div>
           </div>
   
@@ -430,7 +432,7 @@ docker run -it --rm &lt;image-name&gt; ME
       <ul class="share__list list-reset">
         <li class="share__item">
           <a class="share__link share__twitter"
-            href="https://twitter.com/intent/tweet?text=Docker%20Series%20[Part2]:%20Dockerfile%20CMD%20vs%20ENTRYPOINT&url=http://localhost:4000/docker-series3"
+            href="https://twitter.com/intent/tweet?text=Docker%20Series%20[Part3]:%20Dockerfile%20COPY%20VOLUME%20WORKDIR&url=http://localhost:4000/docker-series3"
             onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
             title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
         </li>
@@ -440,12 +442,12 @@ docker run -it --rm &lt;image-name&gt; ME
             title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/docker-series3&amp;media=http://localhost:4000/images/docker_logo.png&amp;description=Docker%20Series%20[Part2]:%20Dockerfile%20CMD%20vs%20ENTRYPOINT"
+          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/docker-series3&amp;media=http://localhost:4000/images/docker_logo.png&amp;description=Docker%20Series%20[Part3]:%20Dockerfile%20COPY%20VOLUME%20WORKDIR"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
           rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/docker-series3&title=Docker%20Series%20[Part2]:%20Dockerfile%20CMD%20vs%20ENTRYPOINT&summary=CMD%20%EB%AA%85%EB%A0%B9%EC%96%B4%EC%9D%98%20%EA%B0%80%EC%9E%A5%20%ED%81%B0%20%EB%AA%A9%EC%A0%81%EC%9D%80%20%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EA%B0%80%20%EC%8B%A4%ED%96%89%EB%90%A0%20%EB%95%8C%20%EB%94%94%ED%8F%B4%ED%8A%B8%20%EB%AA%85%EB%A0%B9%EC%96%B4,%20%EB%98%90%EB%8A%94%20%EC%9D%B8%EC%9E%90%EA%B0%92%EC%9D%84%20%EC%A3%BC%EA%B3%A0%20%EC%8B%B6%EC%9D%80%20%EA%B2%BD%EC%9A%B0%EC%9E%85%EB%8B%88%EB%8B%A4.&source=Jay%20Tech"
+          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/docker-series3&title=Docker%20Series%20[Part3]:%20Dockerfile%20COPY%20VOLUME%20WORKDIR&summary=CMD%20%EB%AA%85%EB%A0%B9%EC%96%B4%EC%9D%98%20%EA%B0%80%EC%9E%A5%20%ED%81%B0%20%EB%AA%A9%EC%A0%81%EC%9D%80%20%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EA%B0%80%20%EC%8B%A4%ED%96%89%EB%90%A0%20%EB%95%8C%20%EB%94%94%ED%8F%B4%ED%8A%B8%20%EB%AA%85%EB%A0%B9%EC%96%B4,%20%EB%98%90%EB%8A%94%20%EC%9D%B8%EC%9E%90%EA%B0%92%EC%9D%84%20%EC%A3%BC%EA%B3%A0%20%EC%8B%B6%EC%9D%80%20%EA%B2%BD%EC%9A%B0%EC%9E%85%EB%8B%88%EB%8B%A4.&source=Jay%20Tech"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
         </li>
       </ul>
@@ -670,7 +672,7 @@ docker run -it --rm &lt;image-name&gt; ME
 
       
       <a class="article__image" href="/docker-series1">
-        <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Series [Part1]: Dockerfile instruction">
+        <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Series [Part1]: Dockerfile FROM RUN LABEL ENV">
       </a>
       
 
@@ -679,7 +681,48 @@ docker run -it --rm &lt;image-name&gt; ME
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/docker-series1">Docker Series [Part1]: Dockerfile instruction</a>
+        <a href="/docker-series1">Docker Series [Part1]: Dockerfile FROM RUN LABEL ENV</a>
+      </h2>
+
+      
+      <p class="article__excerpt">Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...</p>
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-01-25T21:01:35+09:00">25 Jan 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/docker-series4">
+        <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Series [Part4]: Docker Compose">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/docker-series4">Docker Series [Part4]: Docker Compose</a>
       </h2>
 
       
@@ -796,15 +839,7 @@ docker run -it --rm &lt;image-name&gt; ME
 
             
                 
-              
-            
-            
-            
-      
-            
-      
-            
-            
+                  
           </div>
         </div>
       </div>

@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT'
+title:  'Docker Series [Part3]: Dockerfile COPY VOLUME WORKDIR'
 description: CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.
-date:   2022-02-01 15:01:35 +0300
+date:   2022-02-02 15:01:35 +0300
 image:  '/images/docker_logo.png'
 categories: devops
 tags: Docker
