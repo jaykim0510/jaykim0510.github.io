@@ -6,21 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>OS Series [Part1]: 운영체제와 컴퓨터의 구조</title>
-  <meta name='description' content='웹 브라우저는 웹 서버로의 접근, 파일 업로드/다운로드, 메일 전송과 같은 다양한 클라이언트 기능을 겸비한 복합적인 클라이언트 소프트웨어입니다.'>
+  <title>OS Series [Part1]: 운영체제의 개요</title>
+  <meta name='description' content='운영체제는 컴퓨터 전원을 켜면 가장 먼저 만나게 되는 소프트웨어로, 대표적인 예로 컴퓨터의 윈도우와 맥, 리눅스, 모바일의 iOS, 안드로이드가 있습니다.'>
 
   <link rel="canonical" href="http://localhost:4000/os-series1">
   <link rel="alternate" type="application/rss+xml" title="Jay Tech" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="OS Series [Part1]: 운영체제와 컴퓨터의 구조 – Jay Tech">
-  <meta name="twitter:description" content="웹 브라우저는 웹 서버로의 접근, 파일 업로드/다운로드, 메일 전송과 같은 다양한 클라이언트 기능을 겸비한 복합적인 클라이언트 소프트웨어입니다.">
+  <meta name="twitter:title" content="OS Series [Part1]: 운영체제의 개요 – Jay Tech">
+  <meta name="twitter:description" content="운영체제는 컴퓨터 전원을 켜면 가장 먼저 만나게 되는 소프트웨어로, 대표적인 예로 컴퓨터의 윈도우와 맥, 리눅스, 모바일의 iOS, 안드로이드가 있습니다.">
   <meta name="twitter:image:src" content="http://localhost:4000/images/os_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="OS Series [Part1]: 운영체제와 컴퓨터의 구조 – Jay Tech">
-  <meta property="og:description" content="웹 브라우저는 웹 서버로의 접근, 파일 업로드/다운로드, 메일 전송과 같은 다양한 클라이언트 기능을 겸비한 복합적인 클라이언트 소프트웨어입니다.">
+  <meta property="og:title" content="OS Series [Part1]: 운영체제의 개요 – Jay Tech">
+  <meta property="og:description" content="운영체제는 컴퓨터 전원을 켜면 가장 먼저 만나게 되는 소프트웨어로, 대표적인 예로 컴퓨터의 윈도우와 맥, 리눅스, 모바일의 iOS, 안드로이드가 있습니다.">
   <meta property="og:image" content="http://localhost:4000/images/os_logo.png">
 
   <!-- Fonts -->
@@ -230,7 +230,7 @@
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/os_logo.png" alt="OS Series [Part1]: 운영체제와 컴퓨터의 구조">
+          <img class="lazy" data-src="/images/os_logo.png" alt="OS Series [Part1]: 운영체제의 개요">
         </div>
       </div>
       
@@ -249,7 +249,7 @@
             </div>
           
   
-          <h1 class="post__title">OS Series [Part1]: 운영체제와 컴퓨터의 구조</h1>
+          <h1 class="post__title">OS Series [Part1]: 운영체제의 개요</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -278,19 +278,21 @@
 <ul id="markdown-toc">
   <li><a href="#운영체제-소개" id="markdown-toc-운영체제-소개">운영체제 소개</a></li>
   <li><a href="#운영체제의-구조" id="markdown-toc-운영체제의-구조">운영체제의 구조</a>    <ul>
-      <li><a href="#커널과-인터페이스" id="markdown-toc-커널과-인터페이스">커널과 인터페이스</a></li>
+      <li><a href="#커널과-인터페이스" id="markdown-toc-커널과-인터페이스">커널과 인터페이스</a>        <ul>
+          <li><a href="#시스템-호출" id="markdown-toc-시스템-호출">시스템 호출</a></li>
+          <li><a href="#드라이버" id="markdown-toc-드라이버">드라이버</a></li>
+          <li><a href="#커널의-구조" id="markdown-toc-커널의-구조">커널의 구조</a></li>
+        </ul>
+      </li>
     </ul>
   </li>
-  <li><a href="#컴퓨터의-기본-구성" id="markdown-toc-컴퓨터의-기본-구성">컴퓨터의 기본 구성</a></li>
-  <li><a href="#cpu와-메모리" id="markdown-toc-cpu와-메모리">CPU와 메모리</a></li>
-  <li><a href="#컴퓨터-성능-향상-기술" id="markdown-toc-컴퓨터-성능-향상-기술">컴퓨터 성능 향상 기술</a></li>
-  <li><a href="#병렬-처리" id="markdown-toc-병렬-처리">병렬 처리</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 <hr />
 <h1 id="운영체제-소개">운영체제 소개</h1>
 <p>운영체제는 컴퓨터 전원을 켜면 가장 먼저 만나게 되는 소프트웨어로, 대표적인 예로 컴퓨터의 윈도우와 맥, 리눅스, 모바일의 iOS, 안드로이드가 있습니다. 이뿐만 아니라 스마트 워치, 스마트 TV에도 성능은 낮지만 임베디드 운영체제가 있습니다.</p>
 
-<p>운영체제가 하는 역할은 크게 다음과 같습니다.</p>
+<p><strong>운영체제가 하는 역할</strong>은 크게 다음과 같습니다.</p>
 <ul>
   <li>프로세스 관리</li>
   <li>자원(CPU, 메모리) 관리 및 분배</li>
@@ -300,18 +302,42 @@
 </ul>
 
 <p>🦊 <strong>인터페이스</strong><br />
-응용 프로그램이나 하드웨어는 굉장히 다양하고 어려운 분야이기에 사용자가 직접 접근하는 것은 어렵게 느껴집니다. 이러한 문제를 해결하고자 컴퓨터 분야에서는 인터페이스라는 것을 제공하고 있으며 운영체제라는 소프트웨어에도 인터페이스가 있습니다.</p>
+인터페이스는 사용자가 컴퓨터를 더욱 편하게 사용할 수 있도록 제공하는 것으로 크게 두 가지 기능을 제공합니다.</p>
+
+<ul>
+  <li>사용자에게 사용 편의성 제공</li>
+  <li>하드웨어로의 무분별한 접근으로 생길 수 있는 장애를 차단</li>
+</ul>
 
 <h1 id="운영체제의-구조">운영체제의 구조</h1>
 <h2 id="커널과-인터페이스">커널과 인터페이스</h2>
+<ul>
+  <li><strong>커널(kernel)</strong>: 프로세스 관리, 메모리 관리, 저장장치 관리와 같은  운영체제의 핵심적인 기능을 모아놓은 것입니다.</li>
+  <li><strong>인터페이스(interface)</strong>: 커널과 사용자 사이에서 명령을 전달하고, 실행 결과를 보여주는 역할을 합니다.</li>
+</ul>
+
+<p>운영체제는 커널과 인터페이스로 구분되어 있으며, 같은 커널에도 다양한 형태의 인터페이스를 사용할 수 있습니다. 예를 들어 <strong>리눅스에서는 인터페이스를 쉘(shell)</strong>이라고 하는데 쉘에는 배시쉘(bash), 지쉘(zsh)과 같은 여러 종류의 쉘이 있습니다.</p>
+
 <p><img src="../../images/os_1.png" alt="" /></p>
-<h1 id="컴퓨터의-기본-구성">컴퓨터의 기본 구성</h1>
 
-<h1 id="cpu와-메모리">CPU와 메모리</h1>
+<h3 id="시스템-호출">시스템 호출</h3>
+<p>시스템 호출(system call)은 커널에 있는 인터페이스 중 하나로 <strong>시스템 자원의 사용과 관련한 함수를 제공</strong>합니다. 응용 프로그램이 하드웨어 자원에 접근하려 할 때는 시스템 호출을 사용함으로써 (예를 들어 <code class="language-plaintext highlighter-rouge">read()</code>, <code class="language-plaintext highlighter-rouge">write()</code> 함수) <strong>직접적인 접근을 막아줍니다</strong>. 만약 직접적인 접근이 허용되게 된다면 두 응용 프로그램이 같은 위치에 데이터를 저장하게 될 수도 있고, 이로 인해 저장되어 있던 데이터가 지워질 수도 있습니다. 이러한 오류를 막아주기 위해 커널에서는 시스템 호출이라는 인터페이스를 제공합니다.</p>
 
-<h1 id="컴퓨터-성능-향상-기술">컴퓨터 성능 향상 기술</h1>
+<h3 id="드라이버">드라이버</h3>
+<p>예전과 다르게 하드웨어의 종류도 다양해지고, 제품을 만드는 회사도 굉장히 많기 때문에 제품별로 각각 다양한 특징과 기능이 존재합니다. 이러한 변동성을 커널이 가지고 있는 기본적인 기능만으로는 해결하기가 힘들기 때문에, 각 회사에서는 자신의 <strong>제품(하드웨어)과 운영체제의 커널이 잘 상호작용할 수 있도록 인터페이스를 제공</strong>하고 있습니다. 이를 드라이버 또는 디바이스 드라이버라고 합니다. 위의 그림에 드라이버가 커널과 하드웨어의 사이 전체를 감싸고 있지 않는 이유는 모든 하드웨어가 드라이버를 필요로 하지는 않기 때문입니다.</p>
 
-<h1 id="병렬-처리">병렬 처리</h1>
+<h3 id="커널의-구조">커널의 구조</h3>
+
+<ul>
+  <li>단일형 구조</li>
+  <li>계층형 구조</li>
+  <li>마이크로 구조</li>
+</ul>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;ejkGb=KOR&amp;barcode=9791156644071" target="_blank">쉽게 배우는 운영체제 책 참고</a></li>
+</ul>
 
     </div>
 
@@ -319,7 +345,7 @@
       <ul class="share__list list-reset">
         <li class="share__item">
           <a class="share__link share__twitter"
-            href="https://twitter.com/intent/tweet?text=OS%20Series%20[Part1]:%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%99%80%20%EC%BB%B4%ED%93%A8%ED%84%B0%EC%9D%98%20%EA%B5%AC%EC%A1%B0&url=http://localhost:4000/os-series1"
+            href="https://twitter.com/intent/tweet?text=OS%20Series%20[Part1]:%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%9D%98%20%EA%B0%9C%EC%9A%94&url=http://localhost:4000/os-series1"
             onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
             title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
         </li>
@@ -329,12 +355,12 @@
             title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/os-series1&amp;media=http://localhost:4000/images/os_logo.png&amp;description=OS%20Series%20[Part1]:%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%99%80%20%EC%BB%B4%ED%93%A8%ED%84%B0%EC%9D%98%20%EA%B5%AC%EC%A1%B0"
+          <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/os-series1&amp;media=http://localhost:4000/images/os_logo.png&amp;description=OS%20Series%20[Part1]:%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%9D%98%20%EA%B0%9C%EC%9A%94"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
           rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/os-series1&title=OS%20Series%20[Part1]:%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%99%80%20%EC%BB%B4%ED%93%A8%ED%84%B0%EC%9D%98%20%EA%B5%AC%EC%A1%B0&summary=%EC%9B%B9%20%EB%B8%8C%EB%9D%BC%EC%9A%B0%EC%A0%80%EB%8A%94%20%EC%9B%B9%20%EC%84%9C%EB%B2%84%EB%A1%9C%EC%9D%98%20%EC%A0%91%EA%B7%BC,%20%ED%8C%8C%EC%9D%BC%20%EC%97%85%EB%A1%9C%EB%93%9C/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C,%20%EB%A9%94%EC%9D%BC%20%EC%A0%84%EC%86%A1%EA%B3%BC%20%EA%B0%99%EC%9D%80%20%EB%8B%A4%EC%96%91%ED%95%9C%20%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%20%EA%B8%B0%EB%8A%A5%EC%9D%84%20%EA%B2%B8%EB%B9%84%ED%95%9C%20%EB%B3%B5%ED%95%A9%EC%A0%81%EC%9D%B8%20%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%20%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4%EC%9E%85%EB%8B%88%EB%8B%A4.&source=Jay%20Tech"
+          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/os-series1&title=OS%20Series%20[Part1]:%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%9D%98%20%EA%B0%9C%EC%9A%94&summary=%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EB%8A%94%20%EC%BB%B4%ED%93%A8%ED%84%B0%20%EC%A0%84%EC%9B%90%EC%9D%84%20%EC%BC%9C%EB%A9%B4%20%EA%B0%80%EC%9E%A5%20%EB%A8%BC%EC%A0%80%20%EB%A7%8C%EB%82%98%EA%B2%8C%20%EB%90%98%EB%8A%94%20%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4%EB%A1%9C,%20%EB%8C%80%ED%91%9C%EC%A0%81%EC%9D%B8%20%EC%98%88%EB%A1%9C%20%EC%BB%B4%ED%93%A8%ED%84%B0%EC%9D%98%20%EC%9C%88%EB%8F%84%EC%9A%B0%EC%99%80%20%EB%A7%A5,%20%EB%A6%AC%EB%88%85%EC%8A%A4,%20%EB%AA%A8%EB%B0%94%EC%9D%BC%EC%9D%98%20iOS,%20%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C%EA%B0%80%20%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4.&source=Jay%20Tech"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
         </li>
       </ul>
@@ -353,7 +379,7 @@
 
 <!-- begin related posts -->
 <div class="container">
-  <section class="related-posts  animate">
+  <section class="related-posts is-related animate">
     <div class="row">
       <div class="col col-12">
         <div class="container__inner">
@@ -590,6 +616,47 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-01-29T21:01:35+09:00">29 Jan 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/os-series2">
+        <img class="lazy" data-src="/images/os_logo.png" alt="OS Series [Part2]: 컴퓨터의 기본 구조">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/os-series2">OS Series [Part2]: 컴퓨터의 기본 구조</a>
+      </h2>
+
+      
+      <p class="article__excerpt">컴퓨터 하드웨어는 크게 CPU, 메모리, 메인보드, 저장장치, 입출력장치로 구성됩니다.</p>
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
             
             
             
