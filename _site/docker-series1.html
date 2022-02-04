@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Docker Series [Part1]: Dockerfile FROM RUN LABEL ENV</title>
-  <meta name='description' content='Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...'>
+  <meta name='description' content='FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.'>
 
   <link rel="canonical" href="http://localhost:4000/docker-series1">
   <link rel="alternate" type="application/rss+xml" title="Jay Tech" href="/feed.xml">
@@ -15,12 +15,12 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Docker Series [Part1]: Dockerfile FROM RUN LABEL ENV – Jay Tech">
-  <meta name="twitter:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
+  <meta name="twitter:description" content="FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.">
   <meta name="twitter:image:src" content="http://localhost:4000/images/docker_logo.png">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="Docker Series [Part1]: Dockerfile FROM RUN LABEL ENV – Jay Tech">
-  <meta property="og:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
+  <meta property="og:description" content="FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.">
   <meta property="og:image" content="http://localhost:4000/images/docker_logo.png">
 
   <!-- Fonts -->
@@ -280,8 +280,10 @@
 <ul id="markdown-toc">
   <li><a href="#dockerfile" id="markdown-toc-dockerfile">Dockerfile</a></li>
   <li><a href="#dockerfile-instructions" id="markdown-toc-dockerfile-instructions">Dockerfile Instructions</a>    <ul>
-      <li><a href="#from" id="markdown-toc-from">FROM</a></li>
-      <li><a href="#run" id="markdown-toc-run">RUN</a></li>
+      <li><a href="#from" id="markdown-toc-from">FROM</a>        <ul>
+          <li><a href="#multi-stage-builds" id="markdown-toc-multi-stage-builds">Multi-Stage Builds</a></li>
+        </ul>
+      </li>
       <li><a href="#label" id="markdown-toc-label">LABEL</a></li>
       <li><a href="#env" id="markdown-toc-env">ENV</a></li>
     </ul>
@@ -294,7 +296,6 @@
 
 <ul class="task-list">
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />FROM</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />RUN</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />LABEL</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />ENV</li>
 </ul>
@@ -304,17 +305,116 @@
 <h1 id="dockerfile-instructions">Dockerfile Instructions</h1>
 
 <h2 id="from">FROM</h2>
+<p>FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 <strong>기본 이미지를 만듭니다</strong>. 그렇기 때문에 유효한 Dockerfile은 반드시 FROM 명령어로부터 시작해야 합니다.</p>
 
-<h2 id="run">RUN</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">FROM [--platform=&lt;platform&gt;] &lt;image&gt; [AS &lt;name&gt;]</code></li>
+  <li><code class="language-plaintext highlighter-rouge">FROM [--platform=&lt;platform&gt;] &lt;image&gt;[:&lt;tag&gt;] [AS &lt;name&gt;]</code></li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># python:3.8-buster 이미지를 기본 이미지로 만듭니다</span>
+<span class="k">FROM</span><span class="s"> python:3.8-buster</span>
+
+<span class="c"># 현재 Dockerfile이 있는 위치에 있는 모든 파일을 새로 만든 이미지의 디렉토리 위치로 복사합니다</span>
+<span class="k">COPY</span><span class="s"> . .</span>
+
+<span class="c"># 복사된 requirements.txt 파일에 있는 라이브러리를 설치</span>
+<span class="k">RUN </span>pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># deeplearning:pytorch 라는 새로운 이미지를 만듭니다</span>
+docker build <span class="nt">-t</span> deeplearning:pytorch <span class="nb">.</span>
+</code></pre></div></div>
+
+<h3 id="multi-stage-builds">Multi-Stage Builds</h3>
+<p>One of the most challenging things about building images is keeping the image size down. Each instruction in the Dockerfile adds a layer to the image, and you need to remember to clean up any artifacts you don’t need before moving on to the next layer.</p>
+
+<p><strong>이미지를 빌드할 때 가장 중요한 것은 이미지의 사이즈를 줄이는 것</strong>입니다. Dockerfile에서 각각의 명령어는 이미지의 layer를 하나씩 늘려나가게 됩니다. 이를 경량화하는 방법으로 RUN 명령어 사용시 Bash에서 &amp;&amp; 연산자를 사용할 수 있습니다.</p>
+
+<p>또한 만약 여러 개의 이미지로부터 새로운 이미지를 불러와야 하는 상황이라면 <strong>FROM 과 COPY를 사용해 이미지를 경량화</strong> 할 수 있습니다. 이를 이용하면 각각의 이미지에서 <strong>원하는 파일만 선택적으로 복사해 다음 이미지로 전달시키고 필요없는 파일(다운로드 과정에서 필요한 코드와 같은 부수적인 파일들)은 제거할 수 있습니다</strong>. 이 방법을 <strong>Multi-Stage Builds</strong>라고 하는데 이 방법은 여러 개의 이미지로 부터 새로운 이미지를 생성할 때 여러 개의 Dockerfile이 필요없이 <strong>하나의 파일에 관리할 수 있다</strong>는 장점도 있습니다.</p>
+
+<p>Multi Stage Builds 방법으로 이미지를 만드는 코드의 형태는 다음과 같습니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># &lt;image&gt; 를 기본 이미지로 한다</span>
+<span class="k">FROM</span><span class="s"> &lt;image&gt; AS apple</span>
+...
+
+# &lt;image2&gt;를 기본 이미지로 한다
+<span class="k">FROM</span><span class="s"> &lt;image2&gt;</span>
+...
+# &lt;image&gt;의 빌드 결과로 생성된 파일 중 원하는 파일만 복사
+<span class="k">COPY</span><span class="s"> --from=apple /dir/you/want/from/apple /dir/of/image2</span>
+</code></pre></div></div>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 이 방법은 기본 이미지는 &lt;image&gt; 하나만 필요하지만 원하는 파일만 가져오고 싶은 경우 사용하는 것 같다</span>
+
+<span class="c"># &lt;image&gt;를 기본 이미지로 한다</span>
+<span class="k">FROM</span><span class="s"> &lt;image&gt; AS apple</span>
+...
+
+# apple로 생성된 이미지를 기본 이미지로 한다
+<span class="k">FROM</span><span class="s"> apple AS apple_juice</span>
+...
+
+# &lt;image&gt;에서 필요한 파일만 복사
+<span class="k">COPY</span><span class="s"> /dir/you/want/from/apple /dir/of/apple_juice</span>
+</code></pre></div></div>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 사용 예시</span>
+
+<span class="k">FROM</span><span class="s"> golang:1.16 AS builder</span>
+<span class="k">WORKDIR</span><span class="s"> /go/src/github.com/alexellis/href-counter/</span>
+<span class="k">RUN </span>go get <span class="nt">-d</span> <span class="nt">-v</span> golang.org/x/net/html  
+<span class="k">COPY</span><span class="s"> app.go    ./</span>
+<span class="k">RUN </span><span class="nv">CGO_ENABLED</span><span class="o">=</span>0 <span class="nv">GOOS</span><span class="o">=</span>linux go build <span class="nt">-a</span> <span class="nt">-installsuffix</span> cgo <span class="nt">-o</span> app .
+
+<span class="k">FROM</span><span class="s"> alpine:latest  </span>
+<span class="k">RUN </span>apk <span class="nt">--no-cache</span> add ca-certificates
+<span class="k">WORKDIR</span><span class="s"> /root/</span>
+<span class="k">COPY</span><span class="s"> --from=builder /go/src/github.com/alexellis/href-counter/app ./</span>
+<span class="k">CMD</span><span class="s"> ["./app"]  </span>
+</code></pre></div></div>
 
 <h2 id="label">LABEL</h2>
 
+<p>LABEL 명령어는 이미지에 메타데이터를 추가하기 위해 사용됩니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">LABEL</span><span class="s"> "com.example.vendor"="ACME Incorporated"</span>
+<span class="k">LABEL</span><span class="s"> com.example.label-with-value="foo"</span>
+<span class="k">LABEL</span><span class="s"> version="1.0"</span>
+<span class="k">LABEL</span><span class="s"> description="This text illustrates \</span>
+that label-values can span multiple lines."
+</code></pre></div></div>
+
+<p>하나의 명령어에 여러 데이터를 추가하면 이미지 크기를 줄일 수 있습니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">LABEL</span><span class="s"> "com.example.vendor"="ACME Incorporated" \</span>
+com.example.label-with-value="foo" \
+version="1.0" \ 
+description="This text illustrates \
+that label-values can span multiple lines."
+</code></pre></div></div>
+
 <h2 id="env">ENV</h2>
+
+<p>The ENV instruction sets the environment variable <key> to the value <value>. This value will be in the environment for all subsequent instructions in the build stage and can be replaced inline in many as well. The value will be interpreted for other environment variables, so quote characters will be removed if they are not escaped. Like command line parsing, quotes and backslashes can be used to include spaces within values.</value></key></p>
+
+<p>ENV 명령어는 환경 변수를 키:밸류 형태로 지정하도록 해줍니다. 설정된 환경 변수는 설정 이후의 모든 빌드 단계에서 사용됩니다.</p>
+
+<p>만약 밸류로 띄어쓰기가 필요하다면 쌍따옴표로 감싸주면 됩니다.</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> MY_NAME="John Doe"</span>
+<span class="k">ENV</span><span class="s"> MY_CAT=fluffy</span>
+</code></pre></div></div>
 
 <h1 id="참고">참고</h1>
 
 <ul>
   <li><a href="https://docs.docker.com/engine/reference/builder/#cmd" target="_blank">Docker 공식문서</a></li>
+  <li><a href="https://docs.docker.com/develop/develop-images/multistage-build/" target="_blank">Docker 공식문서2</a></li>
+  <li><a href="https://stackoverflow.com/questions/33322103/multiple-froms-what-it-means" target="_blank">stack overfolw Nagev 답변</a></li>
+  <li><a href="https://earthly.dev/blog/docker-multistage/" target="_blank">EARTHLY 블로그: Docker Multistage Builds</a></li>
+  <li><a href="https://www.geeksforgeeks.org/how-to-combine-multiple-base-images-using-single-dockerfile/" target="_blank">geeksforgeeks 블로그</a></li>
 </ul>
 
     </div>
@@ -338,7 +438,7 @@
           rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
         </li>
         <li class="share__item">
-          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/docker-series1&title=Docker%20Series%20[Part1]:%20Dockerfile%20FROM%20RUN%20LABEL%20ENV&summary=Leverage%20agile%20frameworks%20to%20provide%20a%20robust%20synopsis%20for%20high%20level%20overviews.%20Iterative%20a...&source=Jay%20Tech"
+          <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/docker-series1&title=Docker%20Series%20[Part1]:%20Dockerfile%20FROM%20RUN%20LABEL%20ENV&summary=FROM%EC%9D%80%20%EB%B9%8C%EB%93%9C%EB%A5%BC%20%EC%9C%84%ED%95%9C%20stage%EB%A5%BC%20%EC%B4%88%EA%B8%B0%ED%99%94%ED%95%98%EA%B3%A0%20%EC%9D%B4%ED%9B%84%EC%9D%98%20%EB%AA%85%EB%A0%B9%EC%96%B4%EB%A5%BC%20%EC%9C%84%ED%95%9C%20%EA%B8%B0%EB%B3%B8%20%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A5%BC%20%EB%A7%8C%EB%93%AD%EB%8B%88%EB%8B%A4.&source=Jay%20Tech"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
         </li>
       </ul>
@@ -633,7 +733,7 @@
 
       
       <a class="article__image" href="/docker-series2">
-        <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT">
+        <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Series [Part2]: Dockerfile RUN CMD ENTRYPOINT">
       </a>
       
 
@@ -642,7 +742,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/docker-series2">Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT</a>
+        <a href="/docker-series2">Docker Series [Part2]: Dockerfile RUN CMD ENTRYPOINT</a>
       </h2>
 
       

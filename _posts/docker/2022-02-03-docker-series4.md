@@ -14,25 +14,7 @@ tags: Docker
 {:toc}
 
 ---
-**Dockerfile instruction**
 
-- [x] FROM
-- [x] RUN
-- [x] LABEL
-- [x] ENV
-
-
-# Dockerfile  
-
-# Dockerfile Instructions  
-
-## FROM  
-
-## RUN  
-
-## LABEL  
-
-## ENV  
 
 # 참고
 

@@ -1,8 +1,9 @@
-I"<(<p id="toc"><strong>Table of Contents</strong></p>
+I"(<p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#run" id="markdown-toc-run">RUN</a></li>
   <li><a href="#cmd" id="markdown-toc-cmd">CMD</a></li>
   <li><a href="#entrypoint" id="markdown-toc-entrypoint">ENTRYPOINT</a></li>
-  <li><a href="#cmd-and-entrypoint" id="markdown-toc-cmd-and-entrypoint">CMD and ENTRYPOINT</a></li>
+  <li><a href="#cmd-vs-entrypoint" id="markdown-toc-cmd-vs-entrypoint">CMD vs ENTRYPOINT</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -10,24 +11,35 @@
 <p><strong>Dockerfile instruction</strong></p>
 
 <ul class="task-list">
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />FROM</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />RUN</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />RUN</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />CMD</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />LABEL</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />EXPOSE</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ENV</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ADD</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />COPY</li>
   <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />ENTRYPOINT</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />VOLUME</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />USER</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />WORKDIR</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ARG</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ONBUILD</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />STOPSIGNAL</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />HEALTHCHECK</li>
-  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />SHELL</li>
 </ul>
+
+<h1 id="run">RUN</h1>
+
+<p>RUN 명령어 작성요령은 다음과 같이 2가지 형태가 있습니다.</p>
+
+<ul>
+  <li><strong>shell form</strong>: <code class="language-plaintext highlighter-rouge">RUN &lt;command&gt;</code> (the command is run in a shell, Linux default: /bin/sh -c)</li>
+  <li><strong>exec form</strong>: <code class="language-plaintext highlighter-rouge">RUN ["executable", "param1", "param2"]</code></li>
+</ul>
+
+<p>RUN instruction은 어떠한 명령어든 최근 이미지에 새로운 레이어에서 실행됩니다. 그리고 실행 결과는 이미지에 커밋됩니다. 커밋된 새로운 이미지는 Dockerfile의 다음 단계에 계속 사용됩니다.</p>
+
+<p>원한다면 RUN 명령어 중 만들어지는 커밋된 이미지를 이용해 컨테이너를 생성할 수 있습니다.</p>
+
+<ul>
+  <li><strong>shell form</strong>: <code class="language-plaintext highlighter-rouge">RUN &lt;command&gt;</code></li>
+</ul>
+
+<p><strong>shell form</strong>의 기본 shell은 <code class="language-plaintext highlighter-rouge">/bin/zsh -c echo Test</code> 과 같이 직접 표기를 통해 바꿀 수 있습니다. 또한 <code class="language-plaintext highlighter-rouge">\</code>를 통해 여러 개의 RUN 명령어를 하나로 압축할 수 있습니다.</p>
+
+<ul>
+  <li><strong>exec form</strong></li>
+</ul>
+
+<p><strong>exec form</strong>은 <code class="language-plaintext highlighter-rouge">/bin/sh -c</code> 가 필요하지 않은 경우 사용 가능한 형태입니다.</p>
 
 <h1 id="cmd">CMD</h1>
 
@@ -144,7 +156,7 @@ docker run -it --rm &lt;image-name&gt; ME
 -&gt; Hello ME
 </code></pre></div></div>
 
-<h1 id="cmd-and-entrypoint">CMD and ENTRYPOINT</h1>
+<h1 id="cmd-vs-entrypoint">CMD vs ENTRYPOINT</h1>
 
 <ul>
   <li>CMD, ENTRYPOINT 명령어는 마지막 하나만 실행된다</li>

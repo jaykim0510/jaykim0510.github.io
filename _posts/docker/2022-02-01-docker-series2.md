@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Docker Series [Part2]: Dockerfile CMD vs ENTRYPOINT'
+title:  'Docker Series [Part2]: Dockerfile RUN CMD ENTRYPOINT'
 description: CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.
 date:   2022-02-01 15:01:35 +0300
 image:  '/images/docker_logo.png'
@@ -16,10 +16,40 @@ tags: Docker
 ---
 **Dockerfile instruction**
 
-
+- [x] RUN
 - [x] CMD
 - [x] ENTRYPOINT 
 
+
+# RUN  
+
+RUN 명령어 작성요령은 다음과 같이 2가지 형태가 있습니다.  
+
+- **shell form**: `RUN <command>` (the command is run in a shell, Linux default: /bin/sh -c)  
+- **exec form**: `RUN ["executable", "param1", "param2"]` 
+
+RUN instruction은 어떠한 명령어든 최근 이미지에 새로운 레이어에서 실행됩니다. 그리고 실행 결과는 이미지에 커밋됩니다. 커밋된 새로운 이미지는 Dockerfile의 다음 단계에 계속 사용됩니다.  
+
+원한다면 RUN 명령어 중 만들어지는 커밋된 이미지를 이용해 컨테이너를 생성할 수 있습니다.  
+
+- **shell form**: `RUN <command>`  
+
+**shell form**의 기본 shell은 `/bin/zsh -c echo Test` 과 같이 직접 표기를 통해 바꿀 수 있습니다. 또한 `\`를 통해 여러 개의 RUN 명령어를 하나로 압축할 수 있습니다.  
+
+```dockerfile
+RUN /bin/zsh -c echo $HOME
+
+RUN apt-get -y update \
+&& apt-get -y install vim
+```
+
+- **exec form**  
+
+**exec form**은 `/bin/sh -c` 가 필요하지 않은 경우 사용 가능한 형태입니다.
+
+```dockerfile
+RUN pip install -r requirements.txt
+```
 
 # CMD
 
