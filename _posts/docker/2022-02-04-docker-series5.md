@@ -176,7 +176,9 @@ environment:
             - datavolume:/var/lib/mysql
       ```
   - **Long Syntax 표기법**  
-    - **type**: 마운트 타입. `volume`, `bind`, `tmpfs`, `npipe`
+    - **type**: 마운트 타입. `volume`, `bind`, `tmpfs`, `npipe` [(참고)](https://docs.docker.com/storage/bind-mounts/){:target="_blank"}  
+      - `volume`: 도커가 로컬의 저장소와 컨테이너의 저장소를 동기화 시킴. 
+      - `bind`: 로컬의 저장소를 컨테이너에 마운트. 로컬에서만 디렉토리 및 파일 관리 
     - **source**: 마운트 하고자 하는 호스트 경로의 디렉토리 또는 네임드 볼륨
     - **target**: 볼륨이 마운트 될 컨테이너에서의 경로  
 
@@ -230,5 +232,5 @@ command: ["bundle", "exec", "thin", "-p", "3000"]
 
 # 참고
 
-- [Docker 공식문서](https://docs.docker.com/engine/reference/builder/#cmd){:target="_blank"}  
-- [44bits 블로그](https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움){:target="_blank"}  
+- [Docker Compose 공식문서](https://docs.docker.com/compose/compose-file/compose-file-v3/){:target="_blank"}  
+- [44bits님 블로그](https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움){:target="_blank"}  
