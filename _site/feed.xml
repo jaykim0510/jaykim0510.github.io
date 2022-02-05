@@ -5,12 +5,12 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 05 Feb 2022 05:51:15 +0900</pubDate>
-        <lastBuildDate>Sat, 05 Feb 2022 05:51:15 +0900</lastBuildDate>
+        <pubDate>Sat, 05 Feb 2022 19:05:38 +0900</pubDate>
+        <lastBuildDate>Sat, 05 Feb 2022 19:05:38 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
-                <title>Docker Series [Part4]: Docker Compose</title>
+                <title>Docker Series [Part6]: Docker Compose를 이용해 데이터 파이프라인 구축하기</title>
                 <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
@@ -23,6 +23,289 @@
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/engine/reference/builder/#cmd&quot; target=&quot;_blank&quot;&gt;Docker 공식문서&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+                <pubDate>Sat, 05 Feb 2022 00:01:35 +0900</pubDate>
+                <link>http://localhost:4000/docker-series6</link>
+                <guid isPermaLink="true">http://localhost:4000/docker-series6</guid>
+                
+                <category>Docker</category>
+                
+                
+                <category>devops</category>
+                
+            </item>
+        
+            <item>
+                <title>Docker Series [Part5]: Docker Compose 속성 알아보기</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#도커-컴포즈docker-compose&quot; id=&quot;markdown-toc-도커-컴포즈docker-compose&quot;&gt;도커 컴포즈(Docker Compose)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#top-level-keys&quot; id=&quot;markdown-toc-top-level-keys&quot;&gt;Top-level keys&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#services&quot; id=&quot;markdown-toc-services&quot;&gt;services&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+&lt;h1 id=&quot;도커-컴포즈docker-compose&quot;&gt;도커 컴포즈(Docker Compose)&lt;/h1&gt;
+&lt;p&gt;보통 하나의 프로젝트에는 여러 가지 서비스를 포함하고 있습니다. 예를 들어 웹 서버 기반의 프로젝트를 진행한다고 할 때 프로젝트의 기본적인 아키텍처는 다음과 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/docker_2.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://medium.com/storyblocks-engineering/web-architecture-101-a3224e126947&quot; target=&quot;_blank&quot;&gt;(Netflix Tech Blog 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;위의 그림을 보면 웹 서버뿐만 아니라 데이터 웨어하우스, 데이터베이스, 검색 서비스 등과 같은 것들이 서로 유기적으로 연결되어 있습니다. 이런 경우 프로젝트를 상용화 하기 위해서는 어떻게 해야 할까요? 각각의 서비스를 도커를 이용해 컨테이너로 띄우고 서로를 연결시켜주어야 합니다. 이는 앞에서 배웠던 도커 이미지를 만들기 위한 Dockerfile 단계에서는 할 수 없고 도커 컨테이너를 실행(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker run&lt;/code&gt;)하는 단계에서 컨테이너를 띄우는 순서, 데이터 공유, 환경변수 등을 설정해서 실행해야 합니다.&lt;/p&gt;
+
+&lt;p&gt;우리가 도커를 배우는 이유는 서비스를 컨테이너화하고 간결한 코드로 관리하여 어디서든 배포가능 하도록 하기 위한 것인데 컨테이너 실행 단계에서 이렇게 복잡한 과정이 필요하다면 생각보다 힘이 빠질 것 같습니다.&lt;/p&gt;
+
+&lt;p&gt;이러한 문제를 해결하기 위해 도커에서는 &lt;strong&gt;도커 컴포즈&lt;/strong&gt;라는 도구를 제공하였습니다. 도커 컴포즈는 기존의 여러 서비스를 연결하기 위해 컨테이너 실행 단계에서 복잡한 옵션을 주는 상황에서 벗어나 처음부터 &lt;strong&gt;YAML 파일 형태로 관리하여&lt;/strong&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker-compose.yml&lt;/code&gt; &lt;strong&gt;파일 하나만 실행하면 프로젝트 배포에 필요한 모든 서비스를 실행하고 연결 시켜주는 것&lt;/strong&gt;입니다. 다음은 웹 서버와 데이터베이스를 연결해 하나의 프로젝트로 배포하도록 해주는 도커 컴포즈 파일의 예시입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3'&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;postgres&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./docker/data:/var/lib/postgresql/data&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;POSTGRES_DB=sampledb&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;POSTGRES_USER=sampleuser&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;POSTGRES_PASSWORD=samplesecret&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;POSTGRES_INITDB_ARGS=--encoding=UTF-8&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;django&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;.&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;dockerfile&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./compose/django/Dockerfile-dev&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DJANGO_DEBUG=True&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DJANGO_DB_HOST=db&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DJANGO_DB_PORT=5432&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DJANGO_DB_NAME=sampledb&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DJANGO_DB_USERNAME=sampleuser&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DJANGO_DB_PASSWORD=samplesecret&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DJANGO_SECRET_KEY=dev_secret_key&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;8000:8000&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; 
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;python manage.py runserver 0:8000&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./:/app/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움&quot; target=&quot;_blank&quot;&gt;(44bits 블로그 참고)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;지금부터 도커 컴포즈 파일의 구성요소를 한 번 살펴보도록 하겠습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;top-level-keys&quot;&gt;Top-level keys&lt;/h1&gt;
+&lt;p&gt;도커 컴포즈 파일의 최상위 키값에는 version, services, networks, volumes과 같은 항목이 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;version&lt;/strong&gt;: 도커 컴포즈 파일 포맷의 버전을 지정 &lt;a href=&quot;https://docs.docker.com/compose/compose-file/compose-versioning/&quot; target=&quot;_blank&quot;&gt;(도커 엔진과의 호환성 체크 문서)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;services&lt;/strong&gt;: 컨테이너 각각에 대한 세부사항 설정으로 도커 컴포즈에서 가장 많은 비중 차지&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;networks&lt;/strong&gt;: 컴포즈가 제공하는 디폴트 네트워크가 아닌 커스텀 네트워크 생성을 원할 때 지정 &lt;a href=&quot;https://docs.docker.com/compose/networking/&quot; target=&quot;_blank&quot;&gt;(참고)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;volumes&lt;/strong&gt;: 볼륨에 이름을 지정할 수 있으며, 여러 컨테이너에서 공유하는 볼륨을 제공&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;services&quot;&gt;services&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;image&lt;/strong&gt;&lt;br /&gt;
+원하는 컨테이너의 이미지를 이미지 저장소에서 불러와 설정합니다. 불러오는 방법은 다음과 같은 방법이 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 이미지 이름&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;redis&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 이미지 이름:태그&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ubuntu:18.04&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 이미지 작성자/이름&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;tutum/influxdb&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 이미지 url&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;example-registry.com:4000/postgresql&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;build&lt;/strong&gt;&lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build&lt;/code&gt;를 사용하면 이미지를 불러오지 않고, Dockerfile을 이용해 빌드할 수 있습니다.
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;context&lt;/strong&gt;: Dockerfile이 위치한 디렉토리 또는 깃 레포지토리의 url&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;dockerfile&lt;/strong&gt;: context에 Dockerfile이 없을 경우 사용할 대체 Dockerfile (단독으로 못쓰고 context필요)&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;args&lt;/strong&gt;: 이미지 빌드 단계에서만 사용되는 환경변수의 값 (Dockerfile ARG 명령어에 미리 명시되어야함)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ARG&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; buildno&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build number: &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$buildno&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;webapp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./dir&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;dockerfile&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Dockerfile-alternate&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;buildno&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build&lt;/code&gt;&lt;strong&gt;와&lt;/strong&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image가&lt;/code&gt; &lt;strong&gt;함께 표기된 경우&lt;/strong&gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build&lt;/code&gt;로 이미지를 만들고 이미지의 이름에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image&lt;/code&gt; 값을 사용합니다.&lt;/p&gt;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./dir&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;webapp:tag&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;environment&lt;/strong&gt;&lt;br /&gt;
+컨테이너에 환경변수를 추가해줍니다. 아래의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SESSION_SECRET&lt;/code&gt;와 같이 value를 표기하지 않으면 컴포즈가 실행중인 머신 안에서 정의된 value로 해석가능 합니다. 이것은 value를 secret하게 할 수 있으며 또한 host-specific value로 사용할 수 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;RACK_ENV&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;development&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;SHOW&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;true'&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;SESSION_SECRET&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;ports&lt;/strong&gt;&lt;br /&gt;
+포트를 노출해줍니다. 간단한 short syntax와 추가적으로 필드를 추가할 수 있는 long syntax가 있습니다.
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Short Syntax 표기법&lt;/strong&gt;&lt;br /&gt;
+보통 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HOST PORT: CONTAINER PORT&lt;/code&gt; 방법으로 표기합니다&lt;br /&gt;
+번호 하나만 작성되면 CONTAINER PORT를 의미합니다
+IP 주소를 표기하여 해당 IP 주소의 트래픽만 허용할 수도 있습니다 (default: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0.0.0.0&lt;/code&gt;)&lt;br /&gt;
+쌍따옴표를 안쓰면 시간으로 인식되기 때문에 반드시 쌍따옴표로 감싸줍니다
+        &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3000&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3000-3005&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;8000:8000&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;9090-9091:8080-8081&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;49100:22&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;127.0.0.1:8001:8001&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;127.0.0.1:5000-5010:5000-5010&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;127.0.0.1::5000&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;6060:6060/udp&quot;&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;12400-12500:1240&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Long Syntax 표기법&lt;/strong&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;target&lt;/strong&gt;: the port inside the container&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;published&lt;/strong&gt;: the publicly exposed port&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;protocol&lt;/strong&gt;: the port protocol (tcp or udp)&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;mode&lt;/strong&gt;: host for publishing a host port on each node, or ingress for a swarm mode port to be load balanced.&lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;published&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;8080&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;tcp&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;mode&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;host&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;volumes&lt;/strong&gt;&lt;br /&gt;
+호스트 경로의 디렉토리 또는 네임드 볼륨을 컨테이너에 마운트합니다. 하나의 서비스를 위한 볼륨으로는 호스트 경로를 사용해도 괜찮지만, 여러 서비스가 공유하는 볼륨이 필요하다면 top-level &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;volumes&lt;/code&gt;에 네임드 볼륨을 정의해야 합니다.
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Short Syntax 표기법&lt;/strong&gt;
+        &lt;ul&gt;
+          &lt;li&gt;
+            &lt;p&gt;일반적인 표기방법: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[SOURCE:]TARGET[:MODE]&lt;/code&gt;&lt;/p&gt;
+
+            &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;c1&quot;&gt;# Just specify a path and let the Engine create a volume&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/var/lib/mysql&lt;/span&gt;
+
+      &lt;span class=&quot;c1&quot;&gt;# Specify an absolute path mapping&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/opt/data:/var/lib/mysql&lt;/span&gt;
+
+      &lt;span class=&quot;c1&quot;&gt;# Path on the host, relative to the Compose file&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./cache:/tmp/cache&lt;/span&gt;
+
+      &lt;span class=&quot;c1&quot;&gt;# Named volume&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;datavolume:/var/lib/mysql&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;            &lt;/div&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Long Syntax 표기법&lt;/strong&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;strong&gt;type&lt;/strong&gt;: 마운트 타입. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;volume&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bind&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tmpfs&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;npipe&lt;/code&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;source&lt;/strong&gt;: 마운트 하고자 하는 호스트 경로의 디렉토리 또는 네임드 볼륨&lt;/li&gt;
+          &lt;li&gt;
+            &lt;p&gt;&lt;strong&gt;target&lt;/strong&gt;: 볼륨이 마운트 될 컨테이너에서의 경로&lt;/p&gt;
+
+            &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.9&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;web&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nginx:alpine&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;80:80&quot;&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;volume&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mydata&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/data&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;volume&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;nocopy&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bind&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./static&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/opt/app/static&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;networks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;webnet&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;mydata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;            &lt;/div&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;depends_on&lt;/strong&gt;&lt;br /&gt;
+서비스간의 실행순서를 통해 디펜던시를 지키도록 해줍니다. 이 설정은 종속되는 다른 서비스가 실행되기만을 기다릴 뿐 준비(ready)가 되었는지 까지는 고려하지 않습니다. 준비 상태가 필요하다면 추가적인 설정이 필요합니다. &lt;a href=&quot;https://docs.docker.com/compose/startup-order/&quot; target=&quot;_blank&quot;&gt;(참고)&lt;/a&gt;아래 예시는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;web&lt;/code&gt; 서비스 컨테이너가 실행되기 전에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;db&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis&lt;/code&gt;의 실행을 기다립니다. 보통 데이터베이스, 주키퍼와 같은 선행되어야 하는 서비스가 있는 경우 많이 사용합니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.9&quot;&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;web&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;.&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;db&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;redis&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;redis&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;redis&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;db&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;postgres&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;command&lt;/strong&gt;
+기본 커맨드 명령어를 오버라이딩합니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bundle exec thin -p &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;3000&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;bundle&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;exec&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;thin&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;-p&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3000&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/engine/reference/builder/#cmd&quot; target=&quot;_blank&quot;&gt;Docker 공식문서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움&quot; target=&quot;_blank&quot;&gt;44bits 블로그&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Fri, 04 Feb 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/docker-series5</link>
+                <guid isPermaLink="true">http://localhost:4000/docker-series5</guid>
+                
+                <category>Docker</category>
+                
+                
+                <category>devops</category>
+                
+            </item>
+        
+            <item>
+                <title>Docker Series [Part4]: Docker 네트워크 이해하기</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
 </description>
                 <pubDate>Thu, 03 Feb 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/docker-series4</link>
@@ -101,7 +384,6 @@
 
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/engine/reference/builder/#cmd&quot; target=&quot;_blank&quot;&gt;Docker 공식문서&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blog.leocat.kr/notes/2017/01/08/docker-run-vs-cmd-vs-entrypoint&quot; target=&quot;_blank&quot;&gt;스뎅(thDeng)님 블로그&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Wed, 02 Feb 2022 21:01:35 +0900</pubDate>
@@ -918,7 +1200,7 @@ MOVE register 5, mem&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;160&lt;span cl
             </item>
         
             <item>
-                <title>Kubernetes Series [Part7]: StatefulSet</title>
+                <title>Kubernetes Series [Part7]: StatefulSet과 Headless의 조합</title>
                 <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#kubernetes-basics&quot; id=&quot;markdown-toc-kubernetes-basics&quot;&gt;Kubernetes Basics&lt;/a&gt;&lt;/li&gt;
@@ -1035,174 +1317,6 @@ MOVE register 5, mem&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;160&lt;span cl
                 <guid isPermaLink="true">http://localhost:4000/network-series2</guid>
                 
                 <category>Network</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Kubernetes Series [Part6]: ConfigMap과 Secret</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#kubernetes-basics&quot; id=&quot;markdown-toc-kubernetes-basics&quot;&gt;Kubernetes Basics&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#localhost-ip-address-127001&quot; id=&quot;markdown-toc-localhost-ip-address-127001&quot;&gt;Localhost (IP address 127.0.0.1)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#pod-network&quot; id=&quot;markdown-toc-pod-network&quot;&gt;Pod network&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#service-network&quot; id=&quot;markdown-toc-service-network&quot;&gt;Service network&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://developer.ibm.com/articles/kubernetes-networking-what-you-need-to-know/&quot; target=&quot;_blank&quot;&gt;원문: Kubernetes networking for developers - IBM developers&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;불과 몇 년 전까지만 하더라도 개발자들이 네트워크에 대해 알아야 할 지식은 그렇게 많지 않았습니다. 그들은 그들의 코드를 작성하고 로컬에서 동작하는지 확인한 후 테스트나 서비스를 위한 서버에 배포할 수 있었으면 됐었습니다.&lt;/p&gt;
-
-&lt;p&gt;그러나 시간이 지나면서 컨테이너 기술이 점점 발전되어가며 이런 추세가 약간 변하기 시작했습니다. 이번 글을 통해 컨테이너 기반의 배포환경에서 개발자들이 알아두면 좋은 네트워크 지식에 대해 알아보도록 하겠습니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;kubernetes-basics&quot;&gt;Kubernetes Basics&lt;/h1&gt;
-
-&lt;p&gt;컨테이너는 한 개의 어플리케이션 또는 프로세스로 이들을 실행시키기 위해 필요한 모든 것들이 포함되어 있습니다. 어플리케이션 관점에서 컨테이너는 마치 서버위에 동작중인 하나의 운영체제처럼 보입니다. 컨테이너는 컨테이너만의 네트워크 인터페이스, 파일 시스템 등 필요한 모든 것들을 갖추고 있습니다.&lt;/p&gt;
-
-&lt;p&gt;쿠버네티스는 이러한 컨테이너의 집합으로 컨테이너는 쿠버네티스의 워커 노드 안에서 돌아갑니다. 만약 항상 함께 설치되어야 하는 두 개의 어플리케이션이 있다면 이 두 개의 어플리케이션을 가진 컨테이너 두 개를 하나의 &lt;strong&gt;파드(Pod)&lt;/strong&gt;로 정의할 수 있습니다. (파드는 확장가능한 단위로 보통 특정 노드에 장애가 발생할 경우 파드에 문제가 생기는 경우를 대비해, 여러 워커 노드에 파드를 분산 배포합니다.)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_31.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;localhost-ip-address-127001&quot;&gt;Localhost (IP address 127.0.0.1)&lt;/h1&gt;
-&lt;p&gt;같은 파드내에 있는 컨테이너들은 같은 노드 안에서 실행됩니다. 쿠버네티스는 이러한 구조의 장점을 이용해 파드에 &lt;strong&gt;공유되는 네트워크 네임스페이스&lt;/strong&gt;를 각각 제공합니다. 네트워크 네임스페이스는 리눅스 커널의 특징 중 하나로 네트워크 자원들을 그룹으로 만들 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;이러한 그룹내에서 실행되는 프로세스들은 그룹 안에 정의된 네트워크 리소스만 볼 수 있습니다. 예를 들어, 파드 A는 네트워크 네임스페이스가 A인 네트워크 리소스만 볼 수 있습니다. 이것이 바로 쿠버네티스가 파드들을 각각 독립시킬 수 있는 방법입니다. 예를 들어, 파드 A가 포트 80번으로 리스닝하는 것과 파드 B가 포트 80번으로 리스닝하는 것은 서로 독립되어 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_32.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;파드 안의 컨테이너들은 같은 네트워크 네임스페이스를 공유하기 때문에 localhost를 통해 서로 통신할 수 있습니다. 그러므로 컨테이너들이 같은 포트 번호로 리스닝하면 트래픽이 컨테이너들에 모두 전송됩니다. 따라서 같은 트래픽을 받기를 원치 않는 다른 역할의 컨테이너들이라면 포트 번호를 서로 다르게 지정해야 합니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;pod-network&quot;&gt;Pod network&lt;/h1&gt;
-&lt;p&gt;파드안의 컨테이너들은 파드 IP를 통해 묶여지고 포트를 통해 구분됩니다. 이러한 점에서 파드는 마치 하나의 가상 서버와 같다고 볼 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;사용되는 IP 주소는 &lt;strong&gt;파드 네트워크&lt;/strong&gt;라고 알려진 주소 블록에서 가져온 것입니다. 파드가 새로 기동될 때 마다 쿠버네티스는 파드 네트워크에서 사용 가능한 IP 주소를 가져와 파드에 할당한 후 실행합니다. 파드는 모두 동일한 네트워크에 있으며 이 네트워크를 통해 서로 통신할 수 있습니다. 파드가 통신할 수 있는 대상을 제한할 수 있는 네트워크 정책이 있지만 기본적으로 서로 자유롭게 통신할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_35.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;파드는 새로 기동될 때마다 파드 네트워크에서 IP주소를 새로 할당받습니다. 반면에 파드안의 컨테이너는 컨테이너가 파드 안에서 다시 기동되더라도 같은 IP주소를 갖게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;만약 특정 노드에 장애가 발생해 노드 안에 있던 파드들이 다른 노드 안에서 다시 기동되었다면 파드는 모두 새로운 IP주소를 받게 될겁니다. 만약 우리가 개발하는 상황이 IP 주소에 의존적이라면 이러한 쿠버네티스의 특징은 큰 단점이 될 수 있습니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;service-network&quot;&gt;Service network&lt;/h1&gt;
-&lt;p&gt;쿠버네티스에서는 이러한 단점을 해결해주는 리소스를 제공합니다. 쿠버네티스의 &lt;strong&gt;Service 리소스는 파드의 IP주소에 상관 없이 도메인 네임을 통해&lt;/strong&gt; 트래픽을 전송하도록 해줍니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Service&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;web&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;my-app&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;web-server&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;web&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;TCP&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;targetPort&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;80&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위의 서비스 리소스는 서비스 네트워크의 IP 주소로 확인되는 web.my-app.svc.cluster.local DNS 항목을 생성합니다. 할당된 서비스 IP는 서비스 spec.selector와 일치하는 모든 파드에 대한 트래픽 로드 밸런싱을 수행합니다. 위의 리소스 서비스는 metadata.labels.app가 web-server인 모든 파드가 포트 80으로 트래픽을 전송받도록 해줍니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_33.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Service 리소스의 기본 타입은 ClusterIP이며 다음과 같은 종류의 타입들을 제공합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;ClusterIP&lt;/li&gt;
-  &lt;li&gt;NodePort&lt;/li&gt;
-  &lt;li&gt;LoadBalancer&lt;/li&gt;
-  &lt;li&gt;ExternalName&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/kube_34.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Fri, 28 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/kubernetes-series6</link>
-                <guid isPermaLink="true">http://localhost:4000/kubernetes-series6</guid>
-                
-                <category>Kubernetes</category>
-                
-                
-                <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>OS Series [Part1]: 운영체제의 개요</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#운영체제-소개&quot; id=&quot;markdown-toc-운영체제-소개&quot;&gt;운영체제 소개&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#운영체제의-구조&quot; id=&quot;markdown-toc-운영체제의-구조&quot;&gt;운영체제의 구조&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#커널과-인터페이스&quot; id=&quot;markdown-toc-커널과-인터페이스&quot;&gt;커널과 인터페이스&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#시스템-호출&quot; id=&quot;markdown-toc-시스템-호출&quot;&gt;시스템 호출&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#드라이버&quot; id=&quot;markdown-toc-드라이버&quot;&gt;드라이버&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#커널의-구조&quot; id=&quot;markdown-toc-커널의-구조&quot;&gt;커널의 구조&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-&lt;h1 id=&quot;운영체제-소개&quot;&gt;운영체제 소개&lt;/h1&gt;
-&lt;p&gt;운영체제는 컴퓨터 전원을 켜면 가장 먼저 만나게 되는 소프트웨어로, 대표적인 예로 컴퓨터의 윈도우와 맥, 리눅스, 모바일의 iOS, 안드로이드가 있습니다. 이뿐만 아니라 스마트 워치, 스마트 TV에도 성능은 낮지만 임베디드 운영체제가 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;운영체제가 하는 역할&lt;/strong&gt;은 크게 다음과 같습니다.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;프로세스 관리&lt;/li&gt;
-  &lt;li&gt;자원(CPU, 메모리) 관리 및 분배&lt;/li&gt;
-  &lt;li&gt;파일시스템 관리&lt;/li&gt;
-  &lt;li&gt;사용자 인터페이스 제공 (CLI, GUI)&lt;/li&gt;
-  &lt;li&gt;하드웨어 인터페이스 제공&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;🦊 &lt;strong&gt;인터페이스&lt;/strong&gt;&lt;br /&gt;
-인터페이스는 사용자가 컴퓨터를 더욱 편하게 사용할 수 있도록 제공하는 것으로 크게 두 가지 기능을 제공합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;사용자에게 사용 편의성 제공&lt;/li&gt;
-  &lt;li&gt;하드웨어로의 무분별한 접근으로 생길 수 있는 장애를 차단&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;운영체제의-구조&quot;&gt;운영체제의 구조&lt;/h1&gt;
-&lt;h2 id=&quot;커널과-인터페이스&quot;&gt;커널과 인터페이스&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;커널(kernel)&lt;/strong&gt;: 프로세스 관리, 메모리 관리, 저장장치 관리와 같은  운영체제의 핵심적인 기능을 모아놓은 것입니다.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;인터페이스(interface)&lt;/strong&gt;: 커널과 사용자 사이에서 명령을 전달하고, 실행 결과를 보여주는 역할을 합니다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;운영체제는 커널과 인터페이스로 구분되어 있으며, 같은 커널에도 다양한 형태의 인터페이스를 사용할 수 있습니다. 예를 들어 &lt;strong&gt;리눅스에서는 인터페이스를 쉘(shell)&lt;/strong&gt;이라고 하는데 쉘에는 배시쉘(bash), 지쉘(zsh)과 같은 여러 종류의 쉘이 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/os_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;시스템-호출&quot;&gt;시스템 호출&lt;/h3&gt;
-&lt;p&gt;시스템 호출(system call)은 커널에 있는 인터페이스 중 하나로 &lt;strong&gt;시스템 자원의 사용과 관련한 함수를 제공&lt;/strong&gt;합니다. 응용 프로그램이 하드웨어 자원에 접근하려 할 때는 시스템 호출을 사용함으로써 (예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read()&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write()&lt;/code&gt; 함수) &lt;strong&gt;직접적인 접근을 막아줍니다&lt;/strong&gt;. 만약 직접적인 접근이 허용되게 된다면 두 응용 프로그램이 같은 위치에 데이터를 저장하게 될 수도 있고, 이로 인해 저장되어 있던 데이터가 지워질 수도 있습니다. 이러한 오류를 막아주기 위해 커널에서는 시스템 호출이라는 인터페이스를 제공합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;드라이버&quot;&gt;드라이버&lt;/h3&gt;
-&lt;p&gt;예전과 다르게 하드웨어의 종류도 다양해지고, 제품을 만드는 회사도 굉장히 많기 때문에 제품별로 각각 다양한 특징과 기능이 존재합니다. 이러한 변동성을 커널이 가지고 있는 기본적인 기능만으로는 해결하기가 힘들기 때문에, 각 회사에서는 자신의 &lt;strong&gt;제품(하드웨어)과 운영체제의 커널이 잘 상호작용할 수 있도록 인터페이스를 제공&lt;/strong&gt;하고 있습니다. 이를 드라이버 또는 디바이스 드라이버라고 합니다. 위의 그림에 드라이버가 커널과 하드웨어의 사이 전체를 감싸고 있지 않는 이유는 모든 하드웨어가 드라이버를 필요로 하지는 않기 때문입니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;커널의-구조&quot;&gt;커널의 구조&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;단일형 구조&lt;/li&gt;
-  &lt;li&gt;계층형 구조&lt;/li&gt;
-  &lt;li&gt;마이크로 구조&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791156644071&quot; target=&quot;_blank&quot;&gt;쉽게 배우는 운영체제 책 참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 27 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/os-series1</link>
-                <guid isPermaLink="true">http://localhost:4000/os-series1</guid>
-                
-                <category>OS</category>
                 
                 
                 <category>CS</category>

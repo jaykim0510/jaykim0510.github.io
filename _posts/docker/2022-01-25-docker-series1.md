@@ -48,7 +48,6 @@ docker build -t deeplearning:pytorch .
 ```
 
 ### Multi-Stage Builds  
-One of the most challenging things about building images is keeping the image size down. Each instruction in the Dockerfile adds a layer to the image, and you need to remember to clean up any artifacts you don’t need before moving on to the next layer.  
 
 **이미지를 빌드할 때 가장 중요한 것은 이미지의 사이즈를 줄이는 것**입니다. Dockerfile에서 각각의 명령어는 이미지의 layer를 하나씩 늘려나가게 됩니다. 이를 경량화하는 방법으로 RUN 명령어 사용시 Bash에서 && 연산자를 사용할 수 있습니다.  
 
@@ -124,8 +123,6 @@ that label-values can span multiple lines."
 ```
 
 ## ENV  
-
-The ENV instruction sets the environment variable <key> to the value <value>. This value will be in the environment for all subsequent instructions in the build stage and can be replaced inline in many as well. The value will be interpreted for other environment variables, so quote characters will be removed if they are not escaped. Like command line parsing, quotes and backslashes can be used to include spaces within values.
 
 ENV 명령어는 환경 변수를 키:밸류 형태로 지정하도록 해줍니다. 설정된 환경 변수는 설정 이후의 모든 빌드 단계에서 사용됩니다.  
 

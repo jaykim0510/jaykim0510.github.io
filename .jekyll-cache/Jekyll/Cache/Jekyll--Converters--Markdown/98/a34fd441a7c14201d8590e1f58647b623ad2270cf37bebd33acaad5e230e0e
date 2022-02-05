@@ -1,0 +1,75 @@
+I"�<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커-컴포즈docker-compose" id="markdown-toc-도커-컴포즈docker-compose">도커 컴포즈(Docker Compose)</a></li>
+  <li><a href="#top-level-keys" id="markdown-toc-top-level-keys">Top-level keys</a></li>
+  <li><a href="#services" id="markdown-toc-services">services</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+<h1 id="도커-컴포즈docker-compose">도커 컴포즈(Docker Compose)</h1>
+<p>보통 하나의 프로젝트에는 여러 가지 서비스를 포함하고 있습니다. 예를 들어 웹 서버 기반의 프로젝트를 진행한다고 할 때 프로젝트의 기본적인 아키텍처는 다음과 같습니다.</p>
+
+<p><img src="/images/docker_2.png" alt="" /><br />
+<a href="https://medium.com/storyblocks-engineering/web-architecture-101-a3224e126947" target="_blank">(Netflix Tech Blog 참고)</a></p>
+
+<p>위의 그림을 보면 웹 서버뿐만 아니라 데이터 웨어하우스, 데이터베이스, 검색 서비스 등과 같은 것들이 서로 유기적으로 연결되어 있습니다. 이런 경우 프로젝트를 상용화 하기 위해서는 어떻게 해야 할까요? 각각의 서비스를 도커를 이용해 컨테이너로 띄우고 서로를 연결시켜주어야 합니다. 이는 앞에서 배웠던 도커 이미지를 만들기 위한 Dockerfile 단계에서는 할 수 없고 도커 컨테이너를 실행(<code class="language-plaintext highlighter-rouge">docker run</code>)하는 단계에서 컨테이너를 띄우는 순서, 데이터 공유, 환경변수 등을 설정해서 실행해야 합니다.</p>
+
+<p>우리가 도커를 배우는 이유는 서비스를 컨테이너화하고 간결한 코드로 관리하여 어디서든 배포가능 하도록 하기 위한 것인데 컨테이너 실행 단계에서 이렇게 복잡한 과정이 필요하다면 생각보다 힘이 빠질 것 같습니다.</p>
+
+<p>이러한 문제를 해결하기 위해 도커에서는 <strong>도커 컴포즈</strong>라는 도구를 제공하였습니다. 도커 컴포즈는 기존의 여러 서비스를 연결하기 위해 컨테이너 실행 단계에서 복잡한 옵션을 주는 상황에서 벗어나 처음부터 <strong>YAML 파일 형태로 관리하여</strong> <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> <strong>파일 하나만 실행하면 프로젝트 배포에 필요한 모든 서비스를 실행하고 연결 시켜주는 것</strong>입니다. 다음은 웹 서버와 데이터베이스를 연결해 하나의 프로젝트로 배포하도록 해주는 도커 컴포즈 파일의 예시입니다.</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">postgres</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./docker/data:/var/lib/postgresql/data</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_DB=sampledb</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_USER=sampleuser</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_PASSWORD=samplesecret</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_INITDB_ARGS=--encoding=UTF-8</span>
+
+  <span class="na">django</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">./compose/django/Dockerfile-dev</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DEBUG=True</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_HOST=db</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_PORT=5432</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_NAME=sampledb</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_USERNAME=sampleuser</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_PASSWORD=samplesecret</span>
+      <span class="pi">-</span> <span class="s">DJANGO_SECRET_KEY=dev_secret_key</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>
+    <span class="na">command</span><span class="pi">:</span> 
+      <span class="pi">-</span> <span class="s">python manage.py runserver 0:8000</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./:/app/</span>
+</code></pre></div></div>
+<p><a href="https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움" target="_blank">(44bits 블로그 참고)</a></p>
+
+<p>지금부터 도커 컴포즈 파일의 구성요소를 한 번 살펴보도록 하겠습니다.</p>
+
+<h1 id="top-level-keys">Top-level keys</h1>
+<p>도커 컴포즈 파일의 최상위 키값에는 version, services, networks, volumes과 같은 항목이 있습니다.</p>
+<ul>
+  <li><strong>version</strong>:</li>
+  <li><strong>services</strong>:</li>
+  <li><strong>networks</strong>:</li>
+  <li><strong>volumes</strong>:</li>
+</ul>
+
+<h1 id="services">services</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.docker.com/engine/reference/builder/#cmd" target="_blank">Docker 공식문서</a></li>
+  <li><a href="https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움" target="_blank">44bits 블로그</a></li>
+</ul>
+:ET

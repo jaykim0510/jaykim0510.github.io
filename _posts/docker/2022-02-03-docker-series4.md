@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  'Docker Series [Part4]: Docker Compose'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+title:  'Docker Series [Part4]: Docker 네트워크 이해하기'
+description: FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.
 date:   2022-02-03 15:01:35 +0300
 image:  '/images/docker_logo.png'
 categories: devops
@@ -14,8 +14,3 @@ tags: Docker
 {:toc}
 
 ---
-
-
-# 참고
-
-- [Docker 공식문서](https://docs.docker.com/engine/reference/builder/#cmd){:target="_blank"}  
