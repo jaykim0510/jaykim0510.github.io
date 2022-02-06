@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Docker Series [Part3]: Dockerfile COPY VOLUME WORKDIR'
+title:  'Docker Series [Part3]: Dockerfile COPY ADD VOLUME WORKDIR'
 description: CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.
 date:   2022-02-02 15:01:35 +0300
 image:  '/images/docker_logo.png'
@@ -18,6 +18,7 @@ tags: Docker
 
 
 - [x] COPY
+- [ ] ADD
 - [x] VOLUME
 - [x] WORKDIR
 
@@ -68,6 +69,8 @@ COPY t*.txt relativeDir/
 # test.txt, teso.txt, tesi.txt과 같은 파일을 /absoluteDir/ 로 복사한다
 COPY tes?.txt /absoluteDir/
 ```
+
+# ADD
 
 # 참고
 

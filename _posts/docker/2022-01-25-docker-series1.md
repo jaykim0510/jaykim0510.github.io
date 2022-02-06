@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Docker Series [Part1]: Dockerfile FROM RUN LABEL ENV'
+title:  'Docker Series [Part1]: Dockerfile FROM LABEL ARG ENV'
 description: FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.
 date:   2022-01-25 15:01:35 +0300
 image:  '/images/docker_logo.png'
@@ -18,6 +18,7 @@ tags: Docker
 
 - [x] FROM
 - [x] LABEL
+- [ ] ARG
 - [x] ENV
 
 
@@ -122,9 +123,12 @@ description="This text illustrates \
 that label-values can span multiple lines."
 ```
 
+## ARG
+빌드 단계에서만 사용하기 위한 변수입니다. 밑에서 배울 ENV와 같은 변수를 지정하게 되면 ENV가 ARG를 오버라이딩합니다.  
+ 
 ## ENV  
 
-ENV 명령어는 환경 변수를 키:밸류 형태로 지정하도록 해줍니다. 설정된 환경 변수는 설정 이후의 모든 빌드 단계에서 사용됩니다.  
+ENV 명령어는 환경 변수를 키:밸류 형태로 지정하도록 해줍니다. 설정된 환경 변수는 설정 이후의 모든 빌드 단계와 런타임 단계에서 사용됩니다.  
 
 만약 밸류로 띄어쓰기가 필요하다면 쌍따옴표로 감싸주면 됩니다.  
 
