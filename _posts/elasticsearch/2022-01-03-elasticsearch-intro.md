@@ -3,7 +3,8 @@ layout: post
 title:  'ElasticSearch Series [Part1]: ElasticSearch Installation'
 description: Elasticsearch는 정형 및 비정형 데이터 등 모든 유형의 데이터를 위한 무료 검색 및 분석 엔진
 date:   2022-01-03 15:01:35 +0300
-image:  '/images/elastic_logo.png'
+image:  '/images/elastic_1.png'
+logo_image:  '/images/elastic_logo.png'
 categories: DE
 tags: Elasticsearch
 ---

@@ -3,7 +3,8 @@ layout: post
 title:  'ElasticSearch Series [Part2]: ElasticSearch에서 사용되는 간단한 용어와 파이썬 코드'
 description: Elasticsearch에서 데이터는 인덱스 안의 특정 타입에 문서로 저장되는데..
 date:   2022-01-05 15:01:35 +0300
-image:  '/images/elastic_logo.png'
+image:  '/images/elastic_4.png'
+logo_image:  '/images/elastic_logo.png'
 categories: DE
 tags: Elasticsearch
 ---

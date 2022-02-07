@@ -3,7 +3,8 @@ layout: post
 title:  'Kafka Series [Part3]: Fault tolerance in Kafka'
 description: 이러한 이유로 카프카는 초기 설계 단계에서부터 장애가 발생하더라도 안정적인 서비스를 제공할 수 있도록 구상됐습니다.
 date:   2022-01-24 15:01:35 +0300
-image:  '/images/kafka_logo.png'
+image:  '/images/kafka_15.png'
+logo_image:  '/images/kafka_logo.png'
 categories:   DE
 tags: Kafka
 ---

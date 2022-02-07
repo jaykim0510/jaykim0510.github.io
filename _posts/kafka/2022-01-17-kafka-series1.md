@@ -3,7 +3,8 @@ layout: post
 title: 'Kafka Series [Part1]: What is Kafka'
 description: Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.
 date: 2022-01-17 15:01:35 +0300
-image: '/images/kafka_logo.png'
+image:  '/images/kafka_12.png'
+logo_image:  '/images/kafka_logo.png'
 categories: DE
 tags: Kafka
 ---

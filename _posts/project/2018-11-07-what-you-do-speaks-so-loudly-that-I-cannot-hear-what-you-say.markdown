@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: project
 title:  Korean-to-French Translation
 description: 한국어를 프랑스어로 번역해줍니다.
 start:   2022/01/12
