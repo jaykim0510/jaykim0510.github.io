@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Docker Series [Part7]: Docker의 아키텍처 이해하기'
+title:  'Docker의 아키텍처 이해하기'
 description: FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.
 date:   2022-02-02 15:01:35 +0300
 image:  '/images/docker_logo.png'

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Dockerfile을 이용한 이미지 빌드 [Part1]: FROM LABEL ARG ENV'
+title:  'Dockerfile을 이용한 이미지 빌드(1) FROM LABEL ARG ENV'
 description: FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.
 date:   2022-01-25 15:01:35 +0300
 image:  '/images/docker_logo.png'

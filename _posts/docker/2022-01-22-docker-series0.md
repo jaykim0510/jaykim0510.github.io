@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Docker Series [Part0]: Docker란 무엇인가?'
+title:  'Docker란 무엇인가?'
 description: Docker는 컨테이너 기술을 이용해 개개인의 인프라 환경에 상관없이 모든 애플리케이션을 독립적으로 배포, 실행 가능하도록 해줍니다.
 date:   2022-01-22 15:01:35 +0300
 image:  '/images/docker_3.svg'
@@ -51,6 +51,9 @@ tags: Docker
 
 ## 도커 오브젝트
 
+![](../../images/docker_4.png)  
+[(출처: 오웬의 개발 이야기)](https://devowen.com/249){:target="_blank"}  
+
 ### 이미지
 도커 이미지는 도커 컨테이너를 생성하기 위한 읽기 전용 템플릿입니다. 기본 이미지 위에 원하는 커스터마이징을 통해 새로운 이미지를 만들 수도 있으며, 이렇게 만들어진 이미지는 Docker Registry에 Push하여 공유할 수 있습니다. 이미지를 만들때에는 Dockerfile에 필요한 명령어를 정의하여 만들 수 있습니다. Dockerfile에 정의된 각각의 명령어들은 이미지의 Layer를 생성하며, 이러한 Layer들이 모여 이미지를 구성합니다. Dockerfile을 변경하고 이미지를 다시 구성하면 변경된 부분만 새로운 Layer로 생성됩니다. 이러한 Image의 Layer구조는 Docker가 타 가상화 방식과 비교할 때, 매우 가볍고 빠르게 기동할 수 있는 요인이 됩니다.  
 
@@ -59,6 +62,6 @@ tags: Docker
 
 
 # 참고
-- [도커 공식문서](https://docs.docker.com/get-started/overview/)
-- [yjs0997님의 [Docker 기본(2/8)] Docker’s Skeleton 포스트](https://medium.com/dtevangelist/docker-기본-2-8-dockers-skeleton-649f818b5c3e)
-- [ITWorld 용어풀이: 컨테이너(container), IT World](https://www.itworld.co.kr/t/62077/VDI/103469)
+- [도커 공식문서](https://docs.docker.com/get-started/overview/){:target="_blank"}
+- [yjs0997님의 [Docker 기본(2/8)] Docker’s Skeleton 포스트](https://medium.com/dtevangelist/docker-기본-2-8-dockers-skeleton-649f818b5c3e){:target="_blank"}
+- [ITWorld 용어풀이: 컨테이너(container), IT World](https://www.itworld.co.kr/t/62077/VDI/103469){:target="_blank"}

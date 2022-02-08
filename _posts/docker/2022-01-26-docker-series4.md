@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Docker Series [Part4]: Docker Compose 속성 알아보기'
+title:  'Docker Compose 속성 알아보기'
 description: 도커 컴포즈는 파일 하나만 실행하면 프로젝트 배포에 필요한 모든 서비스를 실행하고 연결 시켜줍니다. 
 date:   2022-01-26 15:01:35 +0300
 image:  '/images/docker_2.png'

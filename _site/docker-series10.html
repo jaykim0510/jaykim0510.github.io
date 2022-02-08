@@ -6,22 +6,24 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Jay Tech</title>
+  <title>Docker 명령에서 컨테이너 실행까지의 내부과정을 들여다보자</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/page/4/">
+  <link rel="canonical" href="http://localhost:4000/docker-series10">
   <link rel="alternate" type="application/rss+xml" title="Jay Tech" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content=" – Jay Tech">
-  <meta name="twitter:description" content="">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/01.jpg">
+  <meta name="twitter:title" content="Docker 명령에서 컨테이너 실행까지의 내부과정을 들여다보자 – Jay Tech">
+  <meta name="twitter:description" content="Table of Contents
+">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/docker_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content=" – Jay Tech">
-  <meta property="og:description" content="">
-  <meta property="og:image" content="http://localhost:4000/images/01.jpg">
+  <meta property="og:title" content="Docker 명령에서 컨테이너 실행까지의 내부과정을 들여다보자 – Jay Tech">
+  <meta property="og:description" content="Table of Contents
+">
+  <meta property="og:image" content="http://localhost:4000/images/docker_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -233,205 +235,378 @@
 
   <!-- begin content -->
   <main class="content" aria-label="Content">
-    <!-- main page -->
+    <head>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
 
-<!-- begin hero -->
-<section class="hero">
+
+
+<div class="post-head">
   <div class="container">
     <div class="row">
-      <div class="col col-12">
-        <div class="hero__inner">
+      
+      
 
-          <div class="hero__left">
-            <h1 class="hero__title">Hey, I’m Jay Kim</h1>
-            <p class="hero__description">I'm interested with NLP and data engineering. I want to share what I learned and my daily pictures.</p>
-            <h6> </h6>
-            <p class="hero__description", style="margin-top: 0.5em;">Programming Language</p>
-            <a href="/Python">
-              <img src='https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white'>
-            </a>
-            <a href="/Javascript">
-              <img src='https://img.shields.io/badge/Javascript-f7df1e?style=for-the-badge&logo=javascript&logoColor=black'>
-            </a>
-            <p class="hero__description", style="margin-top: 0.5em;">AI skills</p>
-            <a href="/Pytorch">
-              <img src='https://img.shields.io/badge/Pytorch-F44336?style=for-the-badge&logo=pytorch&logoColor=white'>
-            <a href="/pandas">
-              <img src='https://img.shields.io/badge/Pandas-00599C?style=for-the-badge&logo=pandas&logoColor=white'>
-            </a>
-            <p class="hero__description", style="margin-top: 0.5em;">Data engineering skills</p>
-            <a href="/Kafka">
-              <img src="https://img.shields.io/badge/Kafka-783BF9?style=for-the-badge&logo=apachekafka&logoColor=white"/>
-            </a>
-            <a href="/Spark">
-              <img src="https://img.shields.io/badge/Spark-F26822?style=for-the-badge&logo=apachespark&logoColor=white" />
-            </a>
-            <a href="/Flink">
-              <img src="https://img.shields.io/badge/Flink-F93B78?style=for-the-badge&logo=apacheflink&logoColor=white" />
-            </a>
-            <a href="/Elasticsearch">
-              <img src="https://img.shields.io/badge/ElasticSearch-004E9F?style=for-the-badge&logo=elasticsearch&logoColor=white" />
-            </a>
-            <a href="/MySQL">
-              <img src='https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white'>
-            </a>
-            <a href="/MongoDB">
-              <img src='https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white'>
-            </a>
-            <p class="hero__description", style="margin-top: 0.5em;">DevOps skills</p>
-            <a href="/Docker">
-              <img src="https://img.shields.io/badge/Docker-1A86FD?style=for-the-badge&logo=docker&logoColor=white" />
-            </a>
-            <a href="/Kubernetes">
-              <img src="https://img.shields.io/badge/Kubenetes-40D1F5?style=for-the-badge&logo=kubernetes&logoColor=white" />
-            </a>
-            <a href="/Airflow">
-              <img src="https://img.shields.io/badge/Airflow-EEEEEE?style=for-the-badge&logo=apacheairflow&logoColor=black" />
-            </a>
-            <a href="/AWS">
-              <img src="https://img.shields.io/badge/AWS-F58025?style=for-the-badge&logo=amazonaws&logoColor=black" />
-            </a>
-            <p class="hero__description", style="margin-top: 0.5em;">Social skills</p>
-            <a href="/Git">
-              <img src='https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white'>
-            </a>
-          </div>
+      
 
-          <div class="hero__right">
-            <div class="hero__image">
-              <img class="lazy" data-src="/images/samantha.gif" alt="'s Picture">
+      
+      
+      
+      <div class="col col-6 col-d-12">
+        <div class="post__info ">
+  
+          
+            <div class="post__tags">
+              
+                <a href="/Docker" class="post__tag">#Docker</a>
+              
+            </div>
+          
+  
+          <h1 class="post__title">Docker 명령에서 컨테이너 실행까지의 내부과정을 들여다보자</h1>
+  
+          <div class="post__meta">
+            <a href="/about/" class="post__author-image">
+              <img class="lazy" data-src="/images/me_2.jpeg" alt="Jay Kim">
+            </a>
+
+            <div class="post__meta-bottom">
+              <a class="post__author" href="/about/">Jay Kim</a>
+              <time class="post__date" datetime="2022-02-06T21:01:35+09:00">06 Feb 2022</time>
             </div>
           </div>
-
+  
         </div>
       </div>
     </div>
   </div>
-</section>
-<!-- end hero -->
+</div>
 
-<!--tag part 현재는 comment처리하여 안보이도록 해놓았다-->
+<!-- begin post -->
+<div class="container_post animate">
 
-<h5> </h5>
+  
 
+    <div class="post__content">
+      <p id="toc"><strong>Table of Contents</strong></p>
 
+<hr />
 
+    </div>
+    <div class="post__tags_list">
+      <div class="container">
+        <h3>All Tag</h3>
+        <ul class="tag__list list-reset">
+          
+            
+              
+              <li class="tag__item"><a href="/AWS" class="post_tag_list">#AWS</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Airflow" class="post_tag_list">#Airflow</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Docker" class="post_tag_list">#Docker</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Elasticsearch" class="post_tag_list">#Elasticsearch</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Flink" class="post_tag_list">#Flink</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Git" class="post_tag_list">#Git</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Javascript" class="post_tag_list">#Javascript</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Kafka" class="post_tag_list">#Kafka</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Kubernetes" class="post_tag_list">#Kubernetes</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/MongoDB" class="post_tag_list">#MongoDB</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/MySQL" class="post_tag_list">#MySQL</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Network" class="post_tag_list">#Network</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/OS" class="post_tag_list">#OS</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Python" class="post_tag_list">#Python</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Pytorch" class="post_tag_list">#Pytorch</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Spark" class="post_tag_list">#Spark</a></li>
+            
+          
+            
+          
+        </ul>
+      </div>
+    </div>
+</div>
 
-
-<!-- Tags 페이지 -->
-<section class="tags">
-
-
-  <div class="container">
-    <ul class="tag__list list-reset">
-      
-        
-          
-          <li class="tag__item"><a href="/AWS" class="tag_list">#AWS</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Airflow" class="tag_list">#Airflow</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Docker" class="tag_list">#Docker</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Elasticsearch" class="tag_list">#Elasticsearch</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Flink" class="tag_list">#Flink</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Git" class="tag_list">#Git</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Javascript" class="tag_list">#Javascript</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Kafka" class="tag_list">#Kafka</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Kubernetes" class="tag_list">#Kubernetes</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/MongoDB" class="tag_list">#MongoDB</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/MySQL" class="tag_list">#MySQL</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Network" class="tag_list">#Network</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/OS" class="tag_list">#OS</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Python" class="tag_list">#Python</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Pytorch" class="tag_list">#Pytorch</a></li>
-        
-      
-        
-          
-          <li class="tag__item"><a href="/Spark" class="tag_list">#Spark</a></li>
-        
-      
-        
-      
+<!-- share -->
+<div class="container">
+  <div class="post__share">
+    <ul class="share__list list-reset">
+      <li class="share__item">
+        <a class="share__link share__twitter"
+          href="https://twitter.com/intent/tweet?text=Docker%20%EB%AA%85%EB%A0%B9%EC%97%90%EC%84%9C%20%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%20%EC%8B%A4%ED%96%89%EA%B9%8C%EC%A7%80%EC%9D%98%20%EB%82%B4%EB%B6%80%EA%B3%BC%EC%A0%95%EC%9D%84%20%EB%93%A4%EC%97%AC%EB%8B%A4%EB%B3%B4%EC%9E%90&url=http://localhost:4000/docker-series10"
+          onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+          title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/docker-series10"
+          onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+          title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/docker-series10&amp;media=http://localhost:4000/images/docker_logo.png&amp;description=Docker%20%EB%AA%85%EB%A0%B9%EC%97%90%EC%84%9C%20%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%20%EC%8B%A4%ED%96%89%EA%B9%8C%EC%A7%80%EC%9D%98%20%EB%82%B4%EB%B6%80%EA%B3%BC%EC%A0%95%EC%9D%84%20%EB%93%A4%EC%97%AC%EB%8B%A4%EB%B3%B4%EC%9E%90"
+        onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
+        rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/docker-series10&title=Docker%20%EB%AA%85%EB%A0%B9%EC%97%90%EC%84%9C%20%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%20%EC%8B%A4%ED%96%89%EA%B9%8C%EC%A7%80%EC%9D%98%20%EB%82%B4%EB%B6%80%EA%B3%BC%EC%A0%95%EC%9D%84%20%EB%93%A4%EC%97%AC%EB%8B%A4%EB%B3%B4%EC%9E%90&summary=&source=Jay%20Tech"
+        onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
+      </li>
     </ul>
   </div>
+</div>
 
 
 
+<!-- end post -->
+
+
+
+
+
+
+
+<!-- begin related posts -->
 <div class="container">
-  <div class="section__head">
-    <h3 class="section__title">Recent Posts</h3>
-    <a href="/recent_posts/" class="section__link">See all</a>
-  </div>
-  <h5> </h5>
-  <div class="row animate">
-    
+  <section class="related-posts is-related animate">
+    <div class="row">
+      <div class="col col-12">
+        <div class="container__inner">
+          <div class="section__info">
+            <div class="section__head">
+              <h2 class="section__title">You may also like</h2>
+              <a class="section__link" href="/blog">
+                
+                
+                  
+                    <a href="/tags#Docker" class="section__link related-tag">See all<span> Docker</span></a>
+                  
+                
+              
+              </a>
+            </div>
+          </div>
+          <div class="row">
+
+          
+            
+            
       
-        <div class="article col col-4 col-d-6 col-t-12">
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-01-25T21:01:35+09:00">25 Jan 2022</time>
+      <time class="article__date" datetime="2022-01-22T21:01:35+09:00">22 Jan 2022</time>
 
       
 
       
-      <a class="article__image" href="/docker-series3">
-        <img class="lazy" data-src="/images/docker_logo.png" alt="Dockerfile을 이용한 이미지 빌드(3): COPY ADD VOLUME WORKDIR">
+      <a class="article__image" href="/docker-series0">
+        <img class="lazy" data-src="/images/docker_3.svg" alt="Docker란 무엇인가?">
       </a>
       
 
@@ -440,48 +615,64 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/docker-series3">Dockerfile을 이용한 이미지 빌드(3): COPY ADD VOLUME WORKDIR</a>
+        <a href="/docker-series0">Docker란 무엇인가?</a>
       </h2>
 
       
-      <p class="article__excerpt">CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.</p>
+      <p class="article__excerpt">Docker는 컨테이너 기술을 이용해 개개인의 인프라 환경에 상관없이 모든 애플리케이션을 독립적으로 배포, 실행 가능하도록 해줍니다.</p>
       
 
     </div>
   </div>
 </div>
+
+            
+                
+              
+            
+            
+            
       
-        <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-01-25T21:01:35+09:00">25 Jan 2022</time>
-
+            
       
-
+            
+            
+            
+            
       
-      <a class="article__image" href="/docker-series2">
-        <img class="lazy" data-src="/images/docker_logo.png" alt="Dockerfile을 이용한 이미지 빌드(2): RUN CMD ENTRYPOINT">
-      </a>
+            
       
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/docker-series2">Dockerfile을 이용한 이미지 빌드(2): RUN CMD ENTRYPOINT</a>
-      </h2>
-
+            
+            
+            
+            
       
-      <p class="article__excerpt">CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.</p>
+            
       
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
 
-    </div>
-  </div>
-</div>
-      
-        <div class="article col col-4 col-d-6 col-t-12">
+              <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
@@ -510,39 +701,101 @@
     </div>
   </div>
 </div>
-      
-    
-  </div>
-</div>
 
-
-<!-- begin pagination -->
-<div class="container">
-  <div class="row">
-    <div class="col col-12">
-      <nav class="pagination animate">
-        <div class="pagination__inner">
-
-          <div class="pagination__list">
             
-              <a href="/page/3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i> Prev</a>
+                
+              
+            
+            
             
       
-            <div class="pagination__count pagination__item">Page 4 of 8</div>
+            
       
             
-              <a href="/page/5" class="pagination__next pagination__item">Next <i class="ion ion-ios-arrow-forward"></i></a>
-            
-          </div>
 
-        </div>
-      </nav>
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-01-25T21:01:35+09:00">25 Jan 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/docker-series2">
+        <img class="lazy" data-src="/images/docker_logo.png" alt="Dockerfile을 이용한 이미지 빌드(2): RUN CMD ENTRYPOINT">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/docker-series2">Dockerfile을 이용한 이미지 빌드(2): RUN CMD ENTRYPOINT</a>
+      </h2>
+
+      
+      <p class="article__excerpt">CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.</p>
+      
+
     </div>
   </div>
 </div>
-<!-- end pagination -->
+
+            
+                
+                  
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- end related posts -->
 
 
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <!-- begin comments -->
+<div class="show-comments">
+  <button class="button disqus-button" id="show-comments-button" onclick="disqus();return false;">Show Comments</button>
+</div>
+
+<div id="disqus_thread" class="post__comments">
+  <div id="disqus_empty"></div>
+</div>
+
+<script>
+  var disqus_loaded = false;
+  var disqus_shortname = 'Jay';
+  var disqus_container = document.getElementById("disqus_thread");
+  function disqus() {
+    if (!disqus_loaded) {
+      disqus_loaded = true;
+      var e = document.createElement("script");
+      e.type = "text/javascript";
+      e.async = true;
+      e.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+      (document.getElementsByTagName("head")[0] ||
+        document.getElementsByTagName("body")[0])
+        .appendChild(e);
+      // Hide the button after opening
+      document.getElementById("show-comments-button").style.display = "none";
+      // Show disqus comments
+      disqus_container.classList.add("is-open");
+    }
+  }
+</script>
+
+<noscript>Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<!-- end comments --> 
+      </div>
+    </div>
+  </div>
 
   </main>
   <!-- end content -->
