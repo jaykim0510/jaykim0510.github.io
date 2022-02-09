@@ -63,5 +63,6 @@ tags: Docker
 
 # 참고
 - [도커 공식문서](https://docs.docker.com/get-started/overview/){:target="_blank"}
+- [Rain.i님의 도커 컨테이너 까보기(1) – Protocol, Registry 포스트](http://cloudrain21.com/examination-of-docker-protocol-registry){:target="_blank"}
 - [yjs0997님의 [Docker 기본(2/8)] Docker’s Skeleton 포스트](https://medium.com/dtevangelist/docker-기본-2-8-dockers-skeleton-649f818b5c3e){:target="_blank"}
 - [ITWorld 용어풀이: 컨테이너(container), IT World](https://www.itworld.co.kr/t/62077/VDI/103469){:target="_blank"}

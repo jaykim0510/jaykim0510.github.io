@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 08 Feb 2022 14:10:40 +0900</pubDate>
-        <lastBuildDate>Tue, 08 Feb 2022 14:10:40 +0900</lastBuildDate>
+        <pubDate>Wed, 09 Feb 2022 16:47:34 +0900</pubDate>
+        <lastBuildDate>Wed, 09 Feb 2022 16:47:34 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -97,8 +97,43 @@
             <item>
                 <title>Docker의 아키텍처 이해하기</title>
                 <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#desktop-engine-server-host-daemon&quot; id=&quot;markdown-toc-desktop-engine-server-host-daemon&quot;&gt;Desktop, Engine, Server, Host, Daemon&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;hr /&gt;
+
+&lt;h1 id=&quot;desktop-engine-server-host-daemon&quot;&gt;Desktop, Engine, Server, Host, Daemon&lt;/h1&gt;
+
+&lt;p&gt;도커를 공부하면서 Docker Desktop, Engine, Server, Host, Daemon이라는 용어들의 관계가 조금 헷갈렸었습니다. 지금까지 배웠던 내용을 토대로 다음 용어들을 짧게 정리해볼까 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_13.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Docker Desktop&lt;/strong&gt;&lt;br /&gt;
+Mac, Windows 환경에서의 도커 애플리케이션입니다. 도커는 리눅스 기반의 운영체제에서 동작하는 어플리케이션이지만 Docker Desktop을 통해 Mac, Windows에서도 사용할 수 있도록 해줍니다. 또한 Docker Engine뿐 아니라 Docker Compose도 기본적으로 함께 설치되며 Kubernetes도 클릭 한 번으로 설치가능하도록 해줍니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Docker Engine&lt;/strong&gt;&lt;br /&gt;
+일반적으로 저희가 도커를 생각할 때 가지고 있는 기능들을 곧 Docker Engine이라고 합니다. 다시 말해 도커 컨테이너를 생성하기 위해 요청하는 Client, 실제 컨테이너를 생성하고 관리하는 Server를 포함하는 Client-Server Application을 말합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Docker Server&lt;/strong&gt;&lt;br /&gt;
+Docker Client로 부터 REST API 형태로 요청을 받았을 때 그 요청을 토대로 실제로 컨테이너를 생성하고 관리하는 부분을 말합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Docker Host&lt;/strong&gt;&lt;br /&gt;
+Docker Host는 Docker Engine이 설치된 곳을 말합니다. 제 컴퓨터가 Linux기반의 운영체제였다면 제 컴퓨터 자체가 Host가 되었을 것이고, 만약 클라우드 환경에서 서버를 하나 빌려서 거기에 도커를 설치했다면 빌린 서버가 Host가 될 것입니다.&lt;/p&gt;
+
+    &lt;p&gt;참고로 제가 지금 사용하고 있는 환경은 Mac입니다. Mac의 운영체제는 Unix 계열의 운영체제로 Linux와는 사용하는 커널이 약간 달라서 결론적으로 도커를 다이렉트로 설치할 수 없습니다. 그래서 macOS 위에 Linux Virtual Machine을 하나 더 띄우고 그 위에서 도커를 설치 사용하게 됩니다. 이렇게 사용하면 기본적으로 Linux VM에 2GB 정도의 메모리가 사용된다고 합니다.&lt;br /&gt;
+  &lt;a href=&quot;https://www.reddit.com/r/docker/comments/rhorhs/how_much_overhead_from_running_docker_on_a_mac/&quot;&gt;(참고: How much overhead from running Docker on a Mac?)&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Docer Daemon&lt;/strong&gt;&lt;br /&gt;
+Docker Daemon은 Docker Server 안에 있는 핵심 요소 중 하나로 클라이언트로부터 API 요청을 수신하고 Image, Container, Network 및 Volume과 같은 Docker Object를 관리합니다.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <pubDate>Wed, 02 Feb 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/docker-series7</link>
@@ -114,8 +149,99 @@
             <item>
                 <title>Docker 컨테이너에 저장된 데이터는 어떻게 될까?</title>
                 <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#container-layer&quot; id=&quot;markdown-toc-container-layer&quot;&gt;Container Layer&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#ufs&quot; id=&quot;markdown-toc-ufs&quot;&gt;UFS&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#cow&quot; id=&quot;markdown-toc-cow&quot;&gt;CoW&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#storage-driver&quot; id=&quot;markdown-toc-storage-driver&quot;&gt;Storage Driver&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#정리&quot; id=&quot;markdown-toc-정리&quot;&gt;정리&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;hr /&gt;
+
+&lt;p&gt;도커를 공부하면서 궁금했던 것 중에 하나가 &lt;em&gt;컨테이너에서 생성된 파일은 어디에 저장되어 있는걸까?&lt;/em&gt; 였습니다. 그동안 저는 도커에 다른 저장소를 마운트하면 컨테이너에서 생성된 데이터를 저장할 수 있고 그렇지 않다면 컨테이너가 삭제되면서 같이 사라진다라고 알고 있었는데 그러면 &lt;strong&gt;컨테이너가 사라지기 전까지는 어디에 저장&lt;/strong&gt;되어 있는지 궁금해졌습니다.&lt;/p&gt;
+
+&lt;p&gt;그러던 중 좋은 글을 공유해 놓은 블로그를 알게되어 이와 관련해 정리해보았습니다. &lt;a href=&quot;http://cloudrain21.com/examination-of-docker-containersize-ufs&quot; target=&quot;_blank&quot;&gt;(참고: Rain.i 블로그)&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;container-layer&quot;&gt;Container Layer&lt;/h1&gt;
+
+&lt;p&gt;도커 컨테이너는 도커 이미지로부터 만들어진 인스턴스입니다. 도커 이미지를 토대로 여러 개의 컨테이너를 만들 수 있습니다. 예를 들어 우분투 운영체제를 제공하는 이미지를 이용해 어떤 컨테이너에는 파이썬을 설치하고, 어떤 곳에는 nginx를 설치해 웹 서버로 사용할 수도 있습니다. 이렇게 새로운 소프트웨어를 설치하거나 파일을 생성하는 등의 작업은 &lt;strong&gt;Container Layer&lt;/strong&gt; 위에서 이루어집니다. &lt;del&gt;이걸 보면 도커는 각각의 서비스를 컨테이너화 했을 뿐 아니라 컨테이너도 또 컨테이너화 한 것 같은 느낌이 드네요.&lt;/del&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;도커가 컨테이너를 이런식으로 구현한 이유는 이미지의 상태를 최대한 그대로 보존하여 컨테이너를 계속 생성하더라도 토대가 변하지 않아 &lt;strong&gt;예상치 못한 오류를 예방할 수 있고 관리하기도 편합니다.&lt;/strong&gt; 사용하는 입장에서도 어차피 컨테이너를 삭제하면 원래 기본 이미지 상태로 돌아가니까 &lt;strong&gt;걱정없이 컨테이너를 조작할 수 있을 것 입니다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;우선 컨테이너를 생성하고 새로운 데이터를 생성하면 도커 상에서는 Container Layer에 저장된다는 것을 알았습니다. 그런데 Container Layer도 결국 도커를 띄운 호스트의 자원을 이용하기 때문에 제 컴퓨터(로컬이라면 데스크탑이나 노트북, 리모트라면 AWS의 EC2 정도) 어딘가에 저장이 되어 있을 것입니다. 이렇게 컨테이너들이 사용하는 이미지나 변경사항들은 모두 호스트 File system 의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/docker&lt;/code&gt; 디렉토리 내에 저장된다. 이 영역을 &lt;strong&gt;Docker area&lt;/strong&gt; 또는 &lt;strong&gt;Backing Filesystem&lt;/strong&gt; 이라고 부르기도 한다.&lt;/p&gt;
+
+&lt;p&gt;만약 컨테이너에서 생성된 파일을 버리지 않고 저장하고 싶다면 다음의 두 가지 방법을 사용할 수 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Commit&lt;/strong&gt;: 컨테이너 상에서 변경을 수행한 후 새로운 이미지로 만들어둔다.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Volume&lt;/strong&gt;: 변경사항을 로컬 또는 외부 볼륨에 저장하도록 한다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;ufs&quot;&gt;UFS&lt;/h1&gt;
+&lt;p&gt;위의 내용을 읽다보면 이러한 의문이 생길 수 있습니다. &lt;em&gt;ubuntu 이미지가 가지고 있던 Filesystem이 아닌 별도의 Filesystem에 Container Layer의 데이터가 저장이 되는데 왜 우리는 컨테이너를 사용할 때 이러한 사실을 몰랐을까?&lt;/em&gt; 그 이유는 바로 도커에서는 &lt;strong&gt;UFS(Union File System)&lt;/strong&gt;라는 방식을 이용해 &lt;strong&gt;Image Layer와 Container Layer의 Filesystem을 하나로 통합&lt;/strong&gt;해서 저희에게 제공해줍니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이러한 UFS 방식의 장점은 무엇일까요? 가장 큰 장점은 Image Layer의 데이터를 여러 컨테이너가 공유할 수 있다는 점입니다. 공유한다는 것은 &lt;strong&gt;여러 개의 컨테이너를 띄우더라도 Image Layer의 데이터 용량은 단 1개만큼만 저장&lt;/strong&gt;된다는 말입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;cow&quot;&gt;CoW&lt;/h1&gt;
+&lt;p&gt;위의 그림과 같이 Image Layer의 &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a&lt;/code&gt;&lt;/em&gt;라는 파일을 &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a'&lt;/code&gt;&lt;/em&gt;으로 수정할 때 Image Layer에서 파일이 수정되지 않고 Container Layer 위에서 새로 파일을 복사한 후 수정하는 것을 &lt;strong&gt;CoW(Copy on Write)&lt;/strong&gt;라고 합니다. 이러한 기법을 통해 &lt;strong&gt;기존의 이미지에 대한 변경을 막을 수 있습니다.&lt;/strong&gt; 하지만 Copy-on-Write 기법은 그 동작 구조 상 다음의 단점이 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Performance Overhead&lt;/strong&gt;: data 를 먼저 복제(Copy)한 후 변경을 수행해야함&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Capacity Overhead&lt;/strong&gt;: 원본 데이터 뿐 아니라, 변경된 데이터도 저장해야함&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;따라서 되도록이면 &lt;strong&gt;중복 사용되고 수정되지 않을만한 데이터들을 이미지 레이어로 구성하&lt;/strong&gt;는 것이 좋습니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;storage-driver&quot;&gt;Storage Driver&lt;/h1&gt;
+&lt;p&gt;위에서 그동안 배운 &lt;strong&gt;UFS와 CoW 방식을 도커에서 쉽게 이용할 수 있는 것은 도커의 Storage Driver 덕분입니다.&lt;/strong&gt; Storage Driver는 컨테이너 내에서의 파일 I/O 처리를 담당하는 드라이버입니다. Storage Driver는 Pluggable한 구조로 되어 있고 특성도 다릅니다. 또한 리눅스 배포판마다 지원하는 드라이버도 다르므로 자신의 workload에 맞는 Storage Driver를 선택해아 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Storage Driver의 종류&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_8.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/select-storage-driver/&quot; target=&quot;_blank&quot;&gt;(참고: 도커 공식문서)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;리눅스 배포판별 지원하는 Storage Driver&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_9.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/select-storage-driver/&quot; target=&quot;_blank&quot;&gt;(참고: 도커 공식문서)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Storage Driver와 Backing File System&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Storage Driver는 Container Layer의 데이터를 Backing filesystem(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/docker&lt;/code&gt;)으로 저장하고 사용자에게 layered filesystem으로 제공해 줍니다.   &lt;br /&gt;
+(참고로 볼륨 마운트는 이러한 Storage Driver의 도움없이 직접 Host의 Filesystem에 접근 가능합니다.)&lt;/p&gt;
+
+&lt;p&gt;참고로 Storage Driver와 Backing filesystem 간에도 종속성이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_10.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
+&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/select-storage-driver/&quot; target=&quot;_blank&quot;&gt;(참고: 도커 공식문서)&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Storage Driver와 graphDB&lt;/strong&gt;&lt;br /&gt;
+Storage Driver는 사용자에게 최적의 통합된 파일 시스템을 제공하기 위해서는 layer 별 관계를 조회하고 key를 통해 특정 image를 검색하는 등, 이러한 일련의 정보 검색 및 관리하는 데이터베이스가 필요합니다. 이런 정보를 저장하고 있는 데이터베이스를 graphDB라고 합니다. (&lt;del&gt;graphDB는 Storage Driver의 뇌와 같은 역할?&lt;/del&gt;)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../images/docker_12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;정리&quot;&gt;정리&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;UFS&lt;/strong&gt;: Container Layer와 Image Layer의 파일이 통합되어 보인다&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;CoW&lt;/strong&gt;: Image Layer 내의 파일을 원본은 유지하는 방향으로 파일을 수정할 수 있다&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Storage Driver&lt;/strong&gt;: 위의 기능들을 실제로 수행하는 드라이버&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;graphDB&lt;/strong&gt;: Storage Driver가 최적의 실행을 하는데 필요한 정보를 저장하고 있는 DB&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/&quot; target=&quot;_blank&quot;&gt;도커 공식문서 About Storage Driver&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://cloudrain21.com/examination-of-docker-containersize-ufs&quot; target=&quot;_blank&quot;&gt;Rain.i님의 도커 컨테이너 까보기(2) – Container Size, UFS 포스트&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://devaom.tistory.com/5&quot; target=&quot;_blank&quot;&gt;Davaom’s Tech Blog, [Docker] 컨테이너의 구조 포스트&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <pubDate>Wed, 02 Feb 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/docker-series6</link>

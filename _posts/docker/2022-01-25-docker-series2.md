@@ -3,7 +3,7 @@ layout: post
 title:  'Dockerfile을 이용한 이미지 빌드(2): RUN CMD ENTRYPOINT'
 description: CMD 명령어의 가장 큰 목적은 컨테이너가 실행될 때 디폴트 명령어, 또는 인자값을 주고 싶은 경우입니다.
 date:   2022-01-25 15:01:35 +0300
-image:  '/images/docker_logo.png'
+image:  '/images/docker_4.png'
 logo_image:  '/images/docker_logo.png'
 categories: devops
 tags: Docker

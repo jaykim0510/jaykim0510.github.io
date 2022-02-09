@@ -10,6 +10,9 @@ layout: default
 {% capture site_tags %}{% for tag in site.tags %}{{ tag | first }}{% unless forloop.last %},{% endunless %}{% endfor %}{% endcapture %}
 {% assign tag_words = site_tags | split:',' | sort %}
 
+{% capture site_categories %}{% for category in site.categories %}{{ category | first }}{% unless forloop.last %},{% endunless %}{% endfor %}{% endcapture %}
+{% assign category_words = site_categories | split:',' | sort %}
+
 <div class="post-head">
   <div class="container">
     <div class="row">
@@ -37,15 +40,17 @@ layout: default
       {% if page.video_embed %} {% assign videoInfo = 'post__info-video' %} {% endif %}
       <div class="col {% if page.video_embed %}col-12{% else %}col-6 col-d-12{% endif %}">
         <div class="post__info {{videoInfo}}">
-  
-          {% if page.tags.size >= 1 %}
-            <div class="post__tags">
-              {% for tag in page.tags %}
-                <a href="{{ site.baseurl }}/{{ tag }}" class="post__tag">#{{ tag }}</a>
-              {% endfor %}
-            </div>
-          {% endif %}
-  
+            {% if page.tags.size >= 1 %}
+              <div class="post__tags">
+                {% for tag in page.tags %}
+                  <a href="{{ site.baseurl }}/{{ tag }}" class="post__tag">#{{ tag }}</a>
+                {% endfor %}
+                {% for category in page.categories %}
+                  <a href="{{ site.baseurl }}/{{ category }}" class="post__tag">#{{ category }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+ 
           <h1 class="post__title">{{ page.title | escape }}</h1>
   
           <div class="post__meta">
@@ -81,6 +86,15 @@ layout: default
             {% unless forloop.last %}
               {% capture this_word %}{{ tag_words[item] | strip_newlines }}{% endcapture %}
               <li class="tag__item"><a href="{{ site.baseurl }}/{{ this_word }}" class="post_tag_list">#{{ this_word }}</a></li>
+            {% endunless %}
+          {% endfor %}
+        </ul>
+        <h3>All Category</h3>
+        <ul class="tag__list list-reset">
+          {% for item in (0..site.categories.size) %}
+            {% unless forloop.last %}
+              {% capture this_word %}{{ category_words[item] | strip_newlines }}{% endcapture %}
+              <li class="tag__item"><a href="{{ site.baseurl }}/{{ this_word }}" class="post_category_list">#{{ this_word }}</a></li>
             {% endunless %}
           {% endfor %}
         </ul>
