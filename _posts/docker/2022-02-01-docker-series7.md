@@ -39,3 +39,34 @@ Docker Host는 Docker Engine이 설치된 곳을 말합니다. 제 컴퓨터가 
 
 - **Docer Daemon**  
 Docker Daemon은 Docker Server 안에 있는 핵심 요소 중 하나로 클라이언트로부터 API 요청을 수신하고 Image, Container, Network 및 Volume과 같은 Docker Object를 관리합니다.  
+
+
+지금까지 도커의 큰 그림에서의 구성요소에 대해 살펴보았습니다. 지금부터는 그 중 Docker Server의 내부에 대해서 조금 더 살펴보려고 합니다. 위의 그림을 보면 Docker Client가 요청을 하면 나머지는 Docker Server에서 실행이 이루어지는데 Docker Server가 요청을 수행하기 위해 내부적으로 어떤 과정을 거치는지 한 번 알아보겠습니다.  
+
+# Docker Server
+
+## Docker Server의 구성요소  
+아래 그림은 Docker Server의 아키텍처를 보여주는 좋은 그림입니다. 비록 2014년도에 그려진 그림이어서 최근 버전의 도커와는 차이가 있을 수 있지만 도커의 기본 구성요소를 공부하는 데에는 좋은 자료라고 생각합니다.  
+
+크게 두 개의 사각형 덩어리가 각각 Docker Daemon과 Docker Driver입니다.(~~개인적으로 Engine이라고 적힌 부분은 마치 엔진과 같은 역할을 한다는 뜻일 뿐 저희가 위에서 배운 Docker Engine을 뜻하는 건 아니라고 생각합니다.~~)
+
+![](../../images/docker_14.jpeg)  
+
+### Docker Daemon
+Docker daemon 은 docker engine 내에서 주로 client 및 registry, driver 의 중심에서 작업의 분배를 담당하는 중심점이라고 보면 됩니다. client 로부터의 HTTP 요청을 내부 job 단위(가장 기본적인 작업 실행 단위)로 처리할 수 있도록 분배합니다. 즉, HTTP server 의 역할과 함께 client 요청을 분배(route and distribute), scheduling 하고, 요청에 대한 적합한 Handler 를 찾습니다. 요청에 대해 실질적인 처리는 Handler 를 통해 다른 모듈 들에게 전달하여 수행하고 그 결과를 응답으로 작성하여 client 에게 제공합니다.  
+
+### Docker Driver  
+Docker Driver 는 크게 세 가지 범주로 나눌 수 있습니다.
+
+- **graphdriver** : container image 관리
+- **networkdriver** : 가상 bridge 등 container 의 network 관리
+- **execdriver** : container 생성 관리  
+
+#### Storage Driver
+graphdriver는 Storage Driver 라고 이해하면 됩니다. `/var/lib/docker` 내에 저장되어 있는 container image 관련 정보들을 이용하여 사용자에게 layered filesystem으로 제공하는 드라이버입니다. built-in graphdriver 로는 `btrfs`, `vfs`, `auts`, `devmapper`, `overlay2` 등이 있습니다. Storage Driver에 관한 내용은 [**이 포스트**](https://jaykim0510.github.io/docker-series6)를 참고하시면 됩니다.  
+
+#### Network Driver
+
+#### Exec Driver
+
+## Docker Server내에서의 동작 과정

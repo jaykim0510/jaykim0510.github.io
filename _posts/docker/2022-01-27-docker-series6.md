@@ -87,7 +87,7 @@ Storage Driver는 사용자에게 최적의 통합된 파일 시스템을 제공
 - **UFS**: Container Layer와 Image Layer의 파일이 통합되어 보인다
 - **CoW**: Image Layer 내의 파일을 원본은 유지하는 방향으로 파일을 수정할 수 있다
 - **Storage Driver**: 위의 기능들을 실제로 수행하는 드라이버
-- **graphDB**: Storage Driver가 최적의 실행을 하는데 필요한 정보를 저장하고 있는 DB  
+- **graphDB**: Storage Driver가 최적의 실행을 하는데 필요한 정보를 저장하고 있는 SQLite기반 DB  
 
 # 참고
 - [도커 공식문서 About Storage Driver](https://docs.docker.com/storage/storagedriver/){:target="_blank"}
