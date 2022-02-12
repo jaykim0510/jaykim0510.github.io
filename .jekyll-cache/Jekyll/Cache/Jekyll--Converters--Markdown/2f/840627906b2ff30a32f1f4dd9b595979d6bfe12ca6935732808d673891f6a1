@@ -1,0 +1,60 @@
+I"O
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#조인" id="markdown-toc-조인">조인</a>    <ul>
+      <li><a href="#서로-구조가-다른-테이블간의-조인" id="markdown-toc-서로-구조가-다른-테이블간의-조인">서로 구조가 다른 테이블간의 조인</a>        <ul>
+          <li><a href="#left-outer-join" id="markdown-toc-left-outer-join">LEFT OUTER JOIN</a></li>
+          <li><a href="#right-outer-join" id="markdown-toc-right-outer-join">RIGHT OUTER JOIN</a></li>
+          <li><a href="#inner-join" id="markdown-toc-inner-join">INNER JOIN</a></li>
+        </ul>
+      </li>
+      <li><a href="#구조가-같은-테이블간의-조인" id="markdown-toc-구조가-같은-테이블간의-조인">구조가 같은 테이블간의 조인</a>        <ul>
+          <li><a href="#union" id="markdown-toc-union">UNION</a></li>
+        </ul>
+      </li>
+      <li><a href="#외래키" id="markdown-toc-외래키">외래키</a></li>
+    </ul>
+  </li>
+  <li><a href="#서브쿼리" id="markdown-toc-서브쿼리">서브쿼리</a></li>
+</ul>
+
+<hr />
+
+<h1 id="조인">조인</h1>
+<p>여러 테이블을 합쳐서 하나의 테이블인 것처럼 보는 행위를 ‘조인(join)’이라고 합니다. 실무에서는 이 조인을 잘해야 제대로된 데이터 분석을 할 수 있습니다. 조인은 SQL을 얼마나 잘 쓰는지 판단하는 척도 중 하나일만큼 정말 중요한 개념입니다.</p>
+
+<h2 id="서로-구조가-다른-테이블간의-조인">서로 구조가 다른 테이블간의 조인</h2>
+<ul>
+  <li>서로 구조가 다른 테이블을 특정 컬럼을 기준으로 조인</li>
+</ul>
+
+<p><img src="/images/sql_3.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT 
+    p.name
+    p.team
+    r.team
+    r.region
+FROM player AS p LEFT OUTER JOIN region AS r
+ON p.team = r.team # ON 대신 USING(team) 이렇게 할 수도 있음
+</code></pre></div></div>
+
+<h3 id="left-outer-join">LEFT OUTER JOIN</h3>
+<h3 id="right-outer-join">RIGHT OUTER JOIN</h3>
+<h3 id="inner-join">INNER JOIN</h3>
+
+<h2 id="구조가-같은-테이블간의-조인">구조가 같은 테이블간의 조인</h2>
+
+<p><img src="/images/sql_4.png" alt="" /></p>
+
+<h3 id="union">UNION</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT * FROM old_player
+UNION
+SELECT * FROM new_player;
+</code></pre></div></div>
+
+<h2 id="외래키">외래키</h2>
+<p><img src="/images/sql_2.png" alt="" /></p>
+<h1 id="서브쿼리">서브쿼리</h1>
+:ET
