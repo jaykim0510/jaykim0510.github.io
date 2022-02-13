@@ -14,3 +14,6 @@ tags: Flink
 {:toc}
 
 ---
+
+# 참고
+- [Flink and Kafka Streams: a Comparison and Guideline for Users](https://www.confluent.io/blog/apache-flink-apache-kafka-streams-comparison-guideline-users/){:target="_blank"}

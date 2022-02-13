@@ -288,4 +288,4 @@ FROM customers;
 # 마치며  
 여기까지 테이블 한 개에 대해서 데이터를 조회하고 분석하는 방법에 대해 살펴보았습니다. 다음 포스트에서는 테이블이 여러 개인 경우에 대해 데이터를 조회하고 분석할 때 필요한 문법에 대해 알아보겠습니다.  
 
-[MySQL 실습 제공 사이트](https://www.w3schools.com/mysql/trymysql.asp?filename=trysql_select_all)
+[MySQL 실습 제공 사이트](https://www.w3schools.com/mysql/trymysql.asp?filename=trysql_select_all){:target="_blank"}
