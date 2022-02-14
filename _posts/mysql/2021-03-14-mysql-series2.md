@@ -80,9 +80,6 @@ SELECT * FROM new_player;
 - MySQL에서는 지원 하지 않음
 - LEFT/RIGHT OUTER JOIN으로 해결
 
-## 외래키
-![](/images/sql_2.png)  
-
 
 # 서브쿼리  
 

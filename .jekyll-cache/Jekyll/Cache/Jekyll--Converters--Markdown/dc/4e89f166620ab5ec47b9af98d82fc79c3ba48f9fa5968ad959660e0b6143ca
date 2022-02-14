@@ -1,0 +1,302 @@
+I"�8<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#테이블-생성-및-삭제" id="markdown-toc-테이블-생성-및-삭제">테이블 생성 및 삭제</a>    <ul>
+      <li><a href="#sql문-데이터-타입" id="markdown-toc-sql문-데이터-타입">SQL문 데이터 타입</a></li>
+    </ul>
+  </li>
+  <li><a href="#데이터-crud" id="markdown-toc-데이터-crud">데이터 CRUD</a>    <ul>
+      <li><a href="#데이터-추가" id="markdown-toc-데이터-추가">데이터 추가</a></li>
+      <li><a href="#데이터-갱신" id="markdown-toc-데이터-갱신">데이터 갱신</a></li>
+      <li><a href="#데이터-삭제" id="markdown-toc-데이터-삭제">데이터 삭제</a></li>
+    </ul>
+  </li>
+  <li><a href="#테이블-다루기" id="markdown-toc-테이블-다루기">테이블 다루기</a>    <ul>
+      <li><a href="#테이블의-컬럼-구조-확인하기" id="markdown-toc-테이블의-컬럼-구조-확인하기">테이블의 컬럼 구조 확인하기</a></li>
+      <li><a href="#컬럼-추가-이름-변경" id="markdown-toc-컬럼-추가-이름-변경">컬럼 추가, 이름 변경</a></li>
+      <li><a href="#컬럼-삭제" id="markdown-toc-컬럼-삭제">컬럼 삭제</a></li>
+      <li><a href="#컬럼-타입-변경" id="markdown-toc-컬럼-타입-변경">컬럼 타입 변경</a></li>
+      <li><a href="#컬럼-속성-변경" id="markdown-toc-컬럼-속성-변경">컬럼 속성 변경</a></li>
+      <li><a href="#테이블에-제약-사항-걸기" id="markdown-toc-테이블에-제약-사항-걸기">테이블에 제약 사항 걸기</a></li>
+      <li><a href="#테이블의-제약-사항-삭제" id="markdown-toc-테이블의-제약-사항-삭제">테이블의 제약 사항 삭제</a></li>
+      <li><a href="#컬럼-순서-앞으로-당기기" id="markdown-toc-컬럼-순서-앞으로-당기기">컬럼 순서 앞으로 당기기</a></li>
+      <li><a href="#컬럼-순서-정하기" id="markdown-toc-컬럼-순서-정하기">컬럼 순서 정하기</a></li>
+      <li><a href="#컬럼명-속성-동시에-바꾸기" id="markdown-toc-컬럼명-속성-동시에-바꾸기">컬럼명 속성 동시에 바꾸기</a></li>
+      <li><a href="#테이블-복제하기" id="markdown-toc-테이블-복제하기">테이블 복제하기</a></li>
+      <li><a href="#테이블-뼈대만-복제하기" id="markdown-toc-테이블-뼈대만-복제하기">테이블 뼈대만 복제하기</a></li>
+    </ul>
+  </li>
+  <li><a href="#외래키-설정하기" id="markdown-toc-외래키-설정하기">외래키 설정하기</a>    <ul>
+      <li><a href="#외래키-정책" id="markdown-toc-외래키-정책">외래키 정책</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p>앞에서 저희가 배웠던 SQL문들은 모두 <strong>이미 테이블이 주어졌고 그 테이블에 데이터가 쌓여있는 상태에서 원하는 데이터를 조회</strong>하는 방법에 관한 것들이었습니다.</p>
+
+<p>하지만 저희가 <strong>직접 테이블을 생성하고 데이터를 쌓아야 하는 순간도 있을 것</strong>입니다. 이번 포스트에서는 이러한 순간에 필요한 SQL문에 대해 배워 보겠습니다.</p>
+
+<h1 id="테이블-생성-및-삭제">테이블 생성 및 삭제</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 데이터베이스 생성
+CREATE DATABASE [생성할 데이터베이스 이름]
+CREATE DATABASE IF NOT EXISTS [생성할 데이터베이스 이름]
+
+# 데이터베이스 지정
+USE [생성한 데이터베이스 이름]
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 테이블 생성
+CREATE TABLE [데이터베이스 이름].[생성할 테이블 이름] (
+    [컬럼1] INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    [컬럼2] VARCHAR(20) NULL,
+    [컬럼3] VARCHAR(15) NULL,
+    또는 PRIMARY KEY (['컬럼1'])
+);
+
+# 테이블 삭제
+DROP TABLE [테이블 이름]
+</code></pre></div></div>
+
+<h2 id="sql문-데이터-타입">SQL문 데이터 타입</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>종류</strong></td>
+      <td><strong>타입</strong></td>
+    </tr>
+    <tr>
+      <td><strong>정수형</strong></td>
+      <td>TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT</td>
+    </tr>
+    <tr>
+      <td><strong>실수형</strong></td>
+      <td>DECIMAL, FLOAT, DOUBLE</td>
+    </tr>
+    <tr>
+      <td><strong>날짜 및 시간</strong></td>
+      <td>DATE, TIME, DATETIME, TIMESTAMP</td>
+    </tr>
+    <tr>
+      <td><strong>문자열</strong></td>
+      <td>CHAR, VARCHAR, TEXT</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li>
+    <p><strong>TINYINT</strong><br />
+signed: -128 ~ 127<br />
+unsigned: 0 ~ 255</p>
+  </li>
+  <li>
+    <p><strong>INT</strong><br />
+signed: -2147483648 ~ 2147483647<br />
+unsigned: 0 ~ 4294967295</p>
+  </li>
+  <li>
+    <p><strong>DECIMAL</strong><br />
+DECIMAL(M, D): M은 전체 숫자의 최대 자리수, D는 소수점 자리 숫자의 최대 자리수<br />
+DECIMAL(5, 2): -999.99 ~ 999.99<br />
+M은 최대 65까지 가능, D는 최대 30까지 가능</p>
+  </li>
+  <li>
+    <p><strong>FLOAT</strong><br />
+-3.4 * 10^38 ~ 3.4 * 10^38</p>
+  </li>
+  <li>
+    <p><strong>DOUBLE</strong><br />
+-1.7 * 10^308 ~ 1.7 * 10^308<br />
+FLOAT와 비교해 범위도 더 넓고, 정밀도 또한 더 높음(더 많은 소수점 자리 수 지원)</p>
+  </li>
+  <li>
+    <p><strong>DATE</strong><br />
+날짜를 저장하는 데이터 타입<br />
+’2021-03-21’ 이런 형식의 연, 월, 일 순</p>
+  </li>
+  <li>
+    <p><strong>TIME</strong>
+시간을 저장하는 데이터 타입<br />
+’09:27:31’ 이런 형식의 시, 분, 초</p>
+  </li>
+  <li>
+    <p><strong>DATETIME</strong><br />
+날짜와 시간을 저장하는 데이터 타입<br />
+’2021-03-21 09:30:27’ 이런 식으로 연, 월, 일, 시, 분, 초</p>
+  </li>
+  <li>
+    <p><strong>TIMESTAMP</strong><br />
+DATETIME과 같다<br />
+차이점은 TIMESTAMP는 타임 존 정보도 포함</p>
+  </li>
+  <li>
+    <p><strong>CHAR</strong>
+CHAR(30): 최대 30자의 문자열을 저장 (0~255까지 가능)<br />
+차지하는 용량이 항상 숫자값에 고정됨<br />
+데이터의 길이가 크게 변하지 않는 상황에 적합</p>
+  </li>
+  <li>
+    <p><strong>VARCHAR</strong><br />
+VARCHAR(30): 최대 30자의 문자열을 저장 (0~65536까지 가능)<br />
+차지하는 용량이 가변적. 30이어도 그 이하의 길이면 용량도 적게 차지함<br />
+해당 값의 사이즈를 나타내는 부분(1byte 또는 2byte)이 저장 용량에 추가
+데이터 길이가 크게 들쑥날쑥해지는 경우에 적합</p>
+  </li>
+  <li>
+    <p><strong>TEXT</strong><br />
+문자열이 아주 긴 상황에 적합</p>
+  </li>
+</ul>
+
+<h1 id="데이터-crud">데이터 CRUD</h1>
+
+<h2 id="데이터-추가">데이터 추가</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 데이터 추가
+INSERT INTO [사용할 테이블 이름] (컬럼1, 컬럼2, 컬럼3, ...)
+VALUES (컬럼1의 데이터, 컬럼2의 데이터, 컬럼3의 데이터, ...);
+
+# 특정 컬럼에만 데이터 넣을 수도 있다
+INSERT INTO [사용할 테이블 이름] (컬럼1, 컬럼3)
+VALUES (컬럼1의 데이터, 컬럼3의 데이터);
+</code></pre></div></div>
+
+<h2 id="데이터-갱신">데이터 갱신</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 데이터 갱신
+UPDATE [사용할 테이블 이름]
+    SET 컬럼1 = [갱신 데이터] WHERE [조건]; 
+
+# 기존 값을 기준으로 갱신
+UPDATE [사용할 테이블 이름]
+SET 컬럼1 = [컬럼1 + 3] WHERE [조건]; 
+</code></pre></div></div>
+
+<h2 id="데이터-삭제">데이터 삭제</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DELETE FROM [사용할 테이블 이름]
+WHERE [조건]
+</code></pre></div></div>
+
+<h1 id="테이블-다루기">테이블 다루기</h1>
+
+<h2 id="테이블의-컬럼-구조-확인하기">테이블의 컬럼 구조 확인하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DESCRIBE [테이블 이름]
+</code></pre></div></div>
+
+<h2 id="컬럼-추가-이름-변경">컬럼 추가, 이름 변경</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름] 
+ADD [추가할 컬럼] CHAR(10) NULL;
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+RENAME COLUMN [원래 컬럼명] TO [바꿀 컬럼명];
+</code></pre></div></div>
+
+<h2 id="컬럼-삭제">컬럼 삭제</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+DROP COLUMN [삭제할 컬럼명];
+</code></pre></div></div>
+
+<h2 id="컬럼-타입-변경">컬럼 타입 변경</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT;
+</code></pre></div></div>
+
+<h2 id="컬럼-속성-변경">컬럼 속성 변경</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># NOT NULL 속성
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT NOT NULL;
+
+# DEFAULT 속성
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT NOT NULL DEFAULT [주고 싶은 default값];
+
+# DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
+# DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+# 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+# UNIQUE 속성
+# UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT UNIQUE;
+</code></pre></div></div>
+
+<h2 id="테이블에-제약-사항-걸기">테이블에 제약 사항 걸기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+ADD CONSTRAINT [제약 사항 네이밍] CHECK [제약 사항(ex. age &lt; 100)];
+</code></pre></div></div>
+
+<h2 id="테이블의-제약-사항-삭제">테이블의 제약 사항 삭제</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+DROP CONSTRAINT [제약 사항 이름];
+</code></pre></div></div>
+
+<h2 id="컬럼-순서-앞으로-당기기">컬럼 순서 앞으로 당기기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+MODIFY [컬럼명] INT FIRST;
+</code></pre></div></div>
+
+<h2 id="컬럼-순서-정하기">컬럼 순서 정하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+MODIFY [뒤에 올 컬럼명] INT AFTER [앞에 있는 컬럼명];
+</code></pre></div></div>
+
+<h2 id="컬럼명-속성-동시에-바꾸기">컬럼명 속성 동시에 바꾸기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TALBE [테이블 이름]
+CHANGE [원래 컬럼명] [바꿀 컬럼명] VARCHAR(10) NOT NULL;
+</code></pre></div></div>
+
+<h2 id="테이블-복제하기">테이블 복제하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE TABLE [복제한 테이블의 이름]
+AS SELECT * FROM [원본 테이블의 이름]
+</code></pre></div></div>
+
+<h2 id="테이블-뼈대만-복제하기">테이블 뼈대만 복제하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE TABLE [복제한 테이블의 이름]
+LIKE [원본 테이블의 이름]
+</code></pre></div></div>
+
+<h1 id="외래키-설정하기">외래키 설정하기</h1>
+
+<p>외래키(Foreign Key)란 한 테이블의 컬럼 중에서 <strong>다른 테이블의 특정 컬럼을 식별할 수 있는 컬럼</strong>을 말합니다. 그리고 외래키에 의해 참조당하는 테이블을 <strong>부모 테이블(parent table)</strong>, <strong>참조당하는 테이블(referenced table)</strong>이라고 합니다. 외래키를 이용하면 <strong>테이블간의 참조 무결성</strong>을 지킬 수 있습니다. 참조 무결성이란 아래 그림과 같이 두 테이블 간에 참조 관계가 있을 때 각 데이터 간에 유지되어야 하는 정확성과 일관성을 의미합니다.</p>
+
+<p>예를 들어, 강의 평가인 review 테이블에는 ‘컴퓨터 개론’에 관한 평가 데이터가 남아있지만, 강의 목록을 나타내는 course 테이블에는 ‘컴퓨터 개론’ 과목이 삭제된다면 이상한 상황이 벌어질 것입니다. 이 때 외래키를 통해 지정해 놓으면 이런 상황을 해결할 수 있습니다.</p>
+
+<p><img src="/images/sql_2.png" alt="" /></p>
+
+<p>이렇게 외래키는 두 개 이상의 테이블에서 중요한 역할을 하기 때문에 외래키 속성을 어떻게 설정하는지는 굉장히 중요한 문제입니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+ADD CONSTRAINT [제약 사항 네이밍]
+    FOREIGN KEY (자식테이블의 컬럼)
+    REFERENCES 부모테이블 (부모테이블의 컬럼)
+    ON DELETE [DELETE정책]
+    ON UPDATE [UPDATE정책];
+</code></pre></div></div>
+
+<h2 id="외래키-정책">외래키 정책</h2>
+<ul>
+  <li><strong>RESTRICT</strong>: 자식 테이블에서 삭제/갱신해야만 부모 테이블에서도 삭제/갱신 가능</li>
+  <li><strong>CASCADE</strong>: 부모 테이블의 데이터 삭제/갱신하면 관련 자식 테이블 데이터도 같이 삭제/갱신</li>
+  <li><strong>SET NULL</strong>: 부모 테이블의 데이터 삭제/갱신하면 관련 자식 테이블 데이터의 컬럼에 NULL 지정</li>
+</ul>
+:ET

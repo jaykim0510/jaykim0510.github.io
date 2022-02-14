@@ -16,12 +16,12 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="MySQL을 이용한 데이터 관리(2): 테이블 설정을 통해 데이터 관리하기 – Jay Tech">
   <meta name="twitter:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/mysql_logo.webp">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/sql_2.png">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="MySQL을 이용한 데이터 관리(2): 테이블 설정을 통해 데이터 관리하기 – Jay Tech">
   <meta property="og:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
-  <meta property="og:image" content="http://localhost:4000/images/mysql_logo.webp">
+  <meta property="og:image" content="http://localhost:4000/images/sql_2.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -264,6 +264,12 @@
       
 
       
+      <div class="col col-5 col-d-12">
+        <div class="post-image">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL을 이용한 데이터 관리(2): 테이블 설정을 통해 데이터 관리하기">
+        </div>
+      </div>
+      
 
       
       
@@ -307,8 +313,174 @@
 
     <div class="post__content">
       <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#테이블-다루기" id="markdown-toc-테이블-다루기">테이블 다루기</a>    <ul>
+      <li><a href="#테이블의-컬럼-구조-확인하기" id="markdown-toc-테이블의-컬럼-구조-확인하기">테이블의 컬럼 구조 확인하기</a></li>
+      <li><a href="#컬럼-추가-이름-변경" id="markdown-toc-컬럼-추가-이름-변경">컬럼 추가, 이름 변경</a></li>
+      <li><a href="#컬럼-삭제" id="markdown-toc-컬럼-삭제">컬럼 삭제</a></li>
+      <li><a href="#컬럼-타입-변경" id="markdown-toc-컬럼-타입-변경">컬럼 타입 변경</a></li>
+      <li><a href="#컬럼-속성-변경" id="markdown-toc-컬럼-속성-변경">컬럼 속성 변경</a></li>
+      <li><a href="#테이블에-제약-사항-걸기" id="markdown-toc-테이블에-제약-사항-걸기">테이블에 제약 사항 걸기</a></li>
+      <li><a href="#테이블의-제약-사항-삭제" id="markdown-toc-테이블의-제약-사항-삭제">테이블의 제약 사항 삭제</a></li>
+      <li><a href="#컬럼-순서-앞으로-당기기" id="markdown-toc-컬럼-순서-앞으로-당기기">컬럼 순서 앞으로 당기기</a></li>
+      <li><a href="#컬럼-순서-정하기" id="markdown-toc-컬럼-순서-정하기">컬럼 순서 정하기</a></li>
+      <li><a href="#컬럼명-속성-동시에-바꾸기" id="markdown-toc-컬럼명-속성-동시에-바꾸기">컬럼명 속성 동시에 바꾸기</a></li>
+      <li><a href="#테이블-복제하기" id="markdown-toc-테이블-복제하기">테이블 복제하기</a></li>
+      <li><a href="#테이블-뼈대만-복제하기" id="markdown-toc-테이블-뼈대만-복제하기">테이블 뼈대만 복제하기</a></li>
+    </ul>
+  </li>
+  <li><a href="#외래키-설정하기" id="markdown-toc-외래키-설정하기">외래키 설정하기</a>    <ul>
+      <li><a href="#외래키-설정" id="markdown-toc-외래키-설정">외래키 설정</a></li>
+      <li><a href="#외래키-정책" id="markdown-toc-외래키-정책">외래키 정책</a></li>
+      <li><a href="#외래키-삭제" id="markdown-toc-외래키-삭제">외래키 삭제</a></li>
+      <li><a href="#외래키-파악" id="markdown-toc-외래키-파악">외래키 파악</a></li>
+    </ul>
+  </li>
+</ul>
 
 <hr />
+
+<p>이번 포스트에서는 테이블을 처음 구축할 때 필요한 설정을 하기 위한 SQL문에 대해 배워보겠습니다.</p>
+
+<h1 id="테이블-다루기">테이블 다루기</h1>
+
+<h2 id="테이블의-컬럼-구조-확인하기">테이블의 컬럼 구조 확인하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DESCRIBE [테이블 이름]
+</code></pre></div></div>
+
+<h2 id="컬럼-추가-이름-변경">컬럼 추가, 이름 변경</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름] 
+ADD [추가할 컬럼] CHAR(10) NULL;
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+RENAME COLUMN [원래 컬럼명] TO [바꿀 컬럼명];
+</code></pre></div></div>
+
+<h2 id="컬럼-삭제">컬럼 삭제</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+DROP COLUMN [삭제할 컬럼명];
+</code></pre></div></div>
+
+<h2 id="컬럼-타입-변경">컬럼 타입 변경</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT;
+</code></pre></div></div>
+
+<h2 id="컬럼-속성-변경">컬럼 속성 변경</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># NOT NULL 속성
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT NOT NULL;
+
+# DEFAULT 속성
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT NOT NULL DEFAULT [주고 싶은 default값];
+
+# DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
+# DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+# 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+# UNIQUE 속성
+# UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
+ALTER TABLE [테이블 이름]
+MODIFY [변경할 컬럼명] INT UNIQUE;
+</code></pre></div></div>
+
+<h2 id="테이블에-제약-사항-걸기">테이블에 제약 사항 걸기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+ADD CONSTRAINT [제약 사항 네이밍] CHECK [제약 사항(ex. age &lt; 100)];
+</code></pre></div></div>
+
+<h2 id="테이블의-제약-사항-삭제">테이블의 제약 사항 삭제</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+DROP CONSTRAINT [제약 사항 이름];
+</code></pre></div></div>
+
+<h2 id="컬럼-순서-앞으로-당기기">컬럼 순서 앞으로 당기기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+MODIFY [컬럼명] INT FIRST;
+</code></pre></div></div>
+
+<h2 id="컬럼-순서-정하기">컬럼 순서 정하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+MODIFY [뒤에 올 컬럼명] INT AFTER [앞에 있는 컬럼명];
+</code></pre></div></div>
+
+<h2 id="컬럼명-속성-동시에-바꾸기">컬럼명 속성 동시에 바꾸기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TALBE [테이블 이름]
+CHANGE [원래 컬럼명] [바꿀 컬럼명] VARCHAR(10) NOT NULL;
+</code></pre></div></div>
+
+<h2 id="테이블-복제하기">테이블 복제하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE TABLE [복제한 테이블의 이름]
+AS SELECT * FROM [원본 테이블의 이름]
+</code></pre></div></div>
+
+<h2 id="테이블-뼈대만-복제하기">테이블 뼈대만 복제하기</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE TABLE [복제한 테이블의 이름]
+LIKE [원본 테이블의 이름]
+</code></pre></div></div>
+
+<h1 id="외래키-설정하기">외래키 설정하기</h1>
+
+<p>외래키(Foreign Key)란 한 테이블의 컬럼 중에서 <strong>다른 테이블의 특정 컬럼을 식별할 수 있는 컬럼</strong>을 말합니다. 그리고 외래키에 의해 참조당하는 테이블을 <strong>부모 테이블(parent table)</strong>, <strong>참조당하는 테이블(referenced table)</strong>이라고 합니다. 외래키를 이용하면 <strong>테이블간의 참조 무결성</strong>을 지킬 수 있습니다. 참조 무결성이란 아래 그림과 같이 두 테이블 간에 참조 관계가 있을 때 각 데이터 간에 유지되어야 하는 정확성과 일관성을 의미합니다.</p>
+
+<p>예를 들어, 강의 평가인 review 테이블에는 ‘컴퓨터 개론’에 관한 평가 데이터가 남아있지만, 강의 목록을 나타내는 course 테이블에는 ‘컴퓨터 개론’ 과목이 삭제된다면 이상한 상황이 벌어질 것입니다. 이 때 외래키를 통해 지정해 놓으면 이런 상황을 해결할 수 있습니다.</p>
+
+<p><img src="/images/sql_2.png" alt="" /></p>
+
+<p>이렇게 외래키는 두 개 이상의 테이블에서 중요한 역할을 하기 때문에 외래키 속성을 어떻게 설정하는지는 굉장히 중요한 문제입니다.</p>
+
+<h2 id="외래키-설정">외래키 설정</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+ADD CONSTRAINT [제약 사항 네이밍]
+    FOREIGN KEY (자식테이블의 컬럼)
+    REFERENCES 부모테이블 (부모테이블의 컬럼)
+    ON DELETE [DELETE정책]
+    ON UPDATE [UPDATE정책];
+</code></pre></div></div>
+
+<h2 id="외래키-정책">외래키 정책</h2>
+<ul>
+  <li><strong>RESTRICT</strong>: 자식 테이블에서 삭제/갱신해야만 부모 테이블에서도 삭제/갱신 가능</li>
+  <li><strong>CASCADE</strong>: 부모 테이블의 데이터 삭제/갱신하면 관련 자식 테이블 데이터도 같이 삭제/갱신</li>
+  <li><strong>SET NULL</strong>: 부모 테이블의 데이터 삭제/갱신하면 관련 자식 테이블 데이터의 컬럼에 NULL 지정</li>
+</ul>
+
+<h2 id="외래키-삭제">외래키 삭제</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE [테이블 이름]
+DROP FOREIGN KEY [제약 사항이 걸린 테이블];
+</code></pre></div></div>
+
+<h2 id="외래키-파악">외래키 파악</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT
+    i.TABLE_SCHEMA, i.TABLE_NAME, i.CONSTRAINT_TYPE, i.CONSTRAINT_NAME,
+    k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME
+FROM information_schema.TABLE_CONSTRAINTS i
+LEFT JOIN information_schema.KEY_COLUMN_USAGE k
+USING(CONSTRAINT_NAME)
+WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY';
+</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">
@@ -470,7 +642,7 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series4&amp;media=http://localhost:4000/images/mysql_logo.webp&amp;description=MySQL%EC%9D%84%20%EC%9D%B4%EC%9A%A9%ED%95%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC(2):%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%84%A4%EC%A0%95%EC%9D%84%20%ED%86%B5%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series4&amp;media=http://localhost:4000/images/sql_2.png&amp;description=MySQL%EC%9D%84%20%EC%9D%B4%EC%9A%A9%ED%95%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC(2):%20%ED%85%8C%EC%9D%B4%EB%B8%94%20%EC%84%A4%EC%A0%95%EC%9D%84%20%ED%86%B5%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>

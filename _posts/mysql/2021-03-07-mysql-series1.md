@@ -79,6 +79,7 @@ SELECT
 FROM customers
 FROM orders
 
+# 예시
 SELECT name FROM customers;
 ```
 
@@ -96,6 +97,7 @@ WHERE address LIKE '%고양시%'
 WHERE address LIKE BINARY '%Kim%' # Kim 매칭, kim 매칭 x
 WHERE email LIKE '__@%' # _는 임의의 문자 1개
 
+# 예시
 SELECT * 
 FROM customers 
 WHERE age > 25;
@@ -108,6 +110,7 @@ WHERE age > 25;
 ORDER BY height ASC
 ORDER BY height DESC
 
+# 예시
 SELECT name, age, height 
 FROM customers 
 WHERE MONTH(birthday) IN (4, 5, 6) 
@@ -121,6 +124,7 @@ ORDER BY height ASC;
 LIMIT 5 # 5개
 LIMIT 10, 5 # 10번째부터 5개
 
+# 예시
 SELECT name, age, height 
 FROM customers 
 WHERE MONTH(birthday) IN (4, 5, 6) 
@@ -169,6 +173,7 @@ ORDER BY region ASC, gender DESC;
 ```
 HAVING region = '서울'
 
+# 예시
 SELECT
     SUBSTRING(address, 1, 2) as region
     COUNT(*)
@@ -233,12 +238,13 @@ FLOOR(height)
 ROUND(height)
 
 
-# DATE 데이터 타입
+# 날짜 및 시간 데이터 타입
 YEAR(birthday)
 MONTH(birthday)
 DAYOFMONTH(birthday)
 DATEDIFF(birthday, '2002-01-01')
 
+# 예시
 SELECT * 
 FROM customers 
 WHERE MONTH(birthday) IN (4, 5, 6);
