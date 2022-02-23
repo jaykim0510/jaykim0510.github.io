@@ -5,9 +5,60 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 21 Feb 2022 00:28:00 +0900</pubDate>
-        <lastBuildDate>Mon, 21 Feb 2022 00:28:00 +0900</lastBuildDate>
+        <pubDate>Wed, 23 Feb 2022 19:34:10 +0900</pubDate>
+        <lastBuildDate>Wed, 23 Feb 2022 19:34:10 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Apache Spark Series [Part3]: 분산처리를 위한 시스템 아키텍처와 설정 및 매개변수</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Mon, 21 Feb 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/spark-series3</link>
+                <guid isPermaLink="true">http://localhost:4000/spark-series3</guid>
+                
+                <category>Spark</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>Apache Spark Series [Part2]: 개발환경 구축하기</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sun, 20 Feb 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/spark-series2</link>
+                <guid isPermaLink="true">http://localhost:4000/spark-series2</guid>
+                
+                <category>Spark</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>HyperLedger Fabric Series [Part1]: What is HyperLedger Fabric?</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sun, 20 Feb 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/hyperledger_fabric-series0</link>
+                <guid isPermaLink="true">http://localhost:4000/hyperledger_fabric-series0</guid>
+                
+                <category>HyperLedger_fabric</category>
+                
+                
+                <category>Blockchain</category>
+                
+            </item>
         
             <item>
                 <title>BlockChain Series [Part1]: What is BlockChain?</title>
@@ -19,7 +70,24 @@
                 <link>http://localhost:4000/blockchain-series0</link>
                 <guid isPermaLink="true">http://localhost:4000/blockchain-series0</guid>
                 
+                <category>Blockchain_basic</category>
+                
+                
                 <category>Blockchain</category>
+                
+            </item>
+        
+            <item>
+                <title>Bitcoin Series [Part1]: What is Bitcoin?</title>
+                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sun, 20 Feb 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/bitcoin-series0</link>
+                <guid isPermaLink="true">http://localhost:4000/bitcoin-series0</guid>
+                
+                <category>Bitcoin</category>
                 
                 
                 <category>Blockchain</category>
@@ -227,718 +295,6 @@ docker run 을 실행하면 이는 결국 execdriver -&amp;gt; runtime driver -&
                 
                 
                 <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>Docker 컨테이너에 저장된 데이터는 어떻게 될까?</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#container-layer&quot; id=&quot;markdown-toc-container-layer&quot;&gt;Container Layer&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#ufs&quot; id=&quot;markdown-toc-ufs&quot;&gt;UFS&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#cow&quot; id=&quot;markdown-toc-cow&quot;&gt;CoW&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#storage-driver&quot; id=&quot;markdown-toc-storage-driver&quot;&gt;Storage Driver&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#정리&quot; id=&quot;markdown-toc-정리&quot;&gt;정리&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;도커를 공부하면서 궁금했던 것 중에 하나가 &lt;em&gt;컨테이너에서 생성된 파일은 어디에 저장되어 있는걸까?&lt;/em&gt; 였습니다. 그동안 저는 도커에 다른 저장소를 마운트하면 컨테이너에서 생성된 데이터를 저장할 수 있고 그렇지 않다면 컨테이너가 삭제되면서 같이 사라진다라고 알고 있었는데 그러면 &lt;strong&gt;컨테이너가 사라지기 전까지는 어디에 저장&lt;/strong&gt;되어 있는지 궁금해졌습니다.&lt;/p&gt;
-
-&lt;p&gt;그러던 중 좋은 글을 공유해 놓은 블로그를 알게되어 이와 관련해 정리해보았습니다. &lt;a href=&quot;http://cloudrain21.com/examination-of-docker-containersize-ufs&quot; target=&quot;_blank&quot;&gt;(참고: Rain.i 블로그)&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;container-layer&quot;&gt;Container Layer&lt;/h1&gt;
-
-&lt;p&gt;도커 컨테이너는 도커 이미지로부터 만들어진 인스턴스입니다. 도커 이미지를 토대로 여러 개의 컨테이너를 만들 수 있습니다. 예를 들어 우분투 운영체제를 제공하는 이미지를 이용해 어떤 컨테이너에는 파이썬을 설치하고, 어떤 곳에는 nginx를 설치해 웹 서버로 사용할 수도 있습니다. 이렇게 새로운 소프트웨어를 설치하거나 파일을 생성하는 등의 작업은 &lt;strong&gt;Container Layer&lt;/strong&gt; 위에서 이루어집니다. &lt;del&gt;이걸 보면 도커는 각각의 서비스를 컨테이너화 했을 뿐 아니라 컨테이너도 또 컨테이너화 한 것 같은 느낌이 드네요.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/docker_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;도커가 컨테이너를 이런식으로 구현한 이유는 이미지의 상태를 최대한 그대로 보존하여 컨테이너를 계속 생성하더라도 토대가 변하지 않아 &lt;strong&gt;예상치 못한 오류를 예방할 수 있고 관리하기도 편합니다.&lt;/strong&gt; 사용하는 입장에서도 어차피 컨테이너를 삭제하면 원래 기본 이미지 상태로 돌아가니까 &lt;strong&gt;걱정없이 컨테이너를 조작할 수 있을 것 입니다.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;우선 컨테이너를 생성하고 새로운 데이터를 생성하면 도커 상에서는 Container Layer에 저장된다는 것을 알았습니다. 그런데 Container Layer도 결국 도커를 띄운 호스트의 자원을 이용하기 때문에 제 컴퓨터(로컬이라면 데스크탑이나 노트북, 리모트라면 AWS의 EC2 정도) 어딘가에 저장이 되어 있을 것입니다. 이렇게 컨테이너들이 사용하는 이미지나 변경사항들은 모두 호스트 File system 의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/docker&lt;/code&gt; 디렉토리 내에 저장된다. 이 영역을 &lt;strong&gt;Docker area&lt;/strong&gt; 또는 &lt;strong&gt;Backing Filesystem&lt;/strong&gt; 이라고 부르기도 한다.&lt;/p&gt;
-
-&lt;p&gt;만약 컨테이너에서 생성된 파일을 버리지 않고 저장하고 싶다면 다음의 두 가지 방법을 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Commit&lt;/strong&gt;: 컨테이너 상에서 변경을 수행한 후 새로운 이미지로 만들어둔다.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Volume&lt;/strong&gt;: 변경사항을 로컬 또는 외부 볼륨에 저장하도록 한다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;ufs&quot;&gt;UFS&lt;/h1&gt;
-&lt;p&gt;위의 내용을 읽다보면 이러한 의문이 생길 수 있습니다. &lt;em&gt;ubuntu 이미지가 가지고 있던 Filesystem이 아닌 별도의 Filesystem에 Container Layer의 데이터가 저장이 되는데 왜 우리는 컨테이너를 사용할 때 이러한 사실을 몰랐을까?&lt;/em&gt; 그 이유는 바로 도커에서는 &lt;strong&gt;UFS(Union File System)&lt;/strong&gt;라는 방식을 이용해 &lt;strong&gt;Image Layer와 Container Layer의 Filesystem을 하나로 통합&lt;/strong&gt;해서 저희에게 제공해줍니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/docker_6.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이러한 UFS 방식의 장점은 무엇일까요? 가장 큰 장점은 Image Layer의 데이터를 여러 컨테이너가 공유할 수 있다는 점입니다. 공유한다는 것은 &lt;strong&gt;여러 개의 컨테이너를 띄우더라도 Image Layer의 데이터 용량은 단 1개만큼만 저장&lt;/strong&gt;된다는 말입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/docker_7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;cow&quot;&gt;CoW&lt;/h1&gt;
-&lt;p&gt;위의 그림과 같이 Image Layer의 &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a&lt;/code&gt;&lt;/em&gt;라는 파일을 &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;a'&lt;/code&gt;&lt;/em&gt;으로 수정할 때 Image Layer에서 파일이 수정되지 않고 Container Layer 위에서 새로 파일을 복사한 후 수정하는 것을 &lt;strong&gt;CoW(Copy on Write)&lt;/strong&gt;라고 합니다. 이러한 기법을 통해 &lt;strong&gt;기존의 이미지에 대한 변경을 막을 수 있습니다.&lt;/strong&gt; 하지만 Copy-on-Write 기법은 그 동작 구조 상 다음의 단점이 있습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Performance Overhead&lt;/strong&gt;: data 를 먼저 복제(Copy)한 후 변경을 수행해야함&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Capacity Overhead&lt;/strong&gt;: 원본 데이터 뿐 아니라, 변경된 데이터도 저장해야함&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;따라서 되도록이면 &lt;strong&gt;중복 사용되고 수정되지 않을만한 데이터들을 이미지 레이어로 구성하&lt;/strong&gt;는 것이 좋습니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;storage-driver&quot;&gt;Storage Driver&lt;/h1&gt;
-&lt;p&gt;위에서 그동안 배운 &lt;strong&gt;UFS와 CoW 방식을 도커에서 쉽게 이용할 수 있는 것은 도커의 Storage Driver 덕분입니다.&lt;/strong&gt; Storage Driver는 컨테이너 내에서의 파일 I/O 처리를 담당하는 드라이버입니다. Storage Driver는 Pluggable한 구조로 되어 있고 특성도 다릅니다. 또한 리눅스 배포판마다 지원하는 드라이버도 다르므로 자신의 workload에 맞는 Storage Driver를 선택해아 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Storage Driver의 종류&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/docker_8.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/select-storage-driver/&quot; target=&quot;_blank&quot;&gt;(참고: 도커 공식문서)&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;리눅스 배포판별 지원하는 Storage Driver&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/docker_9.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/select-storage-driver/&quot; target=&quot;_blank&quot;&gt;(참고: 도커 공식문서)&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Storage Driver와 Backing File System&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Storage Driver는 Container Layer의 데이터를 Backing filesystem(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/var/lib/docker&lt;/code&gt;)으로 저장하고 사용자에게 layered filesystem으로 제공해 줍니다.   &lt;br /&gt;
-(참고로 볼륨 마운트는 이러한 Storage Driver의 도움없이 직접 Host의 Filesystem에 접근 가능합니다.)&lt;/p&gt;
-
-&lt;p&gt;참고로 Storage Driver와 Backing filesystem 간에도 종속성이 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/docker_10.png&quot; alt=&quot;&quot; /&gt;&lt;br /&gt;
-&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/select-storage-driver/&quot; target=&quot;_blank&quot;&gt;(참고: 도커 공식문서)&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Storage Driver와 graphDB&lt;/strong&gt;&lt;br /&gt;
-Storage Driver는 사용자에게 최적의 통합된 파일 시스템을 제공하기 위해서는 layer 별 관계를 조회하고 key를 통해 특정 image를 검색하는 등, 이러한 일련의 정보 검색 및 관리하는 데이터베이스가 필요합니다. 이런 정보를 저장하고 있는 데이터베이스를 graphDB라고 합니다. (&lt;del&gt;graphDB는 Storage Driver의 뇌와 같은 역할?&lt;/del&gt;)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/docker_12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;정리&quot;&gt;정리&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;UFS&lt;/strong&gt;: Container Layer와 Image Layer의 파일이 통합되어 보인다&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;CoW&lt;/strong&gt;: Image Layer 내의 파일을 원본은 유지하는 방향으로 파일을 수정할 수 있다&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Storage Driver&lt;/strong&gt;: 위의 기능들을 실제로 수행하는 드라이버&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;graphDB&lt;/strong&gt;: Storage Driver가 최적의 실행을 하는데 필요한 정보를 저장하고 있는 SQLite기반 DB&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/storage/storagedriver/&quot; target=&quot;_blank&quot;&gt;도커 공식문서 About Storage Driver&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://cloudrain21.com/examination-of-docker-containersize-ufs&quot; target=&quot;_blank&quot;&gt;Rain.i님의 도커 컨테이너 까보기(2) – Container Size, UFS 포스트&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://devaom.tistory.com/5&quot; target=&quot;_blank&quot;&gt;Davaom’s Tech Blog, [Docker] 컨테이너의 구조 포스트&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Wed, 02 Feb 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/docker-series6</link>
-                <guid isPermaLink="true">http://localhost:4000/docker-series6</guid>
-                
-                <category>Docker</category>
-                
-                
-                <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#connection-client-to-broker&quot; id=&quot;markdown-toc-connection-client-to-broker&quot;&gt;Connection Client To Broker&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#scenario-0-client-and-kafka-running-on-the-same-local-machine&quot; id=&quot;markdown-toc-scenario-0-client-and-kafka-running-on-the-same-local-machine&quot;&gt;Scenario 0: Client and Kafka running on the same local machine&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#scenario-1-client-and-kafka-running-on-the-different-machines&quot; id=&quot;markdown-toc-scenario-1-client-and-kafka-running-on-the-different-machines&quot;&gt;Scenario 1: Client and Kafka running on the different machines&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#scenario-2-kafka-and-client-running-in-docker&quot; id=&quot;markdown-toc-scenario-2-kafka-and-client-running-in-docker&quot;&gt;Scenario 2: Kafka and client running in Docker&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#scenario-3-kafka-in-docker-container-with-a-client-running-locally&quot; id=&quot;markdown-toc-scenario-3-kafka-in-docker-container-with-a-client-running-locally&quot;&gt;Scenario 3: Kafka in Docker container with a client running locally&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#adding-a-new-listener-to-the-broker&quot; id=&quot;markdown-toc-adding-a-new-listener-to-the-broker&quot;&gt;Adding a new listener to the broker&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#scenario-4-kafka-running-locally-with-a-client-in-docker-container&quot; id=&quot;markdown-toc-scenario-4-kafka-running-locally-with-a-client-in-docker-container&quot;&gt;Scenario 4: Kafka running locally with a client in Docker container&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/?utm_source=github&amp;amp;utm_medium=rmoff&amp;amp;utm_campaign=ty.community.con.rmoff-listeners&amp;amp;utm_term=rmoff-devx&quot; target=&quot;_blank&quot;&gt;원문: Confluent블로그&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;connection-client-to-broker&quot;&gt;Connection Client To Broker&lt;/h1&gt;
-
-&lt;p&gt;클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;브로커와의 초기 연결. 연결이 되면 브로커는 클라이언트에게 연결 가능(resolvable and accessible from client machine)한 브로커의 엔드포인트 제공(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt;)&lt;/li&gt;
-  &lt;li&gt;클라이언트와 연결 가능한 브로커와의 연결&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;초기 연결은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;producer = KafkaProducer(bootstrap_servers=[&quot;localhost:9092&quot;])&lt;/code&gt; 와 같이 bootstrap_servers 중 하나의 서버와 초기 연결된다. 그러면 연결된 서버는 클라이언트에게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt;를 노출해 연결되도록 한다.&lt;/p&gt;
-
-&lt;p&gt;예시로 클라이언트와 카프카가 서로 다른 머신에 있는 경우를 보자.&lt;/p&gt;
-
-&lt;p&gt;연결이 성공되는 경우는 다음과 같다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_39.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;연결이 실패되는 경우는 다음과 같다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_40.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이러한 경우에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt;를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost:9092&lt;/code&gt;로 설정하면 안된다.&lt;/p&gt;
-
-&lt;h2 id=&quot;scenario-0-client-and-kafka-running-on-the-same-local-machine&quot;&gt;Scenario 0: Client and Kafka running on the same local machine&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_41.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;bootstrap_servers = 'localhost:9092'
-advertised_listeners = 'localhost:9092'  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;잘 동작한다.&lt;/p&gt;
-
-&lt;p&gt;클라이언트에 전달되는 메타데이터는 192.168.10.83이다. 이 값은 로컬 머신의 IP 주소이다.&lt;/p&gt;
-
-&lt;h2 id=&quot;scenario-1-client-and-kafka-running-on-the-different-machines&quot;&gt;Scenario 1: Client and Kafka running on the different machines&lt;/h2&gt;
-
-&lt;p&gt;카프카 브로커가 다른 머신에서 동작하는 경우를 살펴보자. 예를 들면 AWS, GCP와 같은 클라우드에서 생성한 머신&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_42.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;여기 예제에서 클라이언트는 나의 노트북이고 카프카 브로커가 동작하고 있는 머신의 LAN은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;asgard03&lt;/code&gt;이라고 해보자.&lt;/p&gt;
-
-&lt;p&gt;초기 연결은 성공한다. 하지만 메타데이터에서 돌려주는 노출된 리스너는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;이다. 하지만 클라이언트의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;에는 카프카 브로커가 없으므로 연결은 실패한다.&lt;br /&gt;
-&lt;img src=&quot;/images/kafka_43.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이 문제를 해결하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;server.properties&lt;/code&gt;에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt; 값을 수정해 &lt;strong&gt;클라이언트에서 접근 가능한 올바른 호스트네임과 포트를 제공&lt;/strong&gt;해주어야 한다.&lt;/p&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# advertised.listeners 수정 전&lt;/span&gt;
-advertised.listeners&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://localhost:9092
-&lt;span class=&quot;nv&quot;&gt;listeners&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://0.0.0.0:9092
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# advertised.listeners 수정 후&lt;/span&gt;
-advertised.listeners&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://asgard03.moffatt.me:9092
-&lt;span class=&quot;nv&quot;&gt;listeners&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://0.0.0.0:9092
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_44.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;scenario-2-kafka-and-client-running-in-docker&quot;&gt;Scenario 2: Kafka and client running in Docker&lt;/h2&gt;
-
-&lt;p&gt;도커를 이용할 때 기억해야할 점은 도커는 컨테이너를 통해 그들만의 작은 세상을 만든다는 것이다. 컨테이너는 자체적인 호스트네임, 네트워크 주소, 파일 시스템을 가지고 있다. 따라서 컨테이너를 기준으로 localhost는 더이상 나의 노트북이 아니다. 도커 컨테이너에서 localhost는 컨테이너 자기 자신이다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_46.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;여기서는 카프카와 클라이언트를 모두 각각 도커 호스트 위에 컨테이너로 만들어 본다.&lt;/p&gt;
-
-&lt;p&gt;클라이언트를 컨테이너로 만들어주는 Dockerfile이다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;FROM python:3&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# We'll add netcat cos it's a really useful&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;# network troubleshooting tool&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;RUN apt-get update&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;RUN apt-get install -y netcat&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# Install the Confluent Kafka python library&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;RUN pip install confluent_kafka&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# Add our script&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;ADD python_kafka_test_client.py /&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;ENTRYPOINT [ &quot;python&quot;, &quot;/python_kafka_test_client.py&quot;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위의 메니페스트를 이용해 클라이언트 이미지를 만든다.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker build -t python_kafka_test_client .
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;카프카 브로커를 생성하자.&lt;/p&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker network create rmoff_kafka
-docker run &lt;span class=&quot;nt&quot;&gt;--network&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;rmoff_kafka &lt;span class=&quot;nt&quot;&gt;--rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--detach&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; zookeeper &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;ZOOKEEPER_CLIENT_PORT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;2181 confluentinc/cp-zookeeper:5.5.0
-docker run &lt;span class=&quot;nt&quot;&gt;--network&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;rmoff_kafka &lt;span class=&quot;nt&quot;&gt;--rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--detach&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; broker &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 9092:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_BROKER_ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_ZOOKEEPER_CONNECT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;zookeeper:2181 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://localhost:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           confluentinc/cp-kafka:5.5.0
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;쥬키퍼와 카프카 브로커가 컨테이너로 돌아가고 있다.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker ps
-IMAGE                              STATUS              PORTS                          NAMES
-confluentinc/cp-kafka:5.5.0        Up 32 seconds       0.0.0.0:9092-&amp;gt;9092/tcp         broker
-confluentinc/cp-zookeeper:5.5.0    Up 33 seconds       2181/tcp, 2888/tcp, 3888/tcp   zookeeper
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위에서 우리는 우리만의 도커 네트워크를 만들었고 이제 이 네트워크를 통해 클라이언트와 브로커가 통신하도록 해보자&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ docker run --network=rmoff_kafka --rm --name python_kafka_test_client \
-        --tty python_kafka_test_client broker:9092
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;결과를 보면 초기 연결은 성공하지만, 메타데이터로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;를 돌려주기 때문에 프로듀서와 클라이언트의 연결은 실패된다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_47.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이를 해결하려면 advertise.listeners의 호스트네임을 컨테이너 이름으로 바꿔줘야 한다.&lt;/p&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 수정 전&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://localhost:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 수정 후 &lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://broker:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_48.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;최종적으로 브로커 설정을 다음과 같이 고칠 수 있다.&lt;/p&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker stop broker
-docker run &lt;span class=&quot;nt&quot;&gt;--network&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;rmoff_kafka &lt;span class=&quot;nt&quot;&gt;--rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--detach&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; broker &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 9092:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_BROKER_ID&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_ZOOKEEPER_CONNECT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;zookeeper:2181 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;PLAINTEXT://broker:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;1 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           confluentinc/cp-kafka:5.5.0
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;scenario-3-kafka-in-docker-container-with-a-client-running-locally&quot;&gt;Scenario 3: Kafka in Docker container with a client running locally&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_49.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위의 Scenario 2와 비교하여 클라이언트가 컨테이너화 되어 있다가 여기서는 따로 컨테이너화 되지 않고 로컬 머신 위에 있다. (이러한 차이로 위에서 하던 방식이 왜 안되는 건지 모르겠다…)&lt;/p&gt;
-
-&lt;p&gt;로컬에 실행하는 클라이언트는 따로 네트워크가 구성되어 있지 않다. 그렇기 때문에 따로 특정 트래픽을 받기 위해서는 로컬의 포트를 열어 이를 통해 통신해야 한다. 아래 그림과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9092:9092 포트&lt;/code&gt;를 열었다고 해보자. 클라이언트가 로컬의 9092포트 엔드포인트로 접근하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bootstrap_servers='localhost:9092'&lt;/code&gt;로 해야 한다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;broker:9092&lt;/code&gt;로 해야 한다(클라이언트와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;관계가 아니므로).&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_50.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;문제는 클라이언트 입장에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;broker:9092&lt;/code&gt;는 resolvable하지 않다.&lt;/p&gt;
-
-&lt;h3 id=&quot;adding-a-new-listener-to-the-broker&quot;&gt;Adding a new listener to the broker&lt;/h3&gt;
-&lt;p&gt;이 문제를 해결하는 방법은 다수의 리스너를 만드는 것이다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;...&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;19092:19092&quot;&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT://broker:9092,CONNECTIONS_FROM_HOST://localhost:19092&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT&lt;/span&gt;
-&lt;span class=&quot;nn&quot;&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_52.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;scenario-4-kafka-running-locally-with-a-client-in-docker-container&quot;&gt;Scenario 4: Kafka running locally with a client in Docker container&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_53.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이런 상황이 잘 있지는 않지만, 어쨋든 이런 경우에 대한 해결책은 있다. 다만 좀 임시방편적일 뿐이다.&lt;/p&gt;
-
-&lt;p&gt;만약 맥에서 도커가 동작하고 있다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;host.docker.internal&lt;/code&gt;을 이용할 수 있다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_54.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Mon, 31 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/kafka-series6</link>
-                <guid isPermaLink="true">http://localhost:4000/kafka-series6</guid>
-                
-                <category>Kafka</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Kafka Series [Part5]: Kafka Listeners – Explained[번역]</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#kafka-listeners&quot; id=&quot;markdown-toc-kafka-listeners&quot;&gt;Kafka Listeners&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#why-can-i-connect-to-the-broker-but-the-client-still-fails&quot; id=&quot;markdown-toc-why-can-i-connect-to-the-broker-but-the-client-still-fails&quot;&gt;Why can I connect to the broker, but the client still fails?&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#how-to-connecting-to-kafka-on-docker&quot; id=&quot;markdown-toc-how-to-connecting-to-kafka-on-docker&quot;&gt;HOW TO: Connecting to Kafka on Docker&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#how-to-connecting-to-kafka-on-iaascloud&quot; id=&quot;markdown-toc-how-to-connecting-to-kafka-on-iaascloud&quot;&gt;HOW TO: Connecting to Kafka on IaaS/Cloud&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#option-1-external-address-is-resolvable-locally&quot; id=&quot;markdown-toc-option-1-external-address-is-resolvable-locally&quot;&gt;Option 1: External address is resolvable locally&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#option-2-external-address-is-not-resolvable-locally&quot; id=&quot;markdown-toc-option-2-external-address-is-not-resolvable-locally&quot;&gt;Option 2: External address is NOT resolvable locally&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#exploring-listeners-with-docker&quot; id=&quot;markdown-toc-exploring-listeners-with-docker&quot;&gt;Exploring listeners with Docker&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-listeners-explained/&quot; target=&quot;_blank&quot;&gt;원문: Confluent블로그&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/?utm_source=github&amp;amp;utm_medium=rmoff&amp;amp;utm_campaign=ty.community.con.rmoff-listeners&amp;amp;utm_term=rmoff-devx&quot; target=&quot;_blank&quot;&gt;읽어보면 좋은 포스트&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;kafka-listeners&quot;&gt;Kafka Listeners&lt;/h1&gt;
-
-&lt;p&gt;카프카 클라이언트가 카프카에 연결되기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;advertised.listeners&lt;/code&gt;(또는 도커 이미지를 사용할 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/code&gt;)를 &lt;strong&gt;external IP 주소&lt;/strong&gt;로 설정해야 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_36.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;아파치 카프카는 분산 시스템입니다. 데이터는 리더 파티션으로부터 쓰고 읽어지며 리더 파티션은 어떤 브로커에도 있을 수 있습니다. 그래서 클라이언트가 카프카에 연결되기 위해서는 해당 리더 파티션을 가지고 있는 브로커가 누구인지에 대한 메타데이터를 요청합니다. 이 메타데이터에는 리더 파티션을 가지는 브로커의 엔드포인트 정보를 포함하고 있으며 클라이언트는 이 정보를 이용해 카프카와 연결될 것입니다.&lt;/p&gt;
-
-&lt;p&gt;만약 카프카가 도커와 같은 가상머신이 아닌 bare metal 위에서 동작한다면 이 엔드포인트는 그저 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hostname&lt;/code&gt;이나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt; 정도가 될 것입니다. 하지만 조금 더 복잡한 네트워크 환경 또는 멀티 노드 환경으로 오게 되면 조금 더 주의가 필요하게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;초기에 브로커가 연결되면 실제로 리더 파티션을 가지는 브로커의 host와 IP의 정보를 돌려줍니다. 이러한 과정은 단일 노드 환경에서도 마찬가지입니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;KAFKA_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
-KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
-KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
-KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;server.properties&lt;/code&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;KAFKA_LISTENERS&lt;/strong&gt;: 카프카가 리스닝하기 위해 노출하는 host/IP와 port&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;KAFKA_ADVERTISED_LISTENERS&lt;/strong&gt;: 클라이언트에게 알려주는 리스너의 host/IP와 port 리스트&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/strong&gt;: 각 리스너들이 사용하는 security protocol&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;KAFKA_INTER_BROKER_LISTENER_NAME&lt;/strong&gt;: 브로커들 간의 통신을 위해 사용하는 리스너&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;브로커에 연결되면 연결된 리스너가 반환됩니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kafkacat&lt;/code&gt;은 이러한 정보를 알아보는 유용한 툴입니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-L&lt;/code&gt;을 이용하면 연결된 리스너에 관한 메타데이터를 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 9092포트로 연결시, localhost:9092 리스너가 반환&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kafkacat &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; kafka0:9092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt;
-Metadata &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;all topics &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;from broker &lt;span class=&quot;nt&quot;&gt;-1&lt;/span&gt;: kafka0:9092/bootstrap&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
-1 brokers:
-  broker 0 at localhost:9092
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 29092포트로 연결시, kafka0:29092 리스너가 반환&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kafkacat &lt;span class=&quot;nt&quot;&gt;-b&lt;/span&gt; kafka0:29092 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-           &lt;span class=&quot;nt&quot;&gt;-L&lt;/span&gt;
-Metadata &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;all topics &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;from broker 0: kafka0:29092/0&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;:
-1 brokers:
-  broker 0 at kafka0:29092
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;why-can-i-connect-to-the-broker-but-the-client-still-fails&quot;&gt;Why can I connect to the broker, but the client still fails?&lt;/h1&gt;
-
-&lt;p&gt;초기 브로커 연결에 성공했다고 하더라도, 브로커가 반환하는 메타데이터 안에 있는 주소로 여전히 클라이언트가 접근하지 못하는 경우가 있습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;AWS EC2 인스턴스에 브로커를 만들어 로컬 머신에서 EC2에 있는 브로커로 메세지를 보내보려고 합니다. external hostname은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ec2-54-191-84-122.us-west-2.compute.amazonaws.com&lt;/code&gt;입니다. 로컬 머신과 EC2가 포트포워딩을 통해 연결되었는지 확인해보겠습니다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;우리의 로컬 머신은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ec2-54-191-84-122.us-west-2.compute.amazonaws.com&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;54.191.84.122&lt;/code&gt;으로 성공적으로 리졸브(resolve) 합니다.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ kafkacat -b ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 -L
-Metadata for all topics (from broker -1: ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092/bootstrap):
-1 brokers:
-  broker 0 at ip-172-31-18-160.us-west-2.compute.internal:9092
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;hostname이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip-172-31-18-160.us-west-2.compute.internal&lt;/code&gt;인 리스너를 반환합니다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;하지만 인터넷을 통해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip-172-31-18-160.us-west-2.compute.internal&lt;/code&gt;은 not resolvable해서 클라이언트는 브로커에 메세지 전송을 실패합니다.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo &quot;test&quot;|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
-&amp;gt;&amp;gt;[2018-07-30 15:08:41,932] ERROR Error when sending message to topic test with key: null, value: 4 bytes with error: (org.apache.kafka.clients.producer.internals.ErrorLoggingCallback)
-org.apache.kafka.common.errors.TimeoutException: Expiring 1 record(s) for test-0: 1547 ms has passed since batch creation plus linger time
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;브로커가 설치된 서버의 클라이언트로는 문제없이 동작한다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ echo &quot;foo&quot;|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
-&amp;gt;&amp;gt;
-$ kafka-console-consumer --bootstrap-server ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test --from-beginning
-foo
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;이러한 일이 발생하는 이유는 9092포트로 연결하는 리스너가 내부 리스너이기 때문이라고 한다. 그래서 브로커가 설치된 서버의 내부에서만 resolvable한 hostname인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ip-172-31-18-160.us-west-2.compute.internal&lt;/code&gt;을 리턴한다.&lt;/p&gt;
-
-&lt;h1 id=&quot;how-to-connecting-to-kafka-on-docker&quot;&gt;HOW TO: Connecting to Kafka on Docker&lt;/h1&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_36.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;도커에서 동작하기 위해서는 카프카의 두 개의 listener를 지정해야 한다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;도커 네트워크 내에서의 통신&lt;/strong&gt;: 이것은 브로커간의 통신 또는 도커 안의 다른 컴포넌트와의 통신을 의미한다. 이를 위해서는 도커 네트워크 안에 있는 컨테이너의 호스트네임을 사용해야 한다. 각각의 브로커는 컨테이너의 호스트네임을 통해 서로 통신하게 될 것이다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;도커가 아닌 네트워크로부터의 트래픽&lt;/strong&gt;: 이것은 도커를 실행하는 서버에서 로컬로 동작하는 클라이언트가 될 수 있다. 이러한 경우 도커를 실행하는 서버(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;)에서 컨테이너의 포트에 연결할 수 있다. 아래의 도커 컴포즈 스니펫을 한 번 보자.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
-
-&lt;span class=&quot;na&quot;&gt;kafka0&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;confluentinc/cp-enterprise-kafka:5.2.1&quot;&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;9092:9092'&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;29094:29094'&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
-      &lt;span class=&quot;c1&quot;&gt;# For more details see See https://rmoff.net/2018/08/02/kafka-listeners-explained/&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_INTER_BROKER_LISTENER_NAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB&lt;/span&gt;
-&lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;…&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;도커 네트워크 내에 클라이언트가 있다면 클라이언트는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;호스트네임 kafka0&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;29092 포트&lt;/code&gt;를 이용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BOB&lt;/code&gt; 리스너를 통해 브로커와 통신할 것입니다. 각각의 컨테이너(클라이언트, 브로커)는 kafka0를 도커 내부 네트워크를 통해 resolve합니다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;도커를 실행하는 호스트 머신(VM)에 있는 외부 클라이언트의 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;호스트 네임 localhost&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9092 포트&lt;/code&gt;를 이용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FRED&lt;/code&gt; 리스너를 통해 브로커와 통신한다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;도커를 실행하는 호스트 머신(VM) 밖에 있는 외부 클라이언트는 위의 리스너를 통해 통신할 수 없다. 왜냐하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kafka0&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localhost&lt;/code&gt;도 모두 resolvable하지 않기 때문이다.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;how-to-connecting-to-kafka-on-iaascloud&quot;&gt;HOW TO: Connecting to Kafka on IaaS/Cloud&lt;/h1&gt;
-
-&lt;p&gt;도커와의 차이점은, 도커에서 외부의 연결은 단순히 localhost에서 이루어진 반면, 클라우드 호스트 기반의 카프카는 클라이언트가 localhost에 존재하지 않는다는 것이다.&lt;/p&gt;
-
-&lt;p&gt;더 복잡한 것은 도커 네트워크가 호스트의 네트워크와는 크게 분리되어 있지만 IaaS에서는 외부 호스트 이름이 내부적으로 확인 가능한 경우가 많기 때문에 이러한 문제가 실제로 발생할 경우 호스트 이름이 잘못될 수 있다.&lt;/p&gt;
-
-&lt;p&gt;브로커에 연결할 외부 주소가 브로커에게 로컬로 확인할 수 있는지 여부에 따라 두 가지 방법이 있다.&lt;/p&gt;
-
-&lt;h2 id=&quot;option-1-external-address-is-resolvable-locally&quot;&gt;Option 1: External address is resolvable locally&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_37.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;EC2 인스턴스의 IP 주소는 기본적으로 External IP. 만약 local에서 resolvable하다면, 로컬 내의 클라이언트, 외부 클라이언트 모두 이를 통해 통신 가능. 다만 외부 클라이언트는 밑의 설정만 추가해주면 된다.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;advertised.listeners=PLAINTEXT://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;option-2-external-address-is-not-resolvable-locally&quot;&gt;Option 2: External address is NOT resolvable locally&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/kafka_38.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;만약 로컬 내에서 resolvable하지 않다면, 두 가지 리스너가 필요하다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;VPC 내에서의 통신을 위해 local에서 resolvable한 Internal IP를 통해 내부에서 리슨한다&lt;/li&gt;
-  &lt;li&gt;VPC 밖, 예를 들어 나의 노트북에서 접속하려는 경우 인스턴스의 External IP가 필요하다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;listeners=INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092
-listener.security.protocol.map=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-advertised.listeners=INTERNAL://ip-172-31-18-160.us-west-2.compute.internal:19092,EXTERNAL://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
-inter.broker.listener.name=INTERNAL
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;exploring-listeners-with-docker&quot;&gt;Exploring listeners with Docker&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Listener BOB (port 29092) for &lt;strong&gt;internal traffic on the Docker network&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;Listener FRED (port 9092) for &lt;strong&gt;traffic from the Docker host machine (localhost)&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;Listener ALICE (port 29094) for &lt;strong&gt;traffic from outside&lt;/strong&gt;, reaching the Docker host on the DNS name never-gonna-give-you-up&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;2'&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;zookeeper&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;confluentinc/cp-zookeeper:5.2.1&quot;&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;ZOOKEEPER_CLIENT_PORT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2181&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;ZOOKEEPER_TICK_TIME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2000&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;kafka0&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;confluentinc/cp-enterprise-kafka:5.2.1&quot;&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;9092:9092'&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;29094:29094'&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_BROKER_ID&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_ZOOKEEPER_CONNECT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper:2181&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_INTER_BROKER_LISTENER_NAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;LISTENER_BOB&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_AUTO_CREATE_TOPICS_ENABLE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;false&quot;&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;100&lt;/span&gt;
-
-  &lt;span class=&quot;na&quot;&gt;kafkacat&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;confluentinc/cp-kafkacat&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sleep infinity&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-</description>
-                <pubDate>Sun, 30 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/kafka-series5</link>
-                <guid isPermaLink="true">http://localhost:4000/kafka-series5</guid>
-                
-                <category>Kafka</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>OS Series [Part2]: 컴퓨터의 기본 구조</title>
-                <description>&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#컴퓨터의-기본-구성&quot; id=&quot;markdown-toc-컴퓨터의-기본-구성&quot;&gt;컴퓨터의 기본 구성&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#하드웨어의-구성&quot; id=&quot;markdown-toc-하드웨어의-구성&quot;&gt;하드웨어의 구성&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#폰-노이만-구조&quot; id=&quot;markdown-toc-폰-노이만-구조&quot;&gt;폰 노이만 구조&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#하드웨어-사양-관련-용어&quot; id=&quot;markdown-toc-하드웨어-사양-관련-용어&quot;&gt;하드웨어 사양 관련 용어&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#cpu&quot; id=&quot;markdown-toc-cpu&quot;&gt;CPU&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#cpu의-기본-구성&quot; id=&quot;markdown-toc-cpu의-기본-구성&quot;&gt;CPU의 기본 구성&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#cpu의-명령어-처리-과정&quot; id=&quot;markdown-toc-cpu의-명령어-처리-과정&quot;&gt;CPU의 명령어 처리 과정&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#컴퓨터-성능-향상-기술&quot; id=&quot;markdown-toc-컴퓨터-성능-향상-기술&quot;&gt;컴퓨터 성능 향상 기술&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#버퍼&quot; id=&quot;markdown-toc-버퍼&quot;&gt;버퍼&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#캐시&quot; id=&quot;markdown-toc-캐시&quot;&gt;캐시&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#인터럽트&quot; id=&quot;markdown-toc-인터럽트&quot;&gt;인터럽트&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;컴퓨터의-기본-구성&quot;&gt;컴퓨터의 기본 구성&lt;/h1&gt;
-
-&lt;h2 id=&quot;하드웨어의-구성&quot;&gt;하드웨어의 구성&lt;/h2&gt;
-&lt;p&gt;컴퓨터 하드웨어는 크게 &lt;strong&gt;CPU, 메모리, 메인보드, 저장장치, 입출력장치&lt;/strong&gt;로 구성됩니다. 이 중에 CPU와 메모리는 필수장치로 구분되고 나머지는 주변장치로 구분됩니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;폰-노이만-구조&quot;&gt;폰 노이만 구조&lt;/h2&gt;
-&lt;p&gt;오늘날 대부분의 컴퓨터는 &lt;strong&gt;CPU, 메모리, 저장장치, 입출력장치가 버스로 연결되어 있는 폰 노이만 구조&lt;/strong&gt;를 따르고 있습니다. 폰 노이만 구조 이전에는 컴퓨터가 하드와이어링(hard wiring) 형태로 용도에 맞게 매번 컴퓨터의 전선을 새로 연결해야 했습니다. 이러한 문제를 해결하기 위해 수학자 존 폰 노이만(John von Neumann)은 &lt;strong&gt;프로그램만 교체하여 메모리에 올리는 방법&lt;/strong&gt;을 제안했습니다. 이러한 폰 노이만 구조 덕분에 오늘날에는 프로그래밍 기술을 이용해 컴퓨터로 다양한 작업을 할 수 있게 되었습니다.&lt;/p&gt;
-
-&lt;p&gt;폰 노이만 구조의 가장 중요한 특징은, &lt;strong&gt;모든 프로그램은 메모리에 올라와야 실행할 수 있다&lt;/strong&gt;는 것입니다. 예를 들어 하드디스크에 워드 프로그램과 문서가 저장되어 있어도 실행을 하기 위해서는 메모리에 올라와야 합니다. 운영체제 또한 프로그램이기 때문에 메모리에 올라와야 실행이 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/os_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;하드웨어-사양-관련-용어&quot;&gt;하드웨어 사양 관련 용어&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;CPU 클럭(clock)&lt;/strong&gt;: 초당 CPU내의 트랜지스터가 열고 닫히는 횟수(사이클 수) 하나의 사이클에 여러 개의 명령어가 완료되는 경우도 있고, 하나의 명령어가 여러 사이클에 걸쳐서 완료되기도 함&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;바이트(byte)&lt;/strong&gt;: 저장장치의 기억 용량 단위&lt;/p&gt;
-
-    &lt;table&gt;
-      &lt;tbody&gt;
-        &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;용량 단위&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;&lt;strong&gt;용량&lt;/strong&gt;&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-          &lt;td&gt;1B&lt;/td&gt;
-          &lt;td&gt;1byte&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-          &lt;td&gt;1KB&lt;/td&gt;
-          &lt;td&gt;2^10byte = 1024B&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-          &lt;td&gt;1MB&lt;/td&gt;
-          &lt;td&gt;2^20byte = 1024KB&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-          &lt;td&gt;1GB&lt;/td&gt;
-          &lt;td&gt;2^30byte = 1024MB&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-          &lt;td&gt;1TB&lt;/td&gt;
-          &lt;td&gt;2^40byte = 1024GB&lt;/td&gt;
-        &lt;/tr&gt;
-      &lt;/tbody&gt;
-    &lt;/table&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;버스(bus)&lt;/strong&gt;: &lt;strong&gt;시스템 버스&lt;/strong&gt;는 메모리와 주변장치를 연결하는 버스로 메인보드의 클럭속도를 나타내는 지표이며, &lt;strong&gt;CPU 내부 버스&lt;/strong&gt;는 CPU 내부 부품들을 연결하는 버스로 CPU 클럭 속도와 같음. CPU 버스 속도가 시스템 버스의 속도보다 훨씬 빠름&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;cpu&quot;&gt;CPU&lt;/h1&gt;
-
-&lt;p&gt;CPU(Central Processing Unit)은 중앙처리장치라고 하며 &lt;strong&gt;메모리에 올라온 프로그램의 명령어를 해석하여 실행하는 장치&lt;/strong&gt;입니다. 따라서 중앙 처리 장치(CPU)는 컴퓨터 부품과 정보를 교환하면서 컴퓨터 시스템 전체를 제어하는 장치로, 모든 컴퓨터의 작동과정이 중앙 처리 장치(CPU)의 제어를 받기 때문에 컴퓨터의 두뇌에 해당한다고 할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;🦊 &lt;strong&gt;32bit CPU&lt;/strong&gt;&lt;br /&gt;
-흔히 CPU를 얘기할 때 32bit CPU, 64bit CPU라고 하는데 이 때 32bit는 CPU가 &lt;strong&gt;메모리에서 데이터를 읽거나 쓸 때 한 번에 처리할 수 있는 데이터의 최대 크기&lt;/strong&gt;를 말합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;cpu의-기본-구성&quot;&gt;CPU의 기본 구성&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;산술논리 연산장치(ALU)&lt;/strong&gt;: 산술 연산(덧셈, 뺄셈 등)과 논리 연산(AND, OR 등)을 수행하는 부분&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;제어장치(control unit)&lt;/strong&gt;: 명령어를 해석해 제어 신호를 보냄으로써 작업을 지시하는 부분&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;레지스터(resister)&lt;/strong&gt;: CPU 내에 데이터를 임시로 보관하는 부분&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/os_3.gif&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;cpu의-명령어-처리-과정&quot;&gt;CPU의 명령어 처리 과정&lt;/h2&gt;
-
-&lt;p&gt;CPU는 메모리에 올라온 프로그램을 실행하기 위해서는 컴파일러를 이용해 코드를 기계어로 바꿔줘야 합니다. 이 &lt;strong&gt;기계어를 사람이 이해하기 쉽게 일대일 대응시켜 기호화한 어셈블리어&lt;/strong&gt;가 있는데 어셈블리어를 살펴보면 CPU가 어떤 식으로 명령어를 내리고 처리하는지 볼 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;# C언어
-&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;sum&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;D3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 어셈블리어&lt;/span&gt;
-LOAD mem&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;100&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, register 2&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 메모리 100번지에 있는 값을 레지스터2에 로드&lt;/span&gt;
-LOAD mem&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;120&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;, register 3&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 메모리 120번지에 있는 값을 레지스터3에 로드&lt;/span&gt;
-ADD register 5, resister 2, register 3&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 레지스터2와 레지스터3에 저장된 값을 더해 레지스터5에 저장&lt;/span&gt;
-MOVE register 5, mem&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;160&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 레지스터5에 저장된 값(5)을 메모리 160번지로 이동&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;위의 명령어는 명령어 레지스터에 저장되고 제어장치는 저장된 명령어를 해석하고 알맞은 제어 신호를 보냄으로써 동작을 수행합니다. 이러한 제어 신호는 제어버스를 통해 메모리와 주변장치에 전달합니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;컴퓨터-성능-향상-기술&quot;&gt;컴퓨터 성능 향상 기술&lt;/h1&gt;
-&lt;p&gt;현재 컴퓨터 구조의 가장 큰 문제는 CPU와 다른 장치간의 작업 속도가 다르다는 것입니다. CPU 내부 버스의 속도가 시스템 버스의 속도보다 빠르기 때문에, 메모리를 비롯한 주변장치의 속도가 CPU의 속도를 따라가지 못하고 있습니다. 여기서는 이러한 속도 차이를 개선하기 위해 개발된 기술 중 운영체제와 관련된 기술을 살펴보겠습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;버퍼&quot;&gt;버퍼&lt;/h2&gt;
-&lt;p&gt;버퍼(buffer)는 속도에 차이가 있는 두 장치 사이에서 그 차이를 완화하는 역할을 합니다. 예를 들어 저장장치에서 메모리로 데이터를 읽어올 때 데이터를 하나씩 전송하는 것보다 &lt;strong&gt;일정량의 데이터를 모아서 한꺼번에 전송&lt;/strong&gt;하면 속도를 향상시킬 수 있습니다. (일상생활에서 물건을 하나씩 나르는 것보다 바구니에 물건을 일정량 담아서 옮기는 것이 더 빠릅니다. 특히 거리가 먼 경우에는 그 차이가 더 클 것입니다.) &lt;strong&gt;버퍼는 이러한 바구니 역할&lt;/strong&gt;을 합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;캐시&quot;&gt;캐시&lt;/h2&gt;
-&lt;p&gt;캐시(cache)는 메모리와 CPU간의 속도 차이를 완화하기 위한 용도로 메모리의 데이터를 미리 가져와 저장해두는 임시 장소입니다. 캐시 또한 버퍼의 일종으로 &lt;strong&gt;CPU가 앞으로 사용할 것으로 예상되는 데이터를 미리 가져다 놓습니다(prefetch)&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;캐시는 CPU 안에 있으며 CPU 내부 버스의 속도로 동작합니다. 캐시는 메모리의 내용 중 일부를 미리 가져오고, CPU는 메모리에 접근하기 전에 캐시를 먼저 방문해 원하는 데이터가 있는지 찾아봅니다. 캐시에서 원하는 데이터를 찾은 경우를 &lt;strong&gt;캐시 히트(cache hit)&lt;/strong&gt;라고 합니다. 일반적인 컴퓨터의 캐시 적중률은 약 90%입니다.&lt;/p&gt;
-
-&lt;p&gt;캐시 적중률을 높이기 위해 캐시는 내부적으로 현&lt;strong&gt;재 위치와 가까이 위치한 데이터&lt;/strong&gt;를 가져옵니다. 캐시 용량이 높은 캐시를 구매할 수도 있지만 가격이 비쌉니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../images/os_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;인터럽트&quot;&gt;인터럽트&lt;/h2&gt;
-&lt;p&gt;초기의 컴퓨터 시스템에는 주변장치가 많지 않아 CPU가 직접 입출력장치에서 데이터를 가져오거나 보냈는데 이러한 방식을 폴링(polling)이라고 합니다. 오늘날에는 주변장치가 많아 CPU가 모든 입출력에 관여하면 작업 효율이 현저하게 떨어집니다. 이러한 문제를 해결하기 위해 등장한 것이 &lt;strong&gt;인터럽트(interrupt) 방식&lt;/strong&gt;입니다.&lt;/p&gt;
-
-&lt;p&gt;CPU는 데이터를 가져오거나 보낼 때 직접하지 않고, &lt;strong&gt;입출력 관리자에게 명령&lt;/strong&gt;을 보냅니다. 입출력 관리자가 메모리에 가지고 오거나 메모리의 데이터를 저장장치로 옮기는 동안 CPU는 계속 다른 작업을 할 수 있습니다. &lt;strong&gt;입출력 관리자가 데이터 전송을 완료하고 나면 완료 신호를 CPU에 보내는데 이를 인터럽트&lt;/strong&gt;라고 합니다.&lt;/p&gt;
-
-&lt;p&gt;인터럽트 방식을 이용하면 데이터의 입출력이 이루어지는 동안 CPU는 다른 작업을 하고 있을 수 있습니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;amp;ejkGb=KOR&amp;amp;barcode=9791156644071&quot; target=&quot;_blank&quot;&gt;쉽게 배우는 운영체제 책 참고&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://math-coding.tistory.com/83&quot; target=&quot;_blank&quot;&gt;i’m developer, not coder블로그 참고&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.intel.co.kr/content/www/kr/ko/gaming/resources/cpu-clock-speed.html&quot; target=&quot;_blank&quot;&gt;인텔 홈페이지&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://ko.wikipedia.org/wiki/중앙_처리_장치&quot; target=&quot;_blank&quot;&gt;위키백과&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Sat, 29 Jan 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/os-series2</link>
-                <guid isPermaLink="true">http://localhost:4000/os-series2</guid>
-                
-                <category>OS</category>
-                
-                
-                <category>CS</category>
                 
             </item>
         
