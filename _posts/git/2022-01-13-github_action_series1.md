@@ -72,5 +72,5 @@ jobs:
 
 # 참고
 
-- [Github Actions 공식문서](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions)
-- [ggong.log 블로그](https://velog.io/@ggong/Github-Action에-대한-소개와-사용법)
+- [Github Actions 공식문서](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions){:target="_blank"}
+- [ggong.log 블로그](https://velog.io/@ggong/Github-Action에-대한-소개와-사용법){:target="_blank"}
