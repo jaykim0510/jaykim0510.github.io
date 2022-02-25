@@ -90,3 +90,5 @@ SparkContext
 - [Pyspark 코드는 어디서 실행되는가?](https://stackoverflow.com/questions/61816236/does-pyspark-code-run-in-jvm-or-python-subprocess){:target="_blank"}  
 - [Pyspark만으로 스파크 애플리케이션 실행할 수 있나?](https://stackoverflow.com/questions/51728177/can-pyspark-work-without-spark){:target="_blank"}
 - [Pyspark의 한계](https://stackoverflow.com/questions/58479357/pyspark-from-spark-installation-vs-pyspark-python-package){:target="_blank"}
+- [bin/sh: 1: source: not found](https://askubuntu.com/questions/1363992/bin-sh-1-source-not-found){:target="_blank"}
+- [[Linux] 우분투에 자바 설치](https://unit-15.tistory.com/114?category=521121#recentComments){:target="_blank"}
