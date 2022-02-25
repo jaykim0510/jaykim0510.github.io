@@ -1,0 +1,35 @@
+
+<!--첫 번째 문단-->
+{% assign tag = page.tags[0] %}
+{% assign tag_list = site.tags[tag] %}
+{% for post in tag_list %}
+  {% if post.url == page.url %}
+  	{% assign prevIndex = forloop.index0 | minus: 1 %}
+  	{% assign nextIndex = forloop.index0 | plus: 1 %}
+  	{% if forloop.first == false %}
+  	  {% assign next_post = tag_list[prevIndex] %}
+  	{% endif %}
+  	{% if forloop.last == false %}
+  	  {% assign prev_post = tag_list[nextIndex] %}
+  	{% endif %}
+  	{% break %}
+  {% endif %}
+{% endfor %}
+
+<!--두 번째 문단-->
+{% if prev_post or next_post %}
+
+  <div class="post_pagination">
+    {% if prev_post %}
+      <a href="{{ prev_post.url }}" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>{{ prev_post.title  }}</a>
+    {% else %}
+      <a href="#" class="pagination__prev pagination__item disabled">{{ site.data.ui-text[site.locale].pagination_previous | default: "첫 번째 글입니다" }}</a>
+    {% endif %}
+    {% if next_post %}
+      <a href="{{ next_post.url }}" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>{{ next_post.title }}<i class="ion ion-ios-arrow-forward"></i></a>
+    {% else %}
+      <a href="#" class="pagination__ pagination__item disabled">{{ site.data.ui-text[site.locale].pagination_next | default: "마지막 글 입니다" }}</a>
+    {% endif %}
+  </div>
+
+{% endif %}

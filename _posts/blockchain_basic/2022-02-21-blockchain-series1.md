@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'BlockChain Series [Part1]: 블록체인을 공부하기 전에'
+title:  'BlockChain Series [Part2]: 블록체인의 동작 원리'
 description: 
-date:   2022-02-20 15:01:35 +0300
+date:   2022-02-21 15:01:35 +0300
 image:  '/images/blockchain_logo.webp'
 logo_image:  '/images/blockchain_logo.webp'
 categories: Blockchain
