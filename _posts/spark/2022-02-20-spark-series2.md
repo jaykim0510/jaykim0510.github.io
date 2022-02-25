@@ -45,10 +45,6 @@ apt-get install openjdk-11-jdk
 ```
 
 ```sh
-
-```
-
-```sh
 # JAVA_HOME 변수 설정, 경로 추가
 vim /etc/profile
 
