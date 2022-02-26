@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 26 Feb 2022 02:01:28 +0900</pubDate>
-        <lastBuildDate>Sat, 26 Feb 2022 02:01:28 +0900</lastBuildDate>
+        <pubDate>Sat, 26 Feb 2022 15:34:30 +0900</pubDate>
+        <lastBuildDate>Sat, 26 Feb 2022 15:34:30 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -151,7 +151,7 @@
   &lt;p&gt;To run Spark, you only require a Java runtime environment (JRE) but you may also download the Java development kit (JDK) which includes the JRE.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;저는 파이썬이 설치되어 있는 도커 이미지를 이용해 컨테이너 안에서 실습을 진행해 보았습니다.&lt;/p&gt;
+&lt;p&gt;저는 &lt;strong&gt;파이썬이 설치되어 있는 도커 이미지를 이용해 컨테이너 안에서 실습&lt;/strong&gt;을 진행해 보았습니다.&lt;/p&gt;
 
 &lt;h3 id=&quot;자바-파이썬-설치&quot;&gt;자바, 파이썬 설치&lt;/h3&gt;
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 파이썬이 설치된 컨테이너 생성&lt;/span&gt;
@@ -163,17 +163,13 @@ apt-get update
 apt-get &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openjdk-11-jdk
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# JAVA_HOME 변수 설정, 경로 추가&lt;/span&gt;
-vim /etc/profile
 
-&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/openjdk-11-jdk     // 본인의 자바 설치 경로
+
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/etc/openjdk-11-jdk     &lt;span class=&quot;c&quot;&gt;# 본인의 자바 설치 경로&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/bin:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CLASSPATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$CLASSPATH&lt;/span&gt;:&lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/jre/lib/ext:&lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/lib/tools.jar
 
-&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; /etc/profile // bash쉘이면 &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; /etc/profile
+&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; /etc/profile &lt;span class=&quot;c&quot;&gt;# bash쉘이면 source /etc/profile&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;h3 id=&quot;pyspark-설치&quot;&gt;pyspark 설치&lt;/h3&gt;
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# pyspark 설치&lt;/span&gt;
@@ -197,6 +193,52 @@ pip &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;pyspark
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;spark&quot;&gt;Spark&lt;/h2&gt;
+&lt;p&gt;이번에는 파이썬에 국한되지 않는 조금 더 일반적인 방법으로 스파크를 설치해보겠습니다. 이번에는 리눅스 운영체제만 가지는 컨테이너 위에서 실습을 진행하도록 하겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 우분투 컨테이너 실행&lt;/span&gt;
+docker run &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; ubuntu:latest
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# JDK 설치&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# https://www.oracle.com/java/technologies/downloads/&lt;/span&gt;
+wget https://download.oracle.com/java/17/latest/jdk-17_linux-aarch64_bin.tar.gz
+&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-xzvf&lt;/span&gt; jdk-17_linux-aarch64_bin.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# JAVA_HOME 변수 설정, 경로 추가&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/root/jdk-17.0.2     &lt;span class=&quot;c&quot;&gt;# 본인의 자바 설치 경로&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/bin:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; /etc/profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 스파크 설치&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# https://www.apache.org/dyn/closer.lua/spark/spark-3.2.1/&lt;/span&gt;
+wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz
+&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-xzvf&lt;/span&gt; spark-3.2.1-bin-hadoop3.2.tgz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;spark-3.2.1-bin-hadoop3.2
+&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--------------------------------------------------------------------------------------------------------------&lt;/span&gt;
+LICENSE  NOTICE  R  README.md  RELEASE  bin  conf  data  examples  jars  kubernetes  licenses  python  sbin  yarn
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# 스파크에서 제공하는 실행 파일
+cd bin
+ls
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 스파크 셸 실행&lt;/span&gt;
+./bin/spark-shell
+
+&lt;span class=&quot;c&quot;&gt;# 셸 종료&lt;/span&gt;
+:q
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;로컬-개발-환경&quot;&gt;로컬 개발 환경&lt;/h1&gt;
 

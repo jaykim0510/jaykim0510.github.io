@@ -1,4 +1,4 @@
-I"�<p id="toc"><strong>Table of Contents</strong></p>
+I"|<p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#스파크-설치" id="markdown-toc-스파크-설치">스파크 설치</a>    <ul>
       <li><a href="#pyspark" id="markdown-toc-pyspark">pyspark</a>        <ul>
@@ -31,7 +31,7 @@
   <p>To run Spark, you only require a Java runtime environment (JRE) but you may also download the Java development kit (JDK) which includes the JRE.</p>
 </blockquote>
 
-<p>저는 파이썬이 설치되어 있는 도커 이미지를 이용해 컨테이너 안에서 실습을 진행해 보았습니다.</p>
+<p>저는 <strong>파이썬이 설치되어 있는 도커 이미지를 이용해 컨테이너 안에서 실습</strong>을 진행해 보았습니다.</p>
 
 <h3 id="자바-파이썬-설치">자바, 파이썬 설치</h3>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 파이썬이 설치된 컨테이너 생성</span>
@@ -43,17 +43,13 @@ apt-get update
 apt-get <span class="nb">install </span>openjdk-11-jdk
 </code></pre></div></div>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-</code></pre></div></div>
-
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># JAVA_HOME 변수 설정, 경로 추가</span>
-vim /etc/profile
 
-<span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/etc/openjdk-11-jdk     // 본인의 자바 설치 경로
+
+<span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/etc/openjdk-11-jdk     <span class="c"># 본인의 자바 설치 경로</span>
 <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$PATH</span>
-<span class="nb">export </span><span class="nv">CLASSPATH</span><span class="o">=</span><span class="nv">$CLASSPATH</span>:<span class="nv">$JAVA_HOME</span>/jre/lib/ext:<span class="nv">$JAVA_HOME</span>/lib/tools.jar
-
-<span class="nb">.</span> /etc/profile // bash쉘이면 <span class="nb">source</span> /etc/profile
+a
+<span class="nb">.</span> /etc/profile <span class="c"># bash쉘이면 source /etc/profile</span>
 </code></pre></div></div>
 <h3 id="pyspark-설치">pyspark 설치</h3>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># pyspark 설치</span>
@@ -77,7 +73,31 @@ pip <span class="nb">install </span>pyspark
 </code></pre></div></div>
 
 <h2 id="spark">Spark</h2>
+<p>이번에는 파이썬에 국한되지 않는 조금 더 일반적인 방법으로 스파크를 설치해보겠습니다. 이번에는 리눅스 운영체제만 가지는 컨테이너 위에서 실습을 진행하도록 하겠습니다.</p>
 
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 우분투 컨테이너 실행</span>
+docker run <span class="nt">-it</span> ubuntu:latest
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># JDK 설치</span>
+wget https://download.oracle.com/java/17/latest/jdk-17_linux-aarch64_bin.tar.gz
+apt-get <span class="nb">install </span>openjdk-11-jdk
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># JAVA_HOME 변수 설정, 경로 추가</span>
+<span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/root/jdk-17.0.2     <span class="c"># 본인의 자바 설치 경로</span>
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$PATH</span>
+
+<span class="nb">.</span> /etc/profile
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 스파크 설치</span>
+wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz
+<span class="nb">tar</span> <span class="nt">-xzvf</span> spark-3.2.1-bin-hadoop3.2.tgz
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
 <h1 id="로컬-개발-환경">로컬 개발 환경</h1>
 
 <h1 id="클러스터-환경">클러스터 환경</h1>

@@ -3,7 +3,7 @@ layout: post
 title:  'Apache Spark Series [Part2]: 스파크 개발환경 구축하기'
 description: 
 date:   2022-02-20 15:01:35 +0300
-image:  '/images/spark_logo.png'
+image:  '/images/spark_10.png'
 logo_image:  '/images/spark_logo.png'
 categories: DE
 tags: Spark
@@ -29,7 +29,7 @@ tags: Spark
 
 > To run Spark, you only require a Java runtime environment (JRE) but you may also download the Java development kit (JDK) which includes the JRE.  
 
-저는 파이썬이 설치되어 있는 도커 이미지를 이용해 컨테이너 안에서 실습을 진행해 보았습니다.  
+저는 **파이썬이 설치되어 있는 도커 이미지를 이용해 컨테이너 안에서 실습**을 진행해 보았습니다.  
 
 
 ### 자바, 파이썬 설치
@@ -46,13 +46,12 @@ apt-get install openjdk-11-jdk
 
 ```sh
 # JAVA_HOME 변수 설정, 경로 추가
-vim /etc/profile
 
-export JAVA_HOME=/etc/openjdk-11-jdk     // 본인의 자바 설치 경로
+
+export JAVA_HOME=/etc/openjdk-11-jdk     # 본인의 자바 설치 경로
 export PATH=$JAVA_HOME/bin:$PATH
-export CLASSPATH=$CLASSPATH:$JAVA_HOME/jre/lib/ext:$JAVA_HOME/lib/tools.jar
 
-. /etc/profile // bash쉘이면 source /etc/profile
+. /etc/profile # bash쉘이면 source /etc/profile
 ```
 ### pyspark 설치
 ```sh
@@ -78,6 +77,59 @@ SparkContext
 ```  
 
 ## Spark
+이번에는 파이썬에 국한되지 않는 조금 더 일반적인 방법으로 스파크를 설치해보겠습니다. 이번에는 리눅스 운영체제만 가지는 컨테이너 위에서 실습을 진행하도록 하겠습니다.  
+
+```sh
+# 우분투 컨테이너 실행
+docker run -it ubuntu:latest
+```
+
+```sh
+# JDK 설치
+# https://www.oracle.com/java/technologies/downloads/
+wget https://download.oracle.com/java/17/latest/jdk-17_linux-aarch64_bin.tar.gz
+tar -xzvf jdk-17_linux-aarch64_bin.tar.gz
+```
+
+```sh
+# JAVA_HOME 변수 설정, 경로 추가
+export JAVA_HOME=/root/jdk-17.0.2     # 본인의 자바 설치 경로
+export PATH=$JAVA_HOME/bin:$PATH
+
+. /etc/profile
+```
+
+```sh
+# 스파크 설치
+# https://www.apache.org/dyn/closer.lua/spark/spark-3.2.1/
+wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz
+tar -xzvf spark-3.2.1-bin-hadoop3.2.tgz
+```
+
+```sh
+cd spark-3.2.1-bin-hadoop3.2
+ls
+--------------------------------------------------------------------------------------------------------------
+LICENSE  NOTICE  R  README.md  RELEASE  bin  conf  data  examples  jars  kubernetes  licenses  python  sbin  yarn
+```
+
+```
+# 스파크에서 제공하는 실행 파일
+cd bin
+ls
+```
+
+![](../images/../../images/spark_9.png) 
+
+```sh
+# 스파크 셸 실행
+./bin/spark-shell
+
+# 셸 종료
+:q
+```  
+
+![](../images/../../images/spark_8.png)  
 
 # 로컬 개발 환경
 
