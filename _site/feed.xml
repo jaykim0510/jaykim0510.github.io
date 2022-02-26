@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 26 Feb 2022 15:34:30 +0900</pubDate>
-        <lastBuildDate>Sat, 26 Feb 2022 15:34:30 +0900</lastBuildDate>
+        <pubDate>Sun, 27 Feb 2022 00:17:21 +0900</pubDate>
+        <lastBuildDate>Sun, 27 Feb 2022 00:17:21 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -131,6 +131,7 @@
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#로컬-개발-환경&quot; id=&quot;markdown-toc-로컬-개발-환경&quot;&gt;로컬 개발 환경&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#클러스터-환경&quot; id=&quot;markdown-toc-클러스터-환경&quot;&gt;클러스터 환경&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
@@ -195,27 +196,43 @@ pip &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;pyspark
 &lt;h2 id=&quot;spark&quot;&gt;Spark&lt;/h2&gt;
 &lt;p&gt;이번에는 파이썬에 국한되지 않는 조금 더 일반적인 방법으로 스파크를 설치해보겠습니다. 이번에는 리눅스 운영체제만 가지는 컨테이너 위에서 실습을 진행하도록 하겠습니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 우분투 컨테이너 실행&lt;/span&gt;
-docker run &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; ubuntu:latest
+&lt;p&gt;처음에는 우분투 이미지를 바로 컨테이너로 띄우고 그 위에서 자바를 설치하려 했지만, 오라클에서 다운받는 방법을 제한하고 있어서 아래의 방법으로 진행했습니다. (우분투 이미지에 로컬에서 다운받은 자바를 하나의 이미지로 새로 빌드)&lt;/p&gt;
+
+&lt;p&gt;그래서 사실 위에서 진행한 pyspark만 설치하는 방법에서도 python이미지에 로컬 자바로 한 번 이미지를 빌드한 후 사용하는 것이 좋을 것 같습니다. 저도 아직 본격적으로 사용해보지는 않아서 에러가 있는지는 확인해보지 않았지만 로컬에서 자바를 다운 받고 빌드하는 방법은 확실히 안전합니다.&lt;/p&gt;
+
+&lt;p&gt;🦊 &lt;strong&gt;자바 설치&lt;/strong&gt;&lt;br /&gt;
+자바 라이센스를 소유하고 있는 오라클에서 2019년 4월부터 자바를 외부의 허용하지 않은 방법으로 다운받는 것을 금지시켰습니다. 그래서 wget과 같은 방식으로 자바8 버전을 더이상 다운받을 수 없게 되고 무조건 오라클에 로그인을 한 후 로컬에 먼저 다운을 받아야합니다. &lt;del&gt;자바 17은 가능한데 스파크에서 자바 17로 설치하니까 오류가 난다. 구글링에서는 자바를 다운그레이드 하라고 나와있다. 자바8로 해보니까 된다. 그래서 자바8을 지금 다운 받으려고 하는 것이다.&lt;/del&gt;그래서 저같은 경우에는 왠만한 작업들은 무조건 도커 컨테이너에서 진행하는 편이라 처음에는 도커허브에서 자바8이 설치되어 있는 이미지를 찾아봤지만 뭔가 세부설정들이 내 마음에 들지 않게 되어 있어서 이미지를 직접 빌드하기로 결정했습니다. 제가 사용한 방법의 과정은 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 자바를 로컬에 다운로드&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 다운로드 페이지 접속&lt;/span&gt;
+https://www.oracle.com/java/technologies/javase/javase8u211-later-archive-downloads.html
+
+&lt;span class=&quot;c&quot;&gt;# 저는 M1 칩을 사용하고 있어서 ARM64 전용 파일을 다운로드 받았습니다.&lt;/span&gt;
+jdk-8u311-linux-aarch64.tar.gz
+
+&lt;span class=&quot;c&quot;&gt;# 다운로드 받은 폴더에서 압축해제&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-xzvf&lt;/span&gt; jdk-8u311-linux-aarch64.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-Dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Dockerfile 작성&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 로컬에 설치한 자바를 컨테이너로 옮기고 스파크까지 설치해주었습니다&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; ubuntu:latest&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; jdk1.8.0_321 ./jdk1.8.0_321&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;apt-get &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; update &lt;span class=&quot;se&quot;&gt;\
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;vim &lt;span class=&quot;se&quot;&gt;\
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; apt-get &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;wget &lt;span class=&quot;se&quot;&gt;\
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz &lt;span class=&quot;se&quot;&gt;\
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-xzvf&lt;/span&gt; spark-3.2.1-bin-hadoop3.2.tgz
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# JDK 설치&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# https://www.oracle.com/java/technologies/downloads/&lt;/span&gt;
-wget https://download.oracle.com/java/17/latest/jdk-17_linux-aarch64_bin.tar.gz
-&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-xzvf&lt;/span&gt; jdk-17_linux-aarch64_bin.tar.gz
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vim /etc/profile
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# JAVA_HOME 변수 설정, 경로 추가&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/root/jdk-17.0.2     &lt;span class=&quot;c&quot;&gt;# 본인의 자바 설치 경로&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 환경 변수설정해줍니다. 이부분은 Dockerfile에서 ENV로 설정해 줄 수도 있습니다&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;JAVA_HOME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/jdk1.8.0_321
 &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;PATH&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$JAVA_HOME&lt;/span&gt;/bin:&lt;span class=&quot;nv&quot;&gt;$PATH&lt;/span&gt;
 
 &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; /etc/profile
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 스파크 설치&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;# https://www.apache.org/dyn/closer.lua/spark/spark-3.2.1/&lt;/span&gt;
-wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop3.2.tgz
-&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-xzvf&lt;/span&gt; spark-3.2.1-bin-hadoop3.2.tgz
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;spark-3.2.1-bin-hadoop3.2
@@ -240,16 +257,41 @@ ls
 
 &lt;p&gt;&lt;img src=&quot;../images/../../images/spark_8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
+&lt;p&gt;위의 과정은 이미지에서 매번 스파크를 다운받는 방식이기 때문에, 스파크를 다운받은 컨테이너를 다시 한 번 이미지로 만들면 그 다음부터는 새로 만든 이미지를 이용하면 컨테이너를 띄우는 속도가 더 빨라지게 됩니다. 그래서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker commit&lt;/code&gt; 명령어를 이용해 한번 더 이미지를 빌드하는 것을 권장드립니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 로컬 터미널에서 docker commit 명령어로 이미지 생성&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# dockere commit &amp;lt;원하는 컨테이너 이름&amp;gt; &amp;lt;생성할 이미지 이름&amp;gt;&lt;/span&gt;
+docker commit thirsty_galois spark_container
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;h1 id=&quot;로컬-개발-환경&quot;&gt;로컬 개발 환경&lt;/h1&gt;
+&lt;p&gt;위의 설치과정을 완료한 후 스파크의 설정 정보를 확인해 보겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./bin/spark-shell --verbose
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_11.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;다른 부분은 일단 신경쓰지 말고 master 부분만 보도록 하겠습니다. 현재 master가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;local[*]&lt;/code&gt;로 설정되어 있습니다. 이는 현재 드라이버 프로그램을 실행하는 서버를 포함해 워커 노드까지 모두 로컬 서버를 이용하고 있다는 뜻입니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt;는 로컬 서버의 모든 스레드를 사용하겠다는 뜻입니다.&lt;/p&gt;
+
+&lt;p&gt;따라서 여기까지만 설정하게 되면 로컬에서 테스트 목적으로 사용하기 위한 최소한의 준비는 끝난 것입니다. 이 외에도 여러 가지 설정들을 직접하고 싶을 때에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;./conf&lt;/code&gt;에 설정을 위한 여러가지 파일의 템플릿을 이용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;클러스터-환경&quot;&gt;클러스터 환경&lt;/h1&gt;
 
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/61816236/does-pyspark-code-run-in-jvm-or-python-subprocess&quot; target=&quot;_blank&quot;&gt;Pyspark 코드는 어디서 실행되는가?&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/51728177/can-pyspark-work-without-spark&quot; target=&quot;_blank&quot;&gt;Pyspark만으로 스파크 애플리케이션 실행할 수 있나?&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/58479357/pyspark-from-spark-installation-vs-pyspark-python-package&quot; target=&quot;_blank&quot;&gt;Pyspark의 한계&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://askubuntu.com/questions/1363992/bin-sh-1-source-not-found&quot; target=&quot;_blank&quot;&gt;bin/sh: 1: source: not found&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://unit-15.tistory.com/114?category=521121#recentComments&quot; target=&quot;_blank&quot;&gt;[Linux] 우분투에 자바 설치&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://superuser.com/questions/1466580/unable-to-download-oracle-jdk-8-using-wget-command&quot; target=&quot;_blank&quot;&gt;Unable to download Oracle JDK 8 using Wget command&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://nhj12311.tistory.com/37&quot; target=&quot;_blank&quot;&gt;자바(JDK, JRE) 모든 버전 다운로드( 6,7,8,9,10,11,12,13,14,15, 16, 17..)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.quobyte.com/enterprise-analytics/howto-spark-quobyte-multinode&quot; target=&quot;_blank&quot;&gt;How to Set Up a Multi Node Apache Spark Cluster with Quobyte&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.ibm.com/docs/en/zpfas/1.1.0?topic=structure-updating-apache-spark-configuration-files&quot; target=&quot;_blank&quot;&gt;Updating the Apache Spark configuration files&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://velog.io/@somnode/spark-cluster-install&quot; target=&quot;_blank&quot;&gt;[spark] Spark 3 클러스터 설치&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Sun, 20 Feb 2022 21:01:35 +0900</pubDate>
