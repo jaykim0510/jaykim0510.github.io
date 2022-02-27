@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Apache Spark Series [Part2]: 스파크 개발환경 구축하기'
-description: 
+description: 스파크를 설치하는 과정 자체는 크게 복잡하지 않습니다. 자바와 스파크만 설치하면 스파크를 사용할 수 있습니다
 date:   2022-02-20 15:01:35 +0300
 image:  '/images/spark_10.png'
 logo_image:  '/images/spark_logo.png'
