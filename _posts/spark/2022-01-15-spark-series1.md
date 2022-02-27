@@ -91,7 +91,10 @@ RDD의 연산은 크게 __트랜스포메이션__ 과 **액션**이라는 두 �
 
 여기서 드라이버 프로그램과 워커 노드를 보통 애플리케이션이라고 하고, 클러스터 매니저는 외부 서비스로 애플리케이션과 연동합니다.  
 
-## 드라이버 프로그램
+## 드라이버 프로그램  
+
+> Spark driver is a program that runs on the master node of the machine which declares transformations and actions on knowledge RDDs. In easy terms, the driver in Spark creates SparkContext, connected to a given Spark Master.It conjointly delivers the RDD graphs to Master, wherever the standalone cluster manager runs.  
+
 드라이버 프로그램의 역할은 다음과 같습니다.  
 - 클러스터 매니저와의 connection을 위한 스파크 컨텍스트 객체를 생성
 - 스파크 컨텍스트를 이용해 RDD 생성
@@ -111,8 +114,9 @@ RDD의 연산은 크게 __트랜스포메이션__ 과 **액션**이라는 두 �
 
 ## 워커 노드
 스파크 컨텍스트는 워커 노드에 Executer를 생성하도록 클러스터 매니저에 요청을 하고 클러스터는 그에 맞춰 Executer를 생성합니다. Executer가 생성되면 드라이버 프로그램은 정의된 연산을 수행합니다. 이 때 작업을 실제로 수행하는 것은 아니고 액션 연산의 수만큼 잡(Job)을 생성하고 잡은 셔플링이 최대한 적게 일어나는 방향으로 스테이지(Stage)를 나눕니다. 나누어진 스테이지는 다시 여러 개의 태스크(Task)로 나누어진 후 워커 노드에 생성된 Executer에 할당됩니다.  
-워커 노드는 Executer를 이용해 태스크를 처리하고, 데이터를 나중에 재사용 할 수 있도록 메모리에 저장도 합니다.
-
+워커 노드는 Executer를 이용해 태스크를 처리하고, 데이터를 나중에 재사용 할 수 있도록 메모리에 저장도 합니다.  
+- **Executer**: 작업을 수행하기 위해 스파크에서 실행하는 프로세스, 자원할당 단위, 하나의 노드에 여러 개 Executer 가능
+- **Task(Job)**: 액션 연산의 수
 
 
 

@@ -1,4 +1,4 @@
-I"27<p id="toc"><strong>Table of Contents</strong></p>
+I"8<p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#스파크-설치" id="markdown-toc-스파크-설치">스파크 설치</a>    <ul>
       <li><a href="#pyspark" id="markdown-toc-pyspark">pyspark</a>        <ul>
@@ -11,6 +11,7 @@
   </li>
   <li><a href="#로컬-개발-환경" id="markdown-toc-로컬-개발-환경">로컬 개발 환경</a></li>
   <li><a href="#클러스터-환경" id="markdown-toc-클러스터-환경">클러스터 환경</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
@@ -80,7 +81,7 @@ pip <span class="nb">install </span>pyspark
 <p>그래서 사실 위에서 진행한 pyspark만 설치하는 방법에서도 python이미지에 로컬 자바로 한 번 이미지를 빌드한 후 사용하는 것이 좋을 것 같습니다. 저도 아직 본격적으로 사용해보지는 않아서 에러가 있는지는 확인해보지 않았지만 로컬에서 자바를 다운 받고 빌드하는 방법은 확실히 안전합니다.</p>
 
 <p>🦊 <strong>자바 설치</strong><br />
-자바 라이센스를 소유하고 있는 오라클에서 2019년 4월부터 자바를 외부의 허용하지 않은 방법으로 다운받는 것을 금지시켰습니다. 그래서 wget과 같은 방식으로 자바8 버전을 더이상 다운받을 수 없게 되고 무조건 오라클에 로그인을 한 후 로컬에 먼저 다운을 받아야합니다. <del>자바 17은 가능한데 스파크에서 자바 17로 설치하니까 오류가 난다. 구글링에서는 자바를 다운그레이드 하라고 나와있다. 자바8로 해보니까 된다. 그래서 자바8을 지금 다운 받으려고 하는 것이다.</del>그래서 저같은 경우에는 왠만한 작업들은 무조건 도커 컨테이너에서 진행하는 편이라 처음에는 도커허브에서 자바8이 설치되어 있는 이미지를 찾아봤지만 뭔가 세부설정들이 내 마음에 들지 않게 되어 있어서 이미지를 직접 빌드하기로 결정했습니다. 제가 사용한 방법의 과정은 다음과 같습니다.</p>
+자바 라이센스를 소유하고 있는 오라클에서 2019년 4월부터 자바를 외부의 허용하지 않은 방법으로 다운받는 것을 금지시켰습니다. 그래서 wget과 같은 방식으로 자바8 버전을 더이상 다운받을 수 없게 되고 무조건 오라클에 로그인을 한 후 로컬에 먼저 다운을 받아야합니다. <del>자바 17은 가능한데 스파크에서 자바 17로 설치하니까 오류가 난다. 구글링에서는 자바를 다운그레이드 하라고 나와있다. 자바8로 해보니까 된다. 그래서 자바8을 지금 다운 받으려고 하는 것이다.</del>그래서 저같은 경우에는 왠만한 작업들은 무조건 도커 컨테이너에서 진행하는 편이라 처음에는 도커허브에서 자바8이 설치되어 있는 이미지를 찾아봤지만 뭔가 세부설정들이 제 마음에 들지 않게 되어 있어서 이미지를 직접 빌드하기로 결정했습니다. 제가 사용한 방법의 과정은 다음과 같습니다.</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 자바를 로컬에 다운로드</span>
 <span class="c"># 다운로드 페이지 접속</span>
@@ -106,6 +107,7 @@ jdk-8u311-linux-aarch64.tar.gz
 </code></pre></div></div>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/profile
+
 <span class="c"># 환경 변수설정해줍니다. 이부분은 Dockerfile에서 ENV로 설정해 줄 수도 있습니다</span>
 <span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/jdk1.8.0_321
 <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$JAVA_HOME</span>/bin:<span class="nv">$PATH</span>
@@ -158,6 +160,7 @@ docker commit thirsty_galois spark_container
 
 <h1 id="클러스터-환경">클러스터 환경</h1>
 
+<h1 id="참고">참고</h1>
 <ul>
   <li><a href="https://stackoverflow.com/questions/61816236/does-pyspark-code-run-in-jvm-or-python-subprocess" target="_blank">Pyspark 코드는 어디서 실행되는가?</a></li>
   <li><a href="https://stackoverflow.com/questions/51728177/can-pyspark-work-without-spark" target="_blank">Pyspark만으로 스파크 애플리케이션 실행할 수 있나?</a></li>
@@ -168,5 +171,6 @@ docker commit thirsty_galois spark_container
   <li><a href="https://nhj12311.tistory.com/37" target="_blank">자바(JDK, JRE) 모든 버전 다운로드( 6,7,8,9,10,11,12,13,14,15, 16, 17..)</a></li>
   <li><a href="https://www.quobyte.com/enterprise-analytics/howto-spark-quobyte-multinode" target="_blank">How to Set Up a Multi Node Apache Spark Cluster with Quobyte</a></li>
   <li><a href="https://www.ibm.com/docs/en/zpfas/1.1.0?topic=structure-updating-apache-spark-configuration-files" target="_blank">Updating the Apache Spark configuration files</a></li>
+  <li><a href="https://velog.io/@somnode/spark-cluster-install" target="_blank">[spark] Spark 3 클러스터 설치</a></li>
 </ul>
 :ET
