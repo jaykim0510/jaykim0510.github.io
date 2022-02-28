@@ -19,5 +19,5 @@ tags: Docker
 아직 작성 전 입니다...  
 
 # 참고
-- [도커 공식문서](https://docs.docker.com/network/)
-- [클라우드 엔지니어 Won의 성장 블로그, 06. 도커 네트워크 포스트](https://captcha.tistory.com/70)
+- [도커 공식문서](https://docs.docker.com/network/){:target="_blank"}
+- [클라우드 엔지니어 Won의 성장 블로그, 06. 도커 네트워크 포스트](https://captcha.tistory.com/70){:target="_blank"}
