@@ -1,0 +1,47 @@
+I"<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커에서-데이터-관리하기" id="markdown-toc-도커에서-데이터-관리하기">도커에서 데이터 관리하기</a></li>
+  <li><a href="#마운트-종류" id="markdown-toc-마운트-종류">마운트 종류</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="도커에서-데이터-관리하기">도커에서 데이터 관리하기</h1>
+
+<p>기본적으로 컨테이너 안에서 생성된 모든 파일은 <strong>컨테이너 레이어에 저장</strong>됩니다. 다시 말해,</p>
+
+<ul>
+  <li>해당 컨테이너가 더 이상 존재하지 않으면 데이터가 유지되지 않으며 다른 프로세스에서 데이터를 컨테이너에서 꺼내기가 어려울 수 있습니다.</li>
+  <li>컨테이너 계층은 컨테이너가 실행 중인 호스트 머신에 긴밀하게 연결됩니다. 데이터를 다른 곳으로 쉽게 이동할 수 없습니다.</li>
+  <li>컨테이너 계층에 쓰려면 파일 시스템을 관리할 스토리지 드라이버가 필요합니다. 저장소 드라이버는 리눅스 커널을 사용하여 통합된 단일 파일 시스템을 제공합니다. 이러한 추상화는 호스트 파일 시스템에 직접 쓰는 데이터 볼륨을 사용하는 것에 비해 성능이 저하됩니다.</li>
+</ul>
+
+<p>Docker에서 볼륨을 위해 제공해주는 옵션 중 <strong>volume</strong> 또는 <strong>bind mount</strong>를 사용하면 컨테이너가 중지된 후에도 파일을 호스트 머신에 파일을 저장함으로써 유지할 수 있습니다.</p>
+
+<p>도커에서 <strong>tmpfs mount</strong>를 사용하면 호스트의 시스템 메모리에 인-메모리 형식으로 파일을 저장할 수 있습니다.</p>
+
+<h1 id="마운트-종류">마운트 종류</h1>
+
+<p>어떤 종류의 마운트를 사용하더라도 컨테이너 안에서 데이터의 모습은 같습니다. 각 마운트 종류의 차이를 이해하는 쉬운 방법은 데이터가 도커 호스트 내에서 어디 존재하는지 생각해보는 것 입니다.</p>
+
+<p><img src="../../images/docker_17.png" alt="" /></p>
+
+<ul>
+  <li>
+    <p><strong>Volume</strong>을 사용하면 도커에 의해 관리되는 호스트 파일 시스템(Linux기준 <code class="language-plaintext highlighter-rouge">/var/lib/docker/volumes/</code>)에 데이터가 저장됩니다. 비-도커 프로세스들은 여기 파일들을 수정해서는 안됩니다.</p>
+  </li>
+  <li>
+    <p><strong>Bind mount</strong>는 호스트 시스템 어디든 저장될 수 있습니다. 비-도커 프로세스들도 여기 파일들을 언제든 수정할 수 있습니다.</p>
+  </li>
+  <li>
+    <p><strong>tmpfs mount</strong>는 호스트 메모리 시스템에만 저장됩니다. 호스트 파일 시스템에는 절대 저장되지 않습니다.</p>
+  </li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.docker.com/storage/" target="_blank">도커 공식문서: Manage data in Docker</a></li>
+</ul>
+:ET

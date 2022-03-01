@@ -1,0 +1,51 @@
+I"#<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커에서-데이터-관리하기" id="markdown-toc-도커에서-데이터-관리하기">도커에서 데이터 관리하기</a></li>
+  <li><a href="#마운트-종류" id="markdown-toc-마운트-종류">마운트 종류</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="도커에서-데이터-관리하기">도커에서 데이터 관리하기</h1>
+
+<p>기본적으로 컨테이너 안에서 생성된 모든 파일은 컨테이너 레이어에 저장됩니다.</p>
+
+<ul>
+  <li>The data doesn’t persist when that container no longer exists, and it can be difficult to get the data out of the container if another process needs it.</li>
+  <li>A container’s writable layer is tightly coupled to the host machine where the container is running. You can’t easily move the data somewhere else.</li>
+  <li>Writing into a container’s writable layer requires a storage driver to manage the filesystem. The storage driver provides a union filesystem, using the Linux kernel. This extra abstraction reduces performance as compared to using data volumes, which write directly to the host filesystem.</li>
+</ul>
+
+<p>Docker has two options for containers to store files on the host machine, so that the files are persisted even after the container stops: volumes, and bind mounts.</p>
+
+<p>Docker also supports containers storing files in-memory on the the host machine. Such files are not persisted. If you’re running Docker on Linux, tmpfs mount is used to store files in the host’s system memory. If you’re running Docker on Windows, named pipe is used to store files in the host’s system memory.</p>
+
+<p>Keep reading for more information about persisting data or taking advantage of in-memory files.</p>
+
+<h1 id="마운트-종류">마운트 종류</h1>
+
+<p>No matter which type of mount you choose to use, the data looks the same from within the container. It is exposed as either a directory or an individual file in the container’s filesystem.</p>
+
+<p>An easy way to visualize the difference among volumes, bind mounts, and tmpfs mounts is to think about where the data lives on the Docker host.</p>
+
+<p><img src="../../images/docker_17.png" alt="" /></p>
+
+<ul>
+  <li>
+    <p>Volumes are stored in a part of the host filesystem which is managed by Docker (/var/lib/docker/volumes/ on Linux). Non-Docker processes should not modify this part of the filesystem. Volumes are the best way to persist data in Docker.</p>
+  </li>
+  <li>
+    <p>Bind mounts may be stored anywhere on the host system. They may even be important system files or directories. Non-Docker processes on the Docker host or a Docker container can modify them at any time.</p>
+  </li>
+  <li>
+    <p>tmpfs mounts are stored in the host system’s memory only, and are never written to the host system’s filesystem.</p>
+  </li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.docker.com/storage/" target="_blank">도커 공식문서: Manage data in Docker</a></li>
+</ul>
+:ET

@@ -1,0 +1,49 @@
+I""<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커에서-데이터-관리하기" id="markdown-toc-도커에서-데이터-관리하기">도커에서 데이터 관리하기</a></li>
+  <li><a href="#마운트-종류" id="markdown-toc-마운트-종류">마운트 종류</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="도커에서-데이터-관리하기">도커에서 데이터 관리하기</h1>
+
+<p>기본적으로 컨테이너 안에서 생성된 모든 파일은 <strong>컨테이너 레이어에 저장</strong>됩니다. 다시 말해,</p>
+
+<ul>
+  <li>해당 컨테이너가 더 이상 존재하지 않으면 데이터가 유지되지 않으며 다른 프로세스에서 데이터를 컨테이너에서 꺼내기가 어려울 수 있습니다.</li>
+  <li>컨테이너 계층은 컨테이너가 실행 중인 호스트 머신에 긴밀하게 연결됩니다. 데이터를 다른 곳으로 쉽게 이동할 수 없습니다.</li>
+  <li>컨테이너 계층에 쓰려면 파일 시스템을 관리할 스토리지 드라이버가 필요합니다. 저장소 드라이버는 리눅스 커널을 사용하여 통합된 단일 파일 시스템을 제공합니다. 이러한 추상화는 호스트 파일 시스템에 직접 쓰는 데이터 볼륨을 사용하는 것에 비해 성능이 저하됩니다.</li>
+</ul>
+
+<p>Docker에서 볼륨을 위해 제공해주는 옵션 중 <strong>볼륨</strong> 또는 <strong>바인드 마운트</strong>를 사용하면 컨테이너가 중지된 후에도 파일을 호스트 머신에 파일을 저장함으로써 유지할 수 있습니다.</p>
+
+<p>도커에서 <strong>tmpfs 마운트</strong>를 사용하면 호스트의 시스템 메모리에 인-메모리 형식으로 파일을 저장할 수 있습니다.</p>
+
+<h1 id="마운트-종류">마운트 종류</h1>
+
+<p>No matter which type of mount you choose to use, the data looks the same from within the container. It is exposed as either a directory or an individual file in the container’s filesystem.</p>
+
+<p>An easy way to visualize the difference among volumes, bind mounts, and tmpfs mounts is to think about where the data lives on the Docker host.</p>
+
+<p><img src="../../images/docker_17.png" alt="" /></p>
+
+<ul>
+  <li>
+    <p>Volumes are stored in a part of the host filesystem which is managed by Docker (/var/lib/docker/volumes/ on Linux). Non-Docker processes should not modify this part of the filesystem. Volumes are the best way to persist data in Docker.</p>
+  </li>
+  <li>
+    <p>Bind mounts may be stored anywhere on the host system. They may even be important system files or directories. Non-Docker processes on the Docker host or a Docker container can modify them at any time.</p>
+  </li>
+  <li>
+    <p>tmpfs mounts are stored in the host system’s memory only, and are never written to the host system’s filesystem.</p>
+  </li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.docker.com/storage/" target="_blank">도커 공식문서: Manage data in Docker</a></li>
+</ul>
+:ET
