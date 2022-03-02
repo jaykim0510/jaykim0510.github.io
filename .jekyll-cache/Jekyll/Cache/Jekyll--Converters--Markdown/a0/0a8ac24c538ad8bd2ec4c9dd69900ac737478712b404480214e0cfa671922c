@@ -1,0 +1,178 @@
+I"0<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커에서-데이터-관리하기" id="markdown-toc-도커에서-데이터-관리하기">도커에서 데이터 관리하기</a></li>
+  <li><a href="#마운트-종류" id="markdown-toc-마운트-종류">마운트 종류</a></li>
+  <li><a href="#volume" id="markdown-toc-volume">Volume</a>    <ul>
+      <li><a href="#volume을-사용하기-좋은-경우" id="markdown-toc-volume을-사용하기-좋은-경우">Volume을 사용하기 좋은 경우</a></li>
+    </ul>
+  </li>
+  <li><a href="#bind-mount" id="markdown-toc-bind-mount">Bind Mount</a>    <ul>
+      <li><a href="#bind-mount를-사용하기-좋은-경우" id="markdown-toc-bind-mount를-사용하기-좋은-경우">Bind mount를 사용하기 좋은 경우</a></li>
+    </ul>
+  </li>
+  <li><a href="#tmpfs-mount" id="markdown-toc-tmpfs-mount">tmpfs Mount</a>    <ul>
+      <li><a href="#tmpfs-mount를-사용하기-좋은-경우" id="markdown-toc-tmpfs-mount를-사용하기-좋은-경우">tmpfs mount를 사용하기 좋은 경우</a></li>
+    </ul>
+  </li>
+  <li><a href="#사용-방법" id="markdown-toc-사용-방법">사용 방법</a>    <ul>
+      <li><a href="#dockerfile" id="markdown-toc-dockerfile">Dockerfile</a></li>
+      <li><a href="#docker-run-command" id="markdown-toc-docker-run-command">docker run command</a></li>
+      <li><a href="#docker-compose" id="markdown-toc-docker-compose">docker compose</a></li>
+      <li><a href="#docker-compose-services" id="markdown-toc-docker-compose-services">docker compose services</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="도커에서-데이터-관리하기">도커에서 데이터 관리하기</h1>
+
+<p>기본적으로 컨테이너 안에서 생성된 모든 파일은 <strong>컨테이너 레이어에 저장</strong>됩니다. 그래서, 해당 컨테이너가 삭제되면 데이터도 함께 사라집니다. 따라서 컨테이너의 생명 주기와 관계없이 데이터를 영구적으로 저장하기 위한 방법이 필요합니다. 또한 여러 컨테이너가 데이터를 공유할 수 있으면 데이터를 컨테이너별로 중복 저장할 필요가 없어 컨테이너를 더욱 효율적으로 관리할 수 있게 될 것입니다.</p>
+
+<p>이러한 이유로 다음과 같은 기능을 가진 옵션을 도커에서는 제공해주고 있습니다.</p>
+
+<ul>
+  <li><strong>데이터 영구 저장</strong></li>
+  <li><strong>컨테이너간 데이터 공유</strong></li>
+</ul>
+
+<p>도커에서 볼륨을 위해 제공해주는 옵션 중 <strong>volume</strong> 또는 <strong>bind mount</strong>를 사용하면 컨테이너가 중지된 후에도 파일을 호스트 머신에 파일을 저장함으로써 유지할 수 있습니다.</p>
+
+<p>참고로 도커에서 <strong>tmpfs mount</strong>를 사용하면 호스트의 시스템 메모리에 인-메모리 형식으로 파일을 저장할 수 있습니다.</p>
+
+<h1 id="마운트-종류">마운트 종류</h1>
+
+<p>어떤 종류의 마운트를 사용하더라도 컨테이너 안에서 데이터의 모습은 같습니다. 각 마운트 종류의 차이를 이해하는 쉬운 방법은 데이터가 도커 호스트 내에서 어디 존재하는지 생각해보는 것입니다.</p>
+
+<p><img src="../../images/docker_17.png" alt="" /></p>
+
+<ul>
+  <li>
+    <p><strong>Volume</strong>을 사용하면 도커에 의해 관리되는 호스트 파일 시스템(Linux기준 <code class="language-plaintext highlighter-rouge">/var/lib/docker/volumes/</code>)에 데이터가 저장됩니다. 비-도커 프로세스들은 여기 파일들을 수정해서는 안됩니다.</p>
+  </li>
+  <li>
+    <p><strong>Bind mount</strong>는 호스트 머신 어디든 저장될 수 있습니다. 비-도커 프로세스들도 여기 파일들을 언제든 수정할 수 있습니다.</p>
+  </li>
+  <li>
+    <p><strong>tmpfs mount</strong>는 호스트 메모리 시스템에만 저장됩니다. 호스트 파일 시스템에는 절대 저장되지 않습니다.</p>
+  </li>
+</ul>
+
+<h1 id="volume">Volume</h1>
+
+<p><img src="../../images/docker_18.png" alt="" /></p>
+
+<p>Volume은 <strong>완전히 도커에 의해서만 관리</strong>되어 <strong>호스트 머신의 디렉토리 구조나 OS에 독립적</strong>인, 도커에서 데이터를 유지하기 위한 권장되는 메커니즘입니다.</p>
+
+<p>또한 볼륨이 컨테이너를 사용하는 컨테이너의 크기를 늘리지 않고 컨테이너의 라이프사이클 외부에 존재하기 때문에 컨테이너 레이어에서 데이터를 유지하는 것보다 더 나은 선택인 경우가 많습니다.</p>
+
+<p>Volume은 <code class="language-plaintext highlighter-rouge">docker volume create</code> 명령어를 이용해 명시적으로 볼륨을 생성할 수도 있고, 컨테이너를 생성할 때 같이 볼륨을 생성할 수도 있습니다.</p>
+
+<p>볼륨은 도커 호스트 내의 디렉토리에 저장됩니다. 컨테이너에 마운트되는 볼륨이 바로 이것 입니다. volume은 bind mount와 비슷하지만 다른 점은 도커에 의해 관리 되고 호스트 머신으로부터 isolated 되었다는 점입니다.</p>
+
+<p>주어진 볼륨은 여러 컨테이너에 동시에 마운트 될 수 있습니다. 볼륨을 사용해 실행 중인 컨테이너가 없더라도 볼륨이 저절로 제거되지 않습니다. 만약 사용하지 않는 볼륨을 제거하고 싶다면 <code class="language-plaintext highlighter-rouge">docker volume prune</code> 명령어를 사용하면 됩니다.</p>
+
+<p>볼륨 드라이버를 사용해 클라우드 또는 리모트 호스트에 데이터를 저장할 수도 있습니다.</p>
+
+<h2 id="volume을-사용하기-좋은-경우">Volume을 사용하기 좋은 경우</h2>
+
+<ul>
+  <li>여러 컨테이너에 마운트하고 싶은 경우. 명시적으로 표현한 볼륨이 없으면 자동으로 생성하고 마운트 해줍니다.</li>
+  <li>도커 호스트의 파일 구조를 모르는 경우. bind mount와 달리 Volume은 볼륨 명으로 관리(bind mount는 디렉토리 경로)</li>
+  <li>로컬이 아닌 리모트 호스트 또는 클라우드 서버에 저장하고 싶은 경우</li>
+  <li>높은 성능의 I/O을 요구하는 경우. 볼륨은 호스트가 아닌 Linux VM에 저장. 따라서 읽고 쓰는데 있어 성능이 훨씬 뛰어납니다.</li>
+  <li>Docker Desktop에서 완전히 네이티브한 파일 시스템이 필요한 경우</li>
+  <li>백업, 데이터 통합이 필요한 경우</li>
+</ul>
+
+<h1 id="bind-mount">Bind Mount</h1>
+
+<p><img src="../../images/docker_19.png" alt="" /></p>
+
+<p>bind mount는 volume에 비해 기능이 제한됩니다. bind mount를 사용하면 <strong>호스트 머신의 파일 또는 디렉토리가 컨테이너에 마운트</strong>됩니다. 파일 또는 디렉토리는 <strong>호스트 시스템의 절대 경로에서 참조</strong>됩니다. 반대로 volume을 사용하면 호스트 머신의 Docker 스토리지 디렉토리 내에 새 디렉토리가 생성되고 Docker가 해당 디렉토리의 내용을 관리합니다.</p>
+
+<p>파일 또는 디렉토리가 도커 호스트에 아직 존재하지 않아도 됩니다. 아직 존재하지 않는 경우 요청 시 생성됩니다. bind mount는 성능이 매우 뛰어나지만 사용 가능한 특정 디렉토리 구조가 있는 호스트 시스템의 파일 시스템에 의존합니다.</p>
+
+<p>bind mount를 사용하면 <strong>컨테이너에서 실행되는 프로세스를 통해 호스트 파일 시스템을 변경할 수 있습니다.</strong> 이는 호스트 시스템에 Docker가 아닌 프로세스에 영향을 미치는 등 <strong>보안에 안좋은 영향</strong>을 미칠 수 있는 강력한 기능입니다.</p>
+
+<h2 id="bind-mount를-사용하기-좋은-경우">Bind mount를 사용하기 좋은 경우</h2>
+
+<ul>
+  <li>호스트 머신에 있는 설정 파일을 컨테이너와 공유하고 싶은 경우</li>
+  <li>파일 또는 디렉토리 구조가 항상 일관될 수 있는 경우</li>
+</ul>
+
+<h1 id="tmpfs-mount">tmpfs Mount</h1>
+
+<p><img src="../../images/docker_20.png" alt="" /></p>
+
+<p>tmpfs 마운트는 도커 호스트 또는 컨테이너 내에서 디스크에 유지되지 않습니다. 컨테이너 수명 동안 컨테이너가 비영구 상태 또는 중요한 정보를 저장하는 데 사용할 수 있습니다. 예를 들어, 내부적으로, swarm 서비스는 tmpfs 마운트를 사용하여 서비스의 컨테이너에 비밀을 탑재한다.</p>
+
+<h2 id="tmpfs-mount를-사용하기-좋은-경우">tmpfs mount를 사용하기 좋은 경우</h2>
+
+<ul>
+  <li>보안상의 이유 또는 대용량 데이터로 인한 성능 저하 우려로 데이터가 호스트 머신 또는 컨테이너에 유지되길 원하지 않는 경우.</li>
+</ul>
+
+<h1 id="사용-방법">사용 방법</h1>
+
+<h2 id="dockerfile">Dockerfile</h2>
+<ul>
+  <li>Dockerfile에는 볼륨 기능을 위해 <strong>VOLUME</strong>을 제공합니다.</li>
+  <li>이미지가 빌드되는 호스트 머신은 사용자에 따라 달라지므로 source는 지정할 수 없습니다.</li>
+  <li>VOLUME에서 표기하는 것은 오직 <strong>컨테이너안에 있는 볼륨의 destination</strong>입니다.</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">VOLUME</span><span class="s"> /myvolume</span>
+</code></pre></div></div>
+
+<ul>
+  <li>데이터가 사라지지 않도록 저장해두는 source는 컨테이너 생성/실행 시 표기할 수 있습니다.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-it</span> <span class="nt">-v</span> <span class="si">$(</span><span class="nb">pwd</span><span class="si">)</span>/src:/src my-image
+</code></pre></div></div>
+
+<ul>
+  <li>사실 Dockerfile에서 <strong>VOLUME은 사용하지 않는 것이 좋습니다</strong>. (어차피 source를 지정할 수 없으므로)</li>
+</ul>
+
+<h2 id="docker-run-command">docker run command</h2>
+<p>컨테이너를 생성하거나 실행할 때 <code class="language-plaintext highlighter-rouge">-v</code>(<code class="language-plaintext highlighter-rouge">--volume</code>) or <code class="language-plaintext highlighter-rouge">--mount</code> 옵션을 이용해 볼륨을 마운트할 수 있습니다.</p>
+
+<ul>
+  <li><strong>-v(--volume)</strong></li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># first field</span>
+<span class="c"># volume옵션을 사용할 때는 명명된 볼륨이면 볼륨의 이름, 익명 볼륨이면 생략 가능</span>
+<span class="c"># bind mount옵션의 경우 호스트 머신의 디렉토리 경로</span>
+<span class="c"># second field는 컨테이너내의 마운트하고자 하는 경로입</span>
+<span class="nt">-v</span> &lt;first field&gt;:&lt;second field&gt;
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 예시</span>
+docker run <span class="nt">-d</span> <span class="se">\</span>
+  <span class="nt">--name</span> devtest <span class="se">\</span>
+  <span class="nt">-v</span> myvol2:/app <span class="se">\</span>
+  nginx:latest
+</code></pre></div></div>
+<ul>
+  <li><strong>볼륨 생성</strong></li>
+  <li><strong>볼륨과 함께 컨테이너 실행</strong></li>
+  <li><strong>읽기 전용 볼륨</strong></li>
+</ul>
+
+<h2 id="docker-compose">docker compose</h2>
+
+<h2 id="docker-compose-services">docker compose services</h2>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.docker.com/storage/" target="_blank">도커 공식문서: Manage data in Docker</a></li>
+  <li><a href="https://www.daleseo.com/docker-volumes-bind-mounts/" target="_blank">DaleSeo: Docker 컨테이너에 데이터 저장 (볼륨/바인드 마운트)</a></li>
+  <li><a href="https://stackoverflow.com/questions/41935435/understanding-volume-instruction-in-dockerfile" target="_blank">stack overflow: Understanding “VOLUME” instruction in DockerFile</a></li>
+</ul>
+:ET

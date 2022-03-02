@@ -178,8 +178,8 @@ environment:
       ```
   - **Long Syntax 표기법**  
     - **type**: 마운트 타입. `volume`, `bind`, `tmpfs`, `npipe` [(참고)](https://docs.docker.com/storage/bind-mounts/){:target="_blank"}  
-      - `volume`: 도커가 로컬의 저장소와 컨테이너의 저장소를 동기화 시킴. 
-      - `bind`: 로컬의 저장소를 컨테이너에 마운트. 로컬에서만 디렉토리 및 파일 관리 
+      - `volume`: 도커에 의해 관리되는 볼륨을 마운트하는 경우 
+      - `bind`: 호스트 머신의 파일 또는 디렉토리를 컨테이너에 마운트하는 경우
     - **source**: 마운트 하고자 하는 호스트 경로의 디렉토리 또는 네임드 볼륨
     - **target**: 볼륨이 마운트 될 컨테이너에서의 경로  
 
