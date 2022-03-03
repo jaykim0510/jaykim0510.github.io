@@ -64,7 +64,7 @@ Docker Driver 는 크게 세 가지 범주로 나눌 수 있습니다.
 graphdriver는 Storage Driver 라고 이해하면 됩니다. `/var/lib/docker` 내에 저장되어 있는 container, image 관련 정보들을 이용하여 사용자에게 통합된 File System으로 제공하는 드라이버입니다. built-in graphdriver 로는 `btrfs`, `vfs`, `auts`, `devmapper`, `overlay2` 등이 있습니다. Storage Driver에 관한 내용은 [**이 포스트**](https://jaykim0510.github.io/docker-series6)를 참고하시면 됩니다.  
 
 ### Network Driver
-도커의 네트워크의 철학은 **CNM(Container Network Model)**을 따릅니다. CNM 은 컨테이너를 사용하는 환경에서 사용자가 네트워크 설계를 쉽게 하기 위한 것입니다. 다시 말해, 복잡한 물리적인 환경을 고려할 필요없이 사용자는 네트워크를 설계할 때 추상적인 개념 만을 이용해 설계할 수 있게 됩니다. 이러한 추상화는 운영체제나 인프라 환경에 구애받지 않는 설계를 가능하도록 해줍니다. CNM을 구성하는 요소는 크게 다음과 같이 3가지가 있습니다.  
+도커의 네트워크의 철학은 **CNM(Container Network Model)**을 따릅니다. CNM은 컨테이너를 사용하는 환경에서 사용자가 네트워크 설계를 쉽게 하기 위한 것입니다. 다시 말해, 복잡한 물리적인 환경을 고려할 필요없이 사용자는 네트워크를 설계할 때 추상적인 개념만을 이용해 설계할 수 있게 됩니다. 이러한 추상화는 운영체제나 인프라 환경에 구애받지 않는 설계를 가능하도록 해줍니다. CNM을 구성하는 요소는 크게 다음과 같이 3가지가 있습니다.  
 
 ![](../../images/docker_15.png)  
 
@@ -73,6 +73,26 @@ graphdriver는 Storage Driver 라고 이해하면 됩니다. `/var/lib/docker` �
 - **Network**: 네트워크는 직접적으로 통신을 할 수 있는 엔드포인트를 연결하는 역할  
 
 2개의 Sandbox 안에 각각 Endpoint 요소를 하나 씩 만들고, 그 Endpoint 둘을 Network 이라는 요소에 연결해 컨테이너 간의 통신을 위한 네트워크를 구현할 수 있습니다. **이러한 개념(CNM)으로 네트워크를 구현해 놓은 것이 libnetwork이고 사용자가 사용할 수 있도록 기능을 제공하는 드라이버가 Networkdriver 입니다.**    
+
+![](../../images/docker_21.png) 
+
+Libnetwork provides the network control and management plane (native service discovery and load balancing). It accepts different drivers to provide the data plane (connectivity and isolation).  
+
+Some of the network drivers that we can choose are:  
+
+- **bridge**: it creates single-host bridge networks. Containers connect to these bridges. To allow outbound traffic to the container, the Kernel iptables does NAT. For inbound traffic, we would need to port-forward a host port with a container port.  
+
+```
+🦊 **Note**  
+Every Docker host has a default bridge network (docker0).  
+All new container will attach to it unless you override it (using --network flag).   
+```
+
+- **MACVLAN**: Multi-host network. Containers will have its own MAC and IP addresses on the existing physical network (or VLAN). Good things: it is easy and does not use port-mapping. Bad side: the host NIC has to be in promiscuous mode (most cloud provider does not allow this).
+- **Overlay**: it allows containers in different hosts to communicate using encapsulation. It allows you to create a flat, secure, layer-2 network.
+
+
+Note: Docker creates an Embedded DNS server in user-defined networks. All new containers are registered with the embedded Docker DNS resolver so can resolve names of all other containers in the same network.  
 
 ### Execdriver
 Execdriver는 컨테이너 생성 및 관리에 관한 역할을 담당합니다. 즉, 커널의 격리 기술을 이용하여 컨테이너를 생성하고 실행하는 역할을 합니다. Execdriver의 하위 드라이버인 Runtime driver로는 예전에는 리눅스의 `LXC`를 이용했지만 최근버전의 도커는 도커내에서 개발한 Docker native runtime driver인 `libcontainer`나 `runc`를 이용합니다.  
@@ -84,3 +104,4 @@ docker run 을 실행하면 이는 결국 execdriver -> runtime driver -> cgroup
 
 # 참고
 - [Rain.i님의 도커 컨테이너 까보기(4) – Docker Total Architecture 포스트](http://cloudrain21.com/examination-of-docker-total-architecture){:target="_blank"}
+- [Maria Valcam, Docker: All you need to know — Containers Part 2](https://medium.com/hacking-talent/docker-all-you-need-to-know-containers-part-2-31120eeb296f){:target="_blank"}
