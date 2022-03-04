@@ -137,4 +137,10 @@ import copy
 
 a = [1, 2, 3]
 d = copy.deepcopy(a)
-```
+```  
+
+# 참고  
+
+- [파이썬 알고리즘 인터뷰 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791189909178&orderClick=LEa&Kc=)
+- [YABOONG: 자바 메모리 관리 - 스택 & 힙](https://yaboong.github.io/java/2018/05/26/java-memory-management/){:target="_blank"}
+- [nina, memory-management-in-python-the-basics](https://www.slideshare.net/nnja/memory-management-in-python-the-basics){:target="_blank"}
