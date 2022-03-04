@@ -2,7 +2,7 @@
 layout: post
 title:  'Python Basic Series [Part4]: 파이썬 딕셔너리/셋 자료형'
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
-date:   2020-04-23 15:01:35 +0300
+date:   2021-03-16 15:01:35 +0300
 image:  '/images/python_logo.jpg'
 logo_image: '/images/python_logo.jpg'
 categories: programming_language
