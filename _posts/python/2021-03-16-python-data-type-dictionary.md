@@ -1,13 +1,20 @@
 ---
 layout: post
-title:  Python data type dictionary
+title:  'Python Basic Series [Part4]: 파이썬 딕셔너리/셋 자료형'
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-04-23 15:01:35 +0300
 image:  '/images/python_logo.jpg'
+logo_image: '/images/python_logo.jpg'
 categories: programming_language
 tags: Python
 ---
+---
+**Table of Contents**
+{: #toc }
+*  TOC
+{:toc}
 
+---
 ## 1. 딕셔너리 자료형의 특징
 
 딕셔너리 자료형은 **순서가 없는 시퀀스형** 자료형입니다.  

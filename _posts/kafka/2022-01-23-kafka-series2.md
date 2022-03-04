@@ -9,12 +9,13 @@ categories:   DE
 tags: Kafka
 ---
 
+---
 **Table of Contents**
 {: #toc }
 *  TOC
 {:toc}
 
----  
+--- 
 
 # Kafka의 주요 구성요소
 Kafka는 크게 3가지로 이루어 있습니다.  

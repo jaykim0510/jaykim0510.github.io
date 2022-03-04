@@ -8,6 +8,7 @@ logo_image:  '/images/javascript_logo.png'
 categories: programming_language
 tags: Javascript
 ---
+---
 
 **Table of Contents**
 {: #toc }

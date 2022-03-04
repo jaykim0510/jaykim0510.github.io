@@ -1,0 +1,71 @@
+I"�<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#메모리-관리" id="markdown-toc-메모리-관리">메모리 관리</a>    <ul>
+      <li><a href="#python-memory-manager" id="markdown-toc-python-memory-manager">Python Memory Manager</a></li>
+      <li><a href="#garbage-collection" id="markdown-toc-garbage-collection">Garbage Collection</a></li>
+    </ul>
+  </li>
+  <li><a href="#메모리-할당" id="markdown-toc-메모리-할당">메모리 할당</a>    <ul>
+      <li><a href="#stack-영역" id="markdown-toc-stack-영역">Stack 영역</a></li>
+      <li><a href="#heap-영역" id="markdown-toc-heap-영역">Heap 영역</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+<p>요즘에는 컴퓨터, 스마트폰을 사용할 때 한가지 프로그램/어플리케이션만 실행하는 사람은 없을 것입니다. 그렇기 때문에 내가 만든 프로그램/어플리케이션이 메모리를 효율적으로 사용하도록 개발하는 것은 중요합니다.</p>
+
+<p>메모리를 효율적으로 사용하는 프로그램/어플리케이션을 만들기 위해서는 메모리 할당에 대해 이해해야합니다. 메모리 할당은 내가 사용하는 프로그래밍 언어, 운영체제, 컴퓨터 아키텍처에 따라 조금씩 다르지만 전체적인 과정은 비슷합니다.</p>
+
+<p>파이썬의 메모리 관리는 대부분 Python Memory Manager에 의해 수행되지만, 최상의 코딩 방법과 Python Memory Manager 작동 방식에 대한 이해는 보다 효율적이고 유지 관리 가능한 코드를 작성하도록 도와줍니다.</p>
+
+<h1 id="메모리-관리">메모리 관리</h1>
+
+<p>파이썬에서의 메모리 관리는 크게 두 가지 레벨로 나누어서 생각할 수 있습니다. 첫 번째로 운영체제 레벨에서는 각 프로세스에 메모리를 얼마나 할당할지를 정하고, 각각의 프로세스가 다른 프로세스에 접근하지 못하도록 관리합니다.</p>
+
+<p>두 번째로 파이썬 내에서의 메모리 관리입니다.</p>
+
+<p>파이썬은 실행 중인 모든 프로그램이 안전하고 효율적으로 실행되도록 보장합니다. 그리고 한 변수에 할당된 메모리가 다른 변수에 의해 동시에 사용되지 않도록 합니다. 정확히 어떻게 이런 일이 일어나는지를 이번 포스트에서 살펴보겠습니다.</p>
+
+<p><img src="/images/python_1.png" alt="" /></p>
+
+<h2 id="python-memory-manager">Python Memory Manager</h2>
+
+<p>Python memory manager는 모든 Python objects와 data structures를 포함하는 private 힙을 포함합니다. Python memory manager는 공유(sharing), 분할(segmentation), 사전 할당(preallocation) 또는 캐싱(caching)과 같은 다양한 동적 스토리지 관리 측면을 다루는 다양한 구성 요소를 가지고 있습니다.</p>
+
+<p>가장 낮은 수준에서 raw memory allocator는 운영 체제의 메모리 관리자와 상호 작용하여 모든 파이썬 관련 데이터를 저장할 수 있는 충분한 공간을 private 힙에 확보합니다. raw memory allocator 외에도 여러 object-specific allocators가 동일한 힙에서 object의 특성에 맞는 고유한 메모리 관리 정책을 구현합니다.</p>
+
+<p>파이썬 힙의 관리는 인터프리터 자체에 의해 수행되며 힙 내부의 메모리 블록에 대한 객체 포인터를 사용자가 직접 제어할 수 없다는 것을 의미합니다. Python objects를 위한 힙 공간 할당은 파이썬/C API 함수를 통해 파이썬 메모리 관리자에 의해 수행됩니다.</p>
+
+<h2 id="garbage-collection">Garbage Collection</h2>
+
+<p>가비지 컬렉션은 인터프리터가 프로그램을 사용하지 않을 때 프로그램의 메모리를 비우는 것입니다. 파이썬이 이렇게 할 수 있는 것은 파이썬 개발자들이 백엔드에서 우리를 위해 가비지 컬렉터를 구현했기 때문입니다. 파이썬 가비지 컬렉터는 reference counting 방법으로 객체에 더 이상 참조가 없을 때는 메모리에 할당을 취소하고 메모리를 비우게 됩니다.</p>
+
+<h1 id="메모리-할당">메모리 할당</h1>
+
+<p>Memory allocation is the process by which a program is assigned or allocated to a particular empty block of space in computer memory. In Python, all of this is done on the backend by the Python Memory Manager. Since Python is implemented using C programming language, this process is handled the C-way — where the developer allocates and frees memory (by creating a garbage collector for Python) so users do not have to do manual garbage collection. Since the C-backend handles this, Python users do not need to worry about it.</p>
+
+<h2 id="stack-영역">Stack 영역</h2>
+
+<p>Stack allocation stores static memory, which is the memory that is only needed inside a particular function or method call. When a function is called, it is added onto the program’s call stack. Any local memory assignments — such as variable initializations — inside the particular functions are stored temporarily on the function call stack, where it is deleted once the function returns, and the call stack moves on to the next task. This allocation onto a contiguous block of memory is handled by the compiler using predefined routines, and developers do not need to worry about it.</p>
+
+<h2 id="heap-영역">Heap 영역</h2>
+<p>Heap allocation stores dynamic memory, which is the memory that is used in the program, at global scope. These variables are needed outside of specific method or function calls or are shared within multiple functions globally. Unlike stack allocation, heap allocation is not related to its namely counterpart: the heap data structure. It is simply a large space of memory available for allocation and freeing at somewhat random addresses, found based on the space needed by the object being stored.</p>
+
+<p>This allocation is manually done by C developers and must be implemented carefully to prevent memory leaks. All memory allocated on the heap, such as pointers to nodes in a linked list or other objects, must be freed at the end of the program, or whenever it is no longer needed. For implementations such as linked lists and tree data structures, freeing memory must be handled with extra care when a node is deleted, and access to that address in memory — often with the use of pointers — is lost.</p>
+
+<p>Below is an example of how a program’s function variables would be allocated onto a stack and a heap. Notice how local variables are stored on the stack, however, the form object is stored on a heap. This is because the inbuilt operation ‘new’ allocates dynamic memory on the heap.</p>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://medium.datadriveninvestor.com/how-does-memory-allocation-work-in-python-and-other-languages-d2d8a9398543" target="_blank">How does Memory Allocation work in Python (and other languages)?</a></li>
+  <li><a href="https://docs.python.org/3/c-api/memory.html#tracemalloc-c-api" target="_blank">Python 공식문서: Memory Management</a></li>
+  <li><a href="https://www.programmerinterview.com/data-structures/difference-between-stack-and-heap/" target="_blank">What’s the difference between a stack and a heap?</a></li>
+  <li><a href="https://realpython.com/python-memory-management/" target="_blank">RealPython: Memory Management in Python</a></li>
+  <li><a href="https://velog.io/@muchogusto/파이썬-런타임과-메모리-관리" target="_blank">muchogusto.log: 파이썬 런타임과 메모리 관리</a></li>
+  <li><a href="https://hkim-data.tistory.com/182" target="_blank">python의 메모리 할당과 관리 (Stack &amp; Heap Memory)</a></li>
+  <li><a href="https://armontad-1202.tistory.com/entry/파이썬의-메모리-영역" target="_blank">파이썬 메모리 영역</a></li>
+</ul>
+
+:ET

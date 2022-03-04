@@ -9,7 +9,14 @@ categories: DE
 tags: Elasticsearch
 ---
 
+---
 
+**Table of Contents**
+{: #toc }
+*  TOC
+{:toc}
+
+---
 # Elasticsearch 소개
  - Elasticsearch는 정형 및 비정형 데이터 등 모든 유형의 데이터를 위한 무료 검색 및 분석 엔진
  - Apache Lucene을 기반으로 구축

@@ -1,13 +1,20 @@
 ---
 layout: post
-title:  Python data type list
+title:  'Python Basic Series [Part3]: 파이썬 리스트 자료형'
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2020-04-23 15:01:35 +0300
 image:  '/images/python_logo.jpg'
+logo_image: '/images/python_logo.jpg'
 categories: programming_language
 tags: Python
 ---
+---
+**Table of Contents**
+{: #toc }
+*  TOC
+{:toc}
 
+---
 
 ## 1. 리스트 자료형의 특징
 

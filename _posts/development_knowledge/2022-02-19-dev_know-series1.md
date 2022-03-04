@@ -8,6 +8,7 @@ logo_image:  '/images/development_knowledge_logo.png'
 categories: Development_knowledge
 tags: Javascript Python Java
 ---
+---
 
 **Table of Contents**
 {: #toc }
