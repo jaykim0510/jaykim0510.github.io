@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Apache Spark Series [Part4]: 스파크의 클러스터 매니저(Cluster Manager)'
+title:  'Apache Spark Series [Part4]: 스파크 RDD(Resilient Distributed Dataset)'
 description: 
 date:   2022-02-22 15:01:35 +0300
 image:  '/images/spark_logo.png'
@@ -16,10 +16,4 @@ tags: Spark
 
 ---
 
-# 스탠드얼론
-
-# 얀
-
-# 메소스
-
-# 쿠버네티스  
+아직 작성 전입니다.  

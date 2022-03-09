@@ -1,4 +1,4 @@
-I"�<hr />
+I"<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -6,6 +6,31 @@
 </ul>
 
 <hr />
+
+<p>ES와 Spark 컨테이너 실행</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">elasticsearch</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">elasticsearch:7.16.2</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">elasticsearch</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">9200:9200"</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">9300:9300"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">ES_JAVA_OPTS</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-Xmx256m</span><span class="nv"> </span><span class="s">-Xms256m"</span>
+      <span class="na">ELASTIC_PASSWORD</span><span class="pi">:</span> <span class="s">changeme</span>
+      <span class="na">ELASTIC_USERNAME</span><span class="pi">:</span> <span class="s">elastic</span>
+      <span class="na">discovery.type</span><span class="pi">:</span> <span class="s">single-node</span>
+  
+  <span class="na">spark</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">kimziont:spark</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">spark</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">4040:4040"</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
 
 <p>Spark에서 ElasticSearch를 쓰려면 커넥터가 필요한 것 같다. Elastic에서 이를 위해 elasticsearch-hadoop를 제공하는데 우선 다운을 받아야 한다.</p>
 
@@ -46,8 +71,6 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
     <p><a href="https://docs.docker.com/engine/reference/builder/#cmd" target="_blank">Docker 공식문서</a></p>
   </li>
   <li><a href="https://oboki.net/workspace/python/pyspark-elasticsearch-index-에서-dataframe-생성하기/" target="_blank">Spark와 ElasticSearch 연동하기</a></li>
-  <li><a href="https://www.bmc.com/blogs/write-apache-spark-elasticsearch-python/">How To Write Apache Spark Data to ElasticSearch Using Python</a></li>
-  <li><a href="https://www.bmc.com/blogs/using-elasticsearch-with-apache-spark/">Using ElasticSearch with Apache Spark</a></li>
-  <li><a href="https://github.com/elastic/elasticsearch-hadoop">elasticsearch-hadoop</a></li>
+  <li><a href="https://github.com/elastic/elasticsearch-hadoop" target="_blank">elasticsearch-hadoop</a></li>
 </ul>
 :ET

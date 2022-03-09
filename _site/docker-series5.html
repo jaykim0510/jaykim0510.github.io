@@ -16,12 +16,12 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Docker Compose를 이용해 데이터 파이프라인 구축하기 – Jay Tech">
   <meta name="twitter:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/docker_logo.png">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/datapipeline_logo.png">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="Docker Compose를 이용해 데이터 파이프라인 구축하기 – Jay Tech">
   <meta property="og:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
-  <meta property="og:image" content="http://localhost:4000/images/docker_logo.png">
+  <meta property="og:image" content="http://localhost:4000/images/datapipeline_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -307,8 +307,16 @@
                 
                   <a href="/Docker" class="post__tag">#Docker</a>
                 
+                  <a href="/Spark" class="post__tag">#Spark</a>
+                
+                  <a href="/Kafka" class="post__tag">#Kafka</a>
+                
+                  <a href="/Elasticsearch" class="post__tag">#Elasticsearch</a>
+                
                 
                   <a href="/devops" class="post__tag">#devops</a>
+                
+                  <a href="/DE" class="post__tag">#DE</a>
                 
               </div>
             
@@ -380,6 +388,31 @@
 </ul>
 
 <hr />
+
+<p>ES와 Spark 컨테이너 실행</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">elasticsearch</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">elasticsearch:7.16.2</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">elasticsearch</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">9200:9200"</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">9300:9300"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">ES_JAVA_OPTS</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-Xmx256m</span><span class="nv"> </span><span class="s">-Xms256m"</span>
+      <span class="na">ELASTIC_PASSWORD</span><span class="pi">:</span> <span class="s">changeme</span>
+      <span class="na">ELASTIC_USERNAME</span><span class="pi">:</span> <span class="s">elastic</span>
+      <span class="na">discovery.type</span><span class="pi">:</span> <span class="s">single-node</span>
+  
+  <span class="na">spark</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">kimziont:spark</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">spark</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">4040:4040"</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
 
 <p>Spark에서 ElasticSearch를 쓰려면 커넥터가 필요한 것 같다. Elastic에서 이를 위해 elasticsearch-hadoop를 제공하는데 우선 다운을 받아야 한다.</p>
 
@@ -608,7 +641,7 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/docker-series5&amp;media=http://localhost:4000/images/docker_logo.png&amp;description=Docker%20Compose%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8%20%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/docker-series5&amp;media=http://localhost:4000/images/datapipeline_logo.png&amp;description=Docker%20Compose%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8%20%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
@@ -681,6 +714,8 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
                     <a href="/devops" class="section__link related-tag">See all<span> devops</span></a>
                   
                 
+                  
+                
               
               </a>
             </div>
@@ -701,123 +736,18 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
             
       
             
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-02-05T21:01:35+09:00">05 Feb 2022</time>
+      <time class="article__date" datetime="2022-02-22T21:01:35+09:00">22 Feb 2022</time>
 
       
 
       
-      <a class="article__image" href="/airflow-series1">
-        <img class="lazy" data-src="/images/airflow_logo.png" alt="Airflow Series [Part1]: What is Airflow">
+      <a class="article__image" href="/spark-series5">
+        <img class="lazy" data-src="/images/spark_16.jpg" alt="Apache Spark Series [Part5]: 스파크 SQL">
       </a>
       
 
@@ -826,11 +756,9 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/airflow-series1">Airflow Series [Part1]: What is Airflow</a>
+        <a href="/spark-series5">Apache Spark Series [Part5]: 스파크 SQL</a>
       </h2>
 
-      
-      <p class="article__excerpt">Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.</p>
       
 
     </div>
@@ -852,13 +780,13 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-02-04T21:01:35+09:00">04 Feb 2022</time>
+      <time class="article__date" datetime="2022-02-22T21:01:35+09:00">22 Feb 2022</time>
 
       
 
       
-      <a class="article__image" href="/docker-series9">
-        <img class="lazy" data-src="/images/docker_network_logo.png" alt="Docker의 네트워크 이해하기">
+      <a class="article__image" href="/spark-series4">
+        <img class="lazy" data-src="/images/spark_logo.png" alt="Apache Spark Series [Part4]: 스파크 RDD(Resilient Distributed Dataset)">
       </a>
       
 
@@ -867,11 +795,9 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/docker-series9">Docker의 네트워크 이해하기</a>
+        <a href="/spark-series4">Apache Spark Series [Part4]: 스파크 RDD(Resilient Distributed Dataset)</a>
       </h2>
 
-      
-      <p class="article__excerpt">이러한 개념(CNM)으로 네트워크를 구현해 놓은 것이 libnetwork이고 사용자가 사용할 수 있도록 기능을 제공하는 드라이버가 Networkdriver입니다.</p>
       
 
     </div>
@@ -888,25 +814,18 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
             
       
             
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-02-02T21:01:35+09:00">02 Feb 2022</time>
+      <time class="article__date" datetime="2022-02-21T21:01:35+09:00">21 Feb 2022</time>
 
       
 
       
-      <a class="article__image" href="/docker-series8">
-        <img class="lazy" data-src="/images/docker_17.png" alt="Docker의 볼륨 이해하기">
+      <a class="article__image" href="/spark-series3">
+        <img class="lazy" data-src="/images/spark_13.png" alt="Apache Spark Series [Part3]: 스파크의 클러스터 환경">
       </a>
       
 
@@ -915,11 +834,11 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/docker-series8">Docker의 볼륨 이해하기</a>
+        <a href="/spark-series3">Apache Spark Series [Part3]: 스파크의 클러스터 환경</a>
       </h2>
 
       
-      <p class="article__excerpt">FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.</p>
+      <p class="article__excerpt">그래서 스파크에서는 전체 서버의 자원과 동작을 세밀하고 효율적으로 제어할 수 있는 별도 모듈이 필요한데, 이를 클러스터 매니저라고 합니다</p>
       
 
     </div>

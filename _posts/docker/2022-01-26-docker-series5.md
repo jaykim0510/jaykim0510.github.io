@@ -3,10 +3,10 @@ layout: post
 title:  'Docker Compose를 이용해 데이터 파이프라인 구축하기'
 description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
 date:   2022-01-26 18:01:35 +0300
-image:  '/images/docker_logo.png'
+image:  '/images/datapipeline_logo.png'
 logo_image:  '/images/docker_logo.png'
-categories: devops
-tags: Docker
+categories: devops DE
+tags: Docker Spark Kafka Elasticsearch
 ---
 ---
 
@@ -16,6 +16,32 @@ tags: Docker
 {:toc}
 
 ---
+
+ES와 Spark 컨테이너 실행
+
+```yml
+version: '3.2'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.16.2
+    hostname: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: changeme
+      ELASTIC_USERNAME: elastic
+      discovery.type: single-node
+  
+  spark:
+    image: kimziont:spark
+    hostname: spark
+    ports:
+      - "4040:4040"
+    tty: true
+```
 
 Spark에서 ElasticSearch를 쓰려면 커넥터가 필요한 것 같다. Elastic에서 이를 위해 elasticsearch-hadoop를 제공하는데 우선 다운을 받아야 한다.  
 

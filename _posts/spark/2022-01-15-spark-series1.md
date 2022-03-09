@@ -133,3 +133,6 @@ RDD의 연산은 크게 __트랜스포메이션__ 과 **액션**이라는 두 �
 - RDD가 파티션으로 나뉘어지는 시점은 RDD가 생성되는 순간일까 아니면 연산이 실행되는 순간일까?
 - 어떤 기준으로 RDD를 파티셔닝할까?
 - 셔플링은 액션 연산에서만 발생할까?
+
+# 참고
+- [빅데이터 분석을 위한 스파크2 프로그래밍 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158391034&orderClick=LEa&Kc=){:target="_blank"}

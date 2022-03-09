@@ -1,0 +1,81 @@
+I"=<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#rdd-dataframe-dataset" id="markdown-toc-rdd-dataframe-dataset">RDD, Dataframe, Dataset</a>    <ul>
+      <li><a href="#rdd" id="markdown-toc-rdd">RDD</a></li>
+      <li><a href="#dataframe" id="markdown-toc-dataframe">Dataframe</a></li>
+      <li><a href="#dataset" id="markdown-toc-dataset">Dataset</a></li>
+    </ul>
+  </li>
+  <li><a href="#dataframe-1" id="markdown-toc-dataframe-1">Dataframe</a>    <ul>
+      <li><a href="#dataframe-생성" id="markdown-toc-dataframe-생성">Dataframe 생성</a></li>
+      <li><a href="#dataframe-액션-연산" id="markdown-toc-dataframe-액션-연산">Dataframe 액션 연산</a></li>
+      <li><a href="#dataframe-비타입-트랜스포메이션-연산" id="markdown-toc-dataframe-비타입-트랜스포메이션-연산">Dataframe 비타입 트랜스포메이션 연산</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="rdd-dataframe-dataset">RDD, Dataframe, Dataset</h1>
+
+<h2 id="rdd">RDD</h2>
+
+<p><img src="../images/../../images/spark_15.jpg" alt="" /></p>
+
+<p>Spark Core에 RDD가 있다면 Spark SQL에는 Dataframe과 Dataset이 있습니다. 기존의 RDD를 이용해 스파크 애플리케이션 코드를 작성할 때에는 RDD가 가지고 있는 메서드나 특성을 알아야지만 코드를 작성할 수 있었습니다. 그래서 RDD에 대한 이해도가 높아야 분산 환경에서 높은 처리 성능을 이끌어 낼 수 있었습니다.</p>
+
+<h2 id="dataframe">Dataframe</h2>
+<p>그러던 중 Spark 1.3버전에서 Dataframe이라는 새로운 데이터 모델이 공개되었습니다. Dataframe은 개발자들에게 친숙한 SQL과 비슷한 방식으로 작성할 수 있도록하는 API를 제공해 진입 장벽을 낮췄으며 코드의 가독성 또한 높여주었습니다. Dataframe도 마찬가지로 low-level에서는 RDD로 코드가 동작하는데 Spark SQL은 내부적으로 Catalyst Optimizer를 통해 최적의 RDD 코드로 변환됩니다. 따라서 쉬운 코드 작성과 높은 성능을 모두 얻게되었습니다.</p>
+
+<p>그러나 Dataframe에도 아쉬운 점이 있었는데, 바로 RDD에서 가능했던 컴파일 타임 오류 체크 기능을 사용할 수 없다는 점이었습니다.</p>
+
+<h2 id="dataset">Dataset</h2>
+<p>Spark 1.6버전에서 RDD의 장점과 Dataframe의 장점을 합친 새로운 데이터 모델인 Dataset이 등장했습니다.</p>
+
+<p>그리고 Spark 2.0 이후부터는 Dataframe이 Dataset 안에 포함되었습니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 데이터셋은 데이터를 처리할 때 데이터의 타입을 있는 그대로 활용할 수 있습니다.</span>
+데이터셋: Dataset[String], Dataset[Int]
+
+<span class="c"># 데이터프레임은 데이터를 처리할 때 데이터 타입을 무조건 org.apache.spark.sql.Row로 감싸줘야 합니다.</span>
+데이터프레임: Dataset[Row]
+</code></pre></div></div>
+
+<p>이렇게 Dataframe은 원래 데이터가 가지고 있던 타입의 특성은 사용하지 않기 때문에 Dataframe API은 비타입 트랜스포메이션 연산(untyped operations)으로 분류됩니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>데이터 모델</strong></td>
+      <td><strong>사용 가능한 연산</strong></td>
+    </tr>
+    <tr>
+      <td>Dataframe</td>
+      <td>액션 연산, 비타입 트랜스포메이션 연산</td>
+    </tr>
+    <tr>
+      <td>Dataset</td>
+      <td>액션 연산, 타입 트랜스포메이션 연산</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>저는 파이썬을 주언어로 사용하고 있으며 파이썬 언어는 Dataframe API만 제공하기 때문에 이번 포스트에서는 액션 연산과 비타입 트랜스포메이션 연산에 대해서만 다루도록 하겠습니다.</p>
+
+<h1 id="dataframe-1">Dataframe</h1>
+
+<h2 id="dataframe-생성">Dataframe 생성</h2>
+
+<h2 id="dataframe-액션-연산">Dataframe 액션 연산</h2>
+
+<h2 id="dataframe-비타입-트랜스포메이션-연산">Dataframe 비타입 트랜스포메이션 연산</h2>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791158391034&amp;orderClick=LEa&amp;Kc=" target="_blank">빅데이터 분석을 위한 스파크2 프로그래밍 책</a></li>
+  <li><a href="https://loustler.io/data_eng/spark-rdd-dataframe-and-dataset/" target="_blank">loustler, [Apache Spark] Spark RDD, Dataframe and DataSet</a></li>
+</ul>
+:ET
