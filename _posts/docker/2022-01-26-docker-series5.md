@@ -17,6 +17,16 @@ tags: Docker Spark Kafka Elasticsearch
 
 ---
 
+Elasticsearch 6.x는 arm 아키텍처 지원 X (도커 기준)  
+
+나는 m1이라서 Elasticsearch 7.x 이상 써야됨  
+
+Elasticsearch-Hadoop은 어떤 버전에서든 7.x 정식 지원 안함.  
+
+MongoDB로 생각해보자...............  
+
+
+
 ES와 Spark 컨테이너 실행
 
 ```yml
@@ -62,15 +72,12 @@ pyspark --driver-class-path=/app/spark/jars/ext/elasticsearch-hadoop/6.4.1/dist/
 ```
 
 ```python
-from pyspark.sql import SQLContext
+df = spark.read.format("org.elasticsearch.spark.sql").option("es.read.field.as.array.include", "NerArray").option("es.nodes","localhost:9200").option("es.nodes.discovery", "true").load("index명") 
 
-sqlContext = SQLContext(sc)
+df.registerTempTable("ner") spark.sql("show tables").show() 
 
-df = sqlContext.read.format("org.elasticsearch.spark.sql").option("es.nodes","192.168.179.141:9200").option("es.nodes.discovery", "true").load("${INDEX}/${TYPE}")
-df.registerTempTable("tab")
+spark.sql("select * from ner").show()
 
-output = sqlContext.sql("SELECT distinct request FROM tab")
-output.show()
 ```
 
 spark-shell을 사용할 때는 아래와 같다.  
@@ -87,3 +94,4 @@ spark-shell --jars /app/spark/jars/ext/elasticsearch-hadoop/6.4.1/dist/elasticse
 
 - [Spark와 ElasticSearch 연동하기](https://oboki.net/workspace/python/pyspark-elasticsearch-index-에서-dataframe-생성하기/){:target="_blank"}  
 - [elasticsearch-hadoop](https://github.com/elastic/elasticsearch-hadoop){:target="_blank"}
+- [Jason Heo's Blog: Spark 3.0에서 elasticsearch hadoop 사용하기](http://jason-heo.github.io/programming/2021/01/16/es-hadoop-spark30.html)

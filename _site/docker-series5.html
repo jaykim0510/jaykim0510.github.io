@@ -389,6 +389,14 @@
 
 <hr />
 
+<p>Elasticsearch 6.x는 arm 아키텍처 지원 X (도커 기준)</p>
+
+<p>나는 m1이라서 Elasticsearch 7.x 이상 써야됨</p>
+
+<p>Elasticsearch-Hadoop은 어떤 버전에서든 7.x 정식 지원 안함.</p>
+
+<p>MongoDB로 생각해보자……………</p>
+
 <p>ES와 Spark 컨테이너 실행</p>
 
 <div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
@@ -430,15 +438,12 @@ unzip elasticsearch-hadoop-6.4.1.zip
 pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/spark/jars/ext/elasticsearch-hadoop/6.4.1/dist/elasticsearch-hadoop-6.4.1.jar
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SQLContext</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"org.elasticsearch.spark.sql"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.read.field.as.array.include"</span><span class="p">,</span> <span class="s">"NerArray"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.nodes"</span><span class="p">,</span><span class="s">"localhost:9200"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.nodes.discovery"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">).</span><span class="n">load</span><span class="p">(</span><span class="s">"index명"</span><span class="p">)</span> 
 
-<span class="n">sqlContext</span> <span class="o">=</span> <span class="n">SQLContext</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">registerTempTable</span><span class="p">(</span><span class="s">"ner"</span><span class="p">)</span> <span class="n">spark</span><span class="p">.</span><span class="n">sql</span><span class="p">(</span><span class="s">"show tables"</span><span class="p">).</span><span class="n">show</span><span class="p">()</span> 
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">sqlContext</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"org.elasticsearch.spark.sql"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.nodes"</span><span class="p">,</span><span class="s">"192.168.179.141:9200"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.nodes.discovery"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">).</span><span class="n">load</span><span class="p">(</span><span class="s">"${INDEX}/${TYPE}"</span><span class="p">)</span>
-<span class="n">df</span><span class="p">.</span><span class="n">registerTempTable</span><span class="p">(</span><span class="s">"tab"</span><span class="p">)</span>
+<span class="n">spark</span><span class="p">.</span><span class="n">sql</span><span class="p">(</span><span class="s">"select * from ner"</span><span class="p">).</span><span class="n">show</span><span class="p">()</span>
 
-<span class="n">output</span> <span class="o">=</span> <span class="n">sqlContext</span><span class="p">.</span><span class="n">sql</span><span class="p">(</span><span class="s">"SELECT distinct request FROM tab"</span><span class="p">)</span>
-<span class="n">output</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>spark-shell을 사용할 때는 아래와 같다.</p>
@@ -454,6 +459,7 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
   </li>
   <li><a href="https://oboki.net/workspace/python/pyspark-elasticsearch-index-에서-dataframe-생성하기/" target="_blank">Spark와 ElasticSearch 연동하기</a></li>
   <li><a href="https://github.com/elastic/elasticsearch-hadoop" target="_blank">elasticsearch-hadoop</a></li>
+  <li><a href="http://jason-heo.github.io/programming/2021/01/16/es-hadoop-spark30.html">Jason Heo’s Blog: Spark 3.0에서 elasticsearch hadoop 사용하기</a></li>
 </ul>
 
     </div>
@@ -960,39 +966,39 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
               <div class="gallery" style="grid-template-columns: repeat(3, auto);">
                 
                 <div class="gallery__image">
-                  <img src="/images/100.jpg" alt="Rest" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 001.jpeg" alt="Rest" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/101.jpg" alt="Lifestyle" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 002.jpeg" alt="Lifestyle" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/102.jpg" alt="Hobby" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 003.jpeg" alt="Hobby" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/103.jpg" alt="Notes" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 004.jpeg" alt="Notes" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/104.jpg" alt="Rest" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 005.jpeg" alt="Rest" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/105.jpg" alt="Hobby" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 006.jpeg" alt="Hobby" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/106.jpg" alt="Fashion" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 007.jpeg" alt="Fashion" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/107.jpg" alt="Notes" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 008.jpeg" alt="Notes" loading="lazy">
                 </div>
                 
                 <div class="gallery__image">
-                  <img src="/images/108.jpg" alt="Rest" loading="lazy">
+                  <img src="/images/KakaoTalk_Photo_2022-03-11-01-48-12 009.jpeg" alt="Rest" loading="lazy">
                 </div>
                 
               </div>
