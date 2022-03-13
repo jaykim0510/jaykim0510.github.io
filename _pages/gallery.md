@@ -1,11 +1,11 @@
 ---
 layout: page
-title: About
-permalink: /about/
-image: '/images/her_logo_3.png'
+title: Gallery
+permalink: /gallery/
+image: 
 ---
 
-아직 글을 작성 중입니다.  
+아직 작품 전시 전입니다.  
 
 <div class="gallery-box">
   <div class="gallery">

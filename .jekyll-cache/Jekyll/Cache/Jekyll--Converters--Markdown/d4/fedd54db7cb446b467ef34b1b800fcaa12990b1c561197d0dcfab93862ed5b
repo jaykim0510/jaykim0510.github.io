@@ -1,0 +1,65 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커-컨테이너로-jenkins-띄우기" id="markdown-toc-도커-컨테이너로-jenkins-띄우기">도커 컨테이너로 Jenkins 띄우기</a>    <ul>
+      <li><a href="#도커-이미지-pull" id="markdown-toc-도커-이미지-pull">도커 이미지 Pull</a></li>
+      <li><a href="#jenkins-컨테이너-실행" id="markdown-toc-jenkins-컨테이너-실행">Jenkins 컨테이너 실행</a></li>
+    </ul>
+  </li>
+  <li><a href="#jenkins-컨테이너에서-도커-cli가-필요한-순간이-온다" id="markdown-toc-jenkins-컨테이너에서-도커-cli가-필요한-순간이-온다">Jenkins 컨테이너에서 도커 CLI가 필요한 순간이 온다</a></li>
+</ul>
+
+<hr />
+
+<h1 id="도커-컨테이너로-jenkins-띄우기">도커 컨테이너로 Jenkins 띄우기</h1>
+
+<p>도커 이미지를 이용해서 Jenkins를 띄우는 방법은 간단합니다. 사용하다보면 커스터마이징할 필요가 생겨 이미지를 직접 빌드해야 하는 상황이 오겠지만, 아직 저는 Jenkins를 사용해 본 경험이 없기 때문에 단순히 띄우는 데 의의를 두고 이번 포스트를 작성했습니다.</p>
+
+<h2 id="도커-이미지-pull">도커 이미지 Pull</h2>
+
+<p>우선 도커 허브에서 이미지를 다운받습니다. 저는 arm64 아키텍처를 필요로 하기 때문에 그에 맞는 이미지를 다운 받았습니다.</p>
+
+<p><img src="/images/jenkins_1.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull jenkins/jenkins:2.332.1-lts-jdk11
+</code></pre></div></div>
+
+<h2 id="jenkins-컨테이너-실행">Jenkins 컨테이너 실행</h2>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Jenkins는 Web UI를 8080포트를 통해 제공해줍니다.  </span>
+docker run <span class="nt">-p</span> 8080:8080 <span class="nt">-d</span> jenkins/jenkins:2.332.1-lts-jdk11
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 웹 브라우저에서 로컬호스트 8080포트로 Jenkins Web UI에 접근</span>
+localhost:8080
+</code></pre></div></div>
+
+<p>그러면 뭔가 비밀번호 같은거를 입력하라고 뜨는데 이는 컨테이너 로그에 남아있어서 복붙하면 됩니다.</p>
+
+<p><img src="/images/jenkins_3.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker logs &lt;컨테이너명&gt;
+</code></pre></div></div>
+
+<p><img src="/images/jenkins_2.png" alt="" /></p>
+
+<p>그러면 플러그인 설치를 어떤 방법으로 할 것인지 묻는데 저는 Jenkins에서 선택해준 것들로 우선 설치하겠습니다.</p>
+
+<p><img src="/images/jenkins_4.png" alt="" /></p>
+
+<p>플러그인들을 열심히 설치하고 있습니다. Git이 자주 사용되는지 기본적으로 설치가 되는 모습입니다.</p>
+
+<p><img src="/images/jenkins_5.png" alt="" /></p>
+
+<p>설치가 끝나면 계정 설정을 하라고 나오고 간단히 입력하고 나면 Jenkins web UI가 잘 보입니다.</p>
+
+<p><img src="/images/jenkins_6.png" alt="" /></p>
+
+<h1 id="jenkins-컨테이너에서-도커-cli가-필요한-순간이-온다">Jenkins 컨테이너에서 도커 CLI가 필요한 순간이 온다</h1>
+
+<p>Jenkins는 CI/CD를 위한 기본적인 툴로써 요즘같은 마이크로서비스 패턴이 트렌드인 시대에서 도커는 반드시 필요해 보입니다. 여기서 문제가 있습니다. 저는 방금 Jenkins 서버를 도커 컨테이너로 띄웠는데 컨테이너에서 도커를 또 설치해도 괜찮을까요?</p>
+
+<p>이렇게 도커 컨테이너 안에 도커를 또 설치하는 패턴을 Docker in Docker(DinD)라고 하는데 많은 시니어 개발자들은 이 방식을 권장하지 않는다고 합니다. 다음은 DinD 방식에 대한 장단점을 정리해둔 포스트이니 참고해봐도 좋을 것 같습니다. <a href="http://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/" target="_blank">(<strong>~jpetazzo/Using Docker-in-Docker for your CI or testing environment? Think twice.</strong> 참고)</a></p>
+
+<p>DinD의 단점을 해결하고자 나온 방식이 Docker out of Docker(DooD)라고 합니다. 이 방법은 컨테이너에 도커 엔진(도커 클라이언트와 도커 호스트)을 설치하지 않고 도커 클라이언트만 설치하는 방식입니다.</p>
+:ET
