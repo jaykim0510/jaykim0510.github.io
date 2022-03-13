@@ -3,7 +3,7 @@ layout: post
 title:  'Jenkins Series [Part2]: Docker에서 Jenkins 설치하기(Feat.DooD)'
 description: 
 date:   2022-03-02 15:01:35 +0300
-image:  '/images/jenkins_logo.png'
+image:  '/images/jenkins_1.png'
 logo_image:  '/images/jenkins_logo.png'
 categories:   devops
 tags: Jenkins Docker

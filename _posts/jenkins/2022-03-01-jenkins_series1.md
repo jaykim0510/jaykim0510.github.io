@@ -3,7 +3,7 @@ layout: post
 title:  'Jenkins Series [Part1]: What is Jenkins?'
 description: 
 date:   2022-03-01 15:01:35 +0300
-image:  '/images/jenkins_logo.png'
+image:  '/images/jenkins_10.png'
 logo_image:  '/images/jenkins_logo.png'
 categories:   devops
 tags: Jenkins
