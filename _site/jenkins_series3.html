@@ -378,21 +378,25 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#sections" id="markdown-toc-sections">Sections</a>    <ul>
-      <li><a href="#agent" id="markdown-toc-agent">agent</a></li>
-      <li><a href="#stages" id="markdown-toc-stages">stages</a></li>
-      <li><a href="#stage" id="markdown-toc-stage">stage</a></li>
-      <li><a href="#steps" id="markdown-toc-steps">steps</a></li>
-      <li><a href="#post" id="markdown-toc-post">post</a></li>
-    </ul>
-  </li>
-  <li><a href="#directives" id="markdown-toc-directives">Directives</a>    <ul>
-      <li><a href="#environment" id="markdown-toc-environment">environment</a></li>
-      <li><a href="#options" id="markdown-toc-options">options</a></li>
-      <li><a href="#parameters" id="markdown-toc-parameters">parameters</a></li>
-      <li><a href="#triggers" id="markdown-toc-triggers">triggers</a></li>
-      <li><a href="#tools" id="markdown-toc-tools">tools</a></li>
-      <li><a href="#when" id="markdown-toc-when">when</a></li>
+  <li><a href="#jenkinsfile" id="markdown-toc-jenkinsfile">Jenkinsfile</a></li>
+  <li><a href="#jenkinsfile의-구조" id="markdown-toc-jenkinsfile의-구조">Jenkinsfile의 구조</a>    <ul>
+      <li><a href="#sections" id="markdown-toc-sections">Sections</a>        <ul>
+          <li><a href="#agent" id="markdown-toc-agent">agent</a></li>
+          <li><a href="#stages" id="markdown-toc-stages">stages</a></li>
+          <li><a href="#stage" id="markdown-toc-stage">stage</a></li>
+          <li><a href="#steps" id="markdown-toc-steps">steps</a></li>
+          <li><a href="#post" id="markdown-toc-post">post</a></li>
+        </ul>
+      </li>
+      <li><a href="#directives" id="markdown-toc-directives">Directives</a>        <ul>
+          <li><a href="#environment" id="markdown-toc-environment">environment</a></li>
+          <li><a href="#options" id="markdown-toc-options">options</a></li>
+          <li><a href="#parameters" id="markdown-toc-parameters">parameters</a></li>
+          <li><a href="#triggers" id="markdown-toc-triggers">triggers</a></li>
+          <li><a href="#tools" id="markdown-toc-tools">tools</a></li>
+          <li><a href="#when" id="markdown-toc-when">when</a></li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -400,7 +404,29 @@
 
 <hr />
 
-<h1 id="sections">Sections</h1>
+<h1 id="jenkinsfile">Jenkinsfile</h1>
+
+<p>Jenkinsfile은 파이프라인을 만들기 위해 작성하는 코드입니다. 이 때 Jenkinsfile을 작성하는 방법에는 두 가지가 있습니다.</p>
+
+<ul>
+  <li><strong>Scripted Pipeline</strong></li>
+</ul>
+
+<p>2016년까지 Jenkins 코드는 전체적인 틀을 위해서만 Jenkins DSL(Domain-Specific Language)가 약간 사용되었을 뿐 실질적인 프로그램의 흐름은 그루비(Groovy) 언어에 의해 작성되었습니다. 그래서 Jenkinsfile을 작성하기 위해 J<strong>enkins DSL뿐만 아니라 그루비 언어까지 배워야 했습니다.</strong> 이렇게 작성된 코드가 바로 Scripted Pipeline입니다.</p>
+
+<p>이 때까지는 파이프라인에서 빌드후처리, 파이프라인 에러 상태확인, 알림기능 등 Jenkins에 특화된 내용은 없고 대부분 그루비의 <code class="language-plaintext highlighter-rouge">try-catch-finally</code> 구조로 구현해야 했습니다.</p>
+
+<ul>
+  <li><strong>Declarative Pipeline</strong></li>
+</ul>
+
+<p>그러다 2017년부터 클라우드 비스(CloudBees)에서 선언적 파이프라인을 개발하였습니다. 이 문법을 통하여 파이프라인을 심플하고 독자적인 방법으로 작성할 수 있게 되었습니다.</p>
+
+<h1 id="jenkinsfile의-구조">Jenkinsfile의 구조</h1>
+<p>모든 선언적 파이프라인은 반드시 <code class="language-plaintext highlighter-rouge">pipeline</code> 블록으로 감싸야 합니다. 그리고 그 안에 Sections과 Directives(지침)로 구성되어 있습니다.</p>
+
+<h2 id="sections">Sections</h2>
+<p>Sections에는 <code class="language-plaintext highlighter-rouge">agent</code>, <code class="language-plaintext highlighter-rouge">stages</code>, <code class="language-plaintext highlighter-rouge">steps</code>, <code class="language-plaintext highlighter-rouge">post</code>가 있습니다. (<code class="language-plaintext highlighter-rouge">stage</code>는 Jenkins DSL에서 Directives로 분류하고 있습니다. 하지만 저는 Sections로 분류하는 것이 편해 여기서 <code class="language-plaintext highlighter-rouge">stage</code>도 함께 소개하겠습니다. <a href="https://www.jenkins.io/doc/book/pipeline/syntax/#" target="_blank"><strong>공식문서 참고</strong></a>)</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
     agent <span class="o">{}</span>
@@ -413,19 +439,103 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="agent">agent</h2>
+<h3 id="agent">agent</h3>
 
-<h2 id="stages">stages</h2>
+<p><code class="language-plaintext highlighter-rouge">agent</code>는 파이프라인 혹은 스테이지를 어디서 실행할지를(파일 경로, 컨테이너 등) 의미합니다.</p>
 
-<h2 id="stage">stage</h2>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><strong>파라미터</strong></td>
+      <td>any, none, label, node, docker, dockerfile, kubernetes</td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> block, <code class="language-plaintext highlighter-rouge">stage</code> block</td>
+    </tr>
+  </tbody>
+</table>
 
-<h2 id="steps">steps</h2>
+<p>(<a href="https://www.jenkins.io/doc/book/pipeline/syntax/#agent-parameters" target="_blank"><strong>공식문서 참고</strong></a>)</p>
 
-<h2 id="post">post</h2>
+<h3 id="stages">stages</h3>
 
-<h1 id="directives">Directives</h1>
+<p><code class="language-plaintext highlighter-rouge">stage</code> 섹션을 묶는 블럭입니다.</p>
 
-<h2 id="environment">environment</h2>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><strong>파라미터</strong></td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> block</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="stage">stage</h3>
+<p>stage는 공식문서에서 Directives(지침)으로 분류하는 블럭이며 파이프라인 내에서 구분하고 싶은 각각의 단계(예를 들어 Build, Test, Deploy)를 나타냅니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><strong>파라미터</strong></td>
+      <td>필수 파라미터: 각 <code class="language-plaintext highlighter-rouge">stage</code>의 이름</td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">stages</code> block</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="steps">steps</h3>
+
+<p><code class="language-plaintext highlighter-rouge">steps</code>는 각각의 <code class="language-plaintext highlighter-rouge">stage</code> 안에서 실행될 것들을 묶는 블럭입니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><strong>파라미터</strong></td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">stage</code> block</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="post">post</h3>
+
+<p>post는 <code class="language-plaintext highlighter-rouge">pipeline</code> 또는 각각의 <code class="language-plaintext highlighter-rouge">stage</code>가 실행된 후 <strong>조건에 따라 실행되는 블록</strong>입니다.<br />
+|<strong>필수</strong>|No|
+|<strong>조건</strong>|always, changed, fixed, regression, aborted, failure, success, unstable, unsuccessful, cleanup|
+|<strong>위치</strong>|<code class="language-plaintext highlighter-rouge">pipeline</code> block, <code class="language-plaintext highlighter-rouge">stage</code> block|</p>
+
+<p>(<a href="https://www.jenkins.io/doc/book/pipeline/syntax/#post" target="_blank"><strong>공식문서 참고</strong></a>)</p>
+
+<h2 id="directives">Directives</h2>
+
+<h3 id="environment">environment</h3>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
     agent <span class="o">{}</span>
@@ -440,7 +550,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="options">options</h2>
+<h3 id="options">options</h3>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
     agent <span class="o">{}</span>
@@ -455,7 +565,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="parameters">parameters</h2>
+<h3 id="parameters">parameters</h3>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
     agent <span class="o">{}</span>
@@ -469,7 +579,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="triggers">triggers</h2>
+<h3 id="triggers">triggers</h3>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
     agent <span class="o">{}</span>
@@ -483,7 +593,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="tools">tools</h2>
+<h3 id="tools">tools</h3>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
     agent <span class="o">{}</span>
@@ -498,7 +608,7 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<h2 id="when">when</h2>
+<h3 id="when">when</h3>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
     agent <span class="o">{}</span>
@@ -514,7 +624,7 @@
 
 <h1 id="참고">참고</h1>
 <ul>
-  <li><a href="https://www.jenkins.io/doc/book/pipeline/syntax/#when" target="_blank">Jenkins 공식문서: Pipeline Syntax</a></li>
+  <li><a href="https://www.jenkins.io/doc/book/pipeline/syntax/" target="_blank">Jenkins 공식문서: Pipeline Syntax</a></li>
   <li><a href="https://velog.io/@seunghyeon/Jenkins-선언적Declarative-파이프라인#when--branch-name-" target="_blank">SeungHyeon, [Jenkins] # 선언적(Declarative) 파이프라인</a></li>
 </ul>
 

@@ -17,6 +17,11 @@ tags: Jenkins Docker
 
 ---
 
+# Jenkins 설치하기  
+
+> Jenkins can be installed through native system packages, Docker, or even run standalone by any machine with a Java Runtime Environment (JRE) installed.
+
+
 # 도커 컨테이너로 Jenkins 띄우기
 
 도커 이미지를 이용해서 Jenkins를 띄우는 방법은 간단합니다. 사용하다보면 커스터마이징할 필요가 생겨 이미지를 직접 빌드해야 하는 상황이 오겠지만, 아직 저는 Jenkins를 사용해 본 경험이 없기 때문에 단순히 띄우는 데 의의를 두고 이번 포스트를 작성했습니다.  
@@ -137,3 +142,5 @@ Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docke
 - [postlude: Jenkins를 docker 컨테이너로 구축하기(Docker in Docker)](https://postlude.github.io/2020/12/26/docker-in-docker/){:target="_blank"} 
 - [아이단은 어디 갔을까: DinD(docker in docker)와 DooD(docker out of docker)](https://aidanbae.github.io/code/docker/dinddood/){:target="_blank"}
 - [도커 컨테이너에서 permission denied 해결하는 방법: docker run -u root ...](https://stackoverflow.com/questions/54268180/why-does-simple-dockerfile-give-permission-denied){:target="_blank"}
+- [도커 공식문서: 데비안 위에 도커 설치하는 방법](https://docs.docker.com/engine/install/debian/){:target="_blank"}
+- [Do we need java for jenkins?](https://www.quora.com/Is-java-mandatory-for-jenkins-installation){:target="_blank"}
