@@ -54,7 +54,7 @@ pipeline {
 `agent`는 파이프라인 혹은 스테이지를 어디서 실행할지를(파일 경로, 컨테이너 등) 의미합니다.  
 
 |**필수**|Yes|
-|**파라미터**|`any`, `none`, `label`, `node`, `docker`, `dockerfile`, `kubernetes`|
+|**값**|`any`, `none`, `label`, `node`, `docker`, `dockerfile`, `kubernetes`|
 |**위치**|`pipeline` block, `stage` block|
 
 ([**공식문서 참고**](https://www.jenkins.io/doc/book/pipeline/syntax/#agent-parameters){:target="_blank"})  
@@ -64,7 +64,7 @@ pipeline {
 `stage` 섹션을 묶는 블럭입니다.  
 
 |**필수**|Yes|
-|**파라미터**|None|
+|**값**|`stage` 블럭|
 |**위치**|`pipeline` block|
 
 ### stage
@@ -79,12 +79,13 @@ stage는 공식문서에서 Directives(지침)으로 분류하는 블럭이며 �
 `steps`는 각각의 `stage` 안에서 실행될 것들을 묶는 블럭입니다.  
 
 |**필수**|Yes|
-|**파라미터**|None|
+|**값**|Basic step: `echo`, `sleep`, `timeout`, AWS step: `s3Download`, `ecrDeleteImage` 등|
 |**위치**|`stage` block|
 
 ### post  
 
 post는 `pipeline` 또는 각각의 `stage`가 실행된 후 **조건에 따라 실행되는 블록**입니다.  
+
 |**필수**|No|
 |**조건**|`always`, `changed`, `fixed`, `regression`, `aborted`, `failure`, `success`, `unstable`, `unsuccessful`, `cleanup`|
 |**위치**|`pipeline` block, `stage` block|
@@ -98,7 +99,7 @@ post는 `pipeline` 또는 각각의 `stage`가 실행된 후 **조건에 따라 
 환경변수를 지정하기 위한 키-밸류 쌍입니다.  
 
 |**필수**|None|
-|**파라미터**|None|
+|**값**|key-value pairs|
 |**위치**|`pipeline` block, `stage` block|
 
 ### options  
@@ -115,7 +116,7 @@ post는 `pipeline` 또는 각각의 `stage`가 실행된 후 **조건에 따라 
 
 
 |**필수**|No|
-|**파라미터**|None|
+|**값**|`newContainerPerStage`, `retry`, `timeout`, `timestamps`, `skipDefaultCheckout` 등|
 |**위치**|`pipeline` block, `stage` block|
 
 ### parameters  
@@ -123,7 +124,7 @@ post는 `pipeline` 또는 각각의 `stage`가 실행된 후 **조건에 따라 
 파이프라인을 실행할 때 유저가 파라미터를 줄 수 있도록 합니다.  
 
 |**필수**|No|
-|**파라미터**|`string`, `text`, `booleanParam`, `choice`, `password`|
+|**값**|`string`, `text`, `booleanParam`, `choice`, `password`|
 |**위치**|`pipeline` block|
 
 ```
@@ -163,7 +164,7 @@ pipeline {
 파이프라인을 어떤 기준으로 자동화할지 정하는 옵션입니다. 소스코드가 Github 또는 BitBucket이라면  `triggers`가 필요하지 않을 수 있습니다. 현재 Jenkins에서 제공하는 `triggers`는 `cron`, `pollSCM`, `upstream`이 있습니다.  
 
 |**필수**|No|
-|**파라미터**|`cron`, `pollSCM`, `upstream`|
+|**값**|`cron`, `pollSCM`, `upstream`|
 |**위치**|`pipeline` block|
 
 ### tools
@@ -171,7 +172,7 @@ pipeline {
 파이프라인 내에서 빌드할 때 필요한 도구들을 참조합니다.  
 
 |**필수**|No|
-|**파라미터**|None|
+|**값**|`maven`, `jdk`, `gradle`|
 |**위치**|`pipeline` bloc, `stage` block|
 
 ### when  
@@ -179,7 +180,7 @@ pipeline {
 각각의 스테이지를 실행할지를 설정하는 조건입니다.  
 
 |**필수**|No|
-|**파라미터**|`branch`, `buildingTag`, `environment`, `equals`, `expression`, `tag`, `not`, `allOf`, `anyOf` 등|
+|**값**|`branch`, `buildingTag`, `environment`, `equals`, `expression`, `tag`, `not`, `allOf`, `anyOf` 등|
 |**위치**|`stage` block|
 
 ```
