@@ -5,9 +5,315 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 14 Mar 2022 05:26:37 +0900</pubDate>
-        <lastBuildDate>Mon, 14 Mar 2022 05:26:37 +0900</lastBuildDate>
+        <pubDate>Wed, 16 Mar 2022 03:45:33 +0900</pubDate>
+        <lastBuildDate>Wed, 16 Mar 2022 03:45:33 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Terraform Series [Part3]: 테라폼 명령어를 통한 간단한 실습</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://velog.io/@nanjangpan/Terraform-생존기1-테라폼이란&quot;&gt;nanjangpan.log: Terraform 생존기(1) - 테라폼이란?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Fri, 11 Mar 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/terraform_series3</link>
+                <guid isPermaLink="true">http://localhost:4000/terraform_series3</guid>
+                
+                <category>Terraform</category>
+                
+                
+                <category>devops</category>
+                
+            </item>
+        
+            <item>
+                <title>Terraform Series [Part2]: HCL 코드를 이용한 인프라 관리</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#hcl-코드&quot; id=&quot;markdown-toc-hcl-코드&quot;&gt;HCL 코드&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#block&quot; id=&quot;markdown-toc-block&quot;&gt;Block&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#provider&quot; id=&quot;markdown-toc-provider&quot;&gt;Provider&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#resource&quot; id=&quot;markdown-toc-resource&quot;&gt;Resource&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#data&quot; id=&quot;markdown-toc-data&quot;&gt;Data&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#variables&quot; id=&quot;markdown-toc-variables&quot;&gt;Variables&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#output&quot; id=&quot;markdown-toc-output&quot;&gt;Output&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#locals&quot; id=&quot;markdown-toc-locals&quot;&gt;Locals&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#module&quot; id=&quot;markdown-toc-module&quot;&gt;Module&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;hcl-코드&quot;&gt;HCL 코드&lt;/h1&gt;
+
+&lt;p&gt;이번 포스트에서는 인프라 관리를 위한 테라폼 코드를 작성하기 위해 알아두면 좋은 몇 가지 구성 요소에 대해 알아보도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;테라폼 언어는 선언적입니다. 또한 각각의 코드가 목표에 도달하기 위한 단계를 의미하는 것이 아니기 때문에 순서는 크게 중요하지 않습니다. 테라폼은 오직 resource들의 관계만을 고려해 실행 순서를 정합니다.&lt;/p&gt;
+
+&lt;p&gt;테라폼 코드는 큰 틀에서 몇 가지 Block으로 이루어져 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;BLOCK TYPE&amp;gt; &quot;&amp;lt;BLOCK LABEL&amp;gt;&quot; &quot;&amp;lt;BLOCK LABEL&amp;gt;&quot; {
+  # Block body
+  &amp;lt;IDENTIFIER&amp;gt; = &amp;lt;EXPRESSION&amp;gt; # Argument
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;main&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;cidr_block&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;base_cidr_block&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;block&quot;&gt;Block&lt;/h1&gt;
+
+&lt;p&gt;블록은 resource와 같은 오브젝트를 나타내기 위해 필요한 설정값을 담고 있습니다. 블록의 종류에는 크게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;,  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resource&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variables&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;locals&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;module&lt;/code&gt;이 있습니다. 테라폼 코드는 이러한 블록들로 구성되어 있다고 생각해도 무방합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;provider&quot;&gt;Provider&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;인프라를 제공해주는 주체가 누구인지 설정하는 블럭&lt;/li&gt;
+  &lt;li&gt;예: Local, AWS, Azure, GCP 등&lt;/li&gt;
+  &lt;li&gt;provider를 설정하고 나면 해당 provider 플러그인을 설치하고 필요한 API를 사용할 수 있음&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://registry.terraform.io/browse/providers&quot; target=&quot;_blank&quot;&gt;https://registry.terraform.io/browse/providers&lt;/a&gt; 참고&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;us-west-2&quot;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;access_key&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;my-access-key&quot;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;secret_key&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;my-secret-key&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;resource&quot;&gt;Resource&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;테라폼 코드에서 가장 중요한 블럭&lt;/li&gt;
+  &lt;li&gt;각각의 resource 블럭은 인프라스트럭처 오브젝트를 나타냄(컴퓨팅, 스토리지, 네트워크 등)&lt;/li&gt;
+  &lt;li&gt;각각의 resource 종류마다 설정하는 인자값 다르므로 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance#argument-reference&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;공식 문서&lt;/strong&gt;&lt;/a&gt; 참고
+    &lt;ul&gt;
+      &lt;li&gt;예: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_network_interface&lt;/code&gt;의 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;subnet_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;private_ips&lt;/code&gt; 등이 있고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_instance&lt;/code&gt;에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ami&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;instance_type&lt;/code&gt; 등이 있음&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;resource의 속성값을 다른 resource에서 참조할 수도 있음
+    &lt;ul&gt;
+      &lt;li&gt;예: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;network_interface_id = aws_network_interface.foo.id&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_network_interface&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;foo&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;subnet_id&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_subnet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;my_subnet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;private_ips&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;172.16.10.100&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;tags&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;primary_network_interface&quot;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_instance&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;foo&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;ami&lt;/span&gt;           &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ami-005e54dee72cc1d00&quot;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# us-west-2&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;instance_type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;t2.micro&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;network_interface&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;network_interface_id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_network_interface&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;device_index&lt;/span&gt;         &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;credit_specification&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;cpu_credits&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;unlimited&quot;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;data&quot;&gt;Data&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;테라폼 코드 외부에서 설정된 값을 코드로 가져오고 싶은 경우&lt;/li&gt;
+  &lt;li&gt;아래의 예시와 같이 filter, most_recent 와 같은 인자값은 data source마다 달라서 문서 참조해야함
+    &lt;ul&gt;
+      &lt;li&gt;&lt;img src=&quot;/images/tf_3.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+      &lt;li&gt;예를 들어 아래와 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_ami&lt;/code&gt; source를 사용하는 경우 다음의 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami#argument-reference&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;공식문서 참고&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;resource 블럭과 같은 곳에서 사용하고자 할 때는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data.\&amp;lt;data source&amp;gt;.\&amp;lt;name&amp;gt;.\&amp;lt;attribute&amp;gt;&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;예: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data.aws_ami.web.id&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;data source별로 속성도 당연히 다르다 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami#attributes-reference&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;공식문서 참고&lt;/strong&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# AWS AMI 중 state가 available 이고 Component 태그가 web인 것 중 가장 최근 AMI&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;web&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# filter에 어떤 설정할 수 있는지는 https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html 참고 (테라폼 공식문서에 링크 다 명시해놨음)&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;state&quot;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;tag:Component&quot;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;web&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;most_recent&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 필터링 거쳐서 얻은 AMI의 id를 사용한다&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_instance&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;web&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;ami&lt;/span&gt;           &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;aws_ami&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;web&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;instance_type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;t1.micro&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;variables&quot;&gt;Variables&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Variables는 테라폼 코드를 실행할 때에 파라미터로 값을 동적으로 넘겨줄 수 있도록 함&lt;/li&gt;
+  &lt;li&gt;인자값에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;default&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;validation&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sensitive&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nullable가&lt;/code&gt; 있음 (&lt;a href=&quot;https://www.terraform.io/language/values/variables#arguments&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;공식문서 참고&lt;/strong&gt;&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;값을 넘겨주는 방법은 다음과 같음
+    &lt;ul&gt;
+      &lt;li&gt;테라폼 명령어 사용시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-var&lt;/code&gt; 옵션 사용하기
+        &lt;ul&gt;
+          &lt;li&gt;terraform apply -var=”image_id=ami-abc123”&lt;/li&gt;
+          &lt;li&gt;terraform apply -var=’image_id_list=[“ami-abc123”,”ami-def456”]’ -var=”instance_type=t2.micro”&lt;/li&gt;
+          &lt;li&gt;apply -var=’image_id_map={“us-east-1”:”ami-abc123”,”us-east-2”:”ami-def456”}’&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.tfvars&lt;/code&gt; 파일에 정의하기
+        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# testing.tfvars
+image_id = &quot;ami-abc123&quot;
+availability_zone_names = [
+&quot;us-east-1a&quot;,
+&quot;us-west-1c&quot;,
+]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# CLI
+terraform apply -var-file=&quot;testing.tfvars&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+      &lt;li&gt;환경변수로 설정하기
+        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;export TF_VAR_image_id=ami-abc123
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;variable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;user_information&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;string&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;address&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;string&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;sensitive&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;some_resource&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;a&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;user_information&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;address&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;user_information&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;address&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;output&quot;&gt;Output&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;프로그래밍 언어에서 return과 비슷한 역할을 하는 블럭&lt;/li&gt;
+  &lt;li&gt;그냥 print하는 정도의 역할인가?&lt;/li&gt;
+  &lt;li&gt;필수 인자값에는 value가 있고, 옵셔널 인자값에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sensitive&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;depends_on이&lt;/code&gt; 있다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;instance_ip_addr&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;private_ip&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;locals&quot;&gt;Locals&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;반복적인 표현을 줄이고자 할 때 유용한 블럭&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;service_name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;forum&quot;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;owner&lt;/span&gt;        &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Community Team&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;locals&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# Common tags to be assigned to all resources&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;common_tags&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;Service&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;service_name&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;Owner&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;owner&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_instance&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;example&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# ...&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;tags&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;local&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;common_tags&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;module&quot;&gt;Module&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;여러 개의 resource의 묶음&lt;/li&gt;
+  &lt;li&gt;반복적으로 함께 사용되는 resource들을 묶어서 사용할 수 있음&lt;/li&gt;
+  &lt;li&gt;사용자들이 미리 만들어 공유해놓은 Module들이 있다 (&lt;a href=&quot;https://registry.terraform.io/browse/modules?provider=aws&quot; target=&quot;_blank&quot;&gt;공식문서 참고&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# AWS VPC module&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;module&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vpc&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;# &amp;lt;NAMESPACE&amp;gt;/&amp;lt;NAME&amp;gt;/&amp;lt;PROVIDER&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-aws-modules/vpc/aws&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;my-vpc&quot;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;cidr&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.0.0.0/16&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;azs&lt;/span&gt;             &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;eu-west-1a&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;eu-west-1b&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;eu-west-1c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;private_subnets&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;10.0.1.0/24&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.0.2.0/24&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.0.3.0/24&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;public_subnets&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;10.0.101.0/24&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.0.102.0/24&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.0.103.0/24&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;enable_nat_gateway&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;enable_vpn_gateway&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;tags&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;Terraform&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;true&quot;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;Environment&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;dev&quot;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.terraform.io/language&quot; target=&quot;_blank&quot;&gt;Terraform 공식문서&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Thu, 10 Mar 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/terraform_series2</link>
+                <guid isPermaLink="true">http://localhost:4000/terraform_series2</guid>
+                
+                <category>Terraform</category>
+                
+                
+                <category>devops</category>
+                
+            </item>
         
             <item>
                 <title>Javascript Series [Part4]: Javascript 데이터 타입과 연산자</title>
@@ -380,8 +686,8 @@
       &lt;td&gt;Yes&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;&lt;strong&gt;파라미터&lt;/strong&gt;&lt;/td&gt;
-      &lt;td&gt;any, none, label, node, docker, dockerfile, kubernetes&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;any&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;none&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;node&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dockerfile&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubernetes&lt;/code&gt;&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
@@ -403,8 +709,8 @@
       &lt;td&gt;Yes&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;&lt;strong&gt;파라미터&lt;/strong&gt;&lt;/td&gt;
-      &lt;td&gt;None&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; 블럭&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
@@ -444,8 +750,8 @@
       &lt;td&gt;Yes&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;&lt;strong&gt;파라미터&lt;/strong&gt;&lt;/td&gt;
-      &lt;td&gt;None&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;Basic step: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;echo&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sleep&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;timeout&lt;/code&gt;, AWS step: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3Download&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecrDeleteImage&lt;/code&gt; 등&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
@@ -456,10 +762,24 @@
 
 &lt;h3 id=&quot;post&quot;&gt;post&lt;/h3&gt;
 
-&lt;p&gt;post는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; 또는 각각의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt;가 실행된 후 &lt;strong&gt;조건에 따라 실행되는 블록&lt;/strong&gt;입니다.&lt;br /&gt;
-|&lt;strong&gt;필수&lt;/strong&gt;|No|
-|&lt;strong&gt;조건&lt;/strong&gt;|always, changed, fixed, regression, aborted, failure, success, unstable, unsuccessful, cleanup|
-|&lt;strong&gt;위치&lt;/strong&gt;|&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; block, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; block|&lt;/p&gt;
+&lt;p&gt;post는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; 또는 각각의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt;가 실행된 후 &lt;strong&gt;조건에 따라 실행되는 블록&lt;/strong&gt;입니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;조건&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;always&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;changed&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fixed&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;regression&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aborted&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;failure&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;success&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unstable&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unsuccessful&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cleanup&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; block, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; block&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;p&gt;(&lt;a href=&quot;https://www.jenkins.io/doc/book/pipeline/syntax/#post&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;공식문서 참고&lt;/strong&gt;&lt;/a&gt;)&lt;/p&gt;
 
@@ -467,89 +787,235 @@
 
 &lt;h3 id=&quot;environment&quot;&gt;environment&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    agent &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    environment &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    stages &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            environment &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-            steps &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    post &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;환경변수를 지정하기 위한 키-밸류 쌍입니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;None&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;key-value pairs&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; block, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; block&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;h3 id=&quot;options&quot;&gt;options&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    agent &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    options &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    stages &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            options &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-            steps &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    post &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;파이프라인 또는 각 스테이지별로 옵션을 제공합니다. 다양한 종류의 옵션이 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;newContainerPerStage: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dockerfile&lt;/code&gt; agent 사용시 가능한 옵션. 각 스테이지마다 새로운 컨테이너 생성&lt;/li&gt;
+  &lt;li&gt;retry: 파이프라인이 실패할 때 다시 실행&lt;/li&gt;
+  &lt;li&gt;timeout: 제한된 시간 동안만 실행되도록 제한&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;이 밖에 많은 옵션들이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.jenkins.io/doc/book/pipeline/syntax/#options&quot;&gt;[&lt;strong&gt;공식문서 참고&lt;/strong&gt;]&lt;/a&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;newContainerPerStage&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;retry&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;timeout&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;timestamps&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;skipDefaultCheckout&lt;/code&gt; 등&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; block, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; block&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;h3 id=&quot;parameters&quot;&gt;parameters&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    agent &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    parameters &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    stages &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            steps &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    post &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;p&gt;파이프라인을 실행할 때 유저가 파라미터를 줄 수 있도록 합니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;string&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;booleanParam&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;choice&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;password&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; block&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline {
+    agent any
+    parameters {
+        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+
+        text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
+
+        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
+
+        choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+
+        password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
+    }
+    stages {
+        stage('Example') {
+            steps {
+                echo &quot;Hello ${params.PERSON}&quot;
+
+                echo &quot;Biography: ${params.BIOGRAPHY}&quot;
+
+                echo &quot;Toggle: ${params.TOGGLE}&quot;
+
+                echo &quot;Choice: ${params.CHOICE}&quot;
+
+                echo &quot;Password: ${params.PASSWORD}&quot;
+            }
+        }
+    }
+}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;triggers&quot;&gt;triggers&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    agent &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    triggers &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    stages &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            steps &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    post &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;파이프라인을 어떤 기준으로 자동화할지 정하는 옵션입니다. 소스코드가 Github 또는 BitBucket이라면  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;triggers&lt;/code&gt;가 필요하지 않을 수 있습니다. 현재 Jenkins에서 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;triggers&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cron&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pollSCM&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;upstream&lt;/code&gt;이 있습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cron&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pollSCM&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;upstream&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; block&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;h3 id=&quot;tools&quot;&gt;tools&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    agent &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    tools &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    stages &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            tools &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-            steps &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    post &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;파이프라인 내에서 빌드할 때 필요한 도구들을 참조합니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maven&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jdk&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gradle&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pipeline&lt;/code&gt; bloc, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; block&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 
 &lt;h3 id=&quot;when&quot;&gt;when&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    agent &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-    stages &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            when &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-            steps &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    post &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;p&gt;각각의 스테이지를 실행할지를 설정하는 조건입니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;필수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;No&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;값&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;branch&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildingTag&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;environment&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;equals&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;expression&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tag&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;not&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;allOf&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;anyOf&lt;/code&gt; 등&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;위치&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stage&lt;/code&gt; block&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline {
+    agent any
+    stages {
+        stage('Example Build') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        stage('Example Deploy') {
+            when {
+                branch 'production'
+            }
+            steps {
+                echo 'Deploying'
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;pipeline {
+    agent any
+    stages {
+        stage('Example Build') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        stage('Example Deploy') {
+            when {
+                allOf {
+                    branch 'production'
+                    environment name: 'DEPLOY_TO', value: 'production'
+                }
+            }
+            steps {
+                echo 'Deploying'
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;    agent any
+    stages {
+        stage('Example Build') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        stage('Example Deploy') {
+            when {
+                expression { BRANCH_NAME ==~ /(production|staging)/ }
+                anyOf {
+                    environment name: 'DEPLOY_TO', value: 'production'
+                    environment name: 'DEPLOY_TO', value: 'staging'
+                }
+            }
+            steps {
+                echo 'Deploying'
+            }
+        }
+    }
+}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
@@ -732,14 +1198,93 @@ usermod &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; &amp;lt;호스트의사
 
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#terraform&quot; id=&quot;markdown-toc-terraform&quot;&gt;Terraform&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#인프라를-코드로-관리&quot; id=&quot;markdown-toc-인프라를-코드로-관리&quot;&gt;인프라를 코드로 관리&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#테라폼-코드&quot; id=&quot;markdown-toc-테라폼-코드&quot;&gt;테라폼 코드&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#state-driven-workflow-engine&quot; id=&quot;markdown-toc-state-driven-workflow-engine&quot;&gt;State Driven Workflow Engine&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#좋은-글귀&quot; id=&quot;markdown-toc-좋은-글귀&quot;&gt;좋은 글귀&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
 
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+&lt;h1 id=&quot;terraform&quot;&gt;Terraform&lt;/h1&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;HashiCorp Terraform is an infrastructure as code tool that lets you define both cloud and on-prem resources in human-readable configuration files that you can version, reuse, and share.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/tf_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;테라폼은 하시코프에서 오픈소스로 개발 중인 IaC 툴입니다. 테라폼을 통해 인프라 구성에 필요한 파일, 리소스 등을 코드로 정의하여 일관된 워크플로우를 사용해 전체 라이프사이클에 걸쳐 인프라를 프로비저닝하고 관리할 수 있습니다. 쉽게 말해 원하는 인프라를 코드로 작성할 수 있다는 말입니다. 테라폼은 컴퓨팅, 스토리지, 네트워킹 리소스와 같은 저수준의 구성 요소뿐만 아니라 DNS 및 SaaS 기능과 같은 고수준의 구성 요소를 관리할 수도 있습니다.&lt;/p&gt;
+
+&lt;p&gt;🦊 &lt;strong&gt;프로비저닝&lt;/strong&gt;&lt;br /&gt;
+어떤 프로세스나 서비스를 실행하기 위한 준비 단계를 프로비저닝이라고 이야기합니다. 프로비저닝에는 크게 네트워크나 컴퓨팅 자원을 준비하는 작업과 준비된 컴퓨팅 자원에 사이트 패키지나 애플리케이션 의존성을 준비하는 단계로 나뉘어집니다. 명확한 경계는 불분명하지만 테라폼은 전자를 주로 다루는 도구입니다. (&lt;a href=&quot;https://www.44bits.io/ko/post/terraform_introduction_infrastrucute_as_code&quot;&gt;&lt;strong&gt;44bits: 테라폼(Terraform) 기초 튜토리얼 참고&lt;/strong&gt;&lt;/a&gt;)&lt;/p&gt;
+
+&lt;h1 id=&quot;인프라를-코드로-관리&quot;&gt;인프라를 코드로 관리&lt;/h1&gt;
+&lt;p&gt;인프라(컴퓨팅, 스토리지, 네트워킹)를 구성하기 위해 그저 테라폼 코드만 작성하면 된다는 것은 굉장히 편하게 느껴집니다. 제가 AWS를 맛보기로 사용해 봤을 때의 기억으로는 인프라를 구성하기 위해 EC2, S3, VPC 등 AWS 내에서 많은 서비스들을 왔다갔다 하면서 클릭을 했어야 했는데 이제 이러한 작업들을 할 필요 없어진다는 점이 굉장히 편할 것 같습니다. 인프라를 코드로 관리하게 되면 얻게 되는 이점에 대해 한 번 정리해보면 다음과 같은 것들이 있을 것 같습니다.&lt;/p&gt;
+
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://velog.io/@nanjangpan/Terraform-생존기1-테라폼이란&quot;&gt;nanjangpan.log: Terraform 생존기(1) - 테라폼이란?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;인프라를 언제 어디서든 일관되게 구성할 수 있다.&lt;/li&gt;
+  &lt;li&gt;인프라 관리를 위한 협업을 코드로 할 수 있다.&lt;/li&gt;
+  &lt;li&gt;인프라를 버전 컨트롤 할 수 있다.&lt;/li&gt;
+  &lt;li&gt;인프라도 지속적 통합/지속적 배포가 가능해진다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;테라폼-코드&quot;&gt;테라폼 코드&lt;/h1&gt;
+&lt;p&gt;테라폼 코드는 어떻게 생겼길래 인프라를 관리할 수 있는 걸까요? 테라폼 코드 생김새를 한 번 구경하도록 하겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# main.tf&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ap-northeast-2&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;myvpc&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;cidr_block&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.0.0.0/16&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;를 통해 인프라를 제공해주는 주체를 정할 수 있습니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;는 나의 컴퓨터인 local이 될 수도 있고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcp&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;azure와&lt;/code&gt; 같은 클라우드 서비스가 될 수도 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resource&lt;/code&gt;를 이용해 내가 생성하고자 하는 인프라를 설정할 수 있습니다. 위에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpc&lt;/code&gt;를 생성했습니다.&lt;/p&gt;
+
+&lt;p&gt;위의 코드를 일반적으로 나타내면 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;BLOCK TYPE&amp;gt; &quot;&amp;lt;BLOCK LABEL&amp;gt;&quot; &quot;&amp;lt;BLOCK LABEL&amp;gt;&quot; {
+  &amp;lt;IDENTIFIER&amp;gt; = &amp;lt;EXPRESSION&amp;gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;state-driven-workflow-engine&quot;&gt;State Driven Workflow Engine&lt;/h1&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;It will parse our HCL configuration/code files.&lt;/li&gt;
+  &lt;li&gt;Using the information in our HCL, Terraform will build up a graph of all the resources we want to provision (desired state) and figure out any dependencies between them to try and decide a logical order they need to be created in.&lt;/li&gt;
+  &lt;li&gt;Terraform will next inspect its State to better understand what it has and hasn’t deployed (if it is our first deployment, the State will be empty). This is known as perceived state. It is perceived state because there is a disconnect between what Terraform “thinks” exists and what “actually” exists.&lt;/li&gt;
+  &lt;li&gt;Terraform next performs a logical delta between our desired state, and what it knows to be our perceived state. It then decides which CRUD actions it needs to perform, and the order to perform them in, in order to bring our perceived state in-line with our desired state.&lt;/li&gt;
+  &lt;li&gt;Terraform next performs all necessary operations to achieve the desired state. The result of this operation will be that resources will likely start to appear in our Azure subscription and this then becomes known as actual state.&lt;/li&gt;
+  &lt;li&gt;Terraform updates the state to reflect what it has done.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/tf_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;좋은-글귀&quot;&gt;좋은 글귀&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;Terraform in a nutshell&lt;/strong&gt;&lt;br /&gt;
+In its most basic form, Terraform is an application that converts configuration files known as HCL (Hashicorp Configuration Language) into real world infrastructure, usually in Cloud providers such as AWS, Azure or Google Cloud Platform.&lt;/p&gt;
+
+&lt;p&gt;This concept of taking configuration files and converting them into real resources is known as IaC (Infrastructure as Code) and is the new hotness in the world of Software Engineering. And the reason it is becoming so hot right now, is because this code can live alongside your app code in repos, be version controlled and easily integrated into your CI/CD pipelines.&lt;/p&gt;
+
+&lt;p&gt;간단히 말해 Terraform은 상태 기반 클라우드 플랫폼 프로비저닝 엔진입니다. 또한 추상화 툴링(provider and backend)을 활용하여 일관성 있고 결정론적인 클라우드 프로바이더별 CRUD API 호출로 해석 및 번역할 수 있는 코드를 작성할 수 있으므로 많은 업무와 스트레스가 제거됩니다.&lt;/p&gt;
+
+&lt;p&gt;AWS의 CloudFormation&lt;/p&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.44bits.io/ko/post/terraform_introduction_infrastrucute_as_code&quot; target=&quot;_blank&quot;&gt;44bits: 테라폼(Terraform) 기초 튜토리얼&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://itnext.io/terraform-for-beginners-dd8701c1ebdd&quot; target=&quot;_blank&quot;&gt;C:\Dave\Storey, Terraform For Beginners&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jayendrapatil.com/terraform-cheat-sheet/&quot; target=&quot;_blank&quot;&gt;Jayendra’s Cloud Certification Blog: Terraform Cheat Sheet&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Tue, 01 Mar 2022 21:01:35 +0900</pubDate>
@@ -1086,108 +1631,6 @@ usermod &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; &amp;lt;호스트의사
                 
                 
                 <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Apache Spark Series [Part3]: 스파크의 클러스터 환경</title>
-                <description>&lt;hr /&gt;
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#클러스터-환경&quot; id=&quot;markdown-toc-클러스터-환경&quot;&gt;클러스터 환경&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#스파크의-분산처리-아키텍처&quot; id=&quot;markdown-toc-스파크의-분산처리-아키텍처&quot;&gt;스파크의 분산처리 아키텍처&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#스파크-애플리케이션-동작-순서&quot; id=&quot;markdown-toc-스파크-애플리케이션-동작-순서&quot;&gt;스파크 애플리케이션 동작 순서&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-&lt;h1 id=&quot;클러스터-환경&quot;&gt;클러스터 환경&lt;/h1&gt;
-&lt;p&gt;&lt;strong&gt;스파크는 본질적으로 분산처리 프레임워크&lt;/strong&gt;입니다. 그래서 단순히 테스트를 위한 용도로는 단일 로컬 서버만으로도 가능하지만, 실제 배포 단계에서 스파크를 제대로 활용하기 위해서는 여러 대의 서버를 이용한 클러스터 환경을 구축할 필요가 있습니다.&lt;/p&gt;
-
-&lt;p&gt;클러스터란 여러 대의 서버가 네트워크를 통해 연결되어 마치 하나의 서버인 것처럼 동작하는 방식을 의미합니다. 하지만 여러 서버들을 이 같은 방식으로 동작시키는 것은 쉬운 일이 아닙니다. 그래서 스파크에서는 전체 서버의 자원과 동작을 세밀하고 효율적으로 제어할 수 있는 별도 모듈이 필요한데, 이를 &lt;strong&gt;클러스터 매니저&lt;/strong&gt;라고 합니다.&lt;/p&gt;
-
-&lt;p&gt;스파크에서는 자체 구현한 클러스터 매니저도 제공하고 외부 클러스터 매니저를 임포트해서 사용할 수도 있습니다. 이렇게 여러 종류의 클러스터 매니저를 지원하게 되면 선택의 폭이 넓어진다는 장점도 있긴 하지만 클러스터 매니저마다 동작 방식이나 용어가 다르면 혼동이 될 수 있습니다. 스파크에서는 이런 혼란을 없애고자 추상화된 클러스터 모델을 제공함으로써 사용하는 클러스터의 종류에 관계없이 일관된 방법으로 프로그램을 작성하고 클러스터를 관리할 수 있게 해줍니다.&lt;/p&gt;
-
-&lt;p&gt;내용에 들어가기 전에 한 가지 알아둘 것은 클러스터 환경이라고 해서 로컬 환경에서 사용하던 스파크 애플리케이션 &lt;strong&gt;코드를 새로 작성해야 할 필요는 없습니다.&lt;/strong&gt; 다만 클러스터 환경에서는 여러 서버를 마치 하나의 서버인 것처럼 다뤄야 하기 때문에 하나의 작업을 여러 서버에 분산해서 실행하고 그 결과를 취합할 수 있는 &lt;strong&gt;분산 작업 관리 기능이 추가&lt;/strong&gt;되어야 할 것입니다.&lt;/p&gt;
-
-&lt;p&gt;따라서 이번 포스트의 목적은 &lt;strong&gt;분산처리를 위한 시스템 아키텍처를 이해&lt;/strong&gt;하고, 이를 구현하기 위해 &lt;strong&gt;필요한 설정과 매개변수를 이해&lt;/strong&gt;하는 것입니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;스파크의-분산처리-아키텍처&quot;&gt;스파크의 분산처리 아키텍처&lt;/h1&gt;
-
-&lt;p&gt;아래 그림은 분산처리를 위한 스파크의 전형적인 아키텍처입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;보시다시피 클러스터 매니저는 가운데에서 분산처리를 위한 매니저 역할을 하고 있습니다. 각각의 컴포넌트에 대한 설명은 &lt;a href=&quot;https://jaykim0510.github.io/spark-series1&quot;&gt;&lt;strong&gt;앞의 포스트&lt;/strong&gt;&lt;/a&gt;에서 다룬 적이 있음으로 여기서는 간단하게만 요약하도록 하겠습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;드라이버 프로그램&lt;/strong&gt;: 스파크 컨텍스트를 생성하고 클러스터 매니저와 연결시켜주는 프로그램&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;스파크 컨텍스트&lt;/strong&gt;: 클러스터와 연결되는 객체로 스파크 애플리케이션 코드를 작성하는데 필요한 거의 모든 기능을 제공&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;클러스터 매니저&lt;/strong&gt;: 워커 노드를 모니터링하며 최적의 자원(CPU, 메모리) 할당&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;워커 노드&lt;/strong&gt;: 분산된 데이터를 할당받고 요청된 작업을 처리하는 서버&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;익스큐터&lt;/strong&gt;: 작업을 수행하기 위해 스파크에서 실행하는 프로세스, 자원할당 단위&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;잡(Job)&lt;/strong&gt;: 액션 연산의 수&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;태스크&lt;/strong&gt;: 잡을 적당한 단위로 나누어 실제로 익스큐터에 할당하는 작업 단위&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;스파크 클러스터는 이와 같이 드라이버, 클러스터 매니저, 워커 노드의 조합으로 구성됩니다. 여기서 실행 모드, 클러스터 매니저의 종류에 따라 약간의 다른 점이 있지만 큰 맥락에서는 같습니다.&lt;/p&gt;
-
-&lt;p&gt;실행 모드의 경우 두 가지가 있습니다. 클러스터 모드, 클라이언트 모드입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_13.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;두 모드 가운데 어떤 것을 선택하든 수행 결과는 동일합니다. 하지만 &lt;strong&gt;클러스터 모드의 경우&lt;/strong&gt; 드라이버 프로그램과 익스큐터 간의 네트워크 비용이 상대적으로 낮아져서 &lt;strong&gt;성능 향상&lt;/strong&gt;을 기대할 수 있습니다. 하지만 스파크 셸과 같은 인터랙티브 환경을 이용한 &lt;strong&gt;디버깅이 어려워&lt;/strong&gt;서 정형화된 작업에만 주로 사용하고, &lt;strong&gt;클라이언트 모드의 경우&lt;/strong&gt; 사용성이 &lt;strong&gt;편리&lt;/strong&gt;하지만 드라이버 프로그램과 워커 노드가 네트워크 상에서 너무 많이 떨어져 있으면 전체적인 성능에 영향을 줄 수 있으므로 &lt;strong&gt;가급적 동일 네트워크 상에 존재하는 서버로 선택&lt;/strong&gt;하는 것이 좋습니다.&lt;/p&gt;
-
-&lt;p&gt;클러스터 매니저에 대해서는 다음 포스트에서 조금 더 자세히 다루도록 하겠습니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;스파크-애플리케이션-동작-순서&quot;&gt;스파크 애플리케이션 동작 순서&lt;/h1&gt;
-&lt;p&gt;지금까지 스파크의 클러스터 환경에서 갖게되는 아키텍처와 컴포넌트에 대해 살펴봤습니다. 지금부터는 아키텍처에서 실제로 스파크 애플리케이션이 구동되는 과정을 살펴보도록 하겠습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;가장 먼저 스파크 애플리케이션 코드를 작성합니다. 이 때 코드에는 스파크컨텍스트를 생성하는 드라이버 프로그램이 포함돼 있어야 합니다.&lt;/li&gt;
-  &lt;li&gt;작성한 코드를 빌드하고 관련 라이브러리와 함께 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jar&lt;/code&gt;나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;zip&lt;/code&gt; 파일 등으로 패키징합니다.&lt;/li&gt;
-  &lt;li&gt;패키지 파일을 스파크에서 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spark-submit&lt;/code&gt; 셸 스크립트를 이용해 클러스터에 배포하고 실행합니다.&lt;/li&gt;
-  &lt;li&gt;코드에 있는 드라이버 프로그램이 실행되고 스파크컨텍스트가 클러스터 매니저와 연동되어 워커 노드에 익스큐터를 생성합니다.&lt;/li&gt;
-  &lt;li&gt;드라이버 프로그램은 작성된 코드에서 액션 연산의 수만큼 잡(Job)을 생성합니다.&lt;/li&gt;
-  &lt;li&gt;잡(Job)을 셔플링이 가장 적게 일어나는 방법으로 스테이지를 나누고 각 스테이지 단계를 여러 개의 태스크로 나눕니다.&lt;/li&gt;
-  &lt;li&gt;태스크를 익스큐터에 적절히 분배하여 분산 처리합니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;img src=&quot;../images/../../images/spark_14.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;amp;mallGb=KOR&amp;amp;barcode=9791158391034&amp;amp;orderClick=LEa&amp;amp;Kc=&quot; target=&quot;_blank&quot;&gt;빅데이터 분석을 위한 스파크2 프로그래밍 책&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://sparkbyexamples.com/spark/spark-sparkcontext/&quot; target=&quot;_blank&quot;&gt;What is SparkContext? Explained&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Mon, 21 Feb 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/spark-series3</link>
-                <guid isPermaLink="true">http://localhost:4000/spark-series3</guid>
-                
-                <category>Spark</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>BlockChain Series [Part2]: 블록체인의 동작 원리</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-                <pubDate>Mon, 21 Feb 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/blockchain-series1</link>
-                <guid isPermaLink="true">http://localhost:4000/blockchain-series1</guid>
-                
-                <category>Blockchain_basic</category>
-                
-                
-                <category>Blockchain</category>
                 
             </item>
         

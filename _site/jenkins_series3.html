@@ -17,13 +17,13 @@
   <meta name="twitter:title" content="Jenkins Series [Part3]: 선언적 파이프라인(Feat.Jenkinsfile) – Code Museum">
   <meta name="twitter:description" content="
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/jenkins_logo.png">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/jenkins_17.png">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="Jenkins Series [Part3]: 선언적 파이프라인(Feat.Jenkinsfile) – Code Museum">
   <meta property="og:description" content="
 ">
-  <meta property="og:image" content="http://localhost:4000/images/jenkins_logo.png">
+  <meta property="og:image" content="http://localhost:4000/images/jenkins_17.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -450,8 +450,8 @@
       <td>Yes</td>
     </tr>
     <tr>
-      <td><strong>파라미터</strong></td>
-      <td>any, none, label, node, docker, dockerfile, kubernetes</td>
+      <td><strong>값</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">any</code>, <code class="language-plaintext highlighter-rouge">none</code>, <code class="language-plaintext highlighter-rouge">label</code>, <code class="language-plaintext highlighter-rouge">node</code>, <code class="language-plaintext highlighter-rouge">docker</code>, <code class="language-plaintext highlighter-rouge">dockerfile</code>, <code class="language-plaintext highlighter-rouge">kubernetes</code></td>
     </tr>
     <tr>
       <td><strong>위치</strong></td>
@@ -473,8 +473,8 @@
       <td>Yes</td>
     </tr>
     <tr>
-      <td><strong>파라미터</strong></td>
-      <td>None</td>
+      <td><strong>값</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">stage</code> 블럭</td>
     </tr>
     <tr>
       <td><strong>위치</strong></td>
@@ -514,8 +514,8 @@
       <td>Yes</td>
     </tr>
     <tr>
-      <td><strong>파라미터</strong></td>
-      <td>None</td>
+      <td><strong>값</strong></td>
+      <td>Basic step: <code class="language-plaintext highlighter-rouge">echo</code>, <code class="language-plaintext highlighter-rouge">sleep</code>, <code class="language-plaintext highlighter-rouge">timeout</code>, AWS step: <code class="language-plaintext highlighter-rouge">s3Download</code>, <code class="language-plaintext highlighter-rouge">ecrDeleteImage</code> 등</td>
     </tr>
     <tr>
       <td><strong>위치</strong></td>
@@ -526,10 +526,24 @@
 
 <h3 id="post">post</h3>
 
-<p>post는 <code class="language-plaintext highlighter-rouge">pipeline</code> 또는 각각의 <code class="language-plaintext highlighter-rouge">stage</code>가 실행된 후 <strong>조건에 따라 실행되는 블록</strong>입니다.<br />
-|<strong>필수</strong>|No|
-|<strong>조건</strong>|always, changed, fixed, regression, aborted, failure, success, unstable, unsuccessful, cleanup|
-|<strong>위치</strong>|<code class="language-plaintext highlighter-rouge">pipeline</code> block, <code class="language-plaintext highlighter-rouge">stage</code> block|</p>
+<p>post는 <code class="language-plaintext highlighter-rouge">pipeline</code> 또는 각각의 <code class="language-plaintext highlighter-rouge">stage</code>가 실행된 후 <strong>조건에 따라 실행되는 블록</strong>입니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>조건</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">always</code>, <code class="language-plaintext highlighter-rouge">changed</code>, <code class="language-plaintext highlighter-rouge">fixed</code>, <code class="language-plaintext highlighter-rouge">regression</code>, <code class="language-plaintext highlighter-rouge">aborted</code>, <code class="language-plaintext highlighter-rouge">failure</code>, <code class="language-plaintext highlighter-rouge">success</code>, <code class="language-plaintext highlighter-rouge">unstable</code>, <code class="language-plaintext highlighter-rouge">unsuccessful</code>, <code class="language-plaintext highlighter-rouge">cleanup</code></td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> block, <code class="language-plaintext highlighter-rouge">stage</code> block</td>
+    </tr>
+  </tbody>
+</table>
 
 <p>(<a href="https://www.jenkins.io/doc/book/pipeline/syntax/#post" target="_blank"><strong>공식문서 참고</strong></a>)</p>
 
@@ -537,89 +551,235 @@
 
 <h3 id="environment">environment</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
-    agent <span class="o">{}</span>
-    environment <span class="o">{}</span>
-    stages <span class="o">{</span>
-        stage <span class="o">{</span>
-            environment <span class="o">{}</span>
-            steps <span class="o">{}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    post <span class="o">{}</span>
-<span class="o">}</span>
-</code></pre></div></div>
+<p>환경변수를 지정하기 위한 키-밸류 쌍입니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td><strong>값</strong></td>
+      <td>key-value pairs</td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> block, <code class="language-plaintext highlighter-rouge">stage</code> block</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="options">options</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
-    agent <span class="o">{}</span>
-    options <span class="o">{}</span>
-    stages <span class="o">{</span>
-        stage <span class="o">{</span>
-            options <span class="o">{}</span>
-            steps <span class="o">{}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    post <span class="o">{}</span>
-<span class="o">}</span>
-</code></pre></div></div>
+<p>파이프라인 또는 각 스테이지별로 옵션을 제공합니다. 다양한 종류의 옵션이 있습니다.</p>
+
+<ul>
+  <li>newContainerPerStage: <code class="language-plaintext highlighter-rouge">docker</code>, <code class="language-plaintext highlighter-rouge">dockerfile</code> agent 사용시 가능한 옵션. 각 스테이지마다 새로운 컨테이너 생성</li>
+  <li>retry: 파이프라인이 실패할 때 다시 실행</li>
+  <li>timeout: 제한된 시간 동안만 실행되도록 제한</li>
+</ul>
+
+<p>이 밖에 많은 옵션들이 있습니다.</p>
+
+<p><a href="https://www.jenkins.io/doc/book/pipeline/syntax/#options">[<strong>공식문서 참고</strong>]</a></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>값</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">newContainerPerStage</code>, <code class="language-plaintext highlighter-rouge">retry</code>, <code class="language-plaintext highlighter-rouge">timeout</code>, <code class="language-plaintext highlighter-rouge">timestamps</code>, <code class="language-plaintext highlighter-rouge">skipDefaultCheckout</code> 등</td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> block, <code class="language-plaintext highlighter-rouge">stage</code> block</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="parameters">parameters</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
-    agent <span class="o">{}</span>
-    parameters <span class="o">{}</span>
-    stages <span class="o">{</span>
-        stage <span class="o">{</span>
-            steps <span class="o">{}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    post <span class="o">{}</span>
-<span class="o">}</span>
+<p>파이프라인을 실행할 때 유저가 파라미터를 줄 수 있도록 합니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>값</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">string</code>, <code class="language-plaintext highlighter-rouge">text</code>, <code class="language-plaintext highlighter-rouge">booleanParam</code>, <code class="language-plaintext highlighter-rouge">choice</code>, <code class="language-plaintext highlighter-rouge">password</code></td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> block</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline {
+    agent any
+    parameters {
+        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+
+        text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
+
+        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
+
+        choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+
+        password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
+    }
+    stages {
+        stage('Example') {
+            steps {
+                echo "Hello ${params.PERSON}"
+
+                echo "Biography: ${params.BIOGRAPHY}"
+
+                echo "Toggle: ${params.TOGGLE}"
+
+                echo "Choice: ${params.CHOICE}"
+
+                echo "Password: ${params.PASSWORD}"
+            }
+        }
+    }
+}
 </code></pre></div></div>
 
 <h3 id="triggers">triggers</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
-    agent <span class="o">{}</span>
-    triggers <span class="o">{}</span>
-    stages <span class="o">{</span>
-        stage <span class="o">{</span>
-            steps <span class="o">{}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    post <span class="o">{}</span>
-<span class="o">}</span>
-</code></pre></div></div>
+<p>파이프라인을 어떤 기준으로 자동화할지 정하는 옵션입니다. 소스코드가 Github 또는 BitBucket이라면  <code class="language-plaintext highlighter-rouge">triggers</code>가 필요하지 않을 수 있습니다. 현재 Jenkins에서 제공하는 <code class="language-plaintext highlighter-rouge">triggers</code>는 <code class="language-plaintext highlighter-rouge">cron</code>, <code class="language-plaintext highlighter-rouge">pollSCM</code>, <code class="language-plaintext highlighter-rouge">upstream</code>이 있습니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>값</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">cron</code>, <code class="language-plaintext highlighter-rouge">pollSCM</code>, <code class="language-plaintext highlighter-rouge">upstream</code></td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> block</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="tools">tools</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
-    agent <span class="o">{}</span>
-    tools <span class="o">{}</span>
-    stages <span class="o">{</span>
-        stage <span class="o">{</span>
-            tools <span class="o">{}</span>
-            steps <span class="o">{}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    post <span class="o">{}</span>
-<span class="o">}</span>
-</code></pre></div></div>
+<p>파이프라인 내에서 빌드할 때 필요한 도구들을 참조합니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>값</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">maven</code>, <code class="language-plaintext highlighter-rouge">jdk</code>, <code class="language-plaintext highlighter-rouge">gradle</code></td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">pipeline</code> bloc, <code class="language-plaintext highlighter-rouge">stage</code> block</td>
+    </tr>
+  </tbody>
+</table>
 
 <h3 id="when">when</h3>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline <span class="o">{</span>
-    agent <span class="o">{}</span>
-    stages <span class="o">{</span>
-        stage <span class="o">{</span>
-            when <span class="o">{}</span>
-            steps <span class="o">{}</span>
-        <span class="o">}</span>
-    <span class="o">}</span>
-    post <span class="o">{}</span>
-<span class="o">}</span>
+<p>각각의 스테이지를 실행할지를 설정하는 조건입니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>필수</strong></td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>값</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">branch</code>, <code class="language-plaintext highlighter-rouge">buildingTag</code>, <code class="language-plaintext highlighter-rouge">environment</code>, <code class="language-plaintext highlighter-rouge">equals</code>, <code class="language-plaintext highlighter-rouge">expression</code>, <code class="language-plaintext highlighter-rouge">tag</code>, <code class="language-plaintext highlighter-rouge">not</code>, <code class="language-plaintext highlighter-rouge">allOf</code>, <code class="language-plaintext highlighter-rouge">anyOf</code> 등</td>
+    </tr>
+    <tr>
+      <td><strong>위치</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">stage</code> block</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline {
+    agent any
+    stages {
+        stage('Example Build') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        stage('Example Deploy') {
+            when {
+                branch 'production'
+            }
+            steps {
+                echo 'Deploying'
+            }
+        }
+    }
+}
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipeline {
+    agent any
+    stages {
+        stage('Example Build') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        stage('Example Deploy') {
+            when {
+                allOf {
+                    branch 'production'
+                    environment name: 'DEPLOY_TO', value: 'production'
+                }
+            }
+            steps {
+                echo 'Deploying'
+            }
+        }
+    }
+}
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    agent any
+    stages {
+        stage('Example Build') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+        stage('Example Deploy') {
+            when {
+                expression { BRANCH_NAME ==~ /(production|staging)/ }
+                anyOf {
+                    environment name: 'DEPLOY_TO', value: 'production'
+                    environment name: 'DEPLOY_TO', value: 'staging'
+                }
+            }
+            steps {
+                echo 'Deploying'
+            }
+        }
+    }
+}
 </code></pre></div></div>
 
 <h1 id="참고">참고</h1>
@@ -823,7 +983,7 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/jenkins_series3&amp;media=http://localhost:4000/images/jenkins_logo.png&amp;description=Jenkins%20Series%20[Part3]:%20%EC%84%A0%EC%96%B8%EC%A0%81%20%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8(Feat.Jenkinsfile)"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/jenkins_series3&amp;media=http://localhost:4000/images/jenkins_17.png&amp;description=Jenkins%20Series%20[Part3]:%20%EC%84%A0%EC%96%B8%EC%A0%81%20%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8(Feat.Jenkinsfile)"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
@@ -903,6 +1063,86 @@
             
       
             
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-03-11T21:01:35+09:00">11 Mar 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/terraform_series3">
+        <img class="lazy" data-src="/images/terraform_logo.jpg" alt="Terraform Series [Part3]: 테라폼 명령어를 통한 간단한 실습">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/terraform_series3">Terraform Series [Part3]: 테라폼 명령어를 통한 간단한 실습</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-03-10T21:01:35+09:00">10 Mar 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/terraform_series2">
+        <img class="lazy" data-src="/images/tf_3.png" alt="Terraform Series [Part2]: HCL 코드를 이용한 인프라 관리">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/terraform_series2">Terraform Series [Part2]: HCL 코드를 이용한 인프라 관리</a>
+      </h2>
+
+      
+      <p class="article__excerpt">이번 포스트에서는 인프라 관리를 위한 테라폼 코드를 작성하기 위해 알아두면 좋은 몇 가지 구성 요소에 대해 알아보도록 하겠습니다.</p>
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
             
             
             
@@ -931,91 +1171,6 @@
 
       <h2 class="article__title">
         <a href="/jenkins_series4">Jenkins Series [Part4]: Jenkins를 이용한 간단한 실습</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-03-02T21:01:35+09:00">02 Mar 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/jenkins_series2">
-        <img class="lazy" data-src="/images/jenkins_logo.png" alt="Jenkins Series [Part2]: Docker에서 Jenkins 설치하기(Feat.DooD)">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/jenkins_series2">Jenkins Series [Part2]: Docker에서 Jenkins 설치하기(Feat.DooD)</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-03-01T21:01:35+09:00">01 Mar 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/terraform_series1">
-        <img class="lazy" data-src="/images/terraform_logo.jpg" alt="Terraform Series [Part1]: What is Terraform?">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/terraform_series1">Terraform Series [Part1]: What is Terraform?</a>
       </h2>
 
       

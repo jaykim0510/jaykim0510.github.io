@@ -1,0 +1,112 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#hcl-코드" id="markdown-toc-hcl-코드">HCL 코드</a></li>
+  <li><a href="#block" id="markdown-toc-block">Block</a>    <ul>
+      <li><a href="#provider" id="markdown-toc-provider">Provider</a></li>
+      <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
+      <li><a href="#data" id="markdown-toc-data">Data</a></li>
+      <li><a href="#variables" id="markdown-toc-variables">Variables</a></li>
+      <li><a href="#output" id="markdown-toc-output">Output</a></li>
+      <li><a href="#locals" id="markdown-toc-locals">Locals</a></li>
+      <li><a href="#module" id="markdown-toc-module">Module</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="hcl-코드">HCL 코드</h1>
+
+<p>이번 포스트에서는 인프라 관리를 위한 테라폼 코드를 작성하기 위해 알아두면 좋은 몇 가지 구성 요소에 대해 알아보도록 하겠습니다.</p>
+
+<p>테라폼 언어는 선언적입니다. 또한 각각의 코드가 목표에 도달하기 위한 단계를 의미하는 것이 아니기 때문에 순서는 크게 중요하지 않습니다. 테라폼은 오직 resource들의 관계만을 고려해 실행 순서를 정합니다.</p>
+
+<p>테라폼 코드는 큰 틀에서 몇 가지 Block으로 이루어져 있습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;BLOCK TYPE&gt; "&lt;BLOCK LABEL&gt;" "&lt;BLOCK LABEL&gt;" {
+  # Block body
+  &lt;IDENTIFIER&gt; = &lt;EXPRESSION&gt; # Argument
+}
+</code></pre></div></div>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_vpc"</span> <span class="s2">"main"</span> <span class="p">{</span>
+  <span class="nx">cidr_block</span> <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">base_cidr_block</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="block">Block</h1>
+
+<p>블록은 resource와 같은 오브젝트를 나타내기 위해 필요한 설정값을 담고 있습니다. 블록의 종류에는 크게 <code class="language-plaintext highlighter-rouge">resource</code>, <code class="language-plaintext highlighter-rouge">data</code>, <code class="language-plaintext highlighter-rouge">variables</code>, <code class="language-plaintext highlighter-rouge">output</code>, <code class="language-plaintext highlighter-rouge">locals</code>, <code class="language-plaintext highlighter-rouge">module</code>이 있습니다. 테라폼 코드는 이러한 블록들로 구성되어 있다고 생각해도 무방합니다.</p>
+
+<h2 id="provider">Provider</h2>
+
+<ul>
+  <li>인프라를 제공해주는 주체가 누구인지 설정하는 블럭</li>
+  <li>예: Local, AWS, Azure, GCP 등</li>
+  <li>provider를 설정하고 나면 해당 provider 플러그인을 설치하고 필요한 API를 사용할 수 있음</li>
+  <li><a href="https://registry.terraform.io/browse/providers" target="_blank">https://registry.terraform.io/browse/providers</a> 참고</li>
+</ul>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
+  <span class="nx">region</span>     <span class="p">=</span> <span class="s2">"us-west-2"</span>
+  <span class="nx">access_key</span> <span class="p">=</span> <span class="s2">"my-access-key"</span>
+  <span class="nx">secret_key</span> <span class="p">=</span> <span class="s2">"my-secret-key"</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<h2 id="data">Data</h2>
+
+<ul>
+  <li>테라폼 코드 외부에서 설정된 값을 코드로 가져오고 싶은 경우</li>
+  <li>아래의 예시와 같이 filter, most_recent 와 같은 인자값은 data source마다 달라서 문서 참조해야함
+    <ul>
+      <li>예를 들어 아래와 같이 <code class="language-plaintext highlighter-rouge">aws_ami</code> source를 사용하는 경우 다음의 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami#argument-reference" target="_blank"><strong>공식문서 참고</strong></a></li>
+    </ul>
+  </li>
+  <li>resource 블럭과 같은 곳에서 사용하고자 할 때는 data.&lt;data_source&gt;.&lt;name&gt;.&lt;attribute&gt;</li>
+</ul>
+
+<p><img src="/images/tf_3.png" alt="" /></p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># AWS AMI 중 state가 available 이고 Component 태그가 web인 것 중 가장 최근 AMI</span>
+<span class="k">data</span> <span class="s2">"aws_ami"</span> <span class="s2">"web"</span> <span class="p">{</span>
+  <span class="c1"># filter에 어떤 설정할 수 있는지는 https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html 참고 (테라폼 공식문서에 링크 다 명시해놨음)</span>
+  <span class="nx">filter</span> <span class="p">{</span>
+    <span class="nx">name</span>   <span class="p">=</span> <span class="s2">"state"</span>
+    <span class="nx">values</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"available"</span><span class="p">]</span>
+  <span class="p">}</span>
+
+  <span class="nx">filter</span> <span class="p">{</span>
+    <span class="nx">name</span>   <span class="p">=</span> <span class="s2">"tag:Component"</span>
+    <span class="nx">values</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"web"</span><span class="p">]</span>
+  <span class="p">}</span>
+
+  <span class="nx">most_recent</span> <span class="p">=</span> <span class="kc">true</span>
+<span class="p">}</span>
+
+<span class="c1"># 필터링 거쳐서 얻은 AMI의 id를 사용한다</span>
+<span class="k">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"web"</span> <span class="p">{</span>
+  <span class="nx">ami</span>           <span class="p">=</span> <span class="k">data</span><span class="p">.</span><span class="nx">aws_ami</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">id</span>
+  <span class="nx">instance_type</span> <span class="p">=</span> <span class="s2">"t1.micro"</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h2 id="variables">Variables</h2>
+
+<h2 id="output">Output</h2>
+
+<h2 id="locals">Locals</h2>
+
+<h2 id="module">Module</h2>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://velog.io/@nanjangpan/Terraform-생존기1-테라폼이란">nanjangpan.log: Terraform 생존기(1) - 테라폼이란?</a></li>
+</ul>
+:ET
