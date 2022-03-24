@@ -1,9 +1,10 @@
 ---
 layout: post
-title:  'Network Series [Part1]: 웹브라우저의 동작(Application Layer)'
+title:  'Network Series [Part3]: 웹브라우저의 동작(Application Layer)'
 description: 웹 브라우저는 웹 서버로의 접근, 파일 업로드/다운로드, 메일 전송과 같은 다양한 클라이언트 기능을 겸비한 복합적인 클라이언트 소프트웨어입니다.
-date:   2022-01-27 15:01:35 +0300
+date:   2022-02-02 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'
+logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network
 ---

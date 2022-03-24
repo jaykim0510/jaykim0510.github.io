@@ -1,9 +1,10 @@
 ---
 layout: post
-title:  'Network Series [Part2]: IP주소와 DNS 서버'
-description: Kafka는 이러한 데이터를 수집, 가공, 저장해주는 Event streaming platform입니다.
-date:   2022-01-28 15:01:35 +0300
+title:  'Network Series [Part4]: IP주소와 DNS 서버'
+description: 
+date:   2022-02-03 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'
+logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network
 ---
