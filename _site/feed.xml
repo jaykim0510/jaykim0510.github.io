@@ -5,9 +5,108 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 24 Mar 2022 13:11:42 +0900</pubDate>
-        <lastBuildDate>Thu, 24 Mar 2022 13:11:42 +0900</lastBuildDate>
+        <pubDate>Tue, 05 Apr 2022 18:37:07 +0900</pubDate>
+        <lastBuildDate>Tue, 05 Apr 2022 18:37:07 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>BlockChain Series [Part2]: 블록체인의 동작 원리(feat.비트코인)</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#블록체인-구조&quot; id=&quot;markdown-toc-블록체인-구조&quot;&gt;블록체인 구조&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#노드&quot; id=&quot;markdown-toc-노드&quot;&gt;노드&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#블록&quot; id=&quot;markdown-toc-블록&quot;&gt;블록&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#블록체인-동작원리&quot; id=&quot;markdown-toc-블록체인-동작원리&quot;&gt;블록체인 동작원리&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#브로드캐스팅&quot; id=&quot;markdown-toc-브로드캐스팅&quot;&gt;브로드캐스팅&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#작업-증명&quot; id=&quot;markdown-toc-작업-증명&quot;&gt;작업 증명&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#리더-선출&quot; id=&quot;markdown-toc-리더-선출&quot;&gt;리더 선출&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#검증&quot; id=&quot;markdown-toc-검증&quot;&gt;검증&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#비트코인-생태계&quot; id=&quot;markdown-toc-비트코인-생태계&quot;&gt;비트코인 생태계&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#블록체인&quot; id=&quot;markdown-toc-블록체인&quot;&gt;블록체인&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#비트코인-시스템&quot; id=&quot;markdown-toc-비트코인-시스템&quot;&gt;비트코인 시스템&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#비트코인-지갑&quot; id=&quot;markdown-toc-비트코인-지갑&quot;&gt;비트코인 지갑&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#중개소&quot; id=&quot;markdown-toc-중개소&quot;&gt;중개소&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;블록체인-구조&quot;&gt;블록체인 구조&lt;/h1&gt;
+
+&lt;h2 id=&quot;노드&quot;&gt;노드&lt;/h2&gt;
+&lt;p&gt;노드는 일반적으로 어떤 &lt;strong&gt;네트워크에 속해있는 기기(컴퓨터, 스마트폰 등) 또는 기기를 사용하는 유저&lt;/strong&gt;를 일컫습니다. 블록체인 네트워크에서 추구하는 목표는 신뢰할 수 있는 기관(정부, 은행, 핀테크 기업 등) 없이도 &lt;strong&gt;사용자(노드)들이 주체&lt;/strong&gt;가 되어 경제 시스템을 동작하도록 하는 것입니다. 그렇기 때문에 블록체인 기반의 네트워크 구조에서는 노드들의 역할이 굉장히 중요합니다.&lt;/p&gt;
+
+&lt;p&gt;아래 그림은 기존의 거래를 위한 네트워크 구조와 블록체인 기반의 구조를 비교한 것입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/blockchain_basic_8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;기존에 존재하던 네트워크의 경우 A가 B와 거래를 하기 위해서는 자기 자신의 거래내역만 가지고 있으면 됐었습니다. 이게 가능한 이유는 중앙의 신뢰할 수 있는 기관이 거래에서 발생할 수 있는 문제들을 중재하기 때문이었습니다. 하지만 블록체인 기반 네트워크는 이러한 기관을 없애는 것이 목표입니다. 그래서 블록체인에서는 거래내역의 위,변조를 막기 위해 &lt;strong&gt;네트워크내 모든 노드들에게 이러한 거래내역을 저장하도록 하고 데이터에 변화가 일어났는지 서로를 감시하도록 합니다&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;아래 그림은 모든 노드가 블록체인 데이터를 함께 저장(분산 저장이 아니라 중복 저장)하고 블록체인 데이터에 변화가 일어나는지 감시합니다. 이 부분에 대해서는 나중에 블록체인의 동작원리 파트에서 더 자세히 설명하도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/blockchain_basic_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;그러면 지금까지 이렇게 저장된 블록의 용량은 얼마나 될까요? 블록체인 기반 서비스의 조상인 비트코인의 경우 2021년 9월 그동안 생성된 블록의 개수는 70만개를 넘어섰다고 합니다. 블록 하나의 최대 크기는 1MB이므로 평균 0.5MB라고 했을 때 대략 340GB입니다. 저희는 블록체인 기반의 거래 서비스(중 비트코인)을 이용하기 위해 &lt;strong&gt;최소한 340GB의 용량이 컴퓨터에 필요&lt;/strong&gt;하다는 뜻입니다. 이러한 문제 때문에 비트코인의 경우 노드를 설계할 때 두가지의 다른 형태를 두었습니다. 하나는 &lt;strong&gt;완전 노드&lt;/strong&gt;고, 다른 하나는 &lt;strong&gt;단순 지급 검증 노드&lt;/strong&gt;입니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;완전 노드&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;블록체인 데이터 전체 다운 (300GB 이상 디스크 공간 요구)&lt;/li&gt;
+      &lt;li&gt;블록 검증 (검증에 대해서는 보상 없음) -&amp;gt; 사실상 인센티브 공학의 결함&lt;/li&gt;
+      &lt;li&gt;블록 생성 (비트코인 보상) -&amp;gt; 채굴자&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;단순 지급 검증 노드&lt;/strong&gt;
+    &lt;ul&gt;
+      &lt;li&gt;블록의 헤더 정도만 다운 (100MB 정도의 작은 공간)&lt;/li&gt;
+      &lt;li&gt;트랜잭션을 요청하는 단순 서비스 이용자&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;블록&quot;&gt;블록&lt;/h2&gt;
+&lt;p&gt;블록은 마치 거래 장부에서 &lt;strong&gt;특정 페이지&lt;/strong&gt;에 비유할 수 있습니다. 블록 하나에는 &lt;strong&gt;2000~3000개 정도의 트랜잭션&lt;/strong&gt;(거래내역)을 담을 수 있는데 그 이유는 &lt;strong&gt;블록 하나의 크기는 1MB&lt;/strong&gt;로 제한되는데 트랜잭션 하나의 크기가 보통 0.3kB정도이기 때문입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/blockchain_basic_7.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;블록체인-동작원리&quot;&gt;블록체인 동작원리&lt;/h1&gt;
+&lt;p&gt;여기서는 &lt;strong&gt;트랜잭션을 요청&lt;/strong&gt;한 후 어떻게 &lt;strong&gt;블록이 생성&lt;/strong&gt;되고 그 보상으로 &lt;strong&gt;채굴자가 비트코인을 얻게 되는지&lt;/strong&gt;에 관한 과정을 알아보도록 하겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;브로드캐스팅&quot;&gt;브로드캐스팅&lt;/h2&gt;
+
+&lt;h2 id=&quot;작업-증명&quot;&gt;작업 증명&lt;/h2&gt;
+
+&lt;h2 id=&quot;리더-선출&quot;&gt;리더 선출&lt;/h2&gt;
+
+&lt;h2 id=&quot;검증&quot;&gt;검증&lt;/h2&gt;
+
+&lt;h1 id=&quot;비트코인-생태계&quot;&gt;비트코인 생태계&lt;/h1&gt;
+
+&lt;h2 id=&quot;블록체인&quot;&gt;블록체인&lt;/h2&gt;
+
+&lt;h2 id=&quot;비트코인-시스템&quot;&gt;비트코인 시스템&lt;/h2&gt;
+
+&lt;h2 id=&quot;비트코인-지갑&quot;&gt;비트코인 지갑&lt;/h2&gt;
+
+&lt;h2 id=&quot;중개소&quot;&gt;중개소&lt;/h2&gt;
+</description>
+                <pubDate>Sun, 03 Apr 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/blockchain-series1</link>
+                <guid isPermaLink="true">http://localhost:4000/blockchain-series1</guid>
+                
+                <category>Blockchain_basic</category>
+                
+                
+                <category>Blockchain</category>
+                
+            </item>
         
             <item>
                 <title>Terraform Series [Part3]: 테라폼 명령어를 통한 간단한 실습</title>
@@ -1246,112 +1345,6 @@ usermod &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; &amp;lt;호스트의사
                 <category>Jenkins</category>
                 
                 <category>Docker</category>
-                
-                
-                <category>devops</category>
-                
-            </item>
-        
-            <item>
-                <title>Terraform Series [Part1]: What is Terraform?</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#terraform&quot; id=&quot;markdown-toc-terraform&quot;&gt;Terraform&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#인프라를-코드로-관리&quot; id=&quot;markdown-toc-인프라를-코드로-관리&quot;&gt;인프라를 코드로 관리&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#테라폼-코드&quot; id=&quot;markdown-toc-테라폼-코드&quot;&gt;테라폼 코드&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#state-driven-workflow-engine&quot; id=&quot;markdown-toc-state-driven-workflow-engine&quot;&gt;State Driven Workflow Engine&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#좋은-글귀&quot; id=&quot;markdown-toc-좋은-글귀&quot;&gt;좋은 글귀&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;terraform&quot;&gt;Terraform&lt;/h1&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;HashiCorp Terraform is an infrastructure as code tool that lets you define both cloud and on-prem resources in human-readable configuration files that you can version, reuse, and share.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/tf_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;테라폼은 하시코프에서 오픈소스로 개발 중인 IaC 툴입니다. 테라폼을 통해 인프라 구성에 필요한 파일, 리소스 등을 코드로 정의하여 일관된 워크플로우를 사용해 전체 라이프사이클에 걸쳐 인프라를 프로비저닝하고 관리할 수 있습니다. 쉽게 말해 원하는 인프라를 코드로 작성할 수 있다는 말입니다. 테라폼은 컴퓨팅, 스토리지, 네트워킹 리소스와 같은 저수준의 구성 요소뿐만 아니라 DNS 및 SaaS 기능과 같은 고수준의 구성 요소를 관리할 수도 있습니다.&lt;/p&gt;
-
-&lt;p&gt;🦊 &lt;strong&gt;프로비저닝&lt;/strong&gt;&lt;br /&gt;
-어떤 프로세스나 서비스를 실행하기 위한 준비 단계를 프로비저닝이라고 이야기합니다. 프로비저닝에는 크게 네트워크나 컴퓨팅 자원을 준비하는 작업과 준비된 컴퓨팅 자원에 사이트 패키지나 애플리케이션 의존성을 준비하는 단계로 나뉘어집니다. 명확한 경계는 불분명하지만 테라폼은 전자를 주로 다루는 도구입니다. (&lt;a href=&quot;https://www.44bits.io/ko/post/terraform_introduction_infrastrucute_as_code&quot;&gt;&lt;strong&gt;44bits: 테라폼(Terraform) 기초 튜토리얼 참고&lt;/strong&gt;&lt;/a&gt;)&lt;/p&gt;
-
-&lt;h1 id=&quot;인프라를-코드로-관리&quot;&gt;인프라를 코드로 관리&lt;/h1&gt;
-&lt;p&gt;인프라(컴퓨팅, 스토리지, 네트워킹)를 구성하기 위해 그저 테라폼 코드만 작성하면 된다는 것은 굉장히 편하게 느껴집니다. 제가 AWS를 맛보기로 사용해 봤을 때의 기억으로는 인프라를 구성하기 위해 EC2, S3, VPC 등 AWS 내에서 많은 서비스들을 왔다갔다 하면서 클릭을 했어야 했는데 이제 이러한 작업들을 할 필요 없어진다는 점이 굉장히 편할 것 같습니다. 인프라를 코드로 관리하게 되면 얻게 되는 이점에 대해 한 번 정리해보면 다음과 같은 것들이 있을 것 같습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;인프라를 언제 어디서든 일관되게 구성할 수 있다.&lt;/li&gt;
-  &lt;li&gt;인프라 관리를 위한 협업을 코드로 할 수 있다.&lt;/li&gt;
-  &lt;li&gt;인프라를 버전 컨트롤 할 수 있다.&lt;/li&gt;
-  &lt;li&gt;인프라도 지속적 통합/지속적 배포가 가능해진다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;테라폼-코드&quot;&gt;테라폼 코드&lt;/h1&gt;
-&lt;p&gt;테라폼 코드는 어떻게 생겼길래 인프라를 관리할 수 있는 걸까요? 테라폼 코드 생김새를 한 번 구경하도록 하겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# main.tf&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ap-northeast-2&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;myvpc&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;cidr_block&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.0.0.0/16&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;를 통해 인프라를 제공해주는 주체를 정할 수 있습니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;는 나의 컴퓨터인 local이 될 수도 있고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gcp&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;azure와&lt;/code&gt; 같은 클라우드 서비스가 될 수도 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resource&lt;/code&gt;를 이용해 내가 생성하고자 하는 인프라를 설정할 수 있습니다. 위에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpc&lt;/code&gt;를 생성했습니다.&lt;/p&gt;
-
-&lt;p&gt;위의 코드를 일반적으로 나타내면 다음과 같습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;BLOCK TYPE&amp;gt; &quot;&amp;lt;BLOCK LABEL&amp;gt;&quot; &quot;&amp;lt;BLOCK LABEL&amp;gt;&quot; {
-  &amp;lt;IDENTIFIER&amp;gt; = &amp;lt;EXPRESSION&amp;gt;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;state-driven-workflow-engine&quot;&gt;State Driven Workflow Engine&lt;/h1&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;It will parse our HCL configuration/code files.&lt;/li&gt;
-  &lt;li&gt;Using the information in our HCL, Terraform will build up a graph of all the resources we want to provision (desired state) and figure out any dependencies between them to try and decide a logical order they need to be created in.&lt;/li&gt;
-  &lt;li&gt;Terraform will next inspect its State to better understand what it has and hasn’t deployed (if it is our first deployment, the State will be empty). This is known as perceived state. It is perceived state because there is a disconnect between what Terraform “thinks” exists and what “actually” exists.&lt;/li&gt;
-  &lt;li&gt;Terraform next performs a logical delta between our desired state, and what it knows to be our perceived state. It then decides which CRUD actions it needs to perform, and the order to perform them in, in order to bring our perceived state in-line with our desired state.&lt;/li&gt;
-  &lt;li&gt;Terraform next performs all necessary operations to achieve the desired state. The result of this operation will be that resources will likely start to appear in our Azure subscription and this then becomes known as actual state.&lt;/li&gt;
-  &lt;li&gt;Terraform updates the state to reflect what it has done.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/tf_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;좋은-글귀&quot;&gt;좋은 글귀&lt;/h1&gt;
-&lt;p&gt;&lt;strong&gt;Terraform in a nutshell&lt;/strong&gt;&lt;br /&gt;
-In its most basic form, Terraform is an application that converts configuration files known as HCL (Hashicorp Configuration Language) into real world infrastructure, usually in Cloud providers such as AWS, Azure or Google Cloud Platform.&lt;/p&gt;
-
-&lt;p&gt;This concept of taking configuration files and converting them into real resources is known as IaC (Infrastructure as Code) and is the new hotness in the world of Software Engineering. And the reason it is becoming so hot right now, is because this code can live alongside your app code in repos, be version controlled and easily integrated into your CI/CD pipelines.&lt;/p&gt;
-
-&lt;p&gt;간단히 말해 Terraform은 상태 기반 클라우드 플랫폼 프로비저닝 엔진입니다. 또한 추상화 툴링(provider and backend)을 활용하여 일관성 있고 결정론적인 클라우드 프로바이더별 CRUD API 호출로 해석 및 번역할 수 있는 코드를 작성할 수 있으므로 많은 업무와 스트레스가 제거됩니다.&lt;/p&gt;
-
-&lt;p&gt;AWS의 CloudFormation&lt;/p&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.44bits.io/ko/post/terraform_introduction_infrastrucute_as_code&quot; target=&quot;_blank&quot;&gt;44bits: 테라폼(Terraform) 기초 튜토리얼&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://itnext.io/terraform-for-beginners-dd8701c1ebdd&quot; target=&quot;_blank&quot;&gt;C:\Dave\Storey, Terraform For Beginners&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://jayendrapatil.com/terraform-cheat-sheet/&quot; target=&quot;_blank&quot;&gt;Jayendra’s Cloud Certification Blog: Terraform Cheat Sheet&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Tue, 01 Mar 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/terraform_series1</link>
-                <guid isPermaLink="true">http://localhost:4000/terraform_series1</guid>
-                
-                <category>Terraform</category>
                 
                 
                 <category>devops</category>

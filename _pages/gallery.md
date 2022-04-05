@@ -5,7 +5,8 @@ permalink: /gallery/
 image: 
 ---
 
-아직 작품 전시 전입니다.  
+내 가족, 시간을 사랑
+
 
 <div class="gallery-box">
   <div class="gallery">
