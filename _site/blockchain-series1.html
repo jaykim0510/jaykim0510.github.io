@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>BlockChain Series [Part2]: 블록체인의 동작 원리(feat.비트코인)</title>
-  <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
+  <meta name='description' content='블록체인 네트워크에서 추구하는 목표는 신뢰할 수 있는 기관 없이도 사용자들이 주체가 되어 경제 시스템을 동작하도록 하는 것입니다'>
 
   <link rel="canonical" href="http://localhost:4000/blockchain-series1">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
@@ -15,14 +15,12 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="BlockChain Series [Part2]: 블록체인의 동작 원리(feat.비트코인) – Code Museum">
-  <meta name="twitter:description" content="
-">
+  <meta name="twitter:description" content="블록체인 네트워크에서 추구하는 목표는 신뢰할 수 있는 기관 없이도 사용자들이 주체가 되어 경제 시스템을 동작하도록 하는 것입니다">
   <meta name="twitter:image:src" content="http://localhost:4000/images/blockchain_logo.webp">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="BlockChain Series [Part2]: 블록체인의 동작 원리(feat.비트코인) – Code Museum">
-  <meta property="og:description" content="
-">
+  <meta property="og:description" content="블록체인 네트워크에서 추구하는 목표는 신뢰할 수 있는 기관 없이도 사용자들이 주체가 되어 경제 시스템을 동작하도록 하는 것입니다">
   <meta property="og:image" content="http://localhost:4000/images/blockchain_logo.webp">
 
   <!-- Fonts -->
@@ -350,6 +348,8 @@
 
 
   
+
+  
   	
   	
   	
@@ -364,7 +364,7 @@
       <a href="/blockchain-series0" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>BlockChain Series [Part1]: 블록체인을 공부하기 전에</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/blockchain-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>BlockChain Series [Part3]: 비트코인에 관한 기술적 접근<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -380,19 +380,19 @@
     </ul>
   </li>
   <li><a href="#블록체인-동작원리" id="markdown-toc-블록체인-동작원리">블록체인 동작원리</a>    <ul>
-      <li><a href="#브로드캐스팅" id="markdown-toc-브로드캐스팅">브로드캐스팅</a></li>
-      <li><a href="#작업-증명" id="markdown-toc-작업-증명">작업 증명</a></li>
-      <li><a href="#리더-선출" id="markdown-toc-리더-선출">리더 선출</a></li>
+      <li><a href="#트랜잭션-요청" id="markdown-toc-트랜잭션-요청">트랜잭션 요청</a></li>
+      <li><a href="#블록-생성" id="markdown-toc-블록-생성">블록 생성</a></li>
       <li><a href="#검증" id="markdown-toc-검증">검증</a></li>
     </ul>
   </li>
   <li><a href="#비트코인-생태계" id="markdown-toc-비트코인-생태계">비트코인 생태계</a>    <ul>
       <li><a href="#블록체인" id="markdown-toc-블록체인">블록체인</a></li>
       <li><a href="#비트코인-시스템" id="markdown-toc-비트코인-시스템">비트코인 시스템</a></li>
-      <li><a href="#비트코인-지갑" id="markdown-toc-비트코인-지갑">비트코인 지갑</a></li>
+      <li><a href="#비트코인-지갑utxo" id="markdown-toc-비트코인-지갑utxo">비트코인 지갑(UTXO)</a></li>
       <li><a href="#중개소" id="markdown-toc-중개소">중개소</a></li>
     </ul>
   </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
@@ -435,16 +435,49 @@
 
 <p><img src="/images/blockchain_basic_7.png" alt="" /></p>
 
+<p>비트코인 블록의 구조는 크게 <strong>블록의 크기, 블록 헤더, 블록 내 거래내역 개수, 모든 거래내역</strong> 이렇게 4가지로 구성됩니다.</p>
+
+<ul>
+  <li><strong>블록의 크기</strong>
+    <ul>
+      <li>4바이트</li>
+      <li>블록 하나의 크기 (최대 1메가바이트)</li>
+    </ul>
+  </li>
+  <li><strong>블록 헤더</strong>
+    <ul>
+      <li>80바이트</li>
+      <li>버전 정보, 이전 블록 헤더 해시, 머클 트리 루트, 타임 스탬프, 타깃 난이도 비트, 난스로 구성</li>
+    </ul>
+  </li>
+  <li><strong>블록 내 전체 거래내역 수</strong>
+    <ul>
+      <li>1~9바이트</li>
+    </ul>
+  </li>
+  <li><strong>블록 내 모든 트랜잭션</strong>
+    <ul>
+      <li>가변 크기</li>
+      <li>2000~3000개 정도 되는 트랜잭션 저장</li>
+    </ul>
+  </li>
+</ul>
+
 <h1 id="블록체인-동작원리">블록체인 동작원리</h1>
 <p>여기서는 <strong>트랜잭션을 요청</strong>한 후 어떻게 <strong>블록이 생성</strong>되고 그 보상으로 <strong>채굴자가 비트코인을 얻게 되는지</strong>에 관한 과정을 알아보도록 하겠습니다.</p>
 
-<h2 id="브로드캐스팅">브로드캐스팅</h2>
+<h2 id="트랜잭션-요청">트랜잭션 요청</h2>
+<p>블록체인에서는 <strong>중앙 서버가 존재하지 않기 때문에</strong> 누가 트랜잭션을 처리할 것인지 정해져 있지 않습니다. 그렇기 때문에 블록체인에서는 기본적으로 <strong>트랜잭션을 모든 노드에게 브로드캐스팅</strong>합니다.</p>
 
-<h2 id="작업-증명">작업 증명</h2>
+<p>이렇게 전달된 트랜잭션들은 각 노드의 대기실에 쌓인 채로 처리되기를 기다립니다. 또한 이 때 처리되는 트랜잭션의 목록과 순서는 노드마다 다릅니다. 노드 A는 a, b, c를 묶어서 처리하고 노드 B는 b, a, d를 처리하는 등 <strong>네트워크 상태와 트랜잭션에 책정된 수수료에 따라 달라집니다</strong>. 통상 노드는 수수료가 더 높은 트랜잭션을 먼저 처리합니다.</p>
 
-<h2 id="리더-선출">리더 선출</h2>
+<h2 id="블록-생성">블록 생성</h2>
+<p>완전 노드 역할을 하는 노드들은 자신들이 가지고 있는 트랜잭션을 가지고 서로 <strong>비동기적</strong>으로 블록을 생성하기 위해 경쟁합니다. 노드들이 블록을 만들기 위해 경쟁을 한다고 했는데 어떤 것을 가지고 경쟁하고 있을까요? 그것은 바로 <strong>해시 퍼즐</strong>입니다. 해시 퍼즐은 공식이 없이 단순 반복을 통해서만 정답을 찾을 수 있습니다. 이러한 단순 반복을 통해 가장 먼저 정답을 찾은 하나의 노드만이 <strong>리더로 선출되고 블록을 만들 자격을 얻는 것</strong>입니다. 이렇게 <strong>블록을 만들기 위해 해시 퍼즐을 푸는 과정을 채굴</strong>한다고 합니다. 또한 이렇게 해시 퍼즐을 통해 리더를 선출하는 방법을 <strong>작업 증명</strong> 방식이라고 합니다. 이외에도 지분 증명이라는 것이 있지만 여기서는 다루지 않도록 하겠습니다.</p>
+
+<p><img src="/images/blockchain_basic_10.png" alt="" /></p>
 
 <h2 id="검증">검증</h2>
+<p>위의 그림에서 살펴봤듯이 노드들은 리더가 만든 블록을 자신의 블록체인 데이터에 추가하기 전에 두 가지를 점검합니다. 먼저 리더가 해시 퍼즐의 정답을 제대로 찾았는지 확인하고, 두 번째로 리더가 추가한 트랜잭션에 문제(위조, 변조, 이중 사용 등)가 없는지 검증하는 절차를 가집니다. 이 두 검증 과정은 <strong>해시 함수와 전자 서명, 비대칭 암호화 기법을 활용</strong>해 순식간에 이뤄집니다.</p>
 
 <h1 id="비트코인-생태계">비트코인 생태계</h1>
 
@@ -452,9 +485,14 @@
 
 <h2 id="비트코인-시스템">비트코인 시스템</h2>
 
-<h2 id="비트코인-지갑">비트코인 지갑</h2>
+<h2 id="비트코인-지갑utxo">비트코인 지갑(UTXO)</h2>
 
 <h2 id="중개소">중개소</h2>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791161752709&amp;orderClick=LAG&amp;Kc=" target="_blank">블록체인 해설서 책</a></li>
+</ul>
 
     </div>
     <div class="post__tags_list">
@@ -646,7 +684,7 @@
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/blockchain-series1&title=BlockChain%20Series%20[Part2]:%20%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8%EC%9D%98%20%EB%8F%99%EC%9E%91%20%EC%9B%90%EB%A6%AC(feat.%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8)&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/blockchain-series1&title=BlockChain%20Series%20[Part2]:%20%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8%EC%9D%98%20%EB%8F%99%EC%9E%91%20%EC%9B%90%EB%A6%AC(feat.%EB%B9%84%ED%8A%B8%EC%BD%94%EC%9D%B8)&summary=%EB%B8%94%EB%A1%9D%EC%B2%B4%EC%9D%B8%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%97%90%EC%84%9C%20%EC%B6%94%EA%B5%AC%ED%95%98%EB%8A%94%20%EB%AA%A9%ED%91%9C%EB%8A%94%20%EC%8B%A0%EB%A2%B0%ED%95%A0%20%EC%88%98%20%EC%9E%88%EB%8A%94%20%EA%B8%B0%EA%B4%80%20%EC%97%86%EC%9D%B4%EB%8F%84%20%EC%82%AC%EC%9A%A9%EC%9E%90%EB%93%A4%EC%9D%B4%20%EC%A3%BC%EC%B2%B4%EA%B0%80%20%EB%90%98%EC%96%B4%20%EA%B2%BD%EC%A0%9C%20%EC%8B%9C%EC%8A%A4%ED%85%9C%EC%9D%84%20%EB%8F%99%EC%9E%91%ED%95%98%EB%8F%84%EB%A1%9D%20%ED%95%98%EB%8A%94%20%EA%B2%83%EC%9E%85%EB%8B%88%EB%8B%A4&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -655,6 +693,8 @@
 <!--첫 번째 문단-->
 
 
+
+  
 
   
   	
@@ -671,7 +711,7 @@
       <a href="/blockchain-series0" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>BlockChain Series [Part1]: 블록체인을 공부하기 전에</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/blockchain-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>BlockChain Series [Part3]: 비트코인에 관한 기술적 접근<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -713,6 +753,45 @@
           <div class="row">
 
           
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-04-04T21:01:35+09:00">04 Apr 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/blockchain-series2">
+        <img class="lazy" data-src="/images/blockchain_logo.webp" alt="BlockChain Series [Part3]: 비트코인에 관한 기술적 접근">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/blockchain-series2">BlockChain Series [Part3]: 비트코인에 관한 기술적 접근</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
             
             
       
