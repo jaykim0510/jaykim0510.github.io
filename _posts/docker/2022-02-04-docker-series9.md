@@ -69,4 +69,4 @@ tags: Docker
 - [MARK CHURCH, Understanding Docker Networking Drivers and their use cases](https://www.docker.com/blog/understanding-docker-networking-drivers-use-cases/){:target="_blank"}
 - [클라우드 엔지니어 Won의 성장 블로그, 06. 도커 네트워크 포스트](https://captcha.tistory.com/70){:target="_blank"}
 - [DaleSeo: Docker 네트워크 사용법](https://www.daleseo.com/docker-networks/){:target="_blank"}
-- [Julie의 Tech블로그, 도커 - 네트워킹 / bridge와 overlay](https://julie-tech.tistory.com/50)
+- [Julie의 Tech블로그, 도커 - 네트워킹 / bridge와 overlay](https://julie-tech.tistory.com/50){:target="_blank"}

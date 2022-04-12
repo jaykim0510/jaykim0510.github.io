@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Java Series [Part4]: 자바의 자료형 특징'
-description: FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.
+description: 
 date:   2021-07-07 15:01:35 +0300
 image:  '/images/java_logo.png'
 logo_image:  '/images/java_logo.png'
