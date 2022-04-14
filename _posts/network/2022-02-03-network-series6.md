@@ -15,13 +15,38 @@ tags: Network
 *  TOC
 {:toc}
 ---
-# IP(Internet Protocol) 주소
 
-## IP 주소
-IP 주소는 인터넷에 연결하고자 하는 **디바이스가 가지고 있는 NIC(Network Interface Controller)의 고유한 주소**를 뜻합니다. 편지를 주고 받기 위해서는 서로의 주소가 필요한 것처럼 디바이스간 통신을 위해서는 IP주소가 필요합니다. IP주소는 **네트워크 번호와 호스트 번호로 이루어진 32비트 숫자**입니다.(IPv4 기준)  
-## 서브넷 마스크(Subnet Mask)
+HTTP API와 REST API는 사실 거의 같은 의미로 사용됩니다.
 
-# DNS(Domain Name System) 서버  
-DNS 서버는 도메인 네임을 IP주소로 매핑하여 보관하고 있는 서버입니다. 하지만 모든 도메인 정보를 저장할 수는 없고 저장한다고 해도 IP주소를 가지고 오는데 많은 시간이 소요됩니다. 이를 해결하기 위해 DNS 서버를 계층적으로 구성해 IP 주소를 가져오도록 했으며 한 번 가져온 정보는 캐시에 저장해둡니다. 하지만 캐시에 저장된 후 정보가 변경될 수 있기 때문에 캐시에 저장된 정보는 유효기간이 지나면 캐시에서 삭제됩니다.  
- 
-![](../../images/network_4.png)  
+그런데 디테일하게 들어가면 차이가 있습니다.
+
+HTTP API는 HTTP를 사용해서 서로 정해둔 스펙으로 데이터를 주고 받으며 통신하는 것으로 이해하시면 됩니다.
+
+그래서 상당히 넓은 의미로 사용됩니다.
+
+반면에 REST API는 HTTP API에 여러가지 제약 조건이 추가됩니다.
+
+REST는 다음 4가지 제약조건을 만족해야 합니다.
+
+(https://ko.wikipedia.org/wiki/REST)
+
+- 자원의 식별
+
+- 메시지를 통한 리소스 조작
+
+- 자기서술적 메서지
+
+- 애플리케이션의 상태에 대한 엔진으로서 하이퍼미디어
+
+여러가지가 있지만 대표적으로 구현하기 어려운 부분이 마지막에 있는 부분인데요. 이것은 HTML처럼 하이퍼링크가 추가되어서 다음에 어떤 API를 호출해야 하는지를 해당 링크를 통해서 받을 수 있어야 합니다.
+
+그리고 이런 부분을 완벽하게 지키면서 개발하는 것을 RESTful API라고 하는데요. 실무에서 이런 방법으로 개발하는 것은 현실적으로 어렵고, 또 추가 개발 비용대비 효과가 있는 것도 아닙니다.
+
+그런데 이미 많은 사람들이 해당 조건을 지키지 않아도 REST API라고 하기 때문에, HTTP API나 REST API를 거의 같은 의미로 사용하고 있습니다. 하지만 앞서 말씀드린 것 처럼 엄격하게 위의 내용들을 모두 지켜야 REST API라고 할 수 있습니다.(하지만 다들 HTTP API를 REST API라고 이미 하고 있기 때문에, 누군가 REST API라고 하면 그냥 아~ HTTP API를 이야기 하는구나 라고 생각하고 들으시면 됩니다. 물론 엄격하게는 다릅니다.)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/RP_f5dMoHFc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+# 참고
+
+- [이영한님의 HTTP API와 REST API의 차이에 관한 질문에 대한 답변](https://www.inflearn.com/questions/126743){:target="_blank"}
+- [REST 논문을 정리한 자료](https://restfulapi.net/resource-naming/){:target="_blank"}
