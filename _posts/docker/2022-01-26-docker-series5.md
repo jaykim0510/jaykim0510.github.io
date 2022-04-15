@@ -6,7 +6,7 @@ date:   2022-01-26 18:01:35 +0300
 image:  '/images/datapipeline_logo.png'
 logo_image:  '/images/docker_logo.png'
 categories: devops DE
-tags: Docker Spark Kafka Elasticsearch
+tags: Docker
 ---
 ---
 
