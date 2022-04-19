@@ -15,4 +15,9 @@ tags: MongoDB
 {:toc}
 
 ---
-아직 작성 전 입니다...  
+
+
+# 참고
+
+- [프로그래머 YD: Docker - 도커로 MongoDB 컨테이너 설치하는 방법을 알아보자](https://7942yongdae.tistory.com/131){:target="_blank"}
+- [프리킴: [MongoDB] 몽고DB 기본 명령어](https://freekim.tistory.com/13){:target="_blank"}

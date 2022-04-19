@@ -64,3 +64,7 @@ Debezium 에서 변경된 데이터 캡쳐를 위해 mysql의 경우 binlog, pos
 - [Confluent 공식문서: MongoDB 커넥터](https://www.confluent.io/hub/mongodb/kafka-connect-mongodb){:target="_blank"}
 - [MongoDB 공식문서: MongoDB 커넥터를 위한 Configuration](https://www.mongodb.com/docs/kafka-connector/current/){:target="_blank"}
 - [kudl: CDC - debezium 설정](https://kudl.tistory.com/entry/CDC-debezium-설정){:target="_blank"}
+- [Confluent 공식문서: 커넥터 관련 강의](https://developer.confluent.io/learn-kafka/kafka-connect/docker/){:target="_blank"}
+- [Confluent 공식문서: Connect 관련 configuration](https://docs.confluent.io/home/connect/self-managed/userguide.html){:target="_blank"}
+- [sup2is: Kafka Connect로 데이터 허브 구축하기](https://sup2is.github.io/2020/06/08/kafka-connect-example.html){:target="_blank"}
+- [깃허브: mongodb-university/kafka-edu](https://github.com/mongodb-university/kafka-edu/tree/main/docs-examples/examples/v1.7/quickstart){:target="_blank"}
