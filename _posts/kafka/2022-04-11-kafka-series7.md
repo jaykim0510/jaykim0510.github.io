@@ -222,7 +222,7 @@ curl -X DELETE http://connect1:8083/connectors/mongo-sink
 - [Confluent 공식문서: Connect 관련 configuration](https://docs.confluent.io/home/connect/self-managed/userguide.html){:target="_blank"}
 - [sup2is: Kafka Connect로 데이터 허브 구축하기](https://sup2is.github.io/2020/06/08/kafka-connect-example.html){:target="_blank"}
 - [깃허브: mongodb-university/kafka-edu](https://github.com/mongodb-university/kafka-edu/tree/main/docs-examples/examples/v1.7/quickstart){:target="_blank"}
-- [컨버터 설정 관련](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/)
-- [컨버터 설정 관련2](https://www.mongodb.com/community/forums/t/error-unable-to-process-record-sinkrecord/16857/2)
-- [카프카 커넥트 실행](https://mongsil-jeong.tistory.com/35)
-- [몽고디비 싱크 커넥터를 위한 컨버터 설정](https://stackoverflow.com/questions/67998387/kafka-mongodb-sink-only-one-record-from-table)
+- [컨버터 설정 관련](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/){:target="_blank"}
+- [컨버터 설정 관련2](https://www.mongodb.com/community/forums/t/error-unable-to-process-record-sinkrecord/16857/2){:target="_blank"}
+- [카프카 커넥트 실행](https://mongsil-jeong.tistory.com/35){:target="_blank"}
+- [몽고디비 싱크 커넥터를 위한 컨버터 설정](https://stackoverflow.com/questions/67998387/kafka-mongodb-sink-only-one-record-from-table){:target="_blank"}

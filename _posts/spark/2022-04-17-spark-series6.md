@@ -2,8 +2,8 @@
 layout: post
 title:  'Apache Spark Series [Part6]: 몽고DB에서 스파크(pyspark)로 데이터 읽어오기(feat.Docker)'
 description: 
-date:   2022-02-22 15:01:35 +0300
-image:  '/images/spark_16.jpg'
+date:   2022-04-17 15:01:35 +0300
+image:  '/images/spark_logo.png'
 logo_image:  '/images/spark_logo.png'
 categories: DE
 tags: Spark
@@ -103,19 +103,16 @@ docker compose up
 ```
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.master('spark://spark-master:7077').config('spark.mongodb.input.uri', 'mongodb://root:root@mongodb:27017/quickstart.topicData/spark.times?authSource=admin').getOrCreate()
+spark = SparkSession.builder.master('spark://spark-master:7077').config('spark.mongodb.input.uri', 'mongodb://root:root@mongodb:27017/quickstart.topicData?authSource=admin').getOrCreate()
 
-df = spark.read.format("mongo").option("uri", "mongodb://root:root@mongodb:27017/quickstart.topicData/spark.times?authSource=admin").load()
+df = spark.read.format("mongo").option("uri", "mongodb://root:root@mongodb:27017/quickstart.topicData?authSource=admin").load()
 
 df.show()
 ```
 
-# 이슈
-
-- 현재 `df.show()` 했을 때 몽고DB에 저장된 데이터 안보이는 이슈
-
-
 
 # 참고
 
-- [Error connecting from pyspark to mongodb with password](https://stackoverflow.com/questions/58305720/error-connecting-from-pyspark-to-mongodb-with-password)
+- [MongoDB 공식문서: Connection String URI Format](https://www.mongodb.com/docs/manual/reference/connection-string/){:target="_blank"}
+- [MongoDB 공식문서: Connection String URI Format: authSource](https://www.mongodb.com/docs/manual/reference/connection-string/#mongodb-urioption-urioption.authSource){:target="_blank"}
+- [Error connecting from pyspark to mongodb with password](https://stackoverflow.com/questions/58305720/error-connecting-from-pyspark-to-mongodb-with-password){:target="_blank"}
