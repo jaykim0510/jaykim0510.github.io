@@ -57,6 +57,160 @@ Debezium은 변경 데이터 캡처를 위한 오픈 소스 분산 플랫폼이�
 
 Debezium 에서 변경된 데이터 캡쳐를 위해 mysql의 경우 binlog, postgresql의 경우 replica slot(logical)을 이용하여 데이터베이스에 커밋하는 데이터를 감시하여 Kakfa, DB, ElasticSearch 등 미들웨어에 이벤트를 전달한다
 
+# 도커 컴포즈 파일
+
+```yml
+version: '3.2'
+
+services:
+
+  mongodb:
+    image: mongo:latest
+    hostname: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    tty: true
+  
+
+  zookeeper:
+    image: zookeeper:3.7
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_PORT: 2181
+    volumes:
+      - ./data/zookeeper/data:/data
+      - ./data/zookeeper/datalog:/datalogco
+
+  kafka:
+    image: wurstmeister/kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    tty: true
+    volumes:
+      - ./data/kafka/data:/tmp/kafka-logs
+    depends_on:
+      - zookeeper
+  
+  connect:
+    image: confluentinc/cp-kafka-connect:latest.arm64
+    hostname: connect1
+    depends_on:
+      - kafka
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: kafka:29092
+      CONNECT_REST_ADVERTISED_HOST_NAME: connect1
+      CONNECT_GROUP_ID: connect-cluster
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      CONNECT_CONFIG_STORAGE_TOPIC: connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: connect-status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_PLUGIN_PATH: /usr/share/java/,/usr/share/confluent-hub-components/mongodb-kafka-connect-mongodb/lib/
+      CONNECT_REST_PORT: 8083
+    ports:
+      - 18083:8083
+    volumes:
+      - ./connectors/1:/usr/share/confluent-hub-components
+    command:
+      - bash
+      - -c
+      - |
+        confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:1.7.0
+        /etc/confluent/docker/run &
+        sleep infinity
+
+  producer:
+    build:
+      context: ./
+      dockerfile: Dockerfile_producer
+    stdin_open: true
+    tty: true
+
+  consumer:
+    build:
+      context: ./
+      dockerfile: Dockerfile_consumer
+    stdin_open: true
+    tty: true
+
+volumes:
+  mongodb:
+```
+
+# kafka 컨테이너에서 워커 실행 모드 설정
+
+```sh
+cd opt/kafka/config
+vi connect-distributed.properties
+```
+
+```sh
+# connect 컨테이너에서 커넥터(jar파일)가 설치되어 있는 경로 설정
+plugin.path=/usr/share/java/,/usr/share/confluent-hub-components/mongodb-kafka-connect-mongodb/lib/
+
+# 컨버터 설정
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable=false
+value.converter.schemas.enable=false
+```
+
+# kafka 컨테이너에서 커넥터 워커 실행
+
+```sh
+./bin/connect-distributed.sh ./config/connect-distributed.properties
+```
+
+# connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행
+
+```sh
+curl -X POST -H'Accept:application/json' -H'Content-Type:application/json' http://connect1:8083/connectors \
+  -w "\n" \
+  -d '{"name": "mongo-sink",
+      "config": {
+         "connector.class":"com.mongodb.kafka.connect.MongoSinkConnector",
+         "connection.user": "root",
+         "connectioin.password": "root",
+         "connection.uri":"mongodb://root:root@mongodb:27017",
+         "database":"quickstart",
+         "collection":"topicData",
+         "topics":"taxi",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schemas.enable": "false"
+         }
+     }'
+```
+
+# 기타 커넥터 관련 REST API
+
+```sh
+# 커넥터 상태 확인(커넥터 등록과 태스크 실행이 RUNNING이면 성공)
+curl -X GET http://connect1:8083/connectors/mongo-sink/status
+
+# 커넥터 삭제
+curl -X DELETE http://connect1:8083/connectors/mongo-sink
+```
+
 # 참고
 
 - [Confluent 공식문서: Kafka Connect Tutorial on Docker](https://docs.confluent.io/5.0.0/installation/docker/docs/installation/connect-avro-jdbc.html){:target="_blank"}
