@@ -5,9 +5,133 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 16 Apr 2022 17:36:41 +0900</pubDate>
-        <lastBuildDate>Sat, 16 Apr 2022 17:36:41 +0900</lastBuildDate>
+        <pubDate>Thu, 21 Apr 2022 09:38:47 +0900</pubDate>
+        <lastBuildDate>Thu, 21 Apr 2022 09:38:47 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Apache Spark Series [Part6]: 몽고DB에서 스파크(pyspark)로 데이터 읽어오기(feat.Docker)</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#도커-컴포즈로-컨테이너-띄우기&quot; id=&quot;markdown-toc-도커-컴포즈로-컨테이너-띄우기&quot;&gt;도커 컴포즈로 컨테이너 띄우기&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#spark-client-컨테이너에서-pyspark-셸을-실행&quot; id=&quot;markdown-toc-spark-client-컨테이너에서-pyspark-셸을-실행&quot;&gt;spark-client 컨테이너에서 pyspark 셸을 실행&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#pyspark-셸에서-몽고db와-연결&quot; id=&quot;markdown-toc-pyspark-셸에서-몽고db와-연결&quot;&gt;pyspark 셸에서 몽고DB와 연결&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;도커-컴포즈로-컨테이너-띄우기&quot;&gt;도커 컴포즈로 컨테이너 띄우기&lt;/h1&gt;
+
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.2'&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;spark-client&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;kimziont/spark:1.0&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;spark-client&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;spark-master&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; 
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bash&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;-c&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;apt -y install python-is-python3&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;sleep infinity&lt;/span&gt;
+
+    &lt;span class=&quot;na&quot;&gt;spark-master&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;kimziont/spark-master:1.0&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;spark-master&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;4041:8080&quot;&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; 
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bash&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;-c&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;./spark/sbin/start-master.sh &amp;amp;&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;sleep infinity&lt;/span&gt;
+
+    &lt;span class=&quot;na&quot;&gt;spark-worker1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;kimziont/spark-worker:1.0&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;worker1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;spark-master&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;4042:8081&quot;&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; 
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bash&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;-c&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;./spark/sbin/start-worker.sh spark://spark-master:7077 &amp;amp;&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;sleep infinity&lt;/span&gt;
+
+    &lt;span class=&quot;na&quot;&gt;spark-worker2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;kimziont/spark-worker:1.0&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;worker2&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;spark-master&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;4043:8081&quot;&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; 
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bash&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;-c&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;./spark/sbin/start-worker.sh spark://spark-master:7077 &amp;amp;&lt;/span&gt;
+          &lt;span class=&quot;s&quot;&gt;sleep infinity&lt;/span&gt;
+    
+    &lt;span class=&quot;na&quot;&gt;mongodb&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mongo:latest&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mongodb&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;27017:27017&quot;&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;MONGO_INITDB_ROOT_USERNAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;root&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;MONGO_INITDB_ROOT_PASSWORD&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;root&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;tty&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;마스터의 UI는 디폴트로 8080포트로 보여준다, 워커는 8081포트이다&lt;/li&gt;
+  &lt;li&gt;워커들은 마스터의 7077포트로 연결될 수 있다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker compose up
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;spark-client-컨테이너에서-pyspark-셸을-실행&quot;&gt;spark-client 컨테이너에서 pyspark 셸을 실행&lt;/h1&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./bin/pyspark &lt;span class=&quot;nt&quot;&gt;--master&lt;/span&gt; spark://spark-master:7077 &lt;span class=&quot;nt&quot;&gt;--packages&lt;/span&gt; org.mongodb.spark:mongo-spark-connector_2.12:3.0.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;pyspark-셸에서-몽고db와-연결&quot;&gt;pyspark 셸에서 몽고DB와 연결&lt;/h1&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.master('spark://spark-master:7077').config('spark.mongodb.input.uri', 'mongodb://root:root@mongodb:27017/quickstart.topicData?authSource=admin').getOrCreate()
+
+df = spark.read.format(&quot;mongo&quot;).option(&quot;uri&quot;, &quot;mongodb://root:root@mongodb:27017/quickstart.topicData?authSource=admin&quot;).load()
+
+df.show()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.mongodb.com/docs/manual/reference/connection-string/&quot; target=&quot;_blank&quot;&gt;MongoDB 공식문서: Connection String URI Format&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.mongodb.com/docs/manual/reference/connection-string/#mongodb-urioption-urioption.authSource&quot; target=&quot;_blank&quot;&gt;MongoDB 공식문서: Connection String URI Format: authSource&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/58305720/error-connecting-from-pyspark-to-mongodb-with-password&quot; target=&quot;_blank&quot;&gt;Error connecting from pyspark to mongodb with password&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Sun, 17 Apr 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/spark-series6</link>
+                <guid isPermaLink="true">http://localhost:4000/spark-series6</guid>
+                
+                <category>Spark</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
         
             <item>
                 <title>Network Series [Part8]: SSH(Secure SHell)이란 무엇인가</title>
@@ -78,6 +202,11 @@
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#debezium&quot; id=&quot;markdown-toc-debezium&quot;&gt;Debezium&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#도커-컴포즈-파일&quot; id=&quot;markdown-toc-도커-컴포즈-파일&quot;&gt;도커 컴포즈 파일&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#kafka-컨테이너에서-워커-실행-모드-설정&quot; id=&quot;markdown-toc-kafka-컨테이너에서-워커-실행-모드-설정&quot;&gt;kafka 컨테이너에서 워커 실행 모드 설정&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#kafka-컨테이너에서-커넥터-워커-실행&quot; id=&quot;markdown-toc-kafka-컨테이너에서-커넥터-워커-실행&quot;&gt;kafka 컨테이너에서 커넥터 워커 실행&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행&quot; id=&quot;markdown-toc-connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행&quot;&gt;connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#기타-커넥터-관련-rest-api&quot; id=&quot;markdown-toc-기타-커넥터-관련-rest-api&quot;&gt;기타 커넥터 관련 REST API&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -127,6 +256,154 @@
 
 &lt;p&gt;Debezium 에서 변경된 데이터 캡쳐를 위해 mysql의 경우 binlog, postgresql의 경우 replica slot(logical)을 이용하여 데이터베이스에 커밋하는 데이터를 감시하여 Kakfa, DB, ElasticSearch 등 미들웨어에 이벤트를 전달한다&lt;/p&gt;
 
+&lt;h1 id=&quot;도커-컴포즈-파일&quot;&gt;도커 컴포즈 파일&lt;/h1&gt;
+
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.2'&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;mongodb&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mongo:latest&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mongodb&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;27017:27017&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MONGO_INITDB_ROOT_USERNAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;root&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MONGO_INITDB_ROOT_PASSWORD&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;root&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;tty&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+  
+
+  &lt;span class=&quot;na&quot;&gt;zookeeper&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper:3.7&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;2181:2181&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ZOO_MY_ID&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;ZOO_PORT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;2181&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./data/zookeeper/data:/data&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./data/zookeeper/datalog:/datalogco&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;kafka&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;wurstmeister/kafka&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;kafka&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;9092:9092&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_BROKER_ID&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_ZOOKEEPER_CONNECT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper:2181&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_ADVERTISED_LISTENERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_LISTENER_SECURITY_PROTOCOL_MAP&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_INTER_BROKER_LISTENER_NAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;PLAINTEXT&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;tty&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./data/kafka/data:/tmp/kafka-logs&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;zookeeper&lt;/span&gt;
+  
+  &lt;span class=&quot;na&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;confluentinc/cp-kafka-connect:latest.arm64&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connect1&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;depends_on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;kafka&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_BOOTSTRAP_SERVERS&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;kafka:29092&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_REST_ADVERTISED_HOST_NAME&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connect1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_GROUP_ID&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connect-cluster&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_KEY_CONVERTER&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;org.apache.kafka.connect.json.JsonConverter&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_VALUE_CONVERTER&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;org.apache.kafka.connect.json.JsonConverter&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_CONFIG_STORAGE_TOPIC&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connect-configs&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_OFFSET_STORAGE_TOPIC&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connect-offsets&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_STATUS_STORAGE_TOPIC&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;connect-status&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_STATUS_STORAGE_REPLICATION_FACTOR&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_PLUGIN_PATH&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/usr/share/java/,/usr/share/confluent-hub-components/mongodb-kafka-connect-mongodb/lib/&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;CONNECT_REST_PORT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;8083&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;18083:8083&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./connectors/1:/usr/share/confluent-hub-components&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bash&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;-c&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:1.7.0&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;/etc/confluent/docker/run &amp;amp;&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;sleep infinity&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;producer&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;dockerfile&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Dockerfile_producer&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;stdin_open&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;tty&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;consumer&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;dockerfile&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Dockerfile_consumer&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;stdin_open&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;tty&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;mongodb&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;kafka-컨테이너에서-워커-실행-모드-설정&quot;&gt;kafka 컨테이너에서 워커 실행 모드 설정&lt;/h1&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;opt/kafka/config
+vi connect-distributed.properties
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# connect 컨테이너에서 커넥터(jar파일)가 설치되어 있는 경로 설정&lt;/span&gt;
+plugin.path&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/share/java/,/usr/share/confluent-hub-components/mongodb-kafka-connect-mongodb/lib/
+
+&lt;span class=&quot;c&quot;&gt;# 컨버터 설정&lt;/span&gt;
+key.converter&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;org.apache.kafka.connect.json.JsonConverter
+value.converter&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false
+&lt;/span&gt;value.converter.schemas.enable&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;kafka-컨테이너에서-커넥터-워커-실행&quot;&gt;kafka 컨테이너에서 커넥터 워커 실행&lt;/h1&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;./bin/connect-distributed.sh ./config/connect-distributed.properties
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행&quot;&gt;connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행&lt;/h1&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; POST &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Accept:application/json'&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Content-Type:application/json'&lt;/span&gt; http://connect1:8083/connectors &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-w&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{&quot;name&quot;: &quot;mongo-sink&quot;,
+      &quot;config&quot;: {
+         &quot;connector.class&quot;:&quot;com.mongodb.kafka.connect.MongoSinkConnector&quot;,
+         &quot;connection.user&quot;: &quot;root&quot;,
+         &quot;connectioin.password&quot;: &quot;root&quot;,
+         &quot;connection.uri&quot;:&quot;mongodb://root:root@mongodb:27017&quot;,
+         &quot;database&quot;:&quot;quickstart&quot;,
+         &quot;collection&quot;:&quot;topicData&quot;,
+         &quot;topics&quot;:&quot;taxi&quot;,
+        &quot;key.converter&quot;: &quot;org.apache.kafka.connect.json.JsonConverter&quot;,
+        &quot;value.converter&quot;: &quot;org.apache.kafka.connect.json.JsonConverter&quot;,
+        &quot;key.converter.schemas.enable&quot;: &quot;false&quot;,
+        &quot;value.converter.schemas.enable&quot;: &quot;false&quot;
+         }
+     }'&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;기타-커넥터-관련-rest-api&quot;&gt;기타 커넥터 관련 REST API&lt;/h1&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 커넥터 상태 확인(커넥터 등록과 태스크 실행이 RUNNING이면 성공)&lt;/span&gt;
+curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; GET http://connect1:8083/connectors/mongo-sink/status
+
+&lt;span class=&quot;c&quot;&gt;# 커넥터 삭제&lt;/span&gt;
+curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; DELETE http://connect1:8083/connectors/mongo-sink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 
 &lt;ul&gt;
@@ -135,6 +412,14 @@
   &lt;li&gt;&lt;a href=&quot;https://www.confluent.io/hub/mongodb/kafka-connect-mongodb&quot; target=&quot;_blank&quot;&gt;Confluent 공식문서: MongoDB 커넥터&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.mongodb.com/docs/kafka-connector/current/&quot; target=&quot;_blank&quot;&gt;MongoDB 공식문서: MongoDB 커넥터를 위한 Configuration&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://kudl.tistory.com/entry/CDC-debezium-설정&quot; target=&quot;_blank&quot;&gt;kudl: CDC - debezium 설정&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developer.confluent.io/learn-kafka/kafka-connect/docker/&quot; target=&quot;_blank&quot;&gt;Confluent 공식문서: 커넥터 관련 강의&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.confluent.io/home/connect/self-managed/userguide.html&quot; target=&quot;_blank&quot;&gt;Confluent 공식문서: Connect 관련 configuration&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://sup2is.github.io/2020/06/08/kafka-connect-example.html&quot; target=&quot;_blank&quot;&gt;sup2is: Kafka Connect로 데이터 허브 구축하기&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mongodb-university/kafka-edu/tree/main/docs-examples/examples/v1.7/quickstart&quot; target=&quot;_blank&quot;&gt;깃허브: mongodb-university/kafka-edu&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/&quot; target=&quot;_blank&quot;&gt;컨버터 설정 관련&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.mongodb.com/community/forums/t/error-unable-to-process-record-sinkrecord/16857/2&quot; target=&quot;_blank&quot;&gt;컨버터 설정 관련2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mongsil-jeong.tistory.com/35&quot; target=&quot;_blank&quot;&gt;카프카 커넥트 실행&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/67998387/kafka-mongodb-sink-only-one-record-from-table&quot; target=&quot;_blank&quot;&gt;몽고디비 싱크 커넥터를 위한 컨버터 설정&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Mon, 11 Apr 2022 21:01:35 +0900</pubDate>
@@ -432,45 +717,6 @@
                 
                 
                 <category>Coding_Test</category>
-                
-            </item>
-        
-            <item>
-                <title>BlockChain Series [Part3]: 비트코인에 관한 기술적 접근</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#해시-함수비트코인-주소&quot; id=&quot;markdown-toc-해시-함수비트코인-주소&quot;&gt;해시 함수(비트코인 주소)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#비대칭-암호화-기법전자서명&quot; id=&quot;markdown-toc-비대칭-암호화-기법전자서명&quot;&gt;비대칭 암호화 기법(전자서명)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#작업-증명&quot; id=&quot;markdown-toc-작업-증명&quot;&gt;작업 증명&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#하드포크와-소프트포크&quot; id=&quot;markdown-toc-하드포크와-소프트포크&quot;&gt;하드포크와 소프트포크&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;해시-함수비트코인-주소&quot;&gt;해시 함수(비트코인 주소)&lt;/h1&gt;
-
-&lt;h1 id=&quot;비대칭-암호화-기법전자서명&quot;&gt;비대칭 암호화 기법(전자서명)&lt;/h1&gt;
-
-&lt;h1 id=&quot;작업-증명&quot;&gt;작업 증명&lt;/h1&gt;
-
-&lt;h1 id=&quot;하드포크와-소프트포크&quot;&gt;하드포크와 소프트포크&lt;/h1&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;amp;mallGb=KOR&amp;amp;barcode=9791161752709&amp;amp;orderClick=LAG&amp;amp;Kc=&quot; target=&quot;_blank&quot;&gt;블록체인 해설서 책&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Mon, 04 Apr 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/blockchain-series2</link>
-                <guid isPermaLink="true">http://localhost:4000/blockchain-series2</guid>
-                
-                <category>Blockchain_basic</category>
-                
-                
-                <category>Blockchain</category>
                 
             </item>
         
