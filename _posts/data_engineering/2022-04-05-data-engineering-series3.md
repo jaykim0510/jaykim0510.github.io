@@ -21,7 +21,8 @@ tags: Data_Engineering
 
 ![](/images/data_engineering_5.png)
 
-
+![](/images/data_engineering_6.png)
 
 # 참고
 
+- [DB Engine 비교](https://db-engines.com/en/systems){:target="_blank"}

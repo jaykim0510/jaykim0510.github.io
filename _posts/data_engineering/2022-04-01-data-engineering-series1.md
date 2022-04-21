@@ -171,4 +171,3 @@ The key differences between a database, a data warehouse, and a data lake are th
 - [EDUCBA: Redis vs MongoDB](https://www.educba.com/redis-vs-mongodb/?source=leftnav){:target="_blank"}
 - [EDUCBA: Data Warehouse vs Data Lake](https://www.educba.com/data-lake-vs-data-warehouse/?source=leftnav){:target="_blank"}
 - [비투엔: Data Warehouse vs Data Lake](https://blog.b2en.com/253){:target="_blank"}
-- [DB Engine 비교](https://db-engines.com/en/systems){:target="_blank"}
