@@ -149,6 +149,7 @@ df = spark.createDataFrame(data)
 - agg()  
 - orderBy()
 - groupBy()
+- withColumn()
 
 **org.apache.spark.Column에서 제공하는 비타입 트랜스포메이션 연산**  
 
@@ -156,17 +157,23 @@ df = spark.createDataFrame(data)
 - alias()
 - isin()
 - when()
+- like()
 
 **org.apache.spark.sql.functions에서 제공하는 비타입 트랜스포메이션 연산**  
+
+(왜 트랜스포메이션이지?)
 
 - max(), mean(), sum()
 - count(), countDistince()
 - explode()
 - when()
+- col()
+- lit()
+
 
 ## 함수가 아닌 SQL문
 
-
+- createOrReplaceTempView()
 
 # 참고
 - [빅데이터 분석을 위한 스파크2 프로그래밍 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158391034&orderClick=LEa&Kc=){:target="_blank"}

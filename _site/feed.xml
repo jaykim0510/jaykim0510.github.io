@@ -5,9 +5,41 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 21 Apr 2022 19:55:55 +0900</pubDate>
-        <lastBuildDate>Thu, 21 Apr 2022 19:55:55 +0900</lastBuildDate>
+        <pubDate>Fri, 22 Apr 2022 18:21:04 +0900</pubDate>
+        <lastBuildDate>Fri, 22 Apr 2022 18:21:04 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Data Engineering Series [Part5]: 데이터 멱등성과 ACID Transaction</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb&quot; target=&quot;_blank&quot;&gt;Avoiding Double Payments in a Distributed Payments System&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://d2.naver.com/helloworld/407507&quot; target=&quot;_blank&quot;&gt;Naver D2: DBMS는 어떻게 트랜잭션을 관리할까?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.baeldung.com/cs/transactions-intro&quot; target=&quot;_blank&quot;&gt;Baeldung: Introduction to Transactions&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://betterprogramming.pub/a-deep-dive-into-idempotence-1a39393df7e6&quot; target=&quot;_blank&quot;&gt;Yuchen Z., A Deep Dive Into Idempotence&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=12f5wB2qHI8&quot; target=&quot;_blank&quot;&gt;Youtube: ACID 2.0: Designing Better API’s and Messages - Improving Talks Series&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Wed, 20 Apr 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/data-engineering-series5</link>
+                <guid isPermaLink="true">http://localhost:4000/data-engineering-series5</guid>
+                
+                <category>Data_Engineering</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
         
             <item>
                 <title>Apache Spark Series [Part6]: 몽고DB에서 스파크(pyspark)로 데이터 읽어오기(feat.Docker)</title>
@@ -207,6 +239,7 @@ df.show()
   &lt;li&gt;&lt;a href=&quot;#kafka-컨테이너에서-커넥터-워커-실행&quot; id=&quot;markdown-toc-kafka-컨테이너에서-커넥터-워커-실행&quot;&gt;kafka 컨테이너에서 커넥터 워커 실행&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행&quot; id=&quot;markdown-toc-connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행&quot;&gt;connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#기타-커넥터-관련-rest-api&quot; id=&quot;markdown-toc-기타-커넥터-관련-rest-api&quot;&gt;기타 커넥터 관련 REST API&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#커넥터와-백엔드java-spring의-관계&quot; id=&quot;markdown-toc-커넥터와-백엔드java-spring의-관계&quot;&gt;커넥터와 백엔드(Java Spring)의 관계&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -404,6 +437,24 @@ curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; GET http://connect1:8083/c
 curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; DELETE http://connect1:8083/connectors/mongo-sink
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
+&lt;h1 id=&quot;커넥터와-백엔드java-spring의-관계&quot;&gt;커넥터와 백엔드(Java Spring)의 관계&lt;/h1&gt;
+
+&lt;p&gt;커넥터가 있으면 알아서 커넥터가 토픽에서 데이터를 가져와 DB로 잘 반영을하는 것 같다.&lt;/p&gt;
+
+&lt;p&gt;이런거보면 딱히 스프링부트 같은 걸 이용해서 백엔드 프로그램을 개발하지 않아도 되는 것 같아보인다.&lt;/p&gt;
+
+&lt;p&gt;하지만 만약 내가 스프링부트 같은 거를 엄청 잘 알아서 직접 개발하는데 불편함이 없다면 왠만한 것들은 스프링 부트를 이용하고 부분적으로 특정 프로듀서/컨슈머는 커넥터를 사용하는 것이 아마 가장 좋은 방법이 아닐까 라는 생각이 든다.&lt;/p&gt;
+
+&lt;p&gt;나는 지금 스프링부트를 모른다. 심지어 자바 언어도 써본 적이 없다. 커넥터는 아예 러닝 커브가 없는 것은 아니지만 훨씬 쉽다.&lt;/p&gt;
+
+&lt;p&gt;하지만 백엔드의 중요한 철학들을 공부하는 것은 굉장히 중요해보인다.&lt;/p&gt;
+
+&lt;p&gt;결론은 지금 당장 구현이 필요한 부분들은 커넥터로 구현을 하고, 백엔드 공부는 스프링 부트를 통해서 계속 하자.&lt;/p&gt;
+
+&lt;p&gt;백엔드 공부를 스프링 부트로 하기로 한 이유는, 내가 사용하고 있는 언어는 파이썬이지만 데이터 엔지니어링 공부에서 자바 언어는 필요해보인다. (데이터 엔지니어링 분야의 관련 오픈 소스들이 자바로 많이 개발됨)&lt;/p&gt;
+
+&lt;p&gt;파이썬으로 백엔드를 구현하도록 해주는 장고나 플라스크도 있지만, 아직은 스프링 부트를 사용하는 비중이 더 커보이고 뭔가 공부하는 관점에서는 스프링 부트가 더 도움이 많이 될 것 같다.&lt;/p&gt;
+
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 
 &lt;ul&gt;
@@ -416,10 +467,9 @@ curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; DELETE http://connect1:808
   &lt;li&gt;&lt;a href=&quot;https://docs.confluent.io/home/connect/self-managed/userguide.html&quot; target=&quot;_blank&quot;&gt;Confluent 공식문서: Connect 관련 configuration&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://sup2is.github.io/2020/06/08/kafka-connect-example.html&quot; target=&quot;_blank&quot;&gt;sup2is: Kafka Connect로 데이터 허브 구축하기&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/mongodb-university/kafka-edu/tree/main/docs-examples/examples/v1.7/quickstart&quot; target=&quot;_blank&quot;&gt;깃허브: mongodb-university/kafka-edu&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/&quot; target=&quot;_blank&quot;&gt;컨버터 설정 관련&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.mongodb.com/community/forums/t/error-unable-to-process-record-sinkrecord/16857/2&quot; target=&quot;_blank&quot;&gt;컨버터 설정 관련2&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mongsil-jeong.tistory.com/35&quot; target=&quot;_blank&quot;&gt;카프카 커넥트 실행&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/67998387/kafka-mongodb-sink-only-one-record-from-table&quot; target=&quot;_blank&quot;&gt;몽고디비 싱크 커넥터를 위한 컨버터 설정&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/&quot; target=&quot;_blank&quot;&gt;Kafka Connect Deep Dive – Converters and Serialization Explained&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mongsil-jeong.tistory.com/35&quot; target=&quot;_blank&quot;&gt;정몽실이: 카프카 커넥트 실행&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/62728894/spring-kafka-jdbc-connector-compatibility&quot;&gt;Stackoverflow: Connector and Spring Kafka&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Mon, 11 Apr 2022 21:01:35 +0900</pubDate>
@@ -663,55 +713,6 @@ curl &lt;span class=&quot;nt&quot;&gt;-X&lt;/span&gt; DELETE http://connect1:808
                 <pubDate>Fri, 08 Apr 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/stack_queue</link>
                 <guid isPermaLink="true">http://localhost:4000/stack_queue</guid>
-                
-                <category>Data_Structure</category>
-                
-                
-                <category>Coding_Test</category>
-                
-            </item>
-        
-            <item>
-                <title>Coding Test Series [Part1]: 배열(Array)</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#배열&quot; id=&quot;markdown-toc-배열&quot;&gt;배열&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#itertools&quot; id=&quot;markdown-toc-itertools&quot;&gt;itertools&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;배열&quot;&gt;배열&lt;/h1&gt;
-
-&lt;p&gt;자료구조는 크게 &lt;strong&gt;메모리 공간 기반의 연속 방식&lt;/strong&gt;과 &lt;strong&gt;포인터 기반의 연결 방식&lt;/strong&gt;으로 나뉩니다. &lt;strong&gt;배열은 이 중에서 연속 방식의 가장 기본이 되는 자료형&lt;/strong&gt;입니다. 연결 방식의 경우는 연결 리스트입니다.&lt;/p&gt;
-
-&lt;p&gt;추상자료형(스택, 큐, 트리, 그래프 등)은 대부분 배열과 연결리스트를 기반으로 구현되었습니다.&lt;/p&gt;
-
-&lt;p&gt;파이썬에서는 정확히 배열, 연결 리스트라는 자료형은 따로 없습니다. 하지만 더욱 편리한 리스트라는 자료형이 있습니다. &lt;strong&gt;리스트 자료형은 배열과 연결 리스트의 장점을 모두 합쳐놓은 파이썬만의 자료형&lt;/strong&gt;입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/python_19.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그렇기 때문에 저는 지금부터는 코딩테스트에서 리스트를 사용할 때 도움이 될만한 지식들을 여기에 기록해두도록 하겠습니다.&lt;/p&gt;
-
-&lt;p&gt;파이썬 리스트는 그 자체로 정말 유용한 메소드들을 많이 보유하고 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;dir&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;--------------------------------------------------------------------------------------------------&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;'append'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'clear'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'copy'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'count'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'extend'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'index'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'insert'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'pop'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'remove'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'reverse'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'sort'&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;itertools&quot;&gt;itertools&lt;/h1&gt;
-
-&lt;p&gt;배열은 대표적인 시퀀스 자료형입니다. 그렇기 때문에 배열안의 원소들을 순회하는 경우가 많습니다. 이 때 파이썬의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;itertools&lt;/code&gt; 모듈을 적절히 사용하면 코드를 훨씬 더 간결하고 가독성 높게 작성할 수 있습니다.&lt;/p&gt;
-
-</description>
-                <pubDate>Thu, 07 Apr 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/array</link>
-                <guid isPermaLink="true">http://localhost:4000/array</guid>
                 
                 <category>Data_Structure</category>
                 

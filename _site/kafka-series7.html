@@ -408,6 +408,7 @@ Table of Contents
   <li><a href="#kafka-컨테이너에서-커넥터-워커-실행" id="markdown-toc-kafka-컨테이너에서-커넥터-워커-실행">kafka 컨테이너에서 커넥터 워커 실행</a></li>
   <li><a href="#connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행" id="markdown-toc-connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행">connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행</a></li>
   <li><a href="#기타-커넥터-관련-rest-api" id="markdown-toc-기타-커넥터-관련-rest-api">기타 커넥터 관련 REST API</a></li>
+  <li><a href="#커넥터와-백엔드java-spring의-관계" id="markdown-toc-커넥터와-백엔드java-spring의-관계">커넥터와 백엔드(Java Spring)의 관계</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -605,6 +606,24 @@ curl <span class="nt">-X</span> GET http://connect1:8083/connectors/mongo-sink/s
 curl <span class="nt">-X</span> DELETE http://connect1:8083/connectors/mongo-sink
 </code></pre></div></div>
 
+<h1 id="커넥터와-백엔드java-spring의-관계">커넥터와 백엔드(Java Spring)의 관계</h1>
+
+<p>커넥터가 있으면 알아서 커넥터가 토픽에서 데이터를 가져와 DB로 잘 반영을하는 것 같다.</p>
+
+<p>이런거보면 딱히 스프링부트 같은 걸 이용해서 백엔드 프로그램을 개발하지 않아도 되는 것 같아보인다.</p>
+
+<p>하지만 만약 내가 스프링부트 같은 거를 엄청 잘 알아서 직접 개발하는데 불편함이 없다면 왠만한 것들은 스프링 부트를 이용하고 부분적으로 특정 프로듀서/컨슈머는 커넥터를 사용하는 것이 아마 가장 좋은 방법이 아닐까 라는 생각이 든다.</p>
+
+<p>나는 지금 스프링부트를 모른다. 심지어 자바 언어도 써본 적이 없다. 커넥터는 아예 러닝 커브가 없는 것은 아니지만 훨씬 쉽다.</p>
+
+<p>하지만 백엔드의 중요한 철학들을 공부하는 것은 굉장히 중요해보인다.</p>
+
+<p>결론은 지금 당장 구현이 필요한 부분들은 커넥터로 구현을 하고, 백엔드 공부는 스프링 부트를 통해서 계속 하자.</p>
+
+<p>백엔드 공부를 스프링 부트로 하기로 한 이유는, 내가 사용하고 있는 언어는 파이썬이지만 데이터 엔지니어링 공부에서 자바 언어는 필요해보인다. (데이터 엔지니어링 분야의 관련 오픈 소스들이 자바로 많이 개발됨)</p>
+
+<p>파이썬으로 백엔드를 구현하도록 해주는 장고나 플라스크도 있지만, 아직은 스프링 부트를 사용하는 비중이 더 커보이고 뭔가 공부하는 관점에서는 스프링 부트가 더 도움이 많이 될 것 같다.</p>
+
 <h1 id="참고">참고</h1>
 
 <ul>
@@ -617,10 +636,9 @@ curl <span class="nt">-X</span> DELETE http://connect1:8083/connectors/mongo-sin
   <li><a href="https://docs.confluent.io/home/connect/self-managed/userguide.html" target="_blank">Confluent 공식문서: Connect 관련 configuration</a></li>
   <li><a href="https://sup2is.github.io/2020/06/08/kafka-connect-example.html" target="_blank">sup2is: Kafka Connect로 데이터 허브 구축하기</a></li>
   <li><a href="https://github.com/mongodb-university/kafka-edu/tree/main/docs-examples/examples/v1.7/quickstart" target="_blank">깃허브: mongodb-university/kafka-edu</a></li>
-  <li><a href="https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/" target="_blank">컨버터 설정 관련</a></li>
-  <li><a href="https://www.mongodb.com/community/forums/t/error-unable-to-process-record-sinkrecord/16857/2" target="_blank">컨버터 설정 관련2</a></li>
-  <li><a href="https://mongsil-jeong.tistory.com/35" target="_blank">카프카 커넥트 실행</a></li>
-  <li><a href="https://stackoverflow.com/questions/67998387/kafka-mongodb-sink-only-one-record-from-table" target="_blank">몽고디비 싱크 커넥터를 위한 컨버터 설정</a></li>
+  <li><a href="https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/" target="_blank">Kafka Connect Deep Dive – Converters and Serialization Explained</a></li>
+  <li><a href="https://mongsil-jeong.tistory.com/35" target="_blank">정몽실이: 카프카 커넥트 실행</a></li>
+  <li><a href="https://stackoverflow.com/questions/62728894/spring-kafka-jdbc-connector-compatibility">Stackoverflow: Connector and Spring Kafka</a></li>
 </ul>
 
     </div>
@@ -916,6 +934,45 @@ curl <span class="nt">-X</span> DELETE http://connect1:8083/connectors/mongo-sin
   <div class="article__inner">
 
     <div class="article__head">
+      <time class="article__date" datetime="2022-04-20T21:01:35+09:00">20 Apr 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/data-engineering-series5">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part5]: 데이터 멱등성과 ACID Transaction">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/data-engineering-series5">Data Engineering Series [Part5]: 데이터 멱등성과 ACID Transaction</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
       <time class="article__date" datetime="2022-04-17T21:01:35+09:00">17 Apr 2022</time>
 
       
@@ -1024,7 +1081,7 @@ curl <span class="nt">-X</span> DELETE http://connect1:8083/connectors/mongo-sin
 
       
       <a class="article__image" href="/data-engineering-series4">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part4]:여러가지 파일 포맷(JSON, BSON, Avro, Parquet)">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part4]: 여러가지 파일 포맷(JSON, BSON, Avro, Parquet)">
       </a>
       
 
@@ -1033,46 +1090,7 @@ curl <span class="nt">-X</span> DELETE http://connect1:8083/connectors/mongo-sin
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series4">Data Engineering Series [Part4]:여러가지 파일 포맷(JSON, BSON, Avro, Parquet)</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-04-05T21:01:35+09:00">05 Apr 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/data-engineering-series3">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part3]: 데이터 저장 서비스, 분석 엔진 서비스 선정하기">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series3">Data Engineering Series [Part3]: 데이터 저장 서비스, 분석 엔진 서비스 선정하기</a>
+        <a href="/data-engineering-series4">Data Engineering Series [Part4]: 여러가지 파일 포맷(JSON, BSON, Avro, Parquet)</a>
       </h2>
 
       

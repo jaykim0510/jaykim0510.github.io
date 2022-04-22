@@ -211,6 +211,25 @@ curl -X GET http://connect1:8083/connectors/mongo-sink/status
 curl -X DELETE http://connect1:8083/connectors/mongo-sink
 ```
 
+# 커넥터와 백엔드(Java Spring)의 관계
+
+커넥터가 있으면 알아서 커넥터가 토픽에서 데이터를 가져와 DB로 잘 반영을하는 것 같다.  
+
+이런거보면 딱히 스프링부트 같은 걸 이용해서 백엔드 프로그램을 개발하지 않아도 되는 것 같아보인다.  
+
+하지만 만약 내가 스프링부트 같은 거를 엄청 잘 알아서 직접 개발하는데 불편함이 없다면 왠만한 것들은 스프링 부트를 이용하고 부분적으로 특정 프로듀서/컨슈머는 커넥터를 사용하는 것이 아마 가장 좋은 방법이 아닐까 라는 생각이 든다.  
+
+나는 지금 스프링부트를 모른다. 심지어 자바 언어도 써본 적이 없다. 커넥터는 아예 러닝 커브가 없는 것은 아니지만 훨씬 쉽다.  
+
+하지만 백엔드의 중요한 철학들을 공부하는 것은 굉장히 중요해보인다.  
+
+결론은 지금 당장 구현이 필요한 부분들은 커넥터로 구현을 하고, 백엔드 공부는 스프링 부트를 통해서 계속 하자.  
+
+백엔드 공부를 스프링 부트로 하기로 한 이유는, 내가 사용하고 있는 언어는 파이썬이지만 데이터 엔지니어링 공부에서 자바 언어는 필요해보인다. (데이터 엔지니어링 분야의 관련 오픈 소스들이 자바로 많이 개발됨)  
+
+파이썬으로 백엔드를 구현하도록 해주는 장고나 플라스크도 있지만, 아직은 스프링 부트를 사용하는 비중이 더 커보이고 뭔가 공부하는 관점에서는 스프링 부트가 더 도움이 많이 될 것 같다.  
+
+
 # 참고
 
 - [Confluent 공식문서: Kafka Connect Tutorial on Docker](https://docs.confluent.io/5.0.0/installation/docker/docs/installation/connect-avro-jdbc.html){:target="_blank"}
@@ -222,7 +241,6 @@ curl -X DELETE http://connect1:8083/connectors/mongo-sink
 - [Confluent 공식문서: Connect 관련 configuration](https://docs.confluent.io/home/connect/self-managed/userguide.html){:target="_blank"}
 - [sup2is: Kafka Connect로 데이터 허브 구축하기](https://sup2is.github.io/2020/06/08/kafka-connect-example.html){:target="_blank"}
 - [깃허브: mongodb-university/kafka-edu](https://github.com/mongodb-university/kafka-edu/tree/main/docs-examples/examples/v1.7/quickstart){:target="_blank"}
-- [컨버터 설정 관련](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/){:target="_blank"}
-- [컨버터 설정 관련2](https://www.mongodb.com/community/forums/t/error-unable-to-process-record-sinkrecord/16857/2){:target="_blank"}
-- [카프카 커넥트 실행](https://mongsil-jeong.tistory.com/35){:target="_blank"}
-- [몽고디비 싱크 커넥터를 위한 컨버터 설정](https://stackoverflow.com/questions/67998387/kafka-mongodb-sink-only-one-record-from-table){:target="_blank"}
+- [Kafka Connect Deep Dive – Converters and Serialization Explained](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/){:target="_blank"}
+- [정몽실이: 카프카 커넥트 실행](https://mongsil-jeong.tistory.com/35){:target="_blank"}
+- [Stackoverflow: Connector and Spring Kafka](https://stackoverflow.com/questions/62728894/spring-kafka-jdbc-connector-compatibility)
