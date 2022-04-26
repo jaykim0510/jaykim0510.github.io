@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'MySQL을 이용한 데이터 조회 및 분석(2): 조인(JOIN)과 서브쿼리(SUBQUERY)'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+description: 
 date:   2021-03-14 15:01:35 +0300
 image:  '/images/sql_5.png'
 logo_image: '/images/mysql_logo.webp'
