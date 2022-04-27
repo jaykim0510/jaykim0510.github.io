@@ -1,0 +1,158 @@
+I"�.<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#트랜잭션" id="markdown-toc-트랜잭션">트랜잭션</a>    <ul>
+      <li><a href="#acid" id="markdown-toc-acid">ACID</a></li>
+      <li><a href="#커밋commit" id="markdown-toc-커밋commit">커밋(Commit)</a></li>
+    </ul>
+  </li>
+  <li><a href="#페이지-캐시" id="markdown-toc-페이지-캐시">페이지 캐시</a>    <ul>
+      <li><a href="#캐싱" id="markdown-toc-캐싱">캐싱</a></li>
+      <li><a href="#캐시-만료" id="markdown-toc-캐시-만료">캐시 만료</a></li>
+      <li><a href="#페이지-동기화" id="markdown-toc-페이지-동기화">페이지 동기화</a></li>
+      <li><a href="#페이지-고정" id="markdown-toc-페이지-고정">페이지 고정</a></li>
+      <li><a href="#페이지-교체-알고리즘" id="markdown-toc-페이지-교체-알고리즘">페이지 교체 알고리즘</a></li>
+    </ul>
+  </li>
+  <li><a href="#복구" id="markdown-toc-복구">복구</a>    <ul>
+      <li><a href="#언두undo-로그와-리두redo-로그" id="markdown-toc-언두undo-로그와-리두redo-로그">언두(Undo) 로그와 리두(Redo) 로그</a></li>
+      <li><a href="#스틸steal과-포스force-정책" id="markdown-toc-스틸steal과-포스force-정책">스틸(Steal)과 포스(Force) 정책</a></li>
+    </ul>
+  </li>
+  <li><a href="#동시성-제어" id="markdown-toc-동시성-제어">동시성 제어</a>    <ul>
+      <li><a href="#잠금" id="markdown-toc-잠금">잠금</a></li>
+      <li><a href="#격리-수준" id="markdown-toc-격리-수준">격리 수준</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="트랜잭션">트랜잭션</h1>
+<p>DBMS에서 트랜잭션이란 <strong>하나의 논리적 작업 단위</strong>를 의미하며, <strong>여러 작업(DB의 읽기, 쓰기)을 한 단계로 표현</strong>하는 방법입니다.</p>
+
+<h2 id="acid">ACID</h2>
+
+<p>이러한 트랜잭션을 정의하기 위해서는 다음의 4가지 속성이 보장되어야 합니다.</p>
+
+<p><strong>원자성(Atomicity)</strong></p>
+<ul>
+  <li>트랜잭션은 더 작은 단계로 나눌 수 없습니다. 트랜잭션과 관련된 작업은 모두 실행되거나 모두 실패해야 합니다.</li>
+  <li>All or Nothing</li>
+  <li>ex) A에서 B로 계좌이체를 할 때, A가 출금이 되면 B도 반드시 입금이 되어야 한다.</li>
+</ul>
+
+<p><strong>일관성(Consistency)</strong></p>
+<ul>
+  <li>트랜잭션이 일어나더라도 데이터베이스의 제약이나 규칙은 그대로 지켜져야 합니다.</li>
+  <li>사용자가 제어할 수 있는 유일한 속성입니다.</li>
+  <li>ex) 고객 정보 DB에서 이름을 반드시 입력하도록 제약을 두었다면 트랜잭션 또한 이러한 제약을 가져야 한다.</li>
+</ul>
+
+<p><strong>격리성(Isolation)</strong></p>
+<ul>
+  <li>하나의 트랜잭션은 다른 트랜잭션으로부터 간섭없이 독립적으로 수행되어야 합니다.</li>
+  <li>동시에 여러 개의 트랜잭션들이 수행될 때, 각 트랜잭션은 연속으로 실행된 것과 동일한 결과를 나타내야 합니다.</li>
+  <li>ex) A가 만원이 있는 계좌에서 B에게 3천원을 송금하던 도중 자신의 잔액을 확인할 때는 여전히 만원이 있어야 한다.</li>
+  <li>많은 데이터베이스는 성능상의 이유로 정의에 비해 약한 격리 수준을 사용합니다. (동시성 제어의 격리 수준 참고)</li>
+</ul>
+
+<p><strong>지속성(Durability)</strong></p>
+<ul>
+  <li>커밋된 데이터는 장애가 발생 하더라도 데이터베이스에 저장되어야 한다.</li>
+  <li>ex) A에서 B로 송금이 완료되어 커밋을 했다면 시스템 중단, 정전으로 장애가 발생해도 DB에 데이터가 그대로 유지되어야 한다</li>
+</ul>
+
+<h2 id="커밋commit">커밋(Commit)</h2>
+<ul>
+  <li><strong>Commit</strong>: A commit ends the current transaction and makes permanent all changes performed in the transaction. The transaction is a sequence of SQL statements that the database treats as a single unit. A commit also erases all savepoints in the transaction and releases transaction locks. After your data is committed, it is visible to other users of the system.</li>
+</ul>
+
+<p>Commit means save the cache changes to the database</p>
+
+<p>A SQL statement that ends a transaction, making permanent any changes made by the transaction. It is the opposite of rollback, which undoes any changes made in the transaction.</p>
+
+<p>InnoDB uses an optimistic mechanism for commits, so that changes can be written to the data files before the commit actually occurs. This technique makes the commit itself faster, with the tradeoff that more work is required in case of a rollback.</p>
+
+<p>By default, MySQL uses the autocommit setting, which automatically issues a commit following each SQL statement.</p>
+
+<ul>
+  <li>
+    <p><strong>Save</strong>: A save writes your changes to the database, however at this point these changes are only visible to you within your transaction scope. The database has also generated undo information which contains the old values of your transaction which can be used to rollback your modifications.</p>
+  </li>
+  <li>
+    <p><strong>Flush</strong>: flush() will synchronize your database with the current state of object/objects held in the memory but it does not commit the transaction. So, if you get any exception after flush() is called, then the transaction will be rolled back.</p>
+  </li>
+</ul>
+
+<p>To write changes to the database files, that had been buffered in a memory area or a temporary disk storage area. The InnoDB storage structures that are periodically flushed include the redo log, the undo log, and the buffer pool.</p>
+
+<ul>
+  <li><strong>Rollback</strong>:</li>
+</ul>
+
+<h1 id="페이지-캐시">페이지 캐시</h1>
+
+<p>대부분의 데이터베이스는 상대적으로 속도가 느린 영구 저장소(디스크)에 접근하는 회수를 줄이기 위해 페이지(읽고 쓰는 가장 작은 단위)를 메모리에 캐시합니다. 이를 페이지 캐시(page cache)라고 하며 이 때의 메모리 영역을 버퍼 풀(buffer pool)이라고 합니다. 메모리에 있는 페이지에 변경사항이 생겼을 때 아직 디스크로 플러시(flush)되지 않은 페이지를 더티(dirty) 페이지라고 합니다.</p>
+
+<p>정리하면 페이지 캐시의 주요 기능은 다음과 같습니다.</p>
+
+<ul>
+  <li>페이지를 메모리에 <strong>캐시함으로써 빠른 읽기</strong>를 지원</li>
+  <li>쓰기 요청이 발생할때마다 디스크로 플러시하지 않고 <strong>버퍼링 후 플러시</strong> 할 수 있다</li>
+</ul>
+
+<h2 id="캐싱">캐싱</h2>
+<p>스토리지 엔진이 특정 페이지를 요청하면 우선 캐시된 버전이 있는지 확인합니다. 페이지가 있다면 반환하고 없다면 페이지 번호를 물리적 주소로 변환해 해당 페이지를 메모리로 복사하고 반환합니다.</p>
+
+<p>이때 해당 페이지가 저장된 버퍼는 참조상태라고 표현합니다. 작업이 끝나면 스토리지 엔진은 참조 해제해야 합니다.</p>
+
+<h2 id="캐시-만료">캐시 만료</h2>
+<p>일반적으로 버퍼 풀은 데이터셋보다 크기가 작기 때문에 새로운 페이지를 추가하기 위해 기존 페이지를 만료시키는 작업도 필요하게 됩니다. 페이지가 동기화됐고 고정 또는 참조 상태가 아니라면 바로 제거할 수 있습니다. 페이지를 제거할 때에는 페이지와 관련된 로그도 WAL에서 삭제합니다.</p>
+
+<h2 id="페이지-동기화">페이지 동기화</h2>
+<p>위에서 버퍼 풀의 메모리 용량을 관리하기 위해서는 캐시가 만료된 페이지는 제거해야 한다고 했습니다. 그리고 이때 페이지를 제거하기 위해서는 우선 페이지가 동기화되어야 한다고 했습니다. <strong>페이지 동기화는 페이지에서 변경된 사항을 디스크에 반영(flush)하는 것</strong>입니다.</p>
+
+<p>이렇게 플러시하는 것은 언제 얼마나 자주하는 것이 좋을까요? 변경 사항이 생길 때마다 플러시하게 되면 데이터 손실 가능성을 줄일 수 있겠지만 결국 잦은 디스크 접근을 유발하기 때문에 트레이드 오프가 있습니다. 그래서 데이터베이스에서는 이러한 <strong>플러시를 주기적으로 하게 되며 이 시점을 체크포인트(checkpoint)</strong>라고 합니다.</p>
+
+<p>체크포인트 시점에 플러시가 일어나는데 이 때 플러시는 디스크에 있는 데이터베이스에 데이터가 저장되는 것을 의미하지는 않습니다. <strong>플러시는 메모리에 있는 페이지에 요청된 작업 명령들을 디스크의 WAL(Write Ahead Log)에 남겨두고 페이지와 싱크를 맞추는 것</strong>입니다.</p>
+
+<p>정리하면</p>
+
+<ul>
+  <li>캐시가 만료된 페이지를 삭제하려면 먼저 페이지를 동기화 해야 한다.</li>
+  <li>동기화된 시점을 체크포인트라고 한다.</li>
+  <li>동기화는 플러시하는 것이며 플러시는 페이지의 변경시 요청된 작업 명령을 디스크의 WAL에 기록하는 것이다.</li>
+</ul>
+
+<h2 id="페이지-고정">페이지 고정</h2>
+<p>가까운 시간 내에 요청될 확률이 높은 페이지는 캐시에 가둬 두는 것이 좋습니다. 이를 페이지 고정(pinning)이라고 합니다. 예를 들어 이진 트리 탐색에서 트리의 상위 노드는 접근될 확률이 높기 때문에 이러한 상위 노드는 고정해두면 성능 향상에 도움이 됩니다.</p>
+
+<h2 id="페이지-교체-알고리즘">페이지 교체 알고리즘</h2>
+<p>저장 공간이 부족한 캐시에 새로운 페이지를 추가하려면 일부 페이지를 만료시켜야 한다고 했습니다. 하지만 빈번하게 요청될 수 있는 페이지를 만료시키면 같은 페이지를 여러 차례 페이징하는 상황이 발생할 수 있습니다. 페이지 교체 알고리즘은 다시 요청될 확률이 가장 낮은 페이지를 만료시키고 해당 위치에 새로운 페이지를 페이징합니다.</p>
+
+<p>하지만 페이지의 요청 순서는 일반적으로 특정 패턴이 없기 때문에 어떤 페이지가 다시 요청될지 정확하게 예측하는 것은 불가능 합니다. 그래서 보통은 그 기준을 <strong>최근에 요청</strong>되었는지 여부, <strong>요청된 빈도수</strong> 등으로 합니다. 관련 알고리즘에는 FIFO(First In First Out), LRU(Least Recently Used), LFU(Least Frequently Used), CLOCK-sweep 알고리즘이 있습니다.</p>
+
+<h1 id="복구">복구</h1>
+
+<h2 id="언두undo-로그와-리두redo-로그">언두(Undo) 로그와 리두(Redo) 로그</h2>
+
+<h2 id="스틸steal과-포스force-정책">스틸(Steal)과 포스(Force) 정책</h2>
+
+<h1 id="동시성-제어">동시성 제어</h1>
+
+<h2 id="잠금">잠금</h2>
+
+<h2 id="격리-수준">격리 수준</h2>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791158392703&amp;orderClick=LAG&amp;Kc=" target="_blank">Real MySQL 8.0 (1권) 책</a></li>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791161754963&amp;orderClick=LEa&amp;Kc=" target="_blank">데이터베이스 인터널스 책</a></li>
+  <li><a href="https://d2.naver.com/helloworld/407507" target="_blank">Naver D2: DBMS는 어떻게 트랜잭션을 관리할까?</a></li>
+  <li><a href="https://happycloud-lee.tistory.com/156" target="_blank">온달의 해피클라우드: ACID 이해하기</a></li>
+  <li><a href="https://m.blog.naver.com/sory1008/220708909773#" target="_blank">노력 이기는 재능 없고 노력 외면하는 결과도 없다: [MySQL Internals] FLUSH</a></li>
+</ul>
+:ET

@@ -1,0 +1,101 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#트랜잭션" id="markdown-toc-트랜잭션">트랜잭션</a>    <ul>
+      <li><a href="#acid" id="markdown-toc-acid">ACID</a></li>
+      <li><a href="#커밋commit" id="markdown-toc-커밋commit">커밋(Commit)</a></li>
+      <li><a href="#롤백rollback" id="markdown-toc-롤백rollback">롤백(Rollback)</a></li>
+    </ul>
+  </li>
+  <li><a href="#버퍼-관리" id="markdown-toc-버퍼-관리">버퍼 관리</a>    <ul>
+      <li><a href="#캐싱" id="markdown-toc-캐싱">캐싱</a></li>
+      <li><a href="#캐시-만료" id="markdown-toc-캐시-만료">캐시 만료</a></li>
+      <li><a href="#캐시-고정" id="markdown-toc-캐시-고정">캐시 고정</a></li>
+      <li><a href="#페이지-교체-알고리즘" id="markdown-toc-페이지-교체-알고리즘">페이지 교체 알고리즘</a></li>
+    </ul>
+  </li>
+  <li><a href="#복구" id="markdown-toc-복구">복구</a>    <ul>
+      <li><a href="#언두undo-로그와-리두redo-로그" id="markdown-toc-언두undo-로그와-리두redo-로그">언두(Undo) 로그와 리두(Redo) 로그</a></li>
+      <li><a href="#스틸steal과-포스force-정책" id="markdown-toc-스틸steal과-포스force-정책">스틸(Steal)과 포스(Force) 정책</a></li>
+    </ul>
+  </li>
+  <li><a href="#동시성-제어" id="markdown-toc-동시성-제어">동시성 제어</a>    <ul>
+      <li><a href="#잠금" id="markdown-toc-잠금">잠금</a></li>
+      <li><a href="#격리-수준" id="markdown-toc-격리-수준">격리 수준</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="트랜잭션">트랜잭션</h1>
+<p>DBMS에서 트랜잭션이란 <strong>하나의 논리적 작업 단위</strong>를 의미하며, <strong>여러 작업(DB의 읽기, 쓰기)을 한 단계로 표현</strong>하는 방법입니다.</p>
+
+<h2 id="acid">ACID</h2>
+
+<p>이러한 트랜잭션을 정의하기 위해서는 다음의 4가지 속성이 보장되어야 합니다.</p>
+
+<p><strong>원자성(Atomicity)</strong></p>
+<ul>
+  <li>트랜잭션은 더 작은 단계로 나눌 수 없습니다. 트랜잭션과 관련된 작업은 모두 실행되거나 모두 실패해야 합니다.</li>
+  <li>All or Nothing</li>
+  <li>ex) A에서 B로 계좌이체를 할 때, A가 출금이 되면 B도 반드시 입금이 되어야 한다.</li>
+</ul>
+
+<p><strong>일관성(Consistency)</strong></p>
+<ul>
+  <li>트랜잭션이 일어나더라도 데이터베이스의 제약이나 규칙은 그대로 지켜져야 합니다.</li>
+  <li>사용자가 제어할 수 있는 유일한 속성입니다.</li>
+  <li>ex) 고객 정보 DB에서 이름을 반드시 입력하도록 제약을 두었다면 트랜잭션 또한 이러한 제약을 가져야 한다.</li>
+</ul>
+
+<p><strong>격리성(Isolation)</strong></p>
+<ul>
+  <li>하나의 트랜잭션은 다른 트랜잭션으로부터 간섭없이 독립적으로 수행되어야 합니다.</li>
+  <li>동시에 여러 개의 트랜잭션들이 수행될 때, 각 트랜잭션은 연속으로 실행된 것과 동일한 결과를 나타내야 합니다.</li>
+  <li>ex) A가 만원이 있는 계좌에서 B에게 3천원을 송금하던 도중 자신의 잔액을 확인할 때는 여전히 만원이 있어야 한다.</li>
+  <li>많은 데이터베이스는 성능상의 이유로 정의에 비해 약한 격리 수준을 사용합니다. (동시성 제어의 격리 수준 참고)</li>
+</ul>
+
+<p><strong>지속성(Durability)</strong></p>
+<ul>
+  <li>커밋된 데이터는 장애가 발생 하더라도 데이터베이스에 저장되어야 한다.</li>
+  <li>ex) A에서 B로 송금이 완료되어 데이터베이스에 기록이 저장되었다면, 시스템 중단, 정전으로 장애가 발생해도 그대로 유지되어야 한다</li>
+</ul>
+
+<h2 id="커밋commit">커밋(Commit)</h2>
+
+<h2 id="롤백rollback">롤백(Rollback)</h2>
+
+<h1 id="버퍼-관리">버퍼 관리</h1>
+
+<h2 id="캐싱">캐싱</h2>
+
+<h2 id="캐시-만료">캐시 만료</h2>
+
+<h2 id="캐시-고정">캐시 고정</h2>
+
+<h2 id="페이지-교체-알고리즘">페이지 교체 알고리즘</h2>
+
+<h1 id="복구">복구</h1>
+
+<h2 id="언두undo-로그와-리두redo-로그">언두(Undo) 로그와 리두(Redo) 로그</h2>
+
+<h2 id="스틸steal과-포스force-정책">스틸(Steal)과 포스(Force) 정책</h2>
+
+<h1 id="동시성-제어">동시성 제어</h1>
+
+<h2 id="잠금">잠금</h2>
+
+<h2 id="격리-수준">격리 수준</h2>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791158392703&amp;orderClick=LAG&amp;Kc=" target="_blank">Real MySQL 8.0 (1권) 책</a></li>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791161754963&amp;orderClick=LEa&amp;Kc=" target="_blank">데이터베이스 인터널스 책</a></li>
+  <li><a href="https://d2.naver.com/helloworld/407507" target="_blank">Naver D2: DBMS는 어떻게 트랜잭션을 관리할까?</a></li>
+  <li><a href="https://happycloud-lee.tistory.com/156" target="_blank">온달의 해피클라우드: ACID 이해하기</a></li>
+</ul>
+:ET
