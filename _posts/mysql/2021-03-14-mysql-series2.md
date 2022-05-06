@@ -5,7 +5,7 @@ description:
 date:   2021-03-14 15:01:35 +0300
 image:  '/images/sql_5.png'
 logo_image: '/images/mysql_logo.webp'
-categories: backend
+categories: DE
 tags: MySQL
 ---
 

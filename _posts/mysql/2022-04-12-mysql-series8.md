@@ -5,7 +5,7 @@ description:
 date:   2022-04-12 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
 logo_image: '/images/mysql_logo.webp'
-categories: backend
+categories: DE
 tags: MySQL
 ---
 

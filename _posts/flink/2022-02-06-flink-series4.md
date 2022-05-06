@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Flink Series [Part4]: 정확성'
+title: 'Flink Series [Part4]: 플링크의 아키텍처'
 description: 
 date: 2022-02-06 15:01:35 +0300
 logo_image: '/images/flink_logo.png'
