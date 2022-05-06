@@ -147,8 +147,6 @@ KeyedState로 사용할 수 있는 기본 상태의 종류는 다음과 같습�
 
 플링크에서 제공하는 대표적인 상태 백엔드 두가지는 다음과 같습니다.  
 
-![](/images/flink_21.png)  
-
 **HashMap StateBackend**  
 
 - Java Heap에 상태를 객체로 저장
