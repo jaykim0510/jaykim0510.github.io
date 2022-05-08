@@ -6,7 +6,7 @@ date:   2022-01-09 15:01:35 +0300
 image:  '/images/container_5.png'
 logo_image:  '/images/docker_logo.png'
 categories: devops
-tags: Docker
+tags: [Docker]
 ---
 ---
 

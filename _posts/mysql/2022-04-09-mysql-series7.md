@@ -88,7 +88,7 @@ tags: MySQL
 
 - [Real MySQL 8.0 (1권) 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158392703&orderClick=LAG&Kc=){:target="_blank"}
 - [MySQL 공식문서: The InnoDB Storage Engine](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html){:target="_blank"}
-- [](){:target="_blank"}
+- [MyInfraBox: InnoDB Architecture](https://myinfrabox.tistory.com/42){:target="_blank"}
 - [](){:target="_blank"}
 - [](){:target="_blank"}
 - [](){:target="_blank"}

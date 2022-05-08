@@ -422,7 +422,12 @@ Table of Contents
   </li>
   <li><a href="#동시성-제어" id="markdown-toc-동시성-제어">동시성 제어</a>    <ul>
       <li><a href="#잠금" id="markdown-toc-잠금">잠금</a></li>
-      <li><a href="#격리-수준" id="markdown-toc-격리-수준">격리 수준</a></li>
+      <li><a href="#격리-수준" id="markdown-toc-격리-수준">격리 수준</a>        <ul>
+          <li><a href="#read-uncommitted" id="markdown-toc-read-uncommitted">READ UNCOMMITTED</a></li>
+          <li><a href="#read-committed" id="markdown-toc-read-committed">READ COMMITTED</a></li>
+          <li><a href="#repeatable-read" id="markdown-toc-repeatable-read">REPEATABLE READ</a></li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -431,7 +436,7 @@ Table of Contents
 <hr />
 
 <h1 id="트랜잭션">트랜잭션</h1>
-<p>DBMS에서 트랜잭션이란 <strong>하나의 논리적 작업 단위</strong>를 의미하며, <strong>여러 작업(DB의 읽기, 쓰기)을 한 단계로 표현</strong>하는 방법입니다.</p>
+<p>DBMS에서 트랜잭션이란 <strong>하나의 논리적 작업 단위</strong>를 의미하며, <strong>여러 작업(DB의 읽기, 쓰기)을 한 단계로 표현</strong>하는 방법입니다. 트랜잭션은 어플리케이션 개발에서 부분 업데이트 현상으로 인해 데이터의 정합성이 깨지는 문제를 걱정하지 않도록 해줍니다. 트랜잭션을 사용할 때는 가능한 범위를 최소화하는 것이 좋습니다. 특히 네트워크를 통해 발생하는 작업은 트랜잭션 내에서 제거해야 합니다. 네트워크간 데이터 이동은 그 자체로 높은 비용이 발생할 뿐 아니라, 다양한 이유로 장애가 발생할 수 있는 부분이기 때문입니다. 트랜잭션이 종료되지 않고 유지되는 시간이 길어지면 MySQL서버의 전체적인 성능 하락에 주요 이유가 됩니다.</p>
 
 <h2 id="acid">ACID</h2>
 
@@ -609,9 +614,57 @@ FORCE 정책을 따르면 트랜잭션이 커밋되면 수정되었던 페이지
 
 <h1 id="동시성-제어">동시성 제어</h1>
 
+<ul>
+  <li>잠금과 트랜잭션, 트랜잭션의 격리 수준이 동시성에 영향을 줌</li>
+  <li>잠금은 동시성을 제어하기 위한 기능</li>
+  <li>트랜잭션은 데이터의 정합성을 보장하기 위한 개념</li>
+</ul>
+
 <h2 id="잠금">잠금</h2>
 
+<ul>
+  <li>하나의 레코드를 여러 커넥션에서 동시에 변경하려고 할 때 잠금이 없다면 레코드의 값은 예측할 수 없는 상태가 됨</li>
+  <li>잠금은 동시에 여러 요청이 들어와도 순서대로 한 시점에는 하나의 커넥션만 변경할 수 있게 하는 역할</li>
+  <li>MySQL 엔진 레벨의 잠금은 모든 스토리지 엔진에 영향을 미치며 종류로는 테이블락, 메타데이터락, 네임드락이 있음</li>
+  <li>InnoDB 스토리지 엔진 레벨의 잠금은 (테이블 전체가 아닌)레코드 기반의 잠금 방식 -&gt; 뛰어난 동시성 처리를 제공</li>
+  <li>정확히는 레코드를 잠그는 것이 아니라 인덱스를 잠그는 방식(데이터 접근 기준에 해당하는 인덱스 모두 잠금)</li>
+  <li>만약 테이블에 인덱스가 하나도 없다면 테이블을 모두 스캔하고 모든 레코드에 잠금이 걸림 -&gt; 인덱스 설계가 중요</li>
+</ul>
+
 <h2 id="격리-수준">격리 수준</h2>
+
+<ul>
+  <li>여러 트랜잭션이 동시에 처리될 때 트랜잭션 간의 작업 내용을 어떻게 공유하고 차단할 것인지 결정하는 레벨</li>
+  <li>격리 수준은 크게 READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE</li>
+  <li>READ UNCOMMITTED는 DIRTY READ 문제로, SERIALIZABLE은 동시성 처리 성능 저하로 거의 사용하지 않음</li>
+  <li>오라클 DB는 READ COMMITTED, MySQL은 REATABLE READ를 주로 사용</li>
+  <li>격리 수준에 따라 DIRTY READ, NON-REPEATABLE READ, PHANTOM READ와 같은 부정합 문제 발생</li>
+</ul>
+
+<h3 id="read-uncommitted">READ UNCOMMITTED</h3>
+
+<ul>
+  <li>트랜잭션에서의 변경 내용이 COMMIT이 되었는지 ROLLBACK이 되었는지 관계없이 다른 트랜잭션에서 보임</li>
+  <li>해당 트랜잭션이 COMMIT되면 상관없지만 ROLLBACK된 경우 다른 트랜잭션은 잘못된 데이터를 읽어간 것이 됨</li>
+</ul>
+
+<h3 id="read-committed">READ COMMITTED</h3>
+
+<ul>
+  <li>오라클 DB를 포함해 많은 온라인 서비스에서 선택하는 격리 수준</li>
+  <li>트랜잭션이 데이터를 변경하고 COMMIT 하지 않았다면 다른 트랜잭션은 언두 영역에 백업된 레코드를 읽어감</li>
+  <li>NON-REPEATABLE READ 문제 발생</li>
+  <li>어떤 트랜잭션내에서 SELECT 요청이 두 번 발생하는 동안 다른 트랜잭션이 데이터 변경 후 커밋하면 하나의 트랜잭션내에서 같은 SELECT 요청에 대해 다른 결과가 나오게 됨</li>
+</ul>
+
+<h3 id="repeatable-read">REPEATABLE READ</h3>
+<ul>
+  <li>InnoDB  스토리지 엔진에서 기본적으로 사용되는 격리 수준</li>
+  <li>READ COMMITTED, REPEATABLE READ 모두 MVCC를 이용해 커밋 되기 전의 데이터를 보여줌</li>
+  <li>차이는 언두 영역에 백업된 레코드의 여러 버전 가운데 몇 번째 이전 버전까지 찾아 들어가야 하느냐는 것</li>
+  <li>모든 트랜잭션은 순차적으로 증가하는 고유한 트랜잭션 번호를 가지며 언두 영역에 백업된 모든 레코드에는 변경을 발생시킨 트랜잭션의 번호가 포함돼 있음</li>
+  <li>트랜잭션은 자신보다 작은 트랜잭션 번호를 가지는 트랜잭션이 변경한 사항만 볼 수 있음</li>
+</ul>
 
 <h1 id="참고">참고</h1>
 
