@@ -188,7 +188,7 @@ curl -X POST -H'Accept:application/json' -H'Content-Type:application/json' http:
       "config": {
          "connector.class":"com.mongodb.kafka.connect.MongoSinkConnector",
          "connection.user": "root",
-         "connectioin.password": "root",
+         "connection.password": "root",
          "connection.uri":"mongodb://root:root@mongodb:27017",
          "database":"quickstart",
          "collection":"topicData",
