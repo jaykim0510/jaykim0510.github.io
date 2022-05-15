@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL을 이용한 데이터 조회 및 분석(1): SQL소개와 MySQL 문법 정리'
+title:  'MySQL Series [Part1] 데이터 조회 및 분석(1): SQL소개와 MySQL 문법 정리'
 description: 데이터베이스를 체계적으로 작동할 수 있도록 돕는 소프트웨어가 나오게 되었으며 이를 DBMS라고 한다
 date:   2021-03-07 15:01:35 +0300
 image:  '/images/mysql_1.png'

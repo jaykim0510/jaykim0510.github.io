@@ -95,7 +95,7 @@ docker compose up
 # spark-client 컨테이너에서 pyspark 셸을 실행
 
 ```sh
-./bin/pyspark --master spark://spark-master:7077 --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1
+./bin/pyspark --master spark://spark-master:7077 --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1 --jars /spark/mysql-connector-java-8.0.29.jar
 ```
 
 # pyspark 셸에서 몽고DB와 연결
@@ -110,6 +110,9 @@ df = spark.read.format("mongo").option("uri", "mongodb://root:root@mongodb:27017
 df.show()
 ```
 
+```
+spark = SparkSession.builder.master('spark://spark-master:7077').config('spark.mongodb.input.uri', 'mongodb://root:root@mongodb:27017/quickstart.topicData?authSource=admin').config("spark.jars", "/spark/mysql-connector-java-8.0.29.jar").master("spark-master:7077").getOrCreate()
+```
 
 # 참고
 

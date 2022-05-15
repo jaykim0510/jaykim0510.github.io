@@ -1,4 +1,4 @@
-I"T<hr />
+I"2<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -87,7 +87,7 @@
 
 <h1 id="spark-client-컨테이너에서-pyspark-셸을-실행">spark-client 컨테이너에서 pyspark 셸을 실행</h1>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./bin/pyspark <span class="nt">--master</span> spark://spark-master:7077 <span class="nt">--packages</span> org.mongodb.spark:mongo-spark-connector_2.12:3.0.1
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./bin/pyspark <span class="nt">--master</span> spark://spark-master:7077 <span class="nt">--packages</span> org.mongodb.spark:mongo-spark-connector_2.12:3.0.1 <span class="nt">--jars</span> /spark/mysql-connector-java-8.0.29.jar
 </code></pre></div></div>
 
 <h1 id="pyspark-셸에서-몽고db와-연결">pyspark 셸에서 몽고DB와 연결</h1>
@@ -99,6 +99,9 @@ spark = SparkSession.builder.master('spark://spark-master:7077').config('spark.m
 df = spark.read.format("mongo").option("uri", "mongodb://root:root@mongodb:27017/quickstart.topicData?authSource=admin").load()
 
 df.show()
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark = SparkSession.builder.master('spark://spark-master:7077').config('spark.mongodb.input.uri', 'mongodb://root:root@mongodb:27017/quickstart.topicData?authSource=admin').config("spark.jars", "/spark/mysql-connector-java-8.0.29.jar").master("spark-master:7077").getOrCreate()
 </code></pre></div></div>
 
 <h1 id="참고">참고</h1>

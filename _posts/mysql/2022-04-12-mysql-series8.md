@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL 트랜잭션과 잠금'
+title:  'MySQL Series [Part8] 트랜잭션과 잠금'
 description: 
 date:   2022-04-12 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
