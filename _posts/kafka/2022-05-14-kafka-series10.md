@@ -18,11 +18,11 @@ tags: Kafka
 ---  
 
 # 참고
-
+- [Data types for Kafka connector](https://docs.cloudera.com/csa/1.2.0/flink-sql-table-api/topics/csa-kafka-sql-datatypes.html){:target="_blank"}
+- [Kafka Connect Deep Dive – Converters and Serialization Explained](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/){:target="_blank"}
 - [dol9, Kafka 스키마 관리, Schema Registry](https://dol9.tistory.com/274){:target="_blank"}
 - [A Practical Introduction to Kafka Storage Internals](https://www.freblogg.com/kafka-storage-internals){:target="_blank"}
 - [Here’s what makes Apache Kafka so fast](https://www.freecodecamp.org/news/what-makes-apache-kafka-so-fast-a8d4f94ab145/){:target="_blank"}
 - [stackoverflow: Which directory does apache kafka store the data in broker nodes](https://stackoverflow.com/questions/40369238/which-directory-does-apache-kafka-store-the-data-in-broker-nodes#){:target="_blank"}
 - [Abhishek Sharma, How kafka stores data](https://medium.com/@abhisheksharma_59226/how-kafka-stores-data-37ee611c89a2){:target="_blank"}
 - [Rohith Sankepally: Deep Dive Into Apache Kafka. Storage Internals](https://rohithsankepally.github.io/Kafka-Storage-Internals/){:target="_blank"}
-- [](){:target="_blank"}
