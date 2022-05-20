@@ -25,4 +25,4 @@ tags: Kafka
 - [Here’s what makes Apache Kafka so fast](https://www.freecodecamp.org/news/what-makes-apache-kafka-so-fast-a8d4f94ab145/){:target="_blank"}
 - [stackoverflow: Which directory does apache kafka store the data in broker nodes](https://stackoverflow.com/questions/40369238/which-directory-does-apache-kafka-store-the-data-in-broker-nodes#){:target="_blank"}
 - [Abhishek Sharma, How kafka stores data](https://medium.com/@abhisheksharma_59226/how-kafka-stores-data-37ee611c89a2){:target="_blank"}
-- [Rohith Sankepally: Deep Dive Into Apache Kafka. Storage Internals](https://rohithsankepally.github.io/Kafka-Storage-Internals/){:target="_blank"}
+- [Rohith Sankepally:g Deep Dive Into Apache Kafka. Storage Internals](https://rohithsankepally.github.io/Kafka-Storage-Internals/){:target="_blank"}
