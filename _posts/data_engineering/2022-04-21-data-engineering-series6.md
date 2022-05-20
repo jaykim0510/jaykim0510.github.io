@@ -20,3 +20,15 @@ tags: Data_Engineering
 # 데이터 파이프라인 설계
 
 ![](/images/data_engineering_0.png)
+
+https://hevodata.com/learn/connect-kafka-to-s3/  
+
+https://swalloow.github.io/kafka-connect/  
+
+https://data-engineer-tech.tistory.com/34  
+
+https://www.confluent.io/ko-kr/blog/apache-kafka-to-amazon-s3-exactly-once/  
+
+https://stackoverflow.com/questions/46731746/move-data-from-postgres-mysql-to-s3-using-airflow  
+
+https://reddit.fun/161619/import-data-from-bucket-mysql-database-using-connectivity

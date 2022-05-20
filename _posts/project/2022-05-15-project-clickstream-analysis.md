@@ -1,9 +1,9 @@
 ---
 layout: project
-title:  Korean-to-French Translation
-description: 한국어를 프랑스어로 번역해줍니다.
-start:   2022/01/12
-image:  '/images/08.jpg'
+title: Shopper Intent Prediction from Clickstream E‑Commerce Data 
+description: 전자상거래 클릭스트림 분석을 통한 고객 행동 분석
+start:   2022/05/15
+image:  '/images/clickstream_1.png'
 portfolio: true
 status: In progress
 skill: Kubernetes, Kafka, Flink, Elasticsearch, Spark
@@ -44,3 +44,6 @@ Completely synergize resource taxing relationships via premier niche markets. Pr
 Globally incubate standards compliant channels before scalable benefits. Quickly disseminate superior deliverables whereas web-enabled applications. Quickly drive clicks-and-mortar catalysts for change before vertical architectures.
 
 Credibly reintermediate backend ideas for cross-platform models. Continually reintermediate integrated processes through technically sound intellectual capital. Holistically foster superior methodologies without market-driven best practices.
+
+# 참고
+- [Sharing Is Caring: Our First Dataset Release for The AI Community](https://www.coveo.com/blog/dataset-release-intent-prediction-ecommerce/){:target="_blank"}
