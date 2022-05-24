@@ -19,4 +19,3 @@ tags: MySQL
 
 # 참고
 
-- [How to Import CSV File into MySQL Table in 4 Different Ways](https://skyvia.com/blog/how-to-import-csv-file-into-mysql-table-in-4-different-ways){:target="_blank"}

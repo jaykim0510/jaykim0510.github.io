@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part11] 실전감각 키우기'
+title:  'MySQL Series [Part11] MySQL 서버 설치, 설정, 사용자 및 권한 관리'
 description: 
 date:   2022-05-13 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
@@ -18,7 +18,7 @@ tags: MySQL
 ---
 
 # 참고
-
+- [Real MySQL 8.0 (1권) 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158392703&orderClick=LAG&Kc=){:target="_blank"}
 - [How to Import CSV File into MySQL Table in 4 Different Ways](https://skyvia.com/blog/how-to-import-csv-file-into-mysql-table-in-4-different-ways){:target="_blank"}
 - [Ubuntu 18.04에 MySQL 설치하기 (feat. docker)](https://2oneweek.dev/others/ubuntu/install-mysql/){:target="_blank"}
 - [Docker : run ufw, iptables command in docker container](https://seulcode.tistory.com/396){:target="_blank"}
