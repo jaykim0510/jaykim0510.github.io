@@ -1,0 +1,85 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#디스크-읽기-방식" id="markdown-toc-디스크-읽기-방식">디스크 읽기 방식</a>    <ul>
+      <li><a href="#hdd와-ssd" id="markdown-toc-hdd와-ssd">HDD와 SSD</a></li>
+      <li><a href="#랜덤-io와-순차-io" id="markdown-toc-랜덤-io와-순차-io">랜덤 I/O와 순차 I/O</a></li>
+    </ul>
+  </li>
+  <li><a href="#인덱스란" id="markdown-toc-인덱스란">인덱스란?</a></li>
+  <li><a href="#b-tree-인덱스" id="markdown-toc-b-tree-인덱스">B-Tree 인덱스</a></li>
+  <li><a href="#멀티-컬럼-인덱스" id="markdown-toc-멀티-컬럼-인덱스">멀티 컬럼 인덱스</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<p><strong>인덱스는 데이터베이스 쿼리의 성능과 관련</strong>해서 빼놓을 수 없는 중요한 부분입니다. 인덱스에 대한 지식은 개발자나 관리자 모두에게 중요한 부분이며, 쿼리 튜닝의 기본이 됩니다.</p>
+
+<h1 id="디스크-읽기-방식">디스크 읽기 방식</h1>
+<p>보통 컴퓨터에서 가장 큰 성능 저하는 디스크 I/O에서 발생합니다. 따라서 데이터베이스의 성능 튜닝은 어떻게 디스크 I/O을 줄이느냐가 관건일 때가 상당히 많습니다.</p>
+
+<h2 id="hdd와-ssd">HDD와 SSD</h2>
+<p>데이터베이스 서버에서 순차 I/O 작업보다는 랜덤 I/O이 차지하는 비중이 훨씬 큽니다. 그리고 이러한 랜덤 I/O의 속도를 훨씬 높여준 장치가 바로 SSD입니다. 이러한 이유로 DBMS용 스토리지에 SSD는 최적의 장치라고 할 수 있습니다.</p>
+
+<h2 id="랜덤-io와-순차-io">랜덤 I/O와 순차 I/O</h2>
+<p>랜덤 I/O은 데이터의 개수만큼 데이터의 위치를 찾아야 하고, 순차 I/O은 한 번만 데이터의 위치를 찾으면 되기 때문에 랜덤 I/O으로 인한 작업 부하가 훨씬 더 크게 발생합니다. HDD는 매번 데이터의 위치를 찾기 위해 디스크 헤드를 움직여야 하기 때문에 랜덤 I/O의 작업 부하는 훨씬 더 커지게 됩니다. SSD는 디스크 원판이 아닌 플래시 메모리를 사용하기 때문에 차이가 없을 것 같지만 마찬가지로 랜덤 I/O에서 성능이 저하됩니다.</p>
+
+<p>그래서 일반적으로 <strong>쿼리를 튜닝의 목적은 랜덤 I/O의 회수를 줄이는 것</strong>입니다. 여기서 랜덤 I/O을 줄인다는 것은 쿼리를 처리하는 데 꼭 필요한 데이터만 읽도록 쿼리를 개선하는 것을 의미합니다. 그리고 <strong>랜덤 I/O을 줄이기 위해 저희는 인덱스라는 것을 활용할 것</strong>입니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DBMS에서는 랜덤 I/O이 자주 발생하고, 쿼리의 성능을 높이기 위해서는 랜덤 I/O을 줄여야 한다.  
+그리고 이렇게 랜덤 I/O을 줄이기 위해 인덱스를 사용한다.
+</code></pre></div></div>
+
+<h1 id="인덱스란">인덱스란?</h1>
+<p>보통 인덱스를 설명할 때 <strong>책 맨 끝에 있는 색인</strong>을 예시로 많이 사용합니다. 예를 들어 책에서 ‘무궁화’라는 단어를 찾고 싶다면 저희는 책 페이지에서 내용을 하나씩 찾아보기 보다는 색인에서 ‘무궁화’라는 단어가 포함된 페이지의 쪽수를 찾게 될 겁니다.</p>
+
+<p>DBMS도 데이터베이스 테이블의 모든 데이터를 검색해서 원하는 레코드(Row)를 가져오려면 시간이 오래 걸릴 것입니다. 그래서 <strong>컬럼의 값과 그 값을 가지는 레코드가 저장된 주소를 매핑한 인덱스</strong>를 만들어 두는 것입니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>책의 색인: 단어 - 책 페이지 매핑
+DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
+</code></pre></div></div>
+
+<p>그리고 인덱스의 중요한 특성 중 하나는 키(컬럼 값)가 정렬되어 있다는 것입니다. 예를 들어 테이블의 사람 이름을 나타내는 name이라는 컬럼으로 인덱스를 만들었다고 했을 때, name 값을 정렬하여 각각의 주소를 매핑해 인덱스를 만들게 됩니다.</p>
+
+<p>아래는 인덱스 페이지의 예시로 다음과 같이 name이 알파벳 순으로 정렬되어 있습니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>name</strong></td>
+      <td><strong>레코드 주소</strong></td>
+    </tr>
+    <tr>
+      <td>Alice</td>
+      <td>14345342</td>
+    </tr>
+    <tr>
+      <td>Bob</td>
+      <td>61345549</td>
+    </tr>
+    <tr>
+      <td>Carl</td>
+      <td>24641345</td>
+    </tr>
+    <tr>
+      <td>Doson</td>
+      <td>41127651</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>이렇게 인덱스 페이지를 정렬했을 때 장단점이 있습니다.</p>
+
+<p>장점: 정렬되어 있기 때문에 인덱스(컬럼 값)를 빠르게 찾고 결과적으로 데이터를 빠르게 읽어온다<br />
+단점: 컬럼 값에 INSERT, UPDATE, DELETE가 발생할 때마다 인덱스 파일 정렬하기 때문에 느리다</p>
+
+<p>결론적으로 DBMS에서 인덱스는 데이터의 저장(INSERT, UPDATE, DELETE) 성능을 희생하고 데이터의 읽기 속도를 높여주게 됩니다. 그래서 인덱스 파일을 하나 더 추가할지 말지는 데이터의 저장 속도를 얼마만큼 희생하여, 그 결과로 읽기 성능을 얼마나 더 빠르게 만들지에 따라 결정되게 됩니다.</p>
+
+<h1 id="b-tree-인덱스">B-Tree 인덱스</h1>
+
+<h1 id="멀티-컬럼-인덱스">멀티 컬럼 인덱스</h1>
+
+<h1 id="참고">참고</h1>
+
+:ET

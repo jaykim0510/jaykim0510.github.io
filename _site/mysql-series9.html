@@ -252,6 +252,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -380,6 +382,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -391,10 +395,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part10] 옵티마이저를 이용한 실행 최적화</a>
+      <a href="/mysql-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part8] 트랜잭션과 잠금</a>
     
     
-      <a href="/mysql-series11" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part11] 실전감각 키우기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series10" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part10] 옵티마이저를 이용한 실행 최적화<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -403,16 +407,144 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#디스크-읽기-방식" id="markdown-toc-디스크-읽기-방식">디스크 읽기 방식</a>    <ul>
+      <li><a href="#hdd와-ssd" id="markdown-toc-hdd와-ssd">HDD와 SSD</a></li>
+      <li><a href="#랜덤-io와-순차-io" id="markdown-toc-랜덤-io와-순차-io">랜덤 I/O와 순차 I/O</a></li>
+    </ul>
+  </li>
+  <li><a href="#인덱스란" id="markdown-toc-인덱스란">인덱스란?</a></li>
+  <li><a href="#b-tree-인덱스" id="markdown-toc-b-tree-인덱스">B-Tree 인덱스</a>    <ul>
+      <li><a href="#myisam-스토리지-엔진의-b-tree-인덱스-구조-및-특성" id="markdown-toc-myisam-스토리지-엔진의-b-tree-인덱스-구조-및-특성">MyISAM 스토리지 엔진의 B-Tree 인덱스 구조 및 특성</a></li>
+      <li><a href="#innodb-스토리지-엔진의-b-tree-인덱스-구조-및-특성" id="markdown-toc-innodb-스토리지-엔진의-b-tree-인덱스-구조-및-특성">InnoDB 스토리지 엔진의 B-Tree 인덱스 구조 및 특성</a></li>
+      <li><a href="#데이터의-insert-update-delete시-인덱스에서의-동작" id="markdown-toc-데이터의-insert-update-delete시-인덱스에서의-동작">데이터의 Insert, Update, Delete시 인덱스에서의 동작</a></li>
+      <li><a href="#b-tree-인덱스-사용에-영향을-미치는-요소" id="markdown-toc-b-tree-인덱스-사용에-영향을-미치는-요소">B-Tree 인덱스 사용에 영향을 미치는 요소</a></li>
+      <li><a href="#데이터의-select시-인덱스에서의-동작" id="markdown-toc-데이터의-select시-인덱스에서의-동작">데이터의 Select시 인덱스에서의 동작</a>        <ul>
+          <li><a href="#인덱스-레인지-스캔" id="markdown-toc-인덱스-레인지-스캔">인덱스 레인지 스캔</a></li>
+          <li><a href="#인덱스-풀-스캔" id="markdown-toc-인덱스-풀-스캔">인덱스 풀 스캔</a></li>
+          <li><a href="#테이블-풀-스캔" id="markdown-toc-테이블-풀-스캔">테이블 풀 스캔</a></li>
+          <li><a href="#루스-인덱스-스캔" id="markdown-toc-루스-인덱스-스캔">루스 인덱스 스캔</a></li>
+          <li><a href="#인덱스-스킵-스캔" id="markdown-toc-인덱스-스킵-스캔">인덱스 스킵 스캔</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#멀티-컬럼-인덱스" id="markdown-toc-멀티-컬럼-인덱스">멀티 컬럼 인덱스</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="참고">참고</h1>
+<p><strong>인덱스는 데이터베이스 쿼리의 성능과 관련</strong>해서 빼놓을 수 없는 중요한 부분입니다. 인덱스에 대한 지식은 개발자나 관리자 모두에게 중요한 부분이며, 쿼리 튜닝의 기본이 됩니다.</p>
+
+<h1 id="디스크-읽기-방식">디스크 읽기 방식</h1>
+<p>보통 컴퓨터에서 가장 큰 성능 저하는 디스크 I/O에서 발생합니다. 따라서 데이터베이스의 성능 튜닝은 어떻게 디스크 I/O을 줄이느냐가 관건일 때가 상당히 많습니다.</p>
+
+<h2 id="hdd와-ssd">HDD와 SSD</h2>
+<p>데이터베이스 서버에서 순차 I/O 작업보다는 랜덤 I/O이 차지하는 비중이 훨씬 큽니다. 그리고 이러한 랜덤 I/O의 속도를 훨씬 높여준 장치가 바로 SSD입니다. 이러한 이유로 DBMS용 스토리지에 SSD는 최적의 장치라고 할 수 있습니다.</p>
+
+<h2 id="랜덤-io와-순차-io">랜덤 I/O와 순차 I/O</h2>
+<p>랜덤 I/O은 데이터의 개수만큼 데이터의 위치를 찾아야 하고, 순차 I/O은 한 번만 데이터의 위치를 찾으면 되기 때문에 랜덤 I/O으로 인한 작업 부하가 훨씬 더 크게 발생합니다. HDD는 매번 데이터의 위치를 찾기 위해 디스크 헤드를 움직여야 하기 때문에 랜덤 I/O의 작업 부하는 훨씬 더 커지게 됩니다. SSD는 디스크 원판이 아닌 플래시 메모리를 사용하기 때문에 차이가 없을 것 같지만 마찬가지로 랜덤 I/O에서 성능이 저하됩니다.</p>
+
+<p>그래서 일반적으로 <strong>쿼리를 튜닝의 목적은 랜덤 I/O의 회수를 줄이는 것</strong>입니다. 여기서 랜덤 I/O을 줄인다는 것은 쿼리를 처리하는 데 꼭 필요한 데이터만 읽도록 쿼리를 개선하는 것을 의미합니다. 그리고 <strong>랜덤 I/O을 줄이기 위해 저희는 인덱스라는 것을 활용할 것</strong>입니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DBMS에서는 랜덤 I/O이 자주 발생하고, 쿼리의 성능을 높이기 위해서는 랜덤 I/O을 줄여야 한다.  
+그리고 이렇게 랜덤 I/O을 줄이기 위해 인덱스를 사용한다.
+</code></pre></div></div>
+
+<h1 id="인덱스란">인덱스란?</h1>
+<p>보통 인덱스를 설명할 때 <strong>책 맨 끝에 있는 색인</strong>을 예시로 많이 사용합니다. 예를 들어 책에서 ‘무궁화’라는 단어를 찾고 싶다면 저희는 책 페이지에서 내용을 하나씩 찾아보기 보다는 색인에서 ‘무궁화’라는 단어가 포함된 페이지의 쪽수를 찾게 될 겁니다.</p>
+
+<p>DBMS도 데이터베이스 테이블의 모든 데이터를 검색해서 원하는 레코드(Row)를 가져오려면 시간이 오래 걸릴 것입니다. 그래서 <strong>컬럼의 값과 그 값을 가지는 레코드가 저장된 주소를 매핑한 인덱스</strong>를 만들어 두는 것입니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>책의 색인: 단어 - 책 페이지 매핑
+DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
+</code></pre></div></div>
+
+<p>그리고 인덱스의 중요한 특성 중 하나는 키(컬럼 값)가 정렬되어 있다는 것입니다. 예를 들어 테이블의 사람 이름을 나타내는 name이라는 컬럼으로 인덱스를 만들었다고 했을 때, name 값을 정렬하여 각각의 주소를 매핑해 인덱스를 만들게 됩니다.</p>
+
+<p>아래는 인덱스 페이지의 예시로 다음과 같이 name이 알파벳 순으로 정렬되어 있습니다.</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>name</strong></td>
+      <td><strong>레코드 주소</strong></td>
+    </tr>
+    <tr>
+      <td>Alice</td>
+      <td>14345342</td>
+    </tr>
+    <tr>
+      <td>Bob</td>
+      <td>61345549</td>
+    </tr>
+    <tr>
+      <td>Carl</td>
+      <td>24641345</td>
+    </tr>
+    <tr>
+      <td>Doson</td>
+      <td>41127651</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>이렇게 인덱스 페이지를 정렬했을 때 장단점이 있습니다.</p>
 
 <ul>
-  <li><a href="https://skyvia.com/blog/how-to-import-csv-file-into-mysql-table-in-4-different-ways" target="_blank">How to Import CSV File into MySQL Table in 4 Different Ways</a></li>
+  <li>장점: 정렬되어 있기 때문에 인덱스(컬럼 값)를 빠르게 찾고 결과적으로 데이터를 <strong>빠르게 읽어온다</strong></li>
+  <li>단점: 컬럼 값에 INSERT, UPDATE, DELETE가 발생할 때마다 인덱스 파일 정렬하기 때문에 <strong>저장 속도가 느리다</strong></li>
 </ul>
+
+<p>결론적으로 DBMS에서 인덱스는 데이터의 저장(INSERT, UPDATE, DELETE) 성능을 희생하고 데이터의 읽기 속도를 높여주게 됩니다. 그래서 인덱스 파일을 하나 더 추가할지 말지는 데이터의 저장 속도를 얼마만큼 희생하여, 그 결과로 읽기 성능을 얼마나 더 빠르게 만들지에 따라 결정되게 됩니다.</p>
+
+<p>위에서 인덱스 페이지가 정렬되어 있어 인덱스 값을 빨리 찾을 수 있다고 했습니다. 정렬되어 있다는 것의 이점은 탐색 알고리즘에서 선형 탐색이 아닌 이진 탐색과 비슷하지만 이보다 더 빠른 탐색 알고리즘을 사용할 수 있다는 것입니다.</p>
+
+<p>인덱스 파일은 이진 탐색을 지원하는 이진 트리 자료 구조와 비슷하지만 더 빠른 탐색을 가능하게 하는 <strong>Balanced Tree(B-Tree)</strong>라는 자료구조로 구현되어 있습니다.</p>
+
+<p>이외에도 대표적으로 Hash Table 자료구조를 이용한 방법도 있으며 최근에는 Fractal-Tree, Merge-Tree와 같은 알고리즘을 사용하는 DBMS도 개발되고 있습니다.</p>
+
+<p><strong>B-Tree 인덱스</strong></p>
+<ul>
+  <li>가장 일반적으로 사용되는 인덱스 형태</li>
+  <li>컬럼 값을 변형하지 않고 원래의 값을 이용해 인덱싱</li>
+  <li>B-Tree을 응용한 많은 자료구조가 등장</li>
+</ul>
+
+<p><strong>Hash Table 인덱스</strong></p>
+<ul>
+  <li>컬럼 값을 해시한 결과를 인덱스로 사용</li>
+  <li>매우 빠른 검색 지원</li>
+  <li>해시값을 인덱스로 사용해 컬럼 값의 일부만 검색하거나 범위를 검색할 때는 사용 불가</li>
+  <li>주로 메모리 기반의 데이터베이스에서 많이 사용</li>
+</ul>
+
+<h1 id="b-tree-인덱스">B-Tree 인덱스</h1>
+
+<h2 id="myisam-스토리지-엔진의-b-tree-인덱스-구조-및-특성">MyISAM 스토리지 엔진의 B-Tree 인덱스 구조 및 특성</h2>
+
+<h2 id="innodb-스토리지-엔진의-b-tree-인덱스-구조-및-특성">InnoDB 스토리지 엔진의 B-Tree 인덱스 구조 및 특성</h2>
+
+<h2 id="데이터의-insert-update-delete시-인덱스에서의-동작">데이터의 Insert, Update, Delete시 인덱스에서의 동작</h2>
+
+<h2 id="b-tree-인덱스-사용에-영향을-미치는-요소">B-Tree 인덱스 사용에 영향을 미치는 요소</h2>
+
+<h2 id="데이터의-select시-인덱스에서의-동작">데이터의 Select시 인덱스에서의 동작</h2>
+
+<h3 id="인덱스-레인지-스캔">인덱스 레인지 스캔</h3>
+
+<h3 id="인덱스-풀-스캔">인덱스 풀 스캔</h3>
+
+<h3 id="테이블-풀-스캔">테이블 풀 스캔</h3>
+
+<h3 id="루스-인덱스-스캔">루스 인덱스 스캔</h3>
+
+<h3 id="인덱스-스킵-스캔">인덱스 스킵 스캔</h3>
+
+<h1 id="멀티-컬럼-인덱스">멀티 컬럼 인덱스</h1>
+
+<h1 id="참고">참고</h1>
+
 
     </div>
     <div class="post__tags_list">
@@ -651,6 +783,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -662,10 +796,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part10] 옵티마이저를 이용한 실행 최적화</a>
+      <a href="/mysql-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part8] 트랜잭션과 잠금</a>
     
     
-      <a href="/mysql-series11" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part11] 실전감각 키우기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series10" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part10] 옵티마이저를 이용한 실행 최적화<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -713,25 +847,18 @@ Table of Contents
             
       
             
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-05-13T21:01:35+09:00">13 May 2022</time>
+      <time class="article__date" datetime="2022-05-17T21:01:35+09:00">17 May 2022</time>
 
       
 
       
-      <a class="article__image" href="/mysql-series11">
-        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part11] 실전감각 키우기">
+      <a class="article__image" href="/data-engineering-series8">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part8]: 정규표현식">
       </a>
       
 
@@ -740,7 +867,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/mysql-series11">MySQL Series [Part11] 실전감각 키우기</a>
+        <a href="/data-engineering-series8">Data Engineering Series [Part8]: 정규표현식</a>
       </h2>
 
       
@@ -764,13 +891,13 @@ Table of Contents
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-05-11T21:01:35+09:00">11 May 2022</time>
+      <time class="article__date" datetime="2022-05-17T21:01:35+09:00">17 May 2022</time>
 
       
 
       
-      <a class="article__image" href="/kafka-series9">
-        <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들">
+      <a class="article__image" href="/data-engineering-series7">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part7]: CDC(Change Data Capture)">
       </a>
       
 
@@ -779,7 +906,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/kafka-series9">Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들</a>
+        <a href="/data-engineering-series7">Data Engineering Series [Part7]: CDC(Change Data Capture)</a>
       </h2>
 
       
@@ -798,18 +925,25 @@ Table of Contents
             
       
             
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-04-21T21:01:35+09:00">21 Apr 2022</time>
+      <time class="article__date" datetime="2022-05-14T21:01:35+09:00">14 May 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series6">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part6]: 데이터 파이프라인 구축하기(1)">
+      <a class="article__image" href="/kafka-series10">
+        <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part10]: 카프카의 데이터 저장">
       </a>
       
 
@@ -818,7 +952,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series6">Data Engineering Series [Part6]: 데이터 파이프라인 구축하기(1)</a>
+        <a href="/kafka-series10">Kafka Series [Part10]: 카프카의 데이터 저장</a>
       </h2>
 
       
