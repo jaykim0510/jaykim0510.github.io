@@ -1,6 +1,16 @@
 [
   
     {
+      "title"    : "Java Series [Part8]: 자바의 객체지향 프로그래밍",
+      "category" : "",
+      "tags"     : "Java",
+      "url"      : "/java-series8",
+      "date"     : "May 17, 2022",
+      "content"  : "Table of Contents  Intro          객체지향 언어      클래스와 객체      객체 생성      클래스 정의      변수      메서드      메서드의 매개변수      static      메서드 오버로딩      인스턴스 초기화 메서드: 생성자      Intro객체지향 언어객체지향 언어는 절차지향 언어와 자주 비교되는 언어중 하나입니다. 절차지향 언어는 코드의 순서에 의미를 가지고 있고, 객체지향 언어는 코드의 관계에 중요한 의미를 가지고 있습니다.객체지향 언어의 대표적인 장점은 코드의 재사용성이 높다는 것입니다. 코드의 재사용성이 높아짐으로써 불필요한 중복 코드가 제거되며, 개발과 유지보수에 들어가는 시간이 줄고, 확장성이 높아집니다.위의 장점을 얻기 위해 코드를 작성하기 전에 어떤식으로 객체를 정의하고 관계를 지을지 계획하는 것이 굉장히 중요합니다. 하지만 너무 많은 시간을 계획에 몰두하는 것은 오히려 개발의 지연을 발생시키므로, 일단 프로그램을 기능적으로 완성한 후 어떻게 객체지향적으로 코드를 개선할 수 있을지 고민하며 점차 개선해 나가는 것이 좋습니다.클래스와 객체  클래스: 실체를 만들기 전에 작성하는 설계도. 변수(속성)와 메서드(기능)를 바탕으로 정의  객체: 클래스에 정의된 내용을 바탕으로 메모리에 생성된 실체객체 생성클래스로부터 객체를 생성하는 방법은 다음과 같습니다.// &amp;lt;참조변수의 타입&amp;gt; &amp;lt;참조변수&amp;gt; = new &amp;lt;클래스명&amp;gt;();Person p = new Person();어떤 클래스의 경우, 연산자 new를 생략하기도 하고, 위의 코드를 두 줄로 나눠 적기도 하고, 매개변수를 전달하기도 하는 등 객체 생성의 몇가지 변형된 방법 또한 존재합니다.객체 생성과 변수에 할당되는 과정은 다음과 같습니다.ex)1. Person p;Person 클래스 타입의 참조변수 p를 선언하면, 메모리에 참조변수 p를 위한 공간이 마련(아직 객체가 생성되지는 않았으므로 비어있음)2. p = new Person();   연산자 new에 의해 Person클래스의 객체가 메모리의 빈 공간에 생성(멤버변수는 각 자료형에 해당하는 기본값으로 초기화)대입연산자(=)에 의해 객체의 주소갑이 참조변수 p에 저장클래스 정의객체를 생성하려면 생성하려는 객체의 타입인 클래스를 먼저 정의해야 합니다. 클래스는 크게 변수와 메서드로 구성되어 있습니다. 선언하는 위치와 제어자의 종류에 따라 변수와 메서드의 성질이 변하게 되는데 이에 대해서는 뒤에서 정리하도록 하며, 여기서는 가장 간단하게만 짚고 넘어가겠습니다.class Person {    // 변수    String name;    int age;    // 메서드    void introduceMyself() {        System.out.println(&quot;My name is &quot; + this.name)    }}변수위에서 변수를 정의하는 코드를 간단하게 살펴봤습니다. 변수는 클래스의 어느 위치에서 선언하냐에 따라 종류가 달라지게 됩니다. 종류에는 클래스 변수, 인스턴스 변수, 지역 변수가 있습니다.      인스턴스 변수인스턴스 변수는 인스턴스가 생성될 때 같이 생성되는 변수로, 인스턴스마다 별도의 저장공간을 가지기 때문에 서로 다른 값을 가질 수 있습니다.        클래스 변수클래스가 메모리에 올라가는 시점에 생성되는 변수로, 모든 인스턴스가 공통된 저장공간을 공유하게 됩니다. 클래스 변수는 앞에 static을 붙여주기만 하면 되고 &amp;lt;클래스명&amp;gt;.&amp;lt;클래스 변수명&amp;gt;으로 사용합니다.  메서드메서드는 특정 작업을 수행하는 코드를 하나로 묶은 것입니다. 예를 들어 두 수의 덧셈, 게임 캐릭터의 공격과 같은 것들이 메서드에 해당합니다.메서드는 크게 선언부와 구현부로 이루어져 있습니다.class Person {        // 선언부    int add(int a, int b)        // 구현부        {         int result = a + b;        return result;        }}      메서드 선언부선언할 수 있는 매개변수의 개수는 거의 제한이 없지만, 입력해야 할 값의 개수가 많은 경우에는 배열이나 참조변수를 사용하면 됩니다.    메서드 선언부 앞에 메서드 수행 후 반환할 결과값의 타입을 적습니다. 반환값이 없는 경우에는 void라고 적습니다.        메서드 구현부메서드 내에 선언된 변수들은 그 메서드 내에서만 사용할 수 있는 지역변수 입니다.    메서드에서 반환할 결과값을 return문 뒤에 작성합니다. 결과값은 선언부에서 정의한 타입과 일치해야 합니다.  메서드의 매개변수자바에서는 메서드를 호출할 때 인자 값을 메서드의 매개변수에 복사해서 넘겨줍니다. 넘겨준 인자의 타입이 기본형인지 참조형인지에 따라 복사되는 값이 다릅니다.      기본형 매개변수매개변수가 기본형인 경우에는 기본형 값을 복사해 오기 때문에, 값을 읽을 수만 있고 수정할 수는 없습니다.    class Person {    public static void main(String[] args) {        int a = 10;                  System.out.println(introduceMyself(a)); // 1000        System.out.println(a); // 10 (변경안됨)    }    // 기본형(정수) 매개변수 a    static int introduceMyself( int a ) {        a = 1000;        return a;    }}            참조형 매개변수매개변수의 타입이 참조형인 경우에는 값이 아니라, 값을 가지고 있는 인스턴스의 주소를 복사해 옵니다. 주소가 복사되기 때문에 값을 읽어오는 것 뿐 아니라 변경할 수도 있게 됩니다.    class Person {  public static void main(String[] args) {      Data d = new Data();      d.x = 10;      System.out.println(introduceMyself(d)); // 1000      // introduceMyself 메서드 안에서 변경된 값이 반영됨      System.out.println(d.x); // 1000  }  // 참조형(Data 타입) 매개변수 d  static int introduceMyself( Data d ) {      d.x = 1000;      return d.x;  }}class Data { int x; }      static위의 예제에서 중간중간 등장했던 static 키워드에 대해 짚고 넘어가도록 하겠습니다. static은 인스턴스 단위가 아닌 클래스 단위로 변수와 메서드를 정의하도록 해줍니다.static 키워드를 붙였을 때의 특징은 다음과 같습니다.  인스턴스를 생성하지 않아도 사용할 수 있다  모든 인스턴스가 공유해서 사용한다  static이 붙은 변수를 클래스 변수, 메서드를 클래스 메서드라고 한다  클래스 메서드는 인스턴스 변수를 사용할 수 없다static은 다음과 같은 경우에 사용합니다.  멤버변수 중 모든 인스턴스에서 공통된 값을 가져야 하는 경우 또는 가져도 되는 경우(메모리 효율성)  메서드 중 인스턴스 변수나 인스턴스 메서드를 사용하지 않는 경우표기법은 다음과 같습니다.변수에 붙는 경우: static &amp;lt;변수 타입&amp;gt; &amp;lt;변수명&amp;gt;ex) static int a = 5;메서드에 붙는 경우: &amp;lt;접근 제어자&amp;gt; static &amp;lt;리턴 타입&amp;gt; &amp;lt;변수명&amp;gt;ex) public static void main() {}-&amp;gt; 타입 앞에 붙는다메서드 오버로딩한 클래스 내에 같은 이름의 메서드를 여러 개 정의하는 것을 메서드 오버로딩 또는 간단히 오버로딩이라고 합니다. 오버로딩이 성립하기 위해서는 다음과 같은 조건을 만족해야 합니다.  메서드 이름이 같아야 한다  매개변수의 개수 또는 타입이 달라야 한다  반환 타입은 관계없다오버로딩을 사용하는 경우는 같은 기능을 하지만 매개변수의 개수나 타입이 달라질 때입니다.인스턴스 초기화 메서드: 생성자생성자는 인스턴스가 생성될 때 가장 먼저 호출되는 인스턴스 초기화 메서드입니다. 인스턴스 초기화는 인스턴스 변수들을 초기화하는 것을 뜻합니다.생성자 역시 메서드처럼 클래스내에 선언되며, 구조도 메서드와 유사하지만 리턴값이 없다는 점이 특징입니다. 그렇다고 void를 사용하는 것은 아니고 그냥 아무것도 적지 않으면 됩니다.생성자를 작성하는 규칙은 다음과 같습니다.  생성자의 이름은 클래스의 이름과 같아야 한다  생성자는 리턴 값이 없다생성자의 특징은 다음과 같습니다.  생성자도 오버로딩이 가능하기 때문에 하나의 클래스에 여러개의 생성자가 존재할 수 있다  기본(default) 생성자가 있어서 정의하지 않아도 사용할 수 있다  새로운 생성자를 추가한 경우, 기본 생성자도 다시 정의해줘야 한다생성자는 다음과 같은 경우에 정의합니다.  인스턴스 변수의 초기화가 필요한 경우  필요하지 않으면 컴파일러가 제공핳는 기본 생성자를 사용하면 된다class Person {    // 인스턴스 변수    String name;    int age;    // 매개 변수가 없으면 기본 생성자    Person() {}     // 매개 변수가 있는 생성자    Person(String name, int age) {        this.name = name;        this.age = age;    }    public static void main(String[] args) {        Person p1 = new Person();        Person p2 = new Person(&quot;Peter&quot;, 25);        System.out.println(&quot;p1의 이름: &quot; + p1.name + &quot;, p1의 나이: &quot; + p1.age); //p1의 이름: null, p1의 나이: 0        System.out.println(&quot;p2의 이름: &quot; + p2.name + &quot;, p2의 나이: &quot; + p2.age); //p2의 이름: Peter, p2의 나이: 25    }}생성자에서 this()를 사용해 다른 생성자를 호출할 수도 있습니다. 필수적인 것은 아니고 코드가 조금 더 간결해지기 때문에 사용합니다.위의 예시에서 기본 생성자가 사용될 경우 이름이 String 객체의 기본값인 null로 초기화되어 있는 것을 확인할 수 있습니다. 이렇게 매개변수가 없을 때 name의 초기값을 no-name으로 하고 싶다고 가정해보겠습니다.Person() {  name = &quot;no-name&quot;;  age = 0;}이런 식으로 작성할 수도 있지만 this()를 사용해 조금 더 간결하게 나타낼 수 있습니다.Person() {  // Person 클래스의 Person(String name, int age) 생성자를 this()로 호출  this(&quot;no-name&quot;, 0)}",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-05-17T21:01:35+09:00'>17 May 2022</time><a class='article__image' href='/java-series8'> <img src='/images/java_logo.png' alt='Java Series [Part8]: 자바의 객체지향 프로그래밍'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/java-series8'>Java Series [Part8]: 자바의 객체지향 프로그래밍</a> </h2></div></div></div>"
+    } ,
+  
+    {
       "title"    : "Data Engineering Series [Part8]: 정규표현식",
       "category" : "",
       "tags"     : "Data_Engineering",
@@ -18,6 +28,26 @@
       "date"     : "May 17, 2022",
       "content"  : "Table of Contents  CDC  Debezium  참고CDCDebezium참고  striim: Change Data Capture (CDC): What it is and How it Works  Farhan Siddiqui, Change Data Capture(CDC) for Data Lake Data Ingestion  How to Implement CDC for MySQL and Postgres  /blog What are the Different Methods of Change Data Capture (CDC)?",
       "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-05-17T21:01:35+09:00'>17 May 2022</time><a class='article__image' href='/data-engineering-series7'> <img src='/images/data_engineering_logo.png' alt='Data Engineering Series [Part7]: CDC(Change Data Capture)'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/data-engineering-series7'>Data Engineering Series [Part7]: CDC(Change Data Capture)</a> </h2></div></div></div>"
+    } ,
+  
+    {
+      "title"    : "Java Series [Part7]: 자바와 자료구조",
+      "category" : "",
+      "tags"     : "Java",
+      "url"      : "/java-series7",
+      "date"     : "May 16, 2022",
+      "content"  : "Table of Contents",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-05-16T21:01:35+09:00'>16 May 2022</time><a class='article__image' href='/java-series7'> <img src='/images/java_logo.png' alt='Java Series [Part7]: 자바와 자료구조'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/java-series7'>Java Series [Part7]: 자바와 자료구조</a> </h2></div></div></div>"
+    } ,
+  
+    {
+      "title"    : "Java Series [Part6]: 자바의 유용한 클래스들",
+      "category" : "",
+      "tags"     : "Java",
+      "url"      : "/java-series6",
+      "date"     : "May 15, 2022",
+      "content"  : "Table of Contents",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-05-15T21:01:35+09:00'>15 May 2022</time><a class='article__image' href='/java-series6'> <img src='/images/java_logo.png' alt='Java Series [Part6]: 자바의 유용한 클래스들'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/java-series6'>Java Series [Part6]: 자바의 유용한 클래스들</a> </h2></div></div></div>"
     } ,
   
     {
@@ -241,13 +271,13 @@
     } ,
   
     {
-      "title"    : "Data Engineering Series [Part3]: 데이터 저장 서비스, 분석 엔진 서비스 선정하기",
+      "title"    : "Data Engineering Series [Part3]: 데이터베이스간 주요 특징 비교",
       "category" : "",
       "tags"     : "Data_Engineering",
       "url"      : "/data-engineering-series3",
       "date"     : "Apr 5, 2022",
-      "content"  : "Table of Contents  참고참고  DB Engine 비교",
-      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-04-05T21:01:35+09:00'>05 Apr 2022</time><a class='article__image' href='/data-engineering-series3'> <img src='/images/data_engineering_logo.png' alt='Data Engineering Series [Part3]: 데이터 저장 서비스, 분석 엔진 서비스 선정하기'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/data-engineering-series3'>Data Engineering Series [Part3]: 데이터 저장 서비스, 분석 엔진 서비스 선정하기</a> </h2></div></div></div>"
+      "content"  : "Table of Contents  데이터베이스 주요 특성          데이터베이스 모델                  RDBMS          Document Store          Wide Column Store          Key-Value Store                    쿼리 지원      In-memory 지원      검색엔진 지원        주요 데이터베이스          MySQL      MongoDB      ElasticSearch      Redis      Cassandra      Redshift      Snowflake        참고데이터베이스 주요 특성데이터베이스 모델RDBMSDocument StoreWide Column StoreKey-Value Store쿼리 지원In-memory 지원검색엔진 지원주요 데이터베이스MySQLMongoDBElasticSearchRedisCassandraRedshiftSnowflake참고  DB Engine 비교",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-04-05T21:01:35+09:00'>05 Apr 2022</time><a class='article__image' href='/data-engineering-series3'> <img src='/images/data_engineering_logo.png' alt='Data Engineering Series [Part3]: 데이터베이스간 주요 특징 비교'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/data-engineering-series3'>Data Engineering Series [Part3]: 데이터베이스간 주요 특징 비교</a> </h2></div></div></div>"
     } ,
   
     {
@@ -296,7 +326,7 @@
       "tags"     : "Data_Engineering",
       "url"      : "/data-engineering-series2",
       "date"     : "Apr 2, 2022",
-      "content"  : "Table of Contents  Hadoop  HDFS  Hive  HBase  Cassandra  참고HadoopHDFSHiveHBaseCassandra참고  Hoing: 하둡 프로그래밍(2) – 빅데이터 - 하둡 에코시스템",
+      "content"  : "Table of Contents  Hadoop  HDFS  Hive  HBase  Cassandra  Yarn  MapReduce  Zookeeper  참고HadoopHDFSHiveHBaseCassandraYarnMapReduceZookeeper참고  Hoing: 하둡 프로그래밍(2) – 빅데이터 - 하둡 에코시스템",
       "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-04-02T21:01:35+09:00'>02 Apr 2022</time><a class='article__image' href='/data-engineering-series2'> <img src='/images/data_engineering_logo.png' alt='Data Engineering Series [Part2]: 하둡 생태계(Hadoop Ecosystem) 살펴보기'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/data-engineering-series2'>Data Engineering Series [Part2]: 하둡 생태계(Hadoop Ecosystem) 살펴보기</a> </h2></div></div></div>"
     } ,
   
@@ -491,43 +521,13 @@
     } ,
   
     {
-      "title"    : "Development Knowledge Series(4): In Memory",
+      "title"    : "Development Knowledge Series(3): In Memory",
       "category" : "",
       "tags"     : "OS",
-      "url"      : "/dev_know-series4",
-      "date"     : "Feb 20, 2022",
-      "content"  : "Table of Contentshttps://www.samsungsds.com/kr/insights/In-Memory-Data-Grid.html",
-      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-20T21:01:35+09:00'>20 Feb 2022</time><a class='article__image' href='/dev_know-series4'> <img src='/images/development_knowledge_logo.png' alt='Development Knowledge Series(4): In Memory'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/dev_know-series4'>Development Knowledge Series(4): In Memory</a> </h2></div></div></div>"
-    } ,
-  
-    {
-      "title"    : "Development Knowledge Series(3): Networks and Distributed Systems",
-      "category" : "",
-      "tags"     : "Network and OS",
       "url"      : "/dev_know-series3",
       "date"     : "Feb 20, 2022",
-      "content"  : "Table of Contentshttps://www.pling.org.uk/cs/nds.html",
-      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-20T21:01:35+09:00'>20 Feb 2022</time><a class='article__image' href='/dev_know-series3'> <img src='/images/development_knowledge_logo.png' alt='Development Knowledge Series(3): Networks and Distributed Systems'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/dev_know-series3'>Development Knowledge Series(3): Networks and Distributed Systems</a> </h2></div></div></div>"
-    } ,
-  
-    {
-      "title"    : "Development Knowledge Series(2): Java 관련 용어",
-      "category" : "",
-      "tags"     : "Java",
-      "url"      : "/dev_know-series2",
-      "date"     : "Feb 20, 2022",
-      "content"  : "Table of Contents아직 글을 작성 중입니다.",
-      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-20T21:01:35+09:00'>20 Feb 2022</time><a class='article__image' href='/dev_know-series2'> <img src='/images/development_knowledge_logo.png' alt='Development Knowledge Series(2): Java 관련 용어'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/dev_know-series2'>Development Knowledge Series(2): Java 관련 용어</a> </h2></div></div></div>"
-    } ,
-  
-    {
-      "title"    : "Development Knowledge Series(1): Scripting Language vs Compile Language",
-      "category" : "",
-      "tags"     : "Javascript, Python, and Java",
-      "url"      : "/dev_know-series1",
-      "date"     : "Feb 20, 2022",
-      "content"  : "Table of Contentshttps://well-made-codestory.tistory.com/30?category=978350",
-      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-20T21:01:35+09:00'>20 Feb 2022</time><a class='article__image' href='/dev_know-series1'> <img src='/images/development_knowledge_logo.png' alt='Development Knowledge Series(1): Scripting Language vs Compile Language'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/dev_know-series1'>Development Knowledge Series(1): Scripting Language vs Compile Language</a> </h2></div></div></div>"
+      "content"  : "Table of Contentshttps://www.samsungsds.com/kr/insights/In-Memory-Data-Grid.html",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-20T21:01:35+09:00'>20 Feb 2022</time><a class='article__image' href='/dev_know-series3'> <img src='/images/development_knowledge_logo.png' alt='Development Knowledge Series(3): In Memory'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/dev_know-series3'>Development Knowledge Series(3): In Memory</a> </h2></div></div></div>"
     } ,
   
     {
@@ -538,6 +538,26 @@
       "date"     : "Feb 20, 2022",
       "content"  : "Table of Contents  블록체인이란  블록체인에 대한 오해  블록체인 용어 바로 알기          분산 vs 탈중앙화      디지털화 vs 블록체인      가상 화폐 vs 암호 화폐      거래소 vs 중개소      트랜잭션 vs 거래내역      디지털 자산        블록체인의 역사          사이퍼펑크      비트코인의 탄생        블록? 블록체인? 비트코인?          블록      블록체인      비트코인        마치며  참고블록체인이란블록체인(blockchain)이란 다수의 거래내역을 묶어 블록을 구성하고, 해시를 이용하여 여러 블록들을 체인처럼 연결한 뒤, 다수의 사람들이 복사하여 분산 저장하는 알고리즘이다.블록체인은 비트코인과 이더리움 등 암호화폐에 사용된 핵심 기술이다. 은행 등 제3의 중개기관이 없더라도 블록체인 기술을 이용하면 누구나 신뢰할 수 있는 안전한 거래를 할 수 있다. 블록체인은 암호화폐뿐 아니라, 온라인 거래내역이 있고 이력관리가 필요한 모든 데이터 처리에 활용할 수 있다. 블록체인 기반의 스마트 계약, 물류관리 시스템, 문서관리 시스템, 의료정보관리 시스템, 저작권관리 시스템 등 다양한 활용이 가능하다.블록체인은 간략히 ‘분산원장’(分散元帳, distributed ledger) 기술이라고 한다. 즉, 거래내역을 기록한 원장을 다수의 사람들에게 분산하여 저장·관리하는 기술이다. 자세히 설명하면, 블록체인이란 다수의 온라인 거래 기록을 묶어 하나의 데이터 블록(block)을 구성하고, 해시(hash) 값을 이용하여 이전 블록과 이후 블록을 마치 체인(chain)처럼 연결한 뒤, 이 정보의 전부 또는 일부를 피투피(P2P) 방식으로 전 세계 여러 컴퓨터에 복사하여 분산 저장·관리하는 기술이다.블록체인에 대한 오해위의 내용은 (해시넷: 블록체인)에서 작성한 글의 일부를 가져온 것입니다.‘제 3자가 필요 없어지고, 이에 따라 수수료도 사라지는 이상적인 플랫폼’. 많은 사람들은 블록체인을 이용하면 그동안의 거래 시스템 전반에 많은 혁신을 가져다 줄 것으로 기대했습니다. 하지만 현실은 그렇지 않았습니다. 블록체인의 등장은 그동안 불필요했던 새로운 형태의 중개인을 양산했고, 암호화폐 재단, 채굴업자, 중개소에 종속되며 빠르게 중앙화되어갔습니다. 또한 독립적인 화폐를 내세웠던 암호 화폐는 선채굴을 악용한 채굴업자들이 암호화폐 대부분을 장악한 후 전 세계 중개소를 통해 일반인들을 선동, 호도하며 내다팔아 막대한 수익을 얻었습니다.저는 이번 BlockChain Series를 준비하며 앞으로 블록체인의 미래가 어떻게 될지 한 번 알아보려고 합니다.블록체인 용어 바로 알기분산 vs 탈중앙화블록체인을 공부하다 보면 분산, 탈중앙화라는 단어가 많이 사용되는 것을 보게 됩니다. 하지만 블록체인과 일반적인 분산 시스템과는 약간 다른 점이 있습니다. 분산 시스템은 데이터를 여러 노드에 분산해 나누어 처리하기 때문에 효율적입니다. 하지만 블록체인은 같은 데이터(거래 내역 등)를 모든 노드가 중복 처리합니다. 이 방법은 데이터의 신뢰도를 높일 수는 있지만 비효율적입니다.            특징      분산      탈중앙화              저장      여러 노드에 분산 저장      여러 노드에 중복 저장              처리      여러 노드가 분산 처리      여러 노드가 중복 처리              장점      높은 효율성      높은 신뢰성      디지털화 vs 블록체인블록체인을 공부하면서 블록체인의 장점으로 시스템의 효율성과 안전한 데이터 저장이라는 글을 본 적이 있습니다. 하지만 이는 디지털화(digitalization)의 장점이며 블록체인은 정확히 이것과 반대입니다. 블록체인은 효율성을 포기하고 데이터의 신뢰성을 높인 것이며, 데이터는 보안되지 않고 모든 사용자에게 공개되어 저장됩니다. 따라서 블록체인은 보안과 효율을 위한 도구가 아니고 신뢰받는 제 3자가 없더라도 거래가 가능한 플랫폼을 만들기 위한 실험적 과정에 있는 개념이라고 생각하면 됩니다.가상 화폐 vs 암호 화폐가상 화폐는 어떤 실물의 가치를 디지털화한 것을 의미하며, 암호 화폐는 가상 화폐의 일부로 블록 체인을 기반으로 만들어진 화폐를 의미합니다. 암호화 되었다는 뜻은 암호 화폐를 보내는 송신인과 수신인이 암호화된 공개키를 통해서만 거래를 하기 때문으로 이는 금융 시스템의 투명성을 해치고 악용될 여지가 많습니다.거래소 vs 중개소거래소는 금융 거래소에서 가져온 단어로 금융 거래소는 거래 시스템에 필요한 환경과 제도가 잘 갖춰져 있습니다. 하지만 암호 화폐 거래소의 경우 암호 화폐의 가격이 단일화 되어 있지도 않고, 거래소 안에 엄격한 규정이 적용되어 있지도 않습니다. 그래서 정확한 명칭은 암호 화폐 중개소 정도가 적합합니다. 그리고 온라인 상에 있는 많은 중개소들은 블록체인과는 별 관련이 없습니다. 중개소는 그저 암호 화폐를 이용하는 지갑이라는 소프트웨어와 온라인 주식 매매에 이용되는 HTS 기능 중 일부를 사용해 거래를 중개하는 브로커일 뿐입니다.트랜잭션 vs 거래내역IT 분야에서는 트랜잭션을 보통 업무 처리의 단위로 얘기 하고 특히 데이터베이스 분야에서는 더 이상 쪼갤 수 없는(또는 더 쪼개면 심각한 오류가 발생할 수 있는)최소한의 업무 처리 단위를 의미합니다. 블록체인에 있어서 트랜잭션은 ‘정의된 이벤트가 발생하는 것’을 의미하며 거래 내역을 포함한 더 포괄적인 의미입니다.디지털 자산암호 화폐는 디지털 자산이 아닙니다. 디지털 자산은 저작권, 소유권 등의 권리를 디지털화 한 것으로 이는 실질적인 가치를 내재하고 있습니다. 하지만 암호 화폐는 내재 가치가 0인 디지털 숫자에 불과합니다. 하지만 내재 가치가 0인 경우에도 가치를 가질 수 있습니다. 그러기 위해 필요한 것이 바로 ‘신뢰’입니다. 따라서 암호 화폐가 실제로 가치를 가지기 위해서는 사람들로부터의 신뢰가 필요합니다. 예를 들어 지폐가 있습니다. 지폐는 종이에 불과하지만 그 뒤에 그 지폐를 발행한 국가의 법령과 신뢰가 뒷받침하기 때문에 실질적인 가치를 가질 수 있는 것입니다. 주식도 온라인 증명서에 불과하지만 주식을 발행한 기관의 신뢰 덕분에 가치를 가지게 됩니다.블록체인의 역사사이퍼펑크블록체인은 사이퍼펑크(cypherpunk) 운동에 뿌리를 두고 있습니다. 사이퍼펑크란 중앙집권화된 국가와 거대 기업들에 대항하여 개인의 프라이버시를 보호하기 위해 암호기술을 이용하여 익명성을 보장하는 탈중앙화 시스템을 만드려는 행동주의자들을 말합니다.비트코인의 탄생2008년 사토시 나카모토란 가명으로 암호화 커뮤니티에 논문이 하나 올라왔습니다. 제목은 비트코인: P2P 전자 캐시 시스템으로 사토시는 이 논문에서 코인을 그 누구의 간섭도 받지 않는 결제 수단이라고 설명했습니다. 그리고 2009년 1월 비트코인의 개념을 실제로 소프트웨어로 구현되어 최초의 블록(제네시스 블록 또는 0번 블록)이 생성되었습니다. 비트코인은 현재까지 10분에 하나꼴로 블록이 만들어지고 있으며 2019년 10월 기준 70만개의 블록이 만들어졌습니다. (참고로 사토시의 정체는 아직까지 밝혀지지 않았다고 합니다)블록? 블록체인? 비트코인?블록체인을 공부하다 보면 블록의 정체가 무엇인지 또 나는 블록체인을 공부하는데 왜 자꾸 나도 모르는 사이에 비트코인이라는 단어가 등장하는 건지 의아했었습니다. (참고로 사토시가 공개한 비트코인에 관한 논문에는 ‘블록’과 ‘체인’이라는 명사가 독립적으로 사용되기는 했지만 ‘블록체인’이라는 단어는 한 번도 등장하지 않았습니다.)블록블록은 전산학에서 보통 한꺼번에 처리되는 논리적 데이터 단위를 일컫습니다. 비트코인에서는 트랜잭션들을 1메가바이트를 넘지 않는 선에서 계속 묶었다가 1메가바이트 직전이 되면 블록으로 만듭니다. 보통 이렇게 하나의 블록이 만들어지는데 10분 정도가 걸립니다.            블록      설명              정의      한꺼번에 처리되는 데이터 단위              크기      최대 1MB              트랜잭션 수      2000~3000개              생성 시간      평균 10분      블록체인트랜잭션 데이터를 포함하는 블록을 앞의 블록의 해시값을 이용해 연결한 것을 블록체인이라고 합니다. 블록은 각각의 노드에서 자신이 가지고 있는 트랜잭션들을 묶다가 블록을 만들 수 있는 시점이 되면 비동기적으로 블록을 만들기 위해 경쟁합니다. 이 때의 경쟁을 채굴(mining)이라고 하며 가장 먼저 블록을 만든 노드의 블록만을 모든 노드의 블록체인에 추가합니다.비트코인비트코인 생태계(네트워크)에서 채굴로 얻게되는 보상을 ‘비트코인’이라고 합니다. 이 보상을 얻기 위해 채굴자들이 그렇게 앞다투어 채굴을 했던 것입니다. 여기서 채굴은 블록을 만들 때 블록에 필요한 해시값을 찾는 과정을 일컫습니다. 채굴에 대한 보상으로 얻게되는 비트코인의 수량은 어떻게 책정될까요? 보상금은 보조금과 수수료의 합으로 이루어지는데, 보조금은 채굴로 얻게되는 고정 수익을 말하고, 수수료는 비트코인 거래 시 송신자로부터 얻게 되는 것으로 수수료는 송신자가 스스로 정하게 됩니다. 그래서 보통 더 높은 수수료를 지불한 트랜잭션이 먼저 블록에 포함되게 됩니다. 보조금의 경우 제네시스 블록이 생성됐을 때에는 50BTC 였으나, 보조금은 블록이 21만개 생성될 때마다 반감되도록 설정되어 현재는 블록을 하나 생성할 때마다 6.25BTC를 얻게 됩니다.블록은 평균 10분 마다 한 개씩 생성되고 보조금은 21만개 마다 계속 반감되기 때문에 시간이 지나면 블록을 생성해도 더 이상 비트코인이 (거의) 발행되지 않게 될 것입니다. 이론적으로 2033년에 거의 포화되는 시점에 다다를 것으로 보며 그 때까지 누적된 비트코인의 양은 2100만BTC라고 합니다. 이렇게 채굴에 대한 보상이 극도로 낮아질 경우, 채굴자가 급격히 줄어들게 될 것이고, 이는 비트코인 시스템의 안전성을 급격하게 저하시키게 됩니다.마치며지금까지 블록체인에 대해 공부하기 전에 알고가면 좋은 지식들에 대해 살펴보았습니다. 다음 포스트에서는 블록체인의 동작원리에 대해 알아보겠습니다.참고  블록체인 해설서 책  해시넷: 블록체인",
       "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-20T21:01:35+09:00'>20 Feb 2022</time><a class='article__image' href='/blockchain-series0'> <img src='/images/blockchain_logo.webp' alt='BlockChain Series [Part1]: 블록체인을 공부하기 전에'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/blockchain-series0'>BlockChain Series [Part1]: 블록체인을 공부하기 전에</a> </h2><p class='article__excerpt'>하지만 현실은 블록체인의 등장으로 불필요한 새로운 형태의 중개인을 양산했고, 암호화폐 재단, 채굴업자, 중개소에 종속되며 빠르게 중앙화되어갔습니다</p></div></div></div>"
+    } ,
+  
+    {
+      "title"    : "Development Knowledge Series(2): Networks and Distributed Systems",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "/dev_know-series2",
+      "date"     : "Feb 19, 2022",
+      "content"  : "Table of Contentshttps://www.pling.org.uk/cs/nds.html",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-19T21:01:35+09:00'>19 Feb 2022</time><a class='article__image' href='/dev_know-series2'> <img src='/images/development_knowledge_logo.png' alt='Development Knowledge Series(2): Networks and Distributed Systems'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/dev_know-series2'>Development Knowledge Series(2): Networks and Distributed Systems</a> </h2></div></div></div>"
+    } ,
+  
+    {
+      "title"    : "Development Knowledge Series(1): Scripting Language vs Compile Language",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "/dev_know-series1",
+      "date"     : "Feb 18, 2022",
+      "content"  : "Table of Contentshttps://well-made-codestory.tistory.com/30?category=978350",
+      "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-18T21:01:35+09:00'>18 Feb 2022</time><a class='article__image' href='/dev_know-series1'> <img src='/images/development_knowledge_logo.png' alt='Development Knowledge Series(1): Scripting Language vs Compile Language'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/dev_know-series1'>Development Knowledge Series(1): Scripting Language vs Compile Language</a> </h2></div></div></div>"
     } ,
   
     {
@@ -606,7 +626,7 @@
       "tags"     : "Docker",
       "url"      : "/container-series2",
       "date"     : "Feb 5, 2022",
-      "content"  : "Table of Contents  참고참고  tutorialworks: The differences between Docker, containerd, CRI-O and runc  LinkedIn: containerd는 무엇이고 왜 중요할까?  cloud native wiki: 3 Types of Container Runtime and the Kubernetes Connection  pageseo: Docker Engine, 제대로 이해하기 (1)  Devin Jeon, Kubernetes의 Docker container runtime 지원 중단에 대하여  Selecting a container runtime for use with Kubernetes  A Comprehensive Container Runtime Comparison  Don’t Panic: Kubernetes and Docker",
+      "content"  : "Table of Contents  도커와 컨테이너 기술  도커 엔진          초기 도커 엔진의 모습      새롭게 바뀐 도커 엔진의 모습                  Client          dockerd          containerd          shim          runc                      참고도커와 컨테이너 기술Docker는 컨테이너 기술을 사용하여 애플리케이션에 필요한 환경을 신속하게 구축하고 테스트 및 배포를 할 수 있게 해주는 플랫폼으로 접근 장벽이 비교적 높았던 컨테이너 기술의 상용화를 앞당겼습니다.컨테이너 기술은 하드웨어와 호스트 OS는 그대로 둔 채 애플리케이션 영역만 캡슐화하여 독립적인 환경을 제공해주는 가상화 방식입니다. 이 덕분에 이전의 가상화 방식에서는 애플리케이션마다 완전한 OS가 필요했지만 컨테이너 기술에서는 이러한 완전한 OS의 불필요한 중복(redundancy)을 제거하였습니다. 이러한 컨테이너 기술 덕분에 CPU, RAM 및 스토리지와 같은 시스템 리소스를 더 많이 확보할 수 있게 되었으며, 라이센스 비용 절감, OS 패치 및 유지보수에 들어가는 오버헤드를 제거할 수 있게 되었습니다.도커 엔진이러한 컨테이너 기술을 실현하기 위해서는 컨테이너를 실행시킬 수 있는 환경을 구축해야 하는데 이를 컨테이너 엔진이라고 하고, 도커에서는 도커 엔진에 해당됩니다.초기 도커 엔진의 모습초기 도커 엔진은 크게 dockerd와 LXC로 이루어져 있었습니다.      dockerd초기 도커 엔진의 dockerd 지금의 dockerd보다 훨씬 많은 역할을 하고 있었습니다. 그 이유는 도커가 처음 등장할 당시 도커 개발자들의 목표는 컨테이너 기술의 대중화였습니다. 그렇기 때문에 최대한 사용성을 간편하게 하고 싶었고 이러한 목적으로 도커 개발자들은 컨테이너 기술을 사용하는데 필요한 많은 기능들을 dockerd에 담아두었었습니다.    이 당시 dockerd에는 현재의 Docker Client, Docker API, Docker Runtime, Image Build와 같은 역할들을 모두 담당하고 있었습니다.        LXCLXC는 단일 호스트 상에서 여러개의 고립된 리눅스 시스템(컨테이너)들을 실행하기 위한 운영 시스템 레벨 가상화 방법입니다. LXC는 dockerd에게 Linux kernel에 존재하는 컨테이너의 기본 building block의 namespaces나 cgroups(control groups)에 대한 접근을 제공했습니다.    namespaces: 운영 시스템을 논리적으로 나누어 고립된 환경을 제공하는 역할cgroups: 고립된 환경에서 사용할 자원을 제한하는 역할  새롭게 바뀐 도커 엔진의 모습도커는 2016년 12월 14일 쿠버네티스, AWS Fargate, Rancher와 같은 컨테이너 기술 기반의 소프트웨어에 dockerd안에 포함되어 있던 containerd라는 컨테이너 런타임을 제공해주기 위해 컨테이너를 모듈화하였습니다. (도커 공식문서 참고)Client도커 클라이언트는 개발자들이 도커를 사용할 때 Docker CLI로 도커 서버에 명령어를 전달하는 역할을 합니다. 흔히 저희가 사용하는 docker run과 같은 명령어가 REST API로 형태로 dockerd에게 전달됩니다.dockerd도커 데몬(dockerd)은 Docker API 요청을 수신하며 이미지 관리, 이미지 빌드, REST API, 인증, 보안, 코어 네트워킹, 오케스트레이션 등과 같은 역할을 담당합니다.containerdcontainerd는 Container의 생명주기를 관리합니다 (= container lifecycle operations).containerd는 원래 작고, 가벼운 Container lifecycle operations으로 설계되었는데, 시간이 지나면서 image pulls, volumes and networks와 같은 기능들이 확장되었습니다.shim앞에서 containerd가 새로운 컨테이너를 만들기 위해 runc를 사용한다고 했는데요. 생성되는 모든 container 당 runc의 새로운 인스턴스를 fork 합니다. 그러나 각 컨테이너가 생성되면, 상위 runc 프로세스가 종료됩니다.수백 개의 runc 인스턴스를 실행하지 않고도 수백 개의 container를 실행할 수 있습니다.컨테이너의 할당된 부모 runc 프로세스가 종료되면, 연결된 containerd-shim 프로세스가 컨테이너의 부모프로세스가 됩니다.이는 containerd에게 컨테이너의 file descriptor(e.g. stdin/out)와 종료 상태를 관리하는 데 필요한 최소한의 코드를 메모리에 남깁니다.runcrunc는 libcontainer용 CLI Wrapper로, 독립된 container runtime입니다.docker가 container 관련된 기능들을 쉽게 사용할 수 있도록 해주는 가볍고 이식가능한 툴입니다.다시 말해, container 동작 환경이 갖추어진 가볍고 이식 가능한 툴입니다.Docker에서 runc는 목적은 단 하나인데요, 바로 Container 생성입니다.참고  Johan Fischer, Comparing Container Runtimes: containerd vs. Docker  tutorialworks: The differences between Docker, containerd, CRI-O and runc  LinkedIn: containerd는 무엇이고 왜 중요할까?  cloud native wiki: 3 Types of Container Runtime and the Kubernetes Connection  pageseo: Docker Engine, 제대로 이해하기 (1)  Devin Jeon, Kubernetes의 Docker container runtime 지원 중단에 대하여  Selecting a container runtime for use with Kubernetes  A Comprehensive Container Runtime Comparison  Don’t Panic: Kubernetes and Docker",
       "article"  : "<div class='article col col-4 col-d-6 col-t-12 animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2022-02-05T21:01:35+09:00'>05 Feb 2022</time><a class='article__image' href='/container-series2'> <img src='/images/container_7.png' alt='Container Series [Part2]: 진화하는 컨테이너 표준'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/container-series2'>Container Series [Part2]: 진화하는 컨테이너 표준</a> </h2></div></div></div>"
     } ,
   

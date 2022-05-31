@@ -27,6 +27,12 @@ tags: Data_Engineering
 
 # Cassandra
 
+# Yarn
+
+# MapReduce
+
+# Zookeeper
+
 # 참고
 
 - [Hoing: 하둡 프로그래밍(2) – 빅데이터 - 하둡 에코시스템](https://hoing.io/archives/21453){:target="_blank"}

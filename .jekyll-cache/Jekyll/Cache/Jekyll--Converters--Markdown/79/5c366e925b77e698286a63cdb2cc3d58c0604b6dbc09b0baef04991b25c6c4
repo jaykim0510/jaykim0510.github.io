@@ -1,0 +1,208 @@
+I"D;<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#intro" id="markdown-toc-intro">Intro</a>    <ul>
+      <li><a href="#객체지향-언어" id="markdown-toc-객체지향-언어">객체지향 언어</a></li>
+      <li><a href="#클래스와-객체" id="markdown-toc-클래스와-객체">클래스와 객체</a></li>
+      <li><a href="#객체-생성" id="markdown-toc-객체-생성">객체 생성</a></li>
+      <li><a href="#클래스-정의" id="markdown-toc-클래스-정의">클래스 정의</a></li>
+      <li><a href="#변수" id="markdown-toc-변수">변수</a></li>
+      <li><a href="#메서드" id="markdown-toc-메서드">메서드</a></li>
+      <li><a href="#메서드의-매개변수" id="markdown-toc-메서드의-매개변수">메서드의 매개변수</a></li>
+      <li><a href="#static" id="markdown-toc-static">static</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="intro">Intro</h1>
+
+<h2 id="객체지향-언어">객체지향 언어</h2>
+<p>객체지향 언어는 절차지향 언어와 자주 비교되는 언어중 하나입니다. 절차지향 언어는 코드의 순서에 의미를 가지고 있고, 객체지향 언어는 코드의 관계에 중요한 의미를 가지고 있습니다.</p>
+
+<p>객체지향 언어의 대표적인 장점은 <strong>코드의 재사용성이 높다</strong>는 것입니다. 코드의 재사용성이 높아짐으로써 불필요한 중복 코드가 제거되며, 개발과 유지보수에 들어가는 시간이 줄고, 확장성이 높아집니다.</p>
+
+<p>위의 장점을 얻기 위해 코드를 작성하기 전에 어떤식으로 객체를 정의하고 관계를 지을지 계획하는 것이 굉장히 중요합니다. 하지만 너무 많은 시간을 계획에 몰두하는 것은 오히려 개발의 지연을 발생시키므로, 일단 프로그램을 기능적으로 완성한 후 어떻게 객체지향적으로 코드를 개선할 수 있을지 고민하며 점차 개선해 나가는 것이 좋습니다.</p>
+
+<h2 id="클래스와-객체">클래스와 객체</h2>
+
+<ul>
+  <li><strong>클래스</strong>: 실체를 만들기 전에 작성하는 설계도. 변수(속성)와 메서드(기능)를 바탕으로 정의</li>
+  <li><strong>객체</strong>: 클래스에 정의된 내용을 바탕으로 메모리에 생성된 실체</li>
+</ul>
+
+<h2 id="객체-생성">객체 생성</h2>
+<p>클래스로부터 객체를 생성하는 방법은 다음과 같습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// &lt;참조변수의 타입&gt; &lt;참조변수&gt; = new &lt;클래스명&gt;();</span>
+<span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">();</span>
+</code></pre></div></div>
+
+<p>어떤 클래스의 경우, 연산자 <code class="language-plaintext highlighter-rouge">new</code>를 생략하기도 하고, 위의 코드를 두 줄로 나눠 적기도 하고, 매개변수를 전달하기도 하는 등 객체 생성의 몇가지 변형된 방법 또한 존재합니다.</p>
+
+<p>객체 생성과 변수에 할당되는 과정은 다음과 같습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ex)
+1. Person p;
+
+Person 클래스 타입의 참조변수 p를 선언하면, 메모리에 참조변수 p를 위한 공간이 마련
+(아직 객체가 생성되지는 않았으므로 비어있음)
+
+
+2. p = new Person();   
+
+연산자 new에 의해 Person클래스의 객체가 메모리의 빈 공간에 생성
+(멤버변수는 각 자료형에 해당하는 기본값으로 초기화)
+
+대입연산자(=)에 의해 객체의 주소갑이 참조변수 p에 저장
+</code></pre></div></div>
+
+<h2 id="클래스-정의">클래스 정의</h2>
+<p>객체를 생성하려면 생성하려는 객체의 타입인 클래스를 먼저 정의해야 합니다. 클래스는 크게 변수와 메서드로 구성되어 있습니다. 선언하는 위치와 제어자의 종류에 따라 변수와 메서드의 성질이 변하게 되는데 이에 대해서는 뒤에서 정리하도록 하며, 여기서는 가장 간단하게만 짚고 넘어가겠습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+
+    <span class="c1">// 변수</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="c1">// 메서드</span>
+    <span class="kt">void</span> <span class="nf">introduceMyself</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"My name is "</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="na">name</span><span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="변수">변수</h2>
+<p>위에서 변수를 정의하는 코드를 간단하게 살펴봤습니다. 변수는 클래스의 어느 위치에서 선언하냐에 따라 종류가 달라지게 됩니다. 종류에는 클래스 변수, 인스턴스 변수, 지역 변수가 있습니다.</p>
+
+<ul>
+  <li>
+    <p><strong>인스턴스 변수</strong><br />
+인스턴스 변수는 인스턴스가 생성될 때 같이 생성되는 변수로, 인스턴스마다 별도의 저장공간을 가지기 때문에 서로 다른 값을 가질 수 있습니다.</p>
+  </li>
+  <li>
+    <p><strong>클래스 변수</strong><br />
+클래스가 메모리에 올라가는 시점에 생성되는 변수로, 모든 인스턴스가 공통된 저장공간을 공유하게 됩니다. 클래스 변수는 앞에 <code class="language-plaintext highlighter-rouge">static</code>을 붙여주기만 하면 되고 <code class="language-plaintext highlighter-rouge">&lt;클래스명&gt;.&lt;클래스 변수명&gt;</code>으로 사용합니다.</p>
+  </li>
+</ul>
+
+<h2 id="메서드">메서드</h2>
+<p>메서드는 특정 작업을 수행하는 코드를 하나로 묶은 것입니다. 예를 들어 두 수의 덧셈, 게임 캐릭터의 공격과 같은 것들이 메서드에 해당합니다.</p>
+
+<p>메서드는 크게 선언부와 구현부로 이루어져 있습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    
+    <span class="c1">// 선언부</span>
+    <span class="kt">int</span> <span class="nf">add</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">)</span>
+        <span class="c1">// 구현부</span>
+        <span class="o">{</span> 
+        <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p><strong>메서드 선언부</strong><br />
+선언할 수 있는 매개변수의 개수는 거의 제한이 없지만, 입력해야 할 값의 개수가 많은 경우에는 배열이나 참조변수를 사용하면 됩니다.</p>
+
+    <p>메서드 선언부 앞에 메서드 수행 후 반환할 결과값의 타입을 적습니다. 반환값이 없는 경우에는 <code class="language-plaintext highlighter-rouge">void</code>라고 적습니다.</p>
+  </li>
+  <li>
+    <p><strong>메서드 구현부</strong><br />
+메서드 내에 선언된 변수들은 그 메서드 내에서만 사용할 수 있는 지역변수 입니다.</p>
+
+    <p>메서드에서 반환할 결과값을 <code class="language-plaintext highlighter-rouge">return</code>문 뒤에 작성합니다. 결과값은 선언부에서 정의한 타입과 일치해야 합니다.</p>
+  </li>
+</ul>
+
+<h2 id="메서드의-매개변수">메서드의 매개변수</h2>
+<p>자바에서는 메서드를 호출할 때 인자 값을 메서드의 매개변수에 복사해서 넘겨줍니다. 넘겨준 인자의 타입이 기본형인지 참조형인지에 따라 복사되는 값이 다릅니다.</p>
+
+<ul>
+  <li>
+    <p><strong>기본형 매개변수</strong><br />
+매개변수가 기본형인 경우에는 기본형 값을 복사해 오기 때문에, 값을 읽을 수만 있고 수정할 수는 없습니다.</p>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+          
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">introduceMyself</span><span class="o">(</span><span class="n">a</span><span class="o">));</span> <span class="c1">// 1000</span>
+
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">a</span><span class="o">);</span> <span class="c1">// 10 (변경안됨)</span>
+
+    <span class="o">}</span>
+
+    <span class="c1">// 기본형(정수) 매개변수 a</span>
+    <span class="kd">static</span> <span class="kt">int</span> <span class="nf">introduceMyself</span><span class="o">(</span> <span class="kt">int</span> <span class="n">a</span> <span class="o">)</span> <span class="o">{</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">;</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>참조형 매개변수</strong><br />
+매개변수의 타입이 참조형인 경우에는 값이 아니라, 값을 가지고 있는 인스턴스의 주소를 복사해 옵니다. 주소가 복사되기 때문에 값을 읽어오는 것 뿐 아니라 변경할 수도 있게 됩니다.</p>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+      <span class="nc">Data</span> <span class="n">d</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Data</span><span class="o">();</span>
+      <span class="n">d</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+
+      <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">introduceMyself</span><span class="o">(</span><span class="n">d</span><span class="o">));</span> <span class="c1">// 1000</span>
+
+      <span class="c1">// introduceMyself 메서드 안에서 변경된 값이 반영됨</span>
+      <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">d</span><span class="o">.</span><span class="na">x</span><span class="o">);</span> <span class="c1">// 1000</span>
+
+  <span class="o">}</span>
+
+  <span class="c1">// 참조형(Data 타입) 매개변수 d</span>
+  <span class="kd">static</span> <span class="kt">int</span> <span class="nf">introduceMyself</span><span class="o">(</span> <span class="nc">Data</span> <span class="n">d</span> <span class="o">)</span> <span class="o">{</span>
+      <span class="n">d</span><span class="o">.</span><span class="na">x</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">;</span>
+      <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="na">x</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Data</span> <span class="o">{</span> <span class="kt">int</span> <span class="n">x</span><span class="o">;</span> <span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="static">static</h2>
+<p>위의 예제에서 중간중간 등장했던 <code class="language-plaintext highlighter-rouge">static</code> 키워드에 대해 짚고 넘어가도록 하겠습니다. <code class="language-plaintext highlighter-rouge">static</code>은 인스턴스 단위가 아닌 클래스 단위로 변수와 메서드를 정의하도록 해줍니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">static</code> 키워드를 붙였을 때의 특징은 다음과 같습니다.</p>
+<ul>
+  <li>인스턴스를 생성하지 않아도 사용할 수 있다</li>
+  <li>모든 인스턴스가 공유해서 사용한다</li>
+  <li><code class="language-plaintext highlighter-rouge">static</code>이 붙은 변수를 클래스 변수, 메서드를 클래스 메서드라고 한다</li>
+  <li>클래스 메서드는 인스턴스 변수를 사용할 수 없다</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">static</code>은 다음과 같은 경우에 사용합니다.</p>
+<ul>
+  <li>멤버변수 중 모든 인스턴스에서 공통된 값을 가져야 하는 경우 또는 가져도 되는 경우(메모리 효율성)</li>
+  <li>메서드 중 인스턴스 변수나 인스턴스 메서드를 사용하지 않는 경우</li>
+</ul>
+
+<p>표기법은 다음과 같습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>변수에 붙는 경우: static &lt;변수 타입&gt; &lt;변수명&gt;
+ex) static int a = 5;
+
+메서드에 붙는 경우: &lt;접근 제어자&gt; static &lt;리턴 타입&gt; &lt;변수명&gt;
+ex) public static void main() {}
+
+-&gt; 타입 앞에 붙는다
+</code></pre></div></div>
+:ET
