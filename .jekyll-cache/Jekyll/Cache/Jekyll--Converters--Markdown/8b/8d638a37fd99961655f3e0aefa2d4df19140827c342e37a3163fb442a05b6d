@@ -1,0 +1,319 @@
+I"�u<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#intro" id="markdown-toc-intro">Intro</a>    <ul>
+      <li><a href="#상속" id="markdown-toc-상속">상속</a></li>
+      <li><a href="#포함-관계" id="markdown-toc-포함-관계">포함 관계</a></li>
+      <li><a href="#오버라이딩overriding" id="markdown-toc-오버라이딩overriding">오버라이딩(overriding)</a></li>
+      <li><a href="#super" id="markdown-toc-super">super</a></li>
+      <li><a href="#super-1" id="markdown-toc-super-1">super()</a></li>
+    </ul>
+  </li>
+  <li><a href="#제어자modifier" id="markdown-toc-제어자modifier">제어자(modifier)</a>    <ul>
+      <li><a href="#static" id="markdown-toc-static">static</a></li>
+      <li><a href="#final" id="markdown-toc-final">final</a></li>
+      <li><a href="#abstract" id="markdown-toc-abstract">abstract</a></li>
+      <li><a href="#public-protected-private" id="markdown-toc-public-protected-private">public, protected, private</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="intro">Intro</h1>
+
+<h2 id="상속">상속</h2>
+<p>상속이란 <strong>기존의 클래스를 재사용하여 새로운 클래스를 작성하는 것</strong>입니다. 상속을 이용하면 코드의 재사용성을 높이고 코드의 중복을 제거할 수 있습니다. 자바에서 상속은 간단히 <code class="language-plaintext highlighter-rouge">extends</code>키워드를 사용해 표현할 수 있습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Child</span> <span class="kd">extends</span> <span class="nc">Parent</span> <span class="o">{</span>
+  <span class="o">...</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>상속을 해주는 클래스를 부모 클래스라고 하고, 상속을 받는 클래스를 자식 클래스라고 합니다.</p>
+
+<p>자식 클래스는 부모 클래스의 변수와 메서드를 상속 받으므로 부모 클래스의 변동은 자식 클래스에게도 영향을 미치지만, 자식 클래스의 변동은 부모 클래스에 아무런 영향을 주지 않습니다.</p>
+
+<p>또한 항상 자식 클래스가 부모 클래스보다 같거나 많은 멤버를 갖게 됩니다. 즉, 상속에 상속을 거듭할수록 상속받는 클래스의 멤버 개수는 점점 늘어나게 됩니다. 그래서 상속을 받는다는 것은 부모 클래스를 확장(extend)한다는 의미로 해석할 수도 있습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kt">char</span> <span class="n">gender</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Worker</span> <span class="kd">extends</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">salary</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Worker</span> <span class="n">w</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Worker</span><span class="o">();</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="mi">25</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">"Peter"</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="sc">'f'</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">salary</span> <span class="o">=</span> <span class="mi">200</span><span class="o">;</span>
+
+        <span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">();</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">"Mike"</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="sc">'f'</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">salary</span> <span class="o">=</span> <span class="mi">100</span><span class="o">;</span> <span class="c1">// cannot find variable salary</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="포함-관계">포함 관계</h2>
+<p>상속을 이용한 방법 말고도 클래스 간의 관계를 맺어주고 클래스를 재사용하는 방법이 있는데, 그것은 바로 포함(composite)관계를 이용하는 방법입니다.</p>
+
+<p>다음 코드는 사람을 나타내는 <code class="language-plaintext highlighter-rouge">Person</code>클래스와, 사람의 자산을 나타내는 <code class="language-plaintext highlighter-rouge">Property</code>클래스의 포함관계를 나타낸 것입니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kt">char</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="nc">Property</span> <span class="n">pty</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Property</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이렇게 코드 재사용성을 높이기 위해 클래스 간 관계를 나타내는 방법에는 크게 상속과 포함관계가 있는데, 그러면 언제 상속을 사용하고 언제 포함관계를 사용할까요?</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- A(노동자)는 B(사람)이다 -&gt; A는 B의 자식 클래스 -&gt; 상속
+- A(자산)은 B(사람)에 속한다 -&gt; 포함 관계  
+</code></pre></div></div>
+
+<p>전체 코드는 아래와 같습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kt">char</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="nc">Property</span> <span class="n">pty</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Property</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Property</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">balance</span><span class="o">;</span>
+    <span class="kt">boolean</span> <span class="n">house</span><span class="o">;</span>
+    <span class="kt">boolean</span> <span class="n">car</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">();</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">"Mike"</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="sc">'f'</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">pty</span><span class="o">.</span><span class="na">balance</span> <span class="o">=</span> <span class="mi">5000</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">pty</span><span class="o">.</span><span class="na">car</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">pty</span><span class="o">.</span><span class="na">house</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="오버라이딩overriding">오버라이딩(overriding)</h2>
+
+<p><strong>부모 클래스로부터 상속받은 메서드의 내용을 변경하는 것을 오버라이딩</strong>이라고 합니다. 상속받은 메서드를 그대로 사용하기도 하지만, 보통 자식 클래스에서 자신에 맞게 변경하는 경우가 많습니다.</p>
+
+<p>여기서 말하는 내용 변경은 구현부에 해당하는 얘기입니다. 그렇기 때문에 메서드의 선언부(메서드 이름, 매개변수, 반환타입)는 부모 클래스와 완전히 일치해야 합니다.</p>
+
+<p>다만 접근 제어자(access modifier)와 예외(exception)는 제한된 조건에서 다르게 변경할 수 있습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>접근 제어자는 부모 클래스의 메서드와 같거나 더 넓은 범위로 변경 가능
+부모 클래스의 메서드보다 많은 수의 예외를 선언할 수 없음
+</code></pre></div></div>
+
+<p>오버라이딩 예시는 다음과 같습니다. <code class="language-plaintext highlighter-rouge">Person</code>클래스의 <code class="language-plaintext highlighter-rouge">introduceMyself()</code> 메서드를 <code class="language-plaintext highlighter-rouge">Worker</code> 클래스에서 오버라이딩 하였습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kt">char</span> <span class="n">gender</span><span class="o">;</span>
+
+    <span class="kt">void</span> <span class="nf">introduceMyself</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hi I'm "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">" I'm just person"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Worker</span> <span class="kd">extends</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">position</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">salary</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">introduceMyself</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Hi I'm "</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">" I'm working as "</span> <span class="o">+</span> <span class="n">position</span> <span class="o">+</span> <span class="s">" My salary is "</span> <span class="o">+</span> <span class="n">salary</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">();</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="mi">20</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">"Mike"</span><span class="o">;</span>
+        <span class="n">p</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="sc">'f'</span><span class="o">;</span>
+
+        <span class="n">p</span><span class="o">.</span><span class="na">introduceMyself</span><span class="o">();</span>
+
+        <span class="nc">Worker</span> <span class="n">w</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Worker</span><span class="o">();</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="mi">25</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">"Peter"</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="sc">'m'</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">position</span> <span class="o">=</span> <span class="s">"Manager"</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">salary</span> <span class="o">=</span> <span class="mi">100</span><span class="o">;</span>
+        <span class="n">w</span><span class="o">.</span><span class="na">introduceMyself</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="super">super</h2>
+<p><code class="language-plaintext highlighter-rouge">super</code>는 자식 클래스에서 부모 클래스 인스턴스를 지칭하는 방법입니다. 클래스 안에서 자기 자신의 인스턴스를 <code class="language-plaintext highlighter-rouge">this</code>로 나타낸 것과 유사합니다. 자식 클래스에서 <code class="language-plaintext highlighter-rouge">super</code>를 사용하면 자식 클래스의 변수, 메서드와 이름이 같은 부모 클래스의 변수, 메서드를 구별할 수 있습니다.</p>
+
+<p>위의 코드에서 자식클래스의 <code class="language-plaintext highlighter-rouge">introduceMyself()</code> 메서드를 다음과 같이 수정해보겠습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Worker</span> <span class="kd">extends</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">position</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">salary</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kt">void</span> <span class="nf">introduceMyself</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">introduceMyself</span><span class="o">();</span> <span class="c1">// Hi I'm Peter I'm just person</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"I'm working as "</span> <span class="o">+</span> <span class="n">position</span> <span class="o">+</span> <span class="s">" My salary is "</span> <span class="o">+</span> <span class="n">salary</span><span class="o">);</span> <span class="c1">// I'm working as Manager My salary is 100</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>위와 같이 super를 이용해 부모클래스의 <code class="language-plaintext highlighter-rouge">introduceMyself()</code> 메서드를 호출할 수 있습니다.</p>
+
+<p>참고로 위의 <code class="language-plaintext highlighter-rouge">@Override</code>는 오버라이딩 애너테이션(annotation)으로 오버라이딩을 위해 반드시 표기해야 하는 것은 아닙니다. 하지만 제가 자바 컴파일러에게 <code class="language-plaintext highlighter-rouge">introduceMyself()</code> 메서드를 오버라이딩 한 것이라고 명시적으로 알려줌으로써 부모 클래스에 <code class="language-plaintext highlighter-rouge">introduceMyself()</code>가 있는지 확인하는 등 제대로 오버라이딩을 했는지 컴파일 단계에서 확인해줍니다.</p>
+
+<h2 id="super-1">super()</h2>
+<p><code class="language-plaintext highlighter-rouge">super()</code>는 <strong>부모클래스의 생성자</strong>입니다. <strong>생성자는 변수를 초기화하는 메서드</strong>라고 했습니다.</p>
+
+<p>그렇기 때문에 <code class="language-plaintext highlighter-rouge">super()</code>는 부모클래스를 상속 받은 <strong>자식클래스에서 부모클래스의 멤버 변수를 초기화 할 때 사용</strong>합니다.</p>
+
+<p>아래는 <code class="language-plaintext highlighter-rouge">super()</code>를 사용하지 않고 부모클래스의 변수를 초기화한 경우입니다. Worker클래스에서 부모클래스의 변수인 name, age, gender를 초기화하는 코드를 <code class="language-plaintext highlighter-rouge">this.name = name</code>과 같은 방법으로 정의하였습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kt">char</span> <span class="n">gender</span><span class="o">;</span>
+
+    <span class="nc">Person</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">age</span><span class="o">,</span> <span class="kt">char</span> <span class="n">gender</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="n">gender</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Worker</span> <span class="kd">extends</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">position</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">salary</span><span class="o">;</span>
+
+    <span class="nc">Worker</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">age</span><span class="o">,</span> <span class="kt">char</span> <span class="n">gender</span><span class="o">,</span> <span class="nc">String</span> <span class="n">position</span><span class="o">,</span> <span class="kt">int</span> <span class="n">salary</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">age</span> <span class="o">=</span> <span class="n">age</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">gender</span> <span class="o">=</span> <span class="n">gender</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">position</span> <span class="o">=</span> <span class="n">position</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">salary</span> <span class="o">=</span> <span class="n">salary</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Person</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Person</span><span class="o">(</span><span class="s">"Mike"</span><span class="o">,</span> <span class="mi">20</span><span class="o">,</span> <span class="sc">'f'</span><span class="o">);</span>
+        <span class="nc">Worker</span> <span class="n">w</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Worker</span><span class="o">(</span><span class="s">"Peter"</span><span class="o">,</span> <span class="mi">20</span><span class="o">,</span> <span class="sc">'m'</span><span class="o">,</span> <span class="s">"Manager"</span><span class="o">,</span> <span class="mi">100</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>이렇게 직접 <code class="language-plaintext highlighter-rouge">this.name = name</code>으로 정의하는 것도 틀린 코드는 아니지만, <code class="language-plaintext highlighter-rouge">super()</code>를 이용하면 코드의 중복을 제거하는 조금 더 객체지향적인 코드를 작성할 수 있기 때문에 <code class="language-plaintext highlighter-rouge">super()</code>를 이용해서 다시 작성하면 다음과 같습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Worker</span> <span class="kd">extends</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">position</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">salary</span><span class="o">;</span>
+
+    <span class="nc">Worker</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">,</span> <span class="kt">int</span> <span class="n">age</span><span class="o">,</span> <span class="kt">char</span> <span class="n">gender</span><span class="o">,</span> <span class="nc">String</span> <span class="n">position</span><span class="o">,</span> <span class="kt">int</span> <span class="n">salary</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">age</span><span class="o">,</span> <span class="n">gender</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">position</span> <span class="o">=</span> <span class="n">position</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">salary</span> <span class="o">=</span> <span class="n">salary</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h1 id="제어자modifier">제어자(modifier)</h1>
+<p>제어자는 클래스, 변수 또는 메서드의 선언부에 함께 사용되어 부가적인 의미를 부여합니다.</p>
+
+<p><strong>접근 제어자</strong></p>
+<ul>
+  <li>public, protected, (default), private</li>
+  <li>네 가지중 한 개만 사용 가능</li>
+  <li>보통 선언부에서 가장 먼저 표기</li>
+</ul>
+
+<p><strong>그 외</strong></p>
+<ul>
+  <li>static, final, abstract 등</li>
+  <li>여러 개 조합하여 사용 가능</li>
+</ul>
+
+<h2 id="static">static</h2>
+<ul>
+  <li>사용될 수 있는 곳: 변수, 메서드</li>
+  <li>
+    <p>인스턴스 생성하지 않고 사용 가능</p>
+  </li>
+  <li>변수에 사용할 경우
+    <ul>
+      <li>모든 인스턴스에 공통적으로 사용되는 클래스 변수가 된다</li>
+      <li>인스턴스 생성하지 않고 사용 가능한 변수가 된다</li>
+      <li>클래스가 메모리에 로드될 때 생성된다</li>
+    </ul>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">static</span> <span class="kt">int</span> <span class="n">personNumber</span><span class="o">;</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kt">char</span> <span class="n">gender</span><span class="o">;</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="nc">Person</span><span class="o">.</span><span class="na">personNumber</span><span class="o">);</span> <span class="c1">// 인스턴스 없이 personNumber 사용</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>메서드에 사용할 경우
+    <ul>
+      <li>인스턴스 생성하지 않고 호출 가능한 클래스 메서드가 된다</li>
+      <li>클래스 메서드에서는 인스턴스 멤버를 직접 사용할 수 없다</li>
+    </ul>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">static</span> <span class="kt">int</span> <span class="n">personNumber</span><span class="o">;</span>
+    <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="o">;</span>
+    <span class="kt">char</span> <span class="n">gender</span><span class="o">;</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">countPersonNumber</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">personNumber</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Person</span><span class="o">.</span><span class="na">countPersonNumber</span><span class="o">();</span> <span class="c1">// 인스턴스 없이 countPersonNumber() 메서드 호출</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="final">final</h2>
+
+<h2 id="abstract">abstract</h2>
+
+<h2 id="public-protected-private">public, protected, private</h2>
+:ET

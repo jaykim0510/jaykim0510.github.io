@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Java Series [Part8]: 자바의 객체지향 프로그래밍'
+title:  'Java Series [Part8]: 자바의 객체지향 프로그래밍(1)'
 description: 
 date:   2022-05-17 15:01:35 +0300
 image:  '/images/java_logo.png'
