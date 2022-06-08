@@ -1,4 +1,4 @@
-I"��<hr />
+I"��<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -20,7 +20,7 @@
   <li><a href="#다형성" id="markdown-toc-다형성">다형성</a></li>
   <li><a href="#추상-클래스" id="markdown-toc-추상-클래스">추상 클래스</a></li>
   <li><a href="#인터페이스" id="markdown-toc-인터페이스">인터페이스</a></li>
-  <li><a href="#내부-클래스" id="markdown-toc-내부-클래스">내부 클래스</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
@@ -442,6 +442,7 @@ private: 같은 클래스 내에서만 접근 가능
     <span class="nc">Car</span> <span class="n">c</span><span class="o">;</span> <span class="c1">// 무슨 차인지 모르더라도 Car로 두고 개발을 지속할 수 있다</span>
 <span class="o">};</span>
 </code></pre></div>    </div>
+    <p><img src="/images/java_5.png" alt="" /></p>
   </li>
   <li>위의 이유로 코드의 확장성이 좋아진다
     <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Car</span> <span class="o">{</span>
@@ -495,11 +496,54 @@ private: 같은 클래스 내에서만 접근 가능
   </li>
 </ul>
 
-<p><img src="/images/java_5.png" alt="" /></p>
-
 <h1 id="추상-클래스">추상 클래스</h1>
+<p>추상 클래스는 클래스에 <strong>완성되지 않은 메서드가 있음을 명시적으로 알리고 이를 자식클래스에서 반드시 오버라이딩하도록 하는 부모클래스의 일종</strong>입니다. 추상 클래스는 완성되지 않은 부분을 가지고 있는 클래스이기 때문에 <strong>인스턴스를 생성할 수 없습니다</strong>. 인스턴스 생성을 자신을 상속받는 자식클래스에게 위임합니다. (부모클래스의 불완전함을 자식클래스가 이어받아 개선하여 최종적으로 인스턴스를 생성한다)</p>
+
+<p>추상 클래스를 만드는 방법은 클래스 선언부와 완성되지 않은 메서드의 선언부에 각각 <code class="language-plaintext highlighter-rouge">abstract</code> 키워드를 붙입니다. 메서드에는 구현부가 없으므로 <code class="language-plaintext highlighter-rouge">{}</code>를 생략합니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Car</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">brand</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">year</span><span class="o">;</span>
+
+    <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">carMode</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">HyundaiCar</span> <span class="kd">extends</span> <span class="nc">Car</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span> <span class="c1">// @Override 어노테이션은 필수 아님, but 컴파일 오류 체크해주므로 권장</span>
+    <span class="kt">void</span> <span class="nf">carMode</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"현대차 모드"</span><span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
 <h1 id="인터페이스">인터페이스</h1>
+<p>인터페이스는 일종의 추상클래스입니다. 추상클래스에는 메서드 중 일부가 구현되어 있지 않았던 반면, 인터페이스는 가지고 있는 <strong>모든 메서드에 구현부가 없습니다</strong>. 인터페이스는 <strong>오직 추상메서드와 상수만</strong>을 멤버로 가질 수 있습니다.</p>
 
-<h1 id="내부-클래스">내부 클래스</h1>
+<p>인터페이스 예시는 다음과 같습니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">interface</span> <span class="nc">Car</span> <span class="o">{</span>
+    <span class="c1">// 모든 멤버변수는 public static final이어야 함. 생략 가능</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">numWheel</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+    
+    <span class="c1">// 모든 메서드는 public abstract. 생략 가능</span>
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>추상 클래스는 자식클래스가 상속받는다고 표현했습니다. 인터페이스는 <strong>구현(implements)한다고 표현</strong>합니다.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Hyundai</span> <span class="kd">implements</span> <span class="nc">Car</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"차가 달립니다"</span><span class="o">)</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>인터페이스는 위에서 배웠던 <strong>다형성을 위한 목적</strong>으로 주로 사용됩니다.</p>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9788994492049&amp;orderClick=LAG&amp;Kc=" target="_blank">남궁성, 자바의 정석 책</a></li>
+</ul>
 :ET

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Java Series [Part6]: 자바의 유용한 클래스들</title>
+  <title>Java Series [Part6]: 자바의 컬렉션 프레임웍</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/java-series6">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Java Series [Part6]: 자바의 유용한 클래스들 – Code Museum">
+  <meta name="twitter:title" content="Java Series [Part6]: 자바의 컬렉션 프레임웍 – Code Museum">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/java_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Java Series [Part6]: 자바의 유용한 클래스들 – Code Museum">
+  <meta property="og:title" content="Java Series [Part6]: 자바의 컬렉션 프레임웍 – Code Museum">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/java_logo.png">
@@ -252,6 +252,10 @@
               
                 
               
+                
+              
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -326,7 +330,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part6]: 자바의 유용한 클래스들">
+          <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part6]: 자바의 컬렉션 프레임웍">
         </div>
       </div>
       
@@ -347,7 +351,7 @@
               </div>
             
  
-          <h1 class="post__title">Java Series [Part6]: 자바의 유용한 클래스들</h1>
+          <h1 class="post__title">Java Series [Part6]: 자바의 컬렉션 프레임웍</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -384,6 +388,8 @@
   
 
   
+
+  
   	
   	
   	
@@ -398,7 +404,7 @@
       <a href="/java-series5" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Java Series [Part5]: 자바 조금 더 알아보기</a>
     
     
-      <a href="/java-series7" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Java Series [Part7]: 자바와 자료구조<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/java-series7" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Java Series [Part7]: 자바의 제네릭<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -407,9 +413,70 @@
       <hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#컬렉션-프레임웍" id="markdown-toc-컬렉션-프레임웍">컬렉션 프레임웍</a></li>
+  <li><a href="#컬렉션-프레임웍의-핵심-인터페이스" id="markdown-toc-컬렉션-프레임웍의-핵심-인터페이스">컬렉션 프레임웍의 핵심 인터페이스</a>    <ul>
+      <li><a href="#list" id="markdown-toc-list">List</a></li>
+      <li><a href="#set" id="markdown-toc-set">Set</a></li>
+      <li><a href="#map" id="markdown-toc-map">Map</a></li>
+    </ul>
+  </li>
+  <li><a href="#몇-가지-중요한-구현클래스" id="markdown-toc-몇-가지-중요한-구현클래스">몇 가지 중요한 구현클래스</a>    <ul>
+      <li><a href="#arraylist" id="markdown-toc-arraylist">ArrayList</a></li>
+      <li><a href="#hashmap" id="markdown-toc-hashmap">HashMap</a></li>
+    </ul>
+  </li>
+</ul>
 
 <hr />
 
+<h1 id="컬렉션-프레임웍">컬렉션 프레임웍</h1>
+<p>JAVA API문서에서는 컬렉션 프레임웍을 ‘데이터 군(group)을 다루고 표현하기 위한 단일화된 구조’라고 정의하고 있습니다. 컬렉션 프레임웍은 컬렉션, 다수의 데이터를 다루는데 필요한 다양하고 풍부한 클래스들을 제공합니다.</p>
+
+<p><img src="/images/java_6.png" alt="" /></p>
+
+<h1 id="컬렉션-프레임웍의-핵심-인터페이스">컬렉션 프레임웍의 핵심 인터페이스</h1>
+
+<p>컬렉션 프레임웍에서는 컬렉션(데이터 그룹)을 크게 <code class="language-plaintext highlighter-rouge">List</code>, <code class="language-plaintext highlighter-rouge">Set</code>, <code class="language-plaintext highlighter-rouge">Map</code>이라는 3가지 인터페이스를 정의함으로써 컬렉션을 다루는데 필요한 기능을 제공하고 있습니다. 그리고 <code class="language-plaintext highlighter-rouge">List</code>와 <code class="language-plaintext highlighter-rouge">Set</code> 인터페이스의 공통된 부분을 뽑아서 새로운 인터페이스인 <code class="language-plaintext highlighter-rouge">Collection</code>을 추가로 정의하였습니다.</p>
+
+<h2 id="list">List</h2>
+
+<ul>
+  <li>순서가 있는 데이터의 집합으로 데이터 중복을 허용</li>
+  <li>구현클래스: ArrayList, LinkedList, Stack 등</li>
+</ul>
+
+<h2 id="set">Set</h2>
+
+<ul>
+  <li>순서를 유지하지 않는 데이터의 집합, 데이터의 중복을 허용하지 않음</li>
+  <li>구현클래스: HashSet, TreeSet 등</li>
+</ul>
+
+<h2 id="map">Map</h2>
+
+<ul>
+  <li>키(Key)와 값(Value)으로 이루어진 쌍을 데이터로 갖는 집합</li>
+  <li>구현클래스: HashMap, TreeMap, Hashtable 등</li>
+</ul>
+
+<h1 id="몇-가지-중요한-구현클래스">몇 가지 중요한 구현클래스</h1>
+
+<h2 id="arraylist">ArrayList</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">ArrayList</span> <span class="n">list1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">();</span>
+
+<span class="n">list1</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">Integer</span><span class="o">(</span><span class="mi">5</span><span class="o">));</span>
+<span class="n">list1</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="nc">Integer</span><span class="o">(</span><span class="mi">3</span><span class="o">));</span>
+</code></pre></div></div>
+
+<h2 id="hashmap">HashMap</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">HashMap</span> <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">();</span>
+
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"key1"</span><span class="o">,</span> <span class="s">"value1"</span><span class="o">);</span>
+<span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"key2"</span><span class="o">,</span> <span class="s">"value2"</span><span class="o">);</span>
+</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">
@@ -534,6 +601,11 @@
           
             
               
+              <li class="tag__item"><a href="/Spring" class="post_tag_list">#Spring</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/Terraform" class="post_tag_list">#Terraform</a></li>
             
           
@@ -585,6 +657,11 @@
           
             
               
+              <li class="tag__item"><a href="/backend" class="post_category_list">#backend</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/devops" class="post_category_list">#devops</a></li>
             
           
@@ -620,7 +697,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Java%20Series%20[Part6]:%20%EC%9E%90%EB%B0%94%EC%9D%98%20%EC%9C%A0%EC%9A%A9%ED%95%9C%20%ED%81%B4%EB%9E%98%EC%8A%A4%EB%93%A4&url=http://localhost:4000/java-series6"
+          href="https://twitter.com/intent/tweet?text=Java%20Series%20[Part6]:%20%EC%9E%90%EB%B0%94%EC%9D%98%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8D&url=http://localhost:4000/java-series6"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -630,12 +707,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/java-series6&amp;media=http://localhost:4000/images/java_logo.png&amp;description=Java%20Series%20[Part6]:%20%EC%9E%90%EB%B0%94%EC%9D%98%20%EC%9C%A0%EC%9A%A9%ED%95%9C%20%ED%81%B4%EB%9E%98%EC%8A%A4%EB%93%A4"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/java-series6&amp;media=http://localhost:4000/images/java_logo.png&amp;description=Java%20Series%20[Part6]:%20%EC%9E%90%EB%B0%94%EC%9D%98%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8D"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/java-series6&title=Java%20Series%20[Part6]:%20%EC%9E%90%EB%B0%94%EC%9D%98%20%EC%9C%A0%EC%9A%A9%ED%95%9C%20%ED%81%B4%EB%9E%98%EC%8A%A4%EB%93%A4&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/java-series6&title=Java%20Series%20[Part6]:%20%EC%9E%90%EB%B0%94%EC%9D%98%20%EC%BB%AC%EB%A0%89%EC%85%98%20%ED%94%84%EB%A0%88%EC%9E%84%EC%9B%8D&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -644,6 +721,8 @@
 <!--첫 번째 문단-->
 
 
+
+  
 
   
 
@@ -666,7 +745,7 @@
       <a href="/java-series5" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Java Series [Part5]: 자바 조금 더 알아보기</a>
     
     
-      <a href="/java-series7" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Java Series [Part7]: 자바와 자료구조<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/java-series7" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Java Series [Part7]: 자바의 제네릭<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -714,18 +793,25 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-05-17T21:01:35+09:00">17 May 2022</time>
+      <time class="article__date" datetime="2022-05-18T21:01:35+09:00">18 May 2022</time>
 
       
 
       
-      <a class="article__image" href="/java-series9">
-        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part9]: 자바의 객체지향 프로그래밍(2)">
+      <a class="article__image" href="/java-series10">
+        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part10]: 자바의 객체지향 프로그래밍(2)">
       </a>
       
 
@@ -734,7 +820,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/java-series9">Java Series [Part9]: 자바의 객체지향 프로그래밍(2)</a>
+        <a href="/java-series10">Java Series [Part10]: 자바의 객체지향 프로그래밍(2)</a>
       </h2>
 
       
@@ -763,8 +849,8 @@
       
 
       
-      <a class="article__image" href="/java-series8">
-        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part8]: 자바의 객체지향 프로그래밍(1)">
+      <a class="article__image" href="/java-series9">
+        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part9]: 자바의 객체지향 프로그래밍(1)">
       </a>
       
 
@@ -773,7 +859,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/java-series8">Java Series [Part8]: 자바의 객체지향 프로그래밍(1)</a>
+        <a href="/java-series9">Java Series [Part9]: 자바의 객체지향 프로그래밍(1)</a>
       </h2>
 
       
@@ -816,8 +902,8 @@
       
 
       
-      <a class="article__image" href="/java-series7">
-        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part7]: 자바와 자료구조">
+      <a class="article__image" href="/java-series8">
+        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part8]: 자바의 애너테이션">
       </a>
       
 
@@ -826,7 +912,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/java-series7">Java Series [Part7]: 자바와 자료구조</a>
+        <a href="/java-series8">Java Series [Part8]: 자바의 애너테이션</a>
       </h2>
 
       
