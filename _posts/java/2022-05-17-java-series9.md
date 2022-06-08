@@ -401,9 +401,127 @@ private: 같은 클래스 내에서만 접근 가능
 이런 경우 보통 변수는 `private`이나 `protected`로 접근 범위를 제한하고, 읽기 메서드(getter), 쓰기 메서드(setter)는 `public`으로 제공함으로써 변수를 다룰 수 있도록 합니다.  
 
 # 다형성
+다형성이란 '여러 가지 형태를 가질 수 있는 능력'을 의미합니다. 다형성은 객체지향 코드의 가장 큰 장점이라고 할 수 있습니다. 자바에서 다형성은 하나의 공통적인 역할을 하는 클래스를 인터페이스로 정의하고, 그 인터페이스를 구현하는 다양한 클래스를 만드는 방식을 의미합니다. 
+
+![](/images/java_4.png)
+
+이렇게 다향성을 가지도록 코드를 작성하게 되면 다음과 같은 이점을 얻을 수 있습니다.  
+
+- 인터페이스만 알아도 다른 쪽에서 무리없이 개발할 수 있다
+  ```java
+  class Car {};
+
+  class HyundaiCar extends Car {};
+  class TeslaCar extends Car {};
+
+  class User {
+      String name;
+      int age;
+      Car c; // 무슨 차인지 모르더라도 Car로 두고 개발을 지속할 수 있다
+  };
+  ```
+  ![](/images/java_5.png)
+
+- 위의 이유로 코드의 확장성이 좋아진다
+  ```java
+  class Car {
+
+    String brand;
+    int year;
+
+    public void start() {
+        System.out.println("차가 출발합니다");
+    }
+
+    public void stop() {
+        System.out.println("차를 멈춥니다");
+    }
+
+    public void normalMode() {
+        System.out.println("일반 모드");
+    }
+  }
+
+  class HyundaiCar extends Car {
+      public void hyundaiMode() {
+          System.out.println("현대차 모드");
+      }
+  }
+
+  class TeslaCar extends Car {
+      public void teslaMode() {
+          System.out.println("테슬라 모드");
+      }
+  }
+  ```
+- 여러 구현체를 인터페이스의 공통된 타입을 이용해 매개변수로 받을 수 있다
+  ```java
+  class Car {};
+
+  class HyundaiCar extends Car {};
+  class TeslaCar extends Car {};
+
+  class Test {
+      public static void main(String[] agrs) {
+          HyundaiCar h = new HyundaiCar();
+          TeslaCar t = new TeslaCar();
+      }
+
+      public static void carSpec(Car c) { // 매개변수의 타입을 Car로 하면 HyundaiCar, TeslaCar 모두 인자로 받을 수 있다
+          System.out.println(c.brand + " " + c.year)
+      }
+  }
+  ```
+
 
 # 추상 클래스
+추상 클래스는 클래스에 **완성되지 않은 메서드가 있음을 명시적으로 알리고 이를 자식클래스에서 반드시 오버라이딩하도록 하는 부모클래스의 일종**입니다. 추상 클래스는 완성되지 않은 부분을 가지고 있는 클래스이기 때문에 **인스턴스를 생성할 수 없습니다**. 인스턴스 생성을 자신을 상속받는 자식클래스에게 위임합니다. (부모클래스의 불완전함을 자식클래스가 이어받아 개선하여 최종적으로 인스턴스를 생성한다)
+
+추상 클래스를 만드는 방법은 클래스 선언부와 완성되지 않은 메서드의 선언부에 각각 `abstract` 키워드를 붙입니다. 메서드에는 구현부가 없으므로 `{}`를 생략합니다.  
+
+```java
+abstract class Car {
+    String brand;
+    int year;
+
+    abstract void carMode();
+}
+
+class HyundaiCar extends Car {
+
+    @Override // @Override 어노테이션은 필수 아님, but 컴파일 오류 체크해주므로 권장
+    void carMode() {
+        System.out.println("현대차 모드")
+    }
+}
+```
 
 # 인터페이스
+인터페이스는 일종의 추상클래스입니다. 추상클래스에는 메서드 중 일부가 구현되어 있지 않았던 반면, 인터페이스는 가지고 있는 **모든 메서드에 구현부가 없습니다**. 인터페이스는 **오직 추상메서드와 상수만**을 멤버로 가질 수 있습니다.   
 
-# 내부 클래스
+인터페이스 예시는 다음과 같습니다.  
+
+```java
+interface Car {
+    // 모든 멤버변수는 public static final이어야 함. 생략 가능
+    public static final int numWheel = 1;
+    
+    // 모든 메서드는 public abstract. 생략 가능
+    public abstract void start();
+}
+```
+
+추상 클래스는 자식클래스가 상속받는다고 표현했습니다. 인터페이스는 **구현(implements)한다고 표현**합니다.  
+
+```java
+class Hyundai implements Car {
+    public void start() {
+        System.out.println("차가 달립니다")
+    }
+}
+```
+
+인터페이스는 위에서 배웠던 **다형성을 위한 목적**으로 주로 사용됩니다. 
+
+# 참고
+- [남궁성, 자바의 정석 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9788994492049&orderClick=LAG&Kc=){:target="_blank"}
