@@ -449,13 +449,51 @@
 <span class="o">}</span>
 </code></pre></div></div>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="nc">HashMap</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map1</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
 
         <span class="n">map1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"apple"</span><span class="o">);</span>
-        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">map1</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">1</span><span class="o">));</span> <span class="c1">// apple 출력</span>
+        <span class="n">map1</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"1"</span><span class="o">,</span> <span class="s">"value2"</span><span class="o">);</span> <span class="c1">// 컴파일 오류</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Car</span> <span class="o">{</span>
+    <span class="nc">String</span> <span class="n">brand</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">year</span><span class="o">;</span>
+
+    <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"차가 출발합니다"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="nf">stop</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"차가 멈춥니다"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">Driver</span><span class="o">&lt;</span><span class="no">C</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="no">C</span> <span class="n">car</span> <span class="o">=</span> <span class="k">new</span> <span class="no">C</span><span class="o">();</span> <span class="c1">// type parameter 'C' cannot be instantiated directly</span>
+
+    <span class="kt">void</span> <span class="nf">driveStart</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">car</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kt">void</span> <span class="nf">driveStop</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">car</span><span class="o">.</span><span class="na">stop</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+
+<span class="kd">class</span> <span class="nc">Test</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Driver</span><span class="o">&lt;</span><span class="nc">Car</span><span class="o">&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Driver</span><span class="o">&lt;&gt;();</span>
+
+        <span class="n">d</span><span class="o">.</span><span class="na">driveStart</span><span class="o">();</span>
+        <span class="n">d</span><span class="o">.</span><span class="na">driveStop</span><span class="o">();</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -784,6 +822,34 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
@@ -816,6 +882,13 @@
             
                 
               
+            
+            
+            
+      
+            
+      
+            
             
             
             

@@ -63,6 +63,43 @@ class Test {
 }
 ```
 
+```java
+class Car {
+    String brand;
+    int year;
+
+    void start() {
+        System.out.println("차가 출발합니다");
+    }
+
+    void stop() {
+        System.out.println("차가 멈춥니다");
+    }
+}
+
+class Driver<C> {
+    C car = new C(); // type parameter 'C' cannot be instantiated directly
+
+    void driveStart() {
+        car.start();
+    }
+
+    void driveStop() {
+        car.stop();
+    }
+}
+
+
+class Test {
+    public static void main(String[] args) {
+        Driver<Car> d = new Driver<>();
+
+        d.driveStart();
+        d.driveStop();
+    }
+}
+```
+
 # 제네릭 클래스
 
 
