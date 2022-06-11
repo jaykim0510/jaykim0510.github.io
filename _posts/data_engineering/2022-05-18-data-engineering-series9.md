@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part8]: 정규표현식(2) 문자 반복'
+title:  'Data Engineering Series [Part9]: 정규표현식(2) 문자 반복'
 description: 
 date:   2022-05-18 15:01:35 +0300
 image:  '/images/data_engineering_logo.png'

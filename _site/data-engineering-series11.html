@@ -6,26 +6,24 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part3] 데이터 관리(1): CRUD를 이용해 데이터 관리하기</title>
+  <title>Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬)</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/mysql-series3">
+  <link rel="canonical" href="http://localhost:4000/data-engineering-series11">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part3] 데이터 관리(1): CRUD를 이용해 데이터 관리하기 – Code Museum">
+  <meta name="twitter:title" content="Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬) – Code Museum">
   <meta name="twitter:description" content="
-Table of Contents
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/mysql_logo.webp">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/data_engineering_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part3] 데이터 관리(1): CRUD를 이용해 데이터 관리하기 – Code Museum">
+  <meta property="og:title" content="Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬) – Code Museum">
   <meta property="og:description" content="
-Table of Contents
 ">
-  <meta property="og:image" content="http://localhost:4000/images/mysql_logo.webp">
+  <meta property="og:image" content="http://localhost:4000/images/data_engineering_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -332,7 +330,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part3] 데이터 관리(1): CRUD를 이용해 데이터 관리하기">
+          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬)">
         </div>
       </div>
       
@@ -345,7 +343,7 @@ Table of Contents
             
               <div class="post__tags">
                 
-                  <a href="/MySQL" class="post__tag">#MySQL</a>
+                  <a href="/Data_Engineering" class="post__tag">#Data_Engineering</a>
                 
                 
                   <a href="/DE" class="post__tag">#DE</a>
@@ -353,7 +351,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part3] 데이터 관리(1): CRUD를 이용해 데이터 관리하기</h1>
+          <h1 class="post__title">Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬)</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -362,7 +360,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2021-03-21T21:01:35+09:00">21 Mar 2021</time>
+              <time class="post__date" datetime="2022-05-20T21:01:35+09:00">20 May 2022</time>
             </div>
           </div>
   
@@ -384,22 +382,6 @@ Table of Contents
 
 
   
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
   	
   	
   	
@@ -411,178 +393,70 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part2] 데이터 조회 및 분석(2): 조인(JOIN)과 서브쿼리(SUBQUERY)</a>
+      <a href="/data-engineering-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part10]: 정규표현식(3) 그루핑</a>
     
     
-      <a href="/mysql-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part4] 데이터 관리(2): 테이블 설정을 통해 데이터 관리하기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 
 
 
       <hr />
+
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#테이블-생성-및-삭제" id="markdown-toc-테이블-생성-및-삭제">테이블 생성 및 삭제</a>    <ul>
-      <li><a href="#sql문-데이터-타입" id="markdown-toc-sql문-데이터-타입">SQL문 데이터 타입</a></li>
+  <li><a href="#re-라이브러리-메서드" id="markdown-toc-re-라이브러리-메서드">re 라이브러리 메서드</a>    <ul>
+      <li><a href="#match" id="markdown-toc-match">match()</a></li>
+      <li><a href="#search" id="markdown-toc-search">search()</a></li>
+      <li><a href="#findall" id="markdown-toc-findall">findall()</a></li>
+      <li><a href="#finditer" id="markdown-toc-finditer">finditer()</a></li>
+      <li><a href="#fullmatch" id="markdown-toc-fullmatch">fullmatch()</a></li>
     </ul>
   </li>
-  <li><a href="#데이터-crud" id="markdown-toc-데이터-crud">데이터 CRUD</a>    <ul>
-      <li><a href="#데이터-추가" id="markdown-toc-데이터-추가">데이터 추가</a></li>
-      <li><a href="#데이터-갱신" id="markdown-toc-데이터-갱신">데이터 갱신</a></li>
-      <li><a href="#데이터-삭제" id="markdown-toc-데이터-삭제">데이터 삭제</a></li>
+  <li><a href="#matchobj-객체의-메서드" id="markdown-toc-matchobj-객체의-메서드">matchObj 객체의 메서드</a>    <ul>
+      <li><a href="#group" id="markdown-toc-group">group()</a></li>
+      <li><a href="#start" id="markdown-toc-start">start()</a></li>
+      <li><a href="#end" id="markdown-toc-end">end()</a></li>
+      <li><a href="#span" id="markdown-toc-span">span()</a></li>
     </ul>
   </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<p>앞에서 저희가 배웠던 SQL문들은 모두 <strong>이미 테이블이 주어졌고 그 테이블에 데이터가 쌓여있는 상태에서 원하는 데이터를 조회</strong>하는 방법에 관한 것들이었습니다.</p>
+<h1 id="re-라이브러리-메서드">re 라이브러리 메서드</h1>
 
-<p>하지만 저희가 <strong>직접 테이블을 생성하고 데이터를 쌓아야 하는 순간도 있을 것</strong>입니다. 이번 포스트에서는 이러한 순간에 필요한 SQL문에 대해 배워 보겠습니다.</p>
+<h2 id="match">match()</h2>
 
-<h1 id="테이블-생성-및-삭제">테이블 생성 및 삭제</h1>
+<h2 id="search">search()</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 데이터베이스 생성
-CREATE DATABASE [생성할 데이터베이스 이름]
-CREATE DATABASE IF NOT EXISTS [생성할 데이터베이스 이름]
+<h2 id="findall">findall()</h2>
 
-# 데이터베이스 지정
-USE [생성한 데이터베이스 이름]
-</code></pre></div></div>
+<h2 id="finditer">finditer()</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 테이블 생성
-CREATE TABLE [데이터베이스 이름].[생성할 테이블 이름] (
-    [컬럼1] INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    [컬럼2] VARCHAR(20) NULL,
-    [컬럼3] VARCHAR(15) NULL,
-    또는 PRIMARY KEY (['컬럼1'])
-);
+<h2 id="fullmatch">fullmatch()</h2>
 
-# 테이블 삭제
-DROP TABLE [테이블 이름]
-</code></pre></div></div>
+<h1 id="matchobj-객체의-메서드">matchObj 객체의 메서드</h1>
 
-<h2 id="sql문-데이터-타입">SQL문 데이터 타입</h2>
+<h2 id="group">group()</h2>
 
-<table>
-  <tbody>
-    <tr>
-      <td><strong>종류</strong></td>
-      <td><strong>타입</strong></td>
-    </tr>
-    <tr>
-      <td><strong>정수형</strong></td>
-      <td>TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT</td>
-    </tr>
-    <tr>
-      <td><strong>실수형</strong></td>
-      <td>DECIMAL, FLOAT, DOUBLE</td>
-    </tr>
-    <tr>
-      <td><strong>날짜 및 시간</strong></td>
-      <td>DATE, TIME, DATETIME, TIMESTAMP</td>
-    </tr>
-    <tr>
-      <td><strong>문자열</strong></td>
-      <td>CHAR, VARCHAR, TEXT</td>
-    </tr>
-  </tbody>
-</table>
+<h2 id="start">start()</h2>
 
+<h2 id="end">end()</h2>
+
+<h2 id="span">span()</h2>
+
+<h1 id="참고">참고</h1>
 <ul>
-  <li>
-    <p><strong>TINYINT</strong><br />
-signed: -128 ~ 127<br />
-unsigned: 0 ~ 255</p>
-  </li>
-  <li>
-    <p><strong>INT</strong><br />
-signed: -2147483648 ~ 2147483647<br />
-unsigned: 0 ~ 4294967295</p>
-  </li>
-  <li>
-    <p><strong>DECIMAL</strong><br />
-DECIMAL(M, D): M은 전체 숫자의 최대 자리수, D는 소수점 자리 숫자의 최대 자리수<br />
-DECIMAL(5, 2): -999.99 ~ 999.99<br />
-M은 최대 65까지 가능, D는 최대 30까지 가능</p>
-  </li>
-  <li>
-    <p><strong>FLOAT</strong><br />
--3.4 * 10^38 ~ 3.4 * 10^38</p>
-  </li>
-  <li>
-    <p><strong>DOUBLE</strong><br />
--1.7 * 10^308 ~ 1.7 * 10^308<br />
-FLOAT와 비교해 범위도 더 넓고, 정밀도 또한 더 높음(더 많은 소수점 자리 수 지원)</p>
-  </li>
-  <li>
-    <p><strong>DATE</strong><br />
-날짜를 저장하는 데이터 타입<br />
-’2021-03-21’ 이런 형식의 연, 월, 일 순</p>
-  </li>
-  <li>
-    <p><strong>TIME</strong>
-시간을 저장하는 데이터 타입<br />
-’09:27:31’ 이런 형식의 시, 분, 초</p>
-  </li>
-  <li>
-    <p><strong>DATETIME</strong><br />
-날짜와 시간을 저장하는 데이터 타입<br />
-’2021-03-21 09:30:27’ 이런 식으로 연, 월, 일, 시, 분, 초</p>
-  </li>
-  <li>
-    <p><strong>TIMESTAMP</strong><br />
-DATETIME과 같다<br />
-차이점은 TIMESTAMP는 타임 존 정보도 포함</p>
-  </li>
-  <li>
-    <p><strong>CHAR</strong>
-CHAR(30): 최대 30자의 문자열을 저장 (0~255까지 가능)<br />
-차지하는 용량이 항상 숫자값에 고정됨<br />
-데이터의 길이가 크게 변하지 않는 상황에 적합</p>
-  </li>
-  <li>
-    <p><strong>VARCHAR</strong><br />
-VARCHAR(30): 최대 30자의 문자열을 저장 (0~65536까지 가능)<br />
-차지하는 용량이 가변적. 30이어도 그 이하의 길이면 용량도 적게 차지함<br />
-해당 값의 사이즈를 나타내는 부분(1byte 또는 2byte)이 저장 용량에 추가
-데이터 길이가 크게 들쑥날쑥해지는 경우에 적합</p>
-  </li>
-  <li>
-    <p><strong>TEXT</strong><br />
-문자열이 아주 긴 상황에 적합</p>
-  </li>
+  <li><a href="https://greeksharifa.github.io/정규표현식(re)/2018/07/20/regex-usage-01-basic/" target="_blank">greeksharifa, 파이썬 정규표현식(re) 사용법</a></li>
+  <li><a href="https://regexone.com" target="_blank">regexone: 정규표현식 문제</a></li>
+  <li><a href="https://regexr.com" target="_blank">regexr: 정규표현식 테스트</a></li>
+  <li><a href="https://regexper.com" target="_blank">regexper: 정규표현식 시각화</a></li>
+  <li><a href="https://programmers.co.kr/learn/courses/11" target="_blank">프로그래머스: 정규표현식 문제</a></li>
+  <li><a href="https://www.acmicpc.net/workbook/view/6082" target="_blank">백준: 정규표현식 문제</a></li>
 </ul>
-
-<h1 id="데이터-crud">데이터 CRUD</h1>
-
-<h2 id="데이터-추가">데이터 추가</h2>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 데이터 추가
-INSERT INTO [사용할 테이블 이름] (컬럼1, 컬럼2, 컬럼3, ...)
-VALUES (컬럼1의 데이터, 컬럼2의 데이터, 컬럼3의 데이터, ...);
-
-# 특정 컬럼에만 데이터 넣을 수도 있다
-INSERT INTO [사용할 테이블 이름] (컬럼1, 컬럼3)
-VALUES (컬럼1의 데이터, 컬럼3의 데이터);
-</code></pre></div></div>
-
-<h2 id="데이터-갱신">데이터 갱신</h2>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 데이터 갱신
-UPDATE [사용할 테이블 이름]
-    SET 컬럼1 = [갱신 데이터] WHERE [조건]; 
-
-# 기존 값을 기준으로 갱신
-UPDATE [사용할 테이블 이름]
-SET 컬럼1 = [컬럼1 + 3] WHERE [조건]; 
-</code></pre></div></div>
-
-<h2 id="데이터-삭제">데이터 삭제</h2>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DELETE FROM [사용할 테이블 이름]
-WHERE [조건]
-</code></pre></div></div>
-
 
     </div>
     <div class="post__tags_list">
@@ -803,22 +677,22 @@ WHERE [조건]
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part3]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC(1):%20CRUD%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0&url=http://localhost:4000/mysql-series3"
+          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part11]:%20%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D(4)%20%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D%EC%9D%84%20%ED%99%9C%EC%9A%A9%ED%95%9C%20%EB%A9%94%EC%84%9C%EB%93%9C(feat.%ED%8C%8C%EC%9D%B4%EC%8D%AC)&url=http://localhost:4000/data-engineering-series11"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/mysql-series3"
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/data-engineering-series11"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series3&amp;media=http://localhost:4000/images/mysql_logo.webp&amp;description=MySQL%20Series%20[Part3]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC(1):%20CRUD%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series11&amp;media=http://localhost:4000/images/data_engineering_logo.png&amp;description=Data%20Engineering%20Series%20[Part11]:%20%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D(4)%20%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D%EC%9D%84%20%ED%99%9C%EC%9A%A9%ED%95%9C%20%EB%A9%94%EC%84%9C%EB%93%9C(feat.%ED%8C%8C%EC%9D%B4%EC%8D%AC)"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series3&title=MySQL%20Series%20[Part3]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC(1):%20CRUD%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series11&title=Data%20Engineering%20Series%20[Part11]:%20%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D(4)%20%EC%A0%95%EA%B7%9C%ED%91%9C%ED%98%84%EC%8B%9D%EC%9D%84%20%ED%99%9C%EC%9A%A9%ED%95%9C%20%EB%A9%94%EC%84%9C%EB%93%9C(feat.%ED%8C%8C%EC%9D%B4%EC%8D%AC)&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -827,22 +701,6 @@ WHERE [조건]
 <!--첫 번째 문단-->
 
 
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
   	
@@ -856,10 +714,10 @@ WHERE [조건]
 
   <div class="post_pagination">
     
-      <a href="/mysql-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part2] 데이터 조회 및 분석(2): 조인(JOIN)과 서브쿼리(SUBQUERY)</a>
+      <a href="/data-engineering-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part10]: 정규표현식(3) 그루핑</a>
     
     
-      <a href="/mysql-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part4] 데이터 관리(2): 테이블 설정을 통해 데이터 관리하기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 
@@ -935,38 +793,6 @@ WHERE [조건]
             
       
             
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-05-20T21:01:35+09:00">20 May 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/data-engineering-series11">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬)">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series11">Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬)</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
             
             
             
@@ -1041,6 +867,52 @@ WHERE [조건]
 
       <h2 class="article__title">
         <a href="/data-engineering-series9">Data Engineering Series [Part9]: 정규표현식(2) 문자 반복</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-05-17T21:01:35+09:00">17 May 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/data-engineering-series8">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part8]: 정규표현식(1) 문자 한 개와 매치">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/data-engineering-series8">Data Engineering Series [Part8]: 정규표현식(1) 문자 한 개와 매치</a>
       </h2>
 
       
