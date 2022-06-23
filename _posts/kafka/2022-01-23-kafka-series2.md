@@ -44,7 +44,7 @@ Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으�
 # Producer
 프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.  
 
-![](/images/kafka_13.webp)  
+![](/images/kafka_13.png)  
 [(Dzone 블로그 참고)](https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api){:target="_blank"}  
 
 ## 레코드 전송과정
@@ -133,6 +133,8 @@ Kafka의 구성요소에 대해 알아보기 전에 메시지가 어떤 식으�
 
 # Broker
 브로커는 Topic내의 Partition들을 분산 저장, 관리해줍니다. 하나의 브로커에는 Topic의 모든 데이터를 가지고 있지 않고, 일부분(Partition)만 가지게 됩니다. 보통 Broker를 최소 3대 이상으로 구성해 Kafka cluster를 형성합니다.
+
+
 
 # Consumer
 컨슈머는 카프카에 저장되어 있는 메시지를 가져오는 역할을 합니다. 그러나 단순히 가져오는 역할만 하지는 않고, 조금 더 자세히 들여다 보면 컨슈머 그룹을 만들고, 그룹 내 모든 컨슈머가 파티션을 골고루 가져오도록 하는 리밸런싱과 같은 역할도 합니다. 컨슈머 수는 파티션 수보다 작거나 같도록 하는 것이 바람직합니다. 

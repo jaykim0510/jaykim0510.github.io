@@ -1,7 +1,9 @@
-I"�$<hr />
+I"�.<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#apache-kafka-소개" id="markdown-toc-apache-kafka-소개">Apache Kafka 소개</a></li>
+  <li><a href="#카프카의-탄생" id="markdown-toc-카프카의-탄생">카프카의 탄생</a></li>
+  <li><a href="#카프카의-구조" id="markdown-toc-카프카의-구조">카프카의 구조</a></li>
+  <li><a href="#카프카-소개" id="markdown-toc-카프카-소개">카프카 소개</a></li>
   <li><a href="#event" id="markdown-toc-event">Event</a></li>
   <li><a href="#기업-사례-잘란도zalando" id="markdown-toc-기업-사례-잘란도zalando">기업 사례: 잘란도(Zalando)</a></li>
   <li><a href="#kafka의-핵심-기능" id="markdown-toc-kafka의-핵심-기능">Kafka의 핵심 기능</a>    <ul>
@@ -18,7 +20,27 @@
 
 <hr />
 
-<h1 id="apache-kafka-소개">Apache Kafka 소개</h1>
+<h1 id="카프카의-탄생">카프카의 탄생</h1>
+
+<p>2011년 <strong>링크드인</strong>에서는 파편화된 데이터 수집 및 분배를 위한 데이터 파이프라인을 운영하는 데에 어려움을 겪었습니다.초기 운영시에는 데이터를 생성하고 적재하는데 큰 어려움이 없었지만, 서비스 사용자가 증가함에 따라 <strong>데이터량이 폭발적으로 증가</strong>하기 시작했고 <strong>아키텍처도 점점 복잡</strong>해지기 시작했습니다.</p>
+
+<p>이를 해결하기 위해 기존에 나와있던 데이터 프레임워크와 오픈소스를 활용해 파이프라인의 파편화를 개선하려고 노력했지만 결국 한계를 느끼고 링크드인의 데이터팀은 <strong>데이터 파이프라인을 위한 새로운 시스템을 만들기로 결정</strong>했습니다.</p>
+
+<p>그 결과물로 등장한 것이 <strong>카프카(Kafka)</strong>입니다. 카프카는 이후 <strong>아파치 재단의 최상위 프로젝트로 등록</strong>되었습니다. 그리고 2014년 카프카 개발의 핵심 멤버였던 제이 크랩스(Jay Kreps)는 <strong>컨플루언트(Confluent)라는 회사를 창업</strong>해 카프카를 더욱 편리하게 운영할 수 있도록 몇 가지 추가적인 기능을 추가해 현재 카프카 관련 다양한 서비스를 제공하고 있습니다.</p>
+
+<h1 id="카프카의-구조">카프카의 구조</h1>
+
+<p>카프카는 더이상 각각의 애플리케이션을 서로 연결해서 데이터를 처리하는 것이 아니라 한 곳에 모아 처리할 수 있도록 중앙 집중화 하였습니다.</p>
+
+<p><img src="/images/kafka_12.png" alt="" /></p>
+
+<p>기존에 있던 데이터 파이프라인은 소스와 타겟의 직접적인 연결로 한쪽의 이슈가 다른 쪽의 애플리케이션에 영향을 미치콘 했지만 카프카는 이러한 높은 의존성 문제를 해결했습니다. 이제 소스 애플리케이션은 어느 타겟 애플리케이션으로 보낼지 고민하지 않고 일단 카프카로 넣으면 됩니다.</p>
+
+<p>카프카 내부에 데이터가 저장되는 파티션의 동작은 FIFO 방식의 큐 자료구조와 유사합니다. 카프카에서는 이러한 큐를 브로커(broker), 소스 애플리케이션을 프로듀서(producer), 타겟 애플리케이션을 컨슈머(consumer)라고 합니다.</p>
+
+<p><img src="/images/kafka_7.png" alt="" /></p>
+
+<h1 id="카프카-소개">카프카 소개</h1>
 
 <blockquote>
   <p>Apache Kafka is an open-source distributed publish-subscribe messaging platform that has been purpose-built to handle real-time streaming data for distributed streaming, pipelining, and replay of data feeds for fast, scalable operations.</p>
