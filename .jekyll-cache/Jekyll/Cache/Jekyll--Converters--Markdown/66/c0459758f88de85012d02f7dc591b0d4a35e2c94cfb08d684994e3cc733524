@@ -1,4 +1,4 @@
-I"c<hr />
+I"6o<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#kafka의-주요-구성요소" id="markdown-toc-kafka의-주요-구성요소">Kafka의 주요 구성요소</a></li>
@@ -18,11 +18,17 @@
       </li>
     </ul>
   </li>
-  <li><a href="#broker" id="markdown-toc-broker">Broker</a></li>
+  <li><a href="#broker" id="markdown-toc-broker">Broker</a>    <ul>
+      <li><a href="#컨트롤러" id="markdown-toc-컨트롤러">컨트롤러</a></li>
+      <li><a href="#데이터의-저장" id="markdown-toc-데이터의-저장">데이터의 저장</a></li>
+      <li><a href="#데이터의-삭제" id="markdown-toc-데이터의-삭제">데이터의 삭제</a></li>
+      <li><a href="#데이터-복제" id="markdown-toc-데이터-복제">데이터 복제</a></li>
+    </ul>
+  </li>
   <li><a href="#consumer" id="markdown-toc-consumer">Consumer</a>    <ul>
       <li><a href="#컨슈머-오프셋-관리" id="markdown-toc-컨슈머-오프셋-관리">컨슈머 오프셋 관리</a></li>
       <li><a href="#그룹-코디네이터" id="markdown-toc-그룹-코디네이터">그룹 코디네이터</a></li>
-      <li><a href="#파티션-할당-전략" id="markdown-toc-파티션-할당-전략">파티션 할당 전략</a>        <ul>
+      <li><a href="#파티션-리밸런싱" id="markdown-toc-파티션-리밸런싱">파티션 리밸런싱</a>        <ul>
           <li><a href="#라운드-로빈-파티션-할당-전략" id="markdown-toc-라운드-로빈-파티션-할당-전략">라운드 로빈 파티션 할당 전략</a></li>
           <li><a href="#스티키-파티션-할당-전략" id="markdown-toc-스티키-파티션-할당-전략">스티키 파티션 할당 전략</a></li>
           <li><a href="#협력적-스티키-파티션-할당-전략" id="markdown-toc-협력적-스티키-파티션-할당-전략">협력적 스티키 파티션 할당 전략</a></li>
@@ -67,7 +73,7 @@
 <h1 id="producer">Producer</h1>
 <p>프로듀서는 카프카의 토픽으로 메시지를 전송하는 역할을 합니다. 프로듀서가 동작하는 방식은 다음과 같습니다.</p>
 
-<p><img src="/images/kafka_13.webp" alt="" /><br />
+<p><img src="/images/kafka_13.png" alt="" /><br />
 <a href="https://dzone.com/articles/take-a-deep-dive-into-kafka-producer-api" target="_blank">(Dzone 블로그 참고)</a></p>
 
 <h2 id="레코드-전송과정">레코드 전송과정</h2>
@@ -166,6 +172,31 @@
 <h1 id="broker">Broker</h1>
 <p>브로커는 Topic내의 Partition들을 분산 저장, 관리해줍니다. 하나의 브로커에는 Topic의 모든 데이터를 가지고 있지 않고, 일부분(Partition)만 가지게 됩니다. 보통 Broker를 최소 3대 이상으로 구성해 Kafka cluster를 형성합니다.</p>
 
+<h2 id="컨트롤러">컨트롤러</h2>
+
+<p>클러스터의 다수 브로커중 한 대가 컨트롤러의 역할을 합니다. 컨트롤러는 다른 브로커들의 상태를 체크하고 브로커가 장애로 클러스터에서 빠지는 경우 해당 브로커에 존재하던 리더 파티션을 다른 브로커로 재분배합니다. 컨트롤러 역할을 하는 브로커에 장애가 생기면 다른 브로커가 컨트롤러 역할을 합니다.</p>
+
+<h2 id="데이터의-저장">데이터의 저장</h2>
+
+<p>카프카의 데이터는 <code class="language-plaintext highlighter-rouge">config/server.properties</code>의 <code class="language-plaintext highlighter-rouge">log.dir</code> 옵션에 정의한 디렉토리(보통 <code class="language-plaintext highlighter-rouge">/tmp/kafka-logs</code>)에 저장됩니다. 데이터는 토픽 이름과 파티션 번호의 조합으로 디렉토리(<code class="language-plaintext highlighter-rouge">토픽명-파티션 번호</code>)를 생성하여 데이터를 저장합니다.</p>
+
+<p>디렉토리(<code class="language-plaintext highlighter-rouge">토픽명-파티션 번호</code>) 아래를 확인하면 <code class="language-plaintext highlighter-rouge">.index</code>, <code class="language-plaintext highlighter-rouge">.log</code>, <code class="language-plaintext highlighter-rouge">.timeindex</code> 파일이 존재합니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>000000000.index: 메시지의 오프셋을 인덱싱한 정보를 담은 파일
+000000000.log: 메시지와 메타데이터를 저장한 파일
+000000000.timeindex: 메시지에 포함된 타임스탬프 값을 기준으로 인덱싱한 정보를 담은 파일
+
+(000000000은 각 세그먼트 파일의 시작 오프셋)
+</code></pre></div></div>
+
+<p><img src="/images/kafka_71.png" alt="" /></p>
+
+<h2 id="데이터의-삭제">데이터의 삭제</h2>
+
+<p>카프카는 다른 메세징 플랫폼과 다르게 컨슈머가 데이터를 가져가더라도 토픽의 데이터는 삭제되지 않습니다. 또한 컨슈머나 프로듀서가 데이터 삭제를 요청할 수 없으며 <strong>오직 브로커만이 데이터를 삭제</strong>할 수 있습니다. 하지만 카프카에 저장한 데이터는 다른 일반적인 데이터베이스처럼 <strong>특정 데이터를 선별해서 삭제할 수 없습니다</strong>. 카프카에서 <strong>데이터를 삭제하는 단위는 로그 세그먼트 파일 단위</strong>입니다. (수정 또한 불가능)</p>
+
+<h2 id="데이터-복제">데이터 복제</h2>
+
 <h1 id="consumer">Consumer</h1>
 <p>컨슈머는 카프카에 저장되어 있는 메시지를 가져오는 역할을 합니다. 그러나 단순히 가져오는 역할만 하지는 않고, 조금 더 자세히 들여다 보면 컨슈머 그룹을 만들고, 그룹 내 모든 컨슈머가 파티션을 골고루 가져오도록 하는 리밸런싱과 같은 역할도 합니다. 컨슈머 수는 파티션 수보다 작거나 같도록 하는 것이 바람직합니다.</p>
 
@@ -180,7 +211,7 @@
 </ul>
 
 <h2 id="컨슈머-오프셋-관리">컨슈머 오프셋 관리</h2>
-<p>컨슈머의 동작 중 가장 핵심은 바로 오프셋 관리입니다. 이를 통해 마지막 고려사항인 컨슈머 장애 발생에 대응할 수 있습니다. 오프셋 관리는 <strong>컨슈머가 메시지를 어디까지 가져왔는지를 표시하는 것</strong>이라고 할 수 있습니다. 예를 들어 컨슈머가 일시적으로 동작을 멈추고 재시작하거나, 컨슈머 서버에 문제가 발생해 새로운 컨슈머가 생성된 경우 새로운 컨슈머는 기존 컨슈머의 마지막 위치에서 메시지를 가져올 수 있어야 장애를 복구할 수 있습니다. 카프카에서는 메시지의 위치를 나타내는 숫자를 오프셋이라고 하고 이러한 오프셋 정보는 <code class="language-plaintext highlighter-rouge">__consumer_offsets</code>라는 별도의 토픽에 저장합니다. 이러한 정보는 컨슈머 그룹별로 기록됩니다.</p>
+<p>컨슈머의 동작 중 가장 핵심은 바로 오프셋 관리입니다. 이를 통해 마지막 고려사항인 <strong>컨슈머 장애 발생에 대응</strong>할 수 있습니다. 오프셋 관리는 <strong>컨슈머가 메시지를 어디까지 가져왔는지를 표시하는 것</strong>이라고 할 수 있습니다. 예를 들어 컨슈머가 일시적으로 동작을 멈추고 재시작하거나, 컨슈머 서버에 문제가 발생해 새로운 컨슈머가 생성된 경우 새로운 컨슈머는 기존 컨슈머의 마지막 위치에서 메시지를 가져올 수 있어야 장애를 복구할 수 있습니다. 카프카에서는 메시지의 위치를 나타내는 숫자를 오프셋이라고 하고 이러한 오프셋 정보는 <code class="language-plaintext highlighter-rouge">__consumer_offsets</code>라는 별도의 토픽에 저장합니다. 이러한 정보는 컨슈머 그룹별로 기록됩니다.</p>
 
 <p>이렇게 __consumer_offsets 토픽에 정보를 기록해 두면 컨슈머의 변경이 발생했을 때 해당 컨슈머가 어디까지 읽었는지 추적할 수 있습니다. 여기서 주의할 점은 저장되는 오프셋값은 컨슈머가 마지막으로 읽은 위치가 아니라, <strong>컨슈머가 다음으로 읽어야 할 위치</strong>를 말합니다.</p>
 
@@ -197,9 +228,9 @@
 
 <p>그룹 코디네이터는 컨슈머와 주기적으로 하트비트를 주고받으며 컨슈머가 잘 동작하는지 확인합니다. 컨슈머는 그룹에서 빠져나가거나 새로 합류하게 되면 그룹 코디네이터에게 join, leave 요청을 보내고 그룹 코디네이터는 이러한 정보를 컨슈머 리더에게 전달해 새로 파티션을 할당하도록 합니다. 이 밖에도 컨슈머가 일정 시간(session.timeout.ms)이 지나도록 하트비트를 보내지 않으면 컨슈머에 문제가 발생한 것으로 간주하고 다시 컨슈머 리더에게 이러한 정보를 알려줍니다.</p>
 
-<p>이렇게 컨슈머에 변화가 생길 때마다 파티션 리밸런싱이 일어나게 되는데 파티션 리밸런싱은 파티션을 골고루 분배해 성능을 향상시키기도 하지만 너무 자주 일어나게 되면 오히려 배보다 배꼽이 더 커지는 상황이 발생할 수 있습니다. 이러한 문제를 해결하기 위해 아파치 카프카에서는 몇가지의 파티션 할당 전략을 제공하고 있습니다.</p>
+<h2 id="파티션-리밸런싱">파티션 리밸런싱</h2>
 
-<h2 id="파티션-할당-전략">파티션 할당 전략</h2>
+<p>이렇게 컨슈머에 변화가 생길 때마다 <strong>파티션 리밸런싱</strong>이 일어나게 되는데 파티션 리밸런싱은 파티션을 골고루 분배해 성능을 향상시키기도 하지만 너무 자주 일어나게 되면 오히려 배보다 배꼽이 더 커지는 상황이 발생할 수 있습니다. 이러한 문제를 해결하기 위해 아파치 카프카에서는 몇가지의 <strong>파티션 할당 전략</strong>을 제공하고 있습니다.</p>
 
 <h3 id="라운드-로빈-파티션-할당-전략">라운드 로빈 파티션 할당 전략</h3>
 <p>라운드 로빈 방식은 파티션 할당 방법 중 가장 간단한 방법입니다. 할당해야할 모든 파티션과 컨슈머들을 나열한 후 하나씩 파티션과 컨슈머를 할당하는 방식입니다.</p>
