@@ -1,0 +1,143 @@
+I"B<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#aws-security" id="markdown-toc-aws-security">AWS Security</a></li>
+  <li><a href="#security의-종류" id="markdown-toc-security의-종류">Security의 종류</a></li>
+  <li><a href="#iam" id="markdown-toc-iam">IAM</a></li>
+  <li><a href="#iam-동작-원리" id="markdown-toc-iam-동작-원리">IAM 동작 원리</a></li>
+  <li><a href="#iam-구성요소" id="markdown-toc-iam-구성요소">IAM 구성요소</a>    <ul>
+      <li><a href="#user" id="markdown-toc-user">User</a></li>
+      <li><a href="#group" id="markdown-toc-group">Group</a></li>
+      <li><a href="#role" id="markdown-toc-role">Role</a></li>
+      <li><a href="#policy" id="markdown-toc-policy">Policy</a>        <ul>
+          <li><a href="#policy-json-fromat" id="markdown-toc-policy-json-fromat">Policy JSON Fromat</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#iam-특징" id="markdown-toc-iam-특징">IAM 특징</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="aws-security">AWS Security</h1>
+
+<ul>
+  <li>AWS Security services assist you in safeguarding sensitive data and information while also meeting compliance and confidentiality standards</li>
+  <li>AWS enables you to automate tedious security processes so you can concentrate on growing and innovating your company. Furthermore, you only pay for the services you utilize</li>
+</ul>
+
+<h1 id="security의-종류">Security의 종류</h1>
+
+<ul>
+  <li>AWS IAM, AWS GuardDuty, AWS Macie, AWS Config, AWS CloudTrail</li>
+</ul>
+
+<h1 id="iam">IAM</h1>
+
+<ul>
+  <li>Identity and Access Management</li>
+  <li>IAM safeguards accesses to AWS services and resources and to create and manage AWS users and groups and use permissions to grant or deny access to AWS services</li>
+</ul>
+
+<h1 id="iam-동작-원리">IAM 동작 원리</h1>
+
+<ul>
+  <li>Principal
+    <ul>
+      <li>A User or a role can be a principal</li>
+      <li>An action on AWS resource can be performed by a principal</li>
+      <li>(AWS 서비스에 접근하려는 주체)</li>
+    </ul>
+  </li>
+  <li>Authentication
+    <ul>
+      <li>It is a process of confirming identity of the principal who is trying to access an AWS product</li>
+      <li>To authenticate from console, you must provide your credentials or required keys</li>
+      <li>(어떤 주체에게 AWS 서비스에 접근 가능하도록 권한을 주려면 필요한 키를 주체에게 주어야 한다)</li>
+    </ul>
+  </li>
+  <li>Request
+    <ul>
+      <li>When a principal attempts to access the AWS Console, API or CLI, he sends a request to AWS</li>
+      <li>(주체가 이제 접근을 한다)</li>
+    </ul>
+  </li>
+  <li>Authorizatioin
+    <ul>
+      <li>Here IAM uses information from the request context to check for matching policies</li>
+      <li>IAM determine whether to allow or deny the request</li>
+      <li>(IAM은 주체가 가지고 있는 키를 이용해 접근 가능한 주체인지 확인한다)</li>
+    </ul>
+  </li>
+  <li>Actions
+    <ul>
+      <li>After authorization of the request, AWS approves the action</li>
+      <li>Using this, you can either edit, or delete or even create a resource</li>
+      <li>(주체의 자격을 검증하고 나면 주체는 본인이 가진 권한만큼 리소스에 접근(생성, 수정, 삭제 등)할 수 있다)</li>
+    </ul>
+  </li>
+  <li>Resources
+    <ul>
+      <li>Resource perform a set of requested actions</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="iam-구성요소">IAM 구성요소</h1>
+
+<h2 id="user">User</h2>
+<ul>
+  <li>AWS users are AWS entities that represent the person or application that interacts with AWS</li>
+  <li>IAM users have a name and credentials which are formed when you gave them</li>
+  <li>The root users of an AWS account is not the same as an IAM user with administrator access</li>
+</ul>
+
+<h2 id="group">Group</h2>
+<ul>
+  <li>A set of IAM users is referred to as an IAM user group</li>
+  <li>User groups allow you to specify permissions for many users, making it easier to manage those user’s permissions</li>
+  <li>In a resource-based policy, a user goup can’t be desinated as a Principal. A user group is a technique to apply policies to ao group of people all at once</li>
+</ul>
+
+<h2 id="role">Role</h2>
+<ul>
+  <li>An IAM role is an identity with permission policies that govern what the identity can and cannot do</li>
+  <li>There are no long-term credentials connected with a role. Instead, when you take on a role, you’re given temporary security credentials for the duration of your role sesion (Role은 Session -&gt; 유효 기간 있음)</li>
+</ul>
+
+<h2 id="policy">Policy</h2>
+<ul>
+  <li>Policies are created and linked to IAM identities(user, group, role) or AWS resource</li>
+  <li>A policy is an object that defines the rights of an identity or resource</li>
+  <li>Most policies are saved as JSON documents</li>
+</ul>
+
+<h3 id="policy-json-fromat">Policy JSON Fromat</h3>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"날짜"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow 또는 Deny"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"s3.*"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"s3-object-lambda:*"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h1 id="iam-특징">IAM 특징</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=oaZ3R4NCRu8&amp;t=1870s" target="_blank">Youtube Simplilearn: AWS S3 Tutorial</a></li>
+</ul>
+:ET

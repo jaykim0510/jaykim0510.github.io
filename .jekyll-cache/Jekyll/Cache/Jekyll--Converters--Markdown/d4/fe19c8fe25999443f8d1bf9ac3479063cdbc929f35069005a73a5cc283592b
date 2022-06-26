@@ -1,0 +1,171 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#s3란-무엇인가" id="markdown-toc-s3란-무엇인가">S3란 무엇인가</a></li>
+  <li><a href="#s3의-이점" id="markdown-toc-s3의-이점">S3의 이점</a></li>
+  <li><a href="#s3의-구성요소" id="markdown-toc-s3의-구성요소">S3의 구성요소</a>    <ul>
+      <li><a href="#object" id="markdown-toc-object">Object</a></li>
+      <li><a href="#bucket" id="markdown-toc-bucket">Bucket</a></li>
+    </ul>
+  </li>
+  <li><a href="#s3의-동작원리" id="markdown-toc-s3의-동작원리">S3의 동작원리</a></li>
+  <li><a href="#s3-특징" id="markdown-toc-s3-특징">S3 특징</a>    <ul>
+      <li><a href="#lifecycle-management" id="markdown-toc-lifecycle-management">Lifecycle Management</a></li>
+      <li><a href="#bucket-policy" id="markdown-toc-bucket-policy">Bucket Policy</a></li>
+      <li><a href="#data-encryption" id="markdown-toc-data-encryption">Data Encryption</a></li>
+      <li><a href="#versioning" id="markdown-toc-versioning">Versioning</a></li>
+      <li><a href="#cross-region-replication" id="markdown-toc-cross-region-replication">Cross-Region Replication</a></li>
+      <li><a href="#transfer-acceleration" id="markdown-toc-transfer-acceleration">Transfer Acceleration</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="s3란-무엇인가">S3란 무엇인가</h1>
+
+<p>object storage service from Amazon that provides industry-leading scalability, data availability, security, and performance</p>
+
+<p>simple management capabilities that allow you to organize your data and fine-tune access controls to match your specific commercial, organizational, and compliance needs.</p>
+
+<h1 id="s3의-이점">S3의 이점</h1>
+
+<ul>
+  <li>Performance, scalability, availability, and durability that are unrivalled in the industry</li>
+  <li>Many cost-effective storage classes are available</li>
+  <li>Security, compliance, and auditing capabilities that are unrivalled</li>
+  <li>Manage data and access permissions with ease</li>
+  <li>Query-in-place and on-demand processing</li>
+  <li>The most widely used cloud storage service</li>
+</ul>
+
+<h1 id="s3의-구성요소">S3의 구성요소</h1>
+
+<h2 id="object">Object</h2>
+
+<ul>
+  <li>Objects are fundamental entities stored in Amazon S3</li>
+  <li>It consists of its data as well as its metadata</li>
+  <li>S3 cannot access the content or data inside the object</li>
+  <li>It can only read the metadata ssociated with the object</li>
+  <li>It allocates a unique version ID for the object when some data is added to the bucket</li>
+</ul>
+
+<h2 id="bucket">Bucket</h2>
+
+<ul>
+  <li>Buckets are the containers where objects are stored and then uploaded to Amazon S3</li>
+  <li>There will never be an object without a Bucket</li>
+  <li>There is no “Windows Explorer” like hierarchy -&gt; just prefix</li>
+  <li>One can create Buckets in any region of the World which is close to you -&gt; shoud be globally unique name</li>
+</ul>
+
+<h1 id="s3의-동작원리">S3의 동작원리</h1>
+
+<p>When files are uploaded to the Bucket, the user will specify the type of S3 storage class to be used for those specific objects</p>
+
+<ul>
+  <li>S3 Standard
+    <ul>
+      <li>Latency is supposed to be low</li>
+      <li>Example: Frequently accessed data</li>
+    </ul>
+  </li>
+  <li>S3 Standard for Infrequent Data Access
+    <ul>
+      <li>Where the data is long lived and is not frequently accessed.</li>
+      <li>Example: Emplyee’s progress report will not be needed daily</li>
+    </ul>
+  </li>
+  <li>Amazone Glacier
+    <ul>
+      <li>Where data can be archived, and high performance is not required</li>
+      <li>Example: Employee’s old record (profile)</li>
+    </ul>
+  </li>
+  <li>One Zone-IA Storage Class
+    <ul>
+      <li>Where data is infrequently accessed and stored in a particular region</li>
+      <li>Example: Employee’s performance report is not accessed daily but is stored in a single region</li>
+    </ul>
+  </li>
+  <li>Amazon S3 Standard Reduced Redundancy Storage
+    <ul>
+      <li>Where the data is noncritical and reproduced quickly</li>
+      <li>Example: External data stored which are not important and can be replaced falls under this category</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="s3-특징">S3 특징</h1>
+
+<h2 id="lifecycle-management">Lifecycle Management</h2>
+
+<ul>
+  <li>S3 can be configured to move a certain data between various storage classes on a defined schedule</li>
+  <li>Two types of action: Transition and Expiration</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Management Tab] -&gt; [Lifecycle rules: Create lifecycle rule]
+</code></pre></div></div>
+
+<h2 id="bucket-policy">Bucket Policy</h2>
+
+<ul>
+  <li>It is an IAM policy which lets you allow and deny permission to your S3 resources</li>
+  <li>With this, you also define security parameters for more than one file in the desired bucket</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>First of all, Unblock all public access
+
+[Permission Tab] -&gt; [Bucket policy: Edit] -&gt; [Policy generator] -&gt; Copy policy JSON document -&gt; Paste
+</code></pre></div></div>
+
+<h2 id="data-encryption">Data Encryption</h2>
+
+<ul>
+  <li>It intends to protect the data when it is in action or at rest</li>
+  <li>Two ways of encryption: Client-Side Encryption and Server-Side Encryption</li>
+</ul>
+
+<h2 id="versioning">Versioning</h2>
+
+<ul>
+  <li>It is utilized to preserve and restore early versions of every object stored in your S3 bucket</li>
+  <li>Unintentional alteration to a file can be easily regained with versioning</li>
+  <li>파일에 수정이 일어나면 수정 전 내용이 버저닝 된다
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Properties Tab] -&gt; [Bucket Versioning: Edit] -&gt; [Bucket Versioning: Enable] -&gt; [Save changes] -&gt; Being tracked by version Number -&gt; You can check the versions of file by clicking [Versions Tab of any file]
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="cross-region-replication">Cross-Region Replication</h2>
+
+<ul>
+  <li>Cross-Region Replication provides automatic copying of every object uploaded to your buckets(source bucket and destination bucket) in different AWS region</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>First of all, Make another bucket to replicate objects
+
+From Source Bucket -&gt; [Management Tab] -&gt; [Replication rules: Create replication rule]
+</code></pre></div></div>
+
+<h2 id="transfer-acceleration">Transfer Acceleration</h2>
+
+<ul>
+  <li>It allows easy and secure transfer of files over long distances between your client and S3 bucket</li>
+  <li>It takes advantages of the edge location around the world provided by the Amazon CloudFront</li>
+  <li>It works via carrying the data over an optimized network bridge that runs between your clients’AWS Edge location and your S3 bucket</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Properties Tab] -&gt; [Transfer acceleration: Edit] -&gt; [Enable]
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=oaZ3R4NCRu8&amp;t=1870s" target="_blank">Youtube Simplilearn: AWS S3 Tutorial</a></li>
+</ul>
+:ET
