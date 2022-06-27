@@ -1,49 +1,33 @@
 ---
-layout: project
-title: Shopper Intent Prediction from Clickstream E‑Commerce Data 
-description: 전자상거래 클릭스트림 분석을 통한 고객 행동 분석
-start:   2022/05/15
-image:  '/images/clickstream_1.png'
+layout: post
+title: Recruitment Data Pipeline
+description: 크롤링을 통해 채용 관련 데이터를 수집하여 검색/시각화 서비스 제공
+start:   2022/06/26
+image:  '/images/recruitment_1.jpeg'
+logo_image: '/images/recruitment_1.jpeg'
 portfolio: true
 status: In progress
-skill: Kubernetes, Kafka, Flink, Elasticsearch, Spark
+skill: Docker, MongoDB, Kafka, S3, Elasticsearch, Superset
 ---
 
-아직 글을 작성 중입니다.  
+# 프로젝트 목표
 
-Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace [Sam Bark](https://unsplash.com/photos/ag51iExrb0U) diversity and empowerment.
+- 다양한 곳에서 웹서비스 형태로 제공되는 채용관련 정보를 데이터로 모아 검색/시각화 형태로 서비스를 제공하고자 한다
+- 이 프로젝트는 크게 두 단계로 계획하고 있다
+    - **1단계**: 개발자 모드 - 코드 실행으로 검색/시각화 구현
+    - **2단계**: 데모 모드 - 간단한 프론트엔드를 통해 검색/시각화 서비스 제공
 
-Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.
+# 프로젝트를 시작하게 된 이유
 
-### Synergistically evolve
+# 프로젝트 일지
 
-Podcasting operational change management inside of workflows to establish a framework. Taking seamless key performance indicators offline to maximise the long tail. Keeping your eye on the ball while performing a deep dive on the start-up mentality to derive convergence on cross-platform integration.
+[**노션 링크**](https://dune-botany-3cc.notion.site/Recruitment-Data-Pipeline-985f82a2308e4bbeb0909290d4ba6229){:target="_blank"}
+
+# 프로젝트 코드
 
 ![Winter]({{site.baseurl}}/images/08-1.jpg#wide)
 *Photo by [Sam Bark](https://unsplash.com/photos/ag51iExrb0U) on [Unsplash](https://unsplash.com/)*
 
-Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.
 
-Capitalize on low hanging fruit to identify a ballpark value added activity to beta test. Override the digital divide with additional clickthroughs from DevOps. Nanotechnology immersion along the information highway will close the loop on focusing solely on the bottom line.
 
-> The longer I live, the more I realize that I am never wrong about anything, and that all the pains I have so humbly taken to verify my notions have only wasted my time!
 
-Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.
-
-Phosfluorescently engage worldwide methodologies with web-enabled technology. Interactively coordinate proactive e-commerce via process-centric "outside the box" thinking. Completely pursue scalable customer service through sustainable [Sam Bark](https://unsplash.com/@samuelbarkos) potentialities.
-
-### Podcasting
-
-Collaboratively administrate turnkey channels whereas virtual e-tailers. Objectively seize scalable metrics whereas proactive e-services. Seamlessly empower fully researched growth strategies and interoperable internal or "organic" sources.
-
-![Trees]({{site.baseurl}}/images/08-2.jpg)
-*Photo by [Sam Bark](https://unsplash.com/@samuelbarkos) on [Unsplash](https://unsplash.com/)*
-
-Completely synergize resource taxing relationships via premier niche markets. Professionally cultivate one-to-one customer service with robust ideas. Dynamically innovate resource-leveling customer service for state of the art customer service.
-
-Globally incubate standards compliant channels before scalable benefits. Quickly disseminate superior deliverables whereas web-enabled applications. Quickly drive clicks-and-mortar catalysts for change before vertical architectures.
-
-Credibly reintermediate backend ideas for cross-platform models. Continually reintermediate integrated processes through technically sound intellectual capital. Holistically foster superior methodologies without market-driven best practices.
-
-# 참고
-- [Sharing Is Caring: Our First Dataset Release for The AI Community](https://www.coveo.com/blog/dataset-release-intent-prediction-ecommerce/){:target="_blank"}
