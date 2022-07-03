@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part2]: 하둡 생태계(Hadoop Ecosystem) 살펴보기'
+title:  'Data Engineering Series [Part2]: 하둡 생태계(HDFS, Hive, HBase)'
 description: 
 date:   2022-04-02 15:01:35 +0300
 image:  '/images/data_engineering_logo.png'

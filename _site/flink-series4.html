@@ -384,6 +384,8 @@
 
 
   
+
+  
   	
   	
   	
@@ -398,7 +400,7 @@
       <a href="/flink-series3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Flink Series [Part3]: 스트림 처리의 핵심(2) 상태관리</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/flink-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Flink Series [Part5]: PyFlink<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -416,6 +418,7 @@
       <li><a href="#task-slots-and-resources" id="markdown-toc-task-slots-and-resources">Task Slots and Resources</a></li>
     </ul>
   </li>
+  <li><a href="#task-scheduling-and-network-shuffle" id="markdown-toc-task-scheduling-and-network-shuffle">Task Scheduling And Network Shuffle</a></li>
   <li><a href="#flink-api" id="markdown-toc-flink-api">Flink API</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
@@ -469,6 +472,45 @@
 <p>플링크는 디폴트로 작업의 전체 파이프라인을 하나의 슬롯에 할당합니다.</p>
 
 <p><img src="/images/flink_27.png" alt="" /></p>
+
+<h1 id="task-scheduling-and-network-shuffle">Task Scheduling And Network Shuffle</h1>
+
+<p>Flink jobs consist of different operations that are connected together in a dataflow graph. The system decides how to schedule the execution of these operations on different processes/machines (TaskManagers) and how data is shuffled (sent) between them.</p>
+
+<p>Multiple operations/operators can be chained together using a feature called chaining. A group of one or multiple (chained) operators that Flink considers as a unit of scheduling is called a task. Often the term subtask is used to refer to the individual instances of tasks that are running in parallel on multiple TaskManagers but we will only use the term task here.</p>
+
+<p>Task scheduling and network shuffles work differently for BATCH and STREAMING execution mode. Mostly due to the fact that we know our input data is bounded in BATCH execution mode, which allows Flink to use more efficient data structures and algorithms.</p>
+
+<p>We will use this example to explain the differences in task scheduling and network transfer:</p>
+
+<p>Operations that imply a 1-to-1 connection pattern between operations, such as <code class="language-plaintext highlighter-rouge">map()</code>, <code class="language-plaintext highlighter-rouge">flatMap()</code>, or <code class="language-plaintext highlighter-rouge">filter()</code> can just forward data straight to the next operation, which allows these operations to be chained together. This means that Flink would not normally insert a network shuffle between them.</p>
+
+<p>Operation such as <code class="language-plaintext highlighter-rouge">keyBy()</code> or <code class="language-plaintext highlighter-rouge">rebalance()</code> on the other hand require data to be shuffled between different parallel instances of tasks. This induces a network shuffle.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">StreamExecutionEnvironment</span> <span class="n">env</span> <span class="o">=</span> <span class="nc">StreamExecutionEnvironment</span><span class="o">.</span><span class="na">getExecutionEnvironment</span><span class="o">();</span>
+
+<span class="nc">DataStreamSource</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">source</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="na">fromElements</span><span class="o">(...);</span>
+
+<span class="n">source</span><span class="o">.</span><span class="na">name</span><span class="o">(</span><span class="s">"source"</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">map</span><span class="o">(...).</span><span class="na">name</span><span class="o">(</span><span class="s">"map1"</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">map</span><span class="o">(...).</span><span class="na">name</span><span class="o">(</span><span class="s">"map2"</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">rebalance</span><span class="o">()</span>
+	<span class="o">.</span><span class="na">map</span><span class="o">(...).</span><span class="na">name</span><span class="o">(</span><span class="s">"map3"</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">map</span><span class="o">(...).</span><span class="na">name</span><span class="o">(</span><span class="s">"map4"</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">keyBy</span><span class="o">((</span><span class="n">value</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">value</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">map</span><span class="o">(...).</span><span class="na">name</span><span class="o">(</span><span class="s">"map5"</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">map</span><span class="o">(...).</span><span class="na">name</span><span class="o">(</span><span class="s">"map6"</span><span class="o">)</span>
+	<span class="o">.</span><span class="na">sinkTo</span><span class="o">(...).</span><span class="na">name</span><span class="o">(</span><span class="s">"sink"</span><span class="o">);</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Task1: source, map1, and map2
+Task2: map3, map4
+Task3: map5, map6, and sink
+</code></pre></div></div>
+
+<p>And we have a network shuffle between Tasks 1 and 2, and also Tasks 2 and 3. This is a visual representation of that job:</p>
+
+<p><img src="/images/flink_31.png" alt="" /></p>
 
 <h1 id="flink-api">Flink API</h1>
 
@@ -745,6 +787,8 @@
 
 
   
+
+  
   	
   	
   	
@@ -759,7 +803,7 @@
       <a href="/flink-series3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Flink Series [Part3]: 스트림 처리의 핵심(2) 상태관리</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/flink-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Flink Series [Part5]: PyFlink<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -801,6 +845,45 @@
           <div class="row">
 
           
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-07-01T21:01:35+09:00">01 Jul 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/flink-series5">
+        <img class="lazy" data-src="/images/flink_logo.png" alt="Flink Series [Part5]: PyFlink">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/flink-series5">Flink Series [Part5]: PyFlink</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
             
             
       
@@ -916,45 +999,6 @@
 
       <h2 class="article__title">
         <a href="/data-engineering-series11">Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬)</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-05-19T21:01:35+09:00">19 May 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/data-engineering-series10">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part10]: 정규표현식(3) 그루핑">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series10">Data Engineering Series [Part10]: 정규표현식(3) 그루핑</a>
       </h2>
 
       

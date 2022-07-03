@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part3]: 데이터베이스간 주요 특징 비교'
+title:  'Data Engineering Series [Part4]: 데이터베이스간 주요 특징 비교'
 description: 
 date:   2022-04-05 15:01:35 +0300
 image:  '/images/data_engineering_logo.png'

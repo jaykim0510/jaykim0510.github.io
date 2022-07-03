@@ -67,6 +67,49 @@ tags: Flink
 
 ![](/images/flink_27.png)  
 
+# Task Scheduling And Network Shuffle
+
+Flink jobs consist of different operations that are connected together in a dataflow graph. The system decides how to schedule the execution of these operations on different processes/machines (TaskManagers) and how data is shuffled (sent) between them.
+
+Multiple operations/operators can be chained together using a feature called chaining. A group of one or multiple (chained) operators that Flink considers as a unit of scheduling is called a task. Often the term subtask is used to refer to the individual instances of tasks that are running in parallel on multiple TaskManagers but we will only use the term task here.
+
+Task scheduling and network shuffles work differently for BATCH and STREAMING execution mode. Mostly due to the fact that we know our input data is bounded in BATCH execution mode, which allows Flink to use more efficient data structures and algorithms.
+
+We will use this example to explain the differences in task scheduling and network transfer:  
+
+Operations that imply a 1-to-1 connection pattern between operations, such as `map()`, `flatMap()`, or `filter()` can just forward data straight to the next operation, which allows these operations to be chained together. This means that Flink would not normally insert a network shuffle between them.  
+
+Operation such as `keyBy()` or `rebalance()` on the other hand require data to be shuffled between different parallel instances of tasks. This induces a network shuffle.  
+
+
+```java
+StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+DataStreamSource<String> source = env.fromElements(...);
+
+source.name("source")
+	.map(...).name("map1")
+	.map(...).name("map2")
+	.rebalance()
+	.map(...).name("map3")
+	.map(...).name("map4")
+	.keyBy((value) -> value)
+	.map(...).name("map5")
+	.map(...).name("map6")
+	.sinkTo(...).name("sink");
+```
+
+```
+Task1: source, map1, and map2
+Task2: map3, map4
+Task3: map5, map6, and sink
+```
+
+And we have a network shuffle between Tasks 1 and 2, and also Tasks 2 and 3. This is a visual representation of that job:  
+
+![](/images/flink_31.png)
+
+
 # Flink API
 
 ![](/images/flink_24.png) 
