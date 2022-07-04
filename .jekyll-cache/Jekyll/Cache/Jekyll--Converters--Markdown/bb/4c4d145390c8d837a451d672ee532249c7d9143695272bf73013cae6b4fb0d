@@ -1,0 +1,229 @@
+I"�^<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#iteration" id="markdown-toc-iteration">Iteration</a>    <ul>
+      <li><a href="#preorder" id="markdown-toc-preorder">Preorder</a></li>
+      <li><a href="#inorder" id="markdown-toc-inorder">Inorder</a></li>
+      <li><a href="#postorder" id="markdown-toc-postorder">Postorder</a></li>
+    </ul>
+  </li>
+  <li><a href="#recursion" id="markdown-toc-recursion">Recursion</a>    <ul>
+      <li><a href="#preorder-1" id="markdown-toc-preorder-1">Preorder</a></li>
+      <li><a href="#inorder-1" id="markdown-toc-inorder-1">Inorder</a></li>
+      <li><a href="#postorder-1" id="markdown-toc-postorder-1">Postorder</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p><img src="/images/b_tree_1.png" alt="" /></p>
+
+<h1 id="iteration">Iteration</h1>
+
+<h2 id="preorder">Preorder</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>첫 번째 방법
+
+현재 꺼낸 노드를 정답에 추가
+자식 노드 여부에 따라 스택(to_visit)에 추가
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">preorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+
+    <span class="n">visited</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">to_visit</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="p">]</span>
+
+    <span class="k">while</span> <span class="n">to_visit</span><span class="p">:</span>
+        <span class="n">now_node</span> <span class="o">=</span> <span class="n">to_visit</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">visited</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">now_node</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">now_node</span><span class="p">.</span><span class="n">right</span><span class="p">:</span>
+            <span class="n">to_visit</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">now_node</span><span class="p">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">now_node</span><span class="p">.</span><span class="n">left</span><span class="p">:</span>
+            <span class="n">to_visit</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">now_node</span><span class="p">.</span><span class="n">left</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">visited</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>두 번째 방법
+
+매번 본인 노드를 방문할 차례가 아니라면 오른쪽 자식 노드, 본인, 왼쪽 자식 노드를 스택에 추가
+본인 노드를 추가할 때는 (본인 노드가 다시 스택에서 꺼내질때는 방문할 차례가 되었기 때문에) True로 표시
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">postorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">res</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[(</span><span class="n">root</span><span class="p">,</span> <span class="bp">False</span><span class="p">)]</span>
+    <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+        <span class="n">node</span><span class="p">,</span> <span class="n">visited</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">.</span><span class="n">right</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">,</span> <span class="bp">True</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span>
+</code></pre></div></div>
+
+<h2 id="inorder">Inorder</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>첫 번째 방법
+
+매번 본인 노드를 방문할 차례가 아니라면 오른쪽 자식 노드, 본인, 왼쪽 자식 노드를 스택에 추가
+본인 노드를 추가할 때는 (본인 노드가 다시 스택에서 꺼내질때는 왼쪽 자식 노드를 방문을 마친 후기 때문에) True로 표시
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">inorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">res</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[(</span><span class="n">root</span><span class="p">,</span> <span class="bp">False</span><span class="p">)]</span>
+    <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+        <span class="n">node</span><span class="p">,</span> <span class="n">visited</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">.</span><span class="n">right</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">,</span> <span class="bp">True</span><span class="p">))</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>두 번째 방법  
+
+왼쪽 자식 노드가 있을 때마다 최대한 깊숙히 들어간 다음 왼쪽 자식 노드가 없으면 자기 자신의 노드를 정답에 추가(방문 표시)하고,
+오른쪽 자식 노드가 있으면 오른쪽 자식 노드로 접근. 더이상 방문할 노드가 없으면 반복문 종료  
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">inorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">res</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    
+    <span class="c1"># this following "while True" block keeps running until "return"
+</span>    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="c1"># goes all the way to left end's None, append every step onto "stack"
+</span>        <span class="k">while</span> <span class="n">root</span><span class="p">:</span>
+            <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">root</span><span class="p">.</span><span class="n">left</span>
+
+        <span class="c1"># if stack has nothing left, then return result
+</span>        <span class="k">if</span> <span class="ow">not</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">res</span>
+        
+        <span class="c1"># take the last step out, append its value to result
+</span>        <span class="n">node</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+        <span class="c1"># moves to right before going all the way to left end's None again
+</span>        <span class="n">root</span> <span class="o">=</span> <span class="n">node</span><span class="p">.</span><span class="n">right</span>    
+</code></pre></div></div>
+
+<h2 id="postorder">Postorder</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>첫 번째 방법
+
+매번 본인 노드를 방문할 차례가 아니라면 오른쪽 자식 노드, 본인, 왼쪽 자식 노드를 스택에 추가
+본인 노드를 추가할 때는 (본인 노드가 다시 스택에서 꺼내질때는 왼쪽/오른쪽 자식 노드를 방문을 마친 후기 때문에) True로 표시
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">postorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+    <span class="n">res</span><span class="p">,</span> <span class="n">stack</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[(</span><span class="n">root</span><span class="p">,</span> <span class="bp">False</span><span class="p">)]</span>
+    <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+        <span class="n">node</span><span class="p">,</span> <span class="n">visited</span> <span class="o">=</span> <span class="n">stack</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">,</span> <span class="bp">True</span><span class="p">))</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">.</span><span class="n">right</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+                <span class="n">stack</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">node</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">False</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">res</span>
+</code></pre></div></div>
+
+<h1 id="recursion">Recursion</h1>
+
+<p>트리 순회를 Recursion으로 구현할 때는 크게 Top-Down approach와 Bottom-Up approach가 있습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>여기서 Top-Down, Bottom-Up은 DP에서도 사용하는 용어인데 값의 흐름을 얘기할 뿐, 같은 의미는 아닙니다.
+(여기서 값은 숫자, 문자열, 리스트 등이 될 수 있습니다.)
+</code></pre></div></div>
+
+<p>Top-Down은 부모 노드를 처리하는 함수가 자신이 가지고 있는 값을 자식 노드를 처리하는 함수의 인자로 전달하는 접근법입니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="n">val</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">right</span><span class="p">,</span> <span class="n">val</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Bottom-Up은 return문으로 계속 자식 노드를 처리하는 함수를 호출해 자식 노드를 처리하는 함수가 리턴하는 값을 계속 누적하는 접근법입니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">node</span><span class="p">.</span><span class="n">val</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="preorder-1">Preorder</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Bottom-Up
+</span>
+<span class="k">def</span> <span class="nf">preorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+  <span class="k">return</span> <span class="p">[</span><span class="n">root</span><span class="p">.</span><span class="n">val</span><span class="p">]</span> <span class="o">+</span> <span class="n">preorder</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">preorder</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="k">if</span> <span class="n">root</span> <span class="k">else</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Top-Down
+</span>
+<span class="k">def</span> <span class="nf">preorder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+    
+<span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">right</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="inorder-1">Inorder</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Bottom-Up
+</span>
+<span class="k">def</span> <span class="nf">inorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+  <span class="k">return</span>  <span class="n">inorder</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">root</span><span class="p">.</span><span class="n">val</span><span class="p">]</span> <span class="o">+</span> <span class="n">inorder</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="k">if</span> <span class="n">root</span> <span class="k">else</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Top-Down
+</span>
+<span class="k">def</span> <span class="nf">inorder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+    
+<span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">right</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="postorder-1">Postorder</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Bottom-Up
+</span>
+<span class="k">def</span> <span class="nf">postorder</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+  <span class="k">return</span>  <span class="n">postorder</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="n">postorder</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">right</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">root</span><span class="p">.</span><span class="n">val</span><span class="p">]</span> <span class="k">if</span> <span class="n">root</span> <span class="k">else</span> <span class="p">[]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Top-Down
+</span>
+<span class="k">def</span> <span class="nf">postorder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+    
+<span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">root</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">left</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">helper</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">right</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">val</span><span class="p">)</span>
+</code></pre></div></div>
+:ET
