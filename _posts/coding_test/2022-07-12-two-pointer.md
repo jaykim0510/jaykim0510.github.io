@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Coding Test Series [Part15]: 투 포인터(Two-Pointers)) - 문제'
+title:  'Coding Test Series [Part20]: 투 포인터(Two-Pointers)) - 문제'
 description: 
 date:   2022-07-11 15:01:35 +0300
 image:  '/images/algorithm_logo.webp'
@@ -23,6 +23,7 @@ tags: Coding_Test
 
 [Leetcode: Two-Pointers](https://leetcode.com/tag/two-pointers/){:target="_blank"}  
 
+✅ ❎  
 
 ```
 문제 리스트
