@@ -73,3 +73,5 @@ tags: Docker
 - [도커 공식문서, Networking with overlay networks](https://docs.docker.com/network/network-tutorial-overlay/){:target="_blank"}
 - [도커 공식문서, Use overlay networks](https://docs.docker.com/network/overlay/){:target="_blank"}
 - [How To Communicate Between Docker Containers](https://www.tutorialworks.com/container-networking/){:target="_blank"}
+- [Using placement constraints with Docker Swarm](https://www.sweharris.org/post/2017-07-30-docker-placement/){:target="_blank"}
+- [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository){:target="_blank"}
