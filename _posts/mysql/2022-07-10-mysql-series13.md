@@ -17,3 +17,5 @@ tags: MySQL
 
 ---
 
+# JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까  
+

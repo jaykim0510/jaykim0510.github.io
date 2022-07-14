@@ -21,13 +21,14 @@ tags: MySQL
 
 [Leetcode: Database ](https://leetcode.com/tag/database/){:target="_blank"}  
 
+💟 ✅ ❎   
 
 ```
 문제 리스트
 --------------------------------------------- EASY 32문제
-- Rearrange Products Table
-- Customer Who Visited but Did Not Make Any Transactions
-- Bank Account Summary II
+- Rearrange Products Table 💟 ❎
+- Customer Who Visited but Did Not Make Any Transactions 💟 ✅ 
+- Bank Account Summary II 💟 ✅
 - Group Sold Products By The Date
 - Immediate Food Delivery I
 - Reformat Department Table
