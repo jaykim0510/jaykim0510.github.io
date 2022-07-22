@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Network Series [Part5]: HTTP의 기초'
+title:  'Network Series [Part4]: 네트워크 프로토콜(1) HTTP'
 description: 
-date:   2022-02-03 15:01:35 +0300
+date:   2022-02-02 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
@@ -16,12 +16,7 @@ tags: Network
 {:toc}
 ---
 
-# 인터넷 프로토콜 스택
-저희가 단말기를 통해 인터넷상에서 데이터를 전송하거나 요청할 때 일련의 과정들이 있습니다. 이러한 과정들을 계층적으로 정의해놓은 것을 **OSI 7 계층**이라고 합니다. 요즘에는 이러한 계층을 조금 더 간소화해 **TCP/IP 4 계층**으로 표현하기도 합니다.  
-
-![](/images/net_12.png)
-
-이러한 OSI 7 계층 또는 TCP/IP 4 계층에는 계층마다 가지고 있는 프로토콜(규칙)들이 있습니다. 위 그림의 가운데 열에 나열된 것들이 각 계층에서 사용되는 프로토콜들이고 이러한 열을 **인터넷 프로토콜 스택**이라고 합니다.  
+# HTTP
 
 **HTTP(HyperText Transfer Protocol)는 응용 계층(Application layer)에서 압도적으로 많이 사용되는 프로토콜**입니다.  
 
@@ -162,6 +157,42 @@ HTTP 메세지의 구조는 다음과 같습니다.
 ### 응답 메세지
 
 ![](/images/network_23.png){: width="70%"} 
+
+# 웹 브라우저의 동작원리
+우리가 웹 브라우저(크롬, 사파리 등)에서 뉴스 보기를 클릭하거나 유튜브 비디오를 시청할 때 내부적으로 어떤 일들이 일어나는지 한 번 알아보겠습니다.  
+
+## HTTP 리퀘스트 작성
+우리는 보통 웹 브라우저에서 URL을 입력하거나 어떤 버튼을 클릭하는 식으로 웹 서버와 상호작용 하게 되는데 이 때 **웹 브라우저는 내부에서 HTTP 리퀘스트라는 것을 웹 서버에 전송**합니다.  
+
+### URL 입력
+
+```
+https://www.google.com/search?q=hello&hl=ko
+```
+
+
+### HTTP 리퀘스트 작성
+URL을 입력하고 나면 웹 브라우저는 URL을 바탕으로 HTTP 리퀘스트 메시지를 만듭니다.  
+HTTP 리퀘스트 메시지의 형태는 다음과 같습니다.  
+![](../../images/network_1.jpeg)  
+[(joie-kim님 블로그 참고)](https://joie-kim.github.io/HTTP/){:target="_blank"}  
+
+## DNS 서버에 웹 서버의 IP주소 조회
+HTTP 리퀘스트를 작성하고 나면 이제 OS에게 이것을 웹 서버로 전송해달라고 요청합니다. (웹 브라우저가 직접 전송하지 않는 이유는 메시지를 송신하는 기능은 하나의 애플리케이션에만 종속되는 기능이 아니므로 OS에서 전송 기능을 담당하는 것이 더 좋다고 합니다.)  
+
+OS에서는 리퀘스트 메시지를 전송하기 전에 먼저 **도메인 네임을 IP 주소로 변환**하는 과정을 거칩니다. 이를 **네임 레졸루션(name resolution)**이라고 합니다.  
+
+### DNS Resolver를 이용해 DNS 서버 조회
+네임 레졸루션을 시행하는 것이 **DNS 리졸버(DNS Resolver)**입니다. 리졸버는 Socket 라이브러리에 들어있는 부품화된 프로그램입니다. Socket 라이브러리는 네트워크 관련 기능을 하는 프로그램을 모아놓은 라이브러리입니다.  
+
+![](../../images/network_2.png)  
+
+## 프로토콜 스택에 메시지 송신 요청
+DNS Resolver가 IP주소를 찾아오면 이제 진짜 웹 서버로 보낼 준비가 완료되었습니다. 이렇게 준비된 HTTP Request 메시지는 OS의 내부에 포함된 프로토콜 스택을 호출하여 실행을 요청합니다.  
+
+![](../../images/network_3.png)  
+
+
 
 # 참고
 - [인프런에서 제공하는 이영한님의 모든 개발자를 위한 HTTP 웹 기본 지식 강의](https://www.inflearn.com/course/http-웹-네트워크/dashboard){:target="_blank"}

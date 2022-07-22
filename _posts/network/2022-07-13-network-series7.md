@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Network Series [Part8]: SSH(Secure SHell)이란 무엇인가'
+title:  'Network Series [Part7]: 네트워크 활용편(1) 웹 브라우저'
 description: 
-date:   2022-04-11 15:01:35 +0300
+date:   2022-07-13 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
@@ -15,6 +15,8 @@ tags: Network
 *  TOC
 {:toc}
 ---
+
+
 
 # 참고
 

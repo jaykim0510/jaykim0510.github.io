@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Data Engineering Series [Part12]: Database Internals 트랜잭션 처리와 복구</title>
+  <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
+
+  <link rel="canonical" href="http://localhost:4000/data-engineering-series14">
+  <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Data Engineering Series [Part12]: Database Internals 트랜잭션 처리와 복구 – Code Museum">
+  <meta name="twitter:description" content="
+">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/data_engineering_logo.png">
+
+  <!-- Facebook OpenGraph -->
+  <meta property="og:title" content="Data Engineering Series [Part12]: Database Internals 트랜잭션 처리와 복구 – Code Museum">
+  <meta property="og:description" content="
+">
+  <meta property="og:image" content="http://localhost:4000/images/data_engineering_logo.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;900&display=swap" as="style">
+
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+
+  <!-- Ionicons -->
+  <link rel="preload" href="https://unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css" as="style">
+
+  <link href="https://unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css" rel="stylesheet">
+
+  <script>
+    
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.setAttribute("dark", "");
+      document.documentElement.classList.add('dark-mode');
+    }
+    
+  </script>
+
+  <style>
+  
+  /*!------------------------------------------------------------------
+[MAIN STYLESHEET]
+-------------------------------------------------------------------*/:root{--brand-color: #0073ec;--white: #fff;--light-gray: #f0f0f0;--light-blue: #f3f7ff;--blue-gray: #716f8a;--gray: #9e9e9e;--dark: #0c101a;--dark-blue: #1e2740;--background-color: rgb(250, 250, 250);--background-alt-color: var(--dark-blue);--text-color: var(--dark-blue);--text-alt-color: var(--blue-gray);--heading-font-color: var(--dark-blue);--link-color: var(--dark-blue);--link-color-hover: var(--dark-blue);--button-color: var(--white);--button-background-color: var(--brand-color);--button-background-hover: #4f31c7;--border-color: var(--light-blue);--border-color-alt: var(--light-blue);--th-color: var(--light-gray);--tr-color: var(--light-gray);--syntax-highlighting-background: #f3f3f3;--article__inner-background: white;--top-background: black;--strong-font-color: palevioletred;--article-highlighing-background: powderblue;--article-highlighing-font: blueviolet;--drag-background-color: darksalmon;--drag-font-color:greenyellow;--quote-font-color:cadetblue;--post-tag-list-background-color: gainsboro;--post-category-list-background-color: antiquewhite}[dark]:root{--brand-color: #0073ec;--white: #fff;--light-gray: #f0f0f0;--gray: #9e9e9e;--dark: #111016;--background-color: var(--dark);--background-alt-color: #1a1a1f;--text-color: var(--gray);--text-alt-color: var(--gray);--heading-font-color: darkgrey;--link-color: var(--light-gray);--link-color-hover: var(--light-gray);--button-color: var(--white);--button-background-color: var(--brand-color);--button-background-hover: #4f31c7;--border-color: #252629;--border-color-alt: #080b12;--th-color: #18181d;--tr-color: #080b12;--syntax-highlighting-background: #292c33;--article__inner-background: rgb(65, 65, 65);--top-background: black;--strong-font-color: darkseagreen;--article-highlighing-background: darkslategrey;--article-highlighing-font: goldenrod;--drag-background-color: darkslategrey;--drag-font-color:rgb(115, 192, 0);--quote-font-color:palevioletred;--post-tag-list-background-color: darkslateblue;--post-category-list-background-color: darkred}.list-reset{list-style-type:none;margin:0;padding:0}.clearfix::after,.clearfix ::before{content:"";display:table;clear:both}.screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}/*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}h1{font-size:2em;margin:0.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace, monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder;color:var(--strong-font-color)}code,kbd,samp{font-family:monospace, monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,[type="button"],[type="reset"],[type="submit"]{-webkit-appearance:button}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:0.35em 0.75em 0.625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0}[type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto}[type="search"]{-webkit-appearance:textfield;outline-offset:-2px}[type="search"]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:32px}ul,ol,dd{margin-left:16px}ul li,ol li{margin-bottom:10px}.highlight{margin-bottom:32px;background:var(--syntax-highlighting-background)}.highlighter-rouge .highlight{background:var(--syntax-highlighting-background)}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#5d76bf;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#ec2355}.highlight .na{color:#008080}.highlight .nb{color:#0086B3}.highlight .nc{color:#5d76bf;font-weight:bold}.highlight .no{color:#008080}.highlight .ni{color:#800080}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:#4d65dc}.highlight .nv{color:#008080}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#ec2355}.highlight .sc{color:#ec2355}.highlight .sd{color:#ec2355}.highlight .s2{color:#ec2355}.highlight .se{color:#ec2355}.highlight .sh{color:#ec2355}.highlight .si{color:#ec2355}.highlight .sx{color:#ec2355}.highlight .sr{color:#009926}.highlight .s1{color:#ec2355}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:#008080}.highlight .vg{color:#008080}.highlight .vi{color:#008080}.highlight .il{color:#099}@media only screen and (min-width: 768px){.post__content{grid-column:span 9}}@media only screen and (max-width: 768px){.post__content{grid-column:span 11}}@media only screen and (max-width: 576px){.post__content{grid-column:span 11}}@media only screen and (min-width: 768px){.post__tags_list{grid-column:span 2;padding-left:2vw}}@media only screen and (max-width: 768px){.post__tags_list{grid-column:span 0;display:none}}@media only screen and (max-width: 576px){.post__tags_list{grid-column:span 0;display:none}}.container_post{max-width:1140px;padding-left:16px;padding-right:16px;margin:0 auto}@media only screen and (max-width: 1140px){.container_post{max-width:1000px}}@media only screen and (max-width: 1024px){.container_post{max-width:740px}}@media only screen and (min-width: 768px){.container_post{display:grid;grid-template-columns:repeat(11, 1fr)}}@media only screen and (max-width: 768px){.container_post{max-width:560px}}@media only screen and (max-width: 576px){.container_post{max-width:480px;padding-left:calc(16px + 4px);padding-right:calc(16px + 4px)}}.container{max-width:1140px;padding-left:16px;padding-right:16px;margin:0 auto}@media only screen and (max-width: 1140px){.container{max-width:1000px}}@media only screen and (max-width: 1024px){.container{max-width:740px}}@media only screen and (max-width: 768px){.container{max-width:560px}}@media only screen and (max-width: 576px){.container{max-width:480px;padding-left:calc(16px + 4px);padding-right:calc(16px + 4px)}}.row{display:flex;flex-wrap:wrap;flex:0 1 auto;flex-direction:row;box-sizing:border-box;margin-left:-16px;margin-right:-16px}.col{padding-left:16px;padding-right:16px}[class^="col-"]{flex:auto}.col-0{width:0%}.col-1{width:8.3333333333%}.col-2{width:16.6666666667%}.col-3{width:25%}.col-4{width:33.3333333333%}.col-5{width:41.6666666667%}.col-6{width:50%}.col-7{width:58.3333333333%}.col-8{width:66.6666666667%}.col-9{width:75%}.col-10{width:83.3333333333%}.col-11{width:91.6666666667%}.col-12{width:100%}.push-0{margin-left:0%}.push-1{margin-left:8.3333333333%}.push-2{margin-left:16.6666666667%}.push-3{margin-left:25%}.push-4{margin-left:33.3333333333%}.push-5{margin-left:41.6666666667%}.push-6{margin-left:50%}.push-7{margin-left:58.3333333333%}.push-8{margin-left:66.6666666667%}.push-9{margin-left:75%}.push-10{margin-left:83.3333333333%}.push-11{margin-left:91.6666666667%}.push-12{margin-left:100%}.pull-0{margin-right:0%}.pull-1{margin-right:8.3333333333%}.pull-2{margin-right:16.6666666667%}.pull-3{margin-right:25%}.pull-4{margin-right:33.3333333333%}.pull-5{margin-right:41.6666666667%}.pull-6{margin-right:50%}.pull-7{margin-right:58.3333333333%}.pull-8{margin-right:66.6666666667%}.pull-9{margin-right:75%}.pull-10{margin-right:83.3333333333%}.pull-11{margin-right:91.6666666667%}.pull-12{margin-right:100%}@media (max-width: 1024px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}@media (max-width: 1024px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}@media (max-width: 1024px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}.animate{animation:animateElement cubic-bezier(0.3, 0.45, 0.45, 0.95) 0.75s;animation-duration:0.5s;animation-iteration-count:1;transition:transform .15s}@keyframes animateElement{0%{transform:translate(0px, 50px)}100%{transform:translate(0px, 0px)}}@keyframes pulse{0%{transform:scale(1, 1)}25%{transform:scale(1, 1)}50%{transform:scale(1.2, 1.2)}100%{transform:scale(1, 1)}}*,*::after,*::before{box-sizing:border-box}body{font-family:"Noto Sans","Apple SD Gothic Neo","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;font-size:18px;line-height:1.5;overflow-x:hidden;color:var(--text-color);background-color:var(--background-color);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}@media only screen and (max-width: 576px){body{font-size:18px}}*::selection{color:var(--text-color);background-color:var(--drag-background-color)}h1,h2,h3,h4,h5,h6{font-family:"Noto Sans","Apple SD Gothic Neo","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;font-weight:700;line-height:1.3;letter-spacing:-1px;color:var(--heading-font-color)}h1{font-size:36px;font-family:'Gowun Batang', serif}h2{font-size:28px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}blockquote{position:relative;margin:40px 0;padding-left:26px;font-size:22px;line-height:1.4}blockquote p{padding-left:24px;padding-top:10px;color:var(--quote-font-color);font-family:'Kalam', cursive;font-weight:400}blockquote cite{display:block;margin-top:8px;font-size:14px;font-weight:700;font-style:normal;color:var(--heading-font-color)}@media only screen and (max-width: 576px){blockquote{font-size:21px}}blockquote::before{content:"\f10d";font-size:32px;color:#ccc;font-family:FontAwesome;font-style:normal;font-weight:normal;text-decoration:inherit;text-align:center;position:absolute;left:0;top:0}pre{overflow:auto;padding:15px;margin-bottom:0;font-size:14px;word-wrap:break-word;word-break:break-all;color:var(--heading-font-color)}img,.lightense-wrap{max-width:100%;height:auto;vertical-align:middle}img+em,.lightense-wrap+em,.gallery+em{display:block;margin-top:20px;font-size:12px;line-height:22px;font-style:normal;font-weight:normal;text-align:center;color:var(--heading-font-color)}img+em a,.lightense-wrap+em a,.gallery+em a{font-weight:500;border-bottom:1px solid var(--border-color);transition:all 0.35s}img+em a:hover,.lightense-wrap+em a:hover,.gallery+em a:hover{color:var(--link-color);border-color:var(--link-color-hover)}@media only screen and (max-width: 576px){img+em,.lightense-wrap+em,.gallery+em{margin-top:12px}}a{text-decoration:none;color:var(--link-color);transition:all 0.35s}a:hover{color:var(--link-color-hover)}hr{width:100%;height:1px;margin:60px 0;border:0;background:var(--text-color)}.table-container{display:block;max-width:100%;overflow-x:auto}table{font-size:12px;color:var(--dark);width:100%;border-width:1px;border-color:var(--background-alt-color);border-collapse:collapse;color:var(--heading-font-color)}table th{padding:10px;font-size:16px;text-align:left;border:1px solid var(--th-color);color:var(--heading-font-color);font-weight:700;background-color:var(--th-color)}table tr{background-color:var(--tr-color);transition:all .3s ease}table tr:nth-child(even){background-color:transparent}table td{padding:10px;font-size:14px;border:1px solid var(--background-alt-color)}.button{display:inline-block;padding:20px 26px;font-size:16px;font-weight:700;text-decoration:none;border-radius:2px;border:none;outline:none;cursor:pointer;transition:all .25s;color:var(--heading-font-color);background:var(--background-alt-color)}.button--primary{color:var(--white);background-color:var(--button-background-color)}.button--primary:hover{background:var(--button-background-hover)}.button--big{display:block;width:100%}.lazy{opacity:0;transition:opacity 0.3s ease-in-out}.lazy.loaded{opacity:1}.lightense-backdrop{background-color:var(--background-color) !important}code.language-plaintext.highlighter-rouge{font-family:monospace, monospace;font-size:15.3px;background-color:var(--article-highlighing-background);border-radius:0.1em;padding-left:0.1em;padding-right:0.1em;color:var(--article-highlighing-font)}.portfolio_img{width:10%;text-align:center;margin-bottom:30px;padding-left:3%;padding-right:3%;background-color:#d4442e}.point_heading{font-family:"Gowun Batang",serif}#top{background-color:var(--top-background);font:white;top:0;left:0;width:100%;position:fixed;z-index:1}.header .header__inner{position:relative;display:flex;align-items:center;flex-wrap:wrap}.logo__link{padding:4px 0;font-family:"Noto Sans","Apple SD Gothic Neo","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;font-size:28px;letter-spacing:-1px;line-height:1;font-weight:700;transition:color .25s ease;color:white}.logo__link:hover{color:var(--brand-color)}.logo__image{max-height:75px}.main-nav{margin-left:auto}@media only screen and (max-width: 1024px){.main-nav{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;opacity:0;visibility:hidden;background-color:var(--background-color)}.main-nav.is-open{opacity:1;visibility:visible;transition:all .25s ease;background-color:#728f39}.main-nav .nav__list{flex-direction:column;width:100%}.main-nav .nav__list .nav__item{display:block;margin:0}.main-nav .nav__list .nav__item.nav__item-icon{margin-right:0}.main-nav .nav__list .nav__item .nav__link{display:inline-block;padding:16px 0;font-size:18px;transition:color .25s ease}.main-nav .nav__list .nav__item .nav__link:hover{color:var(--brand-color)}}.main-nav__box{display:flex;align-items:center}.main-nav__box .nav__icon-close{display:none;justify-content:center;align-items:center;width:36px;height:36px;font-size:24px;line-height:1;border-radius:50%;color:var(--heading-font-color);background:var(--background-alt-color);cursor:pointer}.main-nav__box .nav__icon-close:hover .ion-md-close{transform:rotate(90deg)}.main-nav__box .nav__icon-close .ion-md-close{transition:all 0.35s}.main-nav__box .nav__title{display:none}@media only screen and (max-width: 1024px){.main-nav__box{display:block;align-items:center;width:80%;height:80vh;padding-top:180px;margin:0 auto;text-align:center;overflow-y:auto}.main-nav__box .nav__icon-close{display:flex;position:absolute;top:40px;right:40px}.main-nav__box .nav__title{display:inline-block;margin-bottom:12px;font-family:"Noto Sans", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "돋움", dotum, sans-serif;font-size:36px;font-weight:700;letter-spacing:-1px;color:var(--heading-font-color)}}@media only screen and (max-width: 768px){.main-nav__box{padding-top:100px}}.nav__list{display:flex;align-items:center}.nav__list .nav__item{display:inline-block;margin-right:48px;margin-bottom:0}.nav__list .nav__item.nav__item-icon{margin-right:12px}.nav__list .nav__item .nav__link{position:relative;padding:4px 0;font-size:20px;line-height:1;font-weight:700;transition:color .25s ease;color:lightgrey}.nav__list .nav__item .nav__link:hover{color:indianred;text-decoration:underline}.nav-button{font-size:21px;color:var(--link-color);cursor:pointer}.nav-button .icon__menu{display:none;margin-right:12px}.nav-button .icon__menu,.nav-button .icon__search{transition:color .25s ease;color:lightgrey}.nav-button .icon__menu:hover,.nav-button .icon__search:hover{color:indianred}@media only screen and (max-width: 1024px){.nav-button{display:flex;align-items:center;margin-left:auto;font-size:24px}.nav-button .icon__menu{display:block}}.toggle-theme{position:relative;display:flex;justify-content:center;align-items:center;width:24px;height:24px;user-select:none;cursor:pointer}@media only screen and (max-width: 1024px){.toggle-theme{padding:20px 0}}.toggle-sun,.toggle-moon{position:absolute;font-size:20px;transition:color .25s ease;color:lightgrey}.toggle-sun:hover,.toggle-moon:hover{color:indianred}.toggle-sun{display:none}.dark-mode .toggle-sun{display:block}.dark-mode .toggle-moon{display:none}.search{position:fixed;top:0;left:0;right:0;bottom:0;z-index:-1;overflow:auto;opacity:0;background:var(--background-color);transition:all .25s ease}.search.is-visible{z-index:100;opacity:1;transition:all .25s ease}.search__box{max-width:540px;margin:0 auto;padding-top:120px}@media only screen and (max-width: 1024px){.search__box{padding-top:100px}}.search__group{position:relative;margin-bottom:48px}.search__group .search__close{position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:24px;line-height:1;border-radius:50%;color:var(--heading-font-color);cursor:pointer;will-change:transform;transition:all .25s;background:var(--background-color)}.search__group .search__close:hover{transform:translateY(-50%) rotate(90deg)}.search__group .search__close .ion-md-close{vertical-align:middle}.search__group .search__text{width:100%;padding:28px;font-size:20px;font-weight:700;line-height:24px;border:2px solid transparent;border-radius:2px;color:var(--heading-font-color);background-color:#d3d1d1;outline:0;transition:all .25s}.search__group .search__text::placeholder{font-weight:700;color:var(--heading-font-color)}.search__group .search__text:focus{border-color:var(--brand-color)}.search__group .search__text::-ms-clear{display:none}@media only screen and (max-width: 576px){.search__group{margin-bottom:32px}.search__group .search__text{padding:24px}}.search-results-list .no-results{width:100%;margin:0;text-align:center;color:var(--heading-font-color)}.pagination{margin-bottom:80px}@media only screen and (max-width: 576px){.pagination{margin-bottom:60px}}.pagination__inner{display:flex;justify-content:center;align-items:center}.pagination__list{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:18px;font-weight:700;line-height:1;color:var(--text-color)}@media only screen and (max-width: 576px){.pagination__list{align-items:stretch;font-size:16px}}.pagination__item{font-size:20px;font-family:'Gowun Batang', serif;display:flex;justify-content:center;align-items:center;width:100%;padding:24px 20px;text-align:center;border-radius:8px;background:var(--th-color);margin-top:0.3em}@media only screen and (max-width: 576px){.pagination__item{align-items:center;padding:20px;border-radius:8px}}.pagination__count{margin:0 32px;font-size:16px;color:var(--link-color)}@media only screen and (max-width: 768px){.pagination__count{margin:0 12px}}@media only screen and (max-width: 576px){.pagination__count{margin:0 8px;font-size:14px;line-height:1.2}}.pagination__next:hover,.pagination__prev:hover{color:var(--heading-font-color);background-color:var(--article-highlighing-background)}.pagination__next i,.pagination__prev i{font-size:15px;transition:transform .15s ease;will-change:transform}.pagination__next.disabled,.pagination__prev.disabled{opacity:0.64;cursor:not-allowed;color:inherit}.pagination__next.disabled:hover i,.pagination__prev.disabled:hover i{transform:none}.dark-mode .pagination__next.disabled,.dark-mode .pagination__prev.disabled{opacity:0.78}.pagination__next:hover i{transform:translateX(2px)}.pagination__next i{margin-left:5px}.pagination__prev:hover i{transform:translateX(-2px)}.pagination__prev i{margin-right:5px}.prev_next{font-size:20px;font-family:'Kalam', cursive;color:var(--strong-font-color);font-weight:bold}.footer{margin-top:48px;background-color:var(--background-alt-color)}@media only screen and (max-width: 576px){.footer{margin-top:60px}}.footer__inner{padding:80px 0}.footer__inner .row .col{flex-grow:1}@media only screen and (max-width: 576px){.footer__inner{padding:60px 0}}@media only screen and (max-width: 1024px){.footer__author{margin-bottom:60px}}@media only screen and (max-width: 576px){.footer__author{margin-bottom:40px}}.footer__author-avatar{position:relative;width:105px;height:105px;margin-bottom:20px;transform:translate(0);border-radius:50%;overflow:hidden;box-shadow:0px 100px 80px rgba(0,0,0,0.07),0px 12.5216px 10.0172px rgba(0,0,0,0.035);background-color:var(--background-color)}.footer__author-avatar img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;user-select:none}.footer__author-name{margin-bottom:20px;font-size:32px;font-weight:900;line-height:1;color:var(--text-alt-color)}.footer__author-bio{margin-bottom:0;color:var(--text-alt-color)}.social{margin-top:16px}.social .social__list{display:flex;align-items:center;flex-wrap:wrap}.social .social__list .social__item:first-child>.social__link{padding-left:0}.social .social__item{margin-bottom:0;margin-right:16px}.social .social__item:last-child{margin-right:0}.social .social__link{display:flex;align-items:center;padding:4px;font-size:20px;color:var(--text-alt-color)}.social .social__link:hover{color:var(--brand-color)}.footer__gallery .footer__gallery-title{margin-bottom:24px;font-size:28px}.footer__gallery .gallery__image img{height:100%;border-radius:8px;overflow:hidden}.footer__gallery .gallery__image img.lightense-open{border-radius:0}.footer__info{padding:44px 0;background-color:var(--background-color)}.footer__info .footer__info-box{display:flex;align-items:center;justify-content:space-between}@media only screen and (max-width: 1024px){.footer__info{padding:40px 0}}.copyright{margin-right:20px;font-size:14px;font-weight:500;color:var(--text-alt-color)}.copyright a{text-decoration:underline;text-decoration-color:transparent;color:var(--heading-font-color)}.copyright a:hover{text-decoration-color:var(--heading-font-color);color:var(--heading-font-color)}.top{min-width:36px;height:36px;font-size:20px;line-height:36px;text-align:center;border-radius:8px;color:white;background-color:var(--background-alt-color);cursor:pointer;position:fixed;bottom:0.7em;right:0.7em}.gallery-box{margin:32px 0}.gallery{display:grid;grid-template-columns:repeat(3, auto);justify-content:center;align-content:center;grid-gap:10px}.gallery .gallery__image{background:var(--background-color)}.gallery .gallery__image img{display:block;width:100%;height:auto;object-fit:cover}.hero{padding-top:100px;padding-bottom:80px;margin-bottom:80px;background-color:var(--background-alt-color)}.hero__inner{display:flex;align-items:center}@media only screen and (max-width: 1024px){.hero__inner{flex-direction:column}}.hero__left{max-width:450px;margin-right:auto}@media only screen and (max-width: 1140px){.hero__left{max-width:440px}}@media only screen and (max-width: 1024px){.hero__left{max-width:100%}}.hero__title{font-family:'Tangerine', cursive;margin-bottom:20px;font-size:120px;font-weight:400;line-height:1.3;color:var(--text-alt-color)}@media only screen and (max-width: 1024px){.hero__title{font-size:50px}}@media only screen and (max-width: 768px){.hero__title{font-size:40px}}@media only screen and (max-width: 576px){.hero__title{font-size:32px}}.hero__description{margin-bottom:0;font-size:21px;color:var(--text-alt-color)}@media only screen and (max-width: 1024px){.hero__description{font-size:inherit}}.hero__subscribe{margin-top:32px}.hero__subscribe .subscribe-form{position:relative;border-radius:2px;background-color:var(--background-color)}.hero__subscribe .subscribe-email{width:100%;height:70px;padding:20px;font-size:16px;line-height:21px;border:2px solid transparent;border-radius:2px;outline:0;color:var(--heading-font-color);background-color:transparent;transition:all .25s ease}.hero__subscribe .subscribe-email::placeholder{opacity:0.6;color:var(--text-alt-color)}.hero__subscribe .subscribe-email:focus{border-color:var(--brand-color)}.hero__subscribe .subscribe-button{position:absolute;top:6px;right:6px}@media only screen and (max-width: 1024px){.hero__subscribe{margin-top:24px}}@media only screen and (max-width: 576px){.hero__subscribe{margin-top:20px}.hero__subscribe .subscribe-form{display:flex;flex-direction:column;padding:6px}.hero__subscribe .subscribe-email{height:56px;margin-bottom:4px}.hero__subscribe .subscribe-button{position:relative;top:0;right:0}}.hero__right{width:50%}@media only screen and (max-width: 1024px){.hero__right{width:100%;margin-top:40px}}@media only screen and (max-width: 576px){.hero__right{margin-top:32px}}.hero__image{position:relative;transform:translate(0);width:100%;height:410px;border-radius:8px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.02);background-color:var(--background-color);user-select:none}.hero__image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}@media only screen and (max-width: 1140px){.hero__image{height:380px}}@media only screen and (max-width: 1024px){.hero__image{height:440px}}@media only screen and (max-width: 768px){.hero__image{height:420px}}@media only screen and (max-width: 576px){.hero__image{height:280px}}.article{margin-bottom:32px;will-change:transform;transition:transform .2s}.article:hover{transform:translateY(-3px)}.article:hover .article__title a{text-decoration:underline;text-decoration-color:var(--link-color-hover);text-decoration-thickness:2px}.article__head{position:relative}.article__date{position:absolute;z-index:1;top:16px;left:16px;display:inline-block;padding:8px 12px;font-size:12px;line-height:1;font-weight:500;border-radius:4px;color:var(--heading-font-color);background:var(--background-color);pointer-events:none}.article__image{position:relative;transform:translate(0);display:block;height:0;margin-bottom:24px;padding-bottom:62%;overflow:hidden;background:var(--background-alt-color)}.article__image img{position:absolute;width:100%;height:100%;object-fit:cover;user-select:none}.video-icon{position:absolute;z-index:1;top:50%;left:50%;width:50%;height:50%;transform:translate(-50%, -50%);pointer-events:none}.video-icon .circle{width:50px;height:50px;position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;overflow:hidden;margin:auto;transform:scale(1, 1)}.video-icon .circle.pulse{animation-timing-function:ease;animation:pulse 2s infinite;background-color:rgba(255,255,255,0.25)}.video-icon svg{fill:rgba(255,255,255,0.25);stroke:var(--light-blue);stroke-linejoin:round;stroke-width:5;backdrop-filter:blur(3.5px);-webkit-backdrop-filter:blur(4.5px);transition:all 0.3s}.article__title{margin-bottom:12px;margin-left:10px;margin-right:10px;text-align:center;font-family:"Gowun Batang",serif;font-size:20px;font-weight:lighter}.article__title a{text-decoration:underline;text-decoration-color:transparent;text-decoration-thickness:2px}.article__title a:hover{color:var(--heading-font-color)}.article__excerpt{margin-bottom:0;font-size:16px;margin-left:10px;margin-right:10px;color:var(--text-alt-color);text-align:center}.article__inner{background-color:var(--article__inner-background)}.portfolio_wrapper{display:grid;background-color:var(--article__inner-background);grid-template-columns:repeat(9, 1fr);grid-template-rows:20vw;margin-bottom:5vw;overflow:hidden}.portfolio_image{grid-column:span 3}.portfolio_content{grid-column:span 6;margin-left:1em;font-size:calc(5px + 1vw);text-align:left}.portfolio_title{font-family:"Gowun Batang",serif;font-size:calc(10px + 1.1vw);font-weight:bold}.portfolio_content_row{margin-bottom:0.2em;color:var(--text-alt-color)}.portfolio__page__title{margin-top:150px;font-family:"Gowun Batang",serif}.contact-head{margin-bottom:32px}.form__group{margin-bottom:20px}.form__group:last-child{margin-bottom:0}.form__input{width:100%;padding:20px;font-size:16px;font-weight:400;border:2px solid var(--border-color);border-radius:2px;outline:0;transition:.25s ease-in-out;resize:vertical;color:var(--light-gray);background-color:var(--background-alt-color)}.form__input::placeholder{color:var(--text-alt-color)}.form__input:focus{border-color:var(--brand-color)}.section__head{position:relative;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:40px}.section__head::after{content:"";position:absolute;z-index:-1;display:block;width:100%;height:1px;background:var(--background-alt-color);pointer-events:none}@media only screen and (max-width: 768px){.section__head::after{content:none}}.section__title{padding-right:20px;margin-bottom:0;font-size:28px}@media only screen and (max-width: 576px){.section__title{font-size:24px}}.section__link{padding-left:20px;font-size:18px;font-weight:500;text-decoration:underline;text-decoration-color:transparent;color:var(--link-color);transition:text-decoration .35s}.section__link:hover{text-decoration-color:var(--heading-font-color);color:var(--link-color-hover)}@media only screen and (max-width: 768px){.section__link{padding-left:0}}@media only screen and (max-width: 576px){.section__link{font-size:16px}}.section__title,.section__link{background:var(--background-color)}@media only screen and (max-width: 576px){.section-tags .row .col:last-child>.tag-image{margin-bottom:0}}.tag-image{margin-bottom:32px;position:relative;transform:translate(0);display:block;height:0;padding-bottom:62%;border-radius:8px;overflow:hidden;background:var(--background-alt-color);transition:transform .2s}.tag-image:hover{transform:translateY(-3px)}.tag-image img{position:absolute;width:100%;height:100%;object-fit:cover;user-select:none}.tag-image .tag-name{position:absolute;top:2%;right:2%;z-index:1;max-width:90%;display:inline-block;padding:8px 8px;font-size:1.6rem;line-height:1;font-weight:700;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px;color:white;pointer-events:none}.post-head,.page-head{margin-bottom:48px;padding-top:80px}.post-head .row,.page-head .row{align-items:center}@media only screen and (max-width: 1024px){.post-head,.page-head{margin-bottom:40px}}@media only screen and (max-width: 576px){.post-head,.page-head{margin-bottom:32px}}.post-image,.page-image{position:relative;transform:translate(0);padding-top:90%;min-height:100px;border-radius:8px;overflow:hidden;background:var(--background-alt-color);margin-top:60px}.post-image img,.page-image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;user-select:none}@media only screen and (max-width: 1024px){.post-image,.page-image{padding-top:65%;margin-bottom:40px}}@media only screen and (max-width: 576px){.post-image,.page-image{margin-bottom:32px}}.page-image{padding-top:56.25%;margin-bottom:48px}@media only screen and (max-width: 1024px){.page-image{margin-bottom:40px}}@media only screen and (max-width: 576px){.page-image{margin-bottom:32px}}.post-video,.page-video{margin-bottom:48px;border-radius:8px;overflow:hidden;transform:translate(0);background-color:var(--th-color)}.post-video .post-video__wrap,.post-video .page-video__wrap,.page-video .post-video__wrap,.page-video .page-video__wrap{position:relative;width:100%;height:0;padding-bottom:56.25%}.post-video .post-video__wrap iframe,.post-video .page-video__wrap iframe,.page-video .post-video__wrap iframe,.page-video .page-video__wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%}@media only screen and (max-width: 1024px){.post-video,.page-video{margin-bottom:40px}}@media only screen and (max-width: 576px){.post-video,.page-video{margin-bottom:32px}}.post__info{margin-left:44px}.post__info.post__info-video{max-width:760px;margin:0 auto}@media only screen and (max-width: 1024px){.post__info{margin-left:0}}.page__info{max-width:760px;margin:0 auto}.post__tags{display:flex;align-items:center;flex-wrap:wrap;margin-bottom:20px}.post__tags .post__tag{padding:12px 16px;margin:4px 8px 4px 0;font-size:14px;line-height:1;font-weight:500;text-transform:capitalize;border:none;border-radius:8px;color:var(--heading-font-color);transition:none;background-color:var(--th-color)}.post__tags .post__tag:hover{color:indianred}.post__tags .post__tag:last-child{margin-right:0}@media only screen and (max-width: 576px){.post__tags{margin-bottom:16px}}.post__title,.page__title{margin-bottom:24px;font-size:46px;line-height:1.2;font-weight:500}@media only screen and (max-width: 576px){.post__title,.page__title{margin-bottom:20px;font-size:32px}}.page__title{margin-bottom:0;font-family:"Gowun Batang",serif}.post__meta{display:flex;align-items:center;line-height:1}.post__meta .post__author-image{position:relative;transform:translate(0);width:50px;height:50px;border-radius:50%;overflow:hidden;margin-right:12px;background-color:var(--th-color)}.post__meta .post__author-image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;user-select:none}.post__meta .post__meta-bottom{display:flex;flex-direction:column}.post__meta .post__author{display:inline-block;margin-bottom:7px;font-size:16px;font-weight:500;text-decoration:underline;text-decoration-color:transparent;color:var(--heading-font-color);transition:text-decoration-color .35s}.post__meta .post__author:hover{text-decoration-color:var(--heading-font-color)}.post__meta .post__date{font-size:14px;font-weight:400;color:var(--text-alt-color)}.post,.page{max-width:760px;margin:0 auto 60px;color:var(--text-color)}.post a,.page a{font-weight:500;border-bottom:1px solid var(--border-color)}.post a:hover,.page a:hover{color:var(--link-color);border-bottom-color:var(--link-color-hover)}.post img,.post .js-reframe,.page img,.page .js-reframe{overflow:hidden}.post img.lightense-open,.post .js-reframe.lightense-open,.page img.lightense-open,.page .js-reframe.lightense-open{border-radius:0}.post img[src$='#wide'],.page img[src$='#wide']{display:block;width:100vw;max-width:none;margin-left:50%;transform:translateX(-50%);border-radius:0;pointer-events:none;user-select:none}.post .button,.page .button{border:none;text-decoration:none}.post__share .share__list{display:flex;align-items:center;width:100%}.post__share .share__item{width:25%;margin-right:8px;margin-bottom:0;text-align:center}.post__share .share__item:last-child{margin-right:0}.post__share .share__link{display:flex;justify-content:center;align-items:center;width:100%;height:54px;font-size:18px;text-transform:uppercase;border:none;border-radius:8px;background:var(--th-color)}.post__share .share__link i{transition:transform .25s;will-change:transform}.post__share .share__link:hover{color:var(--heading-font-color)}.post__share .share__link:hover i{transform:scale(1.1)}.related-posts{display:none;margin-top:80px}.related-posts.is-related{display:block}.related-posts .related-tag{text-transform:capitalize}@media only screen and (max-width: 576px){.related-posts{margin-top:60px}.related-posts .row .col:last-child{margin-bottom:0}}.show-comments{margin:48px 0 32px;text-align:center}.show-comments .disqus-button{padding:28px;border-radius:8px;text-decoration:underline;text-decoration-color:transparent;background:var(--th-color)}.show-comments .disqus-button:hover{text-decoration-color:var(--heading-font-color)}@media only screen and (max-width: 576px){.show-comments{margin:60px 0 0}.show-comments .disqus-button{padding:24px}}.post__comments{max-width:760px;margin:0 auto}.post__comments.is-open{margin:0 auto 32px}@media only screen and (max-width: 576px){.post__comments.is-open{margin:0 auto}}.error{text-align:center}.error .error__title{margin-bottom:24px;font-size:100px;line-height:1}.error .error__text{margin-bottom:0;color:var(--text-alt-color)}@media only screen and (max-width: 576px){.error .error__title{font-size:68px}}.recent-posts{margin-top:80px}@media only screen and (max-width: 576px){.recent-posts{margin-top:60px}.recent-posts .row .col:last-child{margin-bottom:0}}.post_tag_list{font-size:18px;border-radius:4px;background-color:var(--post-tag-list-background-color);color:var(--article-highlighing-font);padding-right:2px;padding-left:2px}.post_category_list{font-size:18px;border-radius:4px;background-color:var(--post-category-list-background-color);color:var(--article-highlighing-font);padding-right:2px;padding-left:2px}.post__title{font-family:"Gowun Batang",serif}.toc{font-family:'Tangerine', cursive;color:gold;background-color:#9acaa5;border-radius:0.5}.toc .nav__title{color:#fff;font-size:1em;background:gray}.toc .active a{background-color:greenyellow}.toc__menu{margin:0;padding:0;width:100%;list-style:none;font-size:0.5em}.page__content .archive__item-title{margin-top:0.5em;border-bottom:none}.sidebar__right{margin-bottom:0.5em;position:sticky;top:0;right:0;width:100%}.tag__head{margin-top:150px}@media only screen and (max-width: 1024px){.tag__head{margin:40px 0}}.tags__inner{margin-bottom:90px}@media only screen and (max-width: 576px){.tags__inner{margin-bottom:60px}}.tag__title{margin-bottom:32px;font-size:46px;font-weight:600;font-family:"Gowun Batang",serif}@media only screen and (max-width: 576px){.tag__title{font-size:32px}}.tag__list{display:flex;align-items:center;flex-wrap:wrap;padding-bottom:80px}.tag__list .tag__item{margin-right:12px;margin-bottom:12px}.tag__list .tag__item:last-child{margin-right:0}.tag__list .tag__link{display:block;padding:12px 16px;font-size:16px;font-weight:500;text-transform:capitalize;border-radius:8px;transition:none;background:var(--th-color)}.tag__list .tag__link:hover{color:var(--heading-font-color)}@media only screen and (max-width: 576px){.tag__list{padding-bottom:48px}.tag__list .tag__item{margin-right:8px;margin-bottom:8px}.tag__list .tag__link{font-size:14px}}.tag__info{position:relative;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.tag__info::after{content:"";position:absolute;z-index:-1;display:block;width:100%;height:1px;background:var(--th-color);pointer-events:none}@media only screen and (max-width: 576px){.tag__info::after{content:none}}.tag__info-box{display:flex;align-items:center}.tag__counter{display:flex;flex-direction:column;align-items:center;padding:12px 24px;border-radius:8px;color:var(--heading-font-color);background:var(--th-color)}.tag__counter span{font-family:"Noto Sans","Apple SD Gothic Neo","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;font-size:32px;font-weight:700;line-height:1}.tag__counter small{font-size:16px;font-weight:500}@media only screen and (max-width: 576px){.tag__counter{display:none}}.tag__name{padding:50px 20px 50px 20px;margin-bottom:0;font-size:36px;text-transform:capitalize;background-color:var(--background-color);font-family:"Gowun Batang",serif}.tag__name span{font-weight:400;color:var(--text-alt-color)}@media only screen and (max-width: 768px){.tag__name{font-size:32px}}@media only screen and (max-width: 576px){.tag__name{padding:32px 12px 32px 0;font-size:26px}}.top__link{padding-left:20px;font-size:18px;font-weight:500;text-decoration:underline;text-decoration-color:transparent;color:var(--link-color);transition:text-decoration .35s;background:var(--background-color)}.top__link:hover{text-decoration-color:var(--heading-font-color);color:var(--link-color-hover)}@media only screen and (max-width: 576px){.top__link{padding-left:0;font-size:16px}}.tag__box{display:flex;align-items:center;margin-top:120px}.tag_list{display:block;padding:12px 16px;font-size:16px;font-weight:500;text-transform:capitalize;border-radius:8px;transition:none;background:var(--th-color)}.tag_list:hover{color:indianred}.tag__box_recent_posts{display:flex;align-items:center}
+
+  </style>
+</head>
+
+<body>
+
+  
+
+  <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+</head>
+<!-- begin header -->
+<header class="header" id="top">
+  <div class="container">
+    <div class="row">
+      <div class="header__inner col col-12">
+
+        <div class="logo">
+          <a class="logo__link" href="/">
+          
+            <img class="logo__image" src="/images/code_museum_logo.png" alt="Code Museum">
+          
+          </a>
+        </div>
+
+        <nav class="main-nav">
+          <div class="main-nav__box">
+            <div class="nav__icon-close">
+              <i class="ion ion-md-close"></i>
+            </div>
+            <div class="nav__title">Menu</div>
+            <ul class="nav__list list-reset">
+              <li class="nav__item">
+                <a href="/about" class="nav__link">About</a>
+              </li>
+              <li class="nav__item">
+                <a href="/gallery" class="nav__link">Gallery</a>
+              </li>
+              <li class="nav__item">
+                <a href="/tags" class="nav__link">Tags</a>
+              </li>
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  
+                  <li class="nav__item">
+                    <a href="/categories/" class="nav__link">Categories</a>
+                  </li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  
+                  <li class="nav__item">
+                    <a href="/portfolio/" class="nav__link">Project</a>
+                  </li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+              
+              <li class="nav__item nav__item-icon">
+                <div class="toggle-theme">
+                  <div class="toggle-moon" title="Enable dark mode"><i class="ion ion-ios-moon"></i></div>
+                  <div class="toggle-sun" title="Enable light mode"><i class="ion ion-ios-sunny"></i></div>
+                </div>
+              </li>
+              
+            </ul>
+          </div>
+        </nav>
+
+        <div class="nav-button">
+          <i class="nav__icon icon__menu ion ion-md-menu"></i>
+          <i class="nav__icon icon__search ion ion-md-search"></i>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->
+
+<!-- begin search -->
+<div class="search">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="search__box">
+          <div class="search__group">
+            <div class="search__close">
+              <i class="ion ion-md-close"></i>
+            </div>
+            <label for="js-search-input" class="screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="search__text" autocomplete="off" placeholder="Type to search...">
+          </div>
+        </div>
+        <div class="container">
+          <div class="row search-results-list" id="js-results-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end search -->
+
+  <!-- begin content -->
+  <main class="content" aria-label="Content">
+    <head>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+</head>
+
+
+
+
+
+
+<div class="post-head">
+  <div class="container">
+    <div class="row">
+      
+      
+
+      
+      <div class="col col-5 col-d-12">
+        <div class="post-image">
+          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part12]: Database Internals 트랜잭션 처리와 복구">
+        </div>
+      </div>
+      
+
+      
+      
+      
+      <div class="col col-7 col-d-12">
+        <div class="post__info ">
+            
+              <div class="post__tags">
+                
+                  <a href="/Data_Engineering" class="post__tag">#Data_Engineering</a>
+                
+                
+                  <a href="/DE" class="post__tag">#DE</a>
+                
+              </div>
+            
+ 
+          <h1 class="post__title">Data Engineering Series [Part12]: Database Internals 트랜잭션 처리와 복구</h1>
+  
+          <div class="post__meta">
+            <a href="/about/" class="post__author-image">
+              <img class="lazy" data-src="/images/me_2.jpeg" alt="Jay Kim">
+            </a>
+
+            <div class="post__meta-bottom">
+              <a class="post__author" href="/about/">Jay Kim</a>
+              <time class="post__date" datetime="2022-07-20T21:01:35+09:00">20 Jul 2022</time>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- begin post -->
+<div class="container_post animate">
+
+  
+
+    <div class="post__content">
+      
+<!--첫 번째 문단-->
+
+
+
+  
+  	
+  	
+  	
+  	
+  	
+
+<!--두 번째 문단-->
+
+
+  <div class="post_pagination">
+    
+      <a href="/data-engineering-series13" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part12]: Database Internals 개요</a>
+    
+    
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+    
+  </div>
+
+
+
+      <hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#트랜잭션-처리와-복구" id="markdown-toc-트랜잭션-처리와-복구">트랜잭션 처리와 복구</a>    <ul>
+      <li><a href="#버퍼-관리" id="markdown-toc-버퍼-관리">버퍼 관리</a>        <ul>
+          <li><a href="#캐싱" id="markdown-toc-캐싱">캐싱</a></li>
+          <li><a href="#캐시-만료" id="markdown-toc-캐시-만료">캐시 만료</a></li>
+          <li><a href="#페이지-고정" id="markdown-toc-페이지-고정">페이지 고정</a></li>
+          <li><a href="#페이지-교체" id="markdown-toc-페이지-교체">페이지 교체</a></li>
+        </ul>
+      </li>
+      <li><a href="#복구" id="markdown-toc-복구">복구</a>        <ul>
+          <li><a href="#리두로그-언두로그" id="markdown-toc-리두로그-언두로그">리두로그 언두로그</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="트랜잭션-처리와-복구">트랜잭션 처리와 복구</h1>
+
+<p>트랜잭션을 수행하기 위해서는 데이터를 디스크에 저장하고 유지하는 자료구조 외에도 여러 컴포넌트가 필요하다.</p>
+
+<p>트랜잭션 매니저는 트랜잭션의 세부 단계를 제어, 관리 및 스케줄링하는 컴포넌트다.</p>
+
+<p>잠금 매니저는 리소스에 대한 동시 접근을 제어하고 데이터 무결성을 보장한다. 잠금이 해제되거나 트랜잭션이 완료되면 잠금매니저는 대기 중인 트랜잭션에 이 사실을 알린다</p>
+
+<p>페이지 캐시는 디스크와 스토리지 엔진 사이에서 중개자 역할을 한다. 메인 메모리의 변경 사항을 저장하고 영구 저장소와 동기화되지 않은 페이지를 캐시한다. 모든 데이터베이스 상태에 대한 변경 사항은 우선 페이지 캐시에 저장된다</p>
+
+<p>로그 매니저는 영구 저장소와 동기화되지 않은 페이지 캐시의 내용이 손실되지 않도록 로그(작업 히스토리)를 저장한다.</p>
+
+<h2 id="버퍼-관리">버퍼 관리</h2>
+
+<p>대부분의 데이터베이스는 상대적으로 속도가 느린 디스크와 빠른 메인 메모리로 구성된 계층 구조이다. 따라서 영구 저장소 접근 횟수를 줄이기 위해 페이지를 메모리에 캐시하고 요청한 페이지가 캐시되어 있다면 디스크가 아닌 캐시에서 반환한다.</p>
+
+<p>다른 프로세스가 캐시된 페이지와 일치하는 디스크에 저장된 데이터를 변경하지 않았다면 메모리에 캐시된 페이지를 재사용할 수 있다. 이와 같은 방식을 페이지 캐시 또는 버퍼풀이라고 부른다. 이러한 방식은 요청된 페이지가 메모리에 없을 경우에만 물리적 저장소에 접근한다. 페이지 캐시는 디스크에서 읽은 페이지를 메모리에 캐시한다. 시스템 장애가 발생하거나 시스템이 비정상적으로 종료되면 캐시된 데이터는 사라진다.</p>
+
+<p>디스크에서 메모리로 복사하는 작업을 페이징이라고 한다. 그리고 디스크로 플러시되지 않은 변경된 페이지는 더티페이지라고 한다. 일반적으로 페이지 캐시의 메모리 영역은 전체 데이터셋보다 작기 때문에 결국 새로운 페이지를 추가하기 위해 기존 페이지를 만료시켜야 한다.</p>
+
+<p>페이지 캐시의 주요 기능은 다음과 같다.</p>
+
+<ul>
+  <li>페이지 내용을 메모리에 캐시한다</li>
+  <li>디스크에 저장된 페이지에 대한 변경 사항을 버퍼링하고 캐시된 페이지에 반영한다</li>
+  <li>캐시되지 않은 데이터가 요청될 경우 추가할 공간이 있으면 페이징하고 캐시된 버전을 반환한다</li>
+  <li>추가할 공간이 없다면 일부 페이지를 만료시키고 디스크로 플러시한다</li>
+  <li>캐시된 데이터가 요청된 경우에는 그냥 메모리에서 반환하면 된다</li>
+</ul>
+
+<h3 id="캐싱">캐싱</h3>
+
+<p>버퍼에 대한 변경 사항은 디스크에 쓰기 전까지 메모리에 남겨둔다. 어떤 프로세스도 원본 파일을 수정할 수 없기 때문에 동기화는 메모리에서 디스크로 플러시하는 단방향 작업이다. 데이터베이스는 페이지 캐시를 사용해 메모리를 관리하고 디스크 접근을 제어한다.</p>
+
+<p>스토리지 엔진이 특정 페이지를 요청하면 우선 캐시된 버전이 있는지 확인하고 있을 경우 반환한다. 없다면 논리적 페이지 주소 또는 페이지 번호를 물리적 주소로 변환해 해당 페이지를 메모리로 복사하고 반환한다. 이 떄 해당 페이지가 저장된 버퍼는 참조 상태라고 한다.</p>
+
+<p>페이지가 변경된 경우에는 페이지에 더티 플래그를 설정한다. 더티 플르개는 해당 페이지가 디스크와 동기화되지 않았고, 지속성을 위해 디스크로 플러시돼야 한다는 것을 의미한다.</p>
+
+<h3 id="캐시-만료">캐시 만료</h3>
+
+<p>캐시된 데이터가 많을수록 더 많은 읽기 요청을 디스크에 접근하지 않고 처리할 수 있다. 또한 같은 페이지에 대한 변경사항을 더 많이 같이 버퍼할 수 있다. 하지만 페이지 캐시의 크기는 한정적이기 때문에, <strong>새로운 페이지를 저장하기 위해 오래된 페이지는 제거해야 한다.</strong> 페이지가 동기화됐고 고정 또는 참조 상태가 아니라면 바로 제거 될 수 있다. 더티 페이지는 제거되기 전에 먼저 플러시해야 한다. 참조 상태의 페이지는 사용이 끝나기 전까지는 제거될 수 없다.</p>
+
+<p>페이지를 제거할 때마다 디스크로 플러시한다면 성능을 저하시킬 수 있다. 따라서 별도의 백그라운드 프로세스가 제거될 가능성이 높은 <strong>더티 페이지를 주기적으로 디스크로 플러시</strong>한다. 또한 데이터베이스에 갑작스런 장애가 발생한 경우 플러시되지 않은 데이터는 사라질 수 있다. 이러한 데이터 손실을 방지하기 위해 체크포인트 프로세스가 플러시 시점을 제어한다. 체크포인트 프로세스는 선행 기록 로그(Write Ahead Log)와 페이지 캐시의 싱크가 맞도록 조정한다. (이 말은 선행 기록 로그가 디스크에 있는 데이터라는 말인가? 동기화는 메모리에서 디스크로 플러시하는 단방향 작업이라 했으니까 선행 기록 로그보다 페이지의 데이터가 더 최신? -&gt; 그렇지. 캐시된 페이지에 제일 먼저 변화 생기고 -&gt; 로그 버퍼에 리두 로그(WAL) 버퍼링 되고 버퍼된 리두 로그 디스크에 플러시 되고 -&gt; 캐시된 페이지 플러시) 오직 플러시가 완료된 캐시된 페이지와 관련된 로그만 WAL에서 삭제될 수 있다. 이 과정이 완료될 때 끼지 더티 페이지는 제거될 수 없다.</p>
+
+<h3 id="페이지-고정">페이지 고정</h3>
+
+<p>B-트리의 상위 레벨 노드는 대부분의 읽기 작업에서 접근한다. 이러한 트리의 일부를 캐시하면 상당한 도움이 될 수 있다. 따라서 우선 상위 레벨 노드를 메모리에 고정시키고 나머지 노드는 요청 시 페이징해도 된다.</p>
+
+<h3 id="페이지-교체">페이지 교체</h3>
+
+<p>저장 공간이 부족한 캐시에 새로운 페이지를 추가하려면 일부 페이지를 만료시켜야 한다. 캐시된 페이지는 만료 정책(페이지 교체 알고리즘)에 따라 캐시에서 제거된다. 만료 정책은 다시 요청될 확률이 낮은 페이지를 만료시키고 해당 위치에 새로운 페이지를 페이징한다. 이렇게 페이지를 만료시키고 새로운 페이지로 교체하는 알고리즘은 대표적으로 FIFO, LRU 등이 있다.</p>
+
+<p>FIFO는 First In First Out의 약자로 가장 먼저 큐에 들어온 페이지 ID가 가리키는 페이지를 만료시킨다. 이 방식은 간단하지만 페이지 접근 순서를 전혀 고려하지 않기 때문에 실용적이지 않다.</p>
+
+<p>LRU는 FIFO를 확장한 방식이다. FIFO와 마찬가지로 요청 순서대로 큐에 추가되다가 재요청 되면 다시 큐의 끝에 추가한다.</p>
+
+<h2 id="복구">복구</h2>
+
+<p>데이터베이스 개발자는 여러 장애 시나리오를 고려하고 약속된 데이터가 실제로 저장되게 해야 한다. 선행 기록 로그(WAL 또는 커밋 로그)는 장애 및 트랜잭션 복구를 위해 디스크에 저장하는 추가 전용(Append-only) 보조 자료 구조다. 페이지 캐시는 페이지에 대한 변경 사항을 메모리에 버퍼링한다. <strong>캐시된 내용이 디스크로 플러시될 때 까지 관련 작업 이력의 유일한 디스크 복사본은 WAL</strong>이다. MySQL, PostreSQL과 같은 많은 데이터베이스가 추가 전용 WAL을 사용한다.</p>
+
+<p>WAL의 주요 기능은 다음과 같다.</p>
+
+<ul>
+  <li>캐시된 페이지가 디스크와 동기화 될 때 까지 작업 이력을 디스크에 저장한다. 데이터베이스의 상태를 변경하는 작업을 실제 페이지에 적용하기 전에 먼저 디스크에 로깅한다</li>
+  <li>장애 발생 시 로그를 기반으로 마지막 메모리 상태를 재구성한다</li>
+  <li>WAL은 데이터가 디스크에 저장되도록 보장하고, 장애 발생시 데이터 상태를 되돌리기 위해 필요한 로그를 저장한다</li>
+</ul>
+
+<p>WAL은 추가 전용 자료구조이며, 작성된 데이터는 불변하기 때문에 모든 쓰기 작업은 순차적이다.</p>
+
+<p>WAL은 여러 로그 레코드로 구성된다. 모든 레코드에는 단조 증가하는 고유 로그 시퀀스 번호(LSN, Log Sequence Number)가 있다. 로그 레코드의 크기는 디스크 블록의 크기보다 작을 수 있기 때문에, 로그 버퍼에 임시 저장하고 포스 작업시 디스크로 플러시한다. 포스 작업은 로그 버퍼가 가득 차면 수행되거나 트랜잭션 매니저 또는 페이지 캐시가 직접 요청할 수도 있다. 모든 로그 레코드는 LSN과 동일한 순서로 플러시돼야 한다.</p>
+
+<p>WAL는 작업 로그 레코드 외에도 트랜잭션 완료 여부를 나타내는 레코드를 저장한다. 트랜잭션의 커밋 레코드의 LSN까지 플러시되기 전까지는 해당 트랜잭션은 커밋된 것으로 간주 할 수 없다. 일부 시스템은 트랜잭션 롤백 또는 복구 중 장애가 발생해도 시스템이 계속해서 정상 작동할 수 있도록 보상 로그 레코드를 로그에 저장하고 언두 작업 시 사용한다.</p>
+
+<p>일반적으로 WAL은 체크포인트에 도달하면 이전 로그를 정리하는 인터페이스를 통해 기본 저장소와 동기화한다. 로깅은 데이터베이스의 정확성 측면에서 매우 중요한 작업이다. 로그 정리 작업과 데이터를 기본 스토리지에 저장하는 작업이 조금이라도 어긋나면 데이터는 손실될 수 있다.</p>
+
+<p>모든 데이터는 한 번에 디스크로 플러시하면 체크포인트 작업이 완료될 때 까지 다른 작업을 모두 중지해야 하기 떄문에 비효율적이다. 이 문제를 해결하기 위해 대부분의 데이터베이스 시스템은 퍼지(fuzzy) 체크포인트를 사용한다.</p>
+
+<p>마지막으로 성공한 체크포인트 작업에 대한 정보는 로그 헤더에 저장된 last_checkpoint 포인터에 저장한다. 퍼지 체크포인트는 begin_checkpoint라는 특별한 로그 레코드로 시작해 더티 페이지에 대한 정보와 트랜잭션 테이블의 내용을 저장한 end_checkpoint라는 로그 레코드로 끝난다. 이 로그 레코드에 명시된 모든 페이지가 플러시될 때 까지 해당 체크포인트는 미완료 상태다. 페이지는 비동기적으로 플러시되며, 이 작업이 끝나면 last_checkpoint 레코드를 begin_checkpoint의 LSN으로 업데이트 한다. 장애가 발생할 경우, 복구 프로세스는 해당 LSN에서부터 시작한다.</p>
+
+<h3 id="리두로그-언두로그">리두로그 언두로그</h3>
+
+<p>데이터베이스 시스템은 데이터의 지속성과 트랜잭션의 원자성을 보장하는 쓰기 시 복사(Copy-on-write) 방식의 섀도 페이징 기법을 사용한다. 새로운 데이터를 우선 내부 섀도 페이지에 쓴 다음, 이전 버전의 페이지를 가리키는 포인터를 섀도 페이지를 가리키도록 변경해 업데이트된 내용을 반영한다.</p>
+
+<p>모든 상태 변화는 이전 상태와 이후 상태의 조합으로 나타낼 수 있다. 또는 그에 대응되는 리두 작업과 언두 작업으로 나타낼 수 있다. 이전 상태에 리두 작업을 수행하면 이후 상태가 된다. 반대로 이후 상태에 언두 작업을 수행하면 이전 상태가 된다.</p>
+
+<p>장애 발생 후 데이터베이스 시스템을 재시작하면 복구는 다음 3단계로 진행된다</p>
+
+<ol>
+  <li>
+    <p>분석 단계: 페이지 캐시에 저장된 더티 페이지와 장애 발생 당시 수행 중이던 트랜잭션을 파악한다. 더티 페이지에 대한 정보를 기반으로 리두 단계의 시작 지점을 결정한다. 트랜잭션 목록은 언두 단계에서 미완료된 트랜잭션을 롤백하는 데 사용한다.</p>
+  </li>
+  <li>
+    <p>리두 단계: 장애가 발생하기 전까지의 작업을 재수행하고 데이터베이스를 이전 상태로 복원한다. 불완전한 트랜잭션, 커밋됐지만 디스크로 플러시되지 않은 트랜잭션을 롤백하기 위한 준비 단계다</p>
+  </li>
+  <li>
+    <p>언두 단계: 불완전한 트랜잭션을 롤백하고 데이터베이스를 마지막 일관된 상태로 복원한다. 모든 작업은 실제 수행 순어의 역순으로 롤백된다. 복구 중에도 장애가 발생할 수 있기 때문에 언두 작업도 로그에 기록해야 된다</p>
+  </li>
+</ol>
+
+    </div>
+    <div class="post__tags_list">
+      <div class="container">
+        <h3 class="point_heading">All Tag</h3>
+        <ul class="tag__list list-reset">
+          
+            
+              
+              <li class="tag__item"><a href="/AWS" class="post_tag_list">#AWS</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Airflow" class="post_tag_list">#Airflow</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Blockchain_basic" class="post_tag_list">#Blockchain_basic</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Coding_Test" class="post_tag_list">#Coding_Test</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/DL_theory" class="post_tag_list">#DL_theory</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Data_Engineering" class="post_tag_list">#Data_Engineering</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Django" class="post_tag_list">#Django</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Docker" class="post_tag_list">#Docker</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Elasticsearch" class="post_tag_list">#Elasticsearch</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Finance" class="post_tag_list">#Finance</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Flink" class="post_tag_list">#Flink</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Git" class="post_tag_list">#Git</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Java" class="post_tag_list">#Java</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Javascript" class="post_tag_list">#Javascript</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Jenkins" class="post_tag_list">#Jenkins</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Kafka" class="post_tag_list">#Kafka</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Kubernetes" class="post_tag_list">#Kubernetes</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/MongoDB" class="post_tag_list">#MongoDB</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/MySQL" class="post_tag_list">#MySQL</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Network" class="post_tag_list">#Network</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/OS" class="post_tag_list">#OS</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Python" class="post_tag_list">#Python</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Pytorch" class="post_tag_list">#Pytorch</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Spark" class="post_tag_list">#Spark</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Spring" class="post_tag_list">#Spring</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Terraform" class="post_tag_list">#Terraform</a></li>
+            
+          
+            
+          
+        </ul>
+        <h3 class="point_heading">All Category</h3>
+        <ul class="tag__list list-reset">
+          
+            
+              
+              <li class="tag__item"><a href="/AI" class="post_category_list">#AI</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Blockchain" class="post_category_list">#Blockchain</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/CS" class="post_category_list">#CS</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Cloud" class="post_category_list">#Cloud</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/DE" class="post_category_list">#DE</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Development_knowledge" class="post_category_list">#Development_knowledge</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Economics" class="post_category_list">#Economics</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/devops" class="post_category_list">#devops</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/programming_language" class="post_category_list">#programming_language</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/web_development" class="post_category_list">#web_development</a></li>
+            
+          
+            
+          
+        </ul>
+        <section class="page__content" itemprop="text">
+          
+          
+        </section>
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- share -->
+<div class="container">
+  <div class="post__share">
+    <ul class="share__list list-reset">
+      <li class="share__item">
+        <a class="share__link share__twitter"
+          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part12]:%20Database%20Internals%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EC%B2%98%EB%A6%AC%EC%99%80%20%EB%B3%B5%EA%B5%AC&url=http://localhost:4000/data-engineering-series14"
+          onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+          title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/data-engineering-series14"
+          onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+          title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series14&amp;media=http://localhost:4000/images/data_engineering_logo.png&amp;description=Data%20Engineering%20Series%20[Part12]:%20Database%20Internals%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EC%B2%98%EB%A6%AC%EC%99%80%20%EB%B3%B5%EA%B5%AC"
+        onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
+        rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series14&title=Data%20Engineering%20Series%20[Part12]:%20Database%20Internals%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EC%B2%98%EB%A6%AC%EC%99%80%20%EB%B3%B5%EA%B5%AC&summary=&source=Code%20Museum"
+        onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
+      </li>
+    </ul>
+  </div>
+  
+<!--첫 번째 문단-->
+
+
+
+  
+  	
+  	
+  	
+  	
+  	
+
+<!--두 번째 문단-->
+
+
+  <div class="post_pagination">
+    
+      <a href="/data-engineering-series13" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part12]: Database Internals 개요</a>
+    
+    
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+    
+  </div>
+
+
+
+</div>
+
+
+
+<!-- end post -->
+
+
+
+
+
+
+
+
+<!-- begin related posts -->
+<div class="container">
+  <section class="related-posts is-related animate">
+    <div class="row">
+      <div class="col col-12">
+        <div class="container__inner">
+          <div class="section__info">
+            <div class="section__head">
+              <h2 class="section__title">You may also like</h2>
+              <a class="section__link" href="/blog">
+                
+                
+                  
+                    <a href="/DE" class="section__link related-tag">See all<span> DE</span></a>
+                  
+                
+              
+              </a>
+            </div>
+          </div>
+          <div class="row">
+
+          
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-07-19T21:01:35+09:00">19 Jul 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/data-engineering-series13">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part12]: Database Internals 개요">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/data-engineering-series13">Data Engineering Series [Part12]: Database Internals 개요</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-07-10T21:01:35+09:00">10 Jul 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/mysql-series13">
+        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part13] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/mysql-series13">MySQL Series [Part13] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-07-10T21:01:35+09:00">10 Jul 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/mysql-series12">
+        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part12] SQL 문제">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/mysql-series12">MySQL Series [Part12] SQL 문제</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+                  
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- end related posts -->
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <!-- begin comments -->
+<div class="show-comments">
+  <button class="button disqus-button" id="show-comments-button" onclick="disqus();return false;">Show Comments</button>
+</div>
+
+<div id="disqus_thread" class="post__comments">
+  <div id="disqus_empty"></div>
+</div>
+
+<script>
+  var disqus_loaded = false;
+  var disqus_shortname = 'Jay';
+  var disqus_container = document.getElementById("disqus_thread");
+  function disqus() {
+    if (!disqus_loaded) {
+      disqus_loaded = true;
+      var e = document.createElement("script");
+      e.type = "text/javascript";
+      e.async = true;
+      e.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+      (document.getElementsByTagName("head")[0] ||
+        document.getElementsByTagName("body")[0])
+        .appendChild(e);
+      // Hide the button after opening
+      document.getElementById("show-comments-button").style.display = "none";
+      // Show disqus comments
+      disqus_container.classList.add("is-open");
+    }
+  }
+</script>
+
+<noscript>Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<!-- end comments --> 
+      </div>
+    </div>
+  </div>
+
+  </main>
+  <!-- end content -->
+
+  <!-- begin footer -->
+<footer class="footer">
+
+  <div class="footer__inner">
+    <div class="container">
+      <div class="row">
+
+        <div class="col col-5 col-d-12">
+          <div class="footer__author">
+            <div class="footer__author-avatar">
+              <img class="lazy" data-src="/images/me_2.jpeg" alt="Jay Kim">
+            </div>
+            <h3 class="footer__author-name">Jay Kim</h3>
+            <p class="footer__author-bio">Data Engineer</p>
+            
+            <div class="social">
+              <ul class="social__list list-reset">
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://github.com/kimziont" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-github"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://linkedin.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-linkedin"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://facebook.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-facebook"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://instagram.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-instagram"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://youtube.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-youtube"></i></a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="col col-6 push-1 col-d-12 push-d-0">
+          <div class="footer__gallery">
+            <h3 class="footer__gallery-title">Gallery</h3>
+            
+            <div class="gallery-footer">
+              <div class="gallery" style="grid-template-columns: repeat(3, auto);">
+                
+                <div class="gallery__image">
+                  <img src="/images/100.jpg" alt="Rest" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/101.jpg" alt="Lifestyle" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/102.jpg" alt="Hobby" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/103.jpg" alt="Notes" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/104.jpg" alt="Rest" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/105.jpg" alt="Hobby" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/106.jpg" alt="Fashion" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/107.jpg" alt="Notes" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/108.jpg" alt="Rest" loading="lazy">
+                </div>
+                
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        
+
+      </div>
+    </div>
+  </div>
+
+  <div class="footer__info">
+    <div class="container">
+      <div class="row">
+        <div class="col col-12">
+          <div class="footer__info-box">
+            <div class="copyright">2022 &copy; <a href="/">Code Museum</a>. Crafted & Designed by <a href="https://jekyllthemes.io/developers/artem-sheludko">Artem Sheludko</a>.</div>
+            <div class="top" title="Top"><i class="ion ion-ios-arrow-up"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</footer>
+<!-- end footer -->
+
+  <script src="/js/scripts.js"></script>
+  <script src="/js/common.js"></script>
+</body>
+
+</html>

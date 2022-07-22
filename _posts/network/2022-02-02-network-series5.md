@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Network Series [Part7]: 소켓(Socket)이란 무엇인가'
+title:  'Network Series [Part5]: 네트워크 프로토콜(2) TCP, UDP'
 description: 
-date:   2022-04-11 15:01:35 +0300
+date:   2022-02-02 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
@@ -16,7 +16,7 @@ tags: Network
 {:toc}
 ---
 
-![](/images/net_20.png)  
+# TCP
 
 
 # 참고

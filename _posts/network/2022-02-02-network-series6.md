@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part4]: IP주소와 DNS 서버'
+title:  'Network Series [Part6]: 네트워크 프로토콜(3) IP'
 description: 
 date:   2022-02-03 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'

@@ -1,7 +1,7 @@
-I"y'<hr />
+I"�3<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#인터넷-프로토콜-스택" id="markdown-toc-인터넷-프로토콜-스택">인터넷 프로토콜 스택</a></li>
+  <li><a href="#http" id="markdown-toc-http">HTTP</a></li>
   <li><a href="#url" id="markdown-toc-url">URL</a></li>
   <li><a href="#http-method" id="markdown-toc-http-method">HTTP Method</a></li>
   <li><a href="#http-메세지" id="markdown-toc-http-메세지">HTTP 메세지</a>    <ul>
@@ -19,16 +19,24 @@
       </li>
     </ul>
   </li>
+  <li><a href="#웹-브라우저의-동작원리" id="markdown-toc-웹-브라우저의-동작원리">웹 브라우저의 동작원리</a>    <ul>
+      <li><a href="#http-리퀘스트-작성" id="markdown-toc-http-리퀘스트-작성">HTTP 리퀘스트 작성</a>        <ul>
+          <li><a href="#url-입력" id="markdown-toc-url-입력">URL 입력</a></li>
+          <li><a href="#http-리퀘스트-작성-1" id="markdown-toc-http-리퀘스트-작성-1">HTTP 리퀘스트 작성</a></li>
+        </ul>
+      </li>
+      <li><a href="#dns-서버에-웹-서버의-ip주소-조회" id="markdown-toc-dns-서버에-웹-서버의-ip주소-조회">DNS 서버에 웹 서버의 IP주소 조회</a>        <ul>
+          <li><a href="#dns-resolver를-이용해-dns-서버-조회" id="markdown-toc-dns-resolver를-이용해-dns-서버-조회">DNS Resolver를 이용해 DNS 서버 조회</a></li>
+        </ul>
+      </li>
+      <li><a href="#프로토콜-스택에-메시지-송신-요청" id="markdown-toc-프로토콜-스택에-메시지-송신-요청">프로토콜 스택에 메시지 송신 요청</a></li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 <hr />
 
-<h1 id="인터넷-프로토콜-스택">인터넷 프로토콜 스택</h1>
-<p>저희가 단말기를 통해 인터넷상에서 데이터를 전송하거나 요청할 때 일련의 과정들이 있습니다. 이러한 과정들을 계층적으로 정의해놓은 것을 <strong>OSI 7 계층</strong>이라고 합니다. 요즘에는 이러한 계층을 조금 더 간소화해 <strong>TCP/IP 4 계층</strong>으로 표현하기도 합니다.</p>
-
-<p><img src="/images/net_12.png" alt="" /></p>
-
-<p>이러한 OSI 7 계층 또는 TCP/IP 4 계층에는 계층마다 가지고 있는 프로토콜(규칙)들이 있습니다. 위 그림의 가운데 열에 나열된 것들이 각 계층에서 사용되는 프로토콜들이고 이러한 열을 <strong>인터넷 프로토콜 스택</strong>이라고 합니다.</p>
+<h1 id="http">HTTP</h1>
 
 <p><strong>HTTP(HyperText Transfer Protocol)는 응용 계층(Application layer)에서 압도적으로 많이 사용되는 프로토콜</strong>입니다.</p>
 
@@ -210,6 +218,38 @@ scheme://[userinfo@]host[:port][/path][?query][#fragment]
 <h3 id="응답-메세지">응답 메세지</h3>
 
 <p><img src="/images/network_23.png" alt="" width="70%" /></p>
+
+<h1 id="웹-브라우저의-동작원리">웹 브라우저의 동작원리</h1>
+<p>우리가 웹 브라우저(크롬, 사파리 등)에서 뉴스 보기를 클릭하거나 유튜브 비디오를 시청할 때 내부적으로 어떤 일들이 일어나는지 한 번 알아보겠습니다.</p>
+
+<h2 id="http-리퀘스트-작성">HTTP 리퀘스트 작성</h2>
+<p>우리는 보통 웹 브라우저에서 URL을 입력하거나 어떤 버튼을 클릭하는 식으로 웹 서버와 상호작용 하게 되는데 이 때 <strong>웹 브라우저는 내부에서 HTTP 리퀘스트라는 것을 웹 서버에 전송</strong>합니다.</p>
+
+<h3 id="url-입력">URL 입력</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://www.google.com/search?q=hello&amp;hl=ko
+</code></pre></div></div>
+
+<h3 id="http-리퀘스트-작성-1">HTTP 리퀘스트 작성</h3>
+<p>URL을 입력하고 나면 웹 브라우저는 URL을 바탕으로 HTTP 리퀘스트 메시지를 만듭니다.<br />
+HTTP 리퀘스트 메시지의 형태는 다음과 같습니다.<br />
+<img src="../../images/network_1.jpeg" alt="" /><br />
+<a href="https://joie-kim.github.io/HTTP/" target="_blank">(joie-kim님 블로그 참고)</a></p>
+
+<h2 id="dns-서버에-웹-서버의-ip주소-조회">DNS 서버에 웹 서버의 IP주소 조회</h2>
+<p>HTTP 리퀘스트를 작성하고 나면 이제 OS에게 이것을 웹 서버로 전송해달라고 요청합니다. (웹 브라우저가 직접 전송하지 않는 이유는 메시지를 송신하는 기능은 하나의 애플리케이션에만 종속되는 기능이 아니므로 OS에서 전송 기능을 담당하는 것이 더 좋다고 합니다.)</p>
+
+<p>OS에서는 리퀘스트 메시지를 전송하기 전에 먼저 <strong>도메인 네임을 IP 주소로 변환</strong>하는 과정을 거칩니다. 이를 <strong>네임 레졸루션(name resolution)</strong>이라고 합니다.</p>
+
+<h3 id="dns-resolver를-이용해-dns-서버-조회">DNS Resolver를 이용해 DNS 서버 조회</h3>
+<p>네임 레졸루션을 시행하는 것이 <strong>DNS 리졸버(DNS Resolver)</strong>입니다. 리졸버는 Socket 라이브러리에 들어있는 부품화된 프로그램입니다. Socket 라이브러리는 네트워크 관련 기능을 하는 프로그램을 모아놓은 라이브러리입니다.</p>
+
+<p><img src="../../images/network_2.png" alt="" /></p>
+
+<h2 id="프로토콜-스택에-메시지-송신-요청">프로토콜 스택에 메시지 송신 요청</h2>
+<p>DNS Resolver가 IP주소를 찾아오면 이제 진짜 웹 서버로 보낼 준비가 완료되었습니다. 이렇게 준비된 HTTP Request 메시지는 OS의 내부에 포함된 프로토콜 스택을 호출하여 실행을 요청합니다.</p>
+
+<p><img src="../../images/network_3.png" alt="" /></p>
 
 <h1 id="참고">참고</h1>
 <ul>

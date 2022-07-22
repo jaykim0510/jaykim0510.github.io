@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Network Series [Part8]: SSH(Secure SHell)이란 무엇인가</title>
+  <title>Network Series [Part8]: 네트워크 활용편(2) REST API</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/network-series8">
@@ -14,7 +14,7 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Network Series [Part8]: SSH(Secure SHell)이란 무엇인가 – Code Museum">
+  <meta name="twitter:title" content="Network Series [Part8]: 네트워크 활용편(2) REST API – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 
@@ -22,7 +22,7 @@ Table of Contents
   <meta name="twitter:image:src" content="http://localhost:4000/images/cs_logo.jpeg">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Network Series [Part8]: SSH(Secure SHell)이란 무엇인가 – Code Museum">
+  <meta property="og:title" content="Network Series [Part8]: 네트워크 활용편(2) REST API – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 
@@ -270,6 +270,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -344,7 +346,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part8]: SSH(Secure SHell)이란 무엇인가">
+          <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part8]: 네트워크 활용편(2) REST API">
         </div>
       </div>
       
@@ -365,7 +367,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Network Series [Part8]: SSH(Secure SHell)이란 무엇인가</h1>
+          <h1 class="post__title">Network Series [Part8]: 네트워크 활용편(2) REST API</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -374,7 +376,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-04-11T21:01:35+09:00">11 Apr 2022</time>
+              <time class="post__date" datetime="2022-07-14T21:01:35+09:00">14 Jul 2022</time>
             </div>
           </div>
   
@@ -396,6 +398,14 @@ Table of Contents
 
 
   
+
+  
+
+  
+
+  
+
+  
   	
   	
   	
@@ -407,10 +417,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/network-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Network Series [Part7]: 소켓(Socket)이란 무엇인가</a>
+      <a href="/network-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Network Series [Part7]: 네트워크 활용편(1) 웹 브라우저</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/network-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -423,10 +433,48 @@ Table of Contents
 </ul>
 <hr />
 
+<p>HTTP API와 REST API는 사실 거의 같은 의미로 사용됩니다.</p>
+
+<p>그런데 디테일하게 들어가면 차이가 있습니다.</p>
+
+<p>HTTP API는 HTTP를 사용해서 서로 정해둔 스펙으로 데이터를 주고 받으며 통신하는 것으로 이해하시면 됩니다.</p>
+
+<p>그래서 상당히 넓은 의미로 사용됩니다.</p>
+
+<p>반면에 REST API는 HTTP API에 여러가지 제약 조건이 추가됩니다.</p>
+
+<p>REST는 다음 4가지 제약조건을 만족해야 합니다.</p>
+
+<p>(https://ko.wikipedia.org/wiki/REST)</p>
+
+<ul>
+  <li>
+    <p>자원의 식별</p>
+  </li>
+  <li>
+    <p>메시지를 통한 리소스 조작</p>
+  </li>
+  <li>
+    <p>자기서술적 메서지</p>
+  </li>
+  <li>
+    <p>애플리케이션의 상태에 대한 엔진으로서 하이퍼미디어</p>
+  </li>
+</ul>
+
+<p>여러가지가 있지만 대표적으로 구현하기 어려운 부분이 마지막에 있는 부분인데요. 이것은 HTML처럼 하이퍼링크가 추가되어서 다음에 어떤 API를 호출해야 하는지를 해당 링크를 통해서 받을 수 있어야 합니다.</p>
+
+<p>그리고 이런 부분을 완벽하게 지키면서 개발하는 것을 RESTful API라고 하는데요. 실무에서 이런 방법으로 개발하는 것은 현실적으로 어렵고, 또 추가 개발 비용대비 효과가 있는 것도 아닙니다.</p>
+
+<p>그런데 이미 많은 사람들이 해당 조건을 지키지 않아도 REST API라고 하기 때문에, HTTP API나 REST API를 거의 같은 의미로 사용하고 있습니다. 하지만 앞서 말씀드린 것 처럼 엄격하게 위의 내용들을 모두 지켜야 REST API라고 할 수 있습니다.(하지만 다들 HTTP API를 REST API라고 이미 하고 있기 때문에, 누군가 REST API라고 하면 그냥 아~ HTTP API를 이야기 하는구나 라고 생각하고 들으시면 됩니다. 물론 엄격하게는 다릅니다.)</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/RP_f5dMoHFc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://doubleoctopus.com/security-wiki/protocol/secure-socket-shell/">The Secret Security Wiki</a></li>
+  <li><a href="https://www.inflearn.com/questions/126743" target="_blank">이영한님의 HTTP API와 REST API의 차이에 관한 질문에 대한 답변</a></li>
+  <li><a href="https://restfulapi.net/resource-naming/" target="_blank">REST 논문을 정리한 자료</a></li>
 </ul>
 
     </div>
@@ -648,7 +696,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Network%20Series%20[Part8]:%20SSH(Secure%20SHell)%EC%9D%B4%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80&url=http://localhost:4000/network-series8"
+          href="https://twitter.com/intent/tweet?text=Network%20Series%20[Part8]:%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%ED%99%9C%EC%9A%A9%ED%8E%B8(2)%20REST%20API&url=http://localhost:4000/network-series8"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -658,12 +706,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/network-series8&amp;media=http://localhost:4000/images/cs_logo.jpeg&amp;description=Network%20Series%20[Part8]:%20SSH(Secure%20SHell)%EC%9D%B4%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/network-series8&amp;media=http://localhost:4000/images/cs_logo.jpeg&amp;description=Network%20Series%20[Part8]:%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%ED%99%9C%EC%9A%A9%ED%8E%B8(2)%20REST%20API"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/network-series8&title=Network%20Series%20[Part8]:%20SSH(Secure%20SHell)%EC%9D%B4%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/network-series8&title=Network%20Series%20[Part8]:%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%ED%99%9C%EC%9A%A9%ED%8E%B8(2)%20REST%20API&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -672,6 +720,14 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
+
+  
 
   
   	
@@ -685,10 +741,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/network-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Network Series [Part7]: 소켓(Socket)이란 무엇인가</a>
+      <a href="/network-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Network Series [Part7]: 네트워크 활용편(1) 웹 브라우저</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/network-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -736,18 +792,32 @@ Table of Contents
             
       
             
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-11T21:01:35+09:00">11 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-17T21:01:35+09:00">17 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/two-pointer">
-        <img class="lazy" data-src="/images/algorithm_logo.webp" alt="Coding Test Series [Part20]: 투 포인터(Two-Pointers)) - 문제">
+      <a class="article__image" href="/network-series12">
+        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크">
       </a>
       
 
@@ -756,7 +826,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/two-pointer">Coding Test Series [Part20]: 투 포인터(Two-Pointers)) - 문제</a>
+        <a href="/network-series12">Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크</a>
       </h2>
 
       
@@ -780,13 +850,13 @@ Table of Contents
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-11T21:01:35+09:00">11 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-16T21:01:35+09:00">16 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/stack">
-        <img class="lazy" data-src="/images/algorithm_logo.webp" alt="Coding Test Series [Part19]: 스택(Stack) - 문제">
+      <a class="article__image" href="/network-series11">
+        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 활용편(5) 분산 시스템(Distributed System)">
       </a>
       
 
@@ -795,7 +865,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/stack">Coding Test Series [Part19]: 스택(Stack) - 문제</a>
+        <a href="/network-series11">Network Series [Part11]: 네트워크 활용편(5) 분산 시스템(Distributed System)</a>
       </h2>
 
       
@@ -819,13 +889,13 @@ Table of Contents
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-11T21:01:35+09:00">11 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-16T21:01:35+09:00">16 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/sorting">
-        <img class="lazy" data-src="/images/algorithm_logo.webp" alt="Coding Test Series [Part18]: 정렬 알고리즘(Sorting Algorithm) - 문제">
+      <a class="article__image" href="/network-series10">
+        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part10]: 네트워크 활용편(4) 로드 밸런서(Load Balancer)">
       </a>
       
 
@@ -834,7 +904,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/sorting">Coding Test Series [Part18]: 정렬 알고리즘(Sorting Algorithm) - 문제</a>
+        <a href="/network-series10">Network Series [Part10]: 네트워크 활용편(4) 로드 밸런서(Load Balancer)</a>
       </h2>
 
       

@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Network Series [Part6]: RESTful API란'
+title:  'Network Series [Part8]: 네트워크 활용편(2) REST API'
 description: 
-date:   2022-02-03 15:01:35 +0300
+date:   2022-07-14 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
@@ -15,6 +15,7 @@ tags: Network
 *  TOC
 {:toc}
 ---
+
 
 HTTP API와 REST API는 사실 거의 같은 의미로 사용됩니다.
 
