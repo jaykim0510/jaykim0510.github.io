@@ -16,6 +16,8 @@ tags: Network
 {:toc}
 ---
 
+# 네트워크 관련 리눅스 명령어
+
 ifconfig, ip, netstat, ss, iptables, ufw, ping, route, curl, wget
 
 

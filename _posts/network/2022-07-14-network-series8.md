@@ -16,6 +16,7 @@ tags: Network
 {:toc}
 ---
 
+**REpresentational State Transfer**  
 
 HTTP API와 REST API는 사실 거의 같은 의미로 사용됩니다.
 
@@ -50,4 +51,5 @@ REST는 다음 4가지 제약조건을 만족해야 합니다.
 # 참고
 
 - [이영한님의 HTTP API와 REST API의 차이에 관한 질문에 대한 답변](https://www.inflearn.com/questions/126743){:target="_blank"}
-- [REST 논문을 정리한 자료](https://restfulapi.net/resource-naming/){:target="_blank"}
+- [REST 논문을 정리한 자료](https://restfulapi.net/){:target="_blank"}
+- [정상우, REST를 보다 RESTful 하게 API 만들기](https://pronist.dev/146){:target="_blank"}

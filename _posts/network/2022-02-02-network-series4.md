@@ -52,6 +52,9 @@ HTTP가 하는 역할은 무엇일까요? 저희는 응용 계층에서 데이�
 - HTTP 메시지
 
 # URL
+
+![](/images/network_34.png)
+
 URL은 Uniform Resource Locator의 약자입니다. URL은 URI(Uniform Resource Identifier)를 표현하기 위한 방법 중 하나입니다. URL말고도 URN이라는 것이 있지만 지금은 거의 URL만 사용하기 때문에 URN은 생략하도록 하겠습니다.  
 
 인터넷에서 어떤 **자원(회원 정보, 주문서, 사진, 동영상 등)을 유일하게 표현하기 위해 URI라는 개념이 등장**했고 이를 위한 방법으로 URL을 사용하는 것입니다. **URL은 이러한 자원들에게 부여된 고유한 주소**를 말합니다.  
