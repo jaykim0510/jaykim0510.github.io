@@ -1,7 +1,11 @@
-I"�3<hr />
+I"�><hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#http" id="markdown-toc-http">HTTP</a></li>
+  <li><a href="#http" id="markdown-toc-http">HTTP</a>    <ul>
+      <li><a href="#http-버전-차이" id="markdown-toc-http-버전-차이">HTTP 버전 차이</a></li>
+      <li><a href="#http의-특징" id="markdown-toc-http의-특징">HTTP의 특징</a></li>
+    </ul>
+  </li>
   <li><a href="#url" id="markdown-toc-url">URL</a></li>
   <li><a href="#http-method" id="markdown-toc-http-method">HTTP Method</a></li>
   <li><a href="#http-메세지" id="markdown-toc-http-메세지">HTTP 메세지</a>    <ul>
@@ -38,11 +42,51 @@
 
 <h1 id="http">HTTP</h1>
 
-<p><strong>HTTP(HyperText Transfer Protocol)는 응용 계층(Application layer)에서 압도적으로 많이 사용되는 프로토콜</strong>입니다.</p>
+<p><strong>HTTP(HyperText Transfer Protocol)는 응용 계층(Application layer)에서 압도적으로 많이 사용되는 프로토콜</strong>입니다. 요즘에는 모든 데이터(텍스트, 이미지, 음성, 영상, 파일, JSON 등)를 HTTP 메시지에 담아서 전송합니다.</p>
 
 <p>HTTP가 하는 역할은 무엇일까요? 저희는 응용 계층에서 데이터를 주고받기 위해(크롬, 사파리와 같은 웹 브라우저에서 뉴스, 사진, 동영상을 보고 물건을 주문하는 것과 같은 행위) 클라이언트는 요청(request), 서버는 응답(response)하는 방식을 사용합니다.  이 때 응용 계층에 있는 단말기(우리의 핸드폰, 노트북 그리고 구글이 가지고 있는 웹 서버와 같은 것들)들이 서로 일관된 방법으로 데이터를 주고받기 위해 규약이 필요했는데 이때 생긴 규약이 바로 HTTP입니다.</p>
 
 <p>이 때 클라이언트는 <strong>HTTP 메세지를 작성하기 위해 두 가지를 사용</strong>합니다. 바로 <strong>URL</strong>과 <strong>HTTP 메소드</strong>입니다.</p>
+
+<h2 id="http-버전-차이">HTTP 버전 차이</h2>
+
+<ul>
+  <li>HTTP/1.1: 1997년에 등장해서 현재까지 가장 많이 사용하는 버전</li>
+  <li>HTTP/2:</li>
+  <li>HTTP/3: UDP기반으로 개발됨</li>
+</ul>
+
+<h2 id="http의-특징">HTTP의 특징</h2>
+
+<ul>
+  <li>클라이언트/서버 구조로 동작
+    <ul>
+      <li>클라이언트가 request를 보내면 서버가 response를 돌려주는 구조</li>
+    </ul>
+  </li>
+  <li>무상태(Stateless) 프로토콜
+    <ul>
+      <li>서버가 클라이언트의 상태를 보존하지 않음 (그래서 클라이언트가 알아서 자신의 상태를 잘 업데이트해서 서버에 전달하게 됨)</li>
+      <li>장점: 서버 확장성 높음(서버가 중간에 바뀌어도 된다. 어차피 클라이언트가 부담하게 되므로)</li>
+      <li>장점: 특정 서버에 의존하지 않게 되므로 서버 장애에 강인하다</li>
+      <li>단점: 클라이언트가 추가 데이터 전송해야함</li>
+      <li>로그인이 필요한 서비스의 경우 로그인 상태를 서버에 유지해야하므로 이 때는 브라우저의 쿠키와 서버의 세션을 조합해서 보완해야함</li>
+    </ul>
+  </li>
+  <li>비연결성
+    <ul>
+      <li>서버와 클라이언트가 계속 연결을 유지하게 된다면 클라이언트가 늘어날때마다 서버의 리소스 부담 계속 커지게 됨</li>
+      <li>클라이언트가 request를 보내고 서버가 response를 보낸 후 요청을 끊는다 -&gt; 서버는 최소한의 자원만 사용하게 됨</li>
+      <li>HTTP는 기본적으로 연결을 유지하지 않는 모델</li>
+      <li>연결하는데 시간이 별로 소요되지 않나? -&gt; TCP/IP 연결 새로 맺어야함 -&gt; 3-way handshake 시간이 추가된다</li>
+      <li>그리고 네이버 검색을 예로 들때, 우리가 HTTP 메세지를 보내고 response를 돌려줄 때 검색 결과만 돌려주는게 아니라 그안에 포함된 HTML, CSS, 이미지 등을 함께 돌려줘야 한다 -&gt; 이런 문제를 HTTP Persistent Connection으로 해결</li>
+      <li>Persistent Connection은 내부 메커니즘에 의해 보통 하나의 웹 페이지를 띄울 동안 연결을 계속 지속시킨다</li>
+      <li>HTTP/2, HTTP/3 오면서는 HTTP Persistent Connection이 더욱 발전됨
+<img src="/images/network_30.png" alt="" /></li>
+    </ul>
+  </li>
+  <li>HTTP 메시지</li>
+</ul>
 
 <h1 id="url">URL</h1>
 <p>URL은 Uniform Resource Locator의 약자입니다. URL은 URI(Uniform Resource Identifier)를 표현하기 위한 방법 중 하나입니다. URL말고도 URN이라는 것이 있지만 지금은 거의 URL만 사용하기 때문에 URN은 생략하도록 하겠습니다.</p>
