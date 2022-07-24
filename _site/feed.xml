@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 24 Jul 2022 05:13:32 +0900</pubDate>
-        <lastBuildDate>Sun, 24 Jul 2022 05:13:32 +0900</lastBuildDate>
+        <pubDate>Mon, 25 Jul 2022 05:10:01 +0900</pubDate>
+        <lastBuildDate>Mon, 25 Jul 2022 05:10:01 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -351,9 +351,101 @@
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#로드-밸런싱의-정의&quot; id=&quot;markdown-toc-로드-밸런싱의-정의&quot;&gt;로드 밸런싱의 정의&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#로드-밸런서의-특징&quot; id=&quot;markdown-toc-로드-밸런서의-특징&quot;&gt;로드 밸런서의 특징&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#로드-밸런서가-제공하는-이점&quot; id=&quot;markdown-toc-로드-밸런서가-제공하는-이점&quot;&gt;로드 밸런서가 제공하는 이점&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#로드-밸런싱-방법&quot; id=&quot;markdown-toc-로드-밸런싱-방법&quot;&gt;로드 밸런싱 방법&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#round-robin-algorithm&quot; id=&quot;markdown-toc-round-robin-algorithm&quot;&gt;Round Robin Algorithm&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#least-connections&quot; id=&quot;markdown-toc-least-connections&quot;&gt;Least connections&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#source-ip-hash&quot; id=&quot;markdown-toc-source-ip-hash&quot;&gt;Source IP hash&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#the-least-bandwidth-method&quot; id=&quot;markdown-toc-the-least-bandwidth-method&quot;&gt;The least bandwidth method&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#로드-밸런싱의-이점&quot; id=&quot;markdown-toc-로드-밸런싱의-이점&quot;&gt;로드 밸런싱의 이점&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#software-load-balancers-vs-hardware-load-balancers&quot; id=&quot;markdown-toc-software-load-balancers-vs-hardware-load-balancers&quot;&gt;Software Load Balancers vs. Hardware Load Balancers&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#로드-밸런서-종류&quot; id=&quot;markdown-toc-로드-밸런서-종류&quot;&gt;로드 밸런서 종류&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr /&gt;
+
+&lt;h1 id=&quot;로드-밸런싱의-정의&quot;&gt;로드 밸런싱의 정의&lt;/h1&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Load balancing is the process of distributing network traffic across multiple servers. This ensures no single server bears too much demand. By spreading the work evenly, load balancing improves application responsiveness. It also increases availability of applications and websites for users. Modern applications cannot run without load balancers. Over time, software load balancers have added additional capabilities including application security.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/network_37.svg&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;로드-밸런서의-특징&quot;&gt;로드 밸런서의 특징&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;the load balancer decides which servers can handle that traffic. This maintains a good UX&lt;/li&gt;
+  &lt;li&gt;Load balancers manage the flow of information between the server and an endpoint device&lt;/li&gt;
+  &lt;li&gt;Load balancers conduct continuous health checks on servers to ensure they can handle requests&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;로드-밸런서가-제공하는-이점&quot;&gt;로드 밸런서가 제공하는 이점&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Automatically detect server failures and redirect client traffic&lt;/li&gt;
+  &lt;li&gt;Allow for server maintenance without any impact&lt;/li&gt;
+  &lt;li&gt;Provide automated disaster recovery to backup sites&lt;/li&gt;
+  &lt;li&gt;Add and remove application servers without disruption&lt;/li&gt;
+  &lt;li&gt;Monitor and block malicious content&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;로드-밸런싱-방법&quot;&gt;로드 밸런싱 방법&lt;/h1&gt;
+
+&lt;h2 id=&quot;round-robin-algorithm&quot;&gt;Round Robin Algorithm&lt;/h2&gt;
+
+&lt;p&gt;Round robin (RR) algorithm is a circular distribution of requests to enterprise servers in a sequence. There are two types of Round Robin – Weighted Round Robin and Dynamic Round Robin. Used mainly for a cluster of different servers, in weighted round robin each server is assigned a weight depending on its composition. Based on the preassigned efficiency the load is distributed in a cyclical procedure. Dynamic round robin are used to forward requests to associated servers based on real time calculation of assigned server weights.&lt;/p&gt;
+
+&lt;h2 id=&quot;least-connections&quot;&gt;Least connections&lt;/h2&gt;
+
+&lt;p&gt;By taking into consideration the number of active and current connections to each application instance, ‘Least Connections’ load balancing algorithm distributes the load by choosing the server with the least number of active transactions (connections).&lt;/p&gt;
+
+&lt;h2 id=&quot;source-ip-hash&quot;&gt;Source IP hash&lt;/h2&gt;
+
+&lt;p&gt;In a source IP Hash, load balancing a server is selected based on a unique hash key. The Hash key is generated by taking the source and destination of the request. Based on the generated hash key, servers are assigned to clients.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-least-bandwidth-method&quot;&gt;The least bandwidth method&lt;/h2&gt;
+
+&lt;p&gt;In the least bandwidth method backend servers are selected based on the server’s bandwidth consumption i.e the server consuming least bandwidth is selected (measured in Mbps). Similar to least bandwidth method is the least packets method. Here the server transmitting least packets are selected by the load balancer.&lt;/p&gt;
+
+&lt;h1 id=&quot;로드-밸런싱의-이점&quot;&gt;로드 밸런싱의 이점&lt;/h1&gt;
+
+&lt;p&gt;Load balancing can do more than just act as a network traffic cop. Software load balancers provide benefits like predictive analytics that determine traffic bottlenecks before they happen. As a result, the software load balancer gives an organization actionable insights. These are key to automation and can help drive business decisions.&lt;/p&gt;
+
+&lt;p&gt;In the seven-layer Open System Interconnection (OSI) model, network firewalls are at levels one to three (L1-Physical Wiring, L2-Data Link and L3-Network). Meanwhile, load balancing happens between layers four to seven (L4-Transport, L5-Session, L6-Presentation and L7-Application).&lt;/p&gt;
+
+&lt;p&gt;Load balancers have different capabilities, which include:&lt;/p&gt;
+
+&lt;p&gt;L4 — directs traffic based on data from network and transport layer protocols, such as IP address and TCP port.&lt;/p&gt;
+
+&lt;p&gt;L7 — adds content switching to load balancing. This allows routing decisions based on attributes like HTTP header, uniform resource identifier, SSL session ID and HTML form data.
+GSLB — Global Server Load Balancing extends L4 and L7 capabilities to servers in different geographic locations.&lt;/p&gt;
+
+&lt;p&gt;More enterprises are seeking to deploy cloud-native applications in data centers and public clouds. This is leading to significant changes in the capability of load balancers. In turn, this creates both challenges and opportunities for infrastructure and operations leaders.&lt;/p&gt;
+
+&lt;h1 id=&quot;software-load-balancers-vs-hardware-load-balancers&quot;&gt;Software Load Balancers vs. Hardware Load Balancers&lt;/h1&gt;
+
+&lt;p&gt;Load balancers run as hardware appliances or are software-defined. Hardware appliances often run proprietary software optimized to run on custom processors. As traffic increases, the vendor simply adds more load balancing appliances to handle the volume. Software defined load balancers usually run on less-expensive, standard Intel x86 hardware. Installing the software in cloud environments like AWS EC2 eliminates the need for a physical appliance.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/network_38.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;로드-밸런서-종류&quot;&gt;로드 밸런서 종류&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Network Server Load Balancers(NLB)&lt;/strong&gt;: Load balancers entered the market in the mid-1990s to support the surge of traffic on the internet. Load balancers had basic functionality designed to pool server resources to meet this demand. The load balancer managed connections based on the packet header. Specifically, they looked at the 5-tuple – source IP, destination IP, source port, destination port, and IP protocol. This is the entry of the network server load balancer or Layer 4 load balancer.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Application Load Balancers(ALB)&lt;/strong&gt;: As technology evolved, so did the load balancers. They became more advanced and started providing content awareness and content switching. These load balancers looked beyond the packet header and into the content payload. These load balancers look at the content such as the URL, HTTP header, and other things to make load balancing decisions. These are the application load balancers or Layer 7 load balancers.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Elastic Load Balancers(ELB)&lt;/strong&gt;: Elastic Load Balancing scales traffic to an application as demand changes over time. It uses system health checks to learn the status of application pool members (application servers) and routes traffic appropriately to available servers, manages fail-over to high availability targets, or automatically spins-up additional capacity.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 
@@ -379,9 +471,12 @@
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#네트워크-관련-리눅스-명령어&quot; id=&quot;markdown-toc-네트워크-관련-리눅스-명령어&quot;&gt;네트워크 관련 리눅스 명령어&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr /&gt;
+
+&lt;h1 id=&quot;네트워크-관련-리눅스-명령어&quot;&gt;네트워크 관련 리눅스 명령어&lt;/h1&gt;
 
 &lt;p&gt;ifconfig, ip, netstat, ss, iptables, ufw, ping, route, curl, wget&lt;/p&gt;
 
