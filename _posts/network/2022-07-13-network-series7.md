@@ -108,6 +108,14 @@ cat ~/Library/Application Support/Google/Chrome/Default/Cookies
 ## 세션
 
 
+# Do web browsers use different outgoing ports for different tabs?
+
+Each connection to a website uses a different socket with default destination TCP port 80 for plain HTTP and 443 for HTTPS. For the socket to be unique, the combination of the source IP address, source TCP port, destination IP address and destination TCP port must be different.  
+
+If you have multiple connections to the same website (assuming the website uses only 1 IP address) from the same computer, a different source TCP port must be used. This way, each connection is unique.  
+
+![](/images/network_41.png)
+
 # 참고
 
 - [CLOUD FLARE: What are cookies?, Cookies definition](https://www.cloudflare.com/ko-kr/learning/privacy/what-are-cookies/){:target="_blank"}

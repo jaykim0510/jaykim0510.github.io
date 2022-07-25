@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 25 Jul 2022 22:19:21 +0900</pubDate>
-        <lastBuildDate>Mon, 25 Jul 2022 22:19:21 +0900</lastBuildDate>
+        <pubDate>Tue, 26 Jul 2022 05:38:59 +0900</pubDate>
+        <lastBuildDate>Tue, 26 Jul 2022 05:38:59 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -471,16 +471,148 @@ GSLB — Global Server Load Balancing extends L4 and L7 capabilities to servers 
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#네트워크-관련-리눅스-명령어&quot; id=&quot;markdown-toc-네트워크-관련-리눅스-명령어&quot;&gt;네트워크 관련 리눅스 명령어&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#네트워크-관련-리눅스-명령어&quot; id=&quot;markdown-toc-네트워크-관련-리눅스-명령어&quot;&gt;네트워크 관련 리눅스 명령어&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#ifconfig&quot; id=&quot;markdown-toc-ifconfig&quot;&gt;ifconfig&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#netstat&quot; id=&quot;markdown-toc-netstat&quot;&gt;netstat&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#iptables&quot; id=&quot;markdown-toc-iptables&quot;&gt;iptables&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ping&quot; id=&quot;markdown-toc-ping&quot;&gt;ping&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#wget&quot; id=&quot;markdown-toc-wget&quot;&gt;wget&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#curl&quot; id=&quot;markdown-toc-curl&quot;&gt;curl&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ssh&quot; id=&quot;markdown-toc-ssh&quot;&gt;ssh&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr /&gt;
 
 &lt;h1 id=&quot;네트워크-관련-리눅스-명령어&quot;&gt;네트워크 관련 리눅스 명령어&lt;/h1&gt;
 
-&lt;p&gt;ifconfig, ip, netstat, ss, iptables, ufw, ping, route, curl, wget&lt;/p&gt;
+&lt;p&gt;ifconfig, ip, netstat, ss, iptables, ping, ssh, telnet, route, curl, wget&lt;/p&gt;
+
+&lt;h2 id=&quot;ifconfig&quot;&gt;ifconfig&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;네트워크 인터페이스의 활성/비활성 여부, ip 관련 정보를 확인할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ifconfig
+
+----------------------------------------------------------------------------
+en0: flags=8863&amp;lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&amp;gt; mtu 1500
+    ...
+	inet &amp;lt;ip주소&amp;gt; netmask &amp;lt;서브넷 마스크&amp;gt; broadcast &amp;lt;브로드캐스트 주소&amp;gt;
+    ...
+	status: active
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;netstat&quot;&gt;netstat&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Print network connections, routing tables, interface statistics, masquerade connections, and multicast memberships&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;mac에서 netstat은 ubuntu, redhat 계열과는 가지고 있는 옵션이 다름
+    &lt;ul&gt;
+      &lt;li&gt;-a 기본 출력에 포함되지 않은 netstat의 출력에 서버 포트를 포함합니다.&lt;/li&gt;
+      &lt;li&gt;-g 멀티 캐스트 연결과 관련된 정보를 표시합니다.&lt;/li&gt;
+      &lt;li&gt;-I interface는 지정된 인터페이스에 대한 패킷 데이터를 제공합니다. 사용 가능한 모든 인터페이스는 -i 깃발이지만 en0 일반적으로 기본 발신 네트워크 인터페이스입니다. (소문자에 유의하십시오.)&lt;/li&gt;
+      &lt;li&gt;-n 이름이있는 원격 주소의 레이블을 억제합니다. 이것은 제한된 정보만을 희생시키면서 netstat의 출력 속도를 크게 향상시킵니다.&lt;/li&gt;
+      &lt;li&gt;-p 프로토콜은 특정 네트워킹 프로토콜과 관련된 트래픽을 나열합니다. 전체 프로토콜 목록은 / etc / protocols,하지만 가장 중요한 것은 udp 와 TCP.&lt;/li&gt;
+      &lt;li&gt;-r 네트워크에서 패킷이 라우팅되는 방식을 보여주는 라우팅 테이블을 표시합니다.&lt;/li&gt;
+      &lt;li&gt;-s 활성 여부에 관계없이 모든 프로토콜에 대한 네트워크 통계를 표시합니다.&lt;/li&gt;
+      &lt;li&gt;-v 특히 각 열린 포트와 연관된 프로세스 ID (PID)를 표시하는 열을 추가하여 자세한 정보를 제공합니다.&lt;/li&gt;
+      &lt;li&gt;자주 사용하는 예시
+        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;netstat -avp tcp
+
+# 포트 열고 LISTEN 하고 있는 네트워크 엔드포인트
+netstat -a | grep -i LISTEN
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;ubuntu 계열
+    &lt;ul&gt;
+      &lt;li&gt;자주 사용하는 예시
+        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;netstat -nlp
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+        &lt;p&gt;&lt;img src=&quot;/images/network_40.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;iptables&quot;&gt;iptables&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;administration tool for IPv4 packet filtering(방화벽) and NAT&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ping&quot;&gt;ping&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;특정 서버가 켜져있는지/접근 가능한지 확인
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ping &amp;lt;ip&amp;gt;
+
+ping -c &amp;lt;ping날릴 횟수&amp;gt; &amp;lt;ip&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;포트 번호를 지정하고 싶은 경우에는 tcping 라는 커맨드 툴 설치해야함
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install tcping
+
+tcping &amp;lt;ip&amp;gt; &amp;lt;port&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;wget&quot;&gt;wget&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;network downloader&lt;/li&gt;
+  &lt;li&gt;기본적으로 다운이 디폴트
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wget &amp;lt;URL&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;&lt;img src=&quot;/images/network_44.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;curl&quot;&gt;curl&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;tool for transfering data from or to a server&lt;/li&gt;
+  &lt;li&gt;기본적으로 터미널 화면에 출력이 디폴트
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &amp;lt;URL&amp;gt;
+
+curl &amp;lt;URL&amp;gt; &amp;gt; &amp;lt;원하는 파일명&amp;gt;
+
+curl -o &amp;lt;원하는 파일명&amp;gt; &amp;lt;URL&amp;gt;
+
+curl -O &amp;lt;URL&amp;gt;/&amp;lt;원하는 파일명&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;&lt;img src=&quot;/images/network_45.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;뭔가 curl은 파일의 다운로드 경로를 넣어줘도 HTML 코드가 출력된다 (파일을 다운로드하고자 할 때는 wget인건가 무조건?)&lt;/li&gt;
+  &lt;li&gt;서버에 REST API 형태로 HTTP Request를 전송할 수도 있다
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -X POST -H &amp;lt;헤더&amp;gt; &amp;lt;URL&amp;gt; -d &amp;lt;데이터&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ssh&quot;&gt;ssh&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;remote login program
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh -i &amp;lt;pem파일&amp;gt; &amp;lt;username&amp;gt;@&amp;lt;host&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;어플리케이션 계층에서 제공&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://kibua20.tistory.com/148&quot;&gt;kibua20, 자주 사용하는 curl 명령어 옵션과 예제&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <pubDate>Fri, 15 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/network-series9</link>
@@ -577,6 +709,7 @@ GSLB — Global Server Load Balancing extends L4 and L7 capabilities to servers 
       &lt;li&gt;&lt;a href=&quot;#세션&quot; id=&quot;markdown-toc-세션&quot;&gt;세션&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#do-web-browsers-use-different-outgoing-ports-for-different-tabs&quot; id=&quot;markdown-toc-do-web-browsers-use-different-outgoing-ports-for-different-tabs&quot;&gt;Do web browsers use different outgoing ports for different tabs?&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr /&gt;
@@ -683,6 +816,14 @@ GSLB — Global Server Load Balancing extends L4 and L7 capabilities to servers 
 &lt;p&gt;&lt;img src=&quot;/images/network_37.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;세션&quot;&gt;세션&lt;/h2&gt;
+
+&lt;h1 id=&quot;do-web-browsers-use-different-outgoing-ports-for-different-tabs&quot;&gt;Do web browsers use different outgoing ports for different tabs?&lt;/h1&gt;
+
+&lt;p&gt;Each connection to a website uses a different socket with default destination TCP port 80 for plain HTTP and 443 for HTTPS. For the socket to be unique, the combination of the source IP address, source TCP port, destination IP address and destination TCP port must be different.&lt;/p&gt;
+
+&lt;p&gt;If you have multiple connections to the same website (assuming the website uses only 1 IP address) from the same computer, a different source TCP port must be used. This way, each connection is unique.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/network_41.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 

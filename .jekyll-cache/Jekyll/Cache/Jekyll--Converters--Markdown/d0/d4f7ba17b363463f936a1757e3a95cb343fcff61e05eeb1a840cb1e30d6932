@@ -1,0 +1,137 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#웹-브라우저-렌더링-과정" id="markdown-toc-웹-브라우저-렌더링-과정">웹 브라우저 렌더링 과정</a></li>
+  <li><a href="#캐시와-쿠키" id="markdown-toc-캐시와-쿠키">캐시와 쿠키</a>    <ul>
+      <li><a href="#캐시" id="markdown-toc-캐시">캐시</a>        <ul>
+          <li><a href="#웹-브라우저-캐시와-cpu-캐시" id="markdown-toc-웹-브라우저-캐시와-cpu-캐시">웹 브라우저 캐시와 CPU 캐시</a></li>
+          <li><a href="#웹-브라우저-캐시의-종류" id="markdown-toc-웹-브라우저-캐시의-종류">웹 브라우저 캐시의 종류</a></li>
+          <li><a href="#프록시-캐시" id="markdown-toc-프록시-캐시">프록시 캐시</a></li>
+        </ul>
+      </li>
+      <li><a href="#쿠키" id="markdown-toc-쿠키">쿠키</a></li>
+      <li><a href="#세션" id="markdown-toc-세션">세션</a></li>
+    </ul>
+  </li>
+  <li><a href="#do-web-browsers-use-different-outgoing-ports-for-different-tabs" id="markdown-toc-do-web-browsers-use-different-outgoing-ports-for-different-tabs">Do web browsers use different outgoing ports for different tabs?</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+<hr />
+
+<h1 id="웹-브라우저-렌더링-과정">웹 브라우저 렌더링 과정</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>대기열: 브라우저는 주소창을 통해 입력한 요청을 대기열에 넣는다
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>캐싱: 요청에 대한 응답값을 프록시 서버 캐시 또는 웹 브라우저 캐시에 저장하고 재요청시 캐싱된 값을 리턴
+
+브라우저 캐시: 쿠키, 로컬 스토리지, 세션 스토리지 등을 포함한 캐시
+
+공유 프록시 캐시: 서버 앞 단에 클라이언트와 가깝게 프록시 서버를 배치한다. 프록시 서버에 저장된 응답값이 프록시 캐시
+(Node.js 앞에 있는 nginx)
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DNS: URL의 도메인명을 IP주소로 변환한다. 이 과정 또한 바로 DNS로 요청을 보내지 않고, 호스트 파일과 같이 캐시된 데이터가 있는지 먼저 확인한다
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>라우팅: DNS가 resolve한 IP주소와 ARP 과정을 통해 얻은 MAC 주소를 이용해 목적지 IP 주소로 라우팅 한다.
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>초기연결: 라우팅할 때 처음부터 데이터를 요청하는 것이 아니라 먼저 TCP 3 way handshake를 이용해 연결을 한다
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>다운로드: 이제 요청에 대한 응답값과, 그외에 필요한 HTML, CSS, 이미지 등을 서버로부터 받는다
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>렌더링: 웹 브라우저가 서버로부터 받아온 데이터를 이용해 렌더링하여 사용자에게 제공한다
+</code></pre></div></div>
+
+<p><img src="/images/network_33.png" alt="" /></p>
+
+<h1 id="캐시와-쿠키">캐시와 쿠키</h1>
+
+<h2 id="캐시">캐시</h2>
+
+<blockquote>
+  <p>The goal of a caching is to store some resource “closer” to the access point than it was before</p>
+</blockquote>
+
+<h3 id="웹-브라우저-캐시와-cpu-캐시">웹 브라우저 캐시와 CPU 캐시</h3>
+
+<blockquote>
+  <p>The CPU cache consists of special circuits within the CPU that are designed to cache memory, i.e. the cache is implemented in hardware as part of the physical CPU. This special cache hardware has absolutely nothing to do with the browser cache</p>
+</blockquote>
+
+<ul>
+  <li><strong>웹 브라우저 캐시</strong></li>
+</ul>
+
+<blockquote>
+  <p>We all have cache stored in our internet browser. It’s essentially a folder which contains small pieces of information taken from our browsing experience and the sites we visit. The aim is to make pages we revisit load faster.</p>
+</blockquote>
+
+<ul>
+  <li><strong>CPU 캐시</strong></li>
+</ul>
+
+<blockquote>
+  <p>The purpose of the cache memory component is to increase speed. It’s located physically closer to the processor than the RAM component making it 10 to 100 times faster than RAM. However, its function is very different. The cache memory stores instructions and data that are used repeatedly by programs, enhancing the overall performance.</p>
+</blockquote>
+
+<h3 id="웹-브라우저-캐시의-종류">웹 브라우저 캐시의 종류</h3>
+
+<ul>
+  <li>로컬 스토리지
+    <ul>
+      <li>키/값 쌍의 형태로 클라이언트 브라우저에서 데이터를 저장하는 방법</li>
+      <li>수동으로 삭제하지 않는 한 영구적으로 저장소에 남아 있습니다.
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mac의 경우
+~/Library/Application Support/Google/Chrome/Default/Local Storage/
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>세션 스토리지
+    <ul>
+      <li>로컬 스토리지와 유사하지만 탭을 닫을 때 삭제됨</li>
+    </ul>
+  </li>
+  <li>쿠키</li>
+</ul>
+
+<p><img src="/images/network_35.png" alt="" /></p>
+
+<h3 id="프록시-캐시">프록시 캐시</h3>
+
+<p>공유 프록시 캐시: 서버 앞 단에 클라이언트와 가깝게 프록시 서버를 배치한다. 프록시 서버에 저장된 응답값이 프록시 캐시<br />
+(Node.js 앞에 있는 nginx, AWS의 CloudFront)</p>
+
+<h2 id="쿠키">쿠키</h2>
+
+<p>쿠키는 웹 서버가 생성하여 웹 브라우저로 보내는 정보의 작은 파일입니다. 웹 브라우저는 미리 정해진 시간 동안 또는 웹 사이트에서 사용자의 세션 기간 동안 받은 쿠키를 저장합니다. 사용자가 웹 서버에 대해 향후 요청할 경우 관련 쿠키를 첨부합니다.</p>
+
+<p>쿠키는 웹 사이트가 사용자 경험을 개인화할 수 있도록 사용자에 대한 정보를 웹 사이트에 제공하는 데 도움이 됩니다. 예를 들어, 전자 상거래 웹사이트는 사용자들이 쇼핑 카트에 어떤 상품을 넣었는지 알기 위해 쿠키를 사용한다. 또한 일부 쿠키는 인증 쿠키와 같은 보안 목적으로 필요합니다(아래 참조).</p>
+
+<p>인터넷에서 사용되는 쿠키는 “HTTP 쿠키”라고도 불립니다. 대부분의 웹과 마찬가지로 쿠키는 HTTP 프로토콜을 사용하여 전송됩니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat ~/Library/Application Support/Google/Chrome/Default/Cookies
+</code></pre></div></div>
+
+<p><img src="/images/network_37.png" alt="" /></p>
+
+<h2 id="세션">세션</h2>
+
+<h1 id="do-web-browsers-use-different-outgoing-ports-for-different-tabs">Do web browsers use different outgoing ports for different tabs?</h1>
+
+<p>Each connection to a website uses a different socket with default destination TCP port 80 for plain HTTP and 443 for HTTPS. For the socket to be unique, the combination of the source IP address, source TCP port, destination IP address and destination TCP port must be different.</p>
+
+<p>If you have multiple connections to the same website (assuming the website uses only 1 IP address) from the same computer, a different source TCP port must be used. This way, each connection is unique.</p>
+
+<p><img src="/images/network_41.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://www.cloudflare.com/ko-kr/learning/privacy/what-are-cookies/" target="_blank">CLOUD FLARE: What are cookies?, Cookies definition</a></li>
+</ul>
+:ET
