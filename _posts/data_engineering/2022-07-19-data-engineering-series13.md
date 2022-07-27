@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part12]: Database Internals 개요'
+title:  'Data Engineering Series [Part13]: Database Internals 개요'
 description: 
 date:   2022-07-19 15:01:35 +0300
 image:  '/images/data_engineering_logo.png'

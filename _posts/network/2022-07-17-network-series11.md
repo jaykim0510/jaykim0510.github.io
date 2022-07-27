@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크'
+title:  'Network Series [Part11]: 네트워크 활용편(5) 도커 네트워크와 AWS 네트워크'
 description: 
 date:   2022-07-17 15:01:35 +0300
 image:  '/images/cs_logo.jpeg'

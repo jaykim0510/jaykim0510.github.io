@@ -6,28 +6,24 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크</title>
+  <title>Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/network-series12">
+  <link rel="canonical" href="http://localhost:4000/data-engineering-series16">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크 – Code Museum">
+  <meta name="twitter:title" content="Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제 – Code Museum">
   <meta name="twitter:description" content="
-Table of Contents
-
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/cs_logo.jpeg">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/data_engineering_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크 – Code Museum">
+  <meta property="og:title" content="Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제 – Code Museum">
   <meta property="og:description" content="
-Table of Contents
-
 ">
-  <meta property="og:image" content="http://localhost:4000/images/cs_logo.jpeg">
+  <meta property="og:image" content="http://localhost:4000/images/data_engineering_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -346,7 +342,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크">
+          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제">
         </div>
       </div>
       
@@ -359,15 +355,15 @@ Table of Contents
             
               <div class="post__tags">
                 
-                  <a href="/Network" class="post__tag">#Network</a>
+                  <a href="/Data_Engineering" class="post__tag">#Data_Engineering</a>
                 
                 
-                  <a href="/CS" class="post__tag">#CS</a>
+                  <a href="/DE" class="post__tag">#DE</a>
                 
               </div>
             
  
-          <h1 class="post__title">Network Series [Part12]: 네트워크 활용편(6) 도커 네트워크와 AWS 네트워크</h1>
+          <h1 class="post__title">Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -376,7 +372,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-07-17T21:01:35+09:00">17 Jul 2022</time>
+              <time class="post__date" datetime="2022-07-22T21:01:35+09:00">22 Jul 2022</time>
             </div>
           </div>
   
@@ -398,6 +394,10 @@ Table of Contents
 
 
   
+
+  
+
+  
   	
   	
   	
@@ -409,23 +409,28 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/network-series11" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Network Series [Part11]: 네트워크 활용편(5) 분산 시스템(Distributed System)</a>
+      <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: 분산 시스템(Distributed Systems) 개요</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
 
 
       <hr />
+
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+  <li><a href="#운영체제-관점" id="markdown-toc-운영체제-관점">운영체제 관점</a></li>
+  <li><a href="#네트워크-관점" id="markdown-toc-네트워크-관점">네트워크 관점</a></li>
 </ul>
+
 <hr />
 
-<h1 id="참고">참고</h1>
+<h1 id="운영체제-관점">운영체제 관점</h1>
+
+<h1 id="네트워크-관점">네트워크 관점</h1>
 
     </div>
     <div class="post__tags_list">
@@ -646,22 +651,22 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Network%20Series%20[Part12]:%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%ED%99%9C%EC%9A%A9%ED%8E%B8(6)%20%EB%8F%84%EC%BB%A4%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20AWS%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC&url=http://localhost:4000/network-series12"
+          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(Distributed%20Systems)%EC%97%90%EC%84%9C%EC%9D%98%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C&url=http://localhost:4000/data-engineering-series16"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/network-series12"
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/data-engineering-series16"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/network-series12&amp;media=http://localhost:4000/images/cs_logo.jpeg&amp;description=Network%20Series%20[Part12]:%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%ED%99%9C%EC%9A%A9%ED%8E%B8(6)%20%EB%8F%84%EC%BB%A4%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20AWS%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series16&amp;media=http://localhost:4000/images/data_engineering_logo.png&amp;description=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(Distributed%20Systems)%EC%97%90%EC%84%9C%EC%9D%98%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/network-series12&title=Network%20Series%20[Part12]:%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%ED%99%9C%EC%9A%A9%ED%8E%B8(6)%20%EB%8F%84%EC%BB%A4%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20AWS%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series16&title=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(Distributed%20Systems)%EC%97%90%EC%84%9C%EC%9D%98%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -670,6 +675,10 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
 
   
   	
@@ -683,10 +692,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/network-series11" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Network Series [Part11]: 네트워크 활용편(5) 분산 시스템(Distributed System)</a>
+      <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: 분산 시스템(Distributed Systems) 개요</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -718,7 +727,7 @@ Table of Contents
                 
                 
                   
-                    <a href="/CS" class="section__link related-tag">See all<span> CS</span></a>
+                    <a href="/DE" class="section__link related-tag">See all<span> DE</span></a>
                   
                 
               
@@ -734,39 +743,18 @@ Table of Contents
             
       
             
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-16T21:01:35+09:00">16 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-24T21:01:35+09:00">24 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/network-series11">
-        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 활용편(5) 분산 시스템(Distributed System)">
+      <a class="article__image" href="/data-engineering-series18">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part18]: APIs">
       </a>
       
 
@@ -775,7 +763,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/network-series11">Network Series [Part11]: 네트워크 활용편(5) 분산 시스템(Distributed System)</a>
+        <a href="/data-engineering-series18">Data Engineering Series [Part18]: APIs</a>
       </h2>
 
       
@@ -799,13 +787,13 @@ Table of Contents
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-16T21:01:35+09:00">16 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-23T21:01:35+09:00">23 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/network-series10">
-        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part10]: 네트워크 활용편(4) 로드 밸런서(Load Balancer)">
+      <a class="article__image" href="/data-engineering-series17">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심">
       </a>
       
 
@@ -814,7 +802,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/network-series10">Network Series [Part10]: 네트워크 활용편(4) 로드 밸런서(Load Balancer)</a>
+        <a href="/data-engineering-series17">Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심</a>
       </h2>
 
       
@@ -833,18 +821,25 @@ Table of Contents
             
       
             
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-15T21:01:35+09:00">15 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-21T21:01:35+09:00">21 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/network-series9">
-        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어">
+      <a class="article__image" href="/data-engineering-series15">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part15]: 분산 시스템(Distributed Systems) 개요">
       </a>
       
 
@@ -853,7 +848,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/network-series9">Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어</a>
+        <a href="/data-engineering-series15">Data Engineering Series [Part15]: 분산 시스템(Distributed Systems) 개요</a>
       </h2>
 
       
