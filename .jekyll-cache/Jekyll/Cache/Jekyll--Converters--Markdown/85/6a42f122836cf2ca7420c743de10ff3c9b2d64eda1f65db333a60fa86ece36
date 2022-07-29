@@ -1,4 +1,4 @@
-I"L-<hr />
+I"�0<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -10,7 +10,7 @@
       <li><a href="#아키텍처" id="markdown-toc-아키텍처">아키텍처</a></li>
       <li><a href="#어려운-점" id="markdown-toc-어려운-점">어려운 점</a>        <ul>
           <li><a href="#synchronization" id="markdown-toc-synchronization">Synchronization</a></li>
-          <li><a href="#network-disorder" id="markdown-toc-network-disorder">Network Disorder</a></li>
+          <li><a href="#network-partition" id="markdown-toc-network-partition">Network Partition</a></li>
         </ul>
       </li>
     </ul>
@@ -40,7 +40,7 @@
   <li><strong>Concurrency</strong>: It is naturally present in the Distributed Systems, that deal with the same activity or functionality that can be performed by separate users who are in remote locations. Every local system has its independent Operating Systems and Resources.</li>
   <li><strong>Scalability</strong>: It increases the scale of the system as a number of processors communicate with more users by accommodating to improve the responsiveness of the system.</li>
   <li><strong>Fault tolerance</strong>: It cares about the reliability of the system if there is a failure in Hardware or Software, the system continues to operate properly without degrading the performance the system.</li>
-  <li><strong>Transparency</strong>: It hides the complexity of the Distributed Systems to the Users and Application programs as there should be privacy in every system.</li>
+  <li><strong>Transparency</strong>: It hides the complexity of the Distributed Systems to the Users and Application programs as there should be privacy in every system.(유저는 자신이 사용하는 어플리케이션이 분산시스템인지 인지하지 못함 -&gt; 단일 시스템을 사용하는 것처럼 사용할 수 있음)</li>
 </ul>
 
 <h2 id="장점">장점</h2>
@@ -92,7 +92,19 @@
   <li>Distributed is the one in which there is no centralized time server present. Instead the nodes adjust their time by using their local time and then, taking the average of the differences of time with other nodes. Distributed algorithms overcome the issue of centralized algorithms like the scalability and single point failure. Examples of Distributed algorithms are – Global Averaging Algorithm, Localized Averaging Algorithm, NTP (Network time protocol) etc.</li>
 </ul>
 
-<h3 id="network-disorder">Network Disorder</h3>
+<h3 id="network-partition">Network Partition</h3>
+
+<ul>
+  <li>분산 시스템을 이용한 인터넷 서비스에서 사용하는 어플리케이션의 아키텍처는 대부분 비공유 아키텍처(Shared-nothing)
+    <ul>
+      <li>각 노드는 CPU, RAM, 디스크를 독립적으로 사용(디스크도 독립된다는 점에서 Shared Disk Architecture와 다름)</li>
+    </ul>
+  </li>
+  <li>비공유 시스템에서 장비들이 통신하는 유일한 수단은 네트워크</li>
+  <li>전송 측은 패킷이 전송 된건지, 네트워크 문제인지, 수신 측 서버 문제인지 알 수 없으며 심지어 전달이 실패한건지 아니면 지연된건지 조차 알 수 없음</li>
+</ul>
+
+<p><img src="/images/dist_3.png" alt="" /></p>
 
 <h1 id="분산-파일-시스템">분산 파일 시스템</h1>
 

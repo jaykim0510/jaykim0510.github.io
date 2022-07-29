@@ -1,0 +1,50 @@
+I"<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까" id="markdown-toc-join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까">JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까</a></li>
+  <li><a href="#left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우" id="markdown-toc-left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우">LEFT OUTER JOIN을 사용할 때 조건을 만족하는 행이 2개인 경우</a></li>
+</ul>
+
+<hr />
+
+<h1 id="join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까">JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까</h1>
+
+<h1 id="left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우">LEFT OUTER JOIN을 사용할 때 조건을 만족하는 행이 2개인 경우</h1>
+
+<p>문제 <a href="https://leetcode.com/problems/consecutive-available-seats/" target="_blank">Consecutive Available Seats</a></p>
+
+<p>여기서 나는 LEFT OUTER JOIN을 2번 썼다. [현재 좌석, 이전 좌석, 이후 좌석] 이런식으로.</p>
+
+<p>정답은 맞았지만 이렇게 조인을 2번이나 써야하나 라는 생각에 다른 사람들의 풀이를 구경해봤다.</p>
+
+<p>풀이 중에</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="k">distinct</span> <span class="n">a</span><span class="p">.</span><span class="n">seat_id</span>
+<span class="k">from</span> <span class="n">cinema</span> <span class="n">a</span>
+<span class="k">join</span> <span class="n">cinema</span> <span class="n">b</span>
+<span class="k">on</span> <span class="k">abs</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">seat_id</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">seat_id</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="k">free</span><span class="o">=</span><span class="k">true</span> <span class="k">and</span> <span class="n">b</span><span class="p">.</span><span class="k">free</span><span class="o">=</span><span class="k">true</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">a</span><span class="p">.</span><span class="n">seat_id</span><span class="p">;</span>
+</code></pre></div></div>
+<p>을 봤다. 조인을 1번만 쓰고 있다. 근데 이 방법은 ON절에 사용된 조건이 driving table 행에 조인되는 derived table의 행이 2개가 조인되는 결과를 가져오게 될 것 같았다. 그래서 이러한 경우에는 결과 테이블이 어떻게 될지 궁금해 검색해봤다.</p>
+
+<p><a href="https://velog.io/@haerong22/LEFT-OUTER-JOIN-%EC%9D%98-%ED%95%A8%EC%A0%95">haerong22, LEFT OUTER JOIN 의 함정</a></p>
+
+<p>위 블로그 내용을 보니</p>
+
+<p><img src="/images/sql_30.png" alt="" /></p>
+
+<p>이렇게 id 값이 중복되는 데이터 뻥튀기(?) 현상이 일어났다.</p>
+
+<p>이 때는</p>
+
+<ul>
+  <li>테이블간 제약 조건을 명확히 한다.</li>
+  <li>조인 조건을 추가</li>
+  <li>distinct 사용</li>
+  <li>group by 사용</li>
+  <li>top 1, limit 사용</li>
+</ul>
+
+<p>와 같은 방법을 이용해 해결할 수 있다. 위의 풀이에서는 distinct를 추가했다.</p>
+:ET
