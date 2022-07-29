@@ -5,9 +5,28 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 27 Jul 2022 08:36:51 +0900</pubDate>
-        <lastBuildDate>Wed, 27 Jul 2022 08:36:51 +0900</lastBuildDate>
+        <pubDate>Wed, 27 Jul 2022 10:37:29 +0900</pubDate>
+        <lastBuildDate>Wed, 27 Jul 2022 10:37:29 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Data Engineering Series [Part19]: 로그 구조 스토리지</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Mon, 25 Jul 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/data-engineering-series19</link>
+                <guid isPermaLink="true">http://localhost:4000/data-engineering-series19</guid>
+                
+                <category>Data_Engineering</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
         
             <item>
                 <title>Data Engineering Series [Part18]: APIs</title>
@@ -104,6 +123,7 @@
 &lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#운영체제-관점&quot; id=&quot;markdown-toc-운영체제-관점&quot;&gt;운영체제 관점&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#네트워크-관점&quot; id=&quot;markdown-toc-네트워크-관점&quot;&gt;네트워크 관점&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
@@ -111,6 +131,12 @@
 &lt;h1 id=&quot;운영체제-관점&quot;&gt;운영체제 관점&lt;/h1&gt;
 
 &lt;h1 id=&quot;네트워크-관점&quot;&gt;네트워크 관점&lt;/h1&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/interprocess-communication-in-distributed-systems/?ref=gcse&quot; target=&quot;_blank&quot;&gt;GeeksforGeeks: Interprocess Communication in Distributed Systems&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <pubDate>Fri, 22 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/data-engineering-series16</link>
@@ -135,7 +161,11 @@
       &lt;li&gt;&lt;a href=&quot;#장점&quot; id=&quot;markdown-toc-장점&quot;&gt;장점&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#단점&quot; id=&quot;markdown-toc-단점&quot;&gt;단점&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#아키텍처&quot; id=&quot;markdown-toc-아키텍처&quot;&gt;아키텍처&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#어려운-점&quot; id=&quot;markdown-toc-어려운-점&quot;&gt;어려운 점&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#어려운-점&quot; id=&quot;markdown-toc-어려운-점&quot;&gt;어려운 점&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#synchronization&quot; id=&quot;markdown-toc-synchronization&quot;&gt;Synchronization&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#network-disorder&quot; id=&quot;markdown-toc-network-disorder&quot;&gt;Network Disorder&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#분산-파일-시스템&quot; id=&quot;markdown-toc-분산-파일-시스템&quot;&gt;분산 파일 시스템&lt;/a&gt;&lt;/li&gt;
@@ -195,12 +225,66 @@
 
 &lt;h2 id=&quot;어려운-점&quot;&gt;어려운 점&lt;/h2&gt;
 
+&lt;h3 id=&quot;synchronization&quot;&gt;Synchronization&lt;/h3&gt;
+
+&lt;p&gt;Distributed System is a collection of computers connected via the high speed communication network. In the distributed system, the hardware and software components communicate and coordinate their actions by message passing. Each node in distributed systems can share their resources with other nodes. So, there is need of proper allocation of resources to preserve the state of resources and help coordinate between the several processes. To resolve such conflicts, synchronization is used. Synchronization in distributed systems is achieved via clocks.&lt;/p&gt;
+
+&lt;p&gt;The physical clocks are used to adjust the time of nodes.Each node in the system can share its local time with other nodes in the system. The time is set based on UTC (Universal Time Coordination). UTC is used as a reference time clock for the nodes in the system.&lt;/p&gt;
+
+&lt;p&gt;The clock synchronization can be achieved by 2 ways: External and Internal Clock Synchronization.&lt;/p&gt;
+
 &lt;ul&gt;
-  &lt;li&gt;동기화&lt;/li&gt;
-  &lt;li&gt;네트워크 장애&lt;/li&gt;
+  &lt;li&gt;External clock synchronization is the one in which an external reference clock is present. It is used as a reference and the nodes in the system can set and adjust their time accordingly.&lt;/li&gt;
+  &lt;li&gt;Internal clock synchronization is the one in which each node shares its time with other nodes and all the nodes set and adjust their times accordingly.&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;p&gt;There are 2 types of clock synchronization algorithms: Centralized and Distributed.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Centralized is the one in which a time server is used as a reference. The single time server propagates its time to the nodes and all the nodes adjust the time accordingly. It is dependent on single time server so if that node fails, the whole system will lose synchronization. Examples of centralized are- Berkeley Algorithm, Passive Time Server, Active Time Server etc.&lt;/li&gt;
+  &lt;li&gt;Distributed is the one in which there is no centralized time server present. Instead the nodes adjust their time by using their local time and then, taking the average of the differences of time with other nodes. Distributed algorithms overcome the issue of centralized algorithms like the scalability and single point failure. Examples of Distributed algorithms are – Global Averaging Algorithm, Localized Averaging Algorithm, NTP (Network time protocol) etc.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;network-disorder&quot;&gt;Network Disorder&lt;/h3&gt;
+
 &lt;h1 id=&quot;분산-파일-시스템&quot;&gt;분산 파일 시스템&lt;/h1&gt;
+
+&lt;p&gt;A Distributed File System (DFS) as the name suggests, is a file system that is distributed on multiple file servers or multiple locations. It allows programs to access or store isolated files as they do with the local ones, allowing programmers to access files from any network or computer.&lt;/p&gt;
+
+&lt;p&gt;The main purpose of the Distributed File System (DFS) is to allows users of physically distributed systems to share their data and resources by using a Common File System. A collection of workstations and mainframes connected by a Local Area Network (LAN) is a configuration on Distributed File System. A DFS is executed as a part of the operating system. In DFS, a namespace is created and this process is transparent for the clients.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Working of DFS&lt;/strong&gt;&lt;br /&gt;
+There are two ways in which DFS can be implemented:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Standalone DFS namespace
+    &lt;ul&gt;
+      &lt;li&gt;It allows only for those DFS roots that exist on the local computer and are not using Active Directory. A Standalone DFS can only be acquired on those computers on which it is created. It does not provide any fault liberation and cannot be linked to any other DFS. Standalone DFS roots are rarely come across because of their limited advantage.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Domain-based DFS namespace
+    &lt;ul&gt;
+      &lt;li&gt;It stores the configuration of DFS in Active Directory, creating the DFS namespace root accessible at \&lt;domainname&gt;\&lt;dfsroot&gt; or \\&lt;FQDN&gt;\&lt;dfsroot&gt;&lt;/dfsroot&gt;&lt;/FQDN&gt;&lt;/dfsroot&gt;&lt;/domainname&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/dist_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;DFS allows multiple user to access or store the data.&lt;/li&gt;
+  &lt;li&gt;It allows the data to be share remotely.&lt;/li&gt;
+  &lt;li&gt;It improved the availability of file, access time, and network efficiency.&lt;/li&gt;
+  &lt;li&gt;Improved the capacity to change the size of the data and also improves the ability to exchange the data.&lt;/li&gt;
+  &lt;li&gt;Distributed File System provides transparency of data even if server or disk fails.
+&lt;strong&gt;Disadvantages&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;In Distributed File System nodes and connections needs to be secured therefore we can say that security is at stake.&lt;/li&gt;
+  &lt;li&gt;There is a possibility of lose of messages and data in the network while movement from one node to another.&lt;/li&gt;
+  &lt;li&gt;Database connection in case of Distributed File System is complicated.&lt;/li&gt;
+  &lt;li&gt;Also handling of the database is not easy in Distributed File System as compared to a single user system.&lt;/li&gt;
+  &lt;li&gt;There are chances that overloading will take place if all nodes tries to send data at once.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&quot;분산-데이터베이스&quot;&gt;분산 데이터베이스&lt;/h1&gt;
 
@@ -220,6 +304,8 @@
   &lt;li&gt;&lt;a href=&quot;https://vowi.fsinf.at/images/b/bc/TU_Wien-Verteilte_Systeme_VO_%28G%C3%B6schka%29_-_Tannenbaum-distributed_systems_principles_and_paradigms_2nd_edition.pdf&quot; target=&quot;_blank&quot;&gt;pdf: Distributed Systems: Principles and Paradigms&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/what-is-a-distributed-system/?ref=gcse&quot; target=&quot;_blank&quot;&gt;GeeksforGeeks: What is a Distributed System?&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/comparison-centralized-decentralized-and-distributed-systems/?ref=gcse&quot; target=&quot;_blank&quot;&gt;GeeksforGeeks: Comparison – Centralized, Decentralized and Distributed Systems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/synchronization-in-distributed-systems/?ref=gcse&quot; target=&quot;_blank&quot;&gt;GeeksforGeeks: Synchronization in Distributed Systems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/what-is-dfsdistributed-file-system/?ref=gcse&quot; target=&quot;_blank&quot;&gt;GeeksforGeeks: What is DFS (Distributed File System)?&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Thu, 21 Jul 2022 21:01:35 +0900</pubDate>
@@ -813,73 +899,6 @@ curl -O &amp;lt;URL&amp;gt;/&amp;lt;원하는 파일명&amp;gt;
                 <pubDate>Fri, 15 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/network-series9</link>
                 <guid isPermaLink="true">http://localhost:4000/network-series9</guid>
-                
-                <category>Network</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Network Series [Part8]: 네트워크 활용편(2) REST API</title>
-                <description>&lt;hr /&gt;
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;REpresentational State Transfer&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;HTTP API와 REST API는 사실 거의 같은 의미로 사용됩니다.&lt;/p&gt;
-
-&lt;p&gt;그런데 디테일하게 들어가면 차이가 있습니다.&lt;/p&gt;
-
-&lt;p&gt;HTTP API는 HTTP를 사용해서 서로 정해둔 스펙으로 데이터를 주고 받으며 통신하는 것으로 이해하시면 됩니다.&lt;/p&gt;
-
-&lt;p&gt;그래서 상당히 넓은 의미로 사용됩니다.&lt;/p&gt;
-
-&lt;p&gt;반면에 REST API는 HTTP API에 여러가지 제약 조건이 추가됩니다.&lt;/p&gt;
-
-&lt;p&gt;REST는 다음 4가지 제약조건을 만족해야 합니다.&lt;/p&gt;
-
-&lt;p&gt;(https://ko.wikipedia.org/wiki/REST)&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;자원의 식별&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;메시지를 통한 리소스 조작&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;자기서술적 메서지&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;애플리케이션의 상태에 대한 엔진으로서 하이퍼미디어&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;여러가지가 있지만 대표적으로 구현하기 어려운 부분이 마지막에 있는 부분인데요. 이것은 HTML처럼 하이퍼링크가 추가되어서 다음에 어떤 API를 호출해야 하는지를 해당 링크를 통해서 받을 수 있어야 합니다.&lt;/p&gt;
-
-&lt;p&gt;그리고 이런 부분을 완벽하게 지키면서 개발하는 것을 RESTful API라고 하는데요. 실무에서 이런 방법으로 개발하는 것은 현실적으로 어렵고, 또 추가 개발 비용대비 효과가 있는 것도 아닙니다.&lt;/p&gt;
-
-&lt;p&gt;그런데 이미 많은 사람들이 해당 조건을 지키지 않아도 REST API라고 하기 때문에, HTTP API나 REST API를 거의 같은 의미로 사용하고 있습니다. 하지만 앞서 말씀드린 것 처럼 엄격하게 위의 내용들을 모두 지켜야 REST API라고 할 수 있습니다.(하지만 다들 HTTP API를 REST API라고 이미 하고 있기 때문에, 누군가 REST API라고 하면 그냥 아~ HTTP API를 이야기 하는구나 라고 생각하고 들으시면 됩니다. 물론 엄격하게는 다릅니다.)&lt;/p&gt;
-
-&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/RP_f5dMoHFc&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.inflearn.com/questions/126743&quot; target=&quot;_blank&quot;&gt;이영한님의 HTTP API와 REST API의 차이에 관한 질문에 대한 답변&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://restfulapi.net/&quot; target=&quot;_blank&quot;&gt;REST 논문을 정리한 자료&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://pronist.dev/146&quot; target=&quot;_blank&quot;&gt;정상우, REST를 보다 RESTful 하게 API 만들기&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 14 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/network-series8</link>
-                <guid isPermaLink="true">http://localhost:4000/network-series8</guid>
                 
                 <category>Network</category>
                 

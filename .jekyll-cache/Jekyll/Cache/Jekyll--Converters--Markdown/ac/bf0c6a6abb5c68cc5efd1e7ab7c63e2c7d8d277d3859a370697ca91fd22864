@@ -1,4 +1,4 @@
-I"�<hr />
+I"L-<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -8,7 +8,11 @@
       <li><a href="#장점" id="markdown-toc-장점">장점</a></li>
       <li><a href="#단점" id="markdown-toc-단점">단점</a></li>
       <li><a href="#아키텍처" id="markdown-toc-아키텍처">아키텍처</a></li>
-      <li><a href="#어려운-점" id="markdown-toc-어려운-점">어려운 점</a></li>
+      <li><a href="#어려운-점" id="markdown-toc-어려운-점">어려운 점</a>        <ul>
+          <li><a href="#synchronization" id="markdown-toc-synchronization">Synchronization</a></li>
+          <li><a href="#network-disorder" id="markdown-toc-network-disorder">Network Disorder</a></li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li><a href="#분산-파일-시스템" id="markdown-toc-분산-파일-시스템">분산 파일 시스템</a></li>
@@ -68,12 +72,66 @@
 
 <h2 id="어려운-점">어려운 점</h2>
 
+<h3 id="synchronization">Synchronization</h3>
+
+<p>Distributed System is a collection of computers connected via the high speed communication network. In the distributed system, the hardware and software components communicate and coordinate their actions by message passing. Each node in distributed systems can share their resources with other nodes. So, there is need of proper allocation of resources to preserve the state of resources and help coordinate between the several processes. To resolve such conflicts, synchronization is used. Synchronization in distributed systems is achieved via clocks.</p>
+
+<p>The physical clocks are used to adjust the time of nodes.Each node in the system can share its local time with other nodes in the system. The time is set based on UTC (Universal Time Coordination). UTC is used as a reference time clock for the nodes in the system.</p>
+
+<p>The clock synchronization can be achieved by 2 ways: External and Internal Clock Synchronization.</p>
+
 <ul>
-  <li>동기화</li>
-  <li>네트워크 장애</li>
+  <li>External clock synchronization is the one in which an external reference clock is present. It is used as a reference and the nodes in the system can set and adjust their time accordingly.</li>
+  <li>Internal clock synchronization is the one in which each node shares its time with other nodes and all the nodes set and adjust their times accordingly.</li>
 </ul>
 
+<p>There are 2 types of clock synchronization algorithms: Centralized and Distributed.</p>
+
+<ul>
+  <li>Centralized is the one in which a time server is used as a reference. The single time server propagates its time to the nodes and all the nodes adjust the time accordingly. It is dependent on single time server so if that node fails, the whole system will lose synchronization. Examples of centralized are- Berkeley Algorithm, Passive Time Server, Active Time Server etc.</li>
+  <li>Distributed is the one in which there is no centralized time server present. Instead the nodes adjust their time by using their local time and then, taking the average of the differences of time with other nodes. Distributed algorithms overcome the issue of centralized algorithms like the scalability and single point failure. Examples of Distributed algorithms are – Global Averaging Algorithm, Localized Averaging Algorithm, NTP (Network time protocol) etc.</li>
+</ul>
+
+<h3 id="network-disorder">Network Disorder</h3>
+
 <h1 id="분산-파일-시스템">분산 파일 시스템</h1>
+
+<p>A Distributed File System (DFS) as the name suggests, is a file system that is distributed on multiple file servers or multiple locations. It allows programs to access or store isolated files as they do with the local ones, allowing programmers to access files from any network or computer.</p>
+
+<p>The main purpose of the Distributed File System (DFS) is to allows users of physically distributed systems to share their data and resources by using a Common File System. A collection of workstations and mainframes connected by a Local Area Network (LAN) is a configuration on Distributed File System. A DFS is executed as a part of the operating system. In DFS, a namespace is created and this process is transparent for the clients.</p>
+
+<p><strong>Working of DFS</strong><br />
+There are two ways in which DFS can be implemented:</p>
+
+<ul>
+  <li>Standalone DFS namespace
+    <ul>
+      <li>It allows only for those DFS roots that exist on the local computer and are not using Active Directory. A Standalone DFS can only be acquired on those computers on which it is created. It does not provide any fault liberation and cannot be linked to any other DFS. Standalone DFS roots are rarely come across because of their limited advantage.</li>
+    </ul>
+  </li>
+  <li>Domain-based DFS namespace
+    <ul>
+      <li>It stores the configuration of DFS in Active Directory, creating the DFS namespace root accessible at \<domainname>\<dfsroot> or \\<FQDN>\<dfsroot></dfsroot></FQDN></dfsroot></domainname></li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/images/dist_2.png" alt="" /></p>
+
+<p><strong>Advantages</strong></p>
+<ul>
+  <li>DFS allows multiple user to access or store the data.</li>
+  <li>It allows the data to be share remotely.</li>
+  <li>It improved the availability of file, access time, and network efficiency.</li>
+  <li>Improved the capacity to change the size of the data and also improves the ability to exchange the data.</li>
+  <li>Distributed File System provides transparency of data even if server or disk fails.
+<strong>Disadvantages</strong></li>
+  <li>In Distributed File System nodes and connections needs to be secured therefore we can say that security is at stake.</li>
+  <li>There is a possibility of lose of messages and data in the network while movement from one node to another.</li>
+  <li>Database connection in case of Distributed File System is complicated.</li>
+  <li>Also handling of the database is not easy in Distributed File System as compared to a single user system.</li>
+  <li>There are chances that overloading will take place if all nodes tries to send data at once.</li>
+</ul>
 
 <h1 id="분산-데이터베이스">분산 데이터베이스</h1>
 
@@ -93,5 +151,7 @@
   <li><a href="https://vowi.fsinf.at/images/b/bc/TU_Wien-Verteilte_Systeme_VO_%28G%C3%B6schka%29_-_Tannenbaum-distributed_systems_principles_and_paradigms_2nd_edition.pdf" target="_blank">pdf: Distributed Systems: Principles and Paradigms</a></li>
   <li><a href="https://www.geeksforgeeks.org/what-is-a-distributed-system/?ref=gcse" target="_blank">GeeksforGeeks: What is a Distributed System?</a></li>
   <li><a href="https://www.geeksforgeeks.org/comparison-centralized-decentralized-and-distributed-systems/?ref=gcse" target="_blank">GeeksforGeeks: Comparison – Centralized, Decentralized and Distributed Systems</a></li>
+  <li><a href="https://www.geeksforgeeks.org/synchronization-in-distributed-systems/?ref=gcse" target="_blank">GeeksforGeeks: Synchronization in Distributed Systems</a></li>
+  <li><a href="https://www.geeksforgeeks.org/what-is-dfsdistributed-file-system/?ref=gcse" target="_blank">GeeksforGeeks: What is DFS (Distributed File System)?</a></li>
 </ul>
 :ET
