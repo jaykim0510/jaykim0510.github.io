@@ -39,15 +39,66 @@ many systems were lacking support for communication of continuous media, such as
 Finally, since our understanding of setting up multicast facilities has im- proved, novel and elegant solutions for data dissemination have emerged. We pay separate attention to this subject in the last section of this chapter.
 
 ## Remote Procedure Call(RPC)
+
+![](/images/dist_5.png)    
+
 Remote Procedure Call (RPC) is a communication technology that is used by one program to make a request to another program for utilizing its service on a network without even knowing the network’s details. A function call or a subroutine call are other terms for a procedure call.   
 
 It is based on the client-server concept. The client is the program that makes the request, and the server is the program that gives the service. An RPC, like a local procedure call, is based on the synchronous operation that requires the requesting application to be stopped until the remote process returns its results. Multiple RPCs can be executed concurrently by utilizing lightweight processes or threads that share the same address space.   
 
 Remote Procedure Call program as often as possible utilizes the Interface Definition Language (IDL), a determination language for describing a computer program component’s Application Programming Interface (API). In this circumstance, IDL acts as an interface between machines at either end of the connection, which may be running different operating systems and programming languages.  
 
+
+**Elements of RPC**  
+
+![](/images/rpc_1.png)
+
+- **Client**: The client process initiates RPC. The client makes a standard call, which triggers a correlated procedure in the client stub.
+- **Client Stub**: Stubs are used by RPC to achieve semantic transparency. The client calls the client stub. Client stub does the following tasks:
+    - The first task performed by client stub is when it receives a request from a client, it packs(marshalls) the parameters and required specifications of remote/target procedure in a message.
+    - The second task performed by the client stub is upon receiving the result values after execution, it unpacks (unmarshalled) those results and sends them to the Client.
+- **RPC Runtime**: The RPC runtime is in charge of message transmission between client and server via the network. Retransmission, acknowledgment, routing, and encryption are all tasks performed by it. On the client-side, it receives the result values in a message from the server-side, and then it further sends it to the client stub whereas, on the server-side, RPC Runtime got the same message from the server stub when then it forwards to the client machine. It also accepts and forwards client machine call request messages to the server stub.
+- **Server Stub**: Server stub does the following tasks:
+    - The first task performed by server stub is that it unpacks(unmarshalled) the call request message which is received from the local RPC Runtime and makes a regular call to invoke the required procedure in the server.
+    - The second task performed by server stub is that when it receives the server’s procedure execution result, it packs it into a message and asks the local RPC Runtime to transmit it to the client stub where it is unpacked.
+- **Server**: After receiving a call request from the client machine, the server stub passes it to the server. The execution of the required procedure is made by the server and finally, it returns the result to the server stub so that it can be passed to the client machine using the local RPC Runtime.
+
+**Working Procedure for RPC Model**  
+
+- The process arguments are placed in a precise location by the caller when the procedure needs to be called.
+- Control at that point passed to the body of the method, which is having a series of instructions.
+- The procedure body is run in a recently created execution environment that has duplicates of the calling instruction’s arguments.
+- At the end, after the completion of the operation, the calling point gets back the control, which returns a result.
+  - The call to a procedure is possible only for those procedures that are not within the caller’s address space because both processes (caller and callee) have distinct address space and the access is restricted to the caller’s environment’s data and variables from the remote procedure.
+  - The caller and callee processes in the RPC communicate to exchange information via the message-passing scheme.
+  - The first task from the server-side is to extract the procedure’s parameters when a request message arrives, then the result, send a reply message, and finally wait for the next call message.
+  - Only one process is enabled at a certain point in time.
+  - The caller is not always required to be blocked.
+  - The asynchronous mechanism could be employed in the RPC that permits the client to work even if the server has not responded yet.
+  - In order to handle incoming requests, the server might create a thread that frees the server for handling consequent requests.
+
 ![](/images/dist_4.png)
 
-![](/images/dist_5.png)  
+**Advantages of Remote Procedure Calls**   
+
+- The technique of using procedure calls in RPC permits high-level languages to provide communication between clients and servers.
+- This method is like a local procedure call but with the difference that the called procedure is executed on another process and a different computer.
+- The thread-oriented model is also supported by RPC in addition to the process model.
+- The RPC mechanism is employed to conceal the core message passing method.
+- The amount of time and effort required to rewrite and develop the code is minimal.
+- The distributed and local environments can both benefit from remote procedure calls.
+- To increase performance, it omits several of the protocol layers.
+- Abstraction is provided via RPC.  To exemplify, the user is not known about the nature of message-passing in network communication.
+- RPC empowers the utilization of applications in a distributed environment.
+
+
+**Disadvantages of Remote Procedure Calls**  
+
+- In Remote Procedure Calls parameters are only passed by values as pointer values are not allowed.
+- It involves a communication system with another machine and another process, so this mechanism is extremely prone to failure.
+- The RPC concept can be implemented in a variety of ways, hence there is no standard.
+- Due to the interaction-based nature, there is no flexibility for hardware architecture in RPC.
+- Due to a remote procedure call, the process’s cost has increased.
 
 
 ## Message based Communication
