@@ -120,3 +120,4 @@ This method is mostly used to communicate over a network between a client and a 
 # 참고
 
 - [GeeksforGeeks: Interprocess Communication in Distributed Systems](https://www.geeksforgeeks.org/interprocess-communication-in-distributed-systems/?ref=gcse){:target="_blank"}
+- [조원호의 행복공간: [네트워크] IPC와 RPC의 차이점](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=horajjan&logNo=220956169499){:target="_blank"}
