@@ -270,6 +270,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -396,6 +398,8 @@ Table of Contents
 
 
   
+
+  
   	
   	
   	
@@ -410,7 +414,7 @@ Table of Contents
       <a href="/mysql-series12" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part12] SQL 문제</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/mysql-series14" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part14] MySQL Optimizing SELECT Statements<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -421,11 +425,70 @@ Table of Contents
 <ul id="markdown-toc">
   <li><a href="#join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까" id="markdown-toc-join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까">JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까</a></li>
   <li><a href="#left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우" id="markdown-toc-left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우">LEFT OUTER JOIN을 사용할 때 조건을 만족하는 행이 2개인 경우</a></li>
+  <li><a href="#from에서-콤마가-사용된-경우" id="markdown-toc-from에서-콤마가-사용된-경우">FROM에서 콤마(,)가 사용된 경우</a></li>
+  <li><a href="#날짜-관련-함수" id="markdown-toc-날짜-관련-함수">날짜 관련 함수</a></li>
 </ul>
 
 <hr />
 
 <h1 id="join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까">JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까</h1>
+
+<ol>
+  <li>Sub-query solution</li>
+</ol>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">Name</span> <span class="k">as</span> <span class="n">Employee</span> <span class="k">FROM</span> <span class="n">Employee</span> <span class="n">e</span>
+<span class="k">WHERE</span> <span class="n">Salary</span> <span class="o">&gt;</span> <span class="p">(</span>
+    <span class="k">Select</span> <span class="n">Salary</span> <span class="k">FROM</span> <span class="n">Employee</span> <span class="n">m</span> <span class="k">WHERE</span> <span class="n">m</span><span class="p">.</span><span class="n">Id</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">ManagerId</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong>Advantages Of Subquery</strong></p>
+
+<ul>
+  <li>Complex query can be broken down into a series of logical steps.</li>
+  <li>Subquery is easy to read, understand and maintain.</li>
+  <li>It allow to use the results of another query in the outer query.</li>
+</ul>
+
+<p><strong>Disadvantages of Subquery</strong></p>
+
+<ul>
+  <li>Execution is slower than JOIN.</li>
+  <li>We cannot modify a table and select from the same table within a subquery in the same SQL statement.</li>
+</ul>
+
+<ol>
+  <li>JOIN solution</li>
+</ol>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
+     <span class="n">a</span><span class="p">.</span><span class="n">NAME</span> <span class="k">AS</span> <span class="n">Employee</span>
+<span class="k">FROM</span> <span class="n">Employee</span> <span class="k">AS</span> <span class="n">a</span> <span class="k">JOIN</span> <span class="n">Employee</span> <span class="k">AS</span> <span class="n">b</span>
+     <span class="k">ON</span> <span class="n">a</span><span class="p">.</span><span class="n">ManagerId</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">Id</span>
+     <span class="k">AND</span> <span class="n">a</span><span class="p">.</span><span class="n">Salary</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">.</span><span class="n">Salary</span>
+</code></pre></div></div>
+
+<p><strong>Advantage of a JOIN</strong></p>
+
+<ul>
+  <li>Execution and retrieval time faster than subqueries.</li>
+</ul>
+
+<p><strong>Disadvantages Of JOIN</strong></p>
+
+<ul>
+  <li>Database server has to do more work when it comes to a lot of joins in a query =&gt; more time consuming to retrieve data</li>
+  <li>Developer can be confused to choose the appropriate type among many types of joins.</li>
+</ul>
+
+<ol>
+  <li>Conclusion</li>
+</ol>
+
+<ul>
+  <li>Most developers prioritize speed optimizing while others prioritize logic. It ups to you in your specific case.</li>
+</ul>
 
 <h1 id="left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우">LEFT OUTER JOIN을 사용할 때 조건을 만족하는 행이 2개인 경우</h1>
 
@@ -465,6 +528,23 @@ Table of Contents
 </ul>
 
 <p>와 같은 방법을 이용해 해결할 수 있다. 위의 풀이에서는 distinct를 추가했다.</p>
+
+<h1 id="from에서-콤마가-사용된-경우">FROM에서 콤마(,)가 사용된 경우</h1>
+
+<p>FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 작성법이 조금씩 달랐다. 표기법의 차이일 뿐 다음은 같은 역할을 한다.</p>
+
+<ul>
+  <li>INNER JOIN = JOIN = ,</li>
+  <li>LEFT OUTER JOIN = LEFT JOIN</li>
+  <li>RIGHT OUTER JOIN = RIGHT JOIN</li>
+</ul>
+
+<h1 id="날짜-관련-함수">날짜 관련 함수</h1>
+
+<ul>
+  <li>DATE_SUB()</li>
+  <li>DATE_FORMAT()</li>
+</ul>
 
     </div>
     <div class="post__tags_list">
@@ -711,6 +791,8 @@ Table of Contents
 
 
   
+
+  
   	
   	
   	
@@ -725,7 +807,7 @@ Table of Contents
       <a href="/mysql-series12" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part12] SQL 문제</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/mysql-series14" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part14] MySQL Optimizing SELECT Statements<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -767,6 +849,45 @@ Table of Contents
           <div class="row">
 
           
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-07-29T21:01:35+09:00">29 Jul 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/mysql-series14">
+        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part14] MySQL Optimizing SELECT Statements">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/mysql-series14">MySQL Series [Part14] MySQL Optimizing SELECT Statements</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
             
             
       
@@ -833,45 +954,6 @@ Table of Contents
 
       <h2 class="article__title">
         <a href="/data-engineering-series18">Data Engineering Series [Part18]: APIs</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-07-23T21:01:35+09:00">23 Jul 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/data-engineering-series17">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series17">Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심</a>
       </h2>
 
       

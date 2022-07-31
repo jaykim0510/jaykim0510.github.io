@@ -19,6 +19,51 @@ tags: MySQL
 
 # JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까  
 
+1. Sub-query solution
+
+```sql
+SELECT Name as Employee FROM Employee e
+WHERE Salary > (
+    Select Salary FROM Employee m WHERE m.Id = e.ManagerId
+)
+```
+
+**Advantages Of Subquery**  
+
+- Complex query can be broken down into a series of logical steps.
+- Subquery is easy to read, understand and maintain.
+- It allow to use the results of another query in the outer query.
+
+
+**Disadvantages of Subquery**  
+
+- Execution is slower than JOIN.
+- We cannot modify a table and select from the same table within a subquery in the same SQL statement.
+
+2. JOIN solution
+
+```sql
+SELECT
+     a.NAME AS Employee
+FROM Employee AS a JOIN Employee AS b
+     ON a.ManagerId = b.Id
+     AND a.Salary > b.Salary
+```
+
+**Advantage of a JOIN**  
+
+- Execution and retrieval time faster than subqueries.
+
+
+**Disadvantages Of JOIN**  
+
+- Database server has to do more work when it comes to a lot of joins in a query => more time consuming to retrieve data
+- Developer can be confused to choose the appropriate type among many types of joins.
+
+3. Conclusion
+
+- Most developers prioritize speed optimizing while others prioritize logic. It ups to you in your specific case.
+
 # LEFT OUTER JOIN을 사용할 때 조건을 만족하는 행이 2개인 경우
 
 문제 [Consecutive Available Seats](https://leetcode.com/problems/consecutive-available-seats/){:target="_blank"}  
@@ -56,3 +101,16 @@ order by a.seat_id;
 - top 1, limit 사용
 
 와 같은 방법을 이용해 해결할 수 있다. 위의 풀이에서는 distinct를 추가했다.  
+
+# FROM에서 콤마(,)가 사용된 경우
+
+FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 작성법이 조금씩 달랐다. 표기법의 차이일 뿐 다음은 같은 역할을 한다.  
+
+- INNER JOIN = JOIN = ,
+- LEFT OUTER JOIN = LEFT JOIN
+- RIGHT OUTER JOIN = RIGHT JOIN
+
+# 날짜 관련 함수
+
+- DATE_SUB()
+- DATE_FORMAT()

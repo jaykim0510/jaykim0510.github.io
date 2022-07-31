@@ -5,9 +5,73 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Fri, 29 Jul 2022 13:40:09 +0900</pubDate>
-        <lastBuildDate>Fri, 29 Jul 2022 13:40:09 +0900</lastBuildDate>
+        <pubDate>Sun, 31 Jul 2022 17:55:58 +0900</pubDate>
+        <lastBuildDate>Sun, 31 Jul 2022 17:55:58 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>MySQL Series [Part14] MySQL Optimizing SELECT Statements</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#optimization-overview&quot; id=&quot;markdown-toc-optimization-overview&quot;&gt;Optimization Overview&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#things-to-consider-for-optimization&quot; id=&quot;markdown-toc-things-to-consider-for-optimization&quot;&gt;Things to Consider for Optimization&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#optimizing-select-statements&quot; id=&quot;markdown-toc-optimizing-select-statements&quot;&gt;Optimizing SELECT Statements&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#where-clause-optimization&quot; id=&quot;markdown-toc-where-clause-optimization&quot;&gt;WHERE Clause Optimization&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+&lt;h1 id=&quot;optimization-overview&quot;&gt;Optimization Overview&lt;/h1&gt;
+
+&lt;p&gt;Database performance depends on several factors at the database level, such as tables, queries, and configuration settings. These software constructs result in CPU and I/O operations at the hardware level, which you must minimize and make as efficient as possible.&lt;/p&gt;
+
+&lt;h1 id=&quot;things-to-consider-for-optimization&quot;&gt;Things to Consider for Optimization&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Are the tables structured properly? In particular, do the columns have the right data types, and does each table have the appropriate columns for the type of work? For example, applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Are the right indexes in place to make queries efficient?&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Are you using the appropriate storage engine for each table, and taking advantage of the strengths and features of each storage engine you use? In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Does each table use an appropriate row format? This choice also depends on the storage engine used for the table. In particular, compressed tables use less disk space and so require less disk I/O to read and write the data. Compression is available for all kinds of workloads with InnoDB tables, and for read-only MyISAM tables.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;optimizing-select-statements&quot;&gt;Optimizing SELECT Statements&lt;/h1&gt;
+
+&lt;h2 id=&quot;where-clause-optimization&quot;&gt;WHERE Clause Optimization&lt;/h2&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html&quot; target=&quot;_blank&quot;&gt;MySQL 공식문서: Optimizing SELECT Statements&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization&quot; target=&quot;_blank&quot;&gt;MySQL Performance Tuning and Optimization Tips&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Fri, 29 Jul 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mysql-series14</link>
+                <guid isPermaLink="true">http://localhost:4000/mysql-series14</guid>
+                
+                <category>MySQL</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
         
             <item>
                 <title>Data Engineering Series [Part19]: 로그 구조 스토리지</title>
@@ -82,6 +146,7 @@
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#분산-처리distributed-computing&quot; id=&quot;markdown-toc-분산-처리distributed-computing&quot;&gt;분산 처리(Distributed Computing)&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#시스템-확장scale-out&quot; id=&quot;markdown-toc-시스템-확장scale-out&quot;&gt;시스템 확장(Scale-out)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
@@ -92,17 +157,167 @@
 
 &lt;h2 id=&quot;장애-감지와-회복&quot;&gt;장애 감지와 회복&lt;/h2&gt;
 
+&lt;p&gt;&lt;strong&gt;Heartbeats and Ping&lt;/strong&gt;&lt;/p&gt;
+
 &lt;h2 id=&quot;리더와-팔로워&quot;&gt;리더와 팔로워&lt;/h2&gt;
+
+&lt;p&gt;동기화는 비용이 많이 들 수 있다. 동기화 오버헤드를 줄이기 위해 일부 알고리즘에는 분산 알고리즘의 단계를 수행 및 조정하는 리더 프로세스가 있다. 일반적으로 분산 시스템의 프로세스는 균일하고 모든 프로세스가 리더 역할을 맡을 수 있다. 장애가 발생하면 어떤 프로세스라도 리더 선출 과정을 시작할 수 있고 선출된 프로세스는 이전 리더의 작업을 이어서 수행한다.&lt;/p&gt;
+
+&lt;p&gt;이상적으로는 한 번에 하나의 리더만 존재하고, 여러 리더가 선출되고 서로 존재를 모르는 상황(split brain 현상)은 절대로 발생하지 않아야 한다. 하지만 많은 리더 선출 알고리즘이 이 조건을 위반한다. 이 문제를 해결하기 위해서는 클러스터 구성원 과반수의 동의가 필요하다. 멀티 팍소스와 래프트를 비롯한 여러 합의 알고리즘은 리더 프로세스가 조율을 담당한다.&lt;/p&gt;
+
+&lt;p&gt;선출 작업은 결정론적이어야 한다. 정확히 하나의 리더를 선출하고 모든 참가자가 결과를 인정해야 한다. 선출된 새로운 리더는 모든 구성원에게 자신의 존재를 알려야 한다.&lt;/p&gt;
+
+&lt;p&gt;리더 프로세스가 있는 시스템의 가장 큰 문제는 리더가 병목 지점이 될 수 있다는 점이다. 이 문제를 해결하기 위해 많은 시스템이 데이터를 독립적인 파티션으로 나누고 각 파티션별로 리더를 선출한다. 스패너(Spanner)가 이 방식을 사용한다.&lt;/p&gt;
+
+&lt;p&gt;선출 작업은 비용이 높은 작업이지만 자주 수행되지 않기 때문에 시스템 성능에 큰 영향을 주지 않는다.&lt;/p&gt;
+
+&lt;p&gt;리더의 정체는 프로세스가 모르는 사이에 바뀔 수 있다. 따라서 각 프로세스가 개별적으로 알고 있는 리더에 대한 정보가 유효한지 확인해야 한다. 이 문제는 리더 선출 알고리즘과 장애 감지 알고리즘을 같이 사용해 해결할 수 있다. 예를 들어 안정적인 리더 선출 알고리즘은 안정적인 프로세스에 리더의 기회를 주고 타임아웃 기반의 장애 감지 알고리즘을 사용해 해당 프로세스에 장애가 발생하지 않고 접근이 가능한 동안 계속해서 리더 역할을 유지할 수 있도록 보장한다.&lt;/p&gt;
+
+&lt;p&gt;리더에 의존하는 대부분의 알고리즘은 여러 리더가 존재하는 것을 허용하고 리더 사이의 충돌을 최대한 빠르게 해결한다.&lt;/p&gt;
 
 &lt;h2 id=&quot;복제&quot;&gt;복제&lt;/h2&gt;
 
+&lt;p&gt;In a distributed system data is stored is over different computers in a network. Therefore, we need to make sure that data is readily available for the users. Availability of the data is an important factor often accomplished by data replication. Replication is the practice of keeping several copies of data in different places.&lt;/p&gt;
+
+&lt;p&gt;Why do we require replication?&lt;br /&gt;
+The first and foremost thing is that it makes our system more stable because of node replication. It is good to have replicas of a node in a network due to following reasons:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If a node stops working, the distributed network will still work fine due to its replicas which will be there. Thus it increases the fault tolerance of the system.&lt;/li&gt;
+  &lt;li&gt;It also helps in load sharing where loads on a server are shared among different replicas.&lt;/li&gt;
+  &lt;li&gt;It enhances the availability of the data. If the replicas are created and data is stored near to the consumers, it would be easier and faster to fetch data.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Types of Replication&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Active Replication&lt;/li&gt;
+  &lt;li&gt;Passive Replication&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Active Replication&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The request of the client goes to all the replicas.&lt;/li&gt;
+  &lt;li&gt;It is to be made sure that every replica receives the client request in the same order else the system will get inconsistent.&lt;/li&gt;
+  &lt;li&gt;There is no need for coordination because each copy processes the same request in the same sequence.&lt;/li&gt;
+  &lt;li&gt;All replicas respond to the client’s request.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;It is really simple. The codes in active replication are the same throughout.&lt;/li&gt;
+  &lt;li&gt;It is transparent.&lt;/li&gt;
+  &lt;li&gt;Even if a node fails, it will be easily handled by replicas of that node.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Disadvantages&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;It increases resource consumption. The greater the number of replicas, the greater the memory needed.&lt;/li&gt;
+  &lt;li&gt;It increases the time complexity. If some change is done on one replica it should also be done in all others.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Passive Replication&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The client request goes to the primary replica, also called the main replica.&lt;/li&gt;
+  &lt;li&gt;There are more replicas that act as backup for the primary replica.&lt;/li&gt;
+  &lt;li&gt;Primary replica informs all other backup replicas about any modification done.&lt;/li&gt;
+  &lt;li&gt;The response is returned to the client by a primary replica.&lt;/li&gt;
+  &lt;li&gt;Periodically primary replica sends some signal to backup replicas to let them know that it is working perfectly fine.&lt;/li&gt;
+  &lt;li&gt;In case of failure of a primary replica, a backup replica becomes the primary replica.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The resource consumption is less as backup servers only come into play when the primary server fails.&lt;/li&gt;
+  &lt;li&gt;The time complexity of this is also less as there’s no need for updating in all the nodes replicas, unlike active replication.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Disadvantages&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If some failure occurs, the response time is delayed.&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h2 id=&quot;일관성-보장&quot;&gt;일관성 보장&lt;/h2&gt;
 
+&lt;p&gt;&lt;strong&gt;CAP Theorem&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Eventual Consistency&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Eventual consistency is a consistency model that enables the data store to be highly available. It is also known as optimistic replication &amp;amp; is key to distributed systems. So, how exactly does it work? Let’s Understand this with the help of a use case.&lt;/p&gt;
+
+&lt;p&gt;Real World Use Case :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Think of a popular microblogging site deployed across the world in different geographical regions like Asia, America, and Europe. Moreover, each geographical region has multiple data center zones: North, East, West, and South.&lt;/li&gt;
+  &lt;li&gt;Furthermore, each zone has multiple clusters which have multiple server nodes running. So, we have many datastore nodes spread across the world that micro-blogging site uses for persisting data. Since there are so many nodes running, there is no single point of failure.&lt;/li&gt;
+  &lt;li&gt;The data store service is highly available. Even if a few nodes go down persistence service is still up. Let’s say a celebrity makes a post on the website that everybody starts liking around the world.&lt;/li&gt;
+  &lt;li&gt;At a point in time, a user in Japan likes a post which increases the “Like” count of the post from say 100 to 101. At the same point in time, a user in America, in a different geographical zone, clicks on the post, and he sees “Like” count as 100, not 101.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reason for the above Use case :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Simply, because the new updated value of the Post “Like” counter needs some time to move from Japan to America and update server nodes running there. Though the value of the counter at that point in time was 101, the user in America sees old inconsistent values.&lt;/li&gt;
+  &lt;li&gt;But when he refreshes his web page after a few seconds “Like” counter value shows as 101. So, data was initially inconsistent but eventually got consistent across server nodes deployed around the world. This is what eventual consistency is.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Strong Consistency&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Strong Consistency simply means the data must be strongly consistent at all times. All the server nodes across the world should contain the same value as an entity at any point in time. And the only way to implement this behavior is by locking down the nodes when being updated.&lt;/p&gt;
+
+&lt;p&gt;Real World Use Case :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Let’s continue the same Eventual Consistency example from the previous lesson. To ensure Strong Consistency in the system, when a user in Japan likes posts, all nodes across different geographical zones must be locked down to prevent any concurrent updates.&lt;/li&gt;
+  &lt;li&gt;This means at one point in time, only one user can update the post “Like” counter value. So, once a user in Japan updates the “Like” counter from 100 to 101. The value gets replicated globally across all nodes. Once all nodes reach consensus, locks get lifted. Now, other users can Like posts.&lt;/li&gt;
+  &lt;li&gt;If the nodes take a while to reach a consensus, they must wait until then. Well, this is surely not desired in the case of social applications. But think of a stock market application where the users are seeing different prices of the same stock at one point in time and updating it concurrently. This would create chaos. Therefore, to avoid this confusion we need our systems to be Strongly Consistent.&lt;/li&gt;
+  &lt;li&gt;The nodes must be locked down for updates. Queuing all requests is one good way of making a system Strongly Consistent. The strong Consistency model hits the capability of the system to be Highly Available &amp;amp; perform concurrent updates. This is how strongly consistent ACID transactions are implemented.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;ACID Transaction Support&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Distributed systems like NoSQL databases which scale horizontally on the fly don’t support ACID transactions globally &amp;amp; this is due to their design. The whole reason for the development of NoSQL tech is the ability to be Highly Available and Scalable. If we must lock down nodes every time, it becomes just like SQL. So, NoSQL databases don’t support ACID transactions and those that claim to, have terms and conditions applied to them. Generally, transaction support is limited to a geographic zone or an entity hierarchy. Developers of tech make sure that all the Strongly consistent entity nodes reside in the same geographic zone to make ACID transactions possible.&lt;/p&gt;
+
+&lt;p&gt;Conclusion: For transactional things go for MySQL because it provides a lock-in feature and supports ACID transactions.&lt;/p&gt;
+
 &lt;h2 id=&quot;합의-알고리즘&quot;&gt;합의 알고리즘&lt;/h2&gt;
+
+&lt;p&gt;Consensus is a general agreement on a decision made by the majority of those involved. For example, the problem may be as simple as friends trying to decide which restaurant has multiple options to choose from or complex as decisions on distributed systems.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Need of consensus in a distributed system&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;In a distributed system, nodes are distributed across the network. Some of these nodes might get failed(crash fault) or starts behaving abnormally (Byzantine Fault). In such a scenario, it becomes difficult to come to a common decision. More concisely,&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;There are n processes, m of which may be faulty.&lt;/li&gt;
+  &lt;li&gt;The task is to make all the Nonfaulty processes agree on some value(s) even in the presence of the faulty processes.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So we can remove these problems by given below solutions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Consensus Without Any Fault&lt;/li&gt;
+  &lt;li&gt;Consensus With at most m Crash Faults&lt;/li&gt;
+  &lt;li&gt;Consensus With at most m Byzantine Faults&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;멀티 팍소스&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;래프트&lt;/strong&gt;&lt;/p&gt;
 
 &lt;h1 id=&quot;분산-처리distributed-computing&quot;&gt;분산 처리(Distributed Computing)&lt;/h1&gt;
 
 &lt;h1 id=&quot;시스템-확장scale-out&quot;&gt;시스템 확장(Scale-out)&lt;/h1&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/consensus-problem-of-distributed-systems/?ref=gcse&quot;&gt;GeeksforGeeks: Consensus Problem of Distributed Systems&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <pubDate>Sat, 23 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/data-engineering-series17</link>
@@ -155,15 +370,81 @@ many systems were lacking support for communication of continuous media, such as
 &lt;p&gt;Finally, since our understanding of setting up multicast facilities has im- proved, novel and elegant solutions for data dissemination have emerged. We pay separate attention to this subject in the last section of this chapter.&lt;/p&gt;
 
 &lt;h2 id=&quot;remote-procedure-callrpc&quot;&gt;Remote Procedure Call(RPC)&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/dist_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
 &lt;p&gt;Remote Procedure Call (RPC) is a communication technology that is used by one program to make a request to another program for utilizing its service on a network without even knowing the network’s details. A function call or a subroutine call are other terms for a procedure call.&lt;/p&gt;
 
 &lt;p&gt;It is based on the client-server concept. The client is the program that makes the request, and the server is the program that gives the service. An RPC, like a local procedure call, is based on the synchronous operation that requires the requesting application to be stopped until the remote process returns its results. Multiple RPCs can be executed concurrently by utilizing lightweight processes or threads that share the same address space.&lt;/p&gt;
 
 &lt;p&gt;Remote Procedure Call program as often as possible utilizes the Interface Definition Language (IDL), a determination language for describing a computer program component’s Application Programming Interface (API). In this circumstance, IDL acts as an interface between machines at either end of the connection, which may be running different operating systems and programming languages.&lt;/p&gt;
 
+&lt;p&gt;&lt;strong&gt;Elements of RPC&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/rpc_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Client&lt;/strong&gt;: The client process initiates RPC. The client makes a standard call, which triggers a correlated procedure in the client stub.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Client Stub&lt;/strong&gt;: Stubs are used by RPC to achieve semantic transparency. The client calls the client stub. Client stub does the following tasks:
+    &lt;ul&gt;
+      &lt;li&gt;The first task performed by client stub is when it receives a request from a client, it packs(marshalls) the parameters and required specifications of remote/target procedure in a message.&lt;/li&gt;
+      &lt;li&gt;The second task performed by the client stub is upon receiving the result values after execution, it unpacks (unmarshalled) those results and sends them to the Client.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;RPC Runtime&lt;/strong&gt;: The RPC runtime is in charge of message transmission between client and server via the network. Retransmission, acknowledgment, routing, and encryption are all tasks performed by it. On the client-side, it receives the result values in a message from the server-side, and then it further sends it to the client stub whereas, on the server-side, RPC Runtime got the same message from the server stub when then it forwards to the client machine. It also accepts and forwards client machine call request messages to the server stub.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Server Stub&lt;/strong&gt;: Server stub does the following tasks:
+    &lt;ul&gt;
+      &lt;li&gt;The first task performed by server stub is that it unpacks(unmarshalled) the call request message which is received from the local RPC Runtime and makes a regular call to invoke the required procedure in the server.&lt;/li&gt;
+      &lt;li&gt;The second task performed by server stub is that when it receives the server’s procedure execution result, it packs it into a message and asks the local RPC Runtime to transmit it to the client stub where it is unpacked.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Server&lt;/strong&gt;: After receiving a call request from the client machine, the server stub passes it to the server. The execution of the required procedure is made by the server and finally, it returns the result to the server stub so that it can be passed to the client machine using the local RPC Runtime.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Working Procedure for RPC Model&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The process arguments are placed in a precise location by the caller when the procedure needs to be called.&lt;/li&gt;
+  &lt;li&gt;Control at that point passed to the body of the method, which is having a series of instructions.&lt;/li&gt;
+  &lt;li&gt;The procedure body is run in a recently created execution environment that has duplicates of the calling instruction’s arguments.&lt;/li&gt;
+  &lt;li&gt;At the end, after the completion of the operation, the calling point gets back the control, which returns a result.
+    &lt;ul&gt;
+      &lt;li&gt;The call to a procedure is possible only for those procedures that are not within the caller’s address space because both processes (caller and callee) have distinct address space and the access is restricted to the caller’s environment’s data and variables from the remote procedure.&lt;/li&gt;
+      &lt;li&gt;The caller and callee processes in the RPC communicate to exchange information via the message-passing scheme.&lt;/li&gt;
+      &lt;li&gt;The first task from the server-side is to extract the procedure’s parameters when a request message arrives, then the result, send a reply message, and finally wait for the next call message.&lt;/li&gt;
+      &lt;li&gt;Only one process is enabled at a certain point in time.&lt;/li&gt;
+      &lt;li&gt;The caller is not always required to be blocked.&lt;/li&gt;
+      &lt;li&gt;The asynchronous mechanism could be employed in the RPC that permits the client to work even if the server has not responded yet.&lt;/li&gt;
+      &lt;li&gt;In order to handle incoming requests, the server might create a thread that frees the server for handling consequent requests.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;p&gt;&lt;img src=&quot;/images/dist_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/dist_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Advantages of Remote Procedure Calls&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The technique of using procedure calls in RPC permits high-level languages to provide communication between clients and servers.&lt;/li&gt;
+  &lt;li&gt;This method is like a local procedure call but with the difference that the called procedure is executed on another process and a different computer.&lt;/li&gt;
+  &lt;li&gt;The thread-oriented model is also supported by RPC in addition to the process model.&lt;/li&gt;
+  &lt;li&gt;The RPC mechanism is employed to conceal the core message passing method.&lt;/li&gt;
+  &lt;li&gt;The amount of time and effort required to rewrite and develop the code is minimal.&lt;/li&gt;
+  &lt;li&gt;The distributed and local environments can both benefit from remote procedure calls.&lt;/li&gt;
+  &lt;li&gt;To increase performance, it omits several of the protocol layers.&lt;/li&gt;
+  &lt;li&gt;Abstraction is provided via RPC.  To exemplify, the user is not known about the nature of message-passing in network communication.&lt;/li&gt;
+  &lt;li&gt;RPC empowers the utilization of applications in a distributed environment.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Disadvantages of Remote Procedure Calls&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In Remote Procedure Calls parameters are only passed by values as pointer values are not allowed.&lt;/li&gt;
+  &lt;li&gt;It involves a communication system with another machine and another process, so this mechanism is extremely prone to failure.&lt;/li&gt;
+  &lt;li&gt;The RPC concept can be implemented in a variety of ways, hence there is no standard.&lt;/li&gt;
+  &lt;li&gt;Due to the interaction-based nature, there is no flexibility for hardware architecture in RPC.&lt;/li&gt;
+  &lt;li&gt;Due to a remote procedure call, the process’s cost has increased.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;message-based-communication&quot;&gt;Message based Communication&lt;/h2&gt;
 
@@ -192,6 +473,7 @@ many systems were lacking support for communication of continuous media, such as
 
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/interprocess-communication-in-distributed-systems/?ref=gcse&quot; target=&quot;_blank&quot;&gt;GeeksforGeeks: Interprocess Communication in Distributed Systems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;amp;blogId=horajjan&amp;amp;logNo=220956169499&quot; target=&quot;_blank&quot;&gt;조원호의 행복공간: [네트워크] IPC와 RPC의 차이점&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Fri, 22 Jul 2022 21:01:35 +0900</pubDate>
@@ -808,165 +1090,6 @@ GSLB — Global Server Load Balancing extends L4 and L7 capabilities to servers 
                 <pubDate>Sat, 16 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/network-series10</link>
                 <guid isPermaLink="true">http://localhost:4000/network-series10</guid>
-                
-                <category>Network</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어</title>
-                <description>&lt;hr /&gt;
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#네트워크-관련-리눅스-명령어&quot; id=&quot;markdown-toc-네트워크-관련-리눅스-명령어&quot;&gt;네트워크 관련 리눅스 명령어&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#ifconfig&quot; id=&quot;markdown-toc-ifconfig&quot;&gt;ifconfig&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#netstat&quot; id=&quot;markdown-toc-netstat&quot;&gt;netstat&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#iptables&quot; id=&quot;markdown-toc-iptables&quot;&gt;iptables&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#ping&quot; id=&quot;markdown-toc-ping&quot;&gt;ping&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#wget&quot; id=&quot;markdown-toc-wget&quot;&gt;wget&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#curl&quot; id=&quot;markdown-toc-curl&quot;&gt;curl&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#ssh&quot; id=&quot;markdown-toc-ssh&quot;&gt;ssh&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;네트워크-관련-리눅스-명령어&quot;&gt;네트워크 관련 리눅스 명령어&lt;/h1&gt;
-
-&lt;p&gt;ifconfig, ip, netstat, ss, iptables, ping, ssh, telnet, route, curl, wget&lt;/p&gt;
-
-&lt;h2 id=&quot;ifconfig&quot;&gt;ifconfig&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;네트워크 인터페이스의 활성/비활성 여부, ip 관련 정보를 확인할 수 있음&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ifconfig
-
-----------------------------------------------------------------------------
-en0: flags=8863&amp;lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&amp;gt; mtu 1500
-    ...
-	inet &amp;lt;ip주소&amp;gt; netmask &amp;lt;서브넷 마스크&amp;gt; broadcast &amp;lt;브로드캐스트 주소&amp;gt;
-    ...
-	status: active
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;netstat&quot;&gt;netstat&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Print network connections, routing tables, interface statistics, masquerade connections, and multicast memberships&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;mac에서 netstat은 ubuntu, redhat 계열과는 가지고 있는 옵션이 다름
-    &lt;ul&gt;
-      &lt;li&gt;-a 기본 출력에 포함되지 않은 netstat의 출력에 서버 포트를 포함합니다.&lt;/li&gt;
-      &lt;li&gt;-g 멀티 캐스트 연결과 관련된 정보를 표시합니다.&lt;/li&gt;
-      &lt;li&gt;-I interface는 지정된 인터페이스에 대한 패킷 데이터를 제공합니다. 사용 가능한 모든 인터페이스는 -i 깃발이지만 en0 일반적으로 기본 발신 네트워크 인터페이스입니다. (소문자에 유의하십시오.)&lt;/li&gt;
-      &lt;li&gt;-n 이름이있는 원격 주소의 레이블을 억제합니다. 이것은 제한된 정보만을 희생시키면서 netstat의 출력 속도를 크게 향상시킵니다.&lt;/li&gt;
-      &lt;li&gt;-p 프로토콜은 특정 네트워킹 프로토콜과 관련된 트래픽을 나열합니다. 전체 프로토콜 목록은 / etc / protocols,하지만 가장 중요한 것은 udp 와 TCP.&lt;/li&gt;
-      &lt;li&gt;-r 네트워크에서 패킷이 라우팅되는 방식을 보여주는 라우팅 테이블을 표시합니다.&lt;/li&gt;
-      &lt;li&gt;-s 활성 여부에 관계없이 모든 프로토콜에 대한 네트워크 통계를 표시합니다.&lt;/li&gt;
-      &lt;li&gt;-v 특히 각 열린 포트와 연관된 프로세스 ID (PID)를 표시하는 열을 추가하여 자세한 정보를 제공합니다.&lt;/li&gt;
-      &lt;li&gt;자주 사용하는 예시
-        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;netstat -avp tcp
-
-# 포트 열고 LISTEN 하고 있는 네트워크 엔드포인트
-netstat -a | grep -i LISTEN
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;ubuntu 계열
-    &lt;ul&gt;
-      &lt;li&gt;자주 사용하는 예시
-        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;netstat -nlp
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
-        &lt;p&gt;&lt;img src=&quot;/images/network_40.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;iptables&quot;&gt;iptables&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;administration tool for IPv4 packet filtering(방화벽) and NAT&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;ping&quot;&gt;ping&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;특정 서버가 켜져있는지/접근 가능한지 확인
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ping &amp;lt;ip&amp;gt;
-
-ping -c &amp;lt;ping날릴 횟수&amp;gt; &amp;lt;ip&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;포트 번호를 지정하고 싶은 경우에는 tcping 라는 커맨드 툴 설치해야함
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;brew install tcping
-
-tcping &amp;lt;ip&amp;gt; &amp;lt;port&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;wget&quot;&gt;wget&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;network downloader&lt;/li&gt;
-  &lt;li&gt;기본적으로 다운이 디폴트
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wget &amp;lt;URL&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;&lt;img src=&quot;/images/network_44.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;curl&quot;&gt;curl&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;tool for transfering data from or to a server&lt;/li&gt;
-  &lt;li&gt;기본적으로 터미널 화면에 출력이 디폴트
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &amp;lt;URL&amp;gt;
-
-curl &amp;lt;URL&amp;gt; &amp;gt; &amp;lt;원하는 파일명&amp;gt;
-
-curl -o &amp;lt;원하는 파일명&amp;gt; &amp;lt;URL&amp;gt;
-
-curl -O &amp;lt;URL&amp;gt;/&amp;lt;원하는 파일명&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;&lt;img src=&quot;/images/network_45.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;뭔가 curl은 파일의 다운로드 경로를 넣어줘도 HTML 코드가 출력된다 (파일을 다운로드하고자 할 때는 wget인건가 무조건?)&lt;/li&gt;
-  &lt;li&gt;서버에 REST API 형태로 HTTP Request를 전송할 수도 있다
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl -X POST -H &amp;lt;헤더&amp;gt; &amp;lt;URL&amp;gt; -d &amp;lt;데이터&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;ssh&quot;&gt;ssh&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;remote login program
-    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;ssh -i &amp;lt;pem파일&amp;gt; &amp;lt;username&amp;gt;@&amp;lt;host&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;어플리케이션 계층에서 제공&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://kibua20.tistory.com/148&quot;&gt;kibua20, 자주 사용하는 curl 명령어 옵션과 예제&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Fri, 15 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/network-series9</link>
-                <guid isPermaLink="true">http://localhost:4000/network-series9</guid>
                 
                 <category>Network</category>
                 

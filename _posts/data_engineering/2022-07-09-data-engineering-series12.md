@@ -26,3 +26,4 @@ tags: Data_Engineering
 - [ibm: OLAP vs. OLTP: What’s the Difference?](https://www.ibm.com/cloud/blog/olap-vs-oltp)
 - [분석을 위해 등장한 데이터베이스, OLAP 따라잡기](https://www.ciokorea.com/news/225564){:target="_blank"}
 - [OLAP이란?](https://brunch.co.kr/@qqplot/27){:target="_blank"}
+- [What Is an OLTP Database?](https://phoenixnap.com/kb/oltp-database){:target="_blank"}

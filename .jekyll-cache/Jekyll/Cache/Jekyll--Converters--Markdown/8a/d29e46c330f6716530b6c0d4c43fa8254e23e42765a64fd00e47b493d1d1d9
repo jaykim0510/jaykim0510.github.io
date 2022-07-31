@@ -1,0 +1,51 @@
+I""<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#optimization-overview" id="markdown-toc-optimization-overview">Optimization Overview</a></li>
+  <li><a href="#things-to-consider-for-optimization" id="markdown-toc-things-to-consider-for-optimization">Things to Consider for Optimization</a></li>
+  <li><a href="#optimizing-select-statements" id="markdown-toc-optimizing-select-statements">Optimizing SELECT Statements</a>    <ul>
+      <li><a href="#where-clause-optimization" id="markdown-toc-where-clause-optimization">WHERE Clause Optimization</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+<h1 id="optimization-overview">Optimization Overview</h1>
+
+<p>Database performance depends on several factors at the database level, such as tables, queries, and configuration settings. These software constructs result in CPU and I/O operations at the hardware level, which you must minimize and make as efficient as possible.</p>
+
+<h1 id="things-to-consider-for-optimization">Things to Consider for Optimization</h1>
+
+<ul>
+  <li>
+    <p>Are the tables structured properly? In particular, do the columns have the right data types, and does each table have the appropriate columns for the type of work? For example, applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns.</p>
+  </li>
+  <li>
+    <p>Are the right indexes in place to make queries efficient?</p>
+  </li>
+  <li>
+    <p>Are you using the appropriate storage engine for each table, and taking advantage of the strengths and features of each storage engine you use? In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability.</p>
+  </li>
+  <li>
+    <p>Does each table use an appropriate row format? This choice also depends on the storage engine used for the table. In particular, compressed tables use less disk space and so require less disk I/O to read and write the data. Compression is available for all kinds of workloads with InnoDB tables, and for read-only MyISAM tables.</p>
+  </li>
+  <li>
+    <p>Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code.</p>
+  </li>
+  <li>
+    <p>Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.</p>
+  </li>
+</ul>
+
+<h1 id="optimizing-select-statements">Optimizing SELECT Statements</h1>
+
+<h2 id="where-clause-optimization">WHERE Clause Optimization</h2>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html" target="_blank">MySQL 공식문서: Optimizing SELECT Statements</a></li>
+  <li><a href="https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization" target="_blank">MySQL Performance Tuning and Optimization Tips</a></li>
+</ul>
+:ET
