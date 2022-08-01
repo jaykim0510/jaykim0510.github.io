@@ -114,3 +114,43 @@ FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 �
 
 - DATE_SUB()
 - DATE_FORMAT()
+
+# ROW_NUMBER()
+
+- Assigns a sequential integer to every row within its partition
+- We will show you how to add a sequential integer to each row or group of rows in the result set.
+- ROW_NUMBER() is a [**window function**](https://www.mysqltutorial.org/mysql-window-functions/){:target="_blank"} that returns a sequential number for each row, starting from 1 for the first row.
+
+# 윈도우 함수
+- 특정 범위마다 함수를 적용하는 것을 윈도우 함수라고 함
+- MySQL에서 제공하는 윈도우 함수라고 따로 정의해둔 윈도우 함수 묶음이 있음
+  ![](/images/mysql_45.png)
+- 집계 함수도 OVER절을 이용해 범위를 정의하면 윈도우 함수로 사용할 수 있음(Most aggregate functions also can be used as window functions, [MySQL 공식문서](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html){:target="_blank"})
+- 사용 방법: [윈도우 함수] + [OVER 절] or [집계 함수] + [OVER 절]
+- 범위마다 함수를 적용한다는 점에서 GROUP BY와 비슷하게 느껴지지만, GROUP BY는 집계된 결과를 테이블로 보여주는 반면, 윈도우 함수는 집계된 결과를 기존 테이블에 하나의 열로 추가하여 결과를 볼 수 있음
+  ![](/images/mysql_46.png)
+
+
+
+
+# OVER()
+- If you want to learn window functions in MySQL, you need to understand the OVER clause
+- In 2018, MySQL introduced a new feature: window functions, which are accessed via the OVER clause. Window functions are a super powerful resource available in almost all SQL databases. They perform a specific calculation (e.g. sum, count, average, etc.) on a set of rows; this set of rows is called a “window” and is defined by the MySQL OVER clause.
+- OVER clause which has three possible elements: partition definition, order definition, and frame definition.
+  ```
+  [window_function(expression)][aggregation_function(expression)] OVER ( 
+   [partition_defintion]
+   [order_definition]
+   [frame_definition]
+  )
+  ```
+- PARTITION BY: 윈도우 범위 결정
+- ORDER BY: 순서대로 **누적**하여 계산
+
+# 참고
+
+- [MySQL tutorial: MySQL ROW_NUMBER, This is How You Emulate It](https://www.mysqltutorial.org/mysql-row_number/){:target="_blank"}
+- [SQL OVER 절](https://velog.io/@wltn716/SQL-Over-%EC%A0%88){:target="_blank"}
+- [[MySQL] 윈도우함수(Window Function)](https://mizykk.tistory.com/121){:target="_blank"}
+- [MySQL 공식문서: 12.21.1 Window Function Descriptions](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html){:target="_blank"}
+- [LearnSQL: What Is the MySQL OVER Clause?](https://learnsql.com/blog/over-clause-mysql/){:target="_blank"}

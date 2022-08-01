@@ -425,6 +425,7 @@ Table of Contents
   <li><a href="#things-to-consider-for-optimization" id="markdown-toc-things-to-consider-for-optimization">Things to Consider for Optimization</a></li>
   <li><a href="#optimizing-select-statements" id="markdown-toc-optimizing-select-statements">Optimizing SELECT Statements</a>    <ul>
       <li><a href="#where-clause-optimization" id="markdown-toc-where-clause-optimization">WHERE Clause Optimization</a></li>
+      <li><a href="#group-by-optimization" id="markdown-toc-group-by-optimization">GROUP BY Optimization</a></li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -461,6 +462,27 @@ Table of Contents
 <h1 id="optimizing-select-statements">Optimizing SELECT Statements</h1>
 
 <h2 id="where-clause-optimization">WHERE Clause Optimization</h2>
+
+<ul>
+  <li>Use Indexes Where Appropriate</li>
+  <li>Avoid % Wildcard in a Predicate</li>
+  <li>Avoid using a function in the predicate of a query</li>
+</ul>
+
+<h2 id="group-by-optimization">GROUP BY Optimization</h2>
+
+<p>GROUP BY 절을 만족시키는 가장 일반적인 방법은 전체 테이블을 스캔하여 각 그룹의 모든 행이 연속되는 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것입니다</p>
+
+<p>In some cases, MySQL is able to do much better than that and avoid creation of temporary tables by <strong>using index access</strong>.</p>
+
+<p>GROUP BY에 인덱스를 사용하기 위한 가장 중요한 전제 조건은 모든 GROUP BY 열이 동일한 인덱스의 속성을 참조하고 인덱스가 해당 키를 순서대로 저장한다는 것입니다(예: BTREE 인덱스의 경우 해당되지만 해시 인덱스의 경우 해당되지 않음). 임시 테이블의 사용이 인덱스 액세스로 대체될 수 있는지 여부도 쿼리에 사용되는 인덱스의 부분, 이러한 부분에 대해 지정된 조건 및 선택한 집계 함수에 따라 달라집니다.</p>
+
+<p>There are two ways to execute a GROUP BY query through index access, as detailed in the following sections.</p>
+
+<ul>
+  <li>The first method applies the grouping operation together with all range predicates (if any)</li>
+  <li>The second method first performs a range scan, and then groups the resulting tuples.</li>
+</ul>
 
 <h1 id="참고">참고</h1>
 

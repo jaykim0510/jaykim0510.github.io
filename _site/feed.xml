@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 31 Jul 2022 17:55:58 +0900</pubDate>
-        <lastBuildDate>Sun, 31 Jul 2022 17:55:58 +0900</lastBuildDate>
+        <pubDate>Mon, 01 Aug 2022 09:40:59 +0900</pubDate>
+        <lastBuildDate>Mon, 01 Aug 2022 09:40:59 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -18,6 +18,7 @@
   &lt;li&gt;&lt;a href=&quot;#things-to-consider-for-optimization&quot; id=&quot;markdown-toc-things-to-consider-for-optimization&quot;&gt;Things to Consider for Optimization&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#optimizing-select-statements&quot; id=&quot;markdown-toc-optimizing-select-statements&quot;&gt;Optimizing SELECT Statements&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#where-clause-optimization&quot; id=&quot;markdown-toc-where-clause-optimization&quot;&gt;WHERE Clause Optimization&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#group-by-optimization&quot; id=&quot;markdown-toc-group-by-optimization&quot;&gt;GROUP BY Optimization&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
@@ -54,6 +55,27 @@
 &lt;h1 id=&quot;optimizing-select-statements&quot;&gt;Optimizing SELECT Statements&lt;/h1&gt;
 
 &lt;h2 id=&quot;where-clause-optimization&quot;&gt;WHERE Clause Optimization&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use Indexes Where Appropriate&lt;/li&gt;
+  &lt;li&gt;Avoid % Wildcard in a Predicate&lt;/li&gt;
+  &lt;li&gt;Avoid using a function in the predicate of a query&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;group-by-optimization&quot;&gt;GROUP BY Optimization&lt;/h2&gt;
+
+&lt;p&gt;GROUP BY 절을 만족시키는 가장 일반적인 방법은 전체 테이블을 스캔하여 각 그룹의 모든 행이 연속되는 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것입니다&lt;/p&gt;
+
+&lt;p&gt;In some cases, MySQL is able to do much better than that and avoid creation of temporary tables by &lt;strong&gt;using index access&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;GROUP BY에 인덱스를 사용하기 위한 가장 중요한 전제 조건은 모든 GROUP BY 열이 동일한 인덱스의 속성을 참조하고 인덱스가 해당 키를 순서대로 저장한다는 것입니다(예: BTREE 인덱스의 경우 해당되지만 해시 인덱스의 경우 해당되지 않음). 임시 테이블의 사용이 인덱스 액세스로 대체될 수 있는지 여부도 쿼리에 사용되는 인덱스의 부분, 이러한 부분에 대해 지정된 조건 및 선택한 집계 함수에 따라 달라집니다.&lt;/p&gt;
+
+&lt;p&gt;There are two ways to execute a GROUP BY query through index access, as detailed in the following sections.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The first method applies the grouping operation together with all range predicates (if any)&lt;/li&gt;
+  &lt;li&gt;The second method first performs a range scan, and then groups the resulting tuples.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 
