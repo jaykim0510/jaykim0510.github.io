@@ -1,0 +1,64 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#factors" id="markdown-toc-factors">Factors</a></li>
+  <li><a href="#caching-solution" id="markdown-toc-caching-solution">Caching Solution</a></li>
+  <li><a href="#file-storage-solution" id="markdown-toc-file-storage-solution">File Storage Solution</a></li>
+  <li><a href="#storage-solutions-offering-text-search-capability" id="markdown-toc-storage-solutions-offering-text-search-capability">Storage Solutions Offering Text Search Capability</a></li>
+  <li><a href="#time-series-database" id="markdown-toc-time-series-database">Time Series Database</a></li>
+  <li><a href="#data-warehousing-storage-solution" id="markdown-toc-data-warehousing-storage-solution">Data Warehousing Storage Solution</a></li>
+  <li><a href="#rdbms-vs-nosql" id="markdown-toc-rdbms-vs-nosql">RDBMS vs NoSQL</a></li>
+</ul>
+
+<hr />
+
+<p>Databases will not impact your functional requirements. Whichever database you use, you can still achieve your functional requirements somehow, but at the cost of huge performance degradation. So when we say requirement, we usually mean non-functional requirements.</p>
+
+<h1 id="factors">Factors</h1>
+
+<ul>
+  <li>Structure of the data</li>
+  <li>Query pattern</li>
+  <li>Amount or scale that you need to handle</li>
+</ul>
+
+<p>These are the factors we need to consider when selecting which database to use. Now let us look at various types of storage solutions and some use cases where they will be suitable.</p>
+
+<h1 id="caching-solution">Caching Solution</h1>
+<p>If you are calling your database very frequently or making a remote call to independent services with high latency, you might want to cache some data locally at your end. Some of the most commonly used caching solutions are Memcached, Hazelcast, and Redis. You could also use some other solutions; this is not an exhaustive list. In the following articles, we will usually use Redis as it is one of the most widely used and stable solutions.</p>
+
+<h1 id="file-storage-solution">File Storage Solution</h1>
+
+<p>Assume you are working on something like Netflix and you need a data store for images, videos, etc. Now, in this case, a database is not very useful to us as we are storing files rather than information. <strong>Databases are meant to store information that can be queried</strong>, whereas files you do not need to query. You just deliver them as they are.</p>
+
+<p>This is when we use something called Blob (Binary Large Object) storage. Amazon S3 is an example of blob storage. Usually, blob storage is used in combination with a Content delivery network or a CDN. A CDN is a network of servers around the world that delivers content in different geographical locations with reduced latency. If the server you are getting content from is closer to your geographic location, the content will take less time (reduced latency) to be delivered from the server to you.</p>
+
+<h1 id="storage-solutions-offering-text-search-capability">Storage Solutions Offering Text Search Capability</h1>
+
+<p>Let’s again take the Netflix example. Suppose you want to build a search functionality where the user can search by movie, genre, actor, actress, director, etc. Here you use a search engine like Solr or Elasticsearch which can support fuzzy search.</p>
+
+<p>To understand fuzzy search, let us take an example of an Uber user searching for airprot. If you notice this is a typo, what the user means to search is airport. But if, because of this typo, we don’t provide any search results, it will be a very poor user experience. So we search for terms similar to airport in the database. This is known as fuzzy search.</p>
+
+<p>Now a key point here is that these search engines are not databases. Databases provide a guarantee that once stored, our data will not be lost unless we delete it; search engines offer no such guarantee. This is why we should never use search engines like Elasticsearch as our primary data source. We can load the data to them from our primary database to reduce search latency and provide fuzzy and relevance-based text search.</p>
+
+<h1 id="time-series-database">Time Series Database</h1>
+
+<p>Suppose we are trying to build a metric tracking system. We will need something called a time-series database. Time-series databases are, in a way, an extension of relational databases, but unlike a standard relational DB, time-series databases will never be randomly updated. It will be <strong>updated sequentially in an append-only format</strong>.</p>
+
+<p>Also, it will have more bulk reads for a certain time range as opposed to random reads. For example, how many people watched a video in the last 1 week, 10 days, 1 month, 1 year, and so on. Some examples of time series databases are OpenTSDB and InfluxDB.</p>
+
+<h1 id="data-warehousing-storage-solution">Data Warehousing Storage Solution</h1>
+
+<p>Sometimes we need a large database to dump all of the data available to us, to perform analytics. Eg. a company like Uber will store all of their data so they can perform analytics to identify where Uber is not used very much, where are the hotspots, what are the peak hours, etc. These systems are not used for regular transactions but offline reporting. Hadoop is a very commonly used Data warehouse.</p>
+
+<p><img src="/images/system_design_14.png" alt="" /></p>
+
+<h1 id="rdbms-vs-nosql">RDBMS vs NoSQL</h1>
+
+<p>If you need ACID properties, then you need to use a relational DBMS. Some examples are MySQL, Oracle, and Postgres. But what if you don’t need ACID? Well, you can still use RDBMS, or you can use a Non-relational database.</p>
+
+<p>Let’s consider an example. Suppose you are trying to build a catalog for something like Amazon, where you want to store information about different products that have various attributes. These attributes will normally not be the same for different products. For instance, medicines will have an expiry date, but refrigerators will have energy ratings. In such a case, our data cannot be represented as a table. This means we need to use a NoSQL database.</p>
+
+<p>Also, we don’t just need to store this data but also query on this data. Here comes the factor of query pattern. Which type of database we use here will be decided based on what type of data we store and what types of queries will be run on it. If we have vast data - not just volume but also a vast variety of attributes - and we need to run a vast variety of queries, we need to use something called a Document DB. Couchbase and MongoDB are some commonly used document databases. (Elasticsearch is special cases of document DB)</p>
+:ET

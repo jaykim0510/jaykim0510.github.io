@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 02 Aug 2022 11:00:51 +0900</pubDate>
-        <lastBuildDate>Tue, 02 Aug 2022 11:00:51 +0900</lastBuildDate>
+        <pubDate>Tue, 02 Aug 2022 13:19:59 +0900</pubDate>
+        <lastBuildDate>Tue, 02 Aug 2022 13:19:59 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -153,6 +153,229 @@
                 
                 
                 <category>CS</category>
+                
+            </item>
+        
+            <item>
+                <title>Data Engineering Series [Part24]: 시스템 디자인(4) Database</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#factors&quot; id=&quot;markdown-toc-factors&quot;&gt;Factors&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#caching-solution&quot; id=&quot;markdown-toc-caching-solution&quot;&gt;Caching Solution&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#file-storage-solution&quot; id=&quot;markdown-toc-file-storage-solution&quot;&gt;File Storage Solution&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#storage-solutions-offering-text-search-capability&quot; id=&quot;markdown-toc-storage-solutions-offering-text-search-capability&quot;&gt;Storage Solutions Offering Text Search Capability&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#time-series-database&quot; id=&quot;markdown-toc-time-series-database&quot;&gt;Time Series Database&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#data-warehousing-storage-solution&quot; id=&quot;markdown-toc-data-warehousing-storage-solution&quot;&gt;Data Warehousing Storage Solution&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#rdbms-vs-nosql&quot; id=&quot;markdown-toc-rdbms-vs-nosql&quot;&gt;RDBMS vs NoSQL&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Databases will not impact your functional requirements. Whichever database you use, you can still achieve your functional requirements somehow, but at the cost of huge performance degradation. So when we say requirement, we usually mean non-functional requirements.&lt;/p&gt;
+
+&lt;h1 id=&quot;factors&quot;&gt;Factors&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Structure of the data&lt;/li&gt;
+  &lt;li&gt;Query pattern&lt;/li&gt;
+  &lt;li&gt;Amount or scale that you need to handle&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These are the factors we need to consider when selecting which database to use. Now let us look at various types of storage solutions and some use cases where they will be suitable.&lt;/p&gt;
+
+&lt;h1 id=&quot;caching-solution&quot;&gt;Caching Solution&lt;/h1&gt;
+&lt;p&gt;If you are calling your database very frequently or making a remote call to independent services with high latency, you might want to cache some data locally at your end. Some of the most commonly used caching solutions are Memcached, Hazelcast, and Redis. You could also use some other solutions; this is not an exhaustive list. In the following articles, we will usually use Redis as it is one of the most widely used and stable solutions.&lt;/p&gt;
+
+&lt;h1 id=&quot;file-storage-solution&quot;&gt;File Storage Solution&lt;/h1&gt;
+
+&lt;p&gt;Assume you are working on something like Netflix and you need a data store for images, videos, etc. Now, in this case, a database is not very useful to us as we are storing files rather than information. &lt;strong&gt;Databases are meant to store information that can be queried&lt;/strong&gt;, whereas files you do not need to query. You just deliver them as they are.&lt;/p&gt;
+
+&lt;p&gt;This is when we use something called Blob (Binary Large Object) storage. Amazon S3 is an example of blob storage. Usually, blob storage is used in combination with a Content delivery network or a CDN. A CDN is a network of servers around the world that delivers content in different geographical locations with reduced latency. If the server you are getting content from is closer to your geographic location, the content will take less time (reduced latency) to be delivered from the server to you.&lt;/p&gt;
+
+&lt;h1 id=&quot;storage-solutions-offering-text-search-capability&quot;&gt;Storage Solutions Offering Text Search Capability&lt;/h1&gt;
+
+&lt;p&gt;Let’s again take the Netflix example. Suppose you want to build a search functionality where the user can search by movie, genre, actor, actress, director, etc. Here you use a search engine like Solr or Elasticsearch which can support fuzzy search.&lt;/p&gt;
+
+&lt;p&gt;To understand fuzzy search, let us take an example of an Uber user searching for airprot. If you notice this is a typo, what the user means to search is airport. But if, because of this typo, we don’t provide any search results, it will be a very poor user experience. So we search for terms similar to airport in the database. This is known as fuzzy search.&lt;/p&gt;
+
+&lt;p&gt;Now a key point here is that these search engines are not databases. Databases provide a guarantee that once stored, our data will not be lost unless we delete it; search engines offer no such guarantee. This is why we should never use search engines like Elasticsearch as our primary data source. We can load the data to them from our primary database to reduce search latency and provide fuzzy and relevance-based text search.&lt;/p&gt;
+
+&lt;h1 id=&quot;time-series-database&quot;&gt;Time Series Database&lt;/h1&gt;
+
+&lt;p&gt;Suppose we are trying to build a metric tracking system. We will need something called a time-series database. Time-series databases are, in a way, an extension of relational databases, but unlike a standard relational DB, time-series databases will never be randomly updated. It will be &lt;strong&gt;updated sequentially in an append-only format&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, it will have more bulk reads for a certain time range as opposed to random reads. For example, how many people watched a video in the last 1 week, 10 days, 1 month, 1 year, and so on. Some examples of time series databases are OpenTSDB and InfluxDB.&lt;/p&gt;
+
+&lt;h1 id=&quot;data-warehousing-storage-solution&quot;&gt;Data Warehousing Storage Solution&lt;/h1&gt;
+
+&lt;p&gt;Sometimes we need a large database to dump all of the data available to us, to perform analytics. Eg. a company like Uber will store all of their data so they can perform analytics to identify where Uber is not used very much, where are the hotspots, what are the peak hours, etc. These systems are not used for regular transactions but offline reporting. Hadoop is a very commonly used Data warehouse.&lt;/p&gt;
+
+&lt;h1 id=&quot;rdbms-vs-nosql&quot;&gt;RDBMS vs NoSQL&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/system_design_14.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you need ACID properties, then you need to use a relational DBMS. Some examples are MySQL, Oracle, and Postgres. But what if you don’t need ACID? Well, you can still use RDBMS, or you can use a Non-relational database.&lt;/p&gt;
+
+&lt;p&gt;Let’s consider an example. Suppose you are trying to build a catalog for something like Amazon, where you want to store information about different products that have various attributes. These attributes will normally not be the same for different products. In such a case, our data cannot be represented as a table. This means we need to use a NoSQL database.&lt;/p&gt;
+
+&lt;p&gt;Also, we don’t just need to store this data but also &lt;strong&gt;query on this data&lt;/strong&gt;. Here comes the factor of query pattern. Which type of database we use here will be decided based on what type of data we store and what types of queries will be run on it. If we have vast data - not just volume but also a vast variety of attributes - and we need to run a vast variety of queries, we need to use something called a Document DB. Couchbase and MongoDB are some commonly used document databases. (Elasticsearch is special cases of document DB)&lt;/p&gt;
+
+&lt;p&gt;But what if &lt;strong&gt;you don’t have a vast variety of attributes&lt;/strong&gt; i.e. very &lt;strong&gt;limited variety of queries&lt;/strong&gt;, but the &lt;strong&gt;size of the database increases very rapidly&lt;/strong&gt;? For example, data collected by Uber for their drivers’ location pings. Now the number of Uber drivers will keep increasing day by day, and therefore so will the data collected every day. This results in an ever-increasing amount of data. In such cases, we use &lt;strong&gt;Columnar DBs like Cassandra or HBase&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Using Cassandra is lighter to deploy, whereas HBase is built on top of Hadoop; we would need to first set up Hadoop and then setup HBase on top of it. This makes the setup of HBase a little lengthy, but performance-wise both are pretty much the same.&lt;/p&gt;
+
+&lt;p&gt;Let us assume we have stored Uber’s ride-related data in a Cassandra with driver id as a partition key. Now when we want to fetch a ride for a particular driver on a particular date, Cassandra can find it easily enough. But if we want to find a customer’s ride on a particular date, Cassandra will have to fan out this query to all the partitions since customer id is not a partition key. So what is the point of using Cassandra if it is not going to scale well!&lt;/p&gt;
+
+&lt;p&gt;Well, there is a simple enough fix. We can replicate the same data to another table or column family with a different partition key. Now when we receive the query for customer id and date, we can simply direct it to the table where the partition key is customer id. This is what we mean by a limited variety of queries but a huge scale. Cassandra (and HBase) can scale massively as long as the queries are of similar types.&lt;/p&gt;
+
+&lt;p&gt;If the queries are more diverse, then we will have to replicate again and again for each partition key, which we can, but only to a certain limit. If we cannot control the types of queries, then something like MongoDB might be the way to go. But if we just need a huge scale for a few types of queries, the Cassandra is the perfect solution.&lt;/p&gt;
+
+&lt;p&gt;Now let’s shake things up a bit!&lt;/p&gt;
+
+&lt;p&gt;Let’s consider the Amazon example again. If for a product we have only one item in stock but multiple users are trying to buy it, it should only be sold to one user, which means we need ACID here. So we should choose a Relational DB like MySQL.&lt;/p&gt;
+
+&lt;p&gt;But the orders-related data for Amazon will be ever-increasing and will have a variety of attributes. That means we should use a Columnar NoSQL database like Cassandra. So which one to go for? We decide to go with a combination of both. We can store the data of orders that are not yet delivered in a MySQL database, and once the order is completed, we can move it to Cassandra to be permanently stored.&lt;/p&gt;
+
+&lt;p&gt;But again, our requirements might be a little more complex. Suppose you want to build a reporting system for how many people bought a particular item. Now, on Amazon, products are sold by various users of different brands and different variations. So the report can not target a single product, rather, it should target a subset of products, which can be in either Cassandra or MySQL.&lt;/p&gt;
+
+&lt;p&gt;Such a requirement is an example of a situation where our best choice would be a document DB like Mongo DB. So we decide to keep a subset of this orders data in Mongo DB that tells us which users bought how much quantity of a certain product, at what time, on what date, etc. So suppose you want to check how many people bought sugar in the last month. You can get order ids from Mongo DB and use this order id to pick up the rest of the data from Cassandra or MySQL.&lt;/p&gt;
+
+&lt;p&gt;That should be it for Storage Solutions in System Design!&lt;/p&gt;
+</description>
+                <pubDate>Tue, 26 Jul 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/data-engineering-series24</link>
+                <guid isPermaLink="true">http://localhost:4000/data-engineering-series24</guid>
+                
+                <category>Data_Engineering</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>Data Engineering Series [Part23]: 시스템 디자인(4) Caching</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#what-is-a-cache&quot; id=&quot;markdown-toc-what-is-a-cache&quot;&gt;What is a Cache?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#when-to-cache&quot; id=&quot;markdown-toc-when-to-cache&quot;&gt;When to Cache?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#how-does-caching-work&quot; id=&quot;markdown-toc-how-does-caching-work&quot;&gt;How Does Caching Work?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#when-not-to-cache&quot; id=&quot;markdown-toc-when-not-to-cache&quot;&gt;When Not to Cache?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#cache-eviction-strategies&quot; id=&quot;markdown-toc-cache-eviction-strategies&quot;&gt;Cache Eviction Strategies&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#time-based&quot; id=&quot;markdown-toc-time-based&quot;&gt;Time Based&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#size-based&quot; id=&quot;markdown-toc-size-based&quot;&gt;Size Based&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#metrics&quot; id=&quot;markdown-toc-metrics&quot;&gt;Metrics&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#caching-products&quot; id=&quot;markdown-toc-caching-products&quot;&gt;Caching Products&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;what-is-a-cache&quot;&gt;What is a Cache?&lt;/h1&gt;
+&lt;p&gt;A cache is high-speed data access and storage layer that helps us fetch data that we had previously retrieved or computed.&lt;/p&gt;
+
+&lt;p&gt;If we need frequent or repeated access to certain information that we have already queried from a service or a database, then instead of repeatedly querying the service, it’s better to cache that information for subsequent use, for it to be readily available.&lt;/p&gt;
+
+&lt;p&gt;For Example, for Twitter users, we can cache all the information that is needed to load the homepage of a user (like followers, tweets, etc.). Caching will help avoid repeatedly querying the same service, caused by the refreshing of the browser by the user or other similar use cases. In this case, caching helps to reduce latency and improve resource utilization of servers.&lt;/p&gt;
+
+&lt;h1 id=&quot;when-to-cache&quot;&gt;When to Cache?&lt;/h1&gt;
+&lt;p&gt;A cache is primarily used in the following scenarios:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;When the data involves a lot of computation, then to reduce latency and CPU utilization, it’s good to cache the pre-calculated information for fast retrieval later on.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;To reduce frequent database or network (API) calls, it’s beneficial to cache the previously fetched data for fast retrieval. This helps reduce latency as well as bandwidth requirements.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;how-does-caching-work&quot;&gt;How Does Caching Work?&lt;/h1&gt;
+
+&lt;p&gt;A cache is primarily used to store the most recently or frequently used data, in the hope that it will soon be fetched again. Caches are typically faster than databases and services when it comes to re-accessing this stored information. What makes them so fast is the fact that caches store data in SSDs and mostly RAMs which reduces the lookup time. However, this does not mean that we should cache everything.&lt;/p&gt;
+
+&lt;h1 id=&quot;when-not-to-cache&quot;&gt;When Not to Cache?&lt;/h1&gt;
+&lt;p&gt;There are some scenarios where the negative aspects of caching outweigh its benefits:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;High Consistency requirements: When we fetch the previously stored data from the cache, there is a possibility of stale data being displayed to the user. For example, for a social media app, then some stale data is probably fine. However, for a stock price display app, then the cache must be in sync with the primary data source.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Write heavy / Read Once: When write operations (updates to data) are more frequent than read operations (data retrieval). For example, caching the data of an analytics system would only increase the hardware maintenance cost.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Low repetition: When the action of retrieval of the same information is not frequently repeated by the user. For example, the cost calculated by the trip cost estimation module of a cab booking app between the exact two points need not be cached.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;cache-eviction-strategies&quot;&gt;Cache Eviction Strategies&lt;/h1&gt;
+&lt;p&gt;We need to regularly expel data from the cache to limit the size of the cache and to maintain its speed while ensuring that the entries are up to date.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/system_design_12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;time-based&quot;&gt;Time Based&lt;/h2&gt;
+
+&lt;p&gt;We keep an entry in the cache for some amount of time. In this strategy, we set a TTL (Time To Live). We will evict the entry from the cache after a certain pre-determined time has elapsed. The time which an entry stays in the cache before being evicted is called TTL.&lt;/p&gt;
+
+&lt;h2 id=&quot;size-based&quot;&gt;Size Based&lt;/h2&gt;
+
+&lt;p&gt;We keep at most some number of entries in the cache.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;FIFO (First In First Out): We harness the FIFO property of the queue data structure to evict old entries.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;LFU (Least Frequently Used): When we must evict an entry, we will evict the least frequently used entry.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;LRU (Least Recently Used): When we must evict an entry, we will evict the least recently used entry.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;LFRU (Least Frequently and Recently Used): We evict the least valuable entry, the one that’s neither used frequently nor recently. This strategy gives the best results.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;metrics&quot;&gt;Metrics&lt;/h1&gt;
+&lt;p&gt;We can use the following metrics to evaluate the performance of the cache:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Size: Increasing the size of the cache usually increases the response time and therefore reduces its performance.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Latency: The introduction of cache into the system must reduce latency from what it was earlier.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Cache Hit Rate: It is the ratio of results found in the cache to the requests made to the cache. If the cache hit rate is low i.e., requests to cache are not returning the desired data, then it essentially slows down the system.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;caching-products&quot;&gt;Caching Products&lt;/h1&gt;
+
+&lt;p&gt;It’s usually not recommended to write your own cache implementation, because there are a lot of really good cache implementations out there that you can use. Some of the most popular caching products that are available in the market are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Ehcache&lt;/li&gt;
+  &lt;li&gt;Hazelcast&lt;/li&gt;
+  &lt;li&gt;Memcached&lt;/li&gt;
+  &lt;li&gt;Redis&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Tue, 26 Jul 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/data-engineering-series23</link>
+                <guid isPermaLink="true">http://localhost:4000/data-engineering-series23</guid>
+                
+                <category>Data_Engineering</category>
+                
+                
+                <category>DE</category>
                 
             </item>
         
@@ -602,363 +825,6 @@ Body: {
                 <pubDate>Sun, 24 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/data-engineering-series18</link>
                 <guid isPermaLink="true">http://localhost:4000/data-engineering-series18</guid>
-                
-                <category>Data_Engineering</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#장애-대응fault-tolerance&quot; id=&quot;markdown-toc-장애-대응fault-tolerance&quot;&gt;장애 대응(Fault Tolerance)&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#장애-감지와-회복&quot; id=&quot;markdown-toc-장애-감지와-회복&quot;&gt;장애 감지와 회복&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#리더와-팔로워&quot; id=&quot;markdown-toc-리더와-팔로워&quot;&gt;리더와 팔로워&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#복제&quot; id=&quot;markdown-toc-복제&quot;&gt;복제&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#일관성-보장&quot; id=&quot;markdown-toc-일관성-보장&quot;&gt;일관성 보장&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#합의-알고리즘&quot; id=&quot;markdown-toc-합의-알고리즘&quot;&gt;합의 알고리즘&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#분산-처리distributed-computing&quot; id=&quot;markdown-toc-분산-처리distributed-computing&quot;&gt;분산 처리(Distributed Computing)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#시스템-확장scale-out&quot; id=&quot;markdown-toc-시스템-확장scale-out&quot;&gt;시스템 확장(Scale-out)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;distributed system은 fault tolerance 하기 위해 여러 서버에 replication. replication할 때 유의할 점이 consistency (어떤 서버가 선택되어도 클라이언트에게 일관된 결과를 돌려 주는가). consistency를 제공하기 위한 것이 합의 알고리즘?&lt;/p&gt;
-
-&lt;h1 id=&quot;장애-대응fault-tolerance&quot;&gt;장애 대응(Fault Tolerance)&lt;/h1&gt;
-
-&lt;h2 id=&quot;장애-감지와-회복&quot;&gt;장애 감지와 회복&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;Heartbeats and Ping&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;리더와-팔로워&quot;&gt;리더와 팔로워&lt;/h2&gt;
-
-&lt;p&gt;동기화는 비용이 많이 들 수 있다. 동기화 오버헤드를 줄이기 위해 일부 알고리즘에는 분산 알고리즘의 단계를 수행 및 조정하는 리더 프로세스가 있다. 일반적으로 분산 시스템의 프로세스는 균일하고 모든 프로세스가 리더 역할을 맡을 수 있다. 장애가 발생하면 어떤 프로세스라도 리더 선출 과정을 시작할 수 있고 선출된 프로세스는 이전 리더의 작업을 이어서 수행한다.&lt;/p&gt;
-
-&lt;p&gt;이상적으로는 한 번에 하나의 리더만 존재하고, 여러 리더가 선출되고 서로 존재를 모르는 상황(split brain 현상)은 절대로 발생하지 않아야 한다. 하지만 많은 리더 선출 알고리즘이 이 조건을 위반한다. 이 문제를 해결하기 위해서는 클러스터 구성원 과반수의 동의가 필요하다. 멀티 팍소스와 래프트를 비롯한 여러 합의 알고리즘은 리더 프로세스가 조율을 담당한다.&lt;/p&gt;
-
-&lt;p&gt;선출 작업은 결정론적이어야 한다. 정확히 하나의 리더를 선출하고 모든 참가자가 결과를 인정해야 한다. 선출된 새로운 리더는 모든 구성원에게 자신의 존재를 알려야 한다.&lt;/p&gt;
-
-&lt;p&gt;리더 프로세스가 있는 시스템의 가장 큰 문제는 리더가 병목 지점이 될 수 있다는 점이다. 이 문제를 해결하기 위해 많은 시스템이 데이터를 독립적인 파티션으로 나누고 각 파티션별로 리더를 선출한다. 스패너(Spanner)가 이 방식을 사용한다.&lt;/p&gt;
-
-&lt;p&gt;선출 작업은 비용이 높은 작업이지만 자주 수행되지 않기 때문에 시스템 성능에 큰 영향을 주지 않는다.&lt;/p&gt;
-
-&lt;p&gt;리더의 정체는 프로세스가 모르는 사이에 바뀔 수 있다. 따라서 각 프로세스가 개별적으로 알고 있는 리더에 대한 정보가 유효한지 확인해야 한다. 이 문제는 리더 선출 알고리즘과 장애 감지 알고리즘을 같이 사용해 해결할 수 있다. 예를 들어 안정적인 리더 선출 알고리즘은 안정적인 프로세스에 리더의 기회를 주고 타임아웃 기반의 장애 감지 알고리즘을 사용해 해당 프로세스에 장애가 발생하지 않고 접근이 가능한 동안 계속해서 리더 역할을 유지할 수 있도록 보장한다.&lt;/p&gt;
-
-&lt;p&gt;리더에 의존하는 대부분의 알고리즘은 여러 리더가 존재하는 것을 허용하고 리더 사이의 충돌을 최대한 빠르게 해결한다.&lt;/p&gt;
-
-&lt;h2 id=&quot;복제&quot;&gt;복제&lt;/h2&gt;
-
-&lt;p&gt;In a distributed system data is stored is over different computers in a network. Therefore, we need to make sure that data is readily available for the users. Availability of the data is an important factor often accomplished by data replication. Replication is the practice of keeping several copies of data in different places.&lt;/p&gt;
-
-&lt;p&gt;Why do we require replication?&lt;br /&gt;
-The first and foremost thing is that it makes our system more stable because of node replication. It is good to have replicas of a node in a network due to following reasons:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;If a node stops working, the distributed network will still work fine due to its replicas which will be there. Thus it increases the fault tolerance of the system.&lt;/li&gt;
-  &lt;li&gt;It also helps in load sharing where loads on a server are shared among different replicas.&lt;/li&gt;
-  &lt;li&gt;It enhances the availability of the data. If the replicas are created and data is stored near to the consumers, it would be easier and faster to fetch data.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Types of Replication&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Active Replication&lt;/li&gt;
-  &lt;li&gt;Passive Replication&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Active Replication&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The request of the client goes to all the replicas.&lt;/li&gt;
-  &lt;li&gt;It is to be made sure that every replica receives the client request in the same order else the system will get inconsistent.&lt;/li&gt;
-  &lt;li&gt;There is no need for coordination because each copy processes the same request in the same sequence.&lt;/li&gt;
-  &lt;li&gt;All replicas respond to the client’s request.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;It is really simple. The codes in active replication are the same throughout.&lt;/li&gt;
-  &lt;li&gt;It is transparent.&lt;/li&gt;
-  &lt;li&gt;Even if a node fails, it will be easily handled by replicas of that node.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Disadvantages&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;It increases resource consumption. The greater the number of replicas, the greater the memory needed.&lt;/li&gt;
-  &lt;li&gt;It increases the time complexity. If some change is done on one replica it should also be done in all others.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Passive Replication&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The client request goes to the primary replica, also called the main replica.&lt;/li&gt;
-  &lt;li&gt;There are more replicas that act as backup for the primary replica.&lt;/li&gt;
-  &lt;li&gt;Primary replica informs all other backup replicas about any modification done.&lt;/li&gt;
-  &lt;li&gt;The response is returned to the client by a primary replica.&lt;/li&gt;
-  &lt;li&gt;Periodically primary replica sends some signal to backup replicas to let them know that it is working perfectly fine.&lt;/li&gt;
-  &lt;li&gt;In case of failure of a primary replica, a backup replica becomes the primary replica.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Advantages&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The resource consumption is less as backup servers only come into play when the primary server fails.&lt;/li&gt;
-  &lt;li&gt;The time complexity of this is also less as there’s no need for updating in all the nodes replicas, unlike active replication.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Disadvantages&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;If some failure occurs, the response time is delayed.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;일관성-보장&quot;&gt;일관성 보장&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;CAP Theorem&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Eventual Consistency&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Eventual consistency is a consistency model that enables the data store to be highly available. It is also known as optimistic replication &amp;amp; is key to distributed systems. So, how exactly does it work? Let’s Understand this with the help of a use case.&lt;/p&gt;
-
-&lt;p&gt;Real World Use Case :&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Think of a popular microblogging site deployed across the world in different geographical regions like Asia, America, and Europe. Moreover, each geographical region has multiple data center zones: North, East, West, and South.&lt;/li&gt;
-  &lt;li&gt;Furthermore, each zone has multiple clusters which have multiple server nodes running. So, we have many datastore nodes spread across the world that micro-blogging site uses for persisting data. Since there are so many nodes running, there is no single point of failure.&lt;/li&gt;
-  &lt;li&gt;The data store service is highly available. Even if a few nodes go down persistence service is still up. Let’s say a celebrity makes a post on the website that everybody starts liking around the world.&lt;/li&gt;
-  &lt;li&gt;At a point in time, a user in Japan likes a post which increases the “Like” count of the post from say 100 to 101. At the same point in time, a user in America, in a different geographical zone, clicks on the post, and he sees “Like” count as 100, not 101.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Reason for the above Use case :&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Simply, because the new updated value of the Post “Like” counter needs some time to move from Japan to America and update server nodes running there. Though the value of the counter at that point in time was 101, the user in America sees old inconsistent values.&lt;/li&gt;
-  &lt;li&gt;But when he refreshes his web page after a few seconds “Like” counter value shows as 101. So, data was initially inconsistent but eventually got consistent across server nodes deployed around the world. This is what eventual consistency is.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Strong Consistency&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Strong Consistency simply means the data must be strongly consistent at all times. All the server nodes across the world should contain the same value as an entity at any point in time. And the only way to implement this behavior is by locking down the nodes when being updated.&lt;/p&gt;
-
-&lt;p&gt;Real World Use Case :&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Let’s continue the same Eventual Consistency example from the previous lesson. To ensure Strong Consistency in the system, when a user in Japan likes posts, all nodes across different geographical zones must be locked down to prevent any concurrent updates.&lt;/li&gt;
-  &lt;li&gt;This means at one point in time, only one user can update the post “Like” counter value. So, once a user in Japan updates the “Like” counter from 100 to 101. The value gets replicated globally across all nodes. Once all nodes reach consensus, locks get lifted. Now, other users can Like posts.&lt;/li&gt;
-  &lt;li&gt;If the nodes take a while to reach a consensus, they must wait until then. Well, this is surely not desired in the case of social applications. But think of a stock market application where the users are seeing different prices of the same stock at one point in time and updating it concurrently. This would create chaos. Therefore, to avoid this confusion we need our systems to be Strongly Consistent.&lt;/li&gt;
-  &lt;li&gt;The nodes must be locked down for updates. Queuing all requests is one good way of making a system Strongly Consistent. The strong Consistency model hits the capability of the system to be Highly Available &amp;amp; perform concurrent updates. This is how strongly consistent ACID transactions are implemented.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;ACID Transaction Support&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Distributed systems like NoSQL databases which scale horizontally on the fly don’t support ACID transactions globally &amp;amp; this is due to their design. The whole reason for the development of NoSQL tech is the ability to be Highly Available and Scalable. If we must lock down nodes every time, it becomes just like SQL. So, NoSQL databases don’t support ACID transactions and those that claim to, have terms and conditions applied to them. Generally, transaction support is limited to a geographic zone or an entity hierarchy. Developers of tech make sure that all the Strongly consistent entity nodes reside in the same geographic zone to make ACID transactions possible.&lt;/p&gt;
-
-&lt;p&gt;Conclusion: For transactional things go for MySQL because it provides a lock-in feature and supports ACID transactions.&lt;/p&gt;
-
-&lt;h2 id=&quot;합의-알고리즘&quot;&gt;합의 알고리즘&lt;/h2&gt;
-
-&lt;p&gt;Consensus is a general agreement on a decision made by the majority of those involved. For example, the problem may be as simple as friends trying to decide which restaurant has multiple options to choose from or complex as decisions on distributed systems.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Need of consensus in a distributed system&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;In a distributed system, nodes are distributed across the network. Some of these nodes might get failed(crash fault) or starts behaving abnormally (Byzantine Fault). In such a scenario, it becomes difficult to come to a common decision. More concisely,&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;There are n processes, m of which may be faulty.&lt;/li&gt;
-  &lt;li&gt;The task is to make all the Nonfaulty processes agree on some value(s) even in the presence of the faulty processes.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So we can remove these problems by given below solutions:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Consensus Without Any Fault&lt;/li&gt;
-  &lt;li&gt;Consensus With at most m Crash Faults&lt;/li&gt;
-  &lt;li&gt;Consensus With at most m Byzantine Faults&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;멀티 팍소스&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;래프트&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;분산-처리distributed-computing&quot;&gt;분산 처리(Distributed Computing)&lt;/h1&gt;
-
-&lt;h1 id=&quot;시스템-확장scale-out&quot;&gt;시스템 확장(Scale-out)&lt;/h1&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/consensus-problem-of-distributed-systems/?ref=gcse&quot;&gt;GeeksforGeeks: Consensus Problem of Distributed Systems&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Sat, 23 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/data-engineering-series17</link>
-                <guid isPermaLink="true">http://localhost:4000/data-engineering-series17</guid>
-                
-                <category>Data_Engineering</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#운영체제-관점&quot; id=&quot;markdown-toc-운영체제-관점&quot;&gt;운영체제 관점&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#네트워크-inter-process-communication&quot; id=&quot;markdown-toc-네트워크-inter-process-communication&quot;&gt;네트워크: Inter Process Communication&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#remote-procedure-callrpc&quot; id=&quot;markdown-toc-remote-procedure-callrpc&quot;&gt;Remote Procedure Call(RPC)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#message-based-communication&quot; id=&quot;markdown-toc-message-based-communication&quot;&gt;Message based Communication&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#sockets&quot; id=&quot;markdown-toc-sockets&quot;&gt;Sockets&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;운영체제-관점&quot;&gt;운영체제 관점&lt;/h1&gt;
-
-&lt;h1 id=&quot;네트워크-inter-process-communication&quot;&gt;네트워크: Inter Process Communication&lt;/h1&gt;
-
-&lt;p&gt;Inter-process communication (IPC) is set of interfaces, which is usually programmed in order for the programs to communicate between series of processes. This allows running programs concurrently in an Operating System.&lt;/p&gt;
-
-&lt;p&gt;Interprocess communication is at the heart of all distributed systems. It makes no sense to study distributed systems without carefully examining the ways that processes on different machines can exchange information. Communication in distributed systems is always based on low-level message passing as offered by the underlying network. Expressing communication through message passing is harder than using primitives based on shared memory, as available for nondistrib- uted platforms. Modem distributed systems often consist of thousands or even millions of processes scattered across a network with unreliable communication such as the Internet. Unless the primitive communication facilities of computer networks are replaced by something else, development of large-scale distributed applications is extremely difficult.&lt;/p&gt;
-
-&lt;p&gt;In this chapter, we start by discussing the rules that communicating processes must adhere to, known as protocols, and concentrate on structuring those proto- cols in the form of layers. We then look at three widely-used models for commu- nication: Remote Procedure Call (RPC), Message-Oriented Middleware (MOM), and data streaming. We also discuss the general problem of sending data to multi- ple receivers, called multicasting.&lt;/p&gt;
-
-&lt;p&gt;Our first model for communication in distributed systems is the remote proce- dure call (RPC). An RPC aims at hiding most of the intricacies of message pass- ing, and is ideal for client-server applications.&lt;/p&gt;
-
-&lt;p&gt;In many distributed applications, communication does not follow the rather strict pattern of client-server interaction. In those cases, it turns out that thinking in terms of messages is more appropriate. However, the low-level communication facilities of computer networks are in many ways not suitable due to their lack of distribution transparency.&lt;/p&gt;
-
-&lt;p&gt;An alternative is to use a high-level message-queuing model, in which communication proceeds much the same as in electronic maiI systems. Message-oriented middleware (MOM) is a subject important enough to warrant a section of its own.&lt;/p&gt;
-
-&lt;p&gt;With the advent of multimedia distributed systems, it became apparent that
-many systems were lacking support for communication of continuous media, such as audio and video. What is needed is the notion of a stream that can support the continuous flow of messages, subject to various timing constraints. Streams are discussed in a separate section.&lt;/p&gt;
-
-&lt;p&gt;Finally, since our understanding of setting up multicast facilities has im- proved, novel and elegant solutions for data dissemination have emerged. We pay separate attention to this subject in the last section of this chapter.&lt;/p&gt;
-
-&lt;h2 id=&quot;remote-procedure-callrpc&quot;&gt;Remote Procedure Call(RPC)&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/dist_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Remote Procedure Call (RPC) is a communication technology that is used by one program to make a request to another program for utilizing its service on a network without even knowing the network’s details. A function call or a subroutine call are other terms for a procedure call.&lt;/p&gt;
-
-&lt;p&gt;It is based on the client-server concept. The client is the program that makes the request, and the server is the program that gives the service. An RPC, like a local procedure call, is based on the synchronous operation that requires the requesting application to be stopped until the remote process returns its results. Multiple RPCs can be executed concurrently by utilizing lightweight processes or threads that share the same address space.&lt;/p&gt;
-
-&lt;p&gt;Remote Procedure Call program as often as possible utilizes the Interface Definition Language (IDL), a determination language for describing a computer program component’s Application Programming Interface (API). In this circumstance, IDL acts as an interface between machines at either end of the connection, which may be running different operating systems and programming languages.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Elements of RPC&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/rpc_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Client&lt;/strong&gt;: The client process initiates RPC. The client makes a standard call, which triggers a correlated procedure in the client stub.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Client Stub&lt;/strong&gt;: Stubs are used by RPC to achieve semantic transparency. The client calls the client stub. Client stub does the following tasks:
-    &lt;ul&gt;
-      &lt;li&gt;The first task performed by client stub is when it receives a request from a client, it packs(marshalls) the parameters and required specifications of remote/target procedure in a message.&lt;/li&gt;
-      &lt;li&gt;The second task performed by the client stub is upon receiving the result values after execution, it unpacks (unmarshalled) those results and sends them to the Client.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;RPC Runtime&lt;/strong&gt;: The RPC runtime is in charge of message transmission between client and server via the network. Retransmission, acknowledgment, routing, and encryption are all tasks performed by it. On the client-side, it receives the result values in a message from the server-side, and then it further sends it to the client stub whereas, on the server-side, RPC Runtime got the same message from the server stub when then it forwards to the client machine. It also accepts and forwards client machine call request messages to the server stub.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Server Stub&lt;/strong&gt;: Server stub does the following tasks:
-    &lt;ul&gt;
-      &lt;li&gt;The first task performed by server stub is that it unpacks(unmarshalled) the call request message which is received from the local RPC Runtime and makes a regular call to invoke the required procedure in the server.&lt;/li&gt;
-      &lt;li&gt;The second task performed by server stub is that when it receives the server’s procedure execution result, it packs it into a message and asks the local RPC Runtime to transmit it to the client stub where it is unpacked.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Server&lt;/strong&gt;: After receiving a call request from the client machine, the server stub passes it to the server. The execution of the required procedure is made by the server and finally, it returns the result to the server stub so that it can be passed to the client machine using the local RPC Runtime.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Working Procedure for RPC Model&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The process arguments are placed in a precise location by the caller when the procedure needs to be called.&lt;/li&gt;
-  &lt;li&gt;Control at that point passed to the body of the method, which is having a series of instructions.&lt;/li&gt;
-  &lt;li&gt;The procedure body is run in a recently created execution environment that has duplicates of the calling instruction’s arguments.&lt;/li&gt;
-  &lt;li&gt;At the end, after the completion of the operation, the calling point gets back the control, which returns a result.
-    &lt;ul&gt;
-      &lt;li&gt;The call to a procedure is possible only for those procedures that are not within the caller’s address space because both processes (caller and callee) have distinct address space and the access is restricted to the caller’s environment’s data and variables from the remote procedure.&lt;/li&gt;
-      &lt;li&gt;The caller and callee processes in the RPC communicate to exchange information via the message-passing scheme.&lt;/li&gt;
-      &lt;li&gt;The first task from the server-side is to extract the procedure’s parameters when a request message arrives, then the result, send a reply message, and finally wait for the next call message.&lt;/li&gt;
-      &lt;li&gt;Only one process is enabled at a certain point in time.&lt;/li&gt;
-      &lt;li&gt;The caller is not always required to be blocked.&lt;/li&gt;
-      &lt;li&gt;The asynchronous mechanism could be employed in the RPC that permits the client to work even if the server has not responded yet.&lt;/li&gt;
-      &lt;li&gt;In order to handle incoming requests, the server might create a thread that frees the server for handling consequent requests.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/dist_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Advantages of Remote Procedure Calls&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The technique of using procedure calls in RPC permits high-level languages to provide communication between clients and servers.&lt;/li&gt;
-  &lt;li&gt;This method is like a local procedure call but with the difference that the called procedure is executed on another process and a different computer.&lt;/li&gt;
-  &lt;li&gt;The thread-oriented model is also supported by RPC in addition to the process model.&lt;/li&gt;
-  &lt;li&gt;The RPC mechanism is employed to conceal the core message passing method.&lt;/li&gt;
-  &lt;li&gt;The amount of time and effort required to rewrite and develop the code is minimal.&lt;/li&gt;
-  &lt;li&gt;The distributed and local environments can both benefit from remote procedure calls.&lt;/li&gt;
-  &lt;li&gt;To increase performance, it omits several of the protocol layers.&lt;/li&gt;
-  &lt;li&gt;Abstraction is provided via RPC.  To exemplify, the user is not known about the nature of message-passing in network communication.&lt;/li&gt;
-  &lt;li&gt;RPC empowers the utilization of applications in a distributed environment.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Disadvantages of Remote Procedure Calls&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;In Remote Procedure Calls parameters are only passed by values as pointer values are not allowed.&lt;/li&gt;
-  &lt;li&gt;It involves a communication system with another machine and another process, so this mechanism is extremely prone to failure.&lt;/li&gt;
-  &lt;li&gt;The RPC concept can be implemented in a variety of ways, hence there is no standard.&lt;/li&gt;
-  &lt;li&gt;Due to the interaction-based nature, there is no flexibility for hardware architecture in RPC.&lt;/li&gt;
-  &lt;li&gt;Due to a remote procedure call, the process’s cost has increased.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;message-based-communication&quot;&gt;Message based Communication&lt;/h2&gt;
-
-&lt;p&gt;In the development of models and technologies, message abstraction is a necessary aspect that enables distributed computing. Distributed system is defined as a system in which components reside at networked communication and synchronise its functions only by movement of messages. In this, message recognizes any discrete data that is moved from one entity to another. It includes any kind of data representation having restriction of size and time, whereas it invokes a remote procedure or a sequence of object instance or a common message. This is the reason that “message-based communication model” can be beneficial to refer various model for inter-process communication, which is based on the data streaming abstraction.&lt;/p&gt;
-
-&lt;p&gt;Various distributed programming model use this type of communication despite of the abstraction which is shown to developers for programming the co-ordination of shared components. Below are some major distributed programming models that uses “message-based communication model”&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Message Passing
-    &lt;ul&gt;
-      &lt;li&gt;In this model, the concept of message as the major abstraction of model is introduced. The units which inter-change the data and information that is explicitly encode, in the form of message. According to then model, the schema and content of message changes or varies. Message Passing Interface and OpenMP are major example of this type of model.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Remote Procedure Call
-    &lt;ul&gt;
-      &lt;li&gt;This model explores the keys of procedure call beyond the restrictions of a single process, thus pointing the execution of program in remote processes. In this, primary client-server is implied. A remote process maintains a server component, thus enabling client processes to invoke the approaches and returns the output of the execution. Messages, created by the Remote Procedure Call (RPC) implementation, retrieve the information of the procedure itself and that procedure is to execute having necessary arguments and also returns the values. The use of messages regarding this referred as marshal-ling of the arguments and return values.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;sockets&quot;&gt;Sockets&lt;/h2&gt;
-
-&lt;p&gt;This method is mostly used to communicate over a network between a client and a server. It allows for a standard connection which is computer and OS independent.&lt;/p&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.geeksforgeeks.org/interprocess-communication-in-distributed-systems/?ref=gcse&quot; target=&quot;_blank&quot;&gt;GeeksforGeeks: Interprocess Communication in Distributed Systems&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;amp;blogId=horajjan&amp;amp;logNo=220956169499&quot; target=&quot;_blank&quot;&gt;조원호의 행복공간: [네트워크] IPC와 RPC의 차이점&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Fri, 22 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/data-engineering-series16</link>
-                <guid isPermaLink="true">http://localhost:4000/data-engineering-series16</guid>
                 
                 <category>Data_Engineering</category>
                 
