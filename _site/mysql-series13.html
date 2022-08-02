@@ -400,6 +400,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -430,6 +432,7 @@ Table of Contents
   <li><a href="#row_number" id="markdown-toc-row_number">ROW_NUMBER()</a></li>
   <li><a href="#윈도우-함수" id="markdown-toc-윈도우-함수">윈도우 함수</a></li>
   <li><a href="#over" id="markdown-toc-over">OVER()</a></li>
+  <li><a href="#ctecommon-table-expression" id="markdown-toc-ctecommon-table-expression">CTE(Common Table Expression)</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -585,6 +588,34 @@ Table of Contents
   <li>ORDER BY: 순서대로 <strong>누적</strong>하여 계산</li>
 </ul>
 
+<h1 id="ctecommon-table-expression">CTE(Common Table Expression)</h1>
+
+<ul>
+  <li>문제: All People Report to the Given Manager</li>
+  <li>In MySQL every query generates a temporary result or relation. In order to give a name to those temporary result set, CTE is used.</li>
+  <li>A CTE is defined using WITH clause</li>
+  <li>A recursive CTE is a subquery which refer to itself using its own name
+    <ul>
+      <li>The recursive CTEs are defined using WITH RECURSIVE clause</li>
+      <li>There should be a terminating condition to recursive CTE.</li>
+      <li>The recursive CTEs are used for series generation and traversal of hierarchical or tree-structured data</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WITH</span> <span class="k">RECURSIVE</span> <span class="n">CTE</span> <span class="k">AS</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="n">employee_id</span>
+    <span class="k">FROM</span> <span class="n">Employees</span>
+    <span class="k">WHERE</span> <span class="n">manager_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">AND</span> <span class="n">employee_id</span> <span class="o">!=</span> <span class="mi">1</span>
+    <span class="k">UNION</span> <span class="k">ALL</span>
+    <span class="k">SELECT</span> <span class="n">e</span><span class="p">.</span><span class="n">employee_id</span>
+    <span class="k">FROM</span> <span class="n">CTE</span> <span class="k">c</span> <span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">Employees</span> <span class="n">e</span> <span class="k">ON</span> <span class="k">c</span><span class="p">.</span><span class="n">employee_id</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">manager_id</span>
+<span class="p">)</span>
+<span class="k">SELECT</span> <span class="n">employee_id</span>
+<span class="k">FROM</span> <span class="n">CTE</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">employee_id</span>
+</code></pre></div></div>
+
 <h1 id="참고">참고</h1>
 
 <ul>
@@ -593,6 +624,8 @@ Table of Contents
   <li><a href="https://mizykk.tistory.com/121" target="_blank">[MySQL] 윈도우함수(Window Function)</a></li>
   <li><a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html" target="_blank">MySQL 공식문서: 12.21.1 Window Function Descriptions</a></li>
   <li><a href="https://learnsql.com/blog/over-clause-mysql/" target="_blank">LearnSQL: What Is the MySQL OVER Clause?</a></li>
+  <li><a href="https://www.geeksforgeeks.org/mysql-recursive-cte-common-table-expressions/" target="_blank">GeeksforGeeks: MySQL Recursive CTE (Common Table Expressions)</a></li>
+  <li><a href="https://horang98.tistory.com/10" target="_blank">horang, [MySQL] 계층 쿼리 - WITH, WITH RECURSIVE 사용법</a></li>
 </ul>
 
     </div>
@@ -842,6 +875,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -914,6 +949,45 @@ Table of Contents
       
 
       
+      <a class="article__image" href="/mysql-series15">
+        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part15] IntelliJ IDE를 이용한 데이터베이스 시각화">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/mysql-series15">MySQL Series [Part15] IntelliJ IDE를 이용한 데이터베이스 시각화</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-07-29T21:01:35+09:00">29 Jul 2022</time>
+
+      
+
+      
       <a class="article__image" href="/mysql-series14">
         <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part14] MySQL Optimizing SELECT Statements">
       </a>
@@ -943,38 +1017,6 @@ Table of Contents
             
       
             
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-07-25T21:01:35+09:00">25 Jul 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/data-engineering-series19">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part19]: 로그 구조 스토리지">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series19">Data Engineering Series [Part19]: 로그 구조 스토리지</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
             
             
             
@@ -987,13 +1029,13 @@ Table of Contents
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-24T21:01:35+09:00">24 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-26T21:01:35+09:00">26 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series18">
-        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part18]: APIs">
+      <a class="article__image" href="/data-engineering-series22">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part22]: 시스템 디자인(3) Consistent Hashing">
       </a>
       
 
@@ -1002,7 +1044,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series18">Data Engineering Series [Part18]: APIs</a>
+        <a href="/data-engineering-series22">Data Engineering Series [Part22]: 시스템 디자인(3) Consistent Hashing</a>
       </h2>
 
       

@@ -147,6 +147,30 @@ FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 �
 - PARTITION BY: 윈도우 범위 결정
 - ORDER BY: 순서대로 **누적**하여 계산
 
+# CTE(Common Table Expression)
+
+- 문제: All People Report to the Given Manager
+- In MySQL every query generates a temporary result or relation. In order to give a name to those temporary result set, CTE is used.
+- A CTE is defined using WITH clause
+- A recursive CTE is a subquery which refer to itself using its own name
+  - The recursive CTEs are defined using WITH RECURSIVE clause
+  - There should be a terminating condition to recursive CTE.
+  - The recursive CTEs are used for series generation and traversal of hierarchical or tree-structured data
+
+```sql
+WITH RECURSIVE CTE AS (
+    SELECT employee_id
+    FROM Employees
+    WHERE manager_id = 1 AND employee_id != 1
+    UNION ALL
+    SELECT e.employee_id
+    FROM CTE c INNER JOIN Employees e ON c.employee_id = e.manager_id
+)
+SELECT employee_id
+FROM CTE
+ORDER BY employee_id
+```
+
 # 참고
 
 - [MySQL tutorial: MySQL ROW_NUMBER, This is How You Emulate It](https://www.mysqltutorial.org/mysql-row_number/){:target="_blank"}
@@ -154,3 +178,5 @@ FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 �
 - [[MySQL] 윈도우함수(Window Function)](https://mizykk.tistory.com/121){:target="_blank"}
 - [MySQL 공식문서: 12.21.1 Window Function Descriptions](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html){:target="_blank"}
 - [LearnSQL: What Is the MySQL OVER Clause?](https://learnsql.com/blog/over-clause-mysql/){:target="_blank"}
+- [GeeksforGeeks: MySQL Recursive CTE (Common Table Expressions)](https://www.geeksforgeeks.org/mysql-recursive-cte-common-table-expressions/){:target="_blank"}
+- [horang, [MySQL] 계층 쿼리 - WITH, WITH RECURSIVE 사용법](https://horang98.tistory.com/10){:target="_blank"}

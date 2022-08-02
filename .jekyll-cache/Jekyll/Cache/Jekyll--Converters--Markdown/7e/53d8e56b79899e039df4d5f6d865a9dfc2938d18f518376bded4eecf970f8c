@@ -1,0 +1,58 @@
+I"<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#consistent-hashing" id="markdown-toc-consistent-hashing">Consistent Hashing</a>    <ul>
+      <li><a href="#why-hashing" id="markdown-toc-why-hashing">Why hashing?</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+<h1 id="consistent-hashing">Consistent Hashing</h1>
+
+<p>Hash is basically a function that takes a value and converts it into another value of a specific format. Hash functions that are commonly used are MD5, SHA1, SHA256, etc.</p>
+
+<h2 id="why-hashing">Why hashing?</h2>
+<p>Suppose you build a distributed cache, where the data is distributed over various nodes, sometimes spanning multiple data centers. When we want to store the data for a user, we need to decide which node will cache this data. And when we want to retrieve this cached value, we must query the same node. So let us use a simple hash function for this again.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hash(user) = Sum(ASCII value of all characters in name) % 5
+</code></pre></div></div>
+
+<p>Where 5 is the number of nodes. This way, the hashes generated for users will be as follows:</p>
+
+<p><img src="/images/system_design_8.png" alt="" /></p>
+
+<p>Since hash(Alice) is 0, Alice’s data will be stored in node 0. Similarly, Bob’s data will be stored in node 1 and Eve’s in 4. Now when you need to look up the information for Alice, you will use the same hash function to determine which node to query. Since hash(Alice) equals 0, you will query node 0 and fetch the information.</p>
+
+<p>But there is a problem with this solution. This model is not scalable. If the traffic increases and you want to add a new node, the formula to calculate the hash will get updated to</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hash(user) = Sum(ASCII value of all characters in name) % 6
+</code></pre></div></div>
+
+<p>And similarly hash(Alice) will get updated to 2. So now you will search for Alice’s information in node 2, but the information is actually stored in node 0 so you won’t find it.</p>
+
+<p>To fix this, you will need to rehash all the data every time a node is added or removed, and once rehashed, you need to move the data to their respective new nodes, which could be across different data centers. This is not a very good solution as it uses up a lot of CPU resources and bandwidth.</p>
+
+<p>This is where Consistent Hashing comes in. Consistent Hashing tries to optimize the system in such a way that:</p>
+
+<ul>
+  <li>You don’t need to move around all the data while adding or removing nodes.</li>
+  <li>There will be minimal movement of data as if a node is removed, the data from that node will be supported by another node. Similarly, when a node is added, some data will be mapped to it as you don’t want it to sit idle.</li>
+  <li>You can have a nearly even distribution of data across all machines.</li>
+</ul>
+
+<p>The idea is <strong>removing the number of nodes in the system out of the equation</strong> while calculating the hash. Now hashes for data and nodes will all be independently calculated and adding or removing nodes won’t change these hashes.</p>
+
+<p>Now instead of assigning the data to these nodes in a sequential manner, we will plot these nodes, or their hashes, on the number line, and each node will be responsible for the range between its position and the position of the first node to its right.</p>
+
+<p><img src="/images/system_design_9.png" alt="" /></p>
+
+<p>When the data comes in for storage, we will calculate its hash to determine its place on the number line. Based on which node’s range it falls in, we will map the data to that node.</p>
+
+<p>If you want to remove a node from this system, the range of the previous machine on the number line will be extended, and all the data from the removed node will be mapped to the previous node in the number line. This resolves the issue of data transfer as only the data from one machine will need to be mapped to another machine.</p>
+
+<p>But there is still a problem with this system. <strong>After removing a node, the ranges of certain machines might not be balanced.</strong></p>
+
+<p>An ideal solution to this would be assigning data between various nodes.</p>
+:ET

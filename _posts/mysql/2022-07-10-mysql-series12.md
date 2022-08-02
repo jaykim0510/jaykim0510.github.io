@@ -60,7 +60,7 @@ tags: MySQL
 --------------------------------------------- MEDIUM
 - Find the Start and End Number of Continuous Ranges 💟 ❎ 
 - Running Total for Different Genders 💟 ❎ 
-- All People Report to the Given Manager
+- All People Report to the Given Manager ✅
 - Number of Calls Between Two Persons
 - Game Play Analysis III
 - Customers Who Bought Products A and B but Not C
