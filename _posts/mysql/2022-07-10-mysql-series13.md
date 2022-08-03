@@ -113,6 +113,7 @@ FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 �
 # 날짜 관련 함수
 
 - DATE_SUB()
+  - INTERVAL
 - DATE_FORMAT()
 
 # ROW_NUMBER()
@@ -145,7 +146,7 @@ FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 �
   )
   ```
 - PARTITION BY: 윈도우 범위 결정
-- ORDER BY: 순서대로 **누적**하여 계산
+- ORDER BY: 정렬하여 계산
 
 # CTE(Common Table Expression)
 
@@ -170,6 +171,19 @@ SELECT employee_id
 FROM CTE
 ORDER BY employee_id
 ```
+
+# LEAD, LAG 함수
+- Non Aggregation Window Function 중 하나
+- lead -> 이끌다 -> 현재 행 다음
+- lag -> 질질 끌다 -> 현재 행 이전
+- LEAD(expr, N, default) OVER(PARTITION BY ~ ORDER BY ~)
+
+# 3 NOT IN (null, 1, 2)
+
+- Tree Node 문제
+- True로 여겨질 줄 알았으나 False였다
+
+
 
 # 참고
 

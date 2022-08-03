@@ -61,13 +61,12 @@ tags: MySQL
 - Find the Start and End Number of Continuous Ranges 💟 ❎ 
 - Running Total for Different Genders 💟 ❎ 
 - All People Report to the Given Manager ✅
-- Number of Calls Between Two Persons
-- Game Play Analysis III
-- Customers Who Bought Products A and B but Not C
-- Biggest Window Between Visits
-- Evaluate Boolean Expression
-- Orders With Maximum Quantity Above Average
-- Tree Node
+- Number of Calls Between Two Persons 💟 ✅
+- Game Play Analysis III 💟 ✅
+- Customers Who Bought Products A and B but Not C 💟 ✅
+- Biggest Window Between Visits 💟 ❎ 
+- Evaluate Boolean Expression 💟 ✅
+- Tree Node ✅
 - Highest Grade For Each Student
 - Number of Accounts That Did Not Stream
 - Restaurant Growth
