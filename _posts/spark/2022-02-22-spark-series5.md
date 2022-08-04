@@ -29,7 +29,7 @@ Spark Core에 RDD가 있다면 Spark SQL에는 Dataframe과 Dataset이 있습니
 
 ![](../images/../../images/spark_16.jpg)  
 
-그러던 중 Spark 1.3버전에서 Dataframe이라는 새로운 데이터 모델이 공개되었습니다. Dataframe은 개발자들에게 친숙한 SQL과 비슷한 방식으로 작성할 수 있도록하는 API를 제공해 진입 장벽을 낮췄으며 코드의 가독성 또한 높여주었습니다. Dataframe도 마찬가지로 low-level에서는 RDD로 코드가 동작하는데 Spark SQL은 내부적으로 Catalyst Optimizer를 통해 최적의 RDD 코드로 변환됩니다. 따라서 쉬운 코드 작성과 높은 성능을 모두 얻게되었습니다.  
+그러던 중 Spark 1.3버전에서 Dataframe이라는 새로운 데이터 모델이 공개되었습니다. Dataframe은 개발자들에게 친숙한 SQL과 비슷한 방식으로 작성할 수 있도록하는 API를 제공해 진입 장벽을 낮췄으며 코드의 가독성 또한 높여주었습니다. Dataframe도 마찬가지로 low-level에서는 RDD로 코드가 동작하는데 Spark SQL은 내부적으로 Catalyst Optimizer를 통해 최적의 RDD 코드로 변환됩니다. 따라서 쉬운 코드 작성과 높은 성능을 모두 얻게 되었습니다.  
 
 그러나 Dataframe에도 아쉬운 점이 있었는데, 바로 RDD에서 가능했던 컴파일 타임 오류 체크 기능을 사용할 수 없다는 점이었습니다.  
 
@@ -43,7 +43,7 @@ Spark 1.6버전에서 RDD의 장점과 Dataframe의 장점을 합친 새로운 �
 데이터셋: Dataset[String], Dataset[Int]
 
 # 데이터프레임은 데이터를 처리할 때 데이터 타입을 무조건 org.apache.spark.sql.Row로 감싸줘야 합니다.
-데이터프레임: Dataset[Row]
+데이터프레임: DataFrame = Dataset[Row(String)]
 ```
 
 ![](../images/../../images/spark_17.png)  
@@ -125,6 +125,7 @@ df = spark.createDataFrame(data)
 ```
 
 ## 기본 연산
+- [Spark 공식문서 참고](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/dataframe.html){:target="_blank"}
 - persist()
 - printSchema()
 - columns
@@ -134,6 +135,7 @@ df = spark.createDataFrame(data)
 
 
 ## 액션 연산
+- [Spark 공식문서 참고](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/dataframe.html){:target="_blank"}
 - show()
 - head()
 - take()
@@ -144,6 +146,7 @@ df = spark.createDataFrame(data)
 ## 비타입 트랜스포메이션 연산
 
 **Dataframe에서 제공하는 비타입 트랜스포메이션 연산**  
+- [Spark 공식문서 참고](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/dataframe.html){:target="_blank"}
 - select()
 - filter()
 - agg()  
@@ -152,7 +155,7 @@ df = spark.createDataFrame(data)
 - withColumn()
 
 **org.apache.spark.Column에서 제공하는 비타입 트랜스포메이션 연산**  
-
+- [Spark 공식문서 참고](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/column.html){:target="_blank"}
 - !==, ===
 - alias()
 - isin()
@@ -162,7 +165,7 @@ df = spark.createDataFrame(data)
 **org.apache.spark.sql.functions에서 제공하는 비타입 트랜스포메이션 연산**  
 
 (왜 트랜스포메이션이지?)
-
+- [Spark 공식문서 참고](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/functions.html){:target="_blank"}
 - max(), mean(), sum()
 - count(), countDistince()
 - explode()
@@ -173,9 +176,48 @@ df = spark.createDataFrame(data)
 
 ## 함수가 아닌 SQL문
 
-- createOrReplaceTempView()
+- createOrReplaceTempView(): Creates or replaces a local temporary view with this DataFrame.
+
+```python
+# DataFrame 생성을 위해서는 SparkSession이 필요함
+from pyspark.sql import SparkSession
+
+# SparkSession 생성
+spark = SparkSession.builder.master("local[*]").appName("taxi_project").getOrCreate()
+
+# SparkSession을 이용해 DataFrame 생성
+df = spark \
+  .read \
+  .format("kafka") \
+  .option("kafka.bootstrap.servers", "kafka:29092") \
+  .option("subscribe", "test") \
+  .option("startingOffsets", "earliest") \
+  .load()
+
+# View 생성
+df.createOrReplaceTempView("tripdata")
+
+# SQL문을 이용해 쿼리 작성
+query = """
+SELECT MONTH(value.tpep_pickup_datetime) AS month, ROUND(AVG(value.trip_distance), 3) AS average_distance
+FROM tripdata
+GROUP BY MONTH(value.tpep_pickup_datetime)
+ORDER BY month
+"""
+
+# Returns a DataFrame representing the result of the given query.
+table = spark.sql(query)
+
+# 액션 연산
+table.show()
+```
+
+# Spark를 이용한 DataFrame 처리 개요
+
+![](/images/spark_40.png)
 
 # 참고
 - [빅데이터 분석을 위한 스파크2 프로그래밍 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158391034&orderClick=LEa&Kc=){:target="_blank"}
 - [loustler, [Apache Spark] Spark RDD, Dataframe and DataSet](https://loustler.io/data_eng/spark-rdd-dataframe-and-dataset/){:target="_blank"}
 - [Apache Spark 공식문서: Spark SQL on PySpark](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql.html){:target="_blank"}
+- [Spark by {Examples}](https://sparkbyexamples.com/pyspark-tutorial/){:target="_blank"}
