@@ -184,6 +184,19 @@ ORDER BY employee_id
 - True로 여겨질 줄 알았으나 False였다
 
 
+# WHERE 조건절에 레코드(튜플) 사용할 수도 있음
+
+```sql
+SELECT student_id, MIN(course_id) AS course_id, grade
+FROM Enrollments
+WHERE (student_id, grade) IN
+                            (SELECT student_id, MAX(grade)
+                            FROM Enrollments
+                            GROUP BY student_id)
+GROUP BY student_id, grade
+ORDER BY student_id
+```
+
 
 # 참고
 
