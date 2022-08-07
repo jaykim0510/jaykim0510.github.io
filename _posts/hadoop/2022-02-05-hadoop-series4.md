@@ -73,3 +73,9 @@ hive -e 'SELECT * FROM dummy'
 - 쓰기 스키마는 DB가 컬럼 단위의 데이터 색인과 압축을 제공하기 때문에 쿼리가 더 빠름
 - 읽기 스키마는 쿼리가 아직 정해지지 않아 스키마, 인덱스를 정의하기 어렵고 우선 데이터를 로드하고 싶을 때
 - 하이브는 테이블과 파티션 수준의 잠금을 지원
+
+
+
+# 참고
+
+- [ETL 성능 향상을 위한 몇 가지 팁들](https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html)

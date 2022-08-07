@@ -197,6 +197,8 @@ GROUP BY student_id, grade
 ORDER BY student_id
 ```
 
+# JOIN이 포함된 쿼리에서 ON절과 WHERE절에 표기하는 것의 차이
+
 
 # 참고
 
