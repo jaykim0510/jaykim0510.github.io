@@ -439,6 +439,7 @@ Table of Contents
   <li><a href="#ctecommon-table-expression" id="markdown-toc-ctecommon-table-expression">CTE(Common Table Expression)</a></li>
   <li><a href="#lead-lag-함수" id="markdown-toc-lead-lag-함수">LEAD, LAG 함수</a></li>
   <li><a href="#3-not-in-null-1-2" id="markdown-toc-3-not-in-null-1-2">3 NOT IN (null, 1, 2)</a></li>
+  <li><a href="#where-조건절에-레코드튜플-사용할-수도-있음" id="markdown-toc-where-조건절에-레코드튜플-사용할-수도-있음">WHERE 조건절에 레코드(튜플) 사용할 수도 있음</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -640,6 +641,18 @@ Table of Contents
   <li>Tree Node 문제</li>
   <li>True로 여겨질 줄 알았으나 False였다</li>
 </ul>
+
+<h1 id="where-조건절에-레코드튜플-사용할-수도-있음">WHERE 조건절에 레코드(튜플) 사용할 수도 있음</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">student_id</span><span class="p">,</span> <span class="k">MIN</span><span class="p">(</span><span class="n">course_id</span><span class="p">)</span> <span class="k">AS</span> <span class="n">course_id</span><span class="p">,</span> <span class="n">grade</span>
+<span class="k">FROM</span> <span class="n">Enrollments</span>
+<span class="k">WHERE</span> <span class="p">(</span><span class="n">student_id</span><span class="p">,</span> <span class="n">grade</span><span class="p">)</span> <span class="k">IN</span>
+                            <span class="p">(</span><span class="k">SELECT</span> <span class="n">student_id</span><span class="p">,</span> <span class="k">MAX</span><span class="p">(</span><span class="n">grade</span><span class="p">)</span>
+                            <span class="k">FROM</span> <span class="n">Enrollments</span>
+                            <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">student_id</span><span class="p">)</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">student_id</span><span class="p">,</span> <span class="n">grade</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">student_id</span>
+</code></pre></div></div>
 
 <h1 id="참고">참고</h1>
 

@@ -429,27 +429,253 @@
       <hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#hadoop" id="markdown-toc-hadoop">Hadoop</a></li>
+  <li><a href="#hdfs" id="markdown-toc-hdfs">HDFS</a>    <ul>
+      <li><a href="#local-file-system-vs-hdfs" id="markdown-toc-local-file-system-vs-hdfs">Local File System vs HDFS</a></li>
+      <li><a href="#구글-플랫폼의-철학" id="markdown-toc-구글-플랫폼의-철학">구글 플랫폼의 철학</a></li>
+      <li><a href="#하둡-특성" id="markdown-toc-하둡-특성">하둡 특성</a></li>
+      <li><a href="#하둡-클러스터" id="markdown-toc-하둡-클러스터">하둡 클러스터</a></li>
+      <li><a href="#하둡-블록" id="markdown-toc-하둡-블록">하둡 블록</a></li>
+      <li><a href="#네임노드" id="markdown-toc-네임노드">네임노드</a></li>
+      <li><a href="#데이터노드" id="markdown-toc-데이터노드">데이터노드</a></li>
+      <li><a href="#보조-네임-노드" id="markdown-toc-보조-네임-노드">보조 네임 노드</a></li>
+      <li><a href="#데이터-읽기-과정" id="markdown-toc-데이터-읽기-과정">데이터 읽기 과정</a></li>
+      <li><a href="#데이터-쓰기-과정" id="markdown-toc-데이터-쓰기-과정">데이터 쓰기 과정</a></li>
+      <li><a href="#hdfs-커맨드" id="markdown-toc-hdfs-커맨드">HDFS 커맨드</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
 
 <hr />
 
-<p>데이터가 단일 물리 머신의 저장 용량을 초과하게 되면 전체 데이터셋을 분리된 여러 머신에 나눠서 저장할 필요가 있다. 네트워크로 연결된 여러 머신의 스토리지를 관리하는 파일시스템을 분산 파일시스템이라고 한다.</p>
-
-<p>하둡은 HDFS(Hadoop Distributed File System)라는 분산 파일시스템을 제공한다. HDFS는 범용 하드웨어로 구성된 클러스터에서 실행되고 스트리밍 방식의 데이터 접근 패턴으로 대용량 파일을 다룰 수 있도록 설계된 파일시스템이다. HDFS의 설계특성은 다음과 같다.</p>
+<h1 id="hadoop">Hadoop</h1>
 
 <ul>
-  <li>매우 큰 파일</li>
-  <li>스트리밍 방식의 데이터 접근
+  <li>빅데이터 처리를 위한 다양한 소프트웨어 제공</li>
+  <li>하둡은 개발자 더크 커팅이 처음으로 시작</li>
+  <li>구글이 발표한 분산 파일 저장을 위한 논문 GFS, 분산 데이터 처리를 위한 MapReduce 논문을 발표</li>
+  <li>더그 커팅이 구글에서 발표한 논문을 구현해 하둡 프로젝트가 시작됨 -&gt; HDFS와 MapReduce가 하둡 프로젝트에 포함</li>
+  <li>이 후 빅데이터 처리를 위한 다양한 소프트웨어 Hive, HBase, Cassandra, Yarn 등이 등장하여 하둡 생태계 구성</li>
+</ul>
+
+<p><img src="/images/hadoop_1.png" alt="" /></p>
+
+<h1 id="hdfs">HDFS</h1>
+
+<p>데이터가 단일 물리 머신의 저장 용량을 초과하게 되면 전체 데이터셋을 분리된 여러 머신에 나눠서 저장할 필요가 있다. 네트워크로 연결된 여러 머신의 스토리지를 관리하는 파일시스템을 분산 파일시스템이라고 한다.</p>
+
+<p>하둡은 HDFS(Hadoop Distributed File System)라는 분산 파일시스템을 제공한다. HDFS는 범용 하드웨어로 구성된 클러스터에서 실행되고 스트리밍 방식의 데이터 접근 패턴으로 대용량 파일을 다룰 수 있도록 설계된 파일시스템이다.</p>
+
+<h2 id="local-file-system-vs-hdfs">Local File System vs HDFS</h2>
+
+<ul>
+  <li>Local File System
     <ul>
-      <li>HDFS는 ‘가장 효율적인 데이터 처리 패턴은 한 번 쓰고 여러 번 읽는 것’이라는 아이디어에서 출발</li>
+      <li>In an operating system, file system is the strategy that is used to keep track of files on a disk</li>
+      <li>The basic file system of Linux operating system is termed as Local file system. It stores any data file as it is in single copy.</li>
+      <li>It stores data files in Tree format. Here, any user can access data files directly. LFS does not Replicate the data blocks. It always used for storing and processing personal data(small data)</li>
+      <li>The block size is 4 KB both in Windows and Unix local file systems</li>
+      <li>multiple disk-seeks in local file system due to its 4KB block size</li>
+      <li>physically a single unit</li>
     </ul>
   </li>
-  <li>범용 하드웨어</li>
-  <li>높은 데이터 처리량
+  <li>HDFS
     <ul>
-      <li>HDFS는 높은 데이터 처리량을 제공하기 위해 최적화되어 있고 이를 위해 응답 시간을 희생했다</li>
-      <li>빠른 응답시간을 원한다면 HBase가 하나의 대안이 될 수 있다</li>
+      <li>HDFS will be deployed on top of the existing Operating system to bring its own file system method</li>
+      <li>the block size in Hadoop HDFS is 64 MB in the initial version and in later versions, it is 128 MB which is configurable</li>
+      <li>HDFS maintains higher block allocation, the data will be read sequentially after every individual seek -&gt; Data retrieval in DFS is fast</li>
+      <li>Large files will be split into multiple chunks automatically, distributed and stored across various slave machines (aka. nodes) in HDFS</li>
+      <li>logically a single unit</li>
     </ul>
   </li>
+</ul>
+
+<h2 id="구글-플랫폼의-철학">구글 플랫폼의 철학</h2>
+<ul>
+  <li>한대의 고가 장비보다 여러 대의 저가 장비가 낫다</li>
+  <li>데이터는 분산 저장한다</li>
+  <li>시스템(H/W)은 언제든 죽을 수 있다</li>
+  <li>시스템 확장이 쉬워야 한다</li>
+</ul>
+
+<h2 id="하둡-특성">하둡 특성</h2>
+<ul>
+  <li>구글 플랫폼의 철학이 녹아든 빅데이터 처리 소프트웨어</li>
+  <li>수천대 이상의 서버를 하나의 클러스터로 사용 (Scalable)</li>
+  <li>범용 하드웨어 클러스터 (Support for Heterogeneous Cluster)</li>
+  <li>복제를 통한 신뢰성 보장 (Fault Tolerant)</li>
+  <li>어떠한 대용량 파일도 분산 저장함으로써 적재 가능 (Built for Large Dataset)</li>
+  <li>데이터 처리의 지역성 보장</li>
+</ul>
+
+<h2 id="하둡-클러스터">하둡 클러스터</h2>
+
+<p><img src="/images/hadoop_2.png" alt="" /></p>
+
+<ul>
+  <li>Name Node: HDFS에 대한 마스터 데몬</li>
+  <li>Data Node: HDFS에 대한 슬레이브 데몬</li>
+  <li>Job Tracker: 어플리케이션 관리를 위한 마스터 데몬</li>
+  <li>Task Tracker: 작업 관리를 위한 슬레이브 데몬</li>
+</ul>
+
+<h2 id="하둡-블록">하둡 블록</h2>
+
+<p><img src="/images/hadoop_3.png" alt="" /></p>
+
+<ul>
+  <li>하나의 파일을 여러 개의 Block으로 저장</li>
+  <li>블럭 크기는 한 번에 읽고 쓸 수 있는 데이터의 크기</li>
+  <li>블럭의 기본 크기는 128MB. 설정을 통해 변경 가능</li>
+  <li>128MB와 같이 블록을 크게 잡는 이유는 탐색 비용을 최소화하기 위해(Minimizing seek operation: 시작점 찾는 비용 최소화)</li>
+  <li>데이터를 조각내고 복제하여 여러 서버에 분산 저장</li>
+  <li>복제 저장하는 것이 용량 낭비일 수 있지만 이를 통해 얻게 되는 이점이 더 큼</li>
+  <li>만약 서버 1대에 장애가 발생하면 하트비트가 끊기게 되고, 장애난 서버가 가지고 있던 블록과 같은 데이터를 가지는 서버가 다른 서버와 통신 후 데이터를 복사함으로써 복제 수 유지</li>
+  <li>블록의 지역성: 데이터를 처리할 때 해당 데이터를 가지고 있는 노드한테 잡을 먼저 할당함</li>
+  <li>블록 캐싱: 자주 읽는 블록을 데이터 노드의 메모리에 캐싱함으로써 읽기 성능 향상</li>
+</ul>
+
+<h2 id="네임노드">네임노드</h2>
+
+<ul>
+  <li>네임노드의 관리 대상: 파일시스템 트리, 트리에 포함된 모든 파일과 디렉터리에 대한 메타데이터</li>
+  <li>이 정보는 네임스페이스 이미지와 에디트 로그라는 두 종류의 파일로 로컬 디스크에 영속적으로 저장됨</li>
+  <li>데이터노드로부터 블럭 리포트를 받음</li>
+  <li>데이터 복제 유지를 위한 커맨더 역할을 수행</li>
+  <li>파일시스템 이미지(fsimage) 관리 (스냅샷)</li>
+  <li>파일시스템에 대한 Edit Log 관리</li>
+  <li>네임노드가 없으면 파일시스템은 동작하지 않음
+    <ul>
+      <li>네임노드 장애 복구 방법
+        <ul>
+          <li>메타데이터를 지속적인 상태로 보존하기 위해 파일로 백업</li>
+          <li>보조 네임노드 운영: 에디트 로그가 너무 커지지 않도록 주기적으로 이미지와 에디트 로그를 병합해 새로운 이미지를 만듬</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="데이터노드">데이터노드</h2>
+
+<ul>
+  <li>로컬 파일 시스템에 HDFS 데이터 저장</li>
+  <li>주기적으로 로컬 파일 시스템에 있는 모든 HDFS 블록들을 검사 후 정상적인 블록의 목록을 만들어 네임노드에 전송</li>
+  <li>데이터 복제시 클라이언트가 네임노드로부터 데이터노드 리스트를 전달 받음</li>
+  <li>네트워크 트래픽은 클라이언트와 데이터노드 간에만 발생</li>
+</ul>
+
+<p><img src="/images/hdfs_1.png" alt="" /></p>
+
+<h2 id="보조-네임-노드">보조 네임 노드</h2>
+
+<ul>
+  <li>네임노드(NN)와 보조 네임노드(SNN)는 Active/Standby 구조 아님 (각자 역할이 따로 있음)</li>
+  <li>체크 포인트
+    <ul>
+      <li>fsimage 와 edits 파일을 주기적으로 병합
+        <ul>
+          <li>1시간 주기로 실행</li>
+          <li>edits 로그가 일정 사이즈 이상이면 실행</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>한계점
+    <ul>
+      <li>네임노드의 SPOF 문제 해결 x</li>
+      <li>보조 네임노드의 장애 상황 감지 툴 없음</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>fsimage와 edits 파일</strong></p>
+
+<ul>
+  <li>파일 시스템에 관한 스냅샷</li>
+  <li>스냅샷 이후에 발생된 데이터에 관한 변경사항은 edits 파일에 기록됨</li>
+  <li>처음 네임노드 데몬이 실행되면 fsimage 스냅샷을 이용해 hdfs 구동</li>
+  <li>이후 발생되는 변경사항은 fsimage와 병합. 이러한 병합은 보조 네임 노드에서 실행</li>
+  <li>병합된 fsimage를 주기적으로 네임노드로 가져와서 fsimage를 최신화</li>
+</ul>
+
+<p><img src="/images/hadoop_5.png" alt="" /></p>
+
+<h2 id="데이터-읽기-과정">데이터 읽기 과정</h2>
+
+<p><img src="/images/hadoop_7.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. 클라이언트가 HDFS의 FileSystem 객체의 open() 메서드를 호출해 원하는 파일을 연다
+2. HDFS는 해당 파일의 첫 번째 블록 위치를 파악하기 위해 RPC를 사용하여 네임노드를 호출한다
+3. 네임노드는 해당 블록을 가지는 데이터 노드의 주소를 가까운 순으로 정렬하여 리스트로 반환한다
+4. HDFS는 클라이언트가 데이터를 읽을 수 있도록 파일 탐색을 지원하는 입력 스트림(FSDataInputStream)을 반환한다
+5. 클라이언트는 스트림을 읽기 위해 read() 메서드를 호출한다
+6. read() 메서드를 반복적으로 호출하면 데이터 노드에서 클라이언트로 모든 데이터가 전송된다
+7. 블록의 끝에 도달하면 해당 데이터 노드의 연결을 닫고 다음 블록의 데이터 노드를 찾는다
+8. 2-7번이 파일의 모든 블록을 읽을 때까지 반복된다
+9. 클라이언트는 FSDataInputStream의 close() 메서드를 호출한다
+</code></pre></div></div>
+
+<h2 id="데이터-쓰기-과정">데이터 쓰기 과정</h2>
+
+<p><img src="/images/hadoop_6.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. 클라이언트는 HDFS의 FileSystem의 create() 메서드를 호출하여 파일을 생성한다
+2. HDFS는 파일시스템의 네임스페이스에 새로운 파일을 생성하기 위해 네임노드에 RPC 요청을 보낸다
+3. 네임노드는 요청한 파일과 동일한 파일이 있는지, 클라이언트에 권한이 있는지 등을 검사한다
+4. 검사가 통과하면 HDFS는 클라이언트에 데이터를 쓸 수 있도록 FSDataOutputStream을 반환한다
+5. 클라이언트가 데이터를 쓸 때 네임 노드로부터 데이터 노드 리스트를 전달 받는다
+6. 데이터 노드 사이에 파이프라인이 형성되고 데이터가 복제 수준만큼 복사된다
+7. 이 때 네트워크 트래픽은 클라이언트와 데이터 노드 간에만 발생한다
+</code></pre></div></div>
+
+<h2 id="hdfs-커맨드">HDFS 커맨드</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version, mkdir, ls, put, put, copyFromLocal, copyToLocal, cat, mv, cp
+moveFromLocal, moveToLocal, tail, rm, chwon, chgrp, setrep, du, df
+touchz, chmod, test, text, count, find, getmerge
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hadoop version
+
+hadoop fs -ls
+
+# hadoop fs -copyFromLocal &lt;local source&gt; &lt;hdfs destination&gt;
+hadoop fs -copyFromLocal ~/test1 /dir1/copytest
+
+# hadoop fs -cat &lt;path_to_file_in_hdfs&gt;
+hadoop fs -cat /dir1/copytest
+
+# hadoop fs -get &lt;src&gt; &lt;local destination&gt;
+hadoop fs -get /testfile ~/copyfromhadoop
+
+# hadoop fs -copyToLocal &lt;hdfs source&gt; &lt;local destination&gt;
+hadoop fs -copyToLocal /dir1/sample ~/copysample
+
+# hadoop fs -mv &lt;source&gt; &lt;destination&gt;
+hadoop fs -mv /dir /dir1
+
+# hadoop fs -tail [-f] &lt;file&gt;
+# hadoop fs -rm &lt;path&gt;
+
+# hadoop fs -chown [-R] [owner] [:[group]] &lt;path&gt;
+hadoop fs -chown newdir /sample
+
+# hadoop fs -setrep &lt;replication num&gt; &lt;path&gt;
+hadoop fs -setrep 2 /dir1
+
+# hadoop fs -du -s &lt;file&gt;
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=OPodJE1jYbg" target="_blank">[토크ON세미나] 아파치 하둡</a></li>
+  <li><a href="https://www.youtube.com/watch?v=nRX4_3qf3rc&amp;list=PLghTMrY7fIM5ZVa43Re7T_-DzLLIdAx6s" target="_blank">Simplilearn, What Is HDFS?</a></li>
+  <li><a href="https://www.geeksforgeeks.org/difference-between-local-file-system-lfs-and-distributed-file-system-dfs/" target="_blank">Difference between Local File System (LFS) and Distributed File System (DFS)</a></li>
+  <li><a href="https://hoing.io/archives/21453" target="_blank">Hoing: 하둡 프로그래밍(2) – 빅데이터 - 하둡 에코시스템</a></li>
 </ul>
 
     </div>
