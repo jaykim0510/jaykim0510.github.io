@@ -70,8 +70,7 @@ tags: MySQL
 - Highest Grade For Each Student 💟 ✅
 - Number of Accounts That Did Not Stream ✅
 - Restaurant Growth 💟 ❎ 
-- Exchange Seats
-- Rectangles Area
+- Exchange Seats 💟 ✅
 - Product Price at a Given Date
 - Customers Who Bought All Products
 - Managers with at Least 5 Direct Reports
