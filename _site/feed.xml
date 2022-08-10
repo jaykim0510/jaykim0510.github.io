@@ -5,9 +5,212 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 09 Aug 2022 13:12:56 +0900</pubDate>
-        <lastBuildDate>Tue, 09 Aug 2022 13:12:56 +0900</lastBuildDate>
+        <pubDate>Thu, 11 Aug 2022 06:47:08 +0900</pubDate>
+        <lastBuildDate>Thu, 11 Aug 2022 06:47:08 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#introduction&quot; id=&quot;markdown-toc-introduction&quot;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#two-complications&quot; id=&quot;markdown-toc-two-complications&quot;&gt;Two Complications&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#data-is-more-diverse&quot; id=&quot;markdown-toc-data-is-more-diverse&quot;&gt;Data is More Diverse&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#the-explosion-of-specialized-data-systems&quot; id=&quot;markdown-toc-the-explosion-of-specialized-data-systems&quot;&gt;The Explosion of Specialized Data Systems&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#log-structured-data-flow&quot; id=&quot;markdown-toc-log-structured-data-flow&quot;&gt;Log-Structured Data Flow&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#experience-at-linkedin&quot; id=&quot;markdown-toc-experience-at-linkedin&quot;&gt;Experience at LinkedIn&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#relationship-to-etl-and-data-warehouse&quot; id=&quot;markdown-toc-relationship-to-etl-and-data-warehouse&quot;&gt;Relationship to ETL and Data Warehouse&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#etl-and-scalability&quot; id=&quot;markdown-toc-etl-and-scalability&quot;&gt;ETL and Scalability&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#where-should-we-put-the-data-transformations&quot; id=&quot;markdown-toc-where-should-we-put-the-data-transformations&quot;&gt;Where Should We Put the Data Transformations?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#decoupling-systems&quot; id=&quot;markdown-toc-decoupling-systems&quot;&gt;Decoupling Systems&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#scaling-a-log&quot; id=&quot;markdown-toc-scaling-a-log&quot;&gt;Scaling a Log&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Data Integration and Logs&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Data Integration means making available all the data (that an organization has) to all the services and systems that need it&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The more recognizable term ETL(populating a relational data warehouse) usually covers only a limited part of data integration.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Capturing all the relevant data and being able to put it together in an applicable processing environment&lt;/li&gt;
+  &lt;li&gt;This data has to be modeled in a uniform way to make it easy to read and process&lt;/li&gt;
+  &lt;li&gt;Process this data in various ways: MapReduce, real-time query systems, ans so on&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Focus on step-by-step&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Reliable and complete data flow&lt;/li&gt;
+  &lt;li&gt;Refining data modeling and consistency&lt;/li&gt;
+  &lt;li&gt;Better visualization, reporting, algorithmic processing and prediction&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;How can we build reliable data flow throughout all the data systems?&lt;/p&gt;
+
+&lt;h1 id=&quot;two-complications&quot;&gt;Two Complications&lt;/h1&gt;
+
+&lt;p&gt;Two things have made data integration an increasingly difficult proflem.&lt;/p&gt;
+
+&lt;h2 id=&quot;data-is-more-diverse&quot;&gt;Data is More Diverse&lt;/h2&gt;
+
+&lt;p&gt;Transactional data - things that &lt;strong&gt;are&lt;/strong&gt;,  Event data - things that &lt;strong&gt;happen&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Log = Data structure what event data is logged&lt;/p&gt;
+
+&lt;p&gt;Event data is generated from Web service, Financial organization, IoT&lt;/p&gt;
+
+&lt;p&gt;This type of event data shakes up traditional data integration approaches because it tends to be several orders of magnitude larger than transactional data.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-explosion-of-specialized-data-systems&quot;&gt;The Explosion of Specialized Data Systems&lt;/h2&gt;
+
+&lt;p&gt;ex. OLAP, Search service, Batch processing, Graph analysis&lt;/p&gt;
+
+&lt;h1 id=&quot;log-structured-data-flow&quot;&gt;Log-Structured Data Flow&lt;/h1&gt;
+
+&lt;h1 id=&quot;experience-at-linkedin&quot;&gt;Experience at LinkedIn&lt;/h1&gt;
+
+&lt;h1 id=&quot;relationship-to-etl-and-data-warehouse&quot;&gt;Relationship to ETL and Data Warehouse&lt;/h1&gt;
+
+&lt;h1 id=&quot;etl-and-scalability&quot;&gt;ETL and Scalability&lt;/h1&gt;
+
+&lt;h1 id=&quot;where-should-we-put-the-data-transformations&quot;&gt;Where Should We Put the Data Transformations?&lt;/h1&gt;
+
+&lt;h1 id=&quot;decoupling-systems&quot;&gt;Decoupling Systems&lt;/h1&gt;
+
+&lt;h1 id=&quot;scaling-a-log&quot;&gt;Scaling a Log&lt;/h1&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewEng.laf?barcode=9781491909386&amp;amp;ejkGb=BNT&amp;amp;mallGb=ENG&quot; target=&quot;_blank&quot;&gt;책 I Heart Logs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/logika-io/try-kill-batch-processing-with-unified-log-stream-processing-d92709117f74&quot; target=&quot;_blank&quot;&gt;Try Kill batch processing with unified log stream processing…&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/data-engineering-series26</link>
+                <guid isPermaLink="true">http://localhost:4000/data-engineering-series26</guid>
+                
+                <category>Data_Engineering</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>Data Engineering Series [Part25]: I 🤍 Logs(1) Introduction</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#what-is-a-log&quot; id=&quot;markdown-toc-what-is-a-log&quot;&gt;What Is a Log?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#logs-in-database&quot; id=&quot;markdown-toc-logs-in-database&quot;&gt;Logs in Database&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#logs-in-distributed-system&quot; id=&quot;markdown-toc-logs-in-distributed-system&quot;&gt;Logs in Distributed System&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#log-centric-design-pattern&quot; id=&quot;markdown-toc-log-centric-design-pattern&quot;&gt;Log-Centric Design Pattern&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;what-is-a-log&quot;&gt;What Is a Log?&lt;/h1&gt;
+
+&lt;p&gt;Yet other than perhaps occasionally tailing a log file, most engineers don’t think much about logs. To help remedy that, I’ll give an overview of how logs work in distributed systems, and then give some practical applications of these concepts to a variety of common uses: data integration, enterprise architecture, real-time data processing, and data system design.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[2022-07-02 05:30:44] method=POST user=crazyboy0510 path=/movies/comment-create/ movie_id=16
+[2022-07-02 05:30:57] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
+[2022-07-02 05:31:15] method=GET user=crazyboy0510 path=/movies/movie-play/16 movie_id=16
+[2022-07-02 05:31:18] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
+[2022-07-02 05:31:19] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Every programmer is familiar with this kind of log - a series of loosely structured requests, errors, or other messages in a sequence of rotating text files.&lt;/p&gt;
+
+&lt;p&gt;The purpose of logs quickly becomes an input to queries in order to understand behavior across many machines, something that English text in files is not nearly as appropriate for as the kind of structured log I’ll be talking about.&lt;/p&gt;
+
+&lt;p&gt;The log I’ll be discussing is a little more general and closer to what in the database or systems called a ‘commit log’. It is append-only sequence of records ordered by time.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/logs_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Each rectangle represents a record that was appended to the log. Records are stored in the order they were appended. The contents and format of the records aren’t important for the purposes of this discussion. To be concrete, we can just imagine each record to be a JSON blob.&lt;/p&gt;
+
+&lt;p&gt;The log entry number can be thought of as the ‘timestamp’ of the entry. this is convenient property of being decoupled from any particular physical clock. This property is essential as we get to distributed systems.&lt;/p&gt;
+
+&lt;p&gt;A log is just kind of table or file where the records are sorted by time&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;table: array of records  
+file: array of bytes  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;However it is important that we thing about the log as an &lt;strong&gt;abstract data structure, not a text file&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Logs have a specific purpose: &lt;strong&gt;they record what happened and when&lt;/strong&gt;. For distributed data systems, this is the heart of the problem.&lt;/p&gt;
+
+&lt;h1 id=&quot;logs-in-database&quot;&gt;Logs in Database&lt;/h1&gt;
+
+&lt;p&gt;The usage in databases has to do with keeping in sync a variety of data structures and indexes in the presence of crashes. To make this atomic and durable, a database uses a log to write out information about the records it will be modifying before applying the changes to all the various data structures that it maintains.&lt;/p&gt;
+
+&lt;p&gt;The log is the record of what happened, and each table or index is a projection of this history into some useful data structure or index.&lt;/p&gt;
+
+&lt;p&gt;Over time, the usage of the log grew from &lt;strong&gt;an implementation detail of the ACID database properties&lt;/strong&gt; to a &lt;strong&gt;method for replicating data between databases&lt;/strong&gt;. It turns out that the sequence of changes that happened on the database is exactly what is needed to keep a remote replica database in sync. Oracle, MySQL, PostreSQL, and MongoDB include log shipping protocols to transmit portions of a log to replica databases that act as slaves. The slaves can then apply the changes recorded in the log to their own local data structures to stay in sync with the master.&lt;/p&gt;
+
+&lt;p&gt;In fact, the use of logs is variations on the two uses in database internals:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The log is used as a publish/subscribe mechanism to transmit data to other replicas&lt;/li&gt;
+  &lt;li&gt;The log is used as a consistency mechanism to order the updates that are applied to multiple replicas&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;logs-in-distributed-system&quot;&gt;Logs in Distributed System&lt;/h1&gt;
+
+&lt;p&gt;The same problems that databases solve with logs (like distributing data to replicas and agreeing on update order) are among the most fundamental problems for all distributed systems.&lt;/p&gt;
+
+&lt;p&gt;The log-centric approach to distributed systems arises from a simple observation&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If two identical, deterministic processes begin in the same state and get the same inputs in the same order, they will produce the same output and end in the same state&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;(Desterministic means that the processing isn’t timing dependent)&lt;/p&gt;
+
+&lt;p&gt;The application to distributed computing is pretty obvious. You can reduce the problem of making multiple machines all do the same thing to the problem of implementaing a consistent log to feed input to theses processes. The purpose of the log here is to squeeze all the nondeterminism out of the input stream to ensure that each replica stays in sync.&lt;/p&gt;
+
+&lt;p&gt;Discrete log entry numbers act as a clock for the state of the replicas - you can describe the state of each replica by a single number: the timestamp for the maximum log entry that it has processed. Two replicas at the same time will be in the same state.&lt;/p&gt;
+
+&lt;h2 id=&quot;log-centric-design-pattern&quot;&gt;Log-Centric Design Pattern&lt;/h2&gt;
+
+&lt;p&gt;There are many variations on how this principle can be applied., depending on what is put in the log. For example, we can log the incoming requests to a service and have each replica process these independently. Or we can have one instance that processed requests and log the state changes that the service undergoes in response to a request.&lt;/p&gt;
+
+&lt;p&gt;Database people generally differentiate between physical and logical logging. Physical or row-based logging means logging the contents of each row that is changed (로우별 실제 변경된 데이터를 저장하는 것). Logical or statement logging  means logging the SQL commands that lead to the row changes (insert, update, and delete statements).&lt;/p&gt;
+
+&lt;p&gt;The distributed systems distinguished two broad approaches to processing and replication. The &lt;strong&gt;state machine model&lt;/strong&gt; keep a log of the incoming requests and &lt;strong&gt;each replica processes each request&lt;/strong&gt; in log order. &lt;strong&gt;primary backup&lt;/strong&gt; elect one replica as the leader. This leader processes requests in the order they arrive and logs the changes to its state that occur as a result of processing the requests.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/logs_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+</description>
+                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/data-engineering-series25</link>
+                <guid isPermaLink="true">http://localhost:4000/data-engineering-series25</guid>
+                
+                <category>Data_Engineering</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
         
             <item>
                 <title>MySQL Series [Part15] IntelliJ IDE를 이용한 데이터베이스 시각화</title>
@@ -979,63 +1182,6 @@ Body: {
                 <pubDate>Tue, 26 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/data-engineering-series20</link>
                 <guid isPermaLink="true">http://localhost:4000/data-engineering-series20</guid>
-                
-                <category>Data_Engineering</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Data Engineering Series [Part19]: 로그 구조 스토리지</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-                <pubDate>Mon, 25 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/data-engineering-series19</link>
-                <guid isPermaLink="true">http://localhost:4000/data-engineering-series19</guid>
-                
-                <category>Data_Engineering</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Data Engineering Series [Part18]: APIs</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#event-driven-api&quot; id=&quot;markdown-toc-event-driven-api&quot;&gt;Event Driven API&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#web-api&quot; id=&quot;markdown-toc-web-api&quot;&gt;Web API&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;event-driven-api&quot;&gt;Event Driven API&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Webhooks&lt;/li&gt;
-  &lt;li&gt;Websockets&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;web-api&quot;&gt;Web API&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;REST&lt;/li&gt;
-  &lt;li&gt;RPC&lt;/li&gt;
-  &lt;li&gt;GraphQL&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Sun, 24 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/data-engineering-series18</link>
-                <guid isPermaLink="true">http://localhost:4000/data-engineering-series18</guid>
                 
                 <category>Data_Engineering</category>
                 

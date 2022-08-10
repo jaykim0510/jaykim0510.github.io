@@ -1,0 +1,69 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#what-is-a-log" id="markdown-toc-what-is-a-log">What Is a Log?</a></li>
+  <li><a href="#logs-in-database" id="markdown-toc-logs-in-database">Logs in Database</a></li>
+  <li><a href="#logs-in-distribuuted-system" id="markdown-toc-logs-in-distribuuted-system">Logs in Distribuuted System</a></li>
+</ul>
+
+<hr />
+
+<h1 id="what-is-a-log">What Is a Log?</h1>
+
+<p>Yet other than perhaps occasionally tailing a log file, most engineers don’t think much about logs. To help remedy that, I’ll give an overview of how logs work in distributed systems, and then give some practical applications of these concepts to a variety of common uses: data integration, enterprise architecture, real-time data processing, and data system design.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2022-07-02 05:30:44] method=POST user=crazyboy0510 path=/movies/comment-create/ movie_id=16
+[2022-07-02 05:30:57] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
+[2022-07-02 05:31:15] method=GET user=crazyboy0510 path=/movies/movie-play/16 movie_id=16
+[2022-07-02 05:31:18] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
+[2022-07-02 05:31:19] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
+</code></pre></div></div>
+
+<p>Every programmer is familiar with this kind of log - a series of loosely structured requests, errors, or other messages in a sequence of rotating text files.</p>
+
+<p>The purpose of logs quickly becomes an input to queries in order to understand behavior across many machines, something that English text in files is not nearly as appropriate for as the kind of structured log I’ll be talking about.</p>
+
+<p>The log I’ll be discussing is a little more general and closer to what in the database or systems called a ‘commit log’. It is append-only sequence of records ordered by time.</p>
+
+<p><img src="/images/logs_1.png" alt="" /></p>
+
+<p>Each rectangle represents a record that was appended to the log. Records are stored in the order they were appended. The contents and format of the records aren’t important for the purposes of this discussion. To be concrete, we can just imagine each record to be a JSON blob.</p>
+
+<p>The log entry number can be thought of as the ‘timestamp’ of the entry. this is convenient property of being decoupled from any particular physical clock. This property is essential as we get to distributed systems.</p>
+
+<p>A log is just kind of table or file where the records are sorted by time</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>table: array of records  
+file: array of bytes  
+</code></pre></div></div>
+
+<p>However it is important that we thing about the log as an <strong>abstract data structure, not a text file</strong>.</p>
+
+<p>Logs have a specific purpose: <strong>they record what happened and when</strong>. For distributed data systems, this is the heart of the problem.</p>
+
+<h1 id="logs-in-database">Logs in Database</h1>
+
+<p>The usage in databases has to do with keeping in sync a variety of data structures and indexes in the presence of crashes. To make this atomic and durable, a database uses a log to write out information about the records it will be modifying before applying the changes to all the various data structures that it maintains.</p>
+
+<p>The log is the record of what happened, and each table or index is a projection of this history into some useful data structure or index.</p>
+
+<p>Over time, the usage of the log grew from <strong>an implementation detail of the ACID database properties</strong> to a <strong>method for replicating data between databases</strong>. It turns out that the sequence of changes that happened on the database is exactly what is needed to keep a remote replica database in sync. Oracle, MySQL, PostreSQL, and MongoDB include log shipping protocols to transmit portions of a log to replica databases that act as slaves. The slaves can then apply the changes recorded in the log to their own local data structures to stay in sync with the master.</p>
+
+<p>In fact, the use of logs is variations on the two uses in database internals:</p>
+
+<ul>
+  <li>The log is used as a publish/subscribe mechanism to transmit data to other replicas</li>
+  <li>The log is used as a consistency mechanism to order the updates that are applied to multiple replicas</li>
+</ul>
+
+<h1 id="logs-in-distribuuted-system">Logs in Distribuuted System</h1>
+
+<p>The same problems that databases solve with logs (like distributing data to replicas and agreeing on update order) are among the most fundamental problems for all distributed systems.</p>
+
+<p>The log-centric approach to distributed systems arises from a simple observation</p>
+
+<blockquote>
+  <p>If two identical, deterministic processes begin in the same state and get the same inputs in the same order, they will produce the same output and end in the same state</p>
+</blockquote>
+:ET
