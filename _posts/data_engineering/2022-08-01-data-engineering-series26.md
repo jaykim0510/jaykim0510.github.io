@@ -57,6 +57,8 @@ ex. OLAP, Search service, Batch processing, Graph analysis
 
 # Log-Structured Data Flow
 
+Log is the natural problem data structure for handling data flow between systems.
+
 # Experience at LinkedIn
 
 # Relationship to ETL and Data Warehouse

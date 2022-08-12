@@ -73,8 +73,8 @@ tags: MySQL
 - Exchange Seats 💟 ✅
 - Product Price at a Given Date 💟 ❎ 
 - Customers Who Bought All Products ❎
-- Managers with at Least 5 Direct Reports
-- Market Analysis I
+- Managers with at Least 5 Direct Reports ✅
+- Market Analysis I 💟 ✅
 - Find Interview Candidates
 - Immediate Food Delivery II
 - Shortest Distance in a Plane

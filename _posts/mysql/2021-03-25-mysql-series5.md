@@ -76,14 +76,30 @@ ERM은 기존 관계형 모델의 로우(Row)를 엔티티(Entity), 컬럼을 �
 
 ## 정규화
 
+데이터베이스에서 데이터를 삽입/업데이트/삭제할 때 생길 수 있는 문제를 사전에 방지하기 위해 실시하는 작업  
+
 ```
 1NF: 모든 컬럼 값은 나눌 수 없는 단일값이 되어야 한다
-2NF: 1NF + candidate key의 일부분에 대해서만 함수 종족성이 있는 non-prime attribute가 없어야 한다
+2NF: 1NF + 모든 non-prime attribute는 candidate key 전체에 함수 종속성이 있어야 한다
+    (Non-prime attrbute중 2NF를 만족하지 않는 속성은 테이블에서 분리한다)
 3NF: 2NF + 모든 attribute는 오직 primary key에 대해서만 함수 종속성을 가져야 한다
     (모든 attribute는 직접적으로 테이블 엔티티에 대한 내용이어야 한다)
     (이행적 함수종속성을 없애야 한다)
 ```
 
+- 1NF
+  - 어떤 채용 공고글에서 요구하는 스킬이 리스트 형태([MySQL, Python, Pytorch]로 되어 있으면 skiils를 새로운 테이블로 만들자
+  ![](/images/sql_43.png)
+  ![](/images/sql_42.png)
+- 2NF
+  - 함수 종족성: x, y 속성이 있을 때, y = f(x)라는 관계가 성립하는 경우
+  - Candidate Key: 하나의 로우를 특정 지을 수 있는 속성(attribute)들의 최소 집합
+  - Prime Attribute: Candidate Key에 포함되는 모든 속성
+  ![](/images/sql_44.png)
+  ![](/images/sql_45.png)
+
+- 3NF
+  - 모든 attribute는 직접적으로 테이블 엔티티에 대한 내용이어야 한다
 
 ## 물리적 모델링(네이밍, 데이터 타입, 제약조건)
 
