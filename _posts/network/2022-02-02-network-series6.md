@@ -103,6 +103,30 @@ MAC addresses are only significant on a LAN. They are in the frame headers, and 
 
 ## 게이트웨이  
 
+![](/images/network_46.png)
+
+- 서버든 라우터든 패킷을 보내기 위해서는 일단 라우팅 테이블을 참조함
+- 라우팅 테이블을 보니 라우팅 엔트리는 1.1.1.0/24, Gateway는 없음 -> 목적지 주소가 나와 같은 네트워크에 존재함을 확인
+  ![](/images/network_47.png)
+- 이제 Server1은 목적지 주소 1.1.1.20에 대한 MAC 주소를 알기위해 자신의 ARP 테이블을 참조함
+- 그런데 ARP 테이블이 비어있음 -> ARP miss
+  ![](/images/network_48.png)
+- Server1은 Server2(1.1.1.20)의 MAC 주소를 알아내기 위해 lan1 포트로 ARP request 패킷을 보냄
+- Switch1은 이 패킷을 수신하고, 수신 패킷의 Source MAC 주소를 배웁니다
+  - (Switch1의 MAC 테이블에 Server1의 MAC주소와 Switch1의 port를 기록)
+  ![](/images/netwrork_49.png)
+- Switch1은 이 ARP request 패킷을 보고 Destination MAC이 브로드 캐스팅 주소임을 확인
+- Switch1은 수신포트 fe1을 제외한 나머지 모든 포트로 flooding
+- 라우터 R1은 패킷의 Target IP 주소를 보고 자기 것이 아닌 것을 확인하고 버림
+- Server2는 자신의 IP 주소임을 확인 -> 자신의 MAC 주소를 필드에 담아 ARP reply 패킷을 lan1 포트로 보냄
+- 이 패킷을 수신한 Switch1은 Source MAC Learning을 하여 MAC 테이블에 기록
+  ![](/images/network_50.png)
+- Server1은 자신의 ARP 테이블에 MAC 주소를 기록
+  ![](/images/network_51.png)
+- 이제 Server1은 Server2로 IP 패킷을 보냄
+- Server1은 목적지 주소 1.1.1.20에 대한 MAC 주소를 ARP 테이블에서 얻어오고 이동해야할 포트 번호를 MAC 테이블을 통해 확인
+- 이 패킷은 fe2 포트를 통해 나가고, Server2가 패킷을 수신
+
 # 참고
 - [스위칭과 라우팅... 참 쉽죠잉~ (1편: Ethernet 스위칭)](https://www.netmanias.com/ko/?m=view&id=blog&no=5501){:target="_blank"}
 - [스위칭과 라우팅... 참 쉽죠잉~ (2편: IP 라우팅)](https://www.netmanias.com/ko/?m=view&id=blog&no=5502){:target="_blank"}
