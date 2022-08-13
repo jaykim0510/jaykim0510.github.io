@@ -75,8 +75,8 @@ tags: MySQL
 - Customers Who Bought All Products ❎
 - Managers with at Least 5 Direct Reports ✅
 - Market Analysis I 💟 ✅
-- Find Interview Candidates
-- Immediate Food Delivery II
+- Find Interview Candidates 💟 ❎ 
+- Immediate Food Delivery II 💟 ❎ 
 - Shortest Distance in a Plane
 - Rank Scores
 - Movie Rating
