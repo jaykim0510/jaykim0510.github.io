@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 15 Aug 2022 12:20:43 +0900</pubDate>
-        <lastBuildDate>Mon, 15 Aug 2022 12:20:43 +0900</lastBuildDate>
+        <pubDate>Mon, 15 Aug 2022 13:30:01 +0900</pubDate>
+        <lastBuildDate>Mon, 15 Aug 2022 13:30:01 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -18,6 +18,7 @@
   &lt;li&gt;&lt;a href=&quot;#kinesis&quot; id=&quot;markdown-toc-kinesis&quot;&gt;Kinesis&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#kinesis-data-streams&quot; id=&quot;markdown-toc-kinesis-data-streams&quot;&gt;Kinesis Data Streams&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#kinesis-data-firehose&quot; id=&quot;markdown-toc-kinesis-data-firehose&quot;&gt;Kinesis Data Firehose&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#youtube&quot; id=&quot;markdown-toc-youtube&quot;&gt;Youtube&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -25,9 +26,53 @@
 
 &lt;h1 id=&quot;kinesis&quot;&gt;Kinesis&lt;/h1&gt;
 
+&lt;ul&gt;
+  &lt;li&gt;You can use Amazon Kinesis Data Streams to collect and process large streams of data records in real time&lt;/li&gt;
+  &lt;li&gt;Apache Kafka와 같은 용도로 사용한다&lt;/li&gt;
+  &lt;li&gt;Apache Kafka와 아키텍처까지 비슷한 서비스로는  Managed Streaming for Apache Kafka(MSK)가 있다&lt;/li&gt;
+  &lt;li&gt;Kinesis가 MSK보다 조금 더 일찍 서비스로 제공되었기 때문에 아직까지는 MSK 보다 통합성이 좋지만 점차 MSK도 나아지는 중&lt;/li&gt;
+  &lt;li&gt;Kinesis가 더 일찍 서비스되었기 때문에 실무에서는 MSK보다 Kinesis를 더 많이 사용&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;아래 영상은 Kinesis와 MSK의 특징과 차이를 자세히 설명해준다.&lt;/p&gt;
+
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/9y-aCX5O3Ms&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+
 &lt;h1 id=&quot;kinesis-data-streams&quot;&gt;Kinesis Data Streams&lt;/h1&gt;
 
+&lt;ul&gt;
+  &lt;li&gt;Apache Kafka의 Broker와 비슷한 용도&lt;/li&gt;
+  &lt;li&gt;아래 그림은 설정 화면을 캡처한 것인데 크게 설정할게 없는 것 같다.
+&lt;img src=&quot;/images/kinesis_1.png&quot; alt=&quot;&quot; /&gt;
+    &lt;ul&gt;
+      &lt;li&gt;중복없는 전송과 같은 설정은 script(python의 boto3 라이브러리)로 해결하거나 Source에서 해결해야 하는 것 같다&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Kinesis Data Stream 서비스 자체에 Auto-scaling 설정 기능이 없다
+    &lt;ul&gt;
+      &lt;li&gt;Unlike some other AWS services, Kinesis does not provide a native auto-scaling solution like DynamoDB On-Demand or EC2 Auto Scaling. Therefore, there is a need for the right number of shards to be calculated for every stream based on the expected number of records and/or the size of the records&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;아래와 같은 방법이 하나의 솔루션이 된다 
+&lt;img src=&quot;/images/kinesis_3.png&quot; alt=&quot;&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h1 id=&quot;kinesis-data-firehose&quot;&gt;Kinesis Data Firehose&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Apache Kafka의 Connector와 비슷한 용도&lt;/li&gt;
+  &lt;li&gt;Source로 설정가능한 값은 Kinesis Data Stream 또는 Direct PUT 뿐이다&lt;/li&gt;
+  &lt;li&gt;Target으로 가능한 것은 S3, Redshift와 같은 것들이 있다&lt;/li&gt;
+  &lt;li&gt;Source로 Direct PUT을 사용하면 Apache Kafka + Kinesis Firehose 조합도 가능할 것 같다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/kinesis_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;youtube&quot;&gt;Youtube&lt;/h1&gt;
+
+&lt;p&gt;Kinesis Data Stream과 Kinesis Data Firehose의 Use case를 포함해 데이터 파이프라인에 관한 좋은 인사이트를 제공해준다.&lt;/p&gt;
+
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/S3vdTBbQ2YM&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 
@@ -35,6 +80,7 @@
   &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/&quot; target=&quot;_blank&quot;&gt;AWS docs&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.whizlabs.com/blog/aws-kinesis-data-streams-vs-aws-kinesis-data-firehose/&quot; target=&quot;_blank&quot;&gt;whizlabs, AWS Kinesis Data Streams vs AWS Kinesis Data Firehose&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=S3vdTBbQ2YM&amp;amp;list=LL&amp;amp;index=8&quot; target=&quot;_blank&quot;&gt;Youtube AWS Korea: AWS에서 데이터 분석을 시작하기 위한 실시간, 배치 데이터 수집 방법 알아보기&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/slalom-data-ai/amazon-kinesis-data-streams-auto-scaling-the-number-of-shards-105dc967bed5&quot; target=&quot;_blank&quot;&gt;Brandon Stanley, Amazon Kinesis Data Streams: Auto-scaling the number of shards&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Thu, 11 Aug 2022 21:01:35 +0900</pubDate>
@@ -246,8 +292,9 @@
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.scylladb.com/learn/dynamodb/introduction-to-dynamodb/&quot; target=&quot;_blank&quot;&gt;scylladb, Introduction to DynamoDB [추천]&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=2k2GINpO308&amp;amp;list=LL&amp;amp;index=14&quot; target=&quot;_blank&quot;&gt;Youtube, Be A Better Dev: AWS DynamoDB Tutorial For Beginners&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/67646412/how-is-it-possible-for-dynamodb-to-support-both-key-value-and-document-database&quot; target=&quot;_blank&quot;&gt;How is it possible for DynamoDB to support both Key-Value and Document database properties at the same time&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html&quot; target=&quot;_blank&quot;&gt;AWS docs, Core components of Amazon DynamoDB&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/67646412/how-is-it-possible-for-dynamodb-to-support-both-key-value-and-document-database&quot; target=&quot;_blank&quot;&gt;stackoverflow: How is it possible for DynamoDB to support both Key-Value and Document database properties at the same time&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/47521164/aws-dynamodb-query-based-on-non-primary-keys&quot; target=&quot;_blank&quot;&gt;stackoverflow: AWS DynamoDB Query based on non-primary keys&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.cloudforecast.io/blog/dynamodb-pricing/&quot; target=&quot;_blank&quot;&gt;cloudforecast: DynamoDB Pricing and Cost Optimization Guide&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
@@ -304,7 +351,9 @@
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=k0fcbRj_pZE&amp;amp;list=LL&amp;amp;index=7&quot; target=&quot;_blank&quot;&gt;Youtube edureka: AWS DynamoDB Tutorial&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/what-is-glue.html&quot; target=&quot;_blank&quot;&gt;AWS docs, What is AWS Glue?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=LkkgtNtuEoU&amp;amp;list=LL&amp;amp;index=24&quot; target=&quot;_blank&quot;&gt;Youtube, AWS Korea: AWS Glue를 통한 손쉬운 데이터 전처리 작업하기&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=dQnRP6X8QAU&amp;amp;list=LL&amp;amp;index=17&quot; target=&quot;_blank&quot;&gt;Youtube, Johny Chivers: AWS Glue Tutorial for Beginners&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
                 <pubDate>Thu, 11 Aug 2022 21:01:35 +0900</pubDate>
