@@ -59,6 +59,9 @@ DNS: URL의 도메인명을 IP주소로 변환한다. 이 과정 또한 바로 D
 
 > The goal of a caching is to store some resource "closer" to the access point than it was before
 
+> 나중에 요청올 결과를 미리 저장해두었다가 빠르게 돌려주는 것  
+
+
 ### 웹 브라우저 캐시와 CPU 캐시  
 
 > The CPU cache consists of special circuits within the CPU that are designed to cache memory, i.e. the cache is implemented in hardware as part of the physical CPU. This special cache hardware has absolutely nothing to do with the browser cache

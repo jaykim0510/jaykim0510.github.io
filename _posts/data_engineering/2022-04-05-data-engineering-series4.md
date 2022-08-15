@@ -23,33 +23,48 @@ tags: Data_Engineering
 
 ### RDBMS
 
+- MySql
+- PostreSQL
+- Apache Hive
+- AWS Redshift
+
 ### Document Store
+
+- MongoDB
+- Elasticsearch
 
 ### Wide Column Store
 
+- Apache Cassandra
+- Apache HBase
+
 ### Key-Value Store
+
+- AWS DynamoDB
+- Apache HBase
+- Redis
 
 ## 쿼리 지원
 
 ## In-memory 지원
 
+- Redis
+
 ## 검색엔진 지원
 
-# 주요 데이터베이스
+- Elasticsearch
 
-## MySQL
+# 주요 데이터베이스간 비교
 
-## MongoDB
+## MySQL vs Hive vs Redshift
 
-## ElasticSearch
+## MongoDB vs Cassandra vs ElasticSearch
 
-## Redis
+## DynamoDB vs HBase vs Redis
 
-## Cassandra
+- [AWS whitepapaer: Comparing the Use of Amazon DynamoDB and Apache HBase for NoSQL](https://docs.aws.amazon.com/whitepapers/latest/comparing-dynamodb-and-hbase-for-nosql/amazon-dynamodb-overview.html){:target="_blank"}
 
-## Redshift
-
-## Snowflake
+# Youtube
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FX5iWHFn1v0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
 

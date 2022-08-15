@@ -23,14 +23,16 @@ tags: Coding_Test
 
 [Leetcode: Binary Search](https://leetcode.com/tag/binary-search/){:target="_blank"}  
 
+💟 ✅ ❎  
+
 ```
 문제 리스트
 ---------------------------------------------EASY 5문제
-- Intersection of Two Arrays
-- Missing Number
-- Kth Missing Positive Number
-- Binary Search
-- First Bad Version
+- Intersection of Two Arrays ✅
+- Missing Number ✅
+- Kth Missing Positive Number 💟 ✅(O(n)) (이진 탐색으로 풀기 꽤 어려움.. 문제는 좋음)
+- Binary Search 💟 ✅
+- First Bad Version 💟 ✅
 ---------------------------------------------MEDIUM 12문제
 - Capacity To Ship Packages Within D Days
 - Max Consecutive Ones III

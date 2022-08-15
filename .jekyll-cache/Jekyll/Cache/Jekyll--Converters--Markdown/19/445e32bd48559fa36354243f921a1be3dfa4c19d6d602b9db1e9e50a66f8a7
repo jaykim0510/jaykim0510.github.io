@@ -1,0 +1,149 @@
+I"0<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#what-is-dynamodb" id="markdown-toc-what-is-dynamodb">What is DynamoDB</a></li>
+  <li><a href="#features-of-dynamodb" id="markdown-toc-features-of-dynamodb">Features of DynamoDB</a></li>
+  <li><a href="#components-of-dynamodb" id="markdown-toc-components-of-dynamodb">Components of DynamoDB</a></li>
+  <li><a href="#storing-data-in-dynamodb" id="markdown-toc-storing-data-in-dynamodb">Storing Data in DynamoDB</a></li>
+  <li><a href="#querying-data-in-dynamodb" id="markdown-toc-querying-data-in-dynamodb">Querying Data in DynamoDB</a></li>
+  <li><a href="#pricing" id="markdown-toc-pricing">Pricing</a>    <ul>
+      <li><a href="#dynamodb-provisioned-capacity" id="markdown-toc-dynamodb-provisioned-capacity">DynamoDB Provisioned Capacity</a></li>
+      <li><a href="#dynamodb-on-demand-pricing" id="markdown-toc-dynamodb-on-demand-pricing">DynamoDB On-demand Pricing</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="what-is-dynamodb">What is DynamoDB</h1>
+
+<p>Amazon DynamoDB is a cloud-native fully managed NoSQL primarily key-value database.</p>
+
+<p>DynamoDB’s NoSQL design is oriented towards simplicity and scalability, which appeal to developers and devops teams respectively. It can be used for a wide variety of semistructured data-driven applications prevalent in modern and emerging use cases beyond traditional databases, from the Internet of Things (IoT) to social apps or massive multiplayer games. With its broad programming language support, it is easy for developers to get started and to create very sophisticated applications using DynamoDB.</p>
+
+<p>While we cannot describe exactly what DynamoDB is, we can describe how you interact with it. When you set up DynamoDB on AWS, you do not provision specific servers or allocate set amounts of disk. Instead, you provision throughput — you define the database based on provisioned capacity — how many transactions and how many kilobytes of traffic you wish to support per second. Users specify a service level of read capacity units (RCUs) and write capacity units (WCUs).</p>
+
+<p>DynamoDB needed to “provide fast performance at any scale,” allowing developers to “start small with just the capacity they need and then increase the request capacity of a given table as their app grows in popularity.” Predictable performance was ensured by provisioning the database with guarantees of throughput, measured in “capacity units” of reads and writes. “Fast” was defined as single-digit milliseconds, based on data stored in Solid State Drives (SSDs).</p>
+
+<p>DynamoDB lets you offload the administrative burdens of operating and scaling a distributed database so that you don’t have to worry about hardware provisioning, setup and configuration, replication, software patching, or cluster scaling. DynamoDB also offers encryption at rest, which eliminates the operational burden and complexity involved in protecting sensitive data.</p>
+
+<p>You can scale up or scale down your tables’ throughput capacity without downtime or performance degradation. You can use the AWS Management Console to monitor resource utilization and performance metrics.</p>
+
+<p>DynamoDB allows you to delete expired items from tables automatically to help you reduce storage usage and the cost of storing data that is no longer relevant. For more information, see Expiring items by using DynamoDB Time to Live (TTL).</p>
+
+<h1 id="features-of-dynamodb">Features of DynamoDB</h1>
+
+<ul>
+  <li><strong>NoSQL primarily key-value (and document using JSON) database service</strong></li>
+  <li><strong>Fully Managed Distributed Systems -&gt; Stable Performance</strong>
+    <ul>
+      <li><strong>Managed</strong> — provided ‘as-a-Service’ so users would not need to maintain the database</li>
+      <li><strong>Scalable</strong> — automatically provision hardware on the backend, invisible to the user</li>
+      <li><strong>Durable</strong> and highly available — multiple availability zones for failures/disaster recovery</li>
+    </ul>
+  </li>
+  <li><strong>Integrates well with other AWS services</strong></li>
+  <li><strong>Built-in support for ACID transactions</strong></li>
+  <li><strong>Encryption at rest</strong></li>
+  <li><strong>On-demand backup</strong></li>
+  <li><strong>Point-in-time recovery</strong></li>
+</ul>
+
+<h1 id="components-of-dynamodb">Components of DynamoDB</h1>
+
+<ul>
+  <li><strong>Attribute</strong>: <strong>single field</strong> that is attached to an item. Key-value pair</li>
+  <li><strong>Item</strong>: <strong>unique set of attributes</strong> in a table. set of key-value pair</li>
+  <li><strong>Table</strong>: <strong>group of items</strong></li>
+  <li><strong>Primary Key</strong>: The primary key <strong>uniquely identifies each item in the table</strong>
+    <ul>
+      <li>therefore, no two items can have the same key</li>
+      <li>primary key could be just <strong>partition key</strong> or <strong>partition key + sort key</strong></li>
+    </ul>
+  </li>
+  <li><strong>Partiton Key</strong>: key for determining physical storage in which the item will be stored
+    <ul>
+      <li>input to an internal hash function. the output from the hash function determines the partition</li>
+      <li>필수 지정값. primary key로 partition key만 지정되면 partition key는 고유한 값을 가져야함</li>
+    </ul>
+  </li>
+  <li><strong>Sort Key</strong>: 동일한 파티션 키를 공유하는 모든 항목을 정렬하거나 검색하는데 이용 (선택 사항)
+    <ul>
+      <li>partition key + sort key -&gt; Referred to as a composite primary key</li>
+      <li>All items with the same partition key value are stored together, in sorted order by sort key value.</li>
+      <li>In a table that has a partition key and a sort key, it’s possible for multiple items to have the same partition key value. However, those items must have different sort key values.</li>
+    </ul>
+  </li>
+  <li><strong>Secondary Indexed</strong>
+    <ul>
+      <li>You can create one or more secondary indexes on a table. A secondary index lets you query the data in the table using an alternate key, in addition to queries against the primary key. DynamoDB doesn’t require that you use indexes, but they give your applications more flexibility when querying your data. After you create a secondary index on a table, you can read data from the index in much the same way as you do from the table.</li>
+      <li>Global secondary index – An index with a partition key and sort key that can be different from those on the table.</li>
+      <li>Local secondary index – An index that has the same partition key as the table, but a different sort key.</li>
+      <li>In the example Music table shown previously, you can query data items by Artist (partition key) or by Artist and SongTitle (partition key and sort key). What if you also wanted to query the data by Genre and AlbumTitle? To do this, you could create an index on Genre and AlbumTitle, and then query the index in much the same way as you’d query the Music table.</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="storing-data-in-dynamodb">Storing Data in DynamoDB</h1>
+
+<p>A key-value store holds for each key a single value. Arguably, if the value can be an entire document, you can call this database a “document store”. In this sense, DynamoDB is a document store. The DynamoDB API lets you conveniently store a JSON document as the value, and also read or writes part of this document directly instead of reading or writing the entire document (although, you actually pay for reading and writing the entire document).</p>
+
+<p>보통은 Key-value store로 쓴다. Document store로 사용하고 싶은 경우 MongoDB의 AWS 버전인 DocumentDB를 쓰는 것을 추천한다.</p>
+
+<p><img src="/images/dynamo_1.png" alt="" /></p>
+
+<p>DynamoDB is a “wide column” style of NoSQL database. While the schema isn’t defined beyond the primary key at table construction time, the querying abilities are limited to primary keys or secondary indexes. Creating Global Secondary Indexes allows you to query against other attribute values. Local Secondary Indexes can be queried too, but they’re a bit of an odd duck. See here for a good comparison of the two secondary index types.</p>
+
+<p>If your needs do include querying inside the attributes, check out some of the “document-oriented” style of NoSQL databases, of which MongoDB is the one most people think of. If you’re already embedded in the AWS ecosystem and don’t want to break out of it, AWS offers DocumentDB as a MongoDB-compatible service managed by AWS.</p>
+
+<p>Wide-column and document-style data stores have different pro’s &amp; cons. Generally-speaking, the wide-column approach is better for extreme scalability at consistent cost &amp; speed, whereas the document-oriented approach gives more flexibility as your data access patterns evolve over time. Choose the one that suits your needs the best.</p>
+
+<h1 id="querying-data-in-dynamodb">Querying Data in DynamoDB</h1>
+
+<ul>
+  <li>PartiQL (SQL like)</li>
+  <li>Primary Key 또는 Global Secondary Indexes(GSI)에 대해서만 쿼리 가능</li>
+  <li>Filter는 쿼리 이후 결과를 제한하는 용도</li>
+</ul>
+
+<p><img src="/images/dynamo_2.png" alt="" /></p>
+
+<p><img src="/images/dynamo_3.png" alt="" /></p>
+
+<h1 id="pricing">Pricing</h1>
+<p>DynamoDB can be extremely expensive to use. There are two pricing structures to choose from: provisioned capacity and on-demand capacity.</p>
+
+<h2 id="dynamodb-provisioned-capacity">DynamoDB Provisioned Capacity</h2>
+<p>In this Amazon DynamoDB Pricing Plan, you’re billed hourly per the use of operational capacity units (or read and write capacity units). You can control costs by specifying the maximum amount of resources needed by each database table being managed. The provisioned capacity provides autoscaling and dynamically adapts to an increase in traffic. However, it does not implement autoscaling for sudden changes in data traffic unless that’s enabled.</p>
+
+<p>You should use provisioned capacity when:</p>
+
+<ul>
+  <li>You have an idea of the maximum workload your application will have</li>
+  <li>Your application’s traffic is consistent and does not require scaling (unless you enable the autoscaling feature, which costs more)</li>
+</ul>
+
+<h2 id="dynamodb-on-demand-pricing">DynamoDB On-demand Pricing</h2>
+<p>This plan is billed per request units (or read and write request units). You’re only charged for the requests you make, making this a truly serverless choice. This choice can become expensive when handling large production workloads, though. The on-demand capacity method is perfect for autoscaling if you’re not sure how much traffic to expect.</p>
+
+<p>Knowing which capacity best suits your requirements is the first step in optimizing your costs with DynamoDB. Here are some factors to consider before making your choice.</p>
+
+<p>You should use on-demand capacity when:</p>
+
+<ul>
+  <li>You’re not sure about the workload your application will have</li>
+  <li>You don’t know how consistent your application’s data traffic will be</li>
+  <li>You only want to pay for what you use</li>
+</ul>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://www.scylladb.com/learn/dynamodb/introduction-to-dynamodb/" target="_blank">scylladb, Introduction to DynamoDB [추천]</a></li>
+  <li><a href="https://www.youtube.com/watch?v=2k2GINpO308&amp;list=LL&amp;index=14" target="_blank">Youtube, Be A Better Dev: AWS DynamoDB Tutorial For Beginners</a></li>
+  <li><a href="https://stackoverflow.com/questions/67646412/how-is-it-possible-for-dynamodb-to-support-both-key-value-and-document-database" target="_blank">How is it possible for DynamoDB to support both Key-Value and Document database properties at the same time</a></li>
+  <li><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html" target="_blank">AWS docs, Core components of Amazon DynamoDB</a></li>
+  <li><a href="https://www.cloudforecast.io/blog/dynamodb-pricing/" target="_blank">cloudforecast: DynamoDB Pricing and Cost Optimization Guide</a></li>
+</ul>
+:ET
