@@ -23,19 +23,17 @@ tags: Coding_Test
 
 [Leetcode: Two-Pointers](https://leetcode.com/tag/two-pointers/){:target="_blank"}  
 
-✅ ❎  
+💟 ✅ ❎  
 
 ```
 문제 리스트
 ---------------------------------------------EASY 3문제
-- Remove Palindromic Subsequences
-- Reverse String
-- Count Binary Substrings
-- 
+- Reverse String ✅
+- Count Binary Substrings 💟 ❎
 ---------------------------------------------MEDIUM 5문제
-- Interval List Intersections
-- Longest String Chain
-- String Compression
+- Interval List Intersections 💟 ✅
+- Longest String Chain 💟 ❎
+- String Compression 💟 ❎
 - 3Sum With Multiplicity
 - Next Permutation
 ```
