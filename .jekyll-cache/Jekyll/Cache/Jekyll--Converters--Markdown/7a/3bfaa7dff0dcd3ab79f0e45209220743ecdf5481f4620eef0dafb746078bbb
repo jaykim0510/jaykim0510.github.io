@@ -1,4 +1,4 @@
-I"�@<hr />
+I"�P<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까" id="markdown-toc-join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까">JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까</a></li>
@@ -15,6 +15,11 @@
   <li><a href="#join-쿼리에서-on절과-where절에-표기하는-것의-차이" id="markdown-toc-join-쿼리에서-on절과-where절에-표기하는-것의-차이">JOIN 쿼리에서 ON절과 WHERE절에 표기하는 것의 차이</a></li>
   <li><a href="#subset" id="markdown-toc-subset">Subset</a></li>
   <li><a href="#comparing-sets" id="markdown-toc-comparing-sets">Comparing Sets</a></li>
+  <li><a href="#inner-join은-on이-없어도-된다" id="markdown-toc-inner-join은-on이-없어도-된다">INNER JOIN은 ON이 없어도 된다?</a></li>
+  <li><a href="#row_number-rank-dense_rank" id="markdown-toc-row_number-rank-dense_rank">ROW_NUMBER(), RANK(), DENSE_RANK()</a></li>
+  <li><a href="#서브쿼리에서는-메인쿼리의-컬럼을-사용할-수-있다" id="markdown-toc-서브쿼리에서는-메인쿼리의-컬럼을-사용할-수-있다">서브쿼리에서는 메인쿼리의 컬럼을 사용할 수 있다</a></li>
+  <li><a href="#컬럼명이-sql-문법에-포함되는-경우-쌍따옴표로-묶어주면-된다" id="markdown-toc-컬럼명이-sql-문법에-포함되는-경우-쌍따옴표로-묶어주면-된다">컬럼명이 SQL 문법에 포함되는 경우 쌍따옴표로 묶어주면 된다</a></li>
+  <li><a href="#union-말고-union-all도-있다" id="markdown-toc-union-말고-union-all도-있다">UNION 말고 UNION ALL도 있다</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -238,6 +243,60 @@
 <h1 id="comparing-sets">Comparing Sets</h1>
 
 <p><img src="/images/sql_41.png" alt="" /></p>
+
+<h1 id="inner-join은-on이-없어도-된다">INNER JOIN은 ON이 없어도 된다?</h1>
+
+<ul>
+  <li>INNER JOIN, JOIN 또는 그냥 콤마(,)를 이용해 두 테이블을 조인할 때는 ON이 없어도 된다</li>
+  <li>(OUTER JOIN은 없으면 에러남)</li>
+  <li>ON없이 사용하는 경우를 Cartesian Product(곱집합) 이라고 함</li>
+  <li>A: {1, 2, 3}, B: {x, y} -&gt; FROM A, B를 하면 -&gt; {[1, x], [1, y], [2, x], [2, y], [3, x], [3, y]}</li>
+  <li>이 개념을 활용하면 LeetCode의 Shortest Distance in a Plane 문제를 풀 수 있다</li>
+</ul>
+
+<h1 id="row_number-rank-dense_rank">ROW_NUMBER(), RANK(), DENSE_RANK()</h1>
+
+<table>
+  <tbody>
+    <tr>
+      <td>ROW_NUMBER()</td>
+      <td>공동 순위를 무시함 (ex: 1,2,3,4 …)</td>
+    </tr>
+    <tr>
+      <td>RANK()</td>
+      <td>공동 순위만큼 건너뜀 (ex: 1,2,2,4 …)</td>
+    </tr>
+    <tr>
+      <td>DENSE_RANK()</td>
+      <td>공동 순위를 뛰어넘지 않음 (ex: 1,2,2,3 …)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="서브쿼리에서는-메인쿼리의-컬럼을-사용할-수-있다">서브쿼리에서는 메인쿼리의 컬럼을 사용할 수 있다</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">S1</span><span class="p">.</span><span class="n">Score</span><span class="p">,</span> <span class="p">(</span>
+    <span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span> <span class="n">Score</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">Scores</span> <span class="k">WHERE</span> <span class="n">Score</span> <span class="o">&gt;=</span> <span class="n">S1</span><span class="p">.</span><span class="n">Score</span><span class="p">)</span> <span class="k">AS</span> <span class="nv">"rank"</span>
+<span class="k">FROM</span> <span class="n">Scores</span> <span class="n">S1</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">S1</span><span class="p">.</span><span class="n">Score</span> <span class="k">DESC</span>
+</code></pre></div></div>
+
+<h1 id="컬럼명이-sql-문법에-포함되는-경우-쌍따옴표로-묶어주면-된다">컬럼명이 SQL 문법에 포함되는 경우 쌍따옴표로 묶어주면 된다</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
+  <span class="n">score</span><span class="p">,</span>
+  <span class="n">RANK</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">score</span><span class="p">)</span> <span class="k">AS</span> <span class="nv">"rank"</span>
+<span class="k">FROM</span> <span class="n">Scores</span>
+</code></pre></div></div>
+
+<h1 id="union-말고-union-all도-있다">UNION 말고 UNION ALL도 있다</h1>
+
+<p><strong>{[1,  ‘kim’]}과 {[1,  ‘kim’]}을 합칠 때</strong></p>
+
+<ul>
+  <li>UNION -&gt; {[1,  ‘kim’]}</li>
+  <li>UNION ALL -&gt; {[1,  ‘kim’], [1,  ‘kim’]}</li>
+</ul>
 
 <h1 id="참고">참고</h1>
 

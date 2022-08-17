@@ -34,7 +34,7 @@ tags: Coding_Test
 - Interval List Intersections 💟 ✅
 - Longest String Chain 💟 ❎
 - String Compression 💟 ❎
-- 3Sum With Multiplicity
-- Next Permutation
+- 3Sum With Multiplicity ❎
+- Next Permutation 💟 ❎
 ```
 

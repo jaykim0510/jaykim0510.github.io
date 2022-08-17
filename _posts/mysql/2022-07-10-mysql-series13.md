@@ -208,6 +208,44 @@ ORDER BY student_id
 
 ![](/images/sql_41.png)
 
+# INNER JOIN은 ON이 없어도 된다?
+
+- INNER JOIN, JOIN 또는 그냥 콤마(,)를 이용해 두 테이블을 조인할 때는 ON이 없어도 된다
+- (OUTER JOIN은 없으면 에러남)
+- ON없이 사용하는 경우를 Cartesian Product(곱집합) 이라고 함
+- A: {1, 2, 3}, B: {x, y} -> FROM A, B를 하면 -> {[1, x], [1, y], [2, x], [2, y], [3, x], [3, y]} 
+- 이 개념을 활용하면 LeetCode의 Shortest Distance in a Plane 문제를 풀 수 있다
+
+# ROW_NUMBER(), RANK(), DENSE_RANK()
+
+|ROW_NUMBER()|공동 순위를 무시함 (ex: 1,2,3,4 ...)|
+|RANK()|공동 순위만큼 건너뜀 (ex: 1,2,2,4 ...)|
+|DENSE_RANK()|공동 순위를 뛰어넘지 않음 (ex: 1,2,2,3 ...)|
+
+# 서브쿼리에서는 메인쿼리의 컬럼을 사용할 수 있다
+
+```sql
+SELECT S1.Score, (
+    SELECT COUNT(DISTINCT Score) FROM Scores WHERE Score >= S1.Score) AS "rank"
+FROM Scores S1
+ORDER BY S1.Score DESC
+```
+
+# 컬럼명이 SQL 문법에 포함되는 경우 쌍따옴표로 묶어주면 된다
+
+```sql
+SELECT
+  score,
+  RANK() OVER (ORDER BY score) AS "rank"
+FROM Scores
+```
+
+# UNION 말고 UNION ALL도 있다
+
+**{[1,  'kim']}과 {[1,  'kim']}을 합칠 때**  
+
+- UNION -> {[1,  'kim']}
+- UNION ALL -> {[1,  'kim'], [1,  'kim']}
 
 # 참고
 
