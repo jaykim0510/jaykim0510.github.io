@@ -1,0 +1,103 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#git-소개" id="markdown-toc-git-소개">Git 소개</a></li>
+  <li><a href="#git-초기-설정하기" id="markdown-toc-git-초기-설정하기">Git 초기 설정하기</a></li>
+  <li><a href="#git-시작하기" id="markdown-toc-git-시작하기">Git 시작하기</a>    <ul>
+      <li><a href="#git-init" id="markdown-toc-git-init">git init</a></li>
+      <li><a href="#git-status" id="markdown-toc-git-status">git status</a></li>
+      <li><a href="#git-add" id="markdown-toc-git-add">git add</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="git-소개">Git 소개</h1>
+
+<h1 id="git-초기-설정하기">Git 초기 설정하기</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 사용자 정보 설정
+git config --global user.name "(본인 이름)"
+git config --global user.email "(본인 이메일)"
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 설정값 확인하기
+git config --global user.name
+git config --global user.email
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># defaultBranch명 main으로 설정하기
+git config --global init.defaultBranch main
+</code></pre></div></div>
+
+<h1 id="git-시작하기">Git 시작하기</h1>
+
+<h2 id="git-init">git init</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Git으로 관리하고 싶은 폴더
+git init
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">.git</code>이라는 숨겨진 폴더가 생성되고 Git이 관리하는 모든 버전들이 이 폴더 안에 저장되게 된다.</p>
+
+<p><img src="/images/git_17.png" alt="" /></p>
+
+<p>yalco라는 폴더를 Git으로 버전관리 하려고 한다. <code class="language-plaintext highlighter-rouge">git init</code> 명령어를 치고나면 Git repository가 <code class="language-plaintext highlighter-rouge">.git</code> 폴더에서 초기화 되었다고 말해준다.</p>
+
+<p><img src="/images/git_18.png" alt="" /></p>
+
+<p>우선 간단하게 yaml 파일 2개를 만들어보았다.</p>
+
+<h2 id="git-status">git status</h2>
+
+<p>Git 상태를 확인해 보자.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git status
+</code></pre></div></div>
+
+<p><img src="/images/git_19.png" alt="" /></p>
+
+<p>보면 Untracked files에 방금 생성한 두 파일이 보인다. Untracked라는 말은 Git이 한 번도 관리해본 적 없는 파일이라는 말이다. 위의 두 yaml 파일을 이제 Git에게 맡겨보도록 하자.</p>
+
+<h2 id="git-add">git add</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 특정 파일만 맡기려는 경우
+git add "파일명"
+
+# 생성/삭제/변경된 모든 파일을 맡기려는 경우
+git add .
+</code></pre></div></div>
+
+<p><img src="/images/git_20.png" alt="" /></p>
+
+<p>new file 이라는 표시가 뜬다. Git 입장에서 이 두 파일은 새로 생성되었기 때문이다.</p>
+
+<p>이 상태에서 lions.yaml 파일의 manager를 Conan으로 변경해보자. 그리고 다시 Git 상태를 보면</p>
+
+<p><img src="/images/git_21.png" alt="" /></p>
+
+<p>이제는 Untracked files가 아니라 Changes not staged for commit 라는 항목에 lions.yaml이 modified 되었다고 뜬다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Untracked files: 한 번도 Git이 관리한 적 없는 파일들
+
+Changes to be committed: git add한 파일들
+
+Changes not staged for commit: 수정하고 저장만 된 파일들
+</code></pre></div></div>
+
+<p>아하 변경되고 git add 되지 않은 파일들은 not staged 라고 얘기하는 구나. Git은 어떤 파일이 최종적으로 하나의 버전으로 남기까지 생애주기를 관리한다. 그림으로 보자.</p>
+
+<p><img src="/images/git_23.png" alt="" /></p>
+
+<p><img src="/images/git_22.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://itnext.io/git-concepts-for-newcomers-part-2-git-repository-working-tree-and-staging-area-a2e720bf3528" target="_blank">Sébastien Dubois, Git concepts for newcomers — Part 2: Git repository, working tree and staging area</a></li>
+  <li><a href="https://stackoverflow.com/questions/6247495/git-committing-unchanged-files" target="_blank">Git committing unchanged files</a></li>
+</ul>
+:ET

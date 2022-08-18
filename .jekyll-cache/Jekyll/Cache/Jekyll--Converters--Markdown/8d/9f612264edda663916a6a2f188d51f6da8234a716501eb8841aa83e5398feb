@@ -1,0 +1,195 @@
+I";'<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#git-소개" id="markdown-toc-git-소개">Git 소개</a>    <ul>
+      <li><a href="#github는" id="markdown-toc-github는">Github는</a></li>
+    </ul>
+  </li>
+  <li><a href="#git-초기-설정하기" id="markdown-toc-git-초기-설정하기">Git 초기 설정하기</a></li>
+  <li><a href="#git-시작하기" id="markdown-toc-git-시작하기">Git 시작하기</a>    <ul>
+      <li><a href="#git-init" id="markdown-toc-git-init">git init</a></li>
+      <li><a href="#git-status" id="markdown-toc-git-status">git status</a></li>
+      <li><a href="#git-add" id="markdown-toc-git-add">git add</a>        <ul>
+          <li><a href="#git의-3가지-작업-영역" id="markdown-toc-git의-3가지-작업-영역">Git의 3가지 작업 영역</a></li>
+        </ul>
+      </li>
+      <li><a href="#git-commit" id="markdown-toc-git-commit">git commit</a></li>
+      <li><a href="#git-log" id="markdown-toc-git-log">git log</a>        <ul>
+          <li><a href="#git-graph-extention을-이용하면-git-log를-시각화-할-수-있다" id="markdown-toc-git-graph-extention을-이용하면-git-log를-시각화-할-수-있다">Git Graph Extention을 이용하면 Git log를 시각화 할 수 있다</a></li>
+        </ul>
+      </li>
+      <li><a href="#gitignore" id="markdown-toc-gitignore">.gitignore</a></li>
+      <li><a href="#다음-포스트에서는" id="markdown-toc-다음-포스트에서는">다음 포스트에서는</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="git-소개">Git 소개</h1>
+
+<p>깃은 리눅스(Linux)의 아버지 리누스 토발즈(Linus Torvalds)라는 사람이 만들었습니다. 리누스 토발즈는 리눅스를 만든 이후에 리눅스의 버전을 관리하기 위해 BitKeeper라고 하는 툴을 이용하고 있었는데요. 그러다 리눅스 개발자 중 한 명이 BitKeeper의 내부 동작원리를 분석하려고 했다가 리눅스 커뮤니티와 BitKeeper 사이가 안좋아지게 되었습니다. 이 때문에 BitKeeper는 리눅스에게 서비스를 유료화 시켰고 리누스 토발즈는 결국 <strong>버전 관리 프로그램</strong>을 직접 만들어버렸습니다. 이렇게 만들어진 것이 바로 깃입니다.</p>
+
+<h2 id="github는">Github는</h2>
+
+<p>깃 허브는 깃을 통해 생성한 파일의 여러 버전들을 <strong>원격 저장소에 저장하도록 해주는 웹 서비</strong>스입니다. 깃 허브를 이용하면 <strong>버전관리 뿐만 아니라 전세계 개발자들과 함께 코드를 공유하며 협업</strong>할 수 있게 됩니다.</p>
+
+<h1 id="git-초기-설정하기">Git 초기 설정하기</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 사용자 정보 설정
+git config --global user.name "(본인 이름)"
+git config --global user.email "(본인 이메일)"
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 설정값 확인하기
+git config --global user.name
+git config --global user.email
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># defaultBranch명 main으로 설정하기
+git config --global init.defaultBranch main
+</code></pre></div></div>
+
+<h1 id="git-시작하기">Git 시작하기</h1>
+
+<h2 id="git-init">git init</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Git으로 관리하고 싶은 폴더
+git init
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">.git</code>이라는 숨겨진 폴더가 생성되고 Git이 관리하는 모든 버전들이 이 폴더 안에 저장되게 된다.</p>
+
+<p><img src="/images/git_17.png" alt="" /></p>
+
+<p>yalco라는 폴더를 Git으로 버전관리 하려고 한다. <code class="language-plaintext highlighter-rouge">git init</code> 명령어를 치고나면 Git repository가 <code class="language-plaintext highlighter-rouge">.git</code> 폴더에서 초기화 되었다고 말해준다.</p>
+
+<p><strong>.git 폴더의 역할</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aaa
+</code></pre></div></div>
+
+<p>우선 간단하게 yaml 파일 2개를 만들어보았다.</p>
+
+<p><img src="/images/git_18.png" alt="" /></p>
+
+<h2 id="git-status">git status</h2>
+
+<p>Git 상태를 확인해 보자.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git status
+</code></pre></div></div>
+
+<p><img src="/images/git_19.png" alt="" /></p>
+
+<p>보면 Untracked files에 방금 생성한 두 파일이 보인다. Untracked라는 말은 Git이 한 번도 관리해본 적 없는 파일이라는 말이다. 위의 두 yaml 파일을 이제 Git에게 맡겨보도록 하자.</p>
+
+<h2 id="git-add">git add</h2>
+
+<ul>
+  <li>git add는 Working directory(로컬 디렉토리)의 변경사항을 Staging Area(스냅샷을 찍기위한 무대)로 올림</li>
+  <li>나는 이러이러한 변경사항을 무대로 올리고(add), 스냅샷으로 찍어서 저장(commit)해둘거야</li>
+  <li>참고로 매번 git add 명령어의 대상이된 파일만 커밋되는 것은 아님 (tracked된 파일들은 git add 안하더라도 가장 최근에 커밋된 상태로 계속 커밋의 대상이됨. 이 내용은 아래의 카카오 프렌즈를 이용한 그림 참고)</li>
+</ul>
+
+<p><img src="/images/git_22.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 특정 파일만 맡기려는 경우
+git add "파일명"
+
+# 생성/삭제/변경된 모든 파일을 맡기려는 경우
+git add .
+</code></pre></div></div>
+
+<p><img src="/images/git_20.png" alt="" /></p>
+
+<p>new file 이라는 표시가 뜬다. Git 입장에서 이 두 파일은 새로 생성되었기 때문이다.</p>
+
+<p>이 상태에서 lions.yaml 파일의 manager를 Conan으로 변경해보자.</p>
+
+<p><img src="/images/git_25.png" alt="" /></p>
+
+<p>그리고 다시 Git 상태를 보면</p>
+
+<p><img src="/images/git_21.png" alt="" /></p>
+
+<p>Changes not staged for commit 라는 항목에 lions.yaml이 modified 되었다고 뜬다.</p>
+
+<p>변경되었지만 아직 Staging Area에 올라가지 않은 경우이다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Untracked files: 한 번도 Git이 관리한 적 없는 파일들
+
+Changes to be committed: git add한 파일들
+
+Changes not staged for commit: 수정하고 저장만 된 파일들
+</code></pre></div></div>
+
+<h3 id="git의-3가지-작업-영역">Git의 3가지 작업 영역</h3>
+
+<p>git add 되지 않은 파일들은 not staged 라고 한다. Git은 이렇게 어떤 파일이 최종적으로 하나의 버전으로 남기까지 3가지 영역을 오간다. 그림으로 보자.</p>
+
+<p><img src="/images/git_24.png" alt="" /></p>
+
+<p>아래 그림은 명령어를 통해 파일들이 오고가는 영역을 나타낸 것이다. Github를 포함하면 remote repository라는 영역도 추가된다.</p>
+
+<p><img src="/images/git_23.png" alt="" /></p>
+
+<p>다시 돌아가 보면 지금 우리의 파일 상태는 다음과 같았다.</p>
+
+<p><img src="/images/git_21.png" alt="" /></p>
+
+<p>여기서 이제 커밋을 해보자.</p>
+
+<h2 id="git-commit">git commit</h2>
+
+<p><img src="/images/git_26.png" alt="" /></p>
+
+<p>커멋이 되었다고 한다. 커밋이 되면 Local Repository에 하나의 버전으로 남게된다.</p>
+
+<p>Local Repository는 <code class="language-plaintext highlighter-rouge">git log</code> 명령으로 확인할 수 있다.</p>
+
+<h2 id="git-log">git log</h2>
+
+<p><img src="/images/git_27.png" alt="" /></p>
+
+<p>‘Create two files’라는 메시지로 잘 커밋이 되었다. 커밋된 버전은 f0c374e…이라는 식별자를 가지게 된다. 이 식별자를 이용해 나중에 버전을 되돌리거나 하는 등의 작업을 할 수 있다.</p>
+
+<h3 id="git-graph-extention을-이용하면-git-log를-시각화-할-수-있다">Git Graph Extention을 이용하면 Git log를 시각화 할 수 있다</h3>
+
+<p><img src="/images/git_28.png" alt="" /></p>
+
+<p>위의 Uncommitted Changes는 무엇인지 보자.</p>
+
+<p><img src="/images/git_29.png" alt="" /></p>
+
+<p>Conan으로 변경하고 커밋에는 포함하지 않았었음 -&gt; 가장 최근 커밋된 모습(현재 Staging Area의 모습)과의 diff를 보여준다</p>
+
+<p>이 변경사항도 하나의 버전으로 만들어 보자.</p>
+
+<p><img src="/images/git_30.png" alt="" /></p>
+
+<h2 id="gitignore">.gitignore</h2>
+
+<p>비밀번호와 같은 민감한 정보는 Git에 의해 관리되지 않는 것이 낫다.</p>
+
+<p>나중에 Github(Remote Repository)에 커밋을 저장(push)하면 다른 사람들에게 내 비밀번호가 공개될 수 있다.</p>
+
+<p>이러한 경우 .gitignore라는 파일을 이용해 관리하고 싶지 않은 파일들을 표기해주면 된다.</p>
+
+<p><img src="/images/git_31.png" alt="" /></p>
+
+<h2 id="다음-포스트에서는">다음 포스트에서는</h2>
+
+<p>지금까지는 계속 새로운 버전을 만들면서 앞으로 가는 방법만 배웠다.</p>
+
+<p>다음 포스트에서는 과거로 돌아가거나, 과거의 특정 버전에서 했던 행동을 돌이키는 방법을 알아보자.</p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://itnext.io/git-concepts-for-newcomers-part-2-git-repository-working-tree-and-staging-area-a2e720bf3528" target="_blank">Sébastien Dubois, Git concepts for newcomers — Part 2: Git repository, working tree and staging area</a></li>
+  <li><a href="https://stackoverflow.com/questions/6247495/git-committing-unchanged-files" target="_blank">Git committing unchanged files</a></li>
+</ul>
+:ET

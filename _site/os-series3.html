@@ -280,6 +280,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -468,6 +470,16 @@ Table of Contents
       </li>
     </ul>
   </li>
+  <li><a href="#프로세스와-스레드-비교-그리고-비동기-프로그래밍" id="markdown-toc-프로세스와-스레드-비교-그리고-비동기-프로그래밍">프로세스와 스레드 비교 그리고 비동기 프로그래밍</a>    <ul>
+      <li><a href="#멀티-태스킹" id="markdown-toc-멀티-태스킹">멀티 태스킹</a></li>
+      <li><a href="#멀티-프로세싱" id="markdown-toc-멀티-프로세싱">멀티 프로세싱</a></li>
+      <li><a href="#멀티-스레딩과-비동기-프로그래밍은-다르다" id="markdown-toc-멀티-스레딩과-비동기-프로그래밍은-다르다">멀티 스레딩과 비동기 프로그래밍은 다르다</a></li>
+      <li><a href="#콜백-함수" id="markdown-toc-콜백-함수">콜백 함수</a></li>
+      <li><a href="#thread-safe" id="markdown-toc-thread-safe">Thread Safe</a></li>
+      <li><a href="#1개의-코어에-2개의-스레드할-때-그-스레드랑-같은-의미인가" id="markdown-toc-1개의-코어에-2개의-스레드할-때-그-스레드랑-같은-의미인가">‘1개의 코어에 2개의 스레드’할 때 그 스레드랑 같은 의미인가?</a></li>
+      <li><a href="#멀티-코어를-가진-cpu-1개-vs-싱글-코어를-가진-cpu-여러개" id="markdown-toc-멀티-코어를-가진-cpu-1개-vs-싱글-코어를-가진-cpu-여러개">멀티 코어를 가진 CPU 1개 vs 싱글 코어를 가진 CPU 여러개</a></li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 <hr />
@@ -616,7 +628,18 @@ Table of Contents
       <li>스택 영역은 운영체제가 사용자의 프로세스를 작동하기 위해 유지하는 영역이므로 사용자에게는 보이지 않음</li>
     </ul>
   </li>
+  <li><strong>힙 영역</strong>
+    <ul>
+      <li>동적으로 할당되는 데이터들을 위해 존재하는 공간이다. ex) malloc</li>
+    </ul>
+  </li>
 </ul>
+
+<p>위의 특징 외에도 코드 영역과 데이터 영역은 선언할 때 그 크기가 결정되는 정적 영역이지만,<br />
+스택 영역과 힙 영역은 프로세스가 실행되는 동안 크기가 늘어났다 줄어들기도 하는 동적 영역이다</p>
+
+<p>원칙적으로 서로 다른 프로세스간의 메모리 공간 접근은 허용되지 않는다.<br />
+만약 프로세스간 서로 다른 자원에 접근하려면 프로세스간의 통신을 해야한다.</p>
 
 <h2 id="프로세스의-생성과-복사">프로세스의 생성과 복사</h2>
 
@@ -918,12 +941,77 @@ Table of Contents
   </li>
 </ul>
 
+<h1 id="프로세스와-스레드-비교-그리고-비동기-프로그래밍">프로세스와 스레드 비교 그리고 비동기 프로그래밍</h1>
+
+<ul>
+  <li>프로세스
+    <ul>
+      <li>운영체제로부터 자원을 할당받는 작업의 단위</li>
+      <li>프로그램이 인스턴스화 되어 메모리에 올라온 상태</li>
+    </ul>
+  </li>
+  <li>스레드
+    <ul>
+      <li>프로세스가 할당받은 자원을 이용하는 실행의 단위</li>
+      <li>스레드는 프로세스 내에서 각각 Stack만 따로 할당받고 Code, Data, Heap 영역은 공유</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="멀티-태스킹">멀티 태스킹</h2>
+
+<h2 id="멀티-프로세싱">멀티 프로세싱</h2>
+
+<h2 id="멀티-스레딩과-비동기-프로그래밍은-다르다">멀티 스레딩과 비동기 프로그래밍은 다르다</h2>
+
+<h2 id="콜백-함수">콜백 함수</h2>
+
+<ul>
+  <li>함수 안에 인자로 전달되는 함수</li>
+  <li>fun1(fun2) -&gt; fun1 함수를 실행하는 도중에 fun2 함수가 실행되고 fun2 함수가 종료된 후 fun1 함수가 마저 실행됨</li>
+  <li>fun2와 같은 함수를 콜백 함수라고 함</li>
+</ul>
+
+<h2 id="thread-safe">Thread Safe</h2>
+
+<h2 id="1개의-코어에-2개의-스레드할-때-그-스레드랑-같은-의미인가">‘1개의 코어에 2개의 스레드’할 때 그 스레드랑 같은 의미인가?</h2>
+
+<p>Threads don’t exist in the CPU. They are a feature of the operating system, used in programs for concurrent programming. Meaning, having different threads of a program running at the same time. While you could just have a process rather than a thread, it’s less efficient, and harder to communicate between the pieces.</p>
+
+<p>As for cores, that is a CPU thing. Starting in the 1970s, the microprocessor could run one program at a time. Into the 80s, and 90s, they still could run only one program at a time. The operating system simply switched programs as needed, giving each program a time slice of the CPU time. For example, simplistically, 10 programs could each be run 1/10s during a second ( that’s not really how it’s done, but good enough for this discussion.)</p>
+
+<p>CPUs eventually hit a performance wall. The ability to make their clock speed faster became harder to do. To compensate, they started effectively putting more than one CPU on the silicon die. So that multiple programs could run truly simultaneously. <strong>The more cores, the more programs that can run at the same time</strong>. Of course there are way more programs running on a typical Windows or Linux computer than your CPU has cores. So there still needs to be some sharing of the CPU, which is handled by the operating system.</p>
+
+<p>Note that many programs could be seen as consisting of a single thread. And some programs have more than one thread. Multiple threaded programs may also be happy to have more CPU cores, as they may run faster, depending on the program. For example, there are applications, for example video editing, where the programs will work better with more cores. I mention this, because this may be one reason people associate threads and cores.</p>
+
+<p>스레드가 CPU에 물리적으로 존재하는게 아니라 논리적인 존재라면 왜 최대 2개 밖에 안되는걸까?</p>
+
+<p>Because running more than 2 threads on a single core would increase core complexity without improving performance.</p>
+
+<p>Even having 2 threads running simultaneous on a single CPU core is not universal. CPU cores were originally designed to run 1 thread at a time. A multitasking OS on a single core machine gives the illusion that it runs multiple threads at the same time, but it does so by running a single thread for a limited amount of time before switching to the next thread.</p>
+
+<p>However, for a while now, CPU cores have had more than one execution unit. For instance, the original Intel Pentium CPU (which is a single core CPU) had 2 integer execution units and 1 floating point unit. This means that it can, in principle, perform multiple instructions at the same time. However, this is only possible when running a single thread, if consecutive instructions are independent of each other, which means that the input of the second instruction does not depend on the output of the first one.</p>
+
+<p>Modern CPUs, such as the Intel i3/i5/i7 series have as many as 8 execution units per core, and they can start execution of 4 new instructions each clock cycle. Even with some instructions taking more than 1 clock cycle, this means that most of the time, some of the execution units have nothing to do.</p>
+
+<p>Hyperthreading is a technology, originally introduced by Intel in its Pentium 4 processors, to fill up these unused execution units with instructions from a different thread. So a CPU core with hyperthreading can run 2 threads at the same time.</p>
+
+<p>Now we finally come to your question: why does hyperthreading limit itself to 2 threads? why not more? The answer is that a single hyperthreading core running 2 threads is nowhere near as fast as two separate cores running these same threads. Since each thread has to make do with the execution units not used by the other one, neither thread runs at maximum speed. If you were to allow more than 2 threads on a single core, this would increase core complexity considerably without much tangible benefit.</p>
+
+<h2 id="멀티-코어를-가진-cpu-1개-vs-싱글-코어를-가진-cpu-여러개">멀티 코어를 가진 CPU 1개 vs 싱글 코어를 가진 CPU 여러개</h2>
+
 <h1 id="참고">참고</h1>
 
 <ul>
   <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;ejkGb=KOR&amp;barcode=9791156644071" target="_blank">쉽게 배우는 운영체제 책 참고</a></li>
+  <li><a href="https://ko.wikipedia.org/wiki/%EC%8A%A4%EB%A0%88%EB%93%9C_(%EC%BB%B4%ED%93%A8%ED%8C%85)" target="_blank">위키백과 스레드</a></li>
   <li><a href="https://oizys.tistory.com/9" target="_blank">우당탕탕 개발, 멀티프로세싱, 멀티프로그래밍,멀티태스킹,멀티스레딩</a></li>
   <li><a href="https://wooody92.github.io/os/%EB%A9%80%ED%8B%B0-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%EC%99%80-%EB%A9%80%ED%8B%B0-%EC%8A%A4%EB%A0%88%EB%93%9C/" target="_blank">wooody92’s blog, 멀티 프로세스(Multi Process)와 멀티 스레드(Multi Thread)</a></li>
+  <li><a href="https://inpa.tistory.com/entry/%F0%9F%91%A9%E2%80%8D%F0%9F%92%BB-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%E2%9A%94%EF%B8%8F-%EC%93%B0%EB%A0%88%EB%93%9C-%EC%B0%A8%EC%9D%B4" target="_blank">인파, 프로세스 vs 쓰레드 차이 정리</a></li>
+  <li><a href="https://brunch.co.kr/@babosamo/100#comment" target="_blank">Noah, Process, Thread 차이가 뭐예요?</a></li>
+  <li><a href="https://jayhyun-hwang.github.io/2021/09/02/The-Difference-Between-Asynchronous-And-Multi-Threading/" target="_blank">비동기와 멀티스레딩</a></li>
+  <li><a href="https://kishoreconnect.com/understanding-processes-threads-and-cpu-cores" target="_blank">Kishore’s Blog, Process vs Thread vs Core</a></li>
+  <li><a href="https://www.quora.com/Why-does-a-core-only-have-two-threads-in-a-processor" target="_blank">Quora, Why does a core only have two threads in a processor?</a></li>
 </ul>
 
     </div>
