@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Coding Test Series [Part11]: 그래프(Graph) - 문제</title>
+  <title>Coding Test Series [Part9]: 그래프(Graph) - Dijkstra, Kruskal</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/graph_4">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Coding Test Series [Part11]: 그래프(Graph) - 문제 – Code Museum">
+  <meta name="twitter:title" content="Coding Test Series [Part9]: 그래프(Graph) - Dijkstra, Kruskal – Code Museum">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/algorithm_logo.webp">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Coding Test Series [Part11]: 그래프(Graph) - 문제 – Code Museum">
+  <meta property="og:title" content="Coding Test Series [Part9]: 그래프(Graph) - Dijkstra, Kruskal – Code Museum">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/algorithm_logo.webp">
@@ -278,6 +278,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -352,7 +354,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/algorithm_logo.webp" alt="Coding Test Series [Part11]: 그래프(Graph) - 문제">
+          <img class="lazy" data-src="/images/algorithm_logo.webp" alt="Coding Test Series [Part9]: 그래프(Graph) - Dijkstra, Kruskal">
         </div>
       </div>
       
@@ -373,7 +375,7 @@
               </div>
             
  
-          <h1 class="post__title">Coding Test Series [Part11]: 그래프(Graph) - 문제</h1>
+          <h1 class="post__title">Coding Test Series [Part9]: 그래프(Graph) - Dijkstra, Kruskal</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -382,7 +384,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-07-06T21:01:35+09:00">06 Jul 2022</time>
+              <time class="post__date" datetime="2022-07-03T21:01:35+09:00">03 Jul 2022</time>
             </div>
           </div>
   
@@ -426,6 +428,12 @@
   
 
   
+
+  
+
+  
+
+  
   	
   	
   	
@@ -437,10 +445,10 @@
 
   <div class="post_pagination">
     
-      <a href="/heap" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Coding Test Series [Part10]: 힙(Heap)</a>
+      <a href="/graph_3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Coding Test Series [Part8]: 그래프(Graph) - Union-Find</a>
     
     
-      <a href="/dp_2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Coding Test Series [Part12]: 동적 프로그래밍(Dynamic Programming) - 문제<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/dp" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Coding Test Series [Part9]: 동적 프로그래밍(Dynamic Programming)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -450,102 +458,26 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#dfs-bfs" id="markdown-toc-dfs-bfs">DFS, BFS</a></li>
-  <li><a href="#mst" id="markdown-toc-mst">MST</a></li>
-  <li><a href="#graph" id="markdown-toc-graph">Graph</a></li>
-  <li><a href="#bfs--graph" id="markdown-toc-bfs--graph">BFS + Graph</a></li>
+  <li><a href="#dijkstra" id="markdown-toc-dijkstra">Dijkstra</a></li>
+  <li><a href="#kruskal" id="markdown-toc-kruskal">Kruskal</a></li>
 </ul>
 
 <hr />
 
-<h1 id="dfs-bfs">DFS, BFS</h1>
+<h1 id="dijkstra">Dijkstra</h1>
 
-<p><a href="https://leetcode.com/tag/depth-first-search/" target="_blank">Leetcode, DFS</a> <br />
-<a href="https://leetcode.com/tag/breadth-first-search/" target="_blank">Leetcode, BFS</a></p>
-
-<p>💟 ✅ ❎</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>문제 리스트
---------------------------------------------- EASY
-- Range Sum of BST 💟 ✅ 
-- Increasing Order Search Tree 💟 ❎
-- Flood Fill (+BFS) 💟 ✅(DFS)
-- Diameter of Binary Tree 💟 ❎ ✅ 
-- Symmetric Tree (+BFS) 💟 ❎
-- Find if Path Exists in Graph (+BFS) 💟 ❎ ✅(DFS)
-- Path Sum (+BFS) 💟 ✅(DFS) 
-- Closest Binary Search Tree Value 💟 ✅
-- Merge Two Binary Trees 💟 ❎
-- Island Perimeter ✅
-- Lowest Common Ancestor of a Binary Search Tree
-- Second Minimum Node In a Binary Tree 💟 ❎
-- Subtree of Another Tree
-- Cousins in Binary Tree
---------------------------------------------- MEDIUM
-- Deepest Leaves Sum (+BFS) 💟 ✅(DFS)
-- All Paths From Source to Target (+BFS) 💟 ✅(DFS)
-- All Elements in Two Binary Search Trees 💟 ❎
-- Find Leaves of Binary Tree 💟 ❎
-- Distribute Coins in Binary Tree 💟 ❎
-- Max Area of Island (+BFS) 💟 ❎
-- Trim a Binary Search Tree 💟 ❎
-- Smallest Common Region (+BFS) 💟 ❎
-- All Nodes Distance K in Binary Tree (+BFS) 💟 ❎
-- Number of Distinct Islands (+BFS)
-- Evaluate Division (+BFS)
-- Lowest Common Ancestor of a Binary Tree (+BFS)
-- Accounts Merge (+BFS)
-- Number of Islands (+BFS)
-- Shortest Bridge (+BFS)
-- Course Schedule (+BFS)
-- Course Schedule II (+BFS)
-</code></pre></div></div>
+<h1 id="kruskal">Kruskal</h1>
 
 <ul>
-  <li>source에서 출발한 모든 경로는 destination으로 끝나는가?
-<a href="https://leetcode.com/problems/all-paths-from-source-lead-to-destination/" target="_blank">Leetcode: All Paths from Source Lead to Destination</a></li>
+  <li>최소 신장 트리를 찾는 알고리즘</li>
+  <li>알고리즘 실행 순서
+    <ol>
+      <li>모든 엣지(edge)를 가중치를 기준으로 오름차순 정렬한다</li>
+      <li>정렬된 엣지를 하나씩 가져와 연결하고, cyclic한지 체크. acyclic한 경우만 선택 -&gt; cyclic한지는 Union Find 이용</li>
+      <li>N-1개의 엣지를 선택할때 까지 2를 반복</li>
+    </ol>
+  </li>
 </ul>
-
-<h1 id="mst">MST</h1>
-
-<p>💟 ✅ ❎</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>문제 리스트
---------------------------------------------- MEDIUM
-- Min Cost to Connect All Points
-- Optimize Water Distribution in a Village
-</code></pre></div></div>
-
-<h1 id="graph">Graph</h1>
-
-<p>💟 ✅ ❎</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>문제 리스트
---------------------------------------------- EASY
-- Find the Town Judge ❎
---------------------------------------------- MEDIUM
-- Network Delay Time
-- Minimum Number of Vertices to Reach All Nodes
-- Parallel Courses
-- Maximal Network Rank
-- Find the City With the Smallest Number of Neighbors at a Threshold Distance
-- Find All Possible Recipes from Given Supplies
-- Find the Celebrity
-</code></pre></div></div>
-
-<h1 id="bfs--graph">BFS + Graph</h1>
-
-<p>💟 ✅ ❎</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Number of Islands 💟 ✅ (BFS)
-- Max Area of Island 💟 ✅ (BFS)
-- Longest Increasing Path in a Matrix 💟 ❎
-- Making A Large Island
-- Swim in Rising Water
-- Shortest Bridge
-- Pacific Atlantic Water Flow
-- Path With Minimum Effort
-</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">
@@ -771,7 +703,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Coding%20Test%20Series%20[Part11]:%20%EA%B7%B8%EB%9E%98%ED%94%84(Graph)%20-%20%EB%AC%B8%EC%A0%9C&url=http://localhost:4000/graph_4"
+          href="https://twitter.com/intent/tweet?text=Coding%20Test%20Series%20[Part9]:%20%EA%B7%B8%EB%9E%98%ED%94%84(Graph)%20-%20Dijkstra,%20Kruskal&url=http://localhost:4000/graph_4"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -781,12 +713,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/graph_4&amp;media=http://localhost:4000/images/algorithm_logo.webp&amp;description=Coding%20Test%20Series%20[Part11]:%20%EA%B7%B8%EB%9E%98%ED%94%84(Graph)%20-%20%EB%AC%B8%EC%A0%9C"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/graph_4&amp;media=http://localhost:4000/images/algorithm_logo.webp&amp;description=Coding%20Test%20Series%20[Part9]:%20%EA%B7%B8%EB%9E%98%ED%94%84(Graph)%20-%20Dijkstra,%20Kruskal"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/graph_4&title=Coding%20Test%20Series%20[Part11]:%20%EA%B7%B8%EB%9E%98%ED%94%84(Graph)%20-%20%EB%AC%B8%EC%A0%9C&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/graph_4&title=Coding%20Test%20Series%20[Part9]:%20%EA%B7%B8%EB%9E%98%ED%94%84(Graph)%20-%20Dijkstra,%20Kruskal&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -795,6 +727,12 @@
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
 
   
 
@@ -830,10 +768,10 @@
 
   <div class="post_pagination">
     
-      <a href="/heap" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Coding Test Series [Part10]: 힙(Heap)</a>
+      <a href="/graph_3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Coding Test Series [Part8]: 그래프(Graph) - Union-Find</a>
     
     
-      <a href="/dp_2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Coding Test Series [Part12]: 동적 프로그래밍(Dynamic Programming) - 문제<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/dp" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Coding Test Series [Part9]: 동적 프로그래밍(Dynamic Programming)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
