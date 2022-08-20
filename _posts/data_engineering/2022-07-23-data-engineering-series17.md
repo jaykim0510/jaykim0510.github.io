@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심'
 description: 
 date:   2022-07-23 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/distributed_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

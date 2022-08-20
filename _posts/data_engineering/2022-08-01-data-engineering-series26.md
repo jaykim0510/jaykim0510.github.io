@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration'
 description: 
 date:   2022-08-01 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/i_heart_log.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

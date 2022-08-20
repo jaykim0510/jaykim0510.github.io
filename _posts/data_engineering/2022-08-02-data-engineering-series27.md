@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part27]: Redis'
 description: 
 date:   2022-08-02 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/redis_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part11]: 정규표현식(4) 정규표현식을 활용한 메서드(feat.파이썬)'
 description: 
 date:   2022-05-20 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/regex_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

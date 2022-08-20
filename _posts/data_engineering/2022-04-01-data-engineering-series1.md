@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part1]: Database, Warehouse, Lake, Lakehouse'
 description: 
 date:   2022-04-01 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/data_warehouse_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering
@@ -171,3 +171,4 @@ The key differences between a database, a data warehouse, and a data lake are th
 - [EDUCBA: Redis vs MongoDB](https://www.educba.com/redis-vs-mongodb/?source=leftnav){:target="_blank"}
 - [EDUCBA: Data Warehouse vs Data Lake](https://www.educba.com/data-lake-vs-data-warehouse/?source=leftnav){:target="_blank"}
 - [비투엔: Data Warehouse vs Data Lake](https://blog.b2en.com/253){:target="_blank"}
+- [화해블로그, 화해의 Data Warehouse를 소개합니다](http://blog.hwahae.co.kr/all/tech/tech-tech/9409/){:target="_blank"}

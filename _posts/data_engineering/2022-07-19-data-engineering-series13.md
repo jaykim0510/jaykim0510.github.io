@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part13]: Database Internals 개요'
 description: 
 date:   2022-07-19 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/db_internals.jpg'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

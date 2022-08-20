@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part7]: CDC(Change Data Capture)'
 description: 
 date:   2022-05-17 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/cdc_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

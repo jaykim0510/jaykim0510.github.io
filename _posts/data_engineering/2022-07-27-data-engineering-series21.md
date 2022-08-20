@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part21]: 시스템 디자인(2) Inter-Service Communication'
 description: 
 date:   2022-07-26 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/system_design_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

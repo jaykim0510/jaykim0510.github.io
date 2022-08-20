@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part5]: 여러가지 파일 포맷(JSON, BSON, Arrow, Avro, Parquet, ORC)'
 description: 
 date:   2022-04-07 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/data_format_logo.jpeg'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering
@@ -139,3 +139,4 @@ With regard to a web service, you will probably be considering serializing/deser
 - [everydayminder: Avro개요](https://luran.me/352){:target="_blank"}
 - [Jaemun Jung, [Avro] Data Encoding과 Avro Format](https://jaemunbro.medium.com/avro-encoding-type%EA%B3%BC-avro-format%EC%97%90-%EB%8C%80%ED%95%B4-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90-1920fe7015ca){:target="_blank"}
 - [VCNC Engineering: Apache Spark에서 컬럼 기반 저장 포맷 Parquet(파케이) 제대로 활용하기](https://engineering.vcnc.co.kr/2018/05/parquet-and-spark/){:target="_blank"}
+- [Youtube, Differences AVRO vs Protobuf vs Parquet vs ORC, JSON vs XML](https://www.youtube.com/watch?v=oipFhroPFVM){:target="_blank"}

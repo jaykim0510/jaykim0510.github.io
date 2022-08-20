@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part14]: Database Internals 트랜잭션 처리와 복구'
 description: 
 date:   2022-07-20 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/db_internals.jpg'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering

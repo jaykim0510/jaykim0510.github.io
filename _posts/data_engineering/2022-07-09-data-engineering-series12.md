@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part12]: OLTP, OLAP'
 description: 
 date:   2022-07-09 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/olap_logo.jpeg'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering
@@ -16,6 +16,8 @@ tags: Data_Engineering
 {:toc}
 
 ---
+
+![](/images/olap_1.png)
 
 # OLTP
 

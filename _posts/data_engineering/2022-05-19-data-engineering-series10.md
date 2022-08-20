@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part10]: 정규표현식(3) 그루핑'
 description: 
 date:   2022-05-19 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/regex_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering
