@@ -1,0 +1,131 @@
+I"�8<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#union-find" id="markdown-toc-union-find">Union-Find</a>    <ul>
+      <li><a href="#key-points-of-union-find" id="markdown-toc-key-points-of-union-find">Key points of Union-Find</a></li>
+      <li><a href="#use-case-of-union-find" id="markdown-toc-use-case-of-union-find">Use Case of Union-Find</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementation-of-union-find" id="markdown-toc-implementation-of-union-find">Implementation of Union-Find</a>    <ul>
+      <li><a href="#quick-find" id="markdown-toc-quick-find">Quick Find</a></li>
+      <li><a href="#quick-union" id="markdown-toc-quick-union">Quick Union</a></li>
+      <li><a href="#union-by-rank" id="markdown-toc-union-by-rank">Union by Rank</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="union-find">Union-Find</h1>
+<ul>
+  <li>The primary use of Union-Find is to address the connectivity between the components of a network.</li>
+</ul>
+
+<h2 id="key-points-of-union-find">Key points of Union-Find</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">find</code>: function finds the root node of a given vertex.</li>
+  <li><code class="language-plaintext highlighter-rouge">union</code>: function unions two vertices and makes their root nodes the same.</li>
+</ul>
+
+<h2 id="use-case-of-union-find">Use Case of Union-Find</h2>
+
+<ul>
+  <li>Determine Connection</li>
+  <li>Detect Cycle</li>
+</ul>
+
+<h1 id="implementation-of-union-find">Implementation of Union-Find</h1>
+
+<h2 id="quick-find">Quick Find</h2>
+
+<ul>
+  <li>self.root의 인덱스는 자기 자신, 값은 루트 노드를 가리킴</li>
+  <li>self.root의 값 자체가 인덱스 노드의 루트 노드이기 때문에 find는 O(1)</li>
+  <li>x와 y를 union하기 위해 x와 같은 루트 노드를 가지는 모든 노드의 루트 노드를 y의 루트 노드로 변경 -&gt; 항상 O(N)</li>
+  <li>find는 O(1). union은 O(N)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Quick Find
+</span><span class="k">class</span> <span class="nc">UnionFind</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">root</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span>
+    
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+            <span class="n">root_x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">root_y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">root_x</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+    
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<span class="n">uf</span> <span class="o">=</span> <span class="n">UnionFind</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+    <span class="n">uf</span><span class="p">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="n">edge</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">uf</span><span class="p">.</span><span class="n">connected</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">uf</span><span class="p">.</span><span class="n">connected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">uf</span><span class="p">.</span><span class="n">connected</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="quick-union">Quick Union</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Quick Union
+</span><span class="k">class</span> <span class="nc">UnionFind</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span>
+    
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">while</span> <span class="n">x</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">x</span>
+    
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+            <span class="n">root_x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">root_y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+    
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<h2 id="union-by-rank">Union by Rank</h2>
+
+<ul>
+  <li>Union by rank -&gt; Path compression -&gt; Optimization</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Path compression
+</span><span class="k">class</span> <span class="nc">UnionFind</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">u</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">])</span>  
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="n">pu</span><span class="p">,</span> <span class="n">pv</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pu</span> <span class="o">==</span> <span class="n">pv</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">pu</span><span class="p">]</span> <span class="o">=</span> <span class="n">pv</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</code></pre></div></div>
+
+:ET

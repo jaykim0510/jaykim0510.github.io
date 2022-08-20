@@ -1,0 +1,199 @@
+I"�_<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#union-find" id="markdown-toc-union-find">Union-Find</a>    <ul>
+      <li><a href="#key-points-of-union-find" id="markdown-toc-key-points-of-union-find">Key points of Union-Find</a></li>
+      <li><a href="#use-case-of-union-find" id="markdown-toc-use-case-of-union-find">Use Case of Union-Find</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementation-of-union-find" id="markdown-toc-implementation-of-union-find">Implementation of Union-Find</a>    <ul>
+      <li><a href="#quick-find" id="markdown-toc-quick-find">Quick Find</a></li>
+      <li><a href="#quick-union" id="markdown-toc-quick-union">Quick Union</a></li>
+      <li><a href="#union-by-rank" id="markdown-toc-union-by-rank">Union by Rank</a></li>
+      <li><a href="#path-compression" id="markdown-toc-path-compression">Path Compression</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="union-find">Union-Find</h1>
+<ul>
+  <li>The primary use of Union-Find is to address the connectivity between the components of a network.</li>
+</ul>
+
+<h2 id="key-points-of-union-find">Key points of Union-Find</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">find</code>: function finds the root node of a given vertex.</li>
+  <li><code class="language-plaintext highlighter-rouge">union</code>: function unions two vertices and makes their root nodes the same.</li>
+</ul>
+
+<h2 id="use-case-of-union-find">Use Case of Union-Find</h2>
+
+<ul>
+  <li>Determine Connection</li>
+  <li>Detect Cycle</li>
+</ul>
+
+<h1 id="implementation-of-union-find">Implementation of Union-Find</h1>
+
+<h2 id="quick-find">Quick Find</h2>
+
+<ul>
+  <li>self.root의 인덱스는 자기 자신, 값은 루트 노드를 가리킴</li>
+  <li>self.root의 값 자체가 인덱스 노드의 루트 노드이기 때문에 find는 O(1)</li>
+  <li>x와 y를 union하기 위해 x와 같은 루트 노드를 가지는 모든 노드의 루트 노드를 y의 루트 노드로 변경 -&gt; 항상 O(N)</li>
+  <li>find는 O(1). union은 O(N)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Quick Find
+</span><span class="k">class</span> <span class="nc">UnionFind</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">root</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span>
+    
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+            <span class="n">root_x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">root_y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">root_x</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="p">.</span><span class="n">root</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+    
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<span class="n">uf</span> <span class="o">=</span> <span class="n">UnionFind</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">)]</span>
+
+<span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+    <span class="n">uf</span><span class="p">.</span><span class="n">union</span><span class="p">(</span><span class="o">*</span><span class="n">edge</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">uf</span><span class="p">.</span><span class="n">connected</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">uf</span><span class="p">.</span><span class="n">connected</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="n">uf</span><span class="p">.</span><span class="n">connected</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="quick-union">Quick Union</h2>
+
+<ul>
+  <li>self.parent의 인덱스는 자기 자신, 값은 부모 노드를 가리킴</li>
+  <li>self.parent의 배열에서 계속 부모 노드를 타고 올라가면서 루트 노드가 나올 때 까지 반복 -&gt; find는 O(N)</li>
+  <li>x의 루트 노드의 부모 노드를 y의 루트 노드로 변경 -&gt; union도 O(N)</li>
+  <li>find와 union 모두 O(N)이기 때문에 Quick Union이 시간 측면에서 성능이 낮아보이지만 union은 최악의 경우만 O(N)이지 Quick Find처럼 항상 O(N)은 아니다. 두 메소드 모두 정확히는 루트 노드를 찾는 과정만 필요로 하므로 정확히는 O(H)이다.</li>
+  <li>union, find -&gt; O(H). (H는 해당 노드에서 루트 노드까지의 높이)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Quick Union
+</span><span class="k">class</span> <span class="nc">UnionFind</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span>
+    
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">while</span> <span class="n">x</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">x</span>
+    
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+            <span class="n">root_x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">root_y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+    
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<h2 id="union-by-rank">Union by Rank</h2>
+
+<ul>
+  <li>rank: 각 노드의 높이</li>
+  <li>union하고자 하는 두 트리의 루트 노드의 rank를 비교</li>
+  <li>rank가 높은 트리의 루트 노드가 union된 결과의 루트 노드가 되도록 하자 -&gt; 최종 결과 트리의 높이가 유지될 수 있음</li>
+  <li>두 트리의 높이가 같으면 임의로 하나를 기준 루트 노드로 잡는다 -&gt; 하지만 rank가 1증가 할 수 밖에 없음</li>
+  <li>Quick-Union의 union 메서드를 개선한 방법</li>
+  <li>Quick Union에서 O(H)가 O(N)이 아닌 O(logN)으로 되도록 함</li>
+  <li>union된 결과가 일자로 길어지는 상황을 피할 수 있음</li>
+</ul>
+
+<p><img src="/images/union_rank_1.png" alt="" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Union by rank
+</span><span class="k">class</span> <span class="nc">UnionFind</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span>
+    
+    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">while</span> <span class="n">x</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">x</span>
+    
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+            <span class="n">root_x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">root_y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_y</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_x</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_y</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_y</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+    
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<h2 id="path-compression">Path Compression</h2>
+
+<ul>
+  <li>기존 Quick Union에서 find는 루트 노드를 찾기 위해 parent를 계속 traverse함</li>
+  <li>If we search the root node of the same element again, we repeat the same operations. Is there any way to optimize this process?</li>
+  <li>After finding the root node, we can update the parent node of all traversed elements to their root node. When we search for the root node of the same element again, we only need to traverse two elements to find its root node, which is highly efficient. So, how could we efficiently update the parent nodes of all traversed elements to the root node? The answer is to use “recursion”. This optimization is called “path compression”, which optimizes the find function.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Path compression
+</span><span class="k">class</span> <span class="nc">UnionFind</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">parent</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">rank</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">size</span>
+    
+    <span class="c1"># Path Compression
+</span>    <span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+    
+    <span class="k">def</span> <span class="nf">union</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">y</span><span class="p">]:</span>
+            <span class="n">root_x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">root_y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_y</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_y</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_x</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_y</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">parent</span><span class="p">[</span><span class="n">root_x</span><span class="p">]</span> <span class="o">=</span> <span class="n">root_y</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">rank</span><span class="p">[</span><span class="n">root_y</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+    
+    <span class="k">def</span> <span class="nf">connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+:ET
