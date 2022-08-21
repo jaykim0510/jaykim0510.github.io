@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part12]: OLTP, OLAP'
+title:  'Data Engineering Series [Part12]: Purpose-built Databases(OLTP, OLAP, Cache)'
 description: 
 date:   2022-07-09 15:01:35 +0300
 image:  '/images/olap_logo.jpeg'
@@ -17,11 +17,17 @@ tags: Data_Engineering
 
 ---
 
+Purpose-built databases address different workloads, including online transactional processing (OLTP), online analytical processing (OLAP), and caching. The data models representing the entities your applications work with and their relationships are supported by relational, document, key-value or graph, or time-series databases.  
+
 ![](/images/olap_1.png)
 
 # OLTP
 
+- 사용자와의 상호 작용을 중시 -> 빠르고 안전한 저장, 빠른 읽기, ACID 지원 -> Redis, DynamoDB, MySQL
+
 # OLAP
+
+- 데이터 분석을 중시 -> 컬럼 기반, 빠른 분석 -> 컬럼지향 RDBMS가 베스트일듯 -> BigQuery, Redshift
 
 # 참고
 

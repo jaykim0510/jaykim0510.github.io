@@ -438,6 +438,7 @@
   <li><a href="#storing-data-in-dynamodb" id="markdown-toc-storing-data-in-dynamodb">Storing Data in DynamoDB</a></li>
   <li><a href="#querying-data-in-dynamodb" id="markdown-toc-querying-data-in-dynamodb">Querying Data in DynamoDB</a></li>
   <li><a href="#configuration-in-dynamodb" id="markdown-toc-configuration-in-dynamodb">Configuration in DynamoDB</a></li>
+  <li><a href="#use-case" id="markdown-toc-use-case">Use Case</a></li>
   <li><a href="#pricing" id="markdown-toc-pricing">Pricing</a>    <ul>
       <li><a href="#dynamodb-provisioned-capacity" id="markdown-toc-dynamodb-provisioned-capacity">DynamoDB Provisioned Capacity</a></li>
       <li><a href="#dynamodb-on-demand-pricing" id="markdown-toc-dynamodb-on-demand-pricing">DynamoDB On-demand Pricing</a></li>
@@ -543,6 +544,10 @@
 
 <p><img src="/images/dynamo_2.png" alt="" /></p>
 
+<p>일반 Attribute에 대해서는 쿼리가 안된다.</p>
+
+<p>아래와 같이 원하는 Attribute를 GSI로 만들고 나면 쿼리가 가능해진다.</p>
+
 <p><img src="/images/dynamo_3.png" alt="" /></p>
 
 <h1 id="configuration-in-dynamodb">Configuration in DynamoDB</h1>
@@ -554,6 +559,12 @@
 <p>그 밖에 테이블 생성 이후 설정할 수 있는 설정값은 다음과 같다.</p>
 
 <p><img src="/images/dynamo_5.png" alt="" /></p>
+
+<h1 id="use-case">Use Case</h1>
+
+<p>In this tutorial, you will create a bookstore application that showcases a product catalog. Products typically contain unique identifiers and attributes such as descriptions, quantities, locations, and prices. The method for retrieving these types of attributes (specifically, the access pattern) is often a key-value lookup based on the product’s unique identifier. This means that an application can retrieve these other attributes when a product’s unique identifier is provided.</p>
+
+<p>While the product catalog can start off with a few products, it should have the ability to scale to billions if needed without having to be re-architected or requiring a different database. It should also maintain fast, predictable performance at any scale for these key-value lookups. With these requirements in mind, Amazon DynamoDB is a good fit as the durable system of record for the bookstore because it offers low latency performance and scales as your application grows. Another benefit is that you do not need to manage any servers or clusters.</p>
 
 <h1 id="pricing">Pricing</h1>
 <p>DynamoDB can be extremely expensive to use. There are two pricing structures to choose from: provisioned capacity and on-demand capacity.</p>

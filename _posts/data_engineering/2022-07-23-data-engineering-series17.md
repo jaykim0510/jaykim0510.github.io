@@ -97,7 +97,9 @@ The first and foremost thing is that it makes our system more stable because of 
 
 **CAP Theorem**  
 
-![](/images/cap_theorem.png)
+![](/images/cap.png)
+
+[Understanding NoSQL Databases by the CAP Theorem](https://data-science-blog.com/blog/2021/10/14/cap-theorem/){:target="_blank"}
 
 The CAP Theorem (as put forth in a presentation by Eric Brewer in 2000) stated that distributed shared-data systems had three properties but systems could only choose to adhere to two of those properties:  
 
@@ -175,4 +177,4 @@ So we can remove these problems by given below solutions:
 
 # 참고
 
-- [GeeksforGeeks: Consensus Problem of Distributed Systems](https://www.geeksforgeeks.org/consensus-problem-of-distributed-systems/?ref=gcse)
+- [GeeksforGeeks: Consensus Problem of Distributed Systems](https://www.geeksforgeeks.org/consensus-problem-of-distributed-systems/?ref=gcse){:target="_blank"}

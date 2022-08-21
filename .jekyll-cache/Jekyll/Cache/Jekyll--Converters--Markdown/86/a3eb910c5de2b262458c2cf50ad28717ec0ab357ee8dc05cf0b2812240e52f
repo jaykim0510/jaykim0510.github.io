@@ -1,0 +1,138 @@
+I"% <hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#데이터베이스-주요-특성" id="markdown-toc-데이터베이스-주요-특성">데이터베이스 주요 특성</a>    <ul>
+      <li><a href="#데이터베이스-모델" id="markdown-toc-데이터베이스-모델">데이터베이스 모델</a>        <ul>
+          <li><a href="#rdbms" id="markdown-toc-rdbms">RDBMS</a></li>
+          <li><a href="#document-store" id="markdown-toc-document-store">Document Store</a></li>
+          <li><a href="#wide-column-store" id="markdown-toc-wide-column-store">Wide Column Store</a></li>
+          <li><a href="#key-value-store" id="markdown-toc-key-value-store">Key-Value Store</a></li>
+        </ul>
+      </li>
+      <li><a href="#쿼리-지원" id="markdown-toc-쿼리-지원">쿼리 지원</a></li>
+      <li><a href="#in-memory-지원" id="markdown-toc-in-memory-지원">In-memory 지원</a></li>
+      <li><a href="#검색엔진-지원" id="markdown-toc-검색엔진-지원">검색엔진 지원</a></li>
+      <li><a href="#scale-up-scale-out" id="markdown-toc-scale-up-scale-out">Scale-Up, Scale-Out</a></li>
+    </ul>
+  </li>
+  <li><a href="#주요-데이터베이스간-비교" id="markdown-toc-주요-데이터베이스간-비교">주요 데이터베이스간 비교</a>    <ul>
+      <li><a href="#mysql-vs-hive-vs-redshift" id="markdown-toc-mysql-vs-hive-vs-redshift">MySQL vs Hive vs Redshift</a></li>
+      <li><a href="#mongodb-vs-cassandra-vs-elasticsearch" id="markdown-toc-mongodb-vs-cassandra-vs-elasticsearch">MongoDB vs Cassandra vs ElasticSearch</a></li>
+      <li><a href="#dynamodb-vs-hbase-vs-redis" id="markdown-toc-dynamodb-vs-hbase-vs-redis">DynamoDB vs HBase vs Redis</a></li>
+    </ul>
+  </li>
+  <li><a href="#youtube" id="markdown-toc-youtube">Youtube</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="데이터베이스-주요-특성">데이터베이스 주요 특성</h1>
+
+<h2 id="데이터베이스-모델">데이터베이스 모델</h2>
+
+<h3 id="rdbms">RDBMS</h3>
+
+<ul>
+  <li>MySql</li>
+  <li>PostreSQL</li>
+  <li>Apache Hive</li>
+  <li>AWS Redshift</li>
+</ul>
+
+<h3 id="document-store">Document Store</h3>
+
+<ul>
+  <li>Schema free한 DBMS와 비슷한 느낌 (NoSQL 중에서 가장 RDBMS와 비슷한 데이터베이스)</li>
+  <li>데이터가 완전히 Structured 되어 있지 않지만, 최대한 DBMS와 비슷하게 사용하고 싶은 경우</li>
+  <li>데이터 하나는 JSON과 같은 객체</li>
+  <li>SQL과 같은 언어로 데이터를 필터링하는 느낌으로 데이터를 읽음 =&gt; 읽어오는게 key-value만큼 빠르지는 않음</li>
+  <li>쿼리의 성능을 조금 포기하는 대신 범용적인 데이터 수집을 가능하게 함</li>
+  <li>ex. MongoDB, Elasticsearch 등</li>
+</ul>
+
+<h3 id="wide-column-store">Wide Column Store</h3>
+<ul>
+  <li>Wide column databases store data in large column-based tables instead of rows. Queries can be run quickly on large amounts of data, making these databases common for retail and IoT data.</li>
+  <li>A wide-column database is a NoSQL database that organizes data storage into flexible columns that can be spread across multiple servers or database nodes, using multi-dimensional mapping to reference data by column, row, and timestamp.</li>
+  <li>A wide-column database is a type of NoSQL database in which the names and format of the columns can vary across rows, even within the same table. Wide-column databases are also known as column family databases. Because data is stored in columns, queries for a particular value in a column are very fast, as the entire column can be loaded and searched quickly. Related columns can be modeled as part of the same column family.</li>
+  <li>Key-value와 비슷한데 차이점은 Key-value는 key로 무조건 Value 전체를 읽어야 함</li>
+  <li>Wide-column은 key로 읽은 결과에서 Column을 통해 더 specific한 value를 얻을 수 있음</li>
+  <li>
+    <p>RDBMS와 다른 점은 Record의</p>
+  </li>
+  <li>Apache Cassandra</li>
+  <li>Apache HBase</li>
+</ul>
+
+<h3 id="key-value-store">Key-Value Store</h3>
+
+<ul>
+  <li>해시테이블과 같은 자료구조를 데이터베이스화 한 것</li>
+  <li>Key를 통해 value를 가져올 수 있다</li>
+  <li>Key는 유니크해야 한다</li>
+  <li>Value는 어떤것이든 될 수 있다(숫자, 텍스트, JSON, URI, 이미지 등)</li>
+  <li>Value의 일부만 읽는 것은 불가능 (이 점이 wide-column과의 차이)</li>
+  <li>Value를 SQL과 같은 언어가 아니라 key값으로 가져옴 -&gt; 굉장히 빠르다</li>
+  <li>Key에 해당하는 value 한개</li>
+  <li>Key-value store + In-memory =&gt; Redis =&gt; Redis가 캐싱 DB 서버로 많이 사용되는 이유</li>
+  <li>ex. Redis, AWS DynamoDB, Apache HBase</li>
+</ul>
+
+<h2 id="쿼리-지원">쿼리 지원</h2>
+
+<h2 id="in-memory-지원">In-memory 지원</h2>
+
+<p>In-memory databases are purpose-built databases that rely <strong>primarily on memory</strong> for data storage, in contrast to databases that store data on disk or SSDs. In-memory data stores are designed to enable minimal response times by eliminating the need to access disks. Because all data is stored and managed exclusively in main memory, in-memory databases risk losing data upon a process or server failure. In-memory databases can persist data on disks by storing each operation in a log or by taking snapshots.</p>
+
+<p>In-memory databases are ideal for applications that require microsecond response times or have large spikes in traffic such as gaming leaderboards, session stores, and real-time analytics.</p>
+
+<ul>
+  <li>Redis</li>
+  <li>AWS ElastiCache</li>
+  <li>Microsoft SQL Server</li>
+  <li>(MySQL, MongoDB와 같은 DB도 메모리 캐시를 지원하지만 주요 저장장치는 디스크이기 때문에 In-memory가 아님)</li>
+</ul>
+
+<h2 id="검색엔진-지원">검색엔진 지원</h2>
+
+<ul>
+  <li>Elasticsearch</li>
+</ul>
+
+<h2 id="scale-up-scale-out">Scale-Up, Scale-Out</h2>
+
+<h1 id="주요-데이터베이스간-비교">주요 데이터베이스간 비교</h1>
+
+<h2 id="mysql-vs-hive-vs-redshift">MySQL vs Hive vs Redshift</h2>
+
+<h2 id="mongodb-vs-cassandra-vs-elasticsearch">MongoDB vs Cassandra vs ElasticSearch</h2>
+
+<h2 id="dynamodb-vs-hbase-vs-redis">DynamoDB vs HBase vs Redis</h2>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/whitepapers/latest/comparing-dynamodb-and-hbase-for-nosql/amazon-dynamodb-overview.html" target="_blank">AWS whitepapaer: Comparing the Use of Amazon DynamoDB and Apache HBase for NoSQL</a></li>
+</ul>
+
+<h1 id="youtube">Youtube</h1>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FX5iWHFn1v0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<p><img src="/images/data_engineering_5.png" alt="" /></p>
+
+<p><img src="/images/data_engineering_6.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://db-engines.com/en/systems" target="_blank">DB Engine 비교</a></li>
+  <li><a href="https://aws.amazon.com/ko/nosql/in-memory/" target="_blank">AWS, What Is an In-Memory Database?</a></li>
+  <li><a href="https://www.scylladb.com/glossary/wide-column-database/" target="_blank">SCYLLA, Wide-column Database</a></li>
+  <li><a href="https://stackoverflow.com/questions/62010368/what-exactly-is-a-wide-column-store" target="_blank">stackoverflow, What exactly is a wide column store?</a></li>
+  <li><a href="https://stackoverflow.com/questions/27157227/can-relational-database-scale-horizontally" target="_blank">stackoverflow, Can relational database scale horizontally</a></li>
+  <li><a href="https://stackoverflow.com/questions/48825977/what-keeps-relational-databases-from-horizontal-scaling" target="_blank">What Keeps Relational Databases From Horizontal Scaling?</a></li>
+  <li><a href="https://www.marklogic.com/blog/relational-databases-scale/" target="_blank">MATT ALLEN, Relational Databases Are Not Designed For Scale</a></li>
+  <li><a href="https://asfirstalways.tistory.com/66">JBee, Scale Up, Scale Out, Sharding</a></li>
+</ul>
+:ET
