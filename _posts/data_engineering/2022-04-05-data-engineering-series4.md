@@ -87,6 +87,8 @@ In-memory databases are ideal for applications that require microsecond response
 - RDBMS가 Scale-Out이 가능한지에 관한 답은 CAP 이론을 공부해야함
 - Relational databases are designed to run on a single server in order to maintain the integrity of the table mappings and avoid the problems of distributed computing.
 - RDBMS가 Scale-out이 힘들다면 Redshift는 뭐지?
+- Redshift는 Columnar database라서 scale-out이 쉽게 가능
+- (Columnar databases are like NoSQL databases, in the fact that they are designed to scale “out” using distributed clusters of low-cost hardware to increase throughput)
 
 Today, the evolution of relational databases allows them to use more complex architectures, relying on a “master-slave” model in which the “slaves” are additional servers that can handle parallel processing and replicated data, or data that is “sharded” (divided and distributed among multiple servers, or hosts) to ease the workload on the master server.  
 
@@ -102,6 +104,22 @@ Using this approach, a NoSQL database can operate across hundreds of servers, pe
 
 Massive scale is impressive, but what is perhaps even more important is elasticity. Not all NoSQL databases are elastic. MarkLogic has a unique architecture that make it possible to quickly and easily add or remove nodes in a cluster so that the database stays in line with performance needs. There is not any complex sharding of data or architectural workarounds—data is automatically rebalanced across a cluster when nodes are added or removed. This also makes administration much easier, making it possible for one DBA to manage for data and with fewer headaches.  
 
+
+## Row Based vs Columnar
+
+- Row Based DB는 OLTP에 적합
+  - record단위로 데이터가 발생할 때 이를 하나의 메모리 블럭에 저장 -> 빠른 쓰기 작업
+  - 단점은 특정 컬럼값이 모두 필요한 경우 모든 메모리 블럭에 접근해야함 -> 느린 분석
+  - ex. MySQL, PostgreSQL, Oracle 등
+- Columnar DB는 OLAP에 적합
+  - 분석은 특정 컬럼에 있는 모든 값을 이용하는 경우 많음
+  - 같은 컬럼에 있는 값을 하나의 메모리 블럭에 저장하면 Random I/O을 줄일 수 있음
+  - 또 하나의 메모리 블럭에 같은 타입의 값만 저장하면 DB는 그 타입에 맞는 특별한 압축 방식을 제공해 줄 수 있음
+  - 단점은 record단위로 발생하는 데이터를 컬럼별로 따로 저장하기 위해 쓰기 작업시 컬럼 개수만큼 더 많은 I/O 작업 발생
+  - ex. AWS Redshift, Google Big Query, Apache HBase 등
+
+- 웹 서비스에 붙어있는 DB로는 OLTP를 위한 Row based DB가 적합하고, 이 데이터를 분석팀에게 제공할 때는 Columnar DB에 저장해서 전달해 주는 것이 좋다.
+- Columnar는 Scale-Out을 쉽게 만들어준다.
 
 # 주요 데이터베이스간 비교
 
@@ -131,3 +149,7 @@ Massive scale is impressive, but what is perhaps even more important is elastici
 - [What Keeps Relational Databases From Horizontal Scaling?](https://stackoverflow.com/questions/48825977/what-keeps-relational-databases-from-horizontal-scaling){:target="_blank"}
 - [MATT ALLEN, Relational Databases Are Not Designed For Scale](https://www.marklogic.com/blog/relational-databases-scale/){:target="_blank"}
 - [JBee, Scale Up, Scale Out, Sharding](https://asfirstalways.tistory.com/66)
+- [HEAVIY.AI, Columnar Database](heavy.ai/technical-glossary/columnar-database){:target="_blank"}
+- [indicative, What Is A Columnar Database?](https://www.indicative.com/resource/columnar-database/){:target="_blank"}
+- [sentinelone, Understanding Row- vs Column-Oriented Databases](https://www.sentinelone.com/blog/understanding-row-vs-column-oriented-databases/){:target="_blank"}
+- [Youtube: Tech Dummies Narendra L, How row oriented and column oriented db works?](https://www.youtube.com/watch?v=uMkVi4SDLbM&t=180s){:target="_blank"}
