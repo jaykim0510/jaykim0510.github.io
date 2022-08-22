@@ -34,6 +34,15 @@ tags: MySQL
 
 ![](/images/mysql_3.png)
 
+There is a metadata file (ibdata1, which holds, by default, data pages, index pages, table metadata and MVCC information), also known as the InnoDB tablespace file.  
+
+- You can have more than one ibdata file (see innodb_data_file_path)
+- There are redo logs (ib_logfile0 and ib_logfile1)
+- You can have more than two redo logs (see innodb_log_files_in_group)
+- You can spread data and indexes across multiple ibdata files if innodb_file_per_table is disabled
+- You can separate data and index pages from ibdata into separate tablespace files (see innodb_file_per_table and StackOverflow Post on how to set this up)
+
+
 ## InnoDB 버퍼 풀
 
 - 스토리지 엔진에서 가장 핵심적인 부분

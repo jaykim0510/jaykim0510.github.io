@@ -104,3 +104,4 @@ tags: Kafka
 - [CodeX 블로그](https://medium.com/codex/apache-kafka-series-part-1-introduction-to-apache-kafka-9b890832002){:target="_blank"}
 - [How Does Kafka Perform When You Need Low Latency?](https://chronicle.software/how-does-kafka-perform-when-you-need-low-latency/){:target="_blank"}
 - [Here’s what makes Apache Kafka so fast](https://www.freecodecamp.org/news/what-makes-apache-kafka-so-fast-a8d4f94ab145/){:target="_blank"}
+- [Apache Kafka Architecture: What You Need to Know](https://www.upsolver.com/blog/apache-kafka-architecture-what-you-need-to-know){:target="_blank"}

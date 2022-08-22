@@ -26,3 +26,6 @@ tags: Kafka
 - [stackoverflow: Which directory does apache kafka store the data in broker nodes](https://stackoverflow.com/questions/40369238/which-directory-does-apache-kafka-store-the-data-in-broker-nodes#){:target="_blank"}
 - [Abhishek Sharma, How kafka stores data](https://medium.com/@abhisheksharma_59226/how-kafka-stores-data-37ee611c89a2){:target="_blank"}
 - [Rohith Sankepally:g Deep Dive Into Apache Kafka. Storage Internals](https://rohithsankepally.github.io/Kafka-Storage-Internals/){:target="_blank"}
+- [towardsdatascience, Log Compacted Topics in Apache Kafka](https://towardsdatascience.com/log-compacted-topics-in-apache-kafka-b1aa1e4665a7){:target="_blank"}
+- [conduktor, Understanding Kafka's Internal Storage and Log Retention](https://www.conduktor.io/understanding-kafkas-internal-storage-and-log-retention){:target="_blank"}
+- [What is a commit log and why should you care?](https://dev.to/heroku/what-is-a-commit-log-and-why-should-you-care-pib){:target="_blank"}
