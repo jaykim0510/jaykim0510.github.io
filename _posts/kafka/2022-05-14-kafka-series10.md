@@ -17,6 +17,16 @@ tags: Kafka
 
 ---  
 
+# Topics, Partitions, Segments
+
+# Schema
+
+# Serialization
+
+# Encoding
+
+# Log Compaction
+
 # 참고
 - [Data types for Kafka connector](https://docs.cloudera.com/csa/1.2.0/flink-sql-table-api/topics/csa-kafka-sql-datatypes.html){:target="_blank"}
 - [Kafka Connect Deep Dive – Converters and Serialization Explained](https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/){:target="_blank"}

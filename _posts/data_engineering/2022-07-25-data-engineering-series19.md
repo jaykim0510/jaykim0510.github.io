@@ -98,5 +98,3 @@ The binary log is generally resilient to unexpected halts because only complete 
 # 참고
 
 - [Quora, What is a DB commit log?](https://www.quora.com/What-is-a-DB-commit-log){:target="_blank"}
-- [Building a Distributed Log from Scratch, Part 2: Data Replication](https://bravenewgeek.com/building-a-distributed-log-from-scratch-part-2-data-replication/){:target="_blank"}
-- [HEVO, Apache Kafka Logs: A Comprehensive Guide](https://hevodata.com/learn/apache-kafka-logs-a-comprehensive-guide/){:target="_blank"}
