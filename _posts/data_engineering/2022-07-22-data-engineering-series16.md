@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제'
+title:  'Data Engineering Series [Part16]: Distributed System(2) CAP Theorem'
 description: 
 date:   2022-07-22 15:01:35 +0300
 image:  '/images/distributed_logo.png'
@@ -17,107 +17,55 @@ tags: Data_Engineering
 
 ---
 
-# 운영체제 관점
+# CAP Theorem
 
-# 네트워크: Inter Process Communication
+The CAP Theorem is one of the most fundamental theorems in the field of distributed systems. It outlines an inherent trade-off in the design of distributed systems.  
 
-Inter-process communication (IPC) is set of interfaces, which is usually programmed in order for the programs to communicate between series of processes. This allows running programs concurrently in an Operating System.  
+CAP theorem – or Brewer’s theorem – was introduced by the computer scientist Eric Brewer at Symposium on Principles of Distributed computing in 2000. The CAP stands for Consistency, Availability and Partition tolerance.  
 
-Interprocess communication is at the heart of all distributed systems. It makes no sense to study distributed systems without carefully examining the ways that processes on different machines can exchange information. Communication in distributed systems is always based on low-level message passing as offered by the underlying network. Expressing communication through message passing is harder than using primitives based on shared memory, as available for nondistrib- uted platforms. Modem distributed systems often consist of thousands or even millions of processes scattered across a network with unreliable communication such as the Internet. Unless the primitive communication facilities of computer networks are replaced by something else, development of large-scale distributed applications is extremely difficult.  
+The CAP Theorem (as put forth in a presentation by Eric Brewer in 2000) stated that distributed shared-data systems had three properties but systems could only choose to adhere to two of those properties:  
 
-In this chapter, we start by discussing the rules that communicating processes must adhere to, known as protocols, and concentrate on structuring those proto- cols in the form of layers. We then look at three widely-used models for commu- nication: Remote Procedure Call (RPC), Message-Oriented Middleware (MOM), and data streaming. We also discuss the general problem of sending data to multi- ple receivers, called multicasting.  
+- **Consistency**: Consistency means that every successful read request receives the result of the most recent write request. Be aware that the definition of consistency for CAP means something different than to ACID (relational consistency).
+- **Availability**: The database is not allowed to be unavailable because it is busy with requests. Every request received by a non-failing node in the system must result in a response. Whether you want to read or write you will get some response back. If the server has not crashed, it is not allowed to ignore the client’s requests.
+- **Partition tolerance**: Databases which store big data will use a cluster of nodes that distribute the connections evenly over the whole cluster. If this system has partition tolerance, it will continue to operate despite a number of messages being delayed or even lost by the network between the cluster nodes.
 
-Our first model for communication in distributed systems is the remote proce- dure call (RPC). An RPC aims at hiding most of the intricacies of message pass- ing, and is ideal for client-server applications.  
+Distributed systems designed for fault tolerance are not much use if they cannot operate in a partitioned state (a state where one or more nodes are unreachable). Thus, partition-tolerance is always a requirement, so the two basic modes that most systems use are either Availability-Partition-tolerant (“AP”) or Consistency-Partition-tolerant (“CP”).  
 
-In many distributed applications, communication does not follow the rather strict pattern of client-server interaction. In those cases, it turns out that thinking in terms of messages is more appropriate. However, the low-level communication facilities of computer networks are in many ways not suitable due to their lack of distribution transparency.  
+In a distributed system, there is always the risk of a network partition. If this happens, the system needs to decide either to continue operating and compromise data consistency, or stop operating and compromise availability.  
 
-An alternative is to use a high-level message-queuing model, in which communication proceeds much the same as in electronic maiI systems. Message-oriented middleware (MOM) is a subject important enough to warrant a section of its own.  
+According to the final statement of the CAP theorem, a distributed system can be either consistent or available in the presence of a network partition.  
 
-With the advent of multimedia distributed systems, it became apparent that
-many systems were lacking support for communication of continuous media, such as audio and video. What is needed is the notion of a stream that can support the continuous flow of messages, subject to various timing constraints. Streams are discussed in a separate section.  
+Database systems designed to fulfill traditional ACID guarantees like relational database (management) systems (RDBMS) choose consistency over availability, whereas NoSQL databases are mostly systems designed referring to the BASE philosophy which prefer availability over consistency.  
 
-Finally, since our understanding of setting up multicast facilities has im- proved, novel and elegant solutions for data dissemination have emerged. We pay separate attention to this subject in the last section of this chapter.
+AP 시스템은 네트워크 파티션이 생겼을 때 AP를 보장해준다. C는 파티션이 없을 때 해결된다.  
 
-## Remote Procedure Call(RPC)
+CA 시스템은 현실적으로 둘 다 완벽하게 지켜낼 수 없다. C를 무조건 보장하면서 A를 최대한 제공해주는 방식이다. 
 
-![](/images/dist_5.png)    
+## AP – Availability + Partition Tolerance
+If we have achieved Availability (our databases will always respond to our requests) as well as Partition Tolerance (all nodes of the database will work even if they cannot communicate), it will immediately mean that we cannot provide Consistency as all nodes will go out of sync as soon as we write new information to one of the nodes. The nodes will continue to accept the database transactions each separately, but they cannot transfer the transaction between each other keeping them in synchronization. We therefore cannot fully guarantee the system consistency. When the partition is resolved, the AP databases typically resync the nodes to repair all inconsistencies in the system.  
 
-Remote Procedure Call (RPC) is a communication technology that is used by one program to make a request to another program for utilizing its service on a network without even knowing the network’s details. A function call or a subroutine call are other terms for a procedure call.   
+A well-known real world example of an AP system is the Domain Name System (DNS). This central network component is responsible for resolving domain names into IP addresses and focuses on the two properties of availability and failure tolerance. Thanks to the large number of servers, the system is available almost without exception. If a single DNS server fails,another one takes over. According to the CAP theorem, DNS is not consistent: If a DNS entry is changed, e.g. when a new domain has been registered or deleted, it can take a few days before this change is passed on to the entire system hierarchy and can be seen by all clients.  
 
-It is based on the client-server concept. The client is the program that makes the request, and the server is the program that gives the service. An RPC, like a local procedure call, is based on the synchronous operation that requires the requesting application to be stopped until the remote process returns its results. Multiple RPCs can be executed concurrently by utilizing lightweight processes or threads that share the same address space.   
+## CA – Consistency + Availability
+Guarantee of full Consistency and Availability is practically impossible to achieve in a system which distributes data over several nodes. We can have databases over more than one node online and available, and we keep the data consistent between these nodes, but the nature of computer networks (LAN, WAN) is that the connection can get interrupted, meaning we cannot guarantee the Partition Tolerance and therefor not the reliability of having the whole database service online at all times.  
 
-Remote Procedure Call program as often as possible utilizes the Interface Definition Language (IDL), a determination language for describing a computer program component’s Application Programming Interface (API). In this circumstance, IDL acts as an interface between machines at either end of the connection, which may be running different operating systems and programming languages.  
+Database management systems based on the relational database models (RDBMS) are a good example of CA systems. These database systems are primarily characterized by a high level of consistency and strive for the highest possible availability. In case of doubt, however, availability can decrease in favor of consistency. Reliability by distributing data over partitions in order to make data reachable in any case – even if computer or network failure – meanwhile plays a subordinate role.  
 
+## CP – Consistency + Partition Tolerance
+If the Consistency of data is given – which means that the data between two or more nodes always contain the up-to-date information – and Partition Tolerance is given as well – which means that we are avoiding any desynchronization of our data between all nodes, then we will lose Availability as soon as only one a partition occurs between any two nodes In most distributed systems, high availability is one of the most important properties, which is why CP systems tend to be a rarity in practice. These systems prove their worth particularly in the financial sector: banking applications that must reliably debit and transfer amounts of money on the account side are dependent on consistency and reliability by consistent redundancies to always be able to rule out incorrect postings – even in the event of disruptions in the data traffic. If consistency and reliability is not guaranteed, the system might be unavailable for the users.  
 
-**Elements of RPC**  
+![](/images/cap.png)
 
-![](/images/rpc_1.png)
+![](/images/dis_sys_6.png)
 
-- **Client**: The client process initiates RPC. The client makes a standard call, which triggers a correlated procedure in the client stub.
-- **Client Stub**: Stubs are used by RPC to achieve semantic transparency. The client calls the client stub. Client stub does the following tasks:
-    - The first task performed by client stub is when it receives a request from a client, it packs(marshalls) the parameters and required specifications of remote/target procedure in a message.
-    - The second task performed by the client stub is upon receiving the result values after execution, it unpacks (unmarshalled) those results and sends them to the Client.
-- **RPC Runtime**: The RPC runtime is in charge of message transmission between client and server via the network. Retransmission, acknowledgment, routing, and encryption are all tasks performed by it. On the client-side, it receives the result values in a message from the server-side, and then it further sends it to the client stub whereas, on the server-side, RPC Runtime got the same message from the server stub when then it forwards to the client machine. It also accepts and forwards client machine call request messages to the server stub.
-- **Server Stub**: Server stub does the following tasks:
-    - The first task performed by server stub is that it unpacks(unmarshalled) the call request message which is received from the local RPC Runtime and makes a regular call to invoke the required procedure in the server.
-    - The second task performed by server stub is that when it receives the server’s procedure execution result, it packs it into a message and asks the local RPC Runtime to transmit it to the client stub where it is unpacked.
-- **Server**: After receiving a call request from the client machine, the server stub passes it to the server. The execution of the required procedure is made by the server and finally, it returns the result to the server stub so that it can be passed to the client machine using the local RPC Runtime.
+# Importance of the CAP theorem
+The CAP theorem is really important because it helped establish the basic limitations of all distributed systems.  
 
-**Working Procedure for RPC Model**  
+The CAP theorem forces designers of distributed systems to make explicit trade-offs between availability and consistency. Once the engineers become aware of these properties, they choose the appropriate system.  
 
-- The process arguments are placed in a precise location by the caller when the procedure needs to be called.
-- Control at that point passed to the body of the method, which is having a series of instructions.
-- The procedure body is run in a recently created execution environment that has duplicates of the calling instruction’s arguments.
-- At the end, after the completion of the operation, the calling point gets back the control, which returns a result.
-  - The call to a procedure is possible only for those procedures that are not within the caller’s address space because both processes (caller and callee) have distinct address space and the access is restricted to the caller’s environment’s data and variables from the remote procedure.
-  - The caller and callee processes in the RPC communicate to exchange information via the message-passing scheme.
-  - The first task from the server-side is to extract the procedure’s parameters when a request message arrives, then the result, send a reply message, and finally wait for the next call message.
-  - Only one process is enabled at a certain point in time.
-  - The caller is not always required to be blocked.
-  - The asynchronous mechanism could be employed in the RPC that permits the client to work even if the server has not responded yet.
-  - In order to handle incoming requests, the server might create a thread that frees the server for handling consequent requests.
-
-![](/images/dist_4.png)
-
-**Advantages of Remote Procedure Calls**   
-
-- The technique of using procedure calls in RPC permits high-level languages to provide communication between clients and servers.
-- This method is like a local procedure call but with the difference that the called procedure is executed on another process and a different computer.
-- The thread-oriented model is also supported by RPC in addition to the process model.
-- The RPC mechanism is employed to conceal the core message passing method.
-- The amount of time and effort required to rewrite and develop the code is minimal.
-- The distributed and local environments can both benefit from remote procedure calls.
-- To increase performance, it omits several of the protocol layers.
-- Abstraction is provided via RPC.  To exemplify, the user is not known about the nature of message-passing in network communication.
-- RPC empowers the utilization of applications in a distributed environment.
-
-
-**Disadvantages of Remote Procedure Calls**  
-
-- In Remote Procedure Calls parameters are only passed by values as pointer values are not allowed.
-- It involves a communication system with another machine and another process, so this mechanism is extremely prone to failure.
-- The RPC concept can be implemented in a variety of ways, hence there is no standard.
-- Due to the interaction-based nature, there is no flexibility for hardware architecture in RPC.
-- Due to a remote procedure call, the process’s cost has increased.
-
-
-## Message based Communication
-
-In the development of models and technologies, message abstraction is a necessary aspect that enables distributed computing. Distributed system is defined as a system in which components reside at networked communication and synchronise its functions only by movement of messages. In this, message recognizes any discrete data that is moved from one entity to another. It includes any kind of data representation having restriction of size and time, whereas it invokes a remote procedure or a sequence of object instance or a common message. This is the reason that “message-based communication model” can be beneficial to refer various model for inter-process communication, which is based on the data streaming abstraction.  
-
-Various distributed programming model use this type of communication despite of the abstraction which is shown to developers for programming the co-ordination of shared components. Below are some major distributed programming models that uses “message-based communication model”  
-
-- Message Passing
-    - In this model, the concept of message as the major abstraction of model is introduced. The units which inter-change the data and information that is explicitly encode, in the form of message. According to then model, the schema and content of message changes or varies. Message Passing Interface and OpenMP are major example of this type of model.
-- Remote Procedure Call
-    - This model explores the keys of procedure call beyond the restrictions of a single process, thus pointing the execution of program in remote processes. In this, primary client-server is implied. A remote process maintains a server component, thus enabling client processes to invoke the approaches and returns the output of the execution. Messages, created by the Remote Procedure Call (RPC) implementation, retrieve the information of the procedure itself and that procedure is to execute having necessary arguments and also returns the values. The use of messages regarding this referred as marshal-ling of the arguments and return values.
-
-## Sockets
-
-This method is mostly used to communicate over a network between a client and a server. It allows for a standard connection which is computer and OS independent.  
-
+# Conclusion
+The CAP Theorem is still an important topic to understand for data engineers and data scientists, but many modern databases enable us to switch between the possibilities within the CAP Theorem. For example, the Cosmos DB von Microsoft Azure offers many granular options to switch between the consistency, availability and partition tolerance . A common misunderstanding of the CAP theorem that it´s none-absoluteness: “All three properties are more continuous than binary. Availability is continuous from 0 to 100 percent, there are many levels of consistency, and even partitions have nuances. Exploring these nuances requires pushing the traditional way of dealing with partitions, which is the fundamental challenge. Because partitions are rare, CAP should allow perfect C and A most of the time, but when partitions are present or perceived, a strategy is in order.”
 
 # 참고
 
-- [GeeksforGeeks: Interprocess Communication in Distributed Systems](https://www.geeksforgeeks.org/interprocess-communication-in-distributed-systems/?ref=gcse){:target="_blank"}
-- [조원호의 행복공간: [네트워크] IPC와 RPC의 차이점](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=horajjan&logNo=220956169499){:target="_blank"}
+- [Understanding NoSQL Databases by the CAP Theorem](https://data-science-blog.com/blog/2021/10/14/cap-theorem/){:target="_blank"}

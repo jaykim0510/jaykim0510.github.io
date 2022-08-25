@@ -159,3 +159,4 @@ Massive scale is impressive, but what is perhaps even more important is elastici
 - [Youtube: Tech Dummies Narendra L, In Memory databases internals for system design interviews](https://www.youtube.com/watch?v=zkACt4NYkU4){:target="_blank"}
 - [Youtube: Tech Dummies Narendra L, Learn System design : Distributed datastores | RDBMS scaling problems | CAP theorem](https://www.youtube.com/watch?v=l9JSK9OBzA4){:target="_blank"}
 - [Youtube: Tech Dummies Narendra L, Learn System design : How distributed datastore works(basics)?](https://www.youtube.com/watch?v=ZbyYvTfBlE0&t=832s){:target="_blank"}
+- [IBM, CAP Theorem](https://www.ibm.com/cz-en/cloud/learn/cap-theorem){:target="_blank"}

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심'
+title:  'Data Engineering Series [Part17]: Distributed Systems(3) 네트워크와 운영체제'
 description: 
 date:   2022-07-23 15:01:35 +0300
 image:  '/images/distributed_logo.png'
@@ -17,164 +17,107 @@ tags: Data_Engineering
 
 ---
 
-distributed system은 fault tolerance 하기 위해 여러 서버에 replication. replication할 때 유의할 점이 consistency (어떤 서버가 선택되어도 클라이언트에게 일관된 결과를 돌려 주는가). consistency를 제공하기 위한 것이 합의 알고리즘?  
+# 운영체제 관점
 
-# 장애 대응(Fault Tolerance)
+# 네트워크: Inter Process Communication
 
-## 장애 감지와 회복
+Inter-process communication (IPC) is set of interfaces, which is usually programmed in order for the programs to communicate between series of processes. This allows running programs concurrently in an Operating System.  
 
-**Heartbeats and Ping**  
+Interprocess communication is at the heart of all distributed systems. It makes no sense to study distributed systems without carefully examining the ways that processes on different machines can exchange information. Communication in distributed systems is always based on low-level message passing as offered by the underlying network. Expressing communication through message passing is harder than using primitives based on shared memory, as available for nondistrib- uted platforms. Modem distributed systems often consist of thousands or even millions of processes scattered across a network with unreliable communication such as the Internet. Unless the primitive communication facilities of computer networks are replaced by something else, development of large-scale distributed applications is extremely difficult.  
 
-## 리더와 팔로워
+In this chapter, we start by discussing the rules that communicating processes must adhere to, known as protocols, and concentrate on structuring those proto- cols in the form of layers. We then look at three widely-used models for commu- nication: Remote Procedure Call (RPC), Message-Oriented Middleware (MOM), and data streaming. We also discuss the general problem of sending data to multi- ple receivers, called multicasting.  
 
-동기화는 비용이 많이 들 수 있다. 동기화 오버헤드를 줄이기 위해 일부 알고리즘에는 분산 알고리즘의 단계를 수행 및 조정하는 리더 프로세스가 있다. 일반적으로 분산 시스템의 프로세스는 균일하고 모든 프로세스가 리더 역할을 맡을 수 있다. 장애가 발생하면 어떤 프로세스라도 리더 선출 과정을 시작할 수 있고 선출된 프로세스는 이전 리더의 작업을 이어서 수행한다.  
+Our first model for communication in distributed systems is the remote proce- dure call (RPC). An RPC aims at hiding most of the intricacies of message pass- ing, and is ideal for client-server applications.  
 
-이상적으로는 한 번에 하나의 리더만 존재하고, 여러 리더가 선출되고 서로 존재를 모르는 상황(split brain 현상)은 절대로 발생하지 않아야 한다. 하지만 많은 리더 선출 알고리즘이 이 조건을 위반한다. 이 문제를 해결하기 위해서는 클러스터 구성원 과반수의 동의가 필요하다. 멀티 팍소스와 래프트를 비롯한 여러 합의 알고리즘은 리더 프로세스가 조율을 담당한다.
+In many distributed applications, communication does not follow the rather strict pattern of client-server interaction. In those cases, it turns out that thinking in terms of messages is more appropriate. However, the low-level communication facilities of computer networks are in many ways not suitable due to their lack of distribution transparency.  
 
-선출 작업은 결정론적이어야 한다. 정확히 하나의 리더를 선출하고 모든 참가자가 결과를 인정해야 한다. 선출된 새로운 리더는 모든 구성원에게 자신의 존재를 알려야 한다.  
+An alternative is to use a high-level message-queuing model, in which communication proceeds much the same as in electronic maiI systems. Message-oriented middleware (MOM) is a subject important enough to warrant a section of its own.  
 
-리더 프로세스가 있는 시스템의 가장 큰 문제는 리더가 병목 지점이 될 수 있다는 점이다. 이 문제를 해결하기 위해 많은 시스템이 데이터를 독립적인 파티션으로 나누고 각 파티션별로 리더를 선출한다. 스패너(Spanner)가 이 방식을 사용한다.  
+With the advent of multimedia distributed systems, it became apparent that
+many systems were lacking support for communication of continuous media, such as audio and video. What is needed is the notion of a stream that can support the continuous flow of messages, subject to various timing constraints. Streams are discussed in a separate section.  
 
-선출 작업은 비용이 높은 작업이지만 자주 수행되지 않기 때문에 시스템 성능에 큰 영향을 주지 않는다.  
+Finally, since our understanding of setting up multicast facilities has im- proved, novel and elegant solutions for data dissemination have emerged. We pay separate attention to this subject in the last section of this chapter.
 
-리더의 정체는 프로세스가 모르는 사이에 바뀔 수 있다. 따라서 각 프로세스가 개별적으로 알고 있는 리더에 대한 정보가 유효한지 확인해야 한다. 이 문제는 리더 선출 알고리즘과 장애 감지 알고리즘을 같이 사용해 해결할 수 있다. 예를 들어 안정적인 리더 선출 알고리즘은 안정적인 프로세스에 리더의 기회를 주고 타임아웃 기반의 장애 감지 알고리즘을 사용해 해당 프로세스에 장애가 발생하지 않고 접근이 가능한 동안 계속해서 리더 역할을 유지할 수 있도록 보장한다.  
+## Remote Procedure Call(RPC)
 
-리더에 의존하는 대부분의 알고리즘은 여러 리더가 존재하는 것을 허용하고 리더 사이의 충돌을 최대한 빠르게 해결한다.  
+![](/images/dist_5.png)    
 
-## 복제
+Remote Procedure Call (RPC) is a communication technology that is used by one program to make a request to another program for utilizing its service on a network without even knowing the network’s details. A function call or a subroutine call are other terms for a procedure call.   
 
-In a distributed system data is stored is over different computers in a network. Therefore, we need to make sure that data is readily available for the users. Availability of the data is an important factor often accomplished by data replication. Replication is the practice of keeping several copies of data in different places.  
+It is based on the client-server concept. The client is the program that makes the request, and the server is the program that gives the service. An RPC, like a local procedure call, is based on the synchronous operation that requires the requesting application to be stopped until the remote process returns its results. Multiple RPCs can be executed concurrently by utilizing lightweight processes or threads that share the same address space.   
 
-Why do we require replication?  
-The first and foremost thing is that it makes our system more stable because of node replication. It is good to have replicas of a node in a network due to following reasons:  
+Remote Procedure Call program as often as possible utilizes the Interface Definition Language (IDL), a determination language for describing a computer program component’s Application Programming Interface (API). In this circumstance, IDL acts as an interface between machines at either end of the connection, which may be running different operating systems and programming languages.  
 
-- If a node stops working, the distributed network will still work fine due to its replicas which will be there. Thus it increases the fault tolerance of the system.
-- It also helps in load sharing where loads on a server are shared among different replicas.
-- It enhances the availability of the data. If the replicas are created and data is stored near to the consumers, it would be easier and faster to fetch data.
 
+**Elements of RPC**  
 
-**Types of Replication**  
-- Active Replication
-- Passive Replication
+![](/images/rpc_1.png)
 
-**Active Replication**  
-- The request of the client goes to all the replicas.
-- It is to be made sure that every replica receives the client request in the same order else the system will get inconsistent.
-- There is no need for coordination because each copy processes the same request in the same sequence.
-- All replicas respond to the client’s request.
+- **Client**: The client process initiates RPC. The client makes a standard call, which triggers a correlated procedure in the client stub.
+- **Client Stub**: Stubs are used by RPC to achieve semantic transparency. The client calls the client stub. Client stub does the following tasks:
+    - The first task performed by client stub is when it receives a request from a client, it packs(marshalls) the parameters and required specifications of remote/target procedure in a message.
+    - The second task performed by the client stub is upon receiving the result values after execution, it unpacks (unmarshalled) those results and sends them to the Client.
+- **RPC Runtime**: The RPC runtime is in charge of message transmission between client and server via the network. Retransmission, acknowledgment, routing, and encryption are all tasks performed by it. On the client-side, it receives the result values in a message from the server-side, and then it further sends it to the client stub whereas, on the server-side, RPC Runtime got the same message from the server stub when then it forwards to the client machine. It also accepts and forwards client machine call request messages to the server stub.
+- **Server Stub**: Server stub does the following tasks:
+    - The first task performed by server stub is that it unpacks(unmarshalled) the call request message which is received from the local RPC Runtime and makes a regular call to invoke the required procedure in the server.
+    - The second task performed by server stub is that when it receives the server’s procedure execution result, it packs it into a message and asks the local RPC Runtime to transmit it to the client stub where it is unpacked.
+- **Server**: After receiving a call request from the client machine, the server stub passes it to the server. The execution of the required procedure is made by the server and finally, it returns the result to the server stub so that it can be passed to the client machine using the local RPC Runtime.
 
+**Working Procedure for RPC Model**  
 
-**Advantages**  
+- The process arguments are placed in a precise location by the caller when the procedure needs to be called.
+- Control at that point passed to the body of the method, which is having a series of instructions.
+- The procedure body is run in a recently created execution environment that has duplicates of the calling instruction’s arguments.
+- At the end, after the completion of the operation, the calling point gets back the control, which returns a result.
+  - The call to a procedure is possible only for those procedures that are not within the caller’s address space because both processes (caller and callee) have distinct address space and the access is restricted to the caller’s environment’s data and variables from the remote procedure.
+  - The caller and callee processes in the RPC communicate to exchange information via the message-passing scheme.
+  - The first task from the server-side is to extract the procedure’s parameters when a request message arrives, then the result, send a reply message, and finally wait for the next call message.
+  - Only one process is enabled at a certain point in time.
+  - The caller is not always required to be blocked.
+  - The asynchronous mechanism could be employed in the RPC that permits the client to work even if the server has not responded yet.
+  - In order to handle incoming requests, the server might create a thread that frees the server for handling consequent requests.
 
-- It is really simple. The codes in active replication are the same throughout.
-- It is transparent.
-- Even if a node fails, it will be easily handled by replicas of that node.
+![](/images/dist_4.png)
 
-**Disadvantages**  
+**Advantages of Remote Procedure Calls**   
 
-- It increases resource consumption. The greater the number of replicas, the greater the memory needed.
-- It increases the time complexity. If some change is done on one replica it should also be done in all others.
+- The technique of using procedure calls in RPC permits high-level languages to provide communication between clients and servers.
+- This method is like a local procedure call but with the difference that the called procedure is executed on another process and a different computer.
+- The thread-oriented model is also supported by RPC in addition to the process model.
+- The RPC mechanism is employed to conceal the core message passing method.
+- The amount of time and effort required to rewrite and develop the code is minimal.
+- The distributed and local environments can both benefit from remote procedure calls.
+- To increase performance, it omits several of the protocol layers.
+- Abstraction is provided via RPC.  To exemplify, the user is not known about the nature of message-passing in network communication.
+- RPC empowers the utilization of applications in a distributed environment.
 
-**Passive Replication**  
 
-- The client request goes to the primary replica, also called the main replica.
-- There are more replicas that act as backup for the primary replica.
-- Primary replica informs all other backup replicas about any modification done.
-- The response is returned to the client by a primary replica.
-- Periodically primary replica sends some signal to backup replicas to let them know that it is working perfectly fine.
-- In case of failure of a primary replica, a backup replica becomes the primary replica.
+**Disadvantages of Remote Procedure Calls**  
 
-**Advantages**  
+- In Remote Procedure Calls parameters are only passed by values as pointer values are not allowed.
+- It involves a communication system with another machine and another process, so this mechanism is extremely prone to failure.
+- The RPC concept can be implemented in a variety of ways, hence there is no standard.
+- Due to the interaction-based nature, there is no flexibility for hardware architecture in RPC.
+- Due to a remote procedure call, the process’s cost has increased.
 
-- The resource consumption is less as backup servers only come into play when the primary server fails.
-- The time complexity of this is also less as there’s no need for updating in all the nodes replicas, unlike active replication.
 
-**Disadvantages**  
+## Message based Communication
 
-- If some failure occurs, the response time is delayed.
+In the development of models and technologies, message abstraction is a necessary aspect that enables distributed computing. Distributed system is defined as a system in which components reside at networked communication and synchronise its functions only by movement of messages. In this, message recognizes any discrete data that is moved from one entity to another. It includes any kind of data representation having restriction of size and time, whereas it invokes a remote procedure or a sequence of object instance or a common message. This is the reason that “message-based communication model” can be beneficial to refer various model for inter-process communication, which is based on the data streaming abstraction.  
 
-## 일관성 보장
+Various distributed programming model use this type of communication despite of the abstraction which is shown to developers for programming the co-ordination of shared components. Below are some major distributed programming models that uses “message-based communication model”  
 
-**CAP Theorem**  
+- Message Passing
+    - In this model, the concept of message as the major abstraction of model is introduced. The units which inter-change the data and information that is explicitly encode, in the form of message. According to then model, the schema and content of message changes or varies. Message Passing Interface and OpenMP are major example of this type of model.
+- Remote Procedure Call
+    - This model explores the keys of procedure call beyond the restrictions of a single process, thus pointing the execution of program in remote processes. In this, primary client-server is implied. A remote process maintains a server component, thus enabling client processes to invoke the approaches and returns the output of the execution. Messages, created by the Remote Procedure Call (RPC) implementation, retrieve the information of the procedure itself and that procedure is to execute having necessary arguments and also returns the values. The use of messages regarding this referred as marshal-ling of the arguments and return values.
 
-![](/images/cap.png)
+## Sockets
 
-[Understanding NoSQL Databases by the CAP Theorem](https://data-science-blog.com/blog/2021/10/14/cap-theorem/){:target="_blank"}
-
-The CAP Theorem (as put forth in a presentation by Eric Brewer in 2000) stated that distributed shared-data systems had three properties but systems could only choose to adhere to two of those properties:  
-
-- Consistency
-- Availability
-- Partition-tolerance
-
-
-Distributed systems designed for fault tolerance are not much use if they cannot operate in a partitioned state (a state where one or more nodes are unreachable). Thus, partition-tolerance is always a requirement, so the two basic modes that most systems use are either Availability-Partition-tolerant (“AP”) or Consistency-Partition-tolerant (“CP”).  
-
-An “AP”-oriented database remains available even if it was partitioned in some way. For instance, if one or more nodes went down, or two or more parts of the cluster were separated by a network outage (a so-called “split-brain” situation), the remaining database nodes would remain available and continue to respond to requests for data (reads) or even accept new data (writes). However, its data would become inconsistent across the cluster during the partitioned state. Transactions (reads and writes) in an “AP”-mode database are considered to be “eventually consistent” because they are allowed to write to some portion of nodes; inconsistencies across nodes are settled over time using various anti-entropy methods.  
-
-A “CP”-oriented database would instead err on the side of consistency in the case of a partition, even if it meant that the database became unavailable in order to maintain its consistency. For example, a database for a bank might disallow transactions to prevent it from becoming inconsistent and allowing withdrawals of more money than were actually available in an account. Transactions on such systems are referred to as “strongly consistent” because all nodes on a system need to reflect the change before the transaction is considered complete or successful.  
-
-**Eventual Consistency** 
-
- Eventual consistency is a consistency model that enables the data store to be highly available. It is also known as optimistic replication & is key to distributed systems. So, how exactly does it work? Let’s Understand this with the help of a use case.  
- 
- Real World Use Case :  
-
-- Think of a popular microblogging site deployed across the world in different geographical regions like Asia, America, and Europe. Moreover, each geographical region has multiple data center zones: North, East, West, and South. 
-- Furthermore, each zone has multiple clusters which have multiple server nodes running. So, we have many datastore nodes spread across the world that micro-blogging site uses for persisting data. Since there are so many nodes running, there is no single point of failure.
-- The data store service is highly available. Even if a few nodes go down persistence service is still up. Let’s say a celebrity makes a post on the website that everybody starts liking around the world. 
-- At a point in time, a user in Japan likes a post which increases the “Like” count of the post from say 100 to 101. At the same point in time, a user in America, in a different geographical zone, clicks on the post, and he sees “Like” count as 100, not 101.
-
-Reason for the above Use case :  
-
-- Simply, because the new updated value of the Post “Like” counter needs some time to move from Japan to America and update server nodes running there. Though the value of the counter at that point in time was 101, the user in America sees old inconsistent values. 
-- But when he refreshes his web page after a few seconds “Like” counter value shows as 101. So, data was initially inconsistent but eventually got consistent across server nodes deployed around the world. This is what eventual consistency is.
-
-
-**Strong Consistency**  
-
-Strong Consistency simply means the data must be strongly consistent at all times. All the server nodes across the world should contain the same value as an entity at any point in time. And the only way to implement this behavior is by locking down the nodes when being updated.  
-
-Real World Use Case :  
-
-- Let’s continue the same Eventual Consistency example from the previous lesson. To ensure Strong Consistency in the system, when a user in Japan likes posts, all nodes across different geographical zones must be locked down to prevent any concurrent updates. 
-- This means at one point in time, only one user can update the post “Like” counter value. So, once a user in Japan updates the “Like” counter from 100 to 101. The value gets replicated globally across all nodes. Once all nodes reach consensus, locks get lifted. Now, other users can Like posts. 
-- If the nodes take a while to reach a consensus, they must wait until then. Well, this is surely not desired in the case of social applications. But think of a stock market application where the users are seeing different prices of the same stock at one point in time and updating it concurrently. This would create chaos. Therefore, to avoid this confusion we need our systems to be Strongly Consistent. 
-- The nodes must be locked down for updates. Queuing all requests is one good way of making a system Strongly Consistent. The strong Consistency model hits the capability of the system to be Highly Available & perform concurrent updates. This is how strongly consistent ACID transactions are implemented.
-
-
-**ACID Transaction Support**  
-
-Distributed systems like NoSQL databases which scale horizontally on the fly don’t support ACID transactions globally & this is due to their design. The whole reason for the development of NoSQL tech is the ability to be Highly Available and Scalable. If we must lock down nodes every time, it becomes just like SQL. So, NoSQL databases don’t support ACID transactions and those that claim to, have terms and conditions applied to them. Generally, transaction support is limited to a geographic zone or an entity hierarchy. Developers of tech make sure that all the Strongly consistent entity nodes reside in the same geographic zone to make ACID transactions possible.  
-
-Conclusion: For transactional things go for MySQL because it provides a lock-in feature and supports ACID transactions.  
-
-## 합의 알고리즘
-
-Consensus is a general agreement on a decision made by the majority of those involved. For example, the problem may be as simple as friends trying to decide which restaurant has multiple options to choose from or complex as decisions on distributed systems.  
-
-**Need of consensus in a distributed system**  
-
-In a distributed system, nodes are distributed across the network. Some of these nodes might get failed(crash fault) or starts behaving abnormally (Byzantine Fault). In such a scenario, it becomes difficult to come to a common decision. More concisely,  
-
-- There are n processes, m of which may be faulty.
-- The task is to make all the Nonfaulty processes agree on some value(s) even in the presence of the faulty processes.
-
-So we can remove these problems by given below solutions:  
-
-- Consensus Without Any Fault
-- Consensus With at most m Crash Faults
-- Consensus With at most m Byzantine Faults
-
-**멀티 팍소스**  
-
-**래프트**  
-
-# 분산 처리(Distributed Computing)
-
-# 시스템 확장(Scale-out)
+This method is mostly used to communicate over a network between a client and a server. It allows for a standard connection which is computer and OS independent.  
 
 
 # 참고
 
-- [GeeksforGeeks: Consensus Problem of Distributed Systems](https://www.geeksforgeeks.org/consensus-problem-of-distributed-systems/?ref=gcse){:target="_blank"}
+- [GeeksforGeeks: Interprocess Communication in Distributed Systems](https://www.geeksforgeeks.org/interprocess-communication-in-distributed-systems/?ref=gcse){:target="_blank"}
+- [조원호의 행복공간: [네트워크] IPC와 RPC의 차이점](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=horajjan&logNo=220956169499){:target="_blank"}

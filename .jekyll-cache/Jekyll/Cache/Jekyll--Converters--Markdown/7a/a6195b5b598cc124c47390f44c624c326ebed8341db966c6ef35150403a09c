@@ -1,0 +1,57 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#ap--availability--partition-tolerance" id="markdown-toc-ap--availability--partition-tolerance">AP – Availability + Partition Tolerance</a></li>
+  <li><a href="#ca--consistency--availability" id="markdown-toc-ca--consistency--availability">CA – Consistency + Availability</a></li>
+  <li><a href="#cp--consistency--partition-tolerance" id="markdown-toc-cp--consistency--partition-tolerance">CP – Consistency + Partition Tolerance</a></li>
+  <li><a href="#importance-of-the-cap-theorem" id="markdown-toc-importance-of-the-cap-theorem">Importance of the CAP theorem</a></li>
+</ul>
+
+<hr />
+
+<p>The CAP Theorem is one of the most fundamental theorems in the field of distributed systems. It outlines an inherent trade-off in the design of distributed systems.</p>
+
+<p>CAP theorem – or Brewer’s theorem – was introduced by the computer scientist Eric Brewer at Symposium on Principles of Distributed computing in 2000. The CAP stands for Consistency, Availability and Partition tolerance.</p>
+
+<p>The CAP Theorem (as put forth in a presentation by Eric Brewer in 2000) stated that distributed shared-data systems had three properties but systems could only choose to adhere to two of those properties:</p>
+
+<ul>
+  <li><strong>Consistency</strong>: Consistency means that every successful read request receives the result of the most recent write request. Be aware that the definition of consistency for CAP means something different than to ACID (relational consistency).</li>
+  <li><strong>Availability</strong>: The database is not allowed to be unavailable because it is busy with requests. Every request received by a non-failing node in the system must result in a response. Whether you want to read or write you will get some response back. If the server has not crashed, it is not allowed to ignore the client’s requests.</li>
+  <li><strong>Partition tolerance</strong>: Databases which store big data will use a cluster of nodes that distribute the connections evenly over the whole cluster. If this system has partition tolerance, it will continue to operate despite a number of messages being delayed or even lost by the network between the cluster nodes.</li>
+</ul>
+
+<p>Distributed systems designed for fault tolerance are not much use if they cannot operate in a partitioned state (a state where one or more nodes are unreachable). Thus, partition-tolerance is always a requirement, so the two basic modes that most systems use are either Availability-Partition-tolerant (“AP”) or Consistency-Partition-tolerant (“CP”).</p>
+
+<p>In a distributed system, there is always the risk of a network partition. If this happens, the system needs to decide either to continue operating and compromise data consistency, or stop operating and compromise availability.</p>
+
+<p>According to the final statement of the CAP theorem, a distributed system can be either consistent or available in the presence of a network partition.</p>
+
+<p>Database systems designed to fulfill traditional ACID guarantees like relational database (management) systems (RDBMS) choose consistency over availability, whereas NoSQL databases are mostly systems designed referring to the BASE philosophy which prefer availability over consistency.</p>
+
+<p>AP 시스템은 네트워크 파티션이 생겼을 때 AP를 보장해준다. C는 파티션이 없을 때 해결된다.</p>
+
+<p>CA 시스템은 현실적으로 둘 다 완벽하게 지켜낼 수 없다. C를 무조건 보장하면서 A를 최대한 제공해주는 방식이다.</p>
+
+<h2 id="ap--availability--partition-tolerance">AP – Availability + Partition Tolerance</h2>
+<p>If we have achieved Availability (our databases will always respond to our requests) as well as Partition Tolerance (all nodes of the database will work even if they cannot communicate), it will immediately mean that we cannot provide Consistency as all nodes will go out of sync as soon as we write new information to one of the nodes. The nodes will continue to accept the database transactions each separately, but they cannot transfer the transaction between each other keeping them in synchronization. We therefore cannot fully guarantee the system consistency. When the partition is resolved, the AP databases typically resync the nodes to repair all inconsistencies in the system.</p>
+
+<p>A well-known real world example of an AP system is the Domain Name System (DNS). This central network component is responsible for resolving domain names into IP addresses and focuses on the two properties of availability and failure tolerance. Thanks to the large number of servers, the system is available almost without exception. If a single DNS server fails,another one takes over. According to the CAP theorem, DNS is not consistent: If a DNS entry is changed, e.g. when a new domain has been registered or deleted, it can take a few days before this change is passed on to the entire system hierarchy and can be seen by all clients.</p>
+
+<h2 id="ca--consistency--availability">CA – Consistency + Availability</h2>
+<p>Guarantee of full Consistency and Availability is practically impossible to achieve in a system which distributes data over several nodes. We can have databases over more than one node online and available, and we keep the data consistent between these nodes, but the nature of computer networks (LAN, WAN) is that the connection can get interrupted, meaning we cannot guarantee the Partition Tolerance and therefor not the reliability of having the whole database service online at all times.</p>
+
+<p>Database management systems based on the relational database models (RDBMS) are a good example of CA systems. These database systems are primarily characterized by a high level of consistency and strive for the highest possible availability. In case of doubt, however, availability can decrease in favor of consistency. Reliability by distributing data over partitions in order to make data reachable in any case – even if computer or network failure – meanwhile plays a subordinate role.</p>
+
+<h2 id="cp--consistency--partition-tolerance">CP – Consistency + Partition Tolerance</h2>
+<p>If the Consistency of data is given – which means that the data between two or more nodes always contain the up-to-date information – and Partition Tolerance is given as well – which means that we are avoiding any desynchronization of our data between all nodes, then we will lose Availability as soon as only one a partition occurs between any two nodes In most distributed systems, high availability is one of the most important properties, which is why CP systems tend to be a rarity in practice. These systems prove their worth particularly in the financial sector: banking applications that must reliably debit and transfer amounts of money on the account side are dependent on consistency and reliability by consistent redundancies to always be able to rule out incorrect postings – even in the event of disruptions in the data traffic. If consistency and reliability is not guaranteed, the system might be unavailable for the users.</p>
+
+<p><img src="/images/dis_sys_6.png" alt="" /></p>
+
+<h2 id="importance-of-the-cap-theorem">Importance of the CAP theorem</h2>
+<p>The CAP theorem is really important because it helped establish the basic limitations of all distributed systems.</p>
+
+<p>The CAP theorem forces designers of distributed systems to make explicit trade-offs between availability and consistency. Once the engineers become aware of these properties, they choose the appropriate system.</p>
+
+:ET

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제</title>
+  <title>Data Engineering Series [Part16]: Distributed System(2) CAP Theorem</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/data-engineering-series16">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제 – Code Museum">
+  <meta name="twitter:title" content="Data Engineering Series [Part16]: Distributed System(2) CAP Theorem – Code Museum">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/distributed_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제 – Code Museum">
+  <meta property="og:title" content="Data Engineering Series [Part16]: Distributed System(2) CAP Theorem – Code Museum">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/distributed_logo.png">
@@ -354,7 +354,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제">
+          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part16]: Distributed System(2) CAP Theorem">
         </div>
       </div>
       
@@ -375,7 +375,7 @@
               </div>
             
  
-          <h1 class="post__title">Data Engineering Series [Part16]: 분산 시스템(Distributed Systems)에서의 네트워크와 운영체제</h1>
+          <h1 class="post__title">Data Engineering Series [Part16]: Distributed System(2) CAP Theorem</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -426,8 +426,6 @@
   
 
   
-
-  
   	
   	
   	
@@ -439,10 +437,10 @@
 
   <div class="post_pagination">
     
-      <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: 분산 시스템(Distributed Systems) 개요</a>
+      <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: Distributed System(1) Comprehensive Guide</a>
     
     
-      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: Distributed Systems(3) 네트워크와 운영체제<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -452,144 +450,74 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#운영체제-관점" id="markdown-toc-운영체제-관점">운영체제 관점</a></li>
-  <li><a href="#네트워크-inter-process-communication" id="markdown-toc-네트워크-inter-process-communication">네트워크: Inter Process Communication</a>    <ul>
-      <li><a href="#remote-procedure-callrpc" id="markdown-toc-remote-procedure-callrpc">Remote Procedure Call(RPC)</a></li>
-      <li><a href="#message-based-communication" id="markdown-toc-message-based-communication">Message based Communication</a></li>
-      <li><a href="#sockets" id="markdown-toc-sockets">Sockets</a></li>
+  <li><a href="#cap-theorem" id="markdown-toc-cap-theorem">CAP Theorem</a>    <ul>
+      <li><a href="#ap--availability--partition-tolerance" id="markdown-toc-ap--availability--partition-tolerance">AP – Availability + Partition Tolerance</a></li>
+      <li><a href="#ca--consistency--availability" id="markdown-toc-ca--consistency--availability">CA – Consistency + Availability</a></li>
+      <li><a href="#cp--consistency--partition-tolerance" id="markdown-toc-cp--consistency--partition-tolerance">CP – Consistency + Partition Tolerance</a></li>
     </ul>
   </li>
+  <li><a href="#importance-of-the-cap-theorem" id="markdown-toc-importance-of-the-cap-theorem">Importance of the CAP theorem</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="운영체제-관점">운영체제 관점</h1>
+<h1 id="cap-theorem">CAP Theorem</h1>
 
-<h1 id="네트워크-inter-process-communication">네트워크: Inter Process Communication</h1>
+<p>The CAP Theorem is one of the most fundamental theorems in the field of distributed systems. It outlines an inherent trade-off in the design of distributed systems.</p>
 
-<p>Inter-process communication (IPC) is set of interfaces, which is usually programmed in order for the programs to communicate between series of processes. This allows running programs concurrently in an Operating System.</p>
+<p>CAP theorem – or Brewer’s theorem – was introduced by the computer scientist Eric Brewer at Symposium on Principles of Distributed computing in 2000. The CAP stands for Consistency, Availability and Partition tolerance.</p>
 
-<p>Interprocess communication is at the heart of all distributed systems. It makes no sense to study distributed systems without carefully examining the ways that processes on different machines can exchange information. Communication in distributed systems is always based on low-level message passing as offered by the underlying network. Expressing communication through message passing is harder than using primitives based on shared memory, as available for nondistrib- uted platforms. Modem distributed systems often consist of thousands or even millions of processes scattered across a network with unreliable communication such as the Internet. Unless the primitive communication facilities of computer networks are replaced by something else, development of large-scale distributed applications is extremely difficult.</p>
-
-<p>In this chapter, we start by discussing the rules that communicating processes must adhere to, known as protocols, and concentrate on structuring those proto- cols in the form of layers. We then look at three widely-used models for commu- nication: Remote Procedure Call (RPC), Message-Oriented Middleware (MOM), and data streaming. We also discuss the general problem of sending data to multi- ple receivers, called multicasting.</p>
-
-<p>Our first model for communication in distributed systems is the remote proce- dure call (RPC). An RPC aims at hiding most of the intricacies of message pass- ing, and is ideal for client-server applications.</p>
-
-<p>In many distributed applications, communication does not follow the rather strict pattern of client-server interaction. In those cases, it turns out that thinking in terms of messages is more appropriate. However, the low-level communication facilities of computer networks are in many ways not suitable due to their lack of distribution transparency.</p>
-
-<p>An alternative is to use a high-level message-queuing model, in which communication proceeds much the same as in electronic maiI systems. Message-oriented middleware (MOM) is a subject important enough to warrant a section of its own.</p>
-
-<p>With the advent of multimedia distributed systems, it became apparent that
-many systems were lacking support for communication of continuous media, such as audio and video. What is needed is the notion of a stream that can support the continuous flow of messages, subject to various timing constraints. Streams are discussed in a separate section.</p>
-
-<p>Finally, since our understanding of setting up multicast facilities has im- proved, novel and elegant solutions for data dissemination have emerged. We pay separate attention to this subject in the last section of this chapter.</p>
-
-<h2 id="remote-procedure-callrpc">Remote Procedure Call(RPC)</h2>
-
-<p><img src="/images/dist_5.png" alt="" /></p>
-
-<p>Remote Procedure Call (RPC) is a communication technology that is used by one program to make a request to another program for utilizing its service on a network without even knowing the network’s details. A function call or a subroutine call are other terms for a procedure call.</p>
-
-<p>It is based on the client-server concept. The client is the program that makes the request, and the server is the program that gives the service. An RPC, like a local procedure call, is based on the synchronous operation that requires the requesting application to be stopped until the remote process returns its results. Multiple RPCs can be executed concurrently by utilizing lightweight processes or threads that share the same address space.</p>
-
-<p>Remote Procedure Call program as often as possible utilizes the Interface Definition Language (IDL), a determination language for describing a computer program component’s Application Programming Interface (API). In this circumstance, IDL acts as an interface between machines at either end of the connection, which may be running different operating systems and programming languages.</p>
-
-<p><strong>Elements of RPC</strong></p>
-
-<p><img src="/images/rpc_1.png" alt="" /></p>
+<p>The CAP Theorem (as put forth in a presentation by Eric Brewer in 2000) stated that distributed shared-data systems had three properties but systems could only choose to adhere to two of those properties:</p>
 
 <ul>
-  <li><strong>Client</strong>: The client process initiates RPC. The client makes a standard call, which triggers a correlated procedure in the client stub.</li>
-  <li><strong>Client Stub</strong>: Stubs are used by RPC to achieve semantic transparency. The client calls the client stub. Client stub does the following tasks:
-    <ul>
-      <li>The first task performed by client stub is when it receives a request from a client, it packs(marshalls) the parameters and required specifications of remote/target procedure in a message.</li>
-      <li>The second task performed by the client stub is upon receiving the result values after execution, it unpacks (unmarshalled) those results and sends them to the Client.</li>
-    </ul>
-  </li>
-  <li><strong>RPC Runtime</strong>: The RPC runtime is in charge of message transmission between client and server via the network. Retransmission, acknowledgment, routing, and encryption are all tasks performed by it. On the client-side, it receives the result values in a message from the server-side, and then it further sends it to the client stub whereas, on the server-side, RPC Runtime got the same message from the server stub when then it forwards to the client machine. It also accepts and forwards client machine call request messages to the server stub.</li>
-  <li><strong>Server Stub</strong>: Server stub does the following tasks:
-    <ul>
-      <li>The first task performed by server stub is that it unpacks(unmarshalled) the call request message which is received from the local RPC Runtime and makes a regular call to invoke the required procedure in the server.</li>
-      <li>The second task performed by server stub is that when it receives the server’s procedure execution result, it packs it into a message and asks the local RPC Runtime to transmit it to the client stub where it is unpacked.</li>
-    </ul>
-  </li>
-  <li><strong>Server</strong>: After receiving a call request from the client machine, the server stub passes it to the server. The execution of the required procedure is made by the server and finally, it returns the result to the server stub so that it can be passed to the client machine using the local RPC Runtime.</li>
+  <li><strong>Consistency</strong>: Consistency means that every successful read request receives the result of the most recent write request. Be aware that the definition of consistency for CAP means something different than to ACID (relational consistency).</li>
+  <li><strong>Availability</strong>: The database is not allowed to be unavailable because it is busy with requests. Every request received by a non-failing node in the system must result in a response. Whether you want to read or write you will get some response back. If the server has not crashed, it is not allowed to ignore the client’s requests.</li>
+  <li><strong>Partition tolerance</strong>: Databases which store big data will use a cluster of nodes that distribute the connections evenly over the whole cluster. If this system has partition tolerance, it will continue to operate despite a number of messages being delayed or even lost by the network between the cluster nodes.</li>
 </ul>
 
-<p><strong>Working Procedure for RPC Model</strong></p>
+<p>Distributed systems designed for fault tolerance are not much use if they cannot operate in a partitioned state (a state where one or more nodes are unreachable). Thus, partition-tolerance is always a requirement, so the two basic modes that most systems use are either Availability-Partition-tolerant (“AP”) or Consistency-Partition-tolerant (“CP”).</p>
 
-<ul>
-  <li>The process arguments are placed in a precise location by the caller when the procedure needs to be called.</li>
-  <li>Control at that point passed to the body of the method, which is having a series of instructions.</li>
-  <li>The procedure body is run in a recently created execution environment that has duplicates of the calling instruction’s arguments.</li>
-  <li>At the end, after the completion of the operation, the calling point gets back the control, which returns a result.
-    <ul>
-      <li>The call to a procedure is possible only for those procedures that are not within the caller’s address space because both processes (caller and callee) have distinct address space and the access is restricted to the caller’s environment’s data and variables from the remote procedure.</li>
-      <li>The caller and callee processes in the RPC communicate to exchange information via the message-passing scheme.</li>
-      <li>The first task from the server-side is to extract the procedure’s parameters when a request message arrives, then the result, send a reply message, and finally wait for the next call message.</li>
-      <li>Only one process is enabled at a certain point in time.</li>
-      <li>The caller is not always required to be blocked.</li>
-      <li>The asynchronous mechanism could be employed in the RPC that permits the client to work even if the server has not responded yet.</li>
-      <li>In order to handle incoming requests, the server might create a thread that frees the server for handling consequent requests.</li>
-    </ul>
-  </li>
-</ul>
+<p>In a distributed system, there is always the risk of a network partition. If this happens, the system needs to decide either to continue operating and compromise data consistency, or stop operating and compromise availability.</p>
 
-<p><img src="/images/dist_4.png" alt="" /></p>
+<p>According to the final statement of the CAP theorem, a distributed system can be either consistent or available in the presence of a network partition.</p>
 
-<p><strong>Advantages of Remote Procedure Calls</strong></p>
+<p>Database systems designed to fulfill traditional ACID guarantees like relational database (management) systems (RDBMS) choose consistency over availability, whereas NoSQL databases are mostly systems designed referring to the BASE philosophy which prefer availability over consistency.</p>
 
-<ul>
-  <li>The technique of using procedure calls in RPC permits high-level languages to provide communication between clients and servers.</li>
-  <li>This method is like a local procedure call but with the difference that the called procedure is executed on another process and a different computer.</li>
-  <li>The thread-oriented model is also supported by RPC in addition to the process model.</li>
-  <li>The RPC mechanism is employed to conceal the core message passing method.</li>
-  <li>The amount of time and effort required to rewrite and develop the code is minimal.</li>
-  <li>The distributed and local environments can both benefit from remote procedure calls.</li>
-  <li>To increase performance, it omits several of the protocol layers.</li>
-  <li>Abstraction is provided via RPC.  To exemplify, the user is not known about the nature of message-passing in network communication.</li>
-  <li>RPC empowers the utilization of applications in a distributed environment.</li>
-</ul>
+<p>AP 시스템은 네트워크 파티션이 생겼을 때 AP를 보장해준다. C는 파티션이 없을 때 해결된다.</p>
 
-<p><strong>Disadvantages of Remote Procedure Calls</strong></p>
+<p>CA 시스템은 현실적으로 둘 다 완벽하게 지켜낼 수 없다. C를 무조건 보장하면서 A를 최대한 제공해주는 방식이다.</p>
 
-<ul>
-  <li>In Remote Procedure Calls parameters are only passed by values as pointer values are not allowed.</li>
-  <li>It involves a communication system with another machine and another process, so this mechanism is extremely prone to failure.</li>
-  <li>The RPC concept can be implemented in a variety of ways, hence there is no standard.</li>
-  <li>Due to the interaction-based nature, there is no flexibility for hardware architecture in RPC.</li>
-  <li>Due to a remote procedure call, the process’s cost has increased.</li>
-</ul>
+<h2 id="ap--availability--partition-tolerance">AP – Availability + Partition Tolerance</h2>
+<p>If we have achieved Availability (our databases will always respond to our requests) as well as Partition Tolerance (all nodes of the database will work even if they cannot communicate), it will immediately mean that we cannot provide Consistency as all nodes will go out of sync as soon as we write new information to one of the nodes. The nodes will continue to accept the database transactions each separately, but they cannot transfer the transaction between each other keeping them in synchronization. We therefore cannot fully guarantee the system consistency. When the partition is resolved, the AP databases typically resync the nodes to repair all inconsistencies in the system.</p>
 
-<h2 id="message-based-communication">Message based Communication</h2>
+<p>A well-known real world example of an AP system is the Domain Name System (DNS). This central network component is responsible for resolving domain names into IP addresses and focuses on the two properties of availability and failure tolerance. Thanks to the large number of servers, the system is available almost without exception. If a single DNS server fails,another one takes over. According to the CAP theorem, DNS is not consistent: If a DNS entry is changed, e.g. when a new domain has been registered or deleted, it can take a few days before this change is passed on to the entire system hierarchy and can be seen by all clients.</p>
 
-<p>In the development of models and technologies, message abstraction is a necessary aspect that enables distributed computing. Distributed system is defined as a system in which components reside at networked communication and synchronise its functions only by movement of messages. In this, message recognizes any discrete data that is moved from one entity to another. It includes any kind of data representation having restriction of size and time, whereas it invokes a remote procedure or a sequence of object instance or a common message. This is the reason that “message-based communication model” can be beneficial to refer various model for inter-process communication, which is based on the data streaming abstraction.</p>
+<h2 id="ca--consistency--availability">CA – Consistency + Availability</h2>
+<p>Guarantee of full Consistency and Availability is practically impossible to achieve in a system which distributes data over several nodes. We can have databases over more than one node online and available, and we keep the data consistent between these nodes, but the nature of computer networks (LAN, WAN) is that the connection can get interrupted, meaning we cannot guarantee the Partition Tolerance and therefor not the reliability of having the whole database service online at all times.</p>
 
-<p>Various distributed programming model use this type of communication despite of the abstraction which is shown to developers for programming the co-ordination of shared components. Below are some major distributed programming models that uses “message-based communication model”</p>
+<p>Database management systems based on the relational database models (RDBMS) are a good example of CA systems. These database systems are primarily characterized by a high level of consistency and strive for the highest possible availability. In case of doubt, however, availability can decrease in favor of consistency. Reliability by distributing data over partitions in order to make data reachable in any case – even if computer or network failure – meanwhile plays a subordinate role.</p>
 
-<ul>
-  <li>Message Passing
-    <ul>
-      <li>In this model, the concept of message as the major abstraction of model is introduced. The units which inter-change the data and information that is explicitly encode, in the form of message. According to then model, the schema and content of message changes or varies. Message Passing Interface and OpenMP are major example of this type of model.</li>
-    </ul>
-  </li>
-  <li>Remote Procedure Call
-    <ul>
-      <li>This model explores the keys of procedure call beyond the restrictions of a single process, thus pointing the execution of program in remote processes. In this, primary client-server is implied. A remote process maintains a server component, thus enabling client processes to invoke the approaches and returns the output of the execution. Messages, created by the Remote Procedure Call (RPC) implementation, retrieve the information of the procedure itself and that procedure is to execute having necessary arguments and also returns the values. The use of messages regarding this referred as marshal-ling of the arguments and return values.</li>
-    </ul>
-  </li>
-</ul>
+<h2 id="cp--consistency--partition-tolerance">CP – Consistency + Partition Tolerance</h2>
+<p>If the Consistency of data is given – which means that the data between two or more nodes always contain the up-to-date information – and Partition Tolerance is given as well – which means that we are avoiding any desynchronization of our data between all nodes, then we will lose Availability as soon as only one a partition occurs between any two nodes In most distributed systems, high availability is one of the most important properties, which is why CP systems tend to be a rarity in practice. These systems prove their worth particularly in the financial sector: banking applications that must reliably debit and transfer amounts of money on the account side are dependent on consistency and reliability by consistent redundancies to always be able to rule out incorrect postings – even in the event of disruptions in the data traffic. If consistency and reliability is not guaranteed, the system might be unavailable for the users.</p>
 
-<h2 id="sockets">Sockets</h2>
+<p><img src="/images/cap.png" alt="" /></p>
 
-<p>This method is mostly used to communicate over a network between a client and a server. It allows for a standard connection which is computer and OS independent.</p>
+<p><img src="/images/dis_sys_6.png" alt="" /></p>
+
+<h1 id="importance-of-the-cap-theorem">Importance of the CAP theorem</h1>
+<p>The CAP theorem is really important because it helped establish the basic limitations of all distributed systems.</p>
+
+<p>The CAP theorem forces designers of distributed systems to make explicit trade-offs between availability and consistency. Once the engineers become aware of these properties, they choose the appropriate system.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+<p>The CAP Theorem is still an important topic to understand for data engineers and data scientists, but many modern databases enable us to switch between the possibilities within the CAP Theorem. For example, the Cosmos DB von Microsoft Azure offers many granular options to switch between the consistency, availability and partition tolerance . A common misunderstanding of the CAP theorem that it´s none-absoluteness: “All three properties are more continuous than binary. Availability is continuous from 0 to 100 percent, there are many levels of consistency, and even partitions have nuances. Exploring these nuances requires pushing the traditional way of dealing with partitions, which is the fundamental challenge. Because partitions are rare, CAP should allow perfect C and A most of the time, but when partitions are present or perceived, a strategy is in order.”</p>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://www.geeksforgeeks.org/interprocess-communication-in-distributed-systems/?ref=gcse" target="_blank">GeeksforGeeks: Interprocess Communication in Distributed Systems</a></li>
-  <li><a href="https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;blogId=horajjan&amp;logNo=220956169499" target="_blank">조원호의 행복공간: [네트워크] IPC와 RPC의 차이점</a></li>
+  <li><a href="https://data-science-blog.com/blog/2021/10/14/cap-theorem/" target="_blank">Understanding NoSQL Databases by the CAP Theorem</a></li>
 </ul>
 
     </div>
@@ -816,7 +744,7 @@ many systems were lacking support for communication of continuous media, such as
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(Distributed%20Systems)%EC%97%90%EC%84%9C%EC%9D%98%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C&url=http://localhost:4000/data-engineering-series16"
+          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part16]:%20Distributed%20System(2)%20CAP%20Theorem&url=http://localhost:4000/data-engineering-series16"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -826,12 +754,12 @@ many systems were lacking support for communication of continuous media, such as
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series16&amp;media=http://localhost:4000/images/distributed_logo.png&amp;description=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(Distributed%20Systems)%EC%97%90%EC%84%9C%EC%9D%98%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series16&amp;media=http://localhost:4000/images/distributed_logo.png&amp;description=Data%20Engineering%20Series%20[Part16]:%20Distributed%20System(2)%20CAP%20Theorem"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series16&title=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(Distributed%20Systems)%EC%97%90%EC%84%9C%EC%9D%98%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%EC%99%80%20%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series16&title=Data%20Engineering%20Series%20[Part16]:%20Distributed%20System(2)%20CAP%20Theorem&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -840,8 +768,6 @@ many systems were lacking support for communication of continuous media, such as
 <!--첫 번째 문단-->
 
 
-
-  
 
   
 
@@ -875,10 +801,10 @@ many systems were lacking support for communication of continuous media, such as
 
   <div class="post_pagination">
     
-      <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: 분산 시스템(Distributed Systems) 개요</a>
+      <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: Distributed System(1) Comprehensive Guide</a>
     
     
-      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: 분산 시스템(Distributed Systems)의 핵심<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: Distributed Systems(3) 네트워크와 운영체제<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -964,45 +890,6 @@ many systems were lacking support for communication of continuous media, such as
       
 
       
-      <a class="article__image" href="/data-engineering-series28">
-        <img class="lazy" data-src="/images/distributed_logo.png" alt="Data Engineering Series [Part28]: Distributed System">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series28">Data Engineering Series [Part28]: Distributed System</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-08-02T21:01:35+09:00">02 Aug 2022</time>
-
-      
-
-      
       <a class="article__image" href="/data-engineering-series27">
         <img class="lazy" data-src="/images/redis_logo.png" alt="Data Engineering Series [Part27]: Redis">
       </a>
@@ -1053,6 +940,45 @@ many systems were lacking support for communication of continuous media, such as
 
       <h2 class="article__title">
         <a href="/data-engineering-series26">Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-08-01T21:01:35+09:00">01 Aug 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/data-engineering-series25">
+        <img class="lazy" data-src="/images/i_heart_log.png" alt="Data Engineering Series [Part25]: I 🤍 Logs(1) Introduction">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/data-engineering-series25">Data Engineering Series [Part25]: I 🤍 Logs(1) Introduction</a>
       </h2>
 
       

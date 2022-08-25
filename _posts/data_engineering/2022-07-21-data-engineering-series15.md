@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part15]: 분산 시스템(Distributed Systems) 개요'
+title:  'Data Engineering Series [Part15]: Distributed System(1) Comprehensive Guide'
 description: 
 date:   2022-07-21 15:01:35 +0300
 image:  '/images/distributed_logo.png'
@@ -17,50 +17,105 @@ tags: Data_Engineering
 
 ---
 
+# 분산 시스템이란
 
-# 분산 시스템
+> A distributed system is a system whose components are located on different networked computers, which communicate and coordinate their actions by passing messages to one another
 
-## 개요
+![](/images/dis_sys_2.png)
 
-Distributed System is a collection of autonomous computer systems that are physically separated but are connected by a centralized computer network that is equipped with distributed system software. The autonomous computers will communicate among each system by sharing resources and files and performing the tasks assigned to them.  
+나는 분산 시스템을 다음과 같은 맥락으로 정리하려고 한다.  
 
-![](/images/dist_1.png)
+![](/images/dis_sys_1.png)
+
+# 장점
+
+## Performance
+
+여기서 Performance는 단일 시스템에서의 Performance와 비교해 가격대비 더 낫다는 의미이다. Performance의 절대적인 수치 자체가 더 오를 이유는 없다. 오히려 네트워크 비용으로 감소할 가능성은 있다. 그럼에도 분산 시스템을 쓰는 이유는 가격적인 측면에서 그만큼 값싼 장비를 여러 대 사용하는 것이 낫고, 성능적인 측면 이외에도 분산 시스템이 주는 장점이 있기 때문이다.  
+
+## Scalability
+
+분산 시스템은 서비스 규모, 트래픽량, 작업량에 따라 시스템의 크기를 조절해 이를 핸들링할 능력이 있다. 물론 단일 시스템에서도 Vertical-scaling이 가능하다. 하지만 Horizontal-scaling이 가격적인 측면과 확장이 용이하다는 점에서 이점이 있다.  
+
+## Availability
+
+분산 시스템은 노드 일부에 장애가 발생하더라도 계속 같은 기능을 유지할 수 있다. 이는 24시간 내내 장애없는 서비스가 가능하다는 말이다. 물론 이를 위해 요구되는 조건들이 있는데 이 부분은 뒤에서 더 자세히 다룰 것이다.  
+
+지금까지 분산 시스템의 장점에 대해서 얘기했다. 이러한 장점을 얻기위해 해야할 일이 있다. 우선 High-level에서 이에 대해 알아보겠다.  
+
+# High-level에서의 동작
+
+## Partitioning
+
+파티셔닝은 분산 시스템의 장점 중에서도 Scalability, Performance를 얻기 위해 필요한 핵심이다. 파티셔닝은 처리(또는 저장)해야 할 데이터를 작게 나누어서 이를 처리(또는 저장)해야 할 노드에게 할당해주는 작업이다.  
+
+하지만 오히려 하나의 작업을 위해 네트워크를 거쳐 여러 노드에 접근해야 한다는 점에서 단점이 되는 경우도 있다. 그래서 데이터를 처리할 때는 최대한 네트워크 비용을 줄이는 것이 관건이다.  
+
+파티셔닝은 크게 range partitioning, hash partitioning, consistent hashing가 있다. Apache HBase는 range partitioning을 쓰고, Apache Cassandra는 consistent hasing을 쓴다.  
+
+## Replication
+
+복제(Replication)는 Availability를 위해 필요한 핵심이다. 복제는 같은 데이터를 여러 노드에 복수 저장함으로써, 노드 중 일부에 장애가 발생하더라도 계속 역할을 유지할 수 있게 한다.  
+
+복제하는 것이 단순한 일은 아니다. 우선 복제 수 만큼 더 많은 저장용량이 필요하다. 또한 복사된 후에도 원본 데이터가 업데이트 될 때마다 동기화해야 한다.  
+
+복제 방법 중 하나인 primary-backup replication에 대해 알아보자.  
+
+We commonly refer to the remaining replicas as followers or secondaries. These can only handle read requests. Every time the leader receives an update, it executes it locally and also propagates the update to the other nodes. This ensures that all the replicas maintain a consistent view of the data.  
+
+![](/images/dis_sys_4.png)
+
+리더는 업데이트를 어떻게 팔로워들에게 전파할까  
+
+There are two ways to propagate the updates: synchronously and asynchronously.  
+
+Synchronous replication  
+
+In synchronous replication, the node replies to the client to indicate the update is complete—only after receiving acknowledgments from the other replicas that they’ve also performed the update on their local storage. This guarantees that the client is able to view the update in a subsequent read after acknowledging it, no matter which replica the client reads from.  
+
+Furthermore, synchronous replication provides increased durability. This is because the update is not lost even if the leader crashes right after it acknowledges the update.  
+
+However, this technique can make writing requests slower. This is because the leader has to wait until it receives responses from all the replicas.  
+
+![](/images/dis_sys_3.png)
+
+Asynchronous replication  
+
+In asynchronous replication, the node replies to the client as soon as it performs the update in its local storage, without waiting for responses from the other replicas.  
+
+This technique increases performance significantly for write requests. This is because the client no longer pays the penalty of the network requests to the other replicas.  
+
+However, this comes at the cost of reduced consistency and decreased durability. After a client receives a response for an update request, the client might read older (stale) values in a subsequent read. This is only possible if the operation happens in one of the replicas that have not yet performed the update. Moreover, if the leader node crashes right after it acknowledges an update, and the propagation requests to the other replicas are lost, any acknowledged update is eventually lost.  
+
+![](/images/dis_sys_5.png)
+
+Most widely used databases, such as PostgreSQL or MySQL, use a primary-backup replication technique that supports both asynchronous and synchronous replication.  
+
+primary-backup replication에는 장점과 단점이 있습니다.  
+
+장점  
+
+- It is simple to understand and implement
+- Concurrent operations serialized in the leader node, remove the need for more complicated, distributed concurrency protocols. In general, this property also makes it easier to support transactional operations
+- It is scalable for read-heavy workloads, because the capacity for reading requests can be increased by adding more read replicas
+
+단점  
+
+- It is not very scalable for write-heavy workloads, because a single node (the leader)’s capacity determines the capacity for writes
+- It imposes an obvious trade-off between performance, durability, and consistency
+- Scaling the read capacity by adding more follower nodes can create a bottleneck in the network bandwidth of the leader node, if there’s a large number of followers listening for updates
+- The process of failing over to a follower node when the leader node crashes, is not instant. This may create some downtime and also introduce the risk of errors
+
+또한 primary-backup replication은 항상 리더가 존재해야 한다. 따라서 리더가 잘 살아있는지 체크하고, 리더가 죽었다면 리더를 새로 선출하는 Leader election 문제도 고려해야 한다.  
 
 
 
-## 특징
 
-- **Resource Sharing**: It is the ability to use any Hardware, Software, or Data anywhere in the System.
-- **Openness**: It is concerned with Extensions and improvements in the system (i.e., How openly the software is developed and shared with                                others)
-- **Concurrency**: It is naturally present in the Distributed Systems, that deal with the same activity or functionality that can be performed by separate users who are in remote locations. Every local system has its independent Operating Systems and Resources.
-- **Scalability**: It increases the scale of the system as a number of processors communicate with more users by accommodating to improve the responsiveness of the system.
-- **Fault tolerance**: It cares about the reliability of the system if there is a failure in Hardware or Software, the system continues to operate properly without degrading the performance the system.
-- **Transparency**: It hides the complexity of the Distributed Systems to the Users and Application programs as there should be privacy in every system.(유저는 자신이 사용하는 어플리케이션이 분산시스템인지 인지하지 못함 -> 단일 시스템을 사용하는 것처럼 사용할 수 있음)
+# 어려운 점
 
-## 장점
+## Synchronization
 
-- Applications in Distributed Systems are Inherently Distributed Applications.
-- Information in Distributed Systems is shared among geographically distributed users.
-- Resource Sharing (Autonomous systems can share resources from remote locations).
-- It has a better price performance ratio and flexibility.
-- It has shorter response time and higher throughput.
-- It has higher reliability and availability against component failure.
-- It has extensibility so that systems can be extended in more remote locations and also incremental growth.
-
-## 단점
-
-- Relevant Software for Distributed systems does not exist currently.
-- Security possess a problem due to easy access to data as the resources are shared to multiple systems.
-- Networking Saturation may cause a hurdle in data transfer i.e., if there is a lag in the network then the user will face a problem accessing data.
-
-## 아키텍처
-
-- Centralized Architecture
-- Decentralized Architecture
-
-## 어려운 점
-
-### Synchronization
+### Clock Synchronization
 
 Distributed System is a collection of computers connected via the high speed communication network. In the distributed system, the hardware and software components communicate and coordinate their actions by message passing. Each node in distributed systems can share their resources with other nodes. So, there is need of proper allocation of resources to preserve the state of resources and help coordinate between the several processes. To resolve such conflicts, synchronization is used. Synchronization in distributed systems is achieved via clocks.  
 
@@ -76,7 +131,13 @@ There are 2 types of clock synchronization algorithms: Centralized and Distribut
 - Centralized is the one in which a time server is used as a reference. The single time server propagates its time to the nodes and all the nodes adjust the time accordingly. It is dependent on single time server so if that node fails, the whole system will lose synchronization. Examples of centralized are- Berkeley Algorithm, Passive Time Server, Active Time Server etc.
 - Distributed is the one in which there is no centralized time server present. Instead the nodes adjust their time by using their local time and then, taking the average of the differences of time with other nodes. Distributed algorithms overcome the issue of centralized algorithms like the scalability and single point failure. Examples of Distributed algorithms are – Global Averaging Algorithm, Localized Averaging Algorithm, NTP (Network time protocol) etc.
 
-### Network Partition
+### Data Synchronization
+
+데이터 동기화 문제는 위에서 말했던 데이터 복제 과정에서, 그리고 업데이트시 복제된 데이터들간의 동기화를 말한다. 또한 트랜잭션과 같이 ACID 특성이 요구될 때, 데이터들이 Atomic하게 처리되는지와도 관련된다.  
+
+## Network Asynchrony
+
+Network asynchrony is a property of communication networks that cannot provide strong guarantees around delivering events, e.g., a maximum amount of time a message requires for delivery. This can create a lot of counter-intuitive behaviors that are not present in non-distributed systems. This contrasts to memory operations that provide much stricter guarantees. For instance, messages might take extremely long to deliver in a distributed system. They may even deliver out of order—or not at all.
 
 - 분산 시스템을 이용한 인터넷 서비스에서 사용하는 어플리케이션의 아키텍처는 대부분 비공유 아키텍처(Shared-nothing)
   - 각 노드는 CPU, RAM, 디스크를 독립적으로 사용(디스크도 독립된다는 점에서 Shared Disk Architecture와 다름)
@@ -85,67 +146,36 @@ There are 2 types of clock synchronization algorithms: Centralized and Distribut
 
 ![](/images/dist_3.png)
 
-# 분산 파일 시스템
+## Partial Failures
 
-A Distributed File System (DFS) as the name suggests, is a file system that is distributed on multiple file servers or multiple locations. It allows programs to access or store isolated files as they do with the local ones, allowing programmers to access files from any network or computer.  
+Partial failures are the cases where only some components of a distributed system fail. This behavior can contrast with certain kinds of applications a single server deploys. These applications work under the assumption that either everything is working fine, or there has been a server crash. It introduces significant complexity when it requires atomicity across components in a distributed system. Thus, we must ensure that we either apply an operation to all the nodes of a system, or to none of them.  
 
-The main purpose of the Distributed File System (DFS) is to allows users of physically distributed systems to share their data and resources by using a Common File System. A collection of workstations and mainframes connected by a Local Area Network (LAN) is a configuration on Distributed File System. A DFS is executed as a part of the operating system. In DFS, a namespace is created and this process is transparent for the clients.   
-
-**Working of DFS**  
-There are two ways in which DFS can be implemented:  
-
-- Standalone DFS namespace
-    - It allows only for those DFS roots that exist on the local computer and are not using Active Directory. A Standalone DFS can only be acquired on those computers on which it is created. It does not provide any fault liberation and cannot be linked to any other DFS. Standalone DFS roots are rarely come across because of their limited advantage.
-- Domain-based DFS namespace
-    - It stores the configuration of DFS in Active Directory, creating the DFS namespace root accessible at \\<domainname>\<dfsroot> or \\<FQDN>\<dfsroot>
-
-![](/images/dist_2.png)
-
-**Advantages**  
-- DFS allows multiple user to access or store the data.
-- It allows the data to be share remotely.
-- It improved the availability of file, access time, and network efficiency.
-- Improved the capacity to change the size of the data and also improves the ability to exchange the data.
-- Distributed File System provides transparency of data even if server or disk fails.
-**Disadvantages**  
-- In Distributed File System nodes and connections needs to be secured therefore we can say that security is at stake.
-- There is a possibility of lose of messages and data in the network while movement from one node to another.
-- Database connection in case of Distributed File System is complicated.
-- Also handling of the database is not easy in Distributed File System as compared to a single user system.
-- There are chances that overloading will take place if all nodes tries to send data at once.
-
-# 분산 데이터베이스
-
-# 분산 처리
-
-# 분산 시스템과 쿠버네티스
-
-쿠버네티스는 'A라는 컨테이너화된 프로세스를 어느 서버에 띄울까? 프로세스를 몇 대의 서버에 복제해두고 일부 서버가 장애가 생기면 다른 서버에 있는 프로세스로 대체'  
-
-분산 시스템은 'A라는 어플리케이션을 여러 서버에서 동작하도록 하여 동시처리(병렬적으로)하도록 하고, 일부 서버에 장애가 발생하면 해당 서버에 있는 어플리케이션을 클러스터에서 제외, 복구 되었는지 주기적으로 헬스체크해서 복구 되면 다시 클러스터에 추가'  
+![](/images/dis_sys_7.png)
 
 
-분산 시스템  
-According to Coulouris et al., “A distributed system is a system whose components are located on different networked computers, which communicate and coordinate their actions by passing messages to one another.”  
+# Low-level에서의 동작
 
 
-분산 시스템의 장점  
-Performance: 가격 대비 높은 성능
+## Consensus Algorithm
 
-Scalability: 노드 개수를 조절함으로써 트래픽량에 대해 유연하게 대처 가능
+합의 알고리즘은 데이터 동기화 문제, 부분 장애 문제를 해결해준다. 
 
-Availability: ability of the system to remain functional despite failures in parts of it.
+![](/images/dis_sys_8.png)
 
+- whether a transaction has been committed or not
+- whether a message has been delivered or not
 
-어려운 점
+### RAFT
+Raft is a protocol for implementing distributed consensus.  
 
-Network asynchrony: 데이터가 네트워크 문제로 전달이 늦어질 수도, 아예 실패할 수도 있음
+Raft decomposes consensus into three sub-problems:  
 
-Partial failures: 클러스터 중 일부 노드가 장애로 다운될 수 있음  
+![](/images/dis_sys_9.png)
 
-Concurrency: Two processes writing to the same resource concurrently
+- Leader Election: A new leader needs to be elected in case of the failure of an existing one.
+- Log replication: The leader needs to keep the logs of all servers in sync with its own through replication
 
-
+## Failure Detector (Timeout)
 
 The asynchronous nature of the network in a distributed system can make it very hard for us to differentiate between a crashed node and a node that is just really slow to respond to requests.  
 
@@ -159,60 +189,16 @@ Completeness corresponds to the percentage of crashed nodes a failure detector s
 
 Accuracy corresponds to the number of mistakes a failure detector makes in a certain period.  
 
+## De-duplication Algorithm
 
+In the de-duplication approach, we give every message a unique identifier, and every retried message contains the same identifier as the original. In this way, the recipient can remember the set of identifiers it received and executed already. It will also avoid executing operations that are executed.  
 
-Scalability lets us store and process datasets much larger than what we could with a single machine.  
+It is important to note that in order to do this, we must have control on both sides of the system: sender and receiver. This is because the ID generation occurs on the sender side, but the de-duplication process occurs on the receiver side.  
 
-One of the primary mechanisms of achieving scalability is partitioning.  
-
-Distributed System에서 말하는 partitioning은 horizontal partitioning  
-
-horizontal partition에는 크게 range partitioning, hash partitioning, consistent hashing  
-
-Partitioning can improve the scalability and performance of a system by distributing data and request load to multiple nodes.  
-
-Another dimension that benefits from using a distributed system is known as availability.  
-
-Distributed system uses replication to achieve availability.  
-
-Replication is the main technique used in distributed systems to increase availability. It consists of storing the same piece of data in multiple nodes (called replicas) so that if one of them crashes, data is not lost, and requests can be served from the other nodes in the meanwhile.  
-
-However, the benefit of increased availability from replication comes with a set of new complications.  
-
-Replication implies that the system now has multiple copies of every piece of data. These copies must be maintained and **kept in sync with each other on every update**.  
-
-Ideally, replication should function transparently to the end-user, or engineer. This is to create the illusion that there’s only one copy of every piece of data. This makes a distributed system look like a simple, centralized system of a single node that is much easier to reason about and develop software around.  
-
-Of course, this is not always possible. We may require significant hardware resources or need to give up other desirable properties to achieve this ideal. For instance, engineers sometimes willingly accept a system that provides much higher performance, but occasionally gives a non-consistent view of the data. Hence, they only do this under specific conditions—and in a specific way—they can account for when they design the application.  
-
-Therefore, there are two main strategies for replication:  
-
-Pessimistic replication  
-Optimistic replication  
-Pessimistic replication  
-Pessimistic replication tries to guarantee from the beginning that all the replicas are identical to each other—as if there was only one copy of the data all along.  
-
-Optimistic replication  
-Optimistic replication, or lazy replication, allows the different replicas to diverge. This guarantees that they will converge again if the system does not receive any updates, or enters a quiesced state, for a period of time.  
-
-
-
-
-
-
-
-
-
-
-
-
+리더는 데이터를 전달할 때마다 데이터에 고유한 식별자를 붙인다. 팔로워들은 식별자를 보고 자기가 가지고 있는 식별자보다 큰 값인 경우에만 받아서 저장한다. 만약 같은 식별자의 데이터를 받았다면 리더에게 ACK 메시지만 보내고, 저장은 하지 않는다.  
 
 # 참고
 
-- [책, Database Internals](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791161754963&orderClick=LEa&Kc=){:target="_blank"}
-- [slideshare: Basic distributed systems principles](https://www.slideshare.net/rubentan/basic-distributed-systems-principles){:target="_blank"}
-- [pdf: Distributed Systems: Principles and Paradigms](https://vowi.fsinf.at/images/b/bc/TU_Wien-Verteilte_Systeme_VO_%28G%C3%B6schka%29_-_Tannenbaum-distributed_systems_principles_and_paradigms_2nd_edition.pdf){:target="_blank"}
-- [GeeksforGeeks: What is a Distributed System?](https://www.geeksforgeeks.org/what-is-a-distributed-system/?ref=gcse){:target="_blank"}
-- [GeeksforGeeks: Comparison – Centralized, Decentralized and Distributed Systems](https://www.geeksforgeeks.org/comparison-centralized-decentralized-and-distributed-systems/?ref=gcse){:target="_blank"}
-- [GeeksforGeeks: Synchronization in Distributed Systems](https://www.geeksforgeeks.org/synchronization-in-distributed-systems/?ref=gcse){:target="_blank"}
-- [GeeksforGeeks: What is DFS (Distributed File System)?](https://www.geeksforgeeks.org/what-is-dfsdistributed-file-system/?ref=gcse){:target="_blank"}
+- [Video Demo,  Raft: Understandable Distributed Consensus](http://thesecretlivesofdata.com/raft/){:target="_blank"}
+- [Understanding the Raft consensus algorithm: an academic article summary](https://www.freecodecamp.org/news/in-search-of-an-understandable-consensus-algorithm-a-summary-4bc294c97e0d/){:target="_blank"}
+- [Building a Distributed Log from Scratch, Part 2: Data Replication](https://bravenewgeek.com/building-a-distributed-log-from-scratch-part-2-data-replication/){:target="_blank"}
