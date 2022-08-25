@@ -19,22 +19,22 @@ tags: Data_Engineering
 
 # Log
 
-A log, in a computing context, is the automatically produced and time-stamped documentation of events relevant to a particular system. Virtually all software applications and systems produce log files. 
+- A log, in a computing context, is the automatically produced and time-stamped documentation of events relevant to a particular system. Virtually all software applications and systems produce log files. 
 
-Logs are everywhere in software development. Without them there’d be no relational databases, git version control, or most analytics platforms.  
+- Logs are everywhere in software development. Without them there’d be no relational databases, git version control, or most analytics platforms.  
 
-A log can be useful for keeping track of computer use, emergency recovery, and application improvement.  
+- A log can be useful for keeping track of computer use, emergency recovery, and application improvement.  
 
-A few common types of logs:  
-- Transaction Log (Redo Log): contains a history of database changes. The term is usually associated with RDBMS. When you insert, update or delete database rows, the changes are journaled in the Transaction Log. Real-world RDBMS systems are based on one of the following types of the journal.
-- Commit Log: includes only committed transactions in their commit order. Every transaction is appended to the log sequentially as a group of change events. Rolled-back transactions will not appear in the Commit Log.
-- Binary Log: binary log 에는 데이터베이스에 대한 모든 변경 사항(데이터 및 구조)과 각 명령문 실행 시간이 기록되어 있다. binary log 의 목적은 백업 작업을 지원할뿐만 아니라, 하나 이상의 마스터에서 하나 이상의 슬레이브 서버로 데이터가 전송되어 복제하도록 하기 위한 것이다.
-- Write-Ahead Log (WAL): The changes are first journaled in the log, then the database is changed. The log is updated simultaneously as parallel transactions make changes. If a transaction is rolled-back, a special record is written to the log.
-- access log: lists all requests for individual files that people have requested from a website
-- audit log: Audit logg is the record of activity within the software systems used across your organization. Audit logs record the occurrence of an event, the time at which it occurred, the responsible user or service, and the impacted entity
-- system log: syslog are records of the operating system (OS) events that indicate how the system was running. Information, errors, and warnings related to the computer operating system are displayed in the syslog.
+**A few common types of logs**:  
+- **Transaction Log (Redo Log, Undo Log)**: contains a history of database changes. The term is usually associated with RDBMS. When you insert, update or delete database rows, the changes are journaled in the Transaction Log. Real-world RDBMS systems are based on one of the following types of the journal.
+- **Commit Log**: includes only committed transactions in their commit order. Every committed transaction is appended to the log sequentially as a group of change events. Rolled-back transactions will not appear in the Commit Log.
+- **Binary Log**: binary log 에는 데이터베이스에 대한 모든 변경 사항(데이터 및 구조)과 각 명령문 실행 시간이 기록되어 있다. binary log 의 목적은 백업 작업을 지원할뿐만 아니라, 하나 이상의 마스터에서 하나 이상의 슬레이브 서버로 데이터가 전송되어 복제하도록 하기 위한 것이다.
+- **Access Log**: lists all requests for individual files that people have requested from a website
+- **Audit Log**: Audit logg is the record of activity within the software systems used across your organization. Audit logs record the occurrence of an event, the time at which it occurred, the responsible user or service, and the impacted entity
+- **System Log**: syslog are records of the operating system (OS) events that indicate how the system was running. Information, errors, and warnings related to the computer operating system are displayed in the syslog.
 
 Transaction Log, Redo Log, Commit Log, Binary Log들은 좀 혼용되서 사용하는 것 같다. DB마다 같은 용어인데 다르게 사용되기도 하고, 또 사람들도 결과적으로 혼용해서 사용하고 설명해서, 명확히 글로 적어내기가 힘들다. 그래서 그냥 자신이 사용하는 DB에 맞게 정리해야 할 것 같다. 참고로 MySQL은 Redo Log, Undo Log 그리고 Binary Log 이 3가지로 롤백(Rollback), 커밋(Commit), 복구(Recovery), 복제(Replication) 기능을 구현한다.  
+
 
 # Log in Distributed System
 
@@ -42,15 +42,27 @@ The log is a totally-ordered, append-only data structure. Whether it’s applica
 
 There are a number of implementations of this idea: Apache Kafka, Amazon Kinesis, NATS Streaming, Tank, and Apache Pulsar to name a few. We can probably credit Kafka with popularizing the idea.  
 
-There arethree key priorities of these types of systems: **performance, high availability, and scalability**. If it’s not fast enough, the data becomes decreasingly useful. If it’s not highly available, it means we can’t reliably get our data in or out. And if it’s not scalable, it won’t be able to meet the needs of many enterprises.  
-
-## Raft: Consensus Algorithm
+There are three key priorities of these types of systems: **performance, high availability, and scalability**. If it’s not fast enough, the data becomes decreasingly useful. If it’s not highly available, it means we can’t reliably get our data in or out. And if it’s not scalable, it won’t be able to meet the needs of many enterprises.  
 
 # Kafka Log
 
 ## Commit Log
 
-# MySQL Log
+Usually, Commit Log is associated with relational database systems. In fact, you can think about Commit Log as a part of your architecture where every transaction is written to some reliable log. The transactions are then read from the log and processed by consumers. This architecture can be implemented using the Event Streaming pattern. Kafka is designed for event streaming and acts very similar to a Commit Log. Kafka has a concept of partitions to parallelize the processing of events.  
+
+# RDBMS Log
+
+## PostgreSQL
+PostgreSQL is based on the Write-Ahead Log. The log represents a binary stream of low-level physical instructions. PostgreSQL provides Logical Decoding to extract the changes in an eye-friendly format.  
+
+## MySQL / MariaDB
+MySQL has a concept of storage engines that represent different strategies for storing your database. There are many storage engines and you can write your own but the most interesting are InnoDB (B-tree index), MyRocks (LSM index), and MyISAM. This architecture is flexible but requires a separate WAL log used by a storage engine.  
+
+Binary Log (also known as binlog) is the Commit Log used for replication and decoupled from storage engines. It has a simple defined format that can be easily parsed. Additionally, every storage engine maintains its own WAL log. The format of the log is specific to the storage engine.  
+
+In MySQL, every transaction is written to the Commit Log and a WAL. Transactions are considered distributed as they require a two-phase commit (2PC) in the two log files.  
+
+As mentioned above, rolled-back transactions will not appear in the Commit Log. In MySQL, this is true only for transactional storage engines like InnoDB and MyRocks. In non-transactional storage engines like MyISAM rolled-back transactions may appear in the log and make your data inconsistent.  
 
 ## Write Ahead Log
 
@@ -85,22 +97,6 @@ The binary log is generally resilient to unexpected halts because only complete 
 
 # 참고
 
-- [해커의 개발일기, 데이터베이스의 무결성을 보장해주는 Write-Ahead-Log](https://bourbonkk.tistory.com/86){:target="_blank"}
-- [alibabacloud, What are the Differences and Functions of the Redo Log, Undo Log, and Binlog in MySQL?](https://www.alibabacloud.com/blog/what-are-the-differences-and-functions-of-the-redo-log-undo-log-and-binlog-in-mysql_598035){:target="_blank"}
-- [Coralogix, 5 Essential MySQL Database Logs To Keep an Eye On](https://coralogix.com/blog/5-essential-mysql-database-logs-to-keep-an-eye-on/){:target="_blank"}
-- [위키백과, 트랜잭션 로그](https://ko.wikipedia.org/wiki/%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98_%EB%A1%9C%EA%B7%B8){:target="_blank"}
-- [Audit Logging Overview](datadoghq.com/knowledge-center/audit-logging/){:target="_blank"}
-- [scaling.dev, Transaction Log. Commit Log. WAL.](https://scaling.dev/replication/log){:target="_blank"}
 - [Quora, What is a DB commit log?](https://www.quora.com/What-is-a-DB-commit-log){:target="_blank"}
-- [PostgreSQL 공식문서, Write-Ahead Logging (WAL)](https://www.postgresql.org/docs/current/wal-intro.html){:target="_blank"}
-- [Dwen, MySQL’s RedoLog and BinLog](https://betterprogramming.pub/mysqls-redolog-and-binlog-1a35bc052489){:target="_blank"}
-- [developPAPER, You must understand the three MySQL logs – binlog, redo log and undo log](https://developpaper.com/you-must-understand-the-three-mysql-logs-binlog-redo-log-and-undo-log/){:target="_blank"}
-- [MySQL 공식문서, 14.6.6 Redo Log](https://dev.mysql.com/doc/refman/5.7/en/innodb-redo-log.html){:target="_blank"}
-- [Katastros, InnoDB transaction log (redo log and undo log) detailed](https://blog.katastros.com/a?ID=01200-5fbbae7f-7eb9-4570-876c-23048d66fb82){:target="_blank"}
-- [heesuk-ahn, [데이터베이스] binary log 란?](https://github.com/heesuk-ahn/today-I-learned/blob/master/database/binary-log.md){:target="_blank"}
-- [The Binary Log](https://docs.oracle.com/cd/E17952_01/mysql-5.7-en/binary-log.html){:target="_blank"}
-- [Log-structured storage](https://jvns.ca/blog/2017/06/11/log-structured-storage/){:target="_blank"}
-- [Video Demo,  Raft: Understandable Distributed Consensus](http://thesecretlivesofdata.com/raft/){:target="_blank"}
-- [Understanding the Raft consensus algorithm: an academic article summary](https://www.freecodecamp.org/news/in-search-of-an-understandable-consensus-algorithm-a-summary-4bc294c97e0d/){:target="_blank"}
 - [Building a Distributed Log from Scratch, Part 2: Data Replication](https://bravenewgeek.com/building-a-distributed-log-from-scratch-part-2-data-replication/){:target="_blank"}
 - [HEVO, Apache Kafka Logs: A Comprehensive Guide](https://hevodata.com/learn/apache-kafka-logs-a-comprehensive-guide/){:target="_blank"}

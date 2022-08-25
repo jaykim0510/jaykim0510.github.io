@@ -1,4 +1,4 @@
-I"�3<hr />
+I"�4<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -24,21 +24,27 @@
 
 <h1 id="log">Log</h1>
 
-<p>A log, in a computing context, is the automatically produced and time-stamped documentation of events relevant to a particular system. Virtually all software applications and systems produce log files.</p>
-
-<p>Logs are everywhere in software development. Without them there’d be no relational databases, git version control, or most analytics platforms.</p>
-
-<p>A log can be useful for keeping track of computer use, emergency recovery, and application improvement.</p>
-
-<p>A few common types of logs:</p>
 <ul>
-  <li>Transaction Log (Redo Log): contains a history of database changes. The term is usually associated with RDBMS. When you insert, update or delete database rows, the changes are journaled in the Transaction Log. Real-world RDBMS systems are based on one of the following types of the journal.</li>
-  <li>Commit Log: includes only committed transactions in their commit order. Every transaction is appended to the log sequentially as a group of change events. Rolled-back transactions will not appear in the Commit Log.</li>
-  <li>Binary Log: binary log 에는 데이터베이스에 대한 모든 변경 사항(데이터 및 구조)과 각 명령문 실행 시간이 기록되어 있다. binary log 의 목적은 백업 작업을 지원할뿐만 아니라, 하나 이상의 마스터에서 하나 이상의 슬레이브 서버로 데이터가 전송되어 복제하도록 하기 위한 것이다.</li>
-  <li>Write-Ahead Log (WAL): The changes are first journaled in the log, then the database is changed. The log is updated simultaneously as parallel transactions make changes. If a transaction is rolled-back, a special record is written to the log.</li>
-  <li>access log: lists all requests for individual files that people have requested from a website</li>
-  <li>audit log: Audit logg is the record of activity within the software systems used across your organization. Audit logs record the occurrence of an event, the time at which it occurred, the responsible user or service, and the impacted entity</li>
-  <li>system log: syslog are records of the operating system (OS) events that indicate how the system was running. Information, errors, and warnings related to the computer operating system are displayed in the syslog.</li>
+  <li>
+    <p>A log, in a computing context, is the automatically produced and time-stamped documentation of events relevant to a particular system. Virtually all software applications and systems produce log files.</p>
+  </li>
+  <li>
+    <p>Logs are everywhere in software development. Without them there’d be no relational databases, git version control, or most analytics platforms.</p>
+  </li>
+  <li>
+    <p>A log can be useful for keeping track of computer use, emergency recovery, and application improvement.</p>
+  </li>
+</ul>
+
+<p><strong>A few common types of logs</strong>:</p>
+<ul>
+  <li><strong>Transaction Log (Redo Log, Undo Log)</strong>: contains a history of database changes. The term is usually associated with RDBMS. When you insert, update or delete database rows, the changes are journaled in the Transaction Log. Real-world RDBMS systems are based on one of the following types of the journal.</li>
+  <li><strong>Commit Log</strong>: includes only committed transactions in their commit order. Every committed transaction is appended to the log sequentially as a group of change events. Rolled-back transactions will not appear in the Commit Log.</li>
+  <li><strong>Binary Log</strong>: binary log 에는 데이터베이스에 대한 모든 변경 사항(데이터 및 구조)과 각 명령문 실행 시간이 기록되어 있다. binary log 의 목적은 백업 작업을 지원할뿐만 아니라, 하나 이상의 마스터에서 하나 이상의 슬레이브 서버로 데이터가 전송되어 복제하도록 하기 위한 것이다.</li>
+  <li><strong>Write-Ahead Log (WAL)</strong>: The changes are first journaled in the log, then the database is changed. The log is updated simultaneously as parallel transactions make changes. If a transaction is rolled-back, a special record is written to the log.</li>
+  <li><strong>Access Log</strong>: lists all requests for individual files that people have requested from a website</li>
+  <li><strong>Audit Log</strong>: Audit logg is the record of activity within the software systems used across your organization. Audit logs record the occurrence of an event, the time at which it occurred, the responsible user or service, and the impacted entity</li>
+  <li><strong>System Log</strong>: syslog are records of the operating system (OS) events that indicate how the system was running. Information, errors, and warnings related to the computer operating system are displayed in the syslog.</li>
 </ul>
 
 <p>Transaction Log, Redo Log, Commit Log, Binary Log들은 좀 혼용되서 사용하는 것 같다. DB마다 같은 용어인데 다르게 사용되기도 하고, 또 사람들도 결과적으로 혼용해서 사용하고 설명해서, 명확히 글로 적어내기가 힘들다. 그래서 그냥 자신이 사용하는 DB에 맞게 정리해야 할 것 같다. 참고로 MySQL은 Redo Log, Undo Log 그리고 Binary Log 이 3가지로 롤백(Rollback), 커밋(Commit), 복구(Recovery), 복제(Replication) 기능을 구현한다.</p>
