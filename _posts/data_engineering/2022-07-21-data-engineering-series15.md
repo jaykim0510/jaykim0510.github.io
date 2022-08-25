@@ -125,6 +125,88 @@ There are two ways in which DFS can be implemented:
 분산 시스템은 'A라는 어플리케이션을 여러 서버에서 동작하도록 하여 동시처리(병렬적으로)하도록 하고, 일부 서버에 장애가 발생하면 해당 서버에 있는 어플리케이션을 클러스터에서 제외, 복구 되었는지 주기적으로 헬스체크해서 복구 되면 다시 클러스터에 추가'  
 
 
+분산 시스템  
+According to Coulouris et al., “A distributed system is a system whose components are located on different networked computers, which communicate and coordinate their actions by passing messages to one another.”  
+
+
+분산 시스템의 장점  
+Performance: 가격 대비 높은 성능
+
+Scalability: 노드 개수를 조절함으로써 트래픽량에 대해 유연하게 대처 가능
+
+Availability: ability of the system to remain functional despite failures in parts of it.
+
+
+어려운 점
+
+Network asynchrony: 데이터가 네트워크 문제로 전달이 늦어질 수도, 아예 실패할 수도 있음
+
+Partial failures: 클러스터 중 일부 노드가 장애로 다운될 수 있음  
+
+Concurrency: Two processes writing to the same resource concurrently
+
+
+
+The asynchronous nature of the network in a distributed system can make it very hard for us to differentiate between a crashed node and a node that is just really slow to respond to requests.  
+
+Timeouts is the main mechanism we can use to detect failures in distributed systems. Since an asynchronous network can infinitely delay messages, timeouts impose an artificial upper bound on these delays. As a result, we can assume that a node fails when it is slower than this bound.  
+
+However, a timeout does not represent an actual limit. Thus, it creates the following trade-off.  
+
+내가 정한 타임아웃 설정이 발생한 문제의 근본적인 원인을 해결하는 점은 아니다. 발생한 문제로 잃게되는 성능이 실제 이상으로 떨어질 수 밖에 없다. 타임아웃 값에 따라 Completeness와 Accruacy 사이에 트레이드 오프 발생   
+
+Completeness corresponds to the percentage of crashed nodes a failure detector successfully identifies in a certain period.  
+
+Accuracy corresponds to the number of mistakes a failure detector makes in a certain period.  
+
+
+
+Scalability lets us store and process datasets much larger than what we could with a single machine.  
+
+One of the primary mechanisms of achieving scalability is partitioning.  
+
+Distributed System에서 말하는 partitioning은 horizontal partitioning  
+
+horizontal partition에는 크게 range partitioning, hash partitioning, consistent hashing  
+
+Partitioning can improve the scalability and performance of a system by distributing data and request load to multiple nodes.  
+
+Another dimension that benefits from using a distributed system is known as availability.  
+
+Distributed system uses replication to achieve availability.  
+
+Replication is the main technique used in distributed systems to increase availability. It consists of storing the same piece of data in multiple nodes (called replicas) so that if one of them crashes, data is not lost, and requests can be served from the other nodes in the meanwhile.  
+
+However, the benefit of increased availability from replication comes with a set of new complications.  
+
+Replication implies that the system now has multiple copies of every piece of data. These copies must be maintained and **kept in sync with each other on every update**.  
+
+Ideally, replication should function transparently to the end-user, or engineer. This is to create the illusion that there’s only one copy of every piece of data. This makes a distributed system look like a simple, centralized system of a single node that is much easier to reason about and develop software around.  
+
+Of course, this is not always possible. We may require significant hardware resources or need to give up other desirable properties to achieve this ideal. For instance, engineers sometimes willingly accept a system that provides much higher performance, but occasionally gives a non-consistent view of the data. Hence, they only do this under specific conditions—and in a specific way—they can account for when they design the application.  
+
+Therefore, there are two main strategies for replication:  
+
+Pessimistic replication  
+Optimistic replication  
+Pessimistic replication  
+Pessimistic replication tries to guarantee from the beginning that all the replicas are identical to each other—as if there was only one copy of the data all along.  
+
+Optimistic replication  
+Optimistic replication, or lazy replication, allows the different replicas to diverge. This guarantees that they will converge again if the system does not receive any updates, or enters a quiesced state, for a period of time.  
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 참고
 
 - [책, Database Internals](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791161754963&orderClick=LEa&Kc=){:target="_blank"}

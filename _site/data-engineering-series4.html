@@ -278,6 +278,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -448,6 +450,8 @@
   
 
   
+
+  
   	
   	
   	
@@ -484,6 +488,7 @@
       <li><a href="#in-memory-지원" id="markdown-toc-in-memory-지원">In-memory 지원</a></li>
       <li><a href="#검색엔진-지원" id="markdown-toc-검색엔진-지원">검색엔진 지원</a></li>
       <li><a href="#scale-up-scale-out" id="markdown-toc-scale-up-scale-out">Scale-Up, Scale-Out</a></li>
+      <li><a href="#row-based-vs-columnar" id="markdown-toc-row-based-vs-columnar">Row Based vs Columnar</a></li>
     </ul>
   </li>
   <li><a href="#주요-데이터베이스간-비교" id="markdown-toc-주요-데이터베이스간-비교">주요 데이터베이스간 비교</a>    <ul>
@@ -555,6 +560,11 @@
 
 <h2 id="쿼리-지원">쿼리 지원</h2>
 
+<ul>
+  <li>쿼리를 지원하지 않는 DB: Redis, Apache HBase 등</li>
+  <li>쿼리를 지원하는 DB: MySQL, PostgreSQL, AWS Redshift, Google Bigquery, Elasticsearch 등</li>
+</ul>
+
 <h2 id="in-memory-지원">In-memory 지원</h2>
 
 <p>In-memory databases are purpose-built databases that rely <strong>primarily on memory</strong> for data storage, in contrast to databases that store data on disk or SSDs. In-memory data stores are designed to enable minimal response times by eliminating the need to access disks. Because all data is stored and managed exclusively in main memory, in-memory databases risk losing data upon a process or server failure. In-memory databases can persist data on disks by storing each operation in a log or by taking snapshots.</p>
@@ -580,6 +590,8 @@
   <li>RDBMS가 Scale-Out이 가능한지에 관한 답은 CAP 이론을 공부해야함</li>
   <li>Relational databases are designed to run on a single server in order to maintain the integrity of the table mappings and avoid the problems of distributed computing.</li>
   <li>RDBMS가 Scale-out이 힘들다면 Redshift는 뭐지?</li>
+  <li>Redshift는 Columnar database라서 scale-out이 쉽게 가능</li>
+  <li>(Columnar databases are like NoSQL databases, in the fact that they are designed to scale “out” using distributed clusters of low-cost hardware to increase throughput)</li>
 </ul>
 
 <p>Today, the evolution of relational databases allows them to use more complex architectures, relying on a “master-slave” model in which the “slaves” are additional servers that can handle parallel processing and replicated data, or data that is “sharded” (divided and distributed among multiple servers, or hosts) to ease the workload on the master server.</p>
@@ -595,6 +607,29 @@
 <p>Using this approach, a NoSQL database can operate across hundreds of servers, petabytes of data, and billions of documents—and still manage to process tens of thousands of transactions per second. And it can do all of this on inexpensive commodity (i.e. cheaper) hardware operating in any environment (i.e. cloud optimized!). Another benefit is that if one node fails, the others can pick up the workload, thus eliminating a single point of failure.</p>
 
 <p>Massive scale is impressive, but what is perhaps even more important is elasticity. Not all NoSQL databases are elastic. MarkLogic has a unique architecture that make it possible to quickly and easily add or remove nodes in a cluster so that the database stays in line with performance needs. There is not any complex sharding of data or architectural workarounds—data is automatically rebalanced across a cluster when nodes are added or removed. This also makes administration much easier, making it possible for one DBA to manage for data and with fewer headaches.</p>
+
+<h2 id="row-based-vs-columnar">Row Based vs Columnar</h2>
+
+<ul>
+  <li>Row Based DB는 OLTP에 적합
+    <ul>
+      <li>record단위로 데이터가 발생할 때 이를 하나의 메모리 블럭에 저장 -&gt; 빠른 쓰기 작업</li>
+      <li>단점은 특정 컬럼값이 모두 필요한 경우 모든 메모리 블럭에 접근해야함 -&gt; 느린 분석</li>
+      <li>ex. MySQL, PostgreSQL, Oracle 등</li>
+    </ul>
+  </li>
+  <li>Columnar DB는 OLAP에 적합
+    <ul>
+      <li>분석은 특정 컬럼에 있는 모든 값을 이용하는 경우 많음</li>
+      <li>같은 컬럼에 있는 값을 하나의 메모리 블럭에 저장하면 Random I/O을 줄일 수 있음</li>
+      <li>또 하나의 메모리 블럭에 같은 타입의 값만 저장하면 DB는 그 타입에 맞는 특별한 압축 방식을 제공해 줄 수 있음</li>
+      <li>단점은 record단위로 발생하는 데이터를 컬럼별로 따로 저장하기 위해 쓰기 작업시 컬럼 개수만큼 더 많은 I/O 작업 발생</li>
+      <li>ex. AWS Redshift, Google Big Query, Apache HBase 등</li>
+    </ul>
+  </li>
+  <li>웹 서비스에 붙어있는 DB로는 OLTP를 위한 Row based DB가 적합하고, 이 데이터를 분석팀에게 제공할 때는 Columnar DB에 저장해서 전달해 주는 것이 좋다.</li>
+  <li>Columnar는 Scale-Out을 쉽게 만들어준다.</li>
+</ul>
 
 <h1 id="주요-데이터베이스간-비교">주요 데이터베이스간 비교</h1>
 
@@ -627,6 +662,23 @@
   <li><a href="https://stackoverflow.com/questions/48825977/what-keeps-relational-databases-from-horizontal-scaling" target="_blank">What Keeps Relational Databases From Horizontal Scaling?</a></li>
   <li><a href="https://www.marklogic.com/blog/relational-databases-scale/" target="_blank">MATT ALLEN, Relational Databases Are Not Designed For Scale</a></li>
   <li><a href="https://asfirstalways.tistory.com/66">JBee, Scale Up, Scale Out, Sharding</a></li>
+  <li><a href="heavy.ai/technical-glossary/columnar-database" target="_blank">HEAVIY.AI, Columnar Database</a></li>
+  <li><a href="https://www.indicative.com/resource/columnar-database/" target="_blank">indicative, What Is A Columnar Database?</a></li>
+  <li><a href="https://www.sentinelone.com/blog/understanding-row-vs-column-oriented-databases/" target="_blank">sentinelone, Understanding Row- vs Column-Oriented Databases</a></li>
+  <li><a href="https://www.youtube.com/watch?v=uMkVi4SDLbM&amp;t=180s" target="_blank">Youtube: Tech Dummies Narendra L, How row oriented and column oriented db works?</a></li>
+  <li><a href="https://www.youtube.com/watch?v=zkACt4NYkU4" target="_blank">Youtube: Tech Dummies Narendra L, In Memory databases internals for system design interviews</a></li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>[Youtube: Tech Dummies Narendra L, Learn System design : Distributed datastores</td>
+          <td>RDBMS scaling problems</td>
+          <td>CAP theorem](https://www.youtube.com/watch?v=l9JSK9OBzA4){:target=”_blank”}</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><a href="https://www.youtube.com/watch?v=ZbyYvTfBlE0&amp;t=832s" target="_blank">Youtube: Tech Dummies Narendra L, Learn System design : How distributed datastore works(basics)?</a></li>
 </ul>
 
     </div>
@@ -923,6 +975,8 @@
   
 
   
+
+  
   	
   	
   	
@@ -1023,6 +1077,45 @@
       
 
       
+      <a class="article__image" href="/data-engineering-series28">
+        <img class="lazy" data-src="/images/distributed_logo.png" alt="Data Engineering Series [Part28]: Distributed System">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/data-engineering-series28">Data Engineering Series [Part28]: Distributed System</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-08-02T21:01:35+09:00">02 Aug 2022</time>
+
+      
+
+      
       <a class="article__image" href="/data-engineering-series27">
         <img class="lazy" data-src="/images/redis_logo.png" alt="Data Engineering Series [Part27]: Redis">
       </a>
@@ -1073,45 +1166,6 @@
 
       <h2 class="article__title">
         <a href="/data-engineering-series26">Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-08-01T21:01:35+09:00">01 Aug 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/data-engineering-series25">
-        <img class="lazy" data-src="/images/i_heart_log.png" alt="Data Engineering Series [Part25]: I 🤍 Logs(1) Introduction">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series25">Data Engineering Series [Part25]: I 🤍 Logs(1) Introduction</a>
       </h2>
 
       

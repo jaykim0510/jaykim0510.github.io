@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 21 Aug 2022 20:01:47 +0900</pubDate>
-        <lastBuildDate>Sun, 21 Aug 2022 20:01:47 +0900</lastBuildDate>
+        <pubDate>Thu, 25 Aug 2022 05:52:21 +0900</pubDate>
+        <lastBuildDate>Thu, 25 Aug 2022 05:52:21 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -472,6 +472,151 @@
             </item>
         
             <item>
+                <title>Data Engineering Series [Part28]: Distributed System</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#분산-시스템이란&quot; id=&quot;markdown-toc-분산-시스템이란&quot;&gt;분산 시스템이란&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#장점&quot; id=&quot;markdown-toc-장점&quot;&gt;장점&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#performance&quot; id=&quot;markdown-toc-performance&quot;&gt;Performance&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#scalability&quot; id=&quot;markdown-toc-scalability&quot;&gt;Scalability&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#availability&quot; id=&quot;markdown-toc-availability&quot;&gt;Availability&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#필요한-것&quot; id=&quot;markdown-toc-필요한-것&quot;&gt;필요한 것&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#partitioning&quot; id=&quot;markdown-toc-partitioning&quot;&gt;Partitioning&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#replication&quot; id=&quot;markdown-toc-replication&quot;&gt;Replication&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#어려운-점&quot; id=&quot;markdown-toc-어려운-점&quot;&gt;어려운 점&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#극복&quot; id=&quot;markdown-toc-극복&quot;&gt;극복&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;분산-시스템이란&quot;&gt;분산 시스템이란&lt;/h1&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A distributed system is a system whose components are located on different networked computers, which communicate and coordinate their actions by passing messages to one another&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/dis_sys_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;나는 분산 시스템을 다음과 같은 맥락으로 정리하려고 한다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/dis_sys_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;장점&quot;&gt;장점&lt;/h1&gt;
+
+&lt;h2 id=&quot;performance&quot;&gt;Performance&lt;/h2&gt;
+
+&lt;p&gt;여기서 Performance는 단일 시스템에서의 Performance와 비교해 가격대비 더 낫다는 의미이다. Performance의 절대적인 수치 자체가 더 오를 이유는 없다. 오히려 네트워크 비용으로 감소할 가능성은 있다. 그럼에도 분산 시스템을 쓰는 이유는 가격적인 측면에서 그만큼 값싼 장비를 여러 대 사용하는 것이 낫고, 성능적인 측면 이외에도 분산 시스템이 주는 장점이 있기 때문이다.&lt;/p&gt;
+
+&lt;h2 id=&quot;scalability&quot;&gt;Scalability&lt;/h2&gt;
+
+&lt;p&gt;분산 시스템은 서비스 규모, 트래픽량, 작업량에 따라 시스템의 크기를 조절해 이를 핸들링할 능력이 있다. 물론 단일 시스템에서도 Vertical-scaling이 가능하다. 하지만 Horizontal-scaling이 가격적인 측면과 확장이 용이하다는 점에서 이점이 있다.&lt;/p&gt;
+
+&lt;h2 id=&quot;availability&quot;&gt;Availability&lt;/h2&gt;
+
+&lt;p&gt;분산 시스템은 노드 일부에 장애가 발생하더라도 계속 같은 기능을 유지할 수 있다. 이는 24시간 내내 장애없는 서비스가 가능하다는 말이다. 물론 이를 위해 요구되는 조건들이 있는데 이 부분은 뒤에서 더 자세히 다룰 것이다.&lt;/p&gt;
+
+&lt;p&gt;지금까지 분산 시스템의 장점에 대해서 얘기했다. 이러한 장점을 얻기위해 해야할 일이 있다. 우선 High-level에서 이에 대해 알아보겠다.&lt;/p&gt;
+
+&lt;h1 id=&quot;필요한-것&quot;&gt;필요한 것&lt;/h1&gt;
+
+&lt;h2 id=&quot;partitioning&quot;&gt;Partitioning&lt;/h2&gt;
+
+&lt;p&gt;파티셔닝은 분산 시스템의 장점 중에서도 Scalability, Performance를 얻기 위해 필요한 핵심이다. 파티셔닝은 처리(또는 저장)해야 할 데이터를 작게 나누어서 이를 처리(또는 저장)해야 할 노드에게 할당해주는 작업이다.&lt;/p&gt;
+
+&lt;p&gt;하지만 오히려 하나의 작업을 위해 네트워크를 거쳐 여러 노드에 접근해야 한다는 점에서 단점이 되는 경우도 있다. 그래서 데이터를 처리할 때는 최대한 네트워크 비용을 줄이는 것이 관건이다.&lt;/p&gt;
+
+&lt;p&gt;파티셔닝은 크게 range partitioning, hash partitioning, consistent hashing가 있다. Apache HBase는 range partitioning을 쓰고, Apache Cassandra는 consistent hasing을 쓴다.&lt;/p&gt;
+
+&lt;h2 id=&quot;replication&quot;&gt;Replication&lt;/h2&gt;
+
+&lt;p&gt;복제(Replication)는 Availability를 위해 필요한 핵심이다. 복제는 같은 데이터를 여러 노드에 복수 저장함으로써, 노드 중 일부에 장애가 발생하더라도 계속 역할을 유지할 수 있게 한다.&lt;/p&gt;
+
+&lt;p&gt;복제하는 것이 단순한 일은 아니다. 우선 복제 수 만큼 더 많은 저장용량이 필요하다. 또한 복사된 후에도 원본 데이터가 업데이트 될 때마다 동기화해야 한다.&lt;/p&gt;
+
+&lt;p&gt;복제 방법 중 하나인 primary-backup replication에 대해 알아보자.&lt;/p&gt;
+
+&lt;p&gt;We commonly refer to the remaining replicas as followers or secondaries. These can only handle read requests. Every time the leader receives an update, it executes it locally and also propagates the update to the other nodes. This ensures that all the replicas maintain a consistent view of the data.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/dis_sys_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;리더는 업데이트를 어떻게 팔로워들에게 전파할까&lt;/p&gt;
+
+&lt;p&gt;There are two ways to propagate the updates: synchronously and asynchronously.&lt;/p&gt;
+
+&lt;p&gt;Synchronous replication&lt;/p&gt;
+
+&lt;p&gt;In synchronous replication, the node replies to the client to indicate the update is complete—only after receiving acknowledgments from the other replicas that they’ve also performed the update on their local storage. This guarantees that the client is able to view the update in a subsequent read after acknowledging it, no matter which replica the client reads from.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, synchronous replication provides increased durability. This is because the update is not lost even if the leader crashes right after it acknowledges the update.&lt;/p&gt;
+
+&lt;p&gt;However, this technique can make writing requests slower. This is because the leader has to wait until it receives responses from all the replicas.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/dis_sys_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Asynchronous replication&lt;/p&gt;
+
+&lt;p&gt;In asynchronous replication, the node replies to the client as soon as it performs the update in its local storage, without waiting for responses from the other replicas.&lt;/p&gt;
+
+&lt;p&gt;This technique increases performance significantly for write requests. This is because the client no longer pays the penalty of the network requests to the other replicas.&lt;/p&gt;
+
+&lt;p&gt;However, this comes at the cost of reduced consistency and decreased durability. After a client receives a response for an update request, the client might read older (stale) values in a subsequent read. This is only possible if the operation happens in one of the replicas that have not yet performed the update. Moreover, if the leader node crashes right after it acknowledges an update, and the propagation requests to the other replicas are lost, any acknowledged update is eventually lost.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/dis_sys_5.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Most widely used databases, such as PostgreSQL or MySQL, use a primary-backup replication technique that supports both asynchronous and synchronous replication.&lt;/p&gt;
+
+&lt;p&gt;primary-backup replication에는 장점과 단점이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;장점&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;It is simple to understand and implement&lt;/li&gt;
+  &lt;li&gt;Concurrent operations serialized in the leader node, remove the need for more complicated, distributed concurrency protocols. In general, this property also makes it easier to support transactional operations&lt;/li&gt;
+  &lt;li&gt;It is scalable for read-heavy workloads, because the capacity for reading requests can be increased by adding more read replicas&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;단점&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;It is not very scalable for write-heavy workloads, because a single node (the leader)’s capacity determines the capacity for writes&lt;/li&gt;
+  &lt;li&gt;It imposes an obvious trade-off between performance, durability, and consistency&lt;/li&gt;
+  &lt;li&gt;Scaling the read capacity by adding more follower nodes can create a bottleneck in the network bandwidth of the leader node, if there’s a large number of followers listening for updates&lt;/li&gt;
+  &lt;li&gt;The process of failing over to a follower node when the leader node crashes, is not instant. This may create some downtime and also introduce the risk of errors&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;또한 primary-backup replication은 항상 리더가 존재해야 한다. 따라서 리더가 잘 살아있는지 체크하고, 리더가 죽었다면 리더를 새로 선출하는 Leader election 문제도 고려해야 한다.&lt;/p&gt;
+
+&lt;h1 id=&quot;어려운-점&quot;&gt;어려운 점&lt;/h1&gt;
+
+&lt;h1 id=&quot;극복&quot;&gt;극복&lt;/h1&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://thesecretlivesofdata.com/raft/&quot; target=&quot;_blank&quot;&gt;Video Demo,  Raft: Understandable Distributed Consensus&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.freecodecamp.org/news/in-search-of-an-understandable-consensus-algorithm-a-summary-4bc294c97e0d/&quot; target=&quot;_blank&quot;&gt;Understanding the Raft consensus algorithm: an academic article summary&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://bravenewgeek.com/building-a-distributed-log-from-scratch-part-2-data-replication/&quot; target=&quot;_blank&quot;&gt;Building a Distributed Log from Scratch, Part 2: Data Replication&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Tue, 02 Aug 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/data-engineering-series28</link>
+                <guid isPermaLink="true">http://localhost:4000/data-engineering-series28</guid>
+                
+                <category>Data_Engineering</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
                 <title>Data Engineering Series [Part27]: Redis</title>
                 <description>&lt;hr /&gt;
 
@@ -783,303 +928,6 @@ file: array of bytes
                 <pubDate>Fri, 29 Jul 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/mysql-series15</link>
                 <guid isPermaLink="true">http://localhost:4000/mysql-series15</guid>
-                
-                <category>MySQL</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>MySQL Series [Part14] MySQL Optimizing SELECT Statements</title>
-                <description>&lt;hr /&gt;
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#optimization-overview&quot; id=&quot;markdown-toc-optimization-overview&quot;&gt;Optimization Overview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#things-to-consider-for-optimization&quot; id=&quot;markdown-toc-things-to-consider-for-optimization&quot;&gt;Things to Consider for Optimization&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#select&quot; id=&quot;markdown-toc-select&quot;&gt;SELECT&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#where&quot; id=&quot;markdown-toc-where&quot;&gt;WHERE&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#group-by&quot; id=&quot;markdown-toc-group-by&quot;&gt;GROUP BY&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#join&quot; id=&quot;markdown-toc-join&quot;&gt;JOIN&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#subquery&quot; id=&quot;markdown-toc-subquery&quot;&gt;Subquery&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#temporary-table&quot; id=&quot;markdown-toc-temporary-table&quot;&gt;Temporary Table&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#order-by&quot; id=&quot;markdown-toc-order-by&quot;&gt;ORDER BY&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#정렬-처리-방법&quot; id=&quot;markdown-toc-정렬-처리-방법&quot;&gt;정렬 처리 방법&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-&lt;h1 id=&quot;optimization-overview&quot;&gt;Optimization Overview&lt;/h1&gt;
-
-&lt;p&gt;Database performance depends on several factors at the database level, such as tables, queries, and configuration settings. These software constructs result in CPU and I/O operations at the hardware level, which you must minimize and make as efficient as possible.&lt;/p&gt;
-
-&lt;h1 id=&quot;things-to-consider-for-optimization&quot;&gt;Things to Consider for Optimization&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are the tables structured properly? In particular, do the columns have the right data types, and does each table have the appropriate columns for the type of work? For example, applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are the right indexes in place to make queries efficient?&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are you using the appropriate storage engine for each table, and taking advantage of the strengths and features of each storage engine you use? In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Does each table use an appropriate row format? This choice also depends on the storage engine used for the table. In particular, compressed tables use less disk space and so require less disk I/O to read and write the data. Compression is available for all kinds of workloads with InnoDB tables, and for read-only MyISAM tables.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;select&quot;&gt;SELECT&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Avoid using *&lt;/li&gt;
-  &lt;li&gt;Avoid using DISTINCT -&amp;gt; 중복 데이터 제거를 위해 테이블 풀 스캔 해야함&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;where&quot;&gt;WHERE&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use Indexes Where Appropriate&lt;/li&gt;
-  &lt;li&gt;Avoid % Wildcard in a Predicate&lt;/li&gt;
-  &lt;li&gt;Avoid using a function in the predicate of a query&lt;/li&gt;
-  &lt;li&gt;BETWEEN, IN, &amp;lt;, &amp;gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;group-by&quot;&gt;GROUP BY&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;GROUP BY 작업은 크게 인덱스를 사용하는 경우와 사용할 수 없는 경우(임시 테이블을 사용)&lt;/li&gt;
-  &lt;li&gt;인덱스를 사용할 수 없는 경우, 전체 테이블을 스캔하여 각 그룹의 모든 행이 연속되는 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것
-    &lt;ul&gt;
-      &lt;li&gt;이렇게 인덱스를 사용할 수 없을 때 할 수 있는 최선의 방법은 WHERE절을 이용해 GROUP BY 하기 전에 데이터량을 줄이는 것&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;인덱스를 잘 설정한다면 임시 테이블을 생성하지 않고 빠르게 데이터를 가져올 수 있다
-    &lt;ul&gt;
-      &lt;li&gt;인덱스를 최대로 활용하기 위해서는 GROUP BY 컬럼과, 인덱스되어 있는 컬럼간의 순서가 중요함&lt;/li&gt;
-      &lt;li&gt;SELECT절에 사용되는 집계함수의 경우 MIN(), MAX()는 인덱스의 성능을 최대로 활용할 수 있도록 함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;참고로 MySQL 8.0부터는 GROUP BY를 한다고 해서 암묵적으로 정렬이 이루어지지 않음 -&amp;gt; 정렬 필요하면 명시적으로 ORDER BY 써야함&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;루스 인덱스 스캔을 사용할 수 있는 경우
-    &lt;ul&gt;
-      &lt;li&gt;루스 인덱스 스캔은 레코드를 건너뛰면서 필요한 부분만 가져오는 스캔 방식&lt;/li&gt;
-      &lt;li&gt;EXPLAIN을 통헤 실행 계획을 확인해보면 Extra 컬럼에 ‘Using index for group-by’ 라고 표기됨&lt;/li&gt;
-      &lt;li&gt;MIN(), MAX() 이외의 함수가 SELECT 절에 사용되면 루스 인덱스 스캔을 사용할 수 없음&lt;/li&gt;
-      &lt;li&gt;인덱스가 (col1 col2, col3) 일 때 , GROUP BY col1, col2 과 같아야 함 (GROUP BY col2, col3은 안됨)&lt;/li&gt;
-      &lt;li&gt;SELECT 절과 GROUP BY 절의 컬럼이 일치해야 함. SELECT col1, col2, MAX(col3) GROUP BY col1, col2 과 같아야 함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;타이트 인덱스 스캔을 사용하는 경우
-    &lt;ul&gt;
-      &lt;li&gt;SELECT 절과 GROUP BY 절의 컬럼이 일치하지 않지만, 조건절을 이용해 범위 스캔이 가능한 경우
-        &lt;ul&gt;
-          &lt;li&gt;SELECT c1, c2, c3 FROM t1 WHERE c2 = ‘a’ GROUP BY c1, c3;&lt;/li&gt;
-          &lt;li&gt;SELECT c1, c2, c3 FROM t1 WHERE c1 = ‘a’ GROUP BY c2, c3;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;join&quot;&gt;JOIN&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;INNER joins, order doesn’t matter&lt;/li&gt;
-  &lt;li&gt;OUTER joins, the order matters&lt;/li&gt;
-  &lt;li&gt;여러 조인을 포함하는 LOOP JOIN 에서는 드라이빙 테이블(Driving Table)이 행들을 최소한으로 리턴하도록 해야됨&lt;/li&gt;
-  &lt;li&gt;JOIN 되는 컬럼의 한쪽에만 INDEX가 있는 경우는 INDEX가 지정된 TABLE이 DRIVING TABLE이 된다&lt;/li&gt;
-  &lt;li&gt;JOIN 시 자주 사용하는 칼럼은 인덱스로 등록한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;인덱스 레인지 스캔은 인덱스를 탐색(Index Seek)하는 단계와 인덱스를 스캔(Index Scan)하는 과정으로 구분해 볼 수 있다. 일반적으로 인덱스를 이용해서 쿼리하는 작업에서는 가져오는 레코드의 건수가 소량(전체 데이터 크기의 20% 이내)이기 때문에 인덱스 스캔 작업은 부하가 작고, 특정 인덱스 키를 찾는 인덱스 탐색 작업이 부하가 높은 편이다.&lt;/p&gt;
-
-&lt;p&gt;JOIN 작업에서 드라이빙 테이블을 읽을 때는 인덱스 탐색 작업을 단 한 번만 수행하고, 그 이후부터는 스캔만 실행하면 된다.&lt;/p&gt;
-
-&lt;p&gt;하지만 드리븐 테이블에서는 인덱스 탐색 작업과 스캔 작업을 드라이빙 테이블에서 읽은 레코드 건수만큼 반복한다.&lt;/p&gt;
-
-&lt;p&gt;드라이빙 테이블과 드리븐 테이블이 1:1 조인되더라도 &lt;strong&gt;드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지&lt;/strong&gt;한다.&lt;/p&gt;
-
-&lt;p&gt;그래서 옵티마이저는 항상 드라이빙 테이블이 아니라 드리븐 테이블을 최적으로 읽을 수 있게 실행 계획을 수립한다.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-SQL&quot;&gt;SELECT *
-FROM employees e, dept_emp de
-WHERE e.emp_no=de.emp_no
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;여기서 각 테이블의 emp_no 컬럼에 인덱스가 있을 때와 없을 때 조인 순서가 어떻게 달라지는 한 번 살펴보자.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;두 컬럼 모두 인덱스가 있는 경우
-    &lt;ul&gt;
-      &lt;li&gt;어느 테이블을 드라이빙으로 선택하든 인덱스를 이용해 드리븐 테이블의 검색 작업을 빠르게 처리할 수 있다&lt;/li&gt;
-      &lt;li&gt;보통의 경우 어느 쪽 테이블이 드라이빙 테이블이 되든 옵티마이저가 선택하는 방법이 최적일 때가 많다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;employees 테이블에만 인덱스가 있는경우
-    &lt;ul&gt;
-      &lt;li&gt;이 때는 employees 테이블을 드리븐 테이블로 선택한다&lt;/li&gt;
-      &lt;li&gt;드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지하기 때문에 드리븐 테이블에서 인덱스를 활용하는 것이 중요한다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;INNER JOIN은 조인 대상 테이블 모두에 해당하는 레코드만 반환한다. 이같은 특성 때문에 OUTER JOIN으로만 조인을 실행하는 쿼리들도 자주 보인다. 하지만 대개의 경우 OUTER JOIN은 대상 테이블들의 데이터가 일관되지 않은 경우에만 필요하다.&lt;/p&gt;
-
-&lt;p&gt;MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN B에서 B)을 드라이빙 테이블로 선택하지 못하기 때문에 무조건 앞에 등장하는 테이블을 드라이빙 테이블로 선택한다. 그 결과 인덱스 유무에 따라 조인 순서를 변경함으로써 얻게 되는 최적화의 이점을 얻지 못하기 때문에 쿼리 성능이 나빠질 수 있다. 그래서 꼭 필요한 경우가 아니라면 INNER JOIN을 사용하는 것이 쿼리의 성능에 도움이 된다.&lt;/p&gt;
-
-&lt;p&gt;JOIN의 순서&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;INNER JOIN인 경우
-    &lt;ul&gt;
-      &lt;li&gt;어차피 A and B and C 이기 때문에 A JOIN B JOIN C이든 B JOIN A JOIN C이든 같다.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;LEFT JOIN의 경우 결과도 성능도 달라진다.
-    &lt;ul&gt;
-      &lt;li&gt;일단 가장 먼저 등장하는 테이블이 드라이빙 테이블이 된다 -&amp;gt; 이 말은 뒤에 따라오는 테이블은 드리븐 테이블이 된다는 말이다 -&amp;gt; 드리븐 테이블은 인덱스가 없으면 성능이 떨어진다 -&amp;gt; 뒤에 조인되는 테이블의 인덱스 유무에 따라 쿼리 성능이 달라진다&lt;/li&gt;
-      &lt;li&gt;결과 자체도 맨 앞에 등장하는 테이블의 모든 레코드가 기준이 되기 때문에 순서에 따라 달라진다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;INNER JOIN과 OUTER JOIN이 결합되는 경우
-    &lt;ul&gt;
-      &lt;li&gt;가능하다면 INNER JOIN이 앞에 오도록 하는 것이 좋다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;subquery&quot;&gt;Subquery&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Avoid correlated sub queries as it searches row by row, impacting the speed of SQL query processing&lt;/li&gt;
-  &lt;li&gt;JOIN으로 해결되면 서브쿼리 대신 JOIN을 사용하자&lt;/li&gt;
-  &lt;li&gt;서브쿼리 안에 where절과 group by를 통해 불러오는 데이터양을 감소시킬 수 있습니다&lt;/li&gt;
-  &lt;li&gt;서브쿼리는 인덱스 또는 제약 정보를 가지지 않기 때문에 최적화되지 못한다&lt;/li&gt;
-  &lt;li&gt;윈도우 함수를 고려해보자&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;temporary-table&quot;&gt;Temporary Table&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use a temporary table to handle bulk data&lt;/li&gt;
-  &lt;li&gt;Temporary table vs Using index access&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;order-by&quot;&gt;ORDER BY&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;대부분의 SELECT 쿼리에서 정렬은 필수적&lt;/li&gt;
-  &lt;li&gt;정렬을 처리하는 방법은 &lt;strong&gt;인덱스를 이용하는 방법&lt;/strong&gt;과 &lt;strong&gt;Filesort&lt;/strong&gt;라는 별도의 처리를 이용하는 방법&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;방법&lt;/td&gt;
-      &lt;td&gt;장점&lt;/td&gt;
-      &lt;td&gt;단점&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;인덱스 이용&lt;/td&gt;
-      &lt;td&gt;SELECT 문을 실행할 때 이미 인덱스가 정렬돼 있어 순서대로 읽기만 하면 되므로 매우 빠르다&lt;/td&gt;
-      &lt;td&gt;INSERT, UPDATE, DELETE 작업시 부가적인 인덱스 추가/삭제 작업이 필요하므로 느리다&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Filesort 이용&lt;/td&gt;
-      &lt;td&gt;인덱스 이용과 반대로 INSERT, UPDATE, DELETE 작업이 빠르다&lt;/td&gt;
-      &lt;td&gt;정렬 작업이 쿼리 실행 시 처리되어 쿼리의 응답 속도가 느려진다&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;strong&gt;Filesort를 사용해야 하는 경우&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;정렬 기준이 너무 많아서 모든 인덱스를 생성하는 것이 불가능한 경우&lt;/li&gt;
-  &lt;li&gt;어떤 처리의 결과를 정렬해야 하는 경우&lt;/li&gt;
-  &lt;li&gt;랜덤하게 결과 레코드를 가져와야 하는 경우&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;소트 버퍼&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;MySQL은 정렬을 수행하기 위해 별도의 메모리 공간을 할당받아서 사용하는데 이 메모리 공간을 소트 버퍼라고 한다&lt;/li&gt;
-  &lt;li&gt;정렬해야 할 레코드의 건수가 소트 버퍼의 크기보다 크다면 어떻게 해야 할까?
-    &lt;ul&gt;
-      &lt;li&gt;정렬해야 할 레코드를 여러 조각으로 나눠서 처리하게 됨. 이 과정에서 임시 저장을 위해 디스크를 사용&lt;/li&gt;
-      &lt;li&gt;일부를 처리하고 디스크에 저장하기를 반복 수행함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;정렬 알고리즘&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;정렬 대상 컬럼과 프라이머리 키만 가져와서 정렬하는 방식
-    &lt;ul&gt;
-      &lt;li&gt;정렬 대상 컬럼과 프라이머리 키 값만 소트 버퍼에 담아 정렬을 수행&lt;/li&gt;
-      &lt;li&gt;그리고 다시 정렬 순서대로 프라이머리 키로 테이블을 읽어서 SELECT할 컬럼을 가져옴&lt;/li&gt;
-      &lt;li&gt;가져오는 컬럼이 두 개 뿐이라 소트 버퍼에 많은 레코드를 한 번에 읽어올 수 있음&lt;/li&gt;
-      &lt;li&gt;단점은 테이블을 두 번 읽어야 함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;정렬 대상 컬럼과 SELECT문으로 요청한 컬럼을 모두 가져와서 정렬하는 방식
-    &lt;ul&gt;
-      &lt;li&gt;최신 버전의 MySQL에서 일반적으로 사용하는 방식&lt;/li&gt;
-      &lt;li&gt;SELECT 문에서 요청한 컬럼의 개수가 많아지면 계속 분할해서 소트 버퍼에 읽어와야함&lt;/li&gt;
-      &lt;li&gt;레코드의 크기나 건수가 작은 경우 성능이 좋음&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;정렬-처리-방법&quot;&gt;정렬 처리 방법&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;인덱스를 사용한 정렬
-    &lt;ul&gt;
-      &lt;li&gt;인덱스를 이용해 정렬을 하기 위해서는 반드시 ORDER BY의 순서대로 생성된 인덱스가 있어야 함&lt;/li&gt;
-      &lt;li&gt;인덱스를 이용해 정렬이 가능한 이유는 B-Tree 인덱스가 키 값으로 정렬되어 있기 때문&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Filesort를 사용한 정렬
-    &lt;ul&gt;
-      &lt;li&gt;인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html&quot; target=&quot;_blank&quot;&gt;MySQL 공식문서: Optimizing SELECT Statements&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization&quot; target=&quot;_blank&quot;&gt;MySQL Performance Tuning and Optimization Tips&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html&quot; target=&quot;_blank&quot;&gt;ETL 성능 향상을 위한 몇 가지 팁들&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://til.songyunseop.com/mysql/group-by-optimization.html&quot; target=&quot;_blank&quot;&gt;전지적 송윤섭시점 TIL, GROUP BY 최적화&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://otsteam.tistory.com/136&quot; target=&quot;_blank&quot;&gt;SQL 성능을 위한 25가지 규칙&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://jojoldu.tistory.com/173?category=761883&quot; target=&quot;_blank&quot;&gt;패스트캠퍼스 SQL튜닝캠프 4일차 - 조인의 기본 원리와 활용&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://brightestbulb.tistory.com/147&quot; target=&quot;_blank&quot;&gt;취미는 공부 특기는 기록, Nested Loop Join, Driving Table&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/9614922/does-the-join-order-matter-in-sql&quot; target=&quot;_blank&quot;&gt;stackoverflow, Does the join order matter in SQL?&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://coding-factory.tistory.com/756&quot; target=&quot;_blank&quot;&gt;코딩팩토리, [DB] 데이터베이스 NESTED LOOPS JOIN (중첩 루프 조인)에 대하여&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://schatz37.tistory.com/2&quot; target=&quot;_blank&quot;&gt;고동의 데이터 분석, [SQL] “성능 관점”에서 보는 결합(Join)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://schatz37.tistory.com/3?category=878798&quot; target=&quot;_blank&quot;&gt;고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Fri, 29 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/mysql-series14</link>
-                <guid isPermaLink="true">http://localhost:4000/mysql-series14</guid>
                 
                 <category>MySQL</category>
                 

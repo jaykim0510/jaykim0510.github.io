@@ -48,6 +48,8 @@ There arethree key priorities of these types of systems: **performance, high ava
 
 # Kafka Log
 
+## Commit Log
+
 # MySQL Log
 
 ## Write Ahead Log
@@ -101,3 +103,4 @@ The binary log is generally resilient to unexpected halts because only complete 
 - [Video Demo,  Raft: Understandable Distributed Consensus](http://thesecretlivesofdata.com/raft/){:target="_blank"}
 - [Understanding the Raft consensus algorithm: an academic article summary](https://www.freecodecamp.org/news/in-search-of-an-understandable-consensus-algorithm-a-summary-4bc294c97e0d/){:target="_blank"}
 - [Building a Distributed Log from Scratch, Part 2: Data Replication](https://bravenewgeek.com/building-a-distributed-log-from-scratch-part-2-data-replication/){:target="_blank"}
+- [HEVO, Apache Kafka Logs: A Comprehensive Guide](https://hevodata.com/learn/apache-kafka-logs-a-comprehensive-guide/){:target="_blank"}

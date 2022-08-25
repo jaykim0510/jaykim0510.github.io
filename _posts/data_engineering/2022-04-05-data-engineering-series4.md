@@ -67,6 +67,9 @@ tags: Data_Engineering
 
 ## 쿼리 지원
 
+- 쿼리를 지원하지 않는 DB: Redis, Apache HBase 등
+- 쿼리를 지원하는 DB: MySQL, PostgreSQL, AWS Redshift, Google Bigquery, Elasticsearch 등
+
 ## In-memory 지원
 
 In-memory databases are purpose-built databases that rely **primarily on memory** for data storage, in contrast to databases that store data on disk or SSDs. In-memory data stores are designed to enable minimal response times by eliminating the need to access disks. Because all data is stored and managed exclusively in main memory, in-memory databases risk losing data upon a process or server failure. In-memory databases can persist data on disks by storing each operation in a log or by taking snapshots.  
@@ -153,3 +156,6 @@ Massive scale is impressive, but what is perhaps even more important is elastici
 - [indicative, What Is A Columnar Database?](https://www.indicative.com/resource/columnar-database/){:target="_blank"}
 - [sentinelone, Understanding Row- vs Column-Oriented Databases](https://www.sentinelone.com/blog/understanding-row-vs-column-oriented-databases/){:target="_blank"}
 - [Youtube: Tech Dummies Narendra L, How row oriented and column oriented db works?](https://www.youtube.com/watch?v=uMkVi4SDLbM&t=180s){:target="_blank"}
+- [Youtube: Tech Dummies Narendra L, In Memory databases internals for system design interviews](https://www.youtube.com/watch?v=zkACt4NYkU4){:target="_blank"}
+- [Youtube: Tech Dummies Narendra L, Learn System design : Distributed datastores | RDBMS scaling problems | CAP theorem](https://www.youtube.com/watch?v=l9JSK9OBzA4){:target="_blank"}
+- [Youtube: Tech Dummies Narendra L, Learn System design : How distributed datastore works(basics)?](https://www.youtube.com/watch?v=ZbyYvTfBlE0&t=832s){:target="_blank"}

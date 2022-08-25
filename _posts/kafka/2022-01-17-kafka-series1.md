@@ -80,7 +80,21 @@ tags: Kafka
 이벤트 처리 순서가 보장되면서, 엔티티 간의 유효성 검사나 동시 수정 같은 무수한 복잡성들이 제거됨으로써 구조 또한 매우 간결해졌습니다.  
 
 ## 적어도 한 번 전송 방식
-분산된 여러 네트워크 환경에서의 데이터 처리에서 중요한 것은 멱등성(itempotence)입니다. 멱등성이란 동일한 작업을 여러 번 수행하더라도 결과가 달라지지 않는 것을 의미합니다. 하지만 실시간 대용량 데이터 스트림에서 이를 완벽히 지켜내기란 쉽지 않습니다. 그래서 차선책으로 데이터가 중복은 되더라도, 손실은 일어나지 않도록 하는 방식이 '적어도 한 번' 전송 방식입니다. 만약 백엔드 시스템에서 중복 메세지만 처리해준다면 멱등성을 위한 시스템 복잡도를 기존에 비해 훨씬 낮출 수 있게 되고, 처리량 또한 더욱 높아집니다. 최근에는 '정확히 한 번' 전송 방식이 도입되어 카프카내에서 중복성을 제거하는 방법이 많이 사용되고 있습니다.  
+분산된 여러 네트워크 환경에서의 데이터 처리에서 중요한 것은 멱등성(idempotence)입니다. 멱등성이란 동일한 작업을 여러 번 수행하더라도 결과가 달라지지 않는 것을 의미합니다. 하지만 실시간 대용량 데이터 스트림에서 이를 완벽히 지켜내기란 쉽지 않습니다. 그래서 차선책으로 데이터가 중복은 되더라도, 손실은 일어나지 않도록 하는 방식이 '적어도 한 번' 전송 방식입니다. 만약 백엔드 시스템에서 중복 메세지만 처리해준다면 멱등성을 위한 시스템 복잡도를 기존에 비해 훨씬 낮출 수 있게 되고, 처리량 또한 더욱 높아집니다. 최근에는 '정확히 한 번' 전송 방식이 도입되어 카프카내에서 중복성을 제거하는 방법이 많이 사용되고 있습니다.  
+
+Idempotent: Characteristic that we can apply operation multiple times without changing the result beyond the initial application.  
+
+카프카에서 정확히 한 번 전송 방식을 지원하는데 멱등적인 방법은 아님. De-duplication 방식임.  
+
+In the de-duplication approach, we give every message a unique identifier, and every retried message contains the same identifier as the original. In this way, the recipient can remember the set of identifiers it received and executed already. It will also avoid executing operations that are executed.  
+
+It is important to note that in order to do this, we must have control on both sides of the system: sender and receiver. This is because the ID generation occurs on the sender side, but the de-duplication process occurs on the receiver side.  
+
+it’s impossible to have exactly-once delivery in a distributed system. However, it’s still sometimes possible to have exactly-once processing.  
+
+(정확히 한 번 전송은 사실 Producer는 중복 전송하더라도, 브로커에서 저장하는 과정을 한 번만 수행함으로서 보장된다)  
+
+
 
 ## 강력한 파티셔닝
 파티셔닝을 통해 확장성이 용이한 분산 처리 환경을 제공합니다.  
