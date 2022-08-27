@@ -1,0 +1,111 @@
+I"N"<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<p>Kafka is everywhere these days. With the advent of Microservices and distributed computing, Kafka has become a regular occurrence in the architecture of every product. In this article, I’ll try to explain how Kafka’s internal storage mechanism works.</p>
+
+<p>Kafka is typically referred to as a Distributed, Replicated Messaging Queue, which although technically true, usually leads to some confusion depending on your definition of a messaging queue. Instead, I prefer to call it a Distributed, Replicated Commit Log. This, I think, clearly represents what Kafka does, as all of us understand how logs are written to disk. And in this case, it is the messages pushed into Kafka that are stored to disk.</p>
+
+<p>Regarding storage in Kafka, you’ll always hear two terms - Partition and Topic. Partitions are the units of storage in Kafka for messages. And Topic can be thought of as being a container in which these partitions lie.</p>
+
+<p>I am going to start by creating a topic in Kafka with three partitions.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kafka-topics.sh <span class="nt">--create</span> <span class="nt">--topic</span> freblogg <span class="nt">--partitions</span> 3 <span class="nt">--replication-factor</span> 1 <span class="nt">--zookeeper</span> localhost:2181
+</code></pre></div></div>
+
+<p>If I go into Kafka’s log directory, I see three directories created as follows.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tree freblogg*
+freblogg-0
+|-- 00000000000000000000.index
+|-- 00000000000000000000.log
+|-- 00000000000000000000.timeindex
+`-- leader-epoch-checkpoint
+freblogg-1
+|-- 00000000000000000000.index
+|-- 00000000000000000000.log
+|-- 00000000000000000000.timeindex
+`-- leader-epoch-checkpoint
+freblogg-2
+|-- 00000000000000000000.index
+|-- 00000000000000000000.log
+|-- 00000000000000000000.timeindex
+`-- leader-epoch-checkpoint
+</code></pre></div></div>
+
+<p>We have three directories created because we’ve given three partitions for our topic, which means that each partition gets a directory on the file system. You also see some files like index, log etc. We’ll get to them shortly.</p>
+
+<p>One more thing that you should be able to see from here is that in Kafka, the topic is more of a logical grouping than anything else and that the Partition is the actual unit of storage in Kafka. That is what is physically stored on the disk. Let’s understand partitions in some more detail.</p>
+
+<p>Now let us send a couple of messages and see what happens. To send the messages I’m using the console producer as follows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kafka-console-producer.sh --topic freblogg --broker-list localhost:9092
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ls -lh freblogg*
+freblogg-0:
+total 20M
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.index
+- freblogg 197121   0 Aug  5 08:26 00000000000000000000.log
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.timeindex
+- freblogg 197121   0 Aug  5 08:26 leader-epoch-checkpoint
+
+freblogg-1:
+total 21M
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.index
+- freblogg 197121  68 Aug  5 10:15 00000000000000000000.log
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.timeindex
+- freblogg 197121  11 Aug  5 10:15 leader-epoch-checkpoint
+
+freblogg-2:
+total 21M
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.index
+- freblogg 197121  79 Aug  5 09:59 00000000000000000000.log
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.timeindex
+- freblogg 197121  11 Aug  5 09:59 leader-epoch-checkpoint
+</code></pre></div></div>
+
+<p>Our two messages went into two of the partitions where you can see that the log files have a non zero size. This is because the messages in the partition are stored in the ‘xxxx.log’ file. To confirm that the messages are indeed stored in the log file, we can just see what’s inside that log file.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cat freblogg-2/*.log
+@^@^BÂ°Â£Ã¦Ãƒ^@^K^XÃ¿Ã¿Ã¿Ã¿Ã¿Ã¿^@^@^@^A"^@^@^A^VHello World^@
+</code></pre></div></div>
+
+<p>The file format of the ‘log’ file is not conducive for textual representation but, you should see the ‘Hello World’ at the end indicating that this file got updated when we have sent the message into the topic. The second message we have sent went into the other partition.</p>
+
+<p>Notice that the first message we sent, went into the third partition (freblogg-2) and the second message went into the second partition (freblogg-1). This is because Kafka arbitrarily picks the partition for the first message and then distributes the messages to partitions in a round-robin fashion. If a third message comes now, it would go into freblogg-0 and this order of partition continues for any new message that comes in. We can also make Kafka choose the same partition for our messages by adding a key to the message. Kafka stores all the messages with the same key into a single partition.</p>
+
+<p>Each new message in the partition gets an Id which is one more than the previous Id number. This Id number is also called the Offset. So, the first message is at ‘offset’ 0, the second message is at offset 1 and so on. These offset Id’s are always incremented from the previous value.</p>
+
+<p><img src="/images/kafka_75.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kafka-run-class.bat kafka.tools.DumpLogSegments <span class="nt">--deep-iteration</span> <span class="nt">--print-data-log</span> <span class="nt">--files</span> logs<span class="se">\f</span>reblogg-2<span class="se">\0</span>0000000000000000000.log
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Dumping logs<span class="se">\f</span>reblogg-2<span class="se">\0</span>0000000000000000000.log
+Starting offset: 0
+
+offset: 0 position: 0 CreateTime: 1533443377944 isvalid: <span class="nb">true </span>keysize: <span class="nt">-1</span> valuesize: 11 producerId: <span class="nt">-1</span> headerKeys: <span class="o">[]</span> payload: Hello World
+
+offset: 1 position: 79 CreateTime: 1533462689974 isvalid: <span class="nb">true </span>keysize: <span class="nt">-1</span> valuesize: 6 producerId: <span class="nt">-1</span> headerKeys: <span class="o">[]</span> payload: amazon
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://docs.cloudera.com/csa/1.2.0/flink-sql-table-api/topics/csa-kafka-sql-datatypes.html" target="_blank">Data types for Kafka connector</a></li>
+  <li><a href="https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/" target="_blank">Kafka Connect Deep Dive – Converters and Serialization Explained</a></li>
+  <li><a href="https://dol9.tistory.com/274" target="_blank">dol9, Kafka 스키마 관리, Schema Registry</a></li>
+  <li><a href="https://www.freblogg.com/kafka-storage-internals" target="_blank">A Practical Introduction to Kafka Storage Internals</a></li>
+  <li><a href="https://www.freecodecamp.org/news/what-makes-apache-kafka-so-fast-a8d4f94ab145/" target="_blank">Here’s what makes Apache Kafka so fast</a></li>
+  <li><a href="https://stackoverflow.com/questions/40369238/which-directory-does-apache-kafka-store-the-data-in-broker-nodes#" target="_blank">stackoverflow: Which directory does apache kafka store the data in broker nodes</a></li>
+  <li><a href="https://medium.com/@abhisheksharma_59226/how-kafka-stores-data-37ee611c89a2" target="_blank">Abhishek Sharma, How kafka stores data</a></li>
+  <li><a href="https://rohithsankepally.github.io/Kafka-Storage-Internals/" target="_blank">Rohith Sankepally:g Deep Dive Into Apache Kafka. Storage Internals</a></li>
+  <li><a href="https://towardsdatascience.com/log-compacted-topics-in-apache-kafka-b1aa1e4665a7" target="_blank">towardsdatascience, Log Compacted Topics in Apache Kafka</a></li>
+  <li><a href="https://www.conduktor.io/understanding-kafkas-internal-storage-and-log-retention" target="_blank">conduktor, Understanding Kafka’s Internal Storage and Log Retention</a></li>
+  <li><a href="https://dev.to/heroku/what-is-a-commit-log-and-why-should-you-care-pib" target="_blank">What is a commit log and why should you care?</a></li>
+</ul>
+:ET

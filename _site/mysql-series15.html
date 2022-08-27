@@ -621,6 +621,18 @@ You can change the threshold query execution time by setting the value of the <c
 
 <h2 id="redo-log">Redo Log</h2>
 
+<p>데이터 작업은 최대한 메모리 위에 있는 페이지에서 하고, 디스크로 flush하는 작업은 DB의 리소스가 여유로울 때 하는 것이 좋다. 그래서 메모리 버퍼 풀을 이용하는 것이다. 근데 그러면 장애 발생으로 서버가 종료될 때 문제가 된다.</p>
+
+<p>그래서 복구가 가능하도록 하기 위해 등장한 것이 Redo log이고, 중간중간 Redo log만 Log buffer에서 Log file로 flush함으로써 문제를 해결할 수 있다.</p>
+
+<p>여기서 드는 생각은 “성능 저하의 주요 요인이 디스크로 flush하는 작업이었는데, Redo log를 디스크로 flush하면 결국 달라지는 게 없지 않는가?”라는 점이다.</p>
+
+<p>하지만 디스크 작업에도 비교적 빠른 작업이 있고, 느린 작업이 있다. 빠른 작업은 디스크의 내용을 순차적으로 읽는 Sequential Access, 느린 작업은 디스크의 블럭을 자주 옮겨 다녀야 하는 Random Access이다.</p>
+
+<p>다시 Redo log로 돌아와보면, Redo log는 디스크의 Log file에 단순히 SQL statement를 append하는 형식이다. 그래서 이 작업은 Sequential Access에 해당한다. 하지만 데이터를 디스크로 flush하는 작업은 디스크 내의 데이터 위치를 찾아야 하기 때문에 Random Access가 발생한다. 이것이 바로 Redo log를 사용하는 것이 더 빠른 이유다.</p>
+
+<p><img src="/images/mysql_47.png" alt="" /></p>
+
 <p>Redo log is to save the executed SQL statement to a specified Log file. When mysql performs data recovery, you can re-execute the SQL operation recorded by the redo log. The introduction of the buffer pool will cause the updated data to not be persisted to the disk in real time. When the system crashes, although the data in the buffer pool is lost and the data is not persisted, the system can restore all data to the latest according to the content of the Redo Log status. The redo log exists as a separate file on the disk. There will be two files by default, named ib_logfile0 and ib_logfile1.</p>
 
 <p>The parameter innodb_log_file_size specifies the size of the redo log innodb_log_file_in_group specifies the number of the redo log, and the default is 2; innodb_log_group_home_dir specifies the path where the redo log is located.</p>

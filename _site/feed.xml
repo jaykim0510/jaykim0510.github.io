@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 27 Aug 2022 10:33:49 +0900</pubDate>
-        <lastBuildDate>Sat, 27 Aug 2022 10:33:49 +0900</lastBuildDate>
+        <pubDate>Sat, 27 Aug 2022 16:41:14 +0900</pubDate>
+        <lastBuildDate>Sat, 27 Aug 2022 16:41:14 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -958,6 +958,18 @@ You can change the threshold query execution time by setting the value of the &l
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;redo-log&quot;&gt;Redo Log&lt;/h2&gt;
+
+&lt;p&gt;데이터 작업은 최대한 메모리 위에 있는 페이지에서 하고, 디스크로 flush하는 작업은 DB의 리소스가 여유로울 때 하는 것이 좋다. 그래서 메모리 버퍼 풀을 이용하는 것이다. 근데 그러면 장애 발생으로 서버가 종료될 때 문제가 된다.&lt;/p&gt;
+
+&lt;p&gt;그래서 복구가 가능하도록 하기 위해 등장한 것이 Redo log이고, 중간중간 Redo log만 Log buffer에서 Log file로 flush함으로써 문제를 해결할 수 있다.&lt;/p&gt;
+
+&lt;p&gt;여기서 드는 생각은 “성능 저하의 주요 요인이 디스크로 flush하는 작업이었는데, Redo log를 디스크로 flush하면 결국 달라지는 게 없지 않는가?”라는 점이다.&lt;/p&gt;
+
+&lt;p&gt;하지만 디스크 작업에도 비교적 빠른 작업이 있고, 느린 작업이 있다. 빠른 작업은 디스크의 내용을 순차적으로 읽는 Sequential Access, 느린 작업은 디스크의 블럭을 자주 옮겨 다녀야 하는 Random Access이다.&lt;/p&gt;
+
+&lt;p&gt;다시 Redo log로 돌아와보면, Redo log는 디스크의 Log file에 단순히 SQL statement를 append하는 형식이다. 그래서 이 작업은 Sequential Access에 해당한다. 하지만 데이터를 디스크로 flush하는 작업은 디스크 내의 데이터 위치를 찾아야 하기 때문에 Random Access가 발생한다. 이것이 바로 Redo log를 사용하는 것이 더 빠른 이유다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/mysql_47.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Redo log is to save the executed SQL statement to a specified Log file. When mysql performs data recovery, you can re-execute the SQL operation recorded by the redo log. The introduction of the buffer pool will cause the updated data to not be persisted to the disk in real time. When the system crashes, although the data in the buffer pool is lost and the data is not persisted, the system can restore all data to the latest according to the content of the Redo Log status. The redo log exists as a separate file on the disk. There will be two files by default, named ib_logfile0 and ib_logfile1.&lt;/p&gt;
 
