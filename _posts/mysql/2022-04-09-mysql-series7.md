@@ -3,7 +3,7 @@ layout: post
 title:  'MySQL Series [Part7] 아키텍처'
 description: 
 date:   2022-04-09 15:01:35 +0300
-image:  '/images/mysql_logo.webp'
+image:  '/images/mysql_3.png'
 logo_image: '/images/mysql_logo.webp'
 categories: DE
 tags: MySQL

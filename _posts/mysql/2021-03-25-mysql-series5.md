@@ -3,7 +3,7 @@ layout: post
 title:  'MySQL Series [Part5] 데이터베이스 모델링'
 description: 
 date:   2021-03-22 15:01:35 +0300
-image:  '/images/mysql_logo.webp'
+image:  '/images/sql_13.png'
 logo_image: '/images/mysql_logo.webp'
 categories: DE
 tags: MySQL

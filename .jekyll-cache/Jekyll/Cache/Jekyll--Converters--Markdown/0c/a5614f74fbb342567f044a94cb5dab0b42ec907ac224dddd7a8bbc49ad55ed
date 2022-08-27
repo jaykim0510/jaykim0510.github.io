@@ -1,0 +1,193 @@
+I"$D<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#log의-중요성" id="markdown-toc-log의-중요성">Log의 중요성</a></li>
+  <li><a href="#mysql의-로그" id="markdown-toc-mysql의-로그">MySQL의 로그</a></li>
+  <li><a href="#mysql-모니터링을-위한-로그" id="markdown-toc-mysql-모니터링을-위한-로그">MySQL 모니터링을 위한 로그</a></li>
+  <li><a href="#트랜잭션-처리를-위한-로그" id="markdown-toc-트랜잭션-처리를-위한-로그">트랜잭션 처리를 위한 로그</a>    <ul>
+      <li><a href="#undo-log" id="markdown-toc-undo-log">Undo Log</a></li>
+      <li><a href="#redo-log" id="markdown-toc-redo-log">Redo Log</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="log의-중요성">Log의 중요성</h1>
+
+<p>MySQL is open-source relational databases, and you should learn how to use MySQL database logs to improve efficiency and security. It is crucial to understand how to diagnose and monitor the performance of a MySQL instance in the long run.</p>
+
+<p>While using a MySQL instance in production, you will come across issues like <strong>slow queries, deadlocks, and aborted connections</strong>. <strong>Logging is essential to diagnosing these issues</strong>. A good understanding of your MySQL database logs will help you improve operations by reducing the mean time to recovery and the mean time between failures. Logs are also key to detecting and diagnosing <strong>security issues</strong> within your MySQL instance.</p>
+
+<h1 id="mysql의-로그">MySQL의 로그</h1>
+
+<p>There are six types of log files in MySQL: redo log(WAL), undo log, binlog, error log, slow query log, general log, relay log. Redo logs and undo logs are closely related to transaction operations. Binlogs are also related to transaction operations. These three types of logs are important for understanding transaction operations in MySQL.</p>
+
+<h1 id="mysql-모니터링을-위한-로그">MySQL 모니터링을 위한 로그</h1>
+
+<ul>
+  <li><a href="https://coralogix.com/blog/5-essential-mysql-database-logs-to-keep-an-eye-on/" target="_blank">Coralogix, 5 Essential MySQL Database Logs To Keep an Eye On</a></li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- General Query Log
+- Slow Query Log
+- Error Log
+- Binary Log
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; show variables;
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt;SET GLOBAL general_log = ‘ON’;
+mysql&gt;SET GLOBAL general_log_file = ‘path_on_your_system’;
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt;SET GLOBAL slow_query_log = ‘ON’;
+mysql&gt;SET GLOBAL slow_query_log_file = ‘path_on_your_system’;
+</code></pre></div></div>
+
+<h1 id="트랜잭션-처리를-위한-로그">트랜잭션 처리를 위한 로그</h1>
+
+<p>데이터베이스는 보통 트랜잭션 수행을 위해 로그를 사용한다. 보통 이러한 역할을 수행하는 로그를 트랜잭션 로그라고 하며 MySQL의 경우 Redo Log, Undo Log, Binary Log가 이에 해당한다. Undo Log는 트랜잭션의 Atomicity, Redo Log는 Durability를 제공해준다.</p>
+
+<p>MySQL은 디스크의 I/O으로 인한 성능 저하를 줄이기 위해 캐싱 메커니즘을 사용한다.</p>
+
+<p>데이터베이스를 수정하는 쿼리가 들어오면, InnoDB는 먼저 메모리에 데이터가 있는지 확인하고, 없으면 디스크에서 불러와 메모리에 올리고 데이터를 수정한다. 이렇게 메모리에서만 계속 읽고 쓰게되면 장애로 서버가 종료될 때 데이터가 날아가게 된다. 이 문제를 해결하기 위해 MySQL에서는 Redo Log를 사용한다. 더 자세한 내용은 밑에서 살펴볼 것이다. 또한 데이터 수정 쿼리가 들어올 때마다 메모리의 데이터를 바로 수정하지는 않고, 이 전 값을 Undo Log에 보관해두고 수정을 가함으로써, 트랜잭션이 실패할 경우 데이터를 롤백(Roll back)할 준비를 한다. 이 내용도 밑에서 더 자세히 살펴보자.</p>
+
+<p>(참고로 디스크에 있는 파일중 데이터를 저장하는 파일을 데이터 파일, 로그를 저장하를 파일을 로그 파일이라고 함)</p>
+
+<p>(메모리에 있는 버퍼중 데이터 페이지를 캐시해놓는 위치를 데이터 버퍼, 로그를 캐시해놓는 위치를 로그 버퍼라고 함)</p>
+
+<p>(InnoDB엔진이 데이터를 읽고 쓸 때는 해당하는 데이터와 인덱스를 메모리 버퍼 풀에 올려둔다.)</p>
+
+<p><strong>Memory Buffer pool</strong>: occupies the largest block of memory. The cache used to store various data includes index pages, data pages, undo pages, insert buffers, adaptive hash indexes, lock information stored in innodb, data dictionary information, etc. The working method always reads the database file into the buffer pool by page (16k per page), and then retains the cached data in the buffer pool according to the least recently used (lru) algorithm. If the database file needs to be modified, always modify the page in the buffer pool first (dirty page after the modification occurs), and then flush the dirty page of the buffer pool to the file at a certain frequency.</p>
+
+<h2 id="undo-log">Undo Log</h2>
+
+<p>Undo log is to achieve atomicity of transactions. Undo Log is also used to implement multi-version concurrency control (referred to as: MVCC).</p>
+
+<ul>
+  <li>Undo log는 트랜잭션의 Atomicity 특성을 지키기 위한 로그</li>
+  <li>Undo log는 MVCC(multi-version concurrency control)를 위해서도 사용</li>
+</ul>
+
+<p><strong>Internal mechanism of delete/update operation</strong></p>
+
+<p>When the transaction is not committed, InnoDB will not delete the undo log immediately, because the undo log may be used later. For example, when the isolation level is repeatable read, the transaction reads the latest committed row version when the transaction is started, as long as the transaction is not over, the row version cannot be deleted, that is, the undo log cannot be deleted.</p>
+
+<p>But when the transaction is committed, the undo log corresponding to the transaction will be put into the delete list, and will be deleted by purge in the future.</p>
+
+<p>The principle of Undo Log is very simple. In order to satisfy the atomicity of transactions, before operating any data, first back up the data to a place (this place where data backup is stored is called Undo Log). Then modify the data. If an error occurs or the user executes a ROLLBACK statement, the system can use the backup in Undo Log to restore the data to the state before the transaction started.</p>
+
+<p>Suppose there are two data, A and B, with values 1, 2 respectively. Perform a +2 transaction operation. A. The transaction begins.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Record A=1 to undo log. 
+- Modify A=3. 
+- Record B=2 to undo log. 
+- Modify B=4. 
+- Write undo log to disk. 
+- Write data to disk. 
+</code></pre></div></div>
+
+<p>The reason why atomicity and persistence can be guaranteed at the same time is because of the following characteristics:</p>
+
+<ul>
+  <li>Record Undo log before updating data.</li>
+  <li>In order to ensure durability, data must be written to disk before the transaction is committed. As long as the transaction is successfully submitted, the data must have been persisted.</li>
+  <li>Undo log must be persisted to disk before data. If the system crashes between transaction, the undo log is complete and can be used to roll back the transaction.</li>
+</ul>
+
+<h2 id="redo-log">Redo Log</h2>
+
+<p>Redo log is to save the executed SQL statement to a specified Log file. When mysql performs data recovery, you can re-execute the SQL operation recorded by the redo log. The introduction of the buffer pool will cause the updated data to not be persisted to the disk in real time. When the system crashes, although the data in the buffer pool is lost and the data is not persisted, the system can restore all data to the latest according to the content of the Redo Log status. The redo log exists as a separate file on the disk. There will be two files by default, named ib_logfile0 and ib_logfile1.</p>
+
+<p>The parameter innodb_log_file_size specifies the size of the redo log innodb_log_file_in_group specifies the number of the redo log, and the default is 2; innodb_log_group_home_dir specifies the path where the redo log is located.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>innodb_additional_mem_pool_size = 100M
+innodb_buffer_pool_size = 128M
+innodb_data_home_dir =/home/mysql/local/mysql/var
+innodb_data_file_path = ibdata1:1G: autoextend
+innodb_file_io_threads = 4
+innodb_thread_concurrency = 16
+innodb_flush_log_at_trx_commit = 1
+innodb_log_buffer_size = 8M
+innodb_log_file_size = 128M
+innodb_log_file_in_group = 2
+innodb_log_group_home_dir =/home/mysql/local/mysql/var
+</code></pre></div></div>
+
+<p>In order to satisfy the atomicity of the transaction, before operating any data, first back up the data to Undo Log, and then modify the data. If an error occurs or the user executes the ROLLBACK statement, the system can use the backup in Undo Log to restore the data to the state before the transaction started. Unlike redo log, there is no separate undo log file on the disk, it is stored in a special segment (segment) inside the database, which is called the undo segment, and the undo segment is located in the shared table space.</p>
+
+<p>The undo log and redo log itself are separate. Innodb’s undo log is recorded in the data file (ibd), and innodb regards the content of the undo log as data, so the operation of the undo log itself (such as inserting an undo record into the undo log, etc.) will record redo log. The undo log does not need to be persisted to disk immediately. Even if it is lost, it can be restored through redo log. So when inserting a record:</p>
+
+<ul>
+  <li>Insert an undo log record into the undo log.</li>
+  <li>Insert a redo log record of “insert undo log record” into the redo log.</li>
+  <li>Insert data.</li>
+  <li>Insert an “insert” redo log record into the redo log.</li>
+</ul>
+
+<p><strong>Redo log io performance</strong></p>
+
+<p>In order to ensure that Redo Log has better IO performance, InnoDB’s Redo Log is designed with the following features:</p>
+
+<p>Try to keep Redo Log stored in a continuous space. Therefore, the log file space is completely allocated when the system is first started. The Redo Log is recorded in sequential addition.<br />
+Write logs in batches. The log is not written directly to the file, but first written to the redo log buffer, and then the data in the buffer is written to the disk every second
+Concurrent transactions share the storage space of Redo Log, and their Redo Logs are recorded together alternately according to the execution order of statements to reduce the space occupied by the log.<br />
+Redo Log only performs sequential append operations. When a transaction needs to be rolled back, its Redo Log records will not be deleted from Redo Log.</p>
+
+<p>Contrary to Undo Log, Redo Log records a backup of new data. Before the transaction is committed, only the Redo Log needs to be persisted, and the data does not need to be persisted. When the system crashes, although the data is not persisted, Redo Log has persisted. The system can restore all data to the latest state according to the content of Redo Log.</p>
+
+<p><strong>Simplified process of Undo + Redo transaction</strong></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A. Transaction start. B. Record A=1 to undo log. 
+C. Modify A=3. 
+D. Record A=3 to redo log. 
+E. Record B=2 to undo log. 
+F. Modify B=4. 
+G . Record B=4 to redo log. 
+H. Write redo log to disk. 
+I. Transaction commit
+</code></pre></div></div>
+
+<p>The AG process is carried out in memory, and the corresponding operations are recorded in redo log buffer (B&amp;E), redo log buffer (E&amp;G), transaction execution results (not submitted at this time) are also stored in db buffer (C&amp;F), and the buffer is full If the number of transactions stored in the buffer is all 1, it means that the log is flushed to the disk immediately, and the data consistency is well guaranteed. If there are multiple storages, the redo log will be synchronized to the disk after a transaction is completed and there will be a status bit to record whether it is committed, then the transaction is actually committed, and the data in the db buffer will be synchronized to the disk of the DB. . To ensure that the contents of the db buffer are written to the disk database file, the contents of the log buffer should be written to the disk log file. This approach can reduce disk IO and increase throughput. However, this method is suitable for scenarios where consistency is not high. Because if there is a system failure such as a power failure, the completed transactions in the log buffer and db buffer have not been synchronized to the disk will be lost. For banks such as banks that require higher transaction consistency, it is necessary to ensure that each transaction is recorded to the disk. If the server is down, go to the redo log to recover and redo the committed transaction.</p>
+
+<p><strong>the role of redo &amp; undo log</strong></p>
+
+<ul>
+  <li>Data persistence
+    <ul>
+      <li>The buffer pool maintains a linked list in the order of dirty page modification, called flush_list. Flush data to persistent storage according to the order of pages in flush_list. The pages are arranged in the order of the earliest modification. Under normal circumstances, when is the dirty page flushed to the disk?<br />
+```</li>
+    </ul>
+  </li>
+  <li>When the redo space is full, part of the dirty page will be flushed to the disk, and then part of the redo log will be released.</li>
+  <li>When you need to allocate a page in the Buffer pool, but it is full, you must flush dirty pages to disk. Generally, this situation can be controlled by the startup parameter innodb_max_dirty_pages_pct. When the dirty page in the buffer pool reaches this ratio, the dirty page is flushed to the disk.</li>
+  <li>
+    <p>When the system is detected to be idle, it will flush.
+```</p>
+  </li>
+  <li>Data Recovery
+    <ul>
+      <li>Over time, Redo Log will become very large. If you start to recover from the first record every time, the recovery process will be very slow and cannot be tolerated. In order to reduce the recovery time, the Checkpoint mechanism is introduced. Suppose that at a certain point in time, all dirty pages have been flushed to disk. All Redo Logs before this time point do not need to be redone. The system records the end of the redo log at this point in time as the checkpoint. When restoring, just start from this checkpoint position. The log before the checkpoint point is no longer needed and can be deleted.</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://bourbonkk.tistory.com/86" target="_blank">해커의 개발일기, 데이터베이스의 무결성을 보장해주는 Write-Ahead-Log</a></li>
+  <li><a href="https://www.alibabacloud.com/blog/what-are-the-differences-and-functions-of-the-redo-log-undo-log-and-binlog-in-mysql_598035" target="_blank">alibabacloud, What are the Differences and Functions of the Redo Log, Undo Log, and Binlog in MySQL?</a></li>
+  <li><a href="https://coralogix.com/blog/5-essential-mysql-database-logs-to-keep-an-eye-on/" target="_blank">Coralogix, 5 Essential MySQL Database Logs To Keep an Eye On</a></li>
+  <li><a href="https://scaling.dev/replication/log" target="_blank">scaling.dev, Transaction Log. Commit Log. WAL.</a></li>
+  <li><a href="https://www.postgresql.org/docs/current/wal-intro.html" target="_blank">PostgreSQL 공식문서, Write-Ahead Logging (WAL)</a></li>
+  <li><a href="https://betterprogramming.pub/mysqls-redolog-and-binlog-1a35bc052489" target="_blank">Dwen, MySQL’s RedoLog and BinLog</a></li>
+  <li><a href="https://developpaper.com/you-must-understand-the-three-mysql-logs-binlog-redo-log-and-undo-log/" target="_blank">developPAPER, You must understand the three MySQL logs – binlog, redo log and undo log</a></li>
+  <li><a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-redo-log.html" target="_blank">MySQL 공식문서, 14.6.6 Redo Log</a></li>
+  <li><a href="https://blog.katastros.com/a?ID=01200-5fbbae7f-7eb9-4570-876c-23048d66fb82" target="_blank">Katastros, InnoDB transaction log (redo log and undo log) detailed</a></li>
+  <li><a href="https://github.com/heesuk-ahn/today-I-learned/blob/master/database/binary-log.md" target="_blank">heesuk-ahn, [데이터베이스] binary log 란?</a></li>
+  <li><a href="https://docs.oracle.com/cd/E17952_01/mysql-5.7-en/binary-log.html" target="_blank">The Binary Log</a></li>
+  <li><a href="https://jvns.ca/blog/2017/06/11/log-structured-storage/" target="_blank">Log-structured storage</a></li>
+</ul>
+:ET
