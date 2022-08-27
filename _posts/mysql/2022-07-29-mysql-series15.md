@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part15] MySQL의 로그'
+title:  'MySQL Series [Part15z] MySQL Optimizing SELECT Statements'
 description: 
 date:   2022-07-29 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
@@ -16,320 +16,172 @@ tags: MySQL
 {:toc}
 
 ---
+# Optimization Overview
 
-# Log의 중요성
+Database performance depends on several factors at the database level, such as tables, queries, and configuration settings. These software constructs result in CPU and I/O operations at the hardware level, which you must minimize and make as efficient as possible. 
 
-MySQL is open-source relational databases, and you should learn how to use MySQL database logs to improve efficiency and security. It is crucial to understand how to diagnose and monitor the performance of a MySQL instance in the long run.  
+# Things to Consider for Optimization
 
-While using a MySQL instance in production, you will come across issues like **slow queries, deadlocks, and aborted connections**. **Logging is essential to diagnosing these issues**. A good understanding of your MySQL database logs will help you improve operations by reducing the mean time to recovery and the mean time between failures. Logs are also key to detecting and diagnosing **security issues** within your MySQL instance.  
+- Are the tables structured properly? In particular, do the columns have the right data types, and does each table have the appropriate columns for the type of work? For example, applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns.
 
-# MySQL의 로그
+- Are the right indexes in place to make queries efficient?
 
-There are six types of log files in MySQL: redo log(WAL), undo log, binlog, error log, slow query log, general log, relay log. Redo logs and undo logs are closely related to transaction operations. Binlogs are also related to transaction operations. These three types of logs are important for understanding transaction operations in MySQL.  
+- Are you using the appropriate storage engine for each table, and taking advantage of the strengths and features of each storage engine you use? In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability.
 
-# MySQL 모니터링을 위한 로그
+- Does each table use an appropriate row format? This choice also depends on the storage engine used for the table. In particular, compressed tables use less disk space and so require less disk I/O to read and write the data. Compression is available for all kinds of workloads with InnoDB tables, and for read-only MyISAM tables.
 
-While using a MySQL instance in production, you will come across issues like **slow queries, deadlocks, and aborted connections**. **Logging is essential to diagnosing these issues**. A good understanding of your MySQL database logs will help you improve operations by reducing the mean time to recovery and the mean time between failures.  
+- Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code.
 
-Logs are also key to detecting and diagnosing security issues within your MySQL instance. In the event of a compromise, logs track the details of an attack and the actions taken by the attackers. This information provides context to your data and helps you take remedial action.  
+- Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.
 
+## SELECT
 
+- Avoid using *
+- Avoid using DISTINCT -> 중복 데이터 제거를 위해 테이블 풀 스캔 해야함
+
+## WHERE
+
+- Use Indexes Where Appropriate
+- Avoid % Wildcard in a Predicate
+- Avoid using a function in the predicate of a query
+- BETWEEN, IN, <, >
+
+## GROUP BY
+- GROUP BY 작업은 크게 인덱스를 사용하는 경우와 사용할 수 없는 경우(임시 테이블을 사용)
+- 인덱스를 사용할 수 없는 경우, 전체 테이블을 스캔하여 각 그룹의 모든 행이 연속되는 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것
+  - 이렇게 인덱스를 사용할 수 없을 때 할 수 있는 최선의 방법은 WHERE절을 이용해 GROUP BY 하기 전에 데이터량을 줄이는 것
+- 인덱스를 잘 설정한다면 임시 테이블을 생성하지 않고 빠르게 데이터를 가져올 수 있다
+  - 인덱스를 최대로 활용하기 위해서는 GROUP BY 컬럼과, 인덱스되어 있는 컬럼간의 순서가 중요함
+  - SELECT절에 사용되는 집계함수의 경우 MIN(), MAX()는 인덱스의 성능을 최대로 활용할 수 있도록 함
+
+- 참고로 MySQL 8.0부터는 GROUP BY를 한다고 해서 암묵적으로 정렬이 이루어지지 않음 -> 정렬 필요하면 명시적으로 ORDER BY 써야함
+
+- 루스 인덱스 스캔을 사용할 수 있는 경우
+  - 루스 인덱스 스캔은 레코드를 건너뛰면서 필요한 부분만 가져오는 스캔 방식
+  - EXPLAIN을 통헤 실행 계획을 확인해보면 Extra 컬럼에 'Using index for group-by' 라고 표기됨
+  - MIN(), MAX() 이외의 함수가 SELECT 절에 사용되면 루스 인덱스 스캔을 사용할 수 없음
+  - 인덱스가 (col1 col2, col3) 일 때 , GROUP BY col1, col2 과 같아야 함 (GROUP BY col2, col3은 안됨)
+  - SELECT 절과 GROUP BY 절의 컬럼이 일치해야 함. SELECT col1, col2, MAX(col3) GROUP BY col1, col2 과 같아야 함
+- 타이트 인덱스 스캔을 사용하는 경우
+  - SELECT 절과 GROUP BY 절의 컬럼이 일치하지 않지만, 조건절을 이용해 범위 스캔이 가능한 경우
+    - SELECT c1, c2, c3 FROM t1 WHERE c2 = 'a' GROUP BY c1, c3; 
+    - SELECT c1, c2, c3 FROM t1 WHERE c1 = 'a' GROUP BY c2, c3;
+
+## JOIN
+
+- INNER joins, order doesn't matter
+- OUTER joins, the order matters
+- 여러 조인을 포함하는 LOOP JOIN 에서는 드라이빙 테이블(Driving Table)이 행들을 최소한으로 리턴하도록 해야됨
+- JOIN 되는 컬럼의 한쪽에만 INDEX가 있는 경우는 INDEX가 지정된 TABLE이 DRIVING TABLE이 된다
+- JOIN 시 자주 사용하는 칼럼은 인덱스로 등록한다
+
+인덱스 레인지 스캔은 인덱스를 탐색(Index Seek)하는 단계와 인덱스를 스캔(Index Scan)하는 과정으로 구분해 볼 수 있다. 일반적으로 인덱스를 이용해서 쿼리하는 작업에서는 가져오는 레코드의 건수가 소량(전체 데이터 크기의 20% 이내)이기 때문에 인덱스 스캔 작업은 부하가 작고, 특정 인덱스 키를 찾는 인덱스 탐색 작업이 부하가 높은 편이다.  
+
+JOIN 작업에서 드라이빙 테이블을 읽을 때는 인덱스 탐색 작업을 단 한 번만 수행하고, 그 이후부터는 스캔만 실행하면 된다.  
+
+하지만 드리븐 테이블에서는 인덱스 탐색 작업과 스캔 작업을 드라이빙 테이블에서 읽은 레코드 건수만큼 반복한다.  
+
+드라이빙 테이블과 드리븐 테이블이 1:1 조인되더라도 **드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지**한다.  
+
+그래서 옵티마이저는 항상 드라이빙 테이블이 아니라 드리븐 테이블을 최적으로 읽을 수 있게 실행 계획을 수립한다.  
+
+```SQL
+SELECT *
+FROM employees e, dept_emp de
+WHERE e.emp_no=de.emp_no
 ```
-- General Query Log
-- Slow Query Log
-- Error Log
-- Binary Log
-```
+여기서 각 테이블의 emp_no 컬럼에 인덱스가 있을 때와 없을 때 조인 순서가 어떻게 달라지는 한 번 살펴보자.  
 
-```
-mysql> show variables;
-```
+- 두 컬럼 모두 인덱스가 있는 경우
+  - 어느 테이블을 드라이빙으로 선택하든 인덱스를 이용해 드리븐 테이블의 검색 작업을 빠르게 처리할 수 있다
+  - 보통의 경우 어느 쪽 테이블이 드라이빙 테이블이 되든 옵티마이저가 선택하는 방법이 최적일 때가 많다
+- employees 테이블에만 인덱스가 있는경우
+  - 이 때는 employees 테이블을 드리븐 테이블로 선택한다
+  - 드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지하기 때문에 드리븐 테이블에서 인덱스를 활용하는 것이 중요한다
 
-```sh
-# Enable Logging on MySQL
-mysql>SET GLOBAL general_log = ‘ON’;
 
-# Log가 저장되는 파일 경로
-mysql>SET GLOBAL general_log_file = ‘path_on_your_system’;
-```
+INNER JOIN은 조인 대상 테이블 모두에 해당하는 레코드만 반환한다. 이같은 특성 때문에 OUTER JOIN으로만 조인을 실행하는 쿼리들도 자주 보인다. 하지만 대개의 경우 OUTER JOIN은 대상 테이블들의 데이터가 일관되지 않은 경우에만 필요하다.  
 
-```sh
-# Enable Logging on MySQL
-mysql>SET GLOBAL slow_query_log = ‘ON’;
+MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN B에서 B)을 드라이빙 테이블로 선택하지 못하기 때문에 무조건 앞에 등장하는 테이블을 드라이빙 테이블로 선택한다. 그 결과 인덱스 유무에 따라 조인 순서를 변경함으로써 얻게 되는 최적화의 이점을 얻지 못하기 때문에 쿼리 성능이 나빠질 수 있다. 그래서 꼭 필요한 경우가 아니라면 INNER JOIN을 사용하는 것이 쿼리의 성능에 도움이 된다.  
 
-# Log가 저장되는 파일 경로
-mysql>SET GLOBAL slow_query_log_file = ‘path_on_your_system’;
-```
+ JOIN의 순서  
 
-## General Query Log
+ - INNER JOIN인 경우
+   - 어차피 A and B and C 이기 때문에 A JOIN B JOIN C이든 B JOIN A JOIN C이든 같다.
+ - LEFT JOIN의 경우 결과도 성능도 달라진다. 
+   - 일단 가장 먼저 등장하는 테이블이 드라이빙 테이블이 된다 -> 이 말은 뒤에 따라오는 테이블은 드리븐 테이블이 된다는 말이다 -> 드리븐 테이블은 인덱스가 없으면 성능이 떨어진다 -> 뒤에 조인되는 테이블의 인덱스 유무에 따라 쿼리 성능이 달라진다
+   - 결과 자체도 맨 앞에 등장하는 테이블의 모든 레코드가 기준이 되기 때문에 순서에 따라 달라진다
+ - INNER JOIN과 OUTER JOIN이 결합되는 경우
+   - 가능하다면 INNER JOIN이 앞에 오도록 하는 것이 좋다
 
-As the name implies, the general query log is a general record of what MySQL is doing. Information is written to this log when clients connect or disconnect to the server. The server also logs each SQL statement it receives from clients. If you suspect an error in a client, you can know exactly what the client sent to the MySQL instance by looking at the general query log.  
 
-You should be aware that MySQL writes statements to the general query log in the order in which it receives them. The order might differ from the order in which the queries are executed because, unlike other log formats, the query is written to this log file before MySQL even attempts to execute the query. MySQL database logs are therefore perfect for debugging MySQL crashes.  
+## Subquery
 
-Since the general query log is a record of every query received by the server, it can grow large quite quickly. If you only want a record of queries that change data, it might be better to use the binary log instead (more on that later).  
+- Avoid correlated sub queries as it searches row by row, impacting the speed of SQL query processing
+- JOIN으로 해결되면 서브쿼리 대신 JOIN을 사용하자
+- 서브쿼리 안에 where절과 group by를 통해 불러오는 데이터양을 감소시킬 수 있습니다
+- 서브쿼리는 인덱스 또는 제약 정보를 가지지 않기 때문에 최적화되지 못한다
+- 윈도우 함수를 고려해보자
 
-## Slow Query Log
 
-As applications scale in size, queries that were once extremely fast can become quite slow. When you’re debugging a MySQL instance for performance issues, the slow query log is a good starting place to see which queries are the slowest and how often they are slow.  
+## Temporary Table
 
-The slow query log is the MySQL database log queries that exceed a given threshold of execution time. By default, all queries taking longer than 10 seconds are logged.   
+- Use a temporary table to handle bulk data
+- Temporary table vs Using index access
 
-**Configuration options**  
-You can change the threshold query execution time by setting the value of the `long_query_time` system variable. It uses a unit of seconds, with an optional milliseconds component.
+## ORDER BY
 
-```sql
-SET GLOBAL long_query_time = 5.0;
-```
-To verify if the slow query log is working properly, you can execute the following query with a time greater than the value of the `long_query_time`.  
+- 대부분의 SELECT 쿼리에서 정렬은 필수적
+- 정렬을 처리하는 방법은 **인덱스를 이용하는 방법**과 **Filesort**라는 별도의 처리를 이용하는 방법
 
-```sql
-SELECT SLEEP(7);
-```
+|방법|장점|단점|
+|인덱스 이용|SELECT 문을 실행할 때 이미 인덱스가 정렬돼 있어 순서대로 읽기만 하면 되므로 매우 빠르다|INSERT, UPDATE, DELETE 작업시 부가적인 인덱스 추가/삭제 작업이 필요하므로 느리다|
+|Filesort 이용|인덱스 이용과 반대로 INSERT, UPDATE, DELETE 작업이 빠르다|정렬 작업이 쿼리 실행 시 처리되어 쿼리의 응답 속도가 느려진다|
 
-Queries not using indexes are often good candidates for optimization. The `log_queries_not_using_indexes` system variable can be switched on to make MySQL log all queries that do not use an index to limit the number of rows scanned. In this case, logging occurs regardless of execution time of the query.   
+**Filesort를 사용해야 하는 경우**  
 
-```sql
-SHOW variables LIKE 'slow%';
+- 정렬 기준이 너무 많아서 모든 인덱스를 생성하는 것이 불가능한 경우
+- 어떤 처리의 결과를 정렬해야 하는 경우
+- 랜덤하게 결과 레코드를 가져와야 하는 경우
 
-# 슬로우 로그 조회하기
-SELECT * FROM mysql.slow_log;
-# 또는
-SELECT start_time, user_host, query_time, lock_time, rows_sent, rows_examined, db, CONVERT(sql_text USING utf8 ) sql_text
-FROM mysql.slow_log;
-```
+**소트 버퍼**  
 
-## Error Log
+- MySQL은 정렬을 수행하기 위해 별도의 메모리 공간을 할당받아서 사용하는데 이 메모리 공간을 소트 버퍼라고 한다
+- 정렬해야 할 레코드의 건수가 소트 버퍼의 크기보다 크다면 어떻게 해야 할까?
+  - 정렬해야 할 레코드를 여러 조각으로 나눠서 처리하게 됨. 이 과정에서 임시 저장을 위해 디스크를 사용
+  - 일부를 처리하고 디스크에 저장하기를 반복 수행함
 
-MySQL uses the error log to record diagnostic messages, warnings, and notes that occur during server startup and shutdown, and while the server is running. The error log also records MySQL startup and shutdown times.  
+**정렬 알고리즘**  
 
-Error logging is always enabled. On Linux, if the destination is not specified, the server writes the error log to the console and sets the log_error system variable to stderr. On Windows, by default, the server writes the error log to the host_name.err file in the data directory. You can customize the path and file name of the error log by setting the value of the log_error system variable.  
+- 정렬 대상 컬럼과 프라이머리 키만 가져와서 정렬하는 방식
+  - 정렬 대상 컬럼과 프라이머리 키 값만 소트 버퍼에 담아 정렬을 수행
+  - 그리고 다시 정렬 순서대로 프라이머리 키로 테이블을 읽어서 SELECT할 컬럼을 가져옴
+  - 가져오는 컬럼이 두 개 뿐이라 소트 버퍼에 많은 레코드를 한 번에 읽어올 수 있음
+  - 단점은 테이블을 두 번 읽어야 함
+- 정렬 대상 컬럼과 SELECT문으로 요청한 컬럼을 모두 가져와서 정렬하는 방식
+  - 최신 버전의 MySQL에서 일반적으로 사용하는 방식
+  - SELECT 문에서 요청한 컬럼의 개수가 많아지면 계속 분할해서 소트 버퍼에 읽어와야함
+  - 레코드의 크기나 건수가 작은 경우 성능이 좋음
 
-**Commonly logged errors**
+### 정렬 처리 방법
 
-- Permission errors
-- Configuration errors
-- Out of memory errors
-- Errors with initiation or shutdown of plugins and InnoDB
+- 인덱스를 사용한 정렬
+  - 인덱스를 이용해 정렬을 하기 위해서는 반드시 ORDER BY의 순서대로 생성된 인덱스가 있어야 함
+  - 인덱스를 이용해 정렬이 가능한 이유는 B-Tree 인덱스가 키 값으로 정렬되어 있기 때문
 
-## Binary Log
-
-The binary log is used by MySQL to record events that change the data within the tables or change the table schema itself. For example, binary logs record `INSERT`, `DELETE` and `UPDATE` statements but not `SELECT` or `SHOW` statements that do not modify data. Binary logs also contain information about how long each statement took to execute.  
-
-The logging order of a binary login is in contrast with that of the general query log. Events are logged only after the transaction is committed by the server.  
-
-MySQL writes binary log files in binary format. To read their contents in text format, you need to use the mysqlbinlog utility. For example, you can use the code below to convert the contents of the binary log file named binlog.000001 to text.  
-
-```
-mysql> mysqlbinlog binlog.0000001
-```
-
-MySQL database logs offer three formats for binary logging.  
-
-- Statement-based logging: In this format, MySQL records the SQL statements that produce data changes. Statement-based logging is useful when many rows are affected by an event because it is more efficient to log a few statements than many rows.
-- Row-based logging: In this format, changes to individual rows are recorded instead of the SQL statements. This is useful for queries that require a lot of execution time on the source but result in just a few rows being modified.
-- Mixed logging: This is the recommended logging format. It uses statement-based logging by default but switches to row-based logging when required.
-
-
-The binary logging format can be changed using the code below. However, you should note that it is not recommended to do so at runtime or while replication is ongoing.  
-
-```sql
-SET GLOBAL binlog_format = 'STATEMENT';
-SET GLOBAL binlog_format = 'ROW';
-SET GLOBAL binlog_format = 'MIXED';
-```
-
-Enabling binary logging on your MySQL instance will lower the performance slightly. However, the advantages discussed above generally outweigh this minor dip in performance.  
-
-# 트랜잭션 처리를 위한 로그
-
-데이터베이스는 보통 트랜잭션 수행을 위해 로그를 사용한다. 보통 이러한 역할을 수행하는 로그를 트랜잭션 로그라고 하며 MySQL의 경우 Redo Log, Undo Log, Binary Log가 이에 해당한다. Undo Log는 트랜잭션의 Atomicity, Redo Log는 Durability를 제공해준다.  
-
-MySQL은 디스크의 I/O으로 인한 성능 저하를 줄이기 위해 캐싱 메커니즘을 사용한다. 
-
-데이터베이스를 수정하는 쿼리가 들어오면, InnoDB는 먼저 메모리에 데이터가 있는지 확인하고, 없으면 디스크에서 불러와 메모리에 올리고 데이터를 수정한다. 이렇게 메모리에서만 계속 읽고 쓰게되면 장애로 서버가 종료될 때 데이터가 날아가게 된다. 이 문제를 해결하기 위해 MySQL에서는 Redo Log를 사용한다. 더 자세한 내용은 밑에서 살펴볼 것이다. 또한 데이터 수정 쿼리가 들어올 때마다 메모리의 데이터를 바로 수정하지는 않고, 이 전 값을 Undo Log에 보관해두고 수정을 가함으로써, 트랜잭션이 실패할 경우 데이터를 롤백(Roll back)할 준비를 한다. 이 내용도 밑에서 더 자세히 살펴보자.  
-
-(참고로 디스크에 있는 파일중 데이터를 저장하는 파일을 데이터 파일, 로그를 저장하를 파일을 로그 파일이라고 함)  
-
-(메모리에 있는 버퍼중 데이터 페이지를 캐시해놓는 위치를 데이터 버퍼, 로그를 캐시해놓는 위치를 로그 버퍼라고 함)
-
-(InnoDB엔진이 데이터를 읽고 쓸 때는 해당하는 데이터와 인덱스를 메모리 버퍼 풀에 올려둔다.)  
-
-**Memory Buffer pool**: occupies the largest block of memory. The cache used to store various data includes index pages, data pages, undo pages, insert buffers, adaptive hash indexes, lock information stored in innodb, data dictionary information, etc. The working method always reads the database file into the buffer pool by page (16k per page), and then retains the cached data in the buffer pool according to the least recently used (lru) algorithm. If the database file needs to be modified, always modify the page in the buffer pool first (dirty page after the modification occurs), and then flush the dirty page of the buffer pool to the file at a certain frequency.  
-
-## Undo Log
-
-Undo log is to achieve atomicity of transactions. Undo Log is also used to implement multi-version concurrency control (referred to as: MVCC).  
-
-- Undo log는 트랜잭션의 Atomicity 특성을 지키기 위한 로그
-- Undo log는 MVCC(multi-version concurrency control)를 위해서도 사용
-
-**Internal mechanism of delete/update operation**
-
-When the transaction is not committed, InnoDB will not delete the undo log immediately, because the undo log may be used later. For example, when the isolation level is repeatable read, the transaction reads the latest committed row version when the transaction is started, as long as the transaction is not over, the row version cannot be deleted, that is, the undo log cannot be deleted.  
-
-But when the transaction is committed, the undo log corresponding to the transaction will be put into the delete list, and will be deleted by purge in the future.  
-
-The principle of Undo Log is very simple. In order to satisfy the atomicity of transactions, before operating any data, first back up the data to a place (this place where data backup is stored is called Undo Log). Then modify the data. If an error occurs or the user executes a ROLLBACK statement, the system can use the backup in Undo Log to restore the data to the state before the transaction started.  
-
-Suppose there are two data, A and B, with values 1, 2 respectively. Perform a +2 transaction operation. A. The transaction begins.   
-
-```
-- Record A=1 to undo log. 
-- Modify A=3. 
-- Record B=2 to undo log. 
-- Modify B=4. 
-- Write undo log to disk. 
-- Write data to disk. 
-```
-
-
-The reason why atomicity and persistence can be guaranteed at the same time is because of the following characteristics:  
-
-- Record Undo log before updating data. 
-- In order to ensure durability, data must be written to disk before the transaction is committed. As long as the transaction is successfully submitted, the data must have been persisted. 
-- Undo log must be persisted to disk before data. If the system crashes between transaction, the undo log is complete and can be used to roll back the transaction. 
-
-
-## Redo Log
-
-데이터 작업은 최대한 메모리 위에 있는 페이지에서 하고, 디스크로 flush하는 작업은 DB의 리소스가 여유로울 때 하는 것이 좋다. 그래서 메모리 버퍼 풀을 이용하는 것이다. 근데 그러면 장애 발생으로 서버가 종료될 때 문제가 된다.  
-
-그래서 복구가 가능하도록 하기 위해 등장한 것이 Redo log이고, 중간중간 Redo log만 Log buffer에서 Log file로 flush함으로써 문제를 해결할 수 있다.  
-
-여기서 드는 생각은 "성능 저하의 주요 요인이 디스크로 flush하는 작업이었는데, Redo log를 디스크로 flush하면 결국 달라지는 게 없지 않는가?"라는 점이다.  
-
-하지만 디스크 작업에도 비교적 빠른 작업이 있고, 느린 작업이 있다. 빠른 작업은 디스크의 내용을 순차적으로 읽는 Sequential Access, 느린 작업은 디스크의 블럭을 자주 옮겨 다녀야 하는 Random Access이다.  
-
-다시 Redo log로 돌아와보면, Redo log는 디스크의 Log file에 단순히 SQL statement를 append하는 형식이다. 그래서 이 작업은 Sequential Access에 해당한다. 하지만 데이터를 디스크로 flush하는 작업은 디스크 내의 데이터 위치를 찾아야 하기 때문에 Random Access가 발생한다. 이것이 바로 Redo log를 사용하는 것이 더 빠른 이유다.  
-
-![](/images/mysql_47.png)
-
-Redo log is to save the executed SQL statement to a specified Log file. When mysql performs data recovery, you can re-execute the SQL operation recorded by the redo log. The introduction of the buffer pool will cause the updated data to not be persisted to the disk in real time. When the system crashes, although the data in the buffer pool is lost and the data is not persisted, the system can restore all data to the latest according to the content of the Redo Log status. The redo log exists as a separate file on the disk. There will be two files by default, named ib_logfile0 and ib_logfile1.  
-
-The parameter innodb_log_file_size specifies the size of the redo log innodb_log_file_in_group specifies the number of the redo log, and the default is 2; innodb_log_group_home_dir specifies the path where the redo log is located.  
-
-```
-innodb_additional_mem_pool_size = 100M
-innodb_buffer_pool_size = 128M
-innodb_data_home_dir =/home/mysql/local/mysql/var
-innodb_data_file_path = ibdata1:1G: autoextend
-innodb_file_io_threads = 4
-innodb_thread_concurrency = 16
-innodb_flush_log_at_trx_commit = 1
-innodb_log_buffer_size = 8M
-innodb_log_file_size = 128M
-innodb_log_file_in_group = 2
-innodb_log_group_home_dir =/home/mysql/local/mysql/var
-```
-
-In order to satisfy the atomicity of the transaction, before operating any data, first back up the data to Undo Log, and then modify the data. If an error occurs or the user executes the ROLLBACK statement, the system can use the backup in Undo Log to restore the data to the state before the transaction started. Unlike redo log, there is no separate undo log file on the disk, it is stored in a special segment (segment) inside the database, which is called the undo segment, and the undo segment is located in the shared table space.    
-
-The undo log and redo log itself are separate. Innodb's undo log is recorded in the data file (ibd), and innodb regards the content of the undo log as data, so the operation of the undo log itself (such as inserting an undo record into the undo log, etc.) will record redo log. The undo log does not need to be persisted to disk immediately. Even if it is lost, it can be restored through redo log. So when inserting a record:  
-
-- Insert an undo log record into the undo log.
-- Insert a redo log record of "insert undo log record" into the redo log.
-- Insert data.
-- Insert an "insert" redo log record into the redo log.
-
-**Redo log io performance**  
-
-In order to ensure that Redo Log has better IO performance, InnoDB's Redo Log is designed with the following features:  
-
-Try to keep Redo Log stored in a continuous space. Therefore, the log file space is completely allocated when the system is first started. The Redo Log is recorded in sequential addition.  
-Write logs in batches. The log is not written directly to the file, but first written to the redo log buffer, and then the data in the buffer is written to the disk every second
-Concurrent transactions share the storage space of Redo Log, and their Redo Logs are recorded together alternately according to the execution order of statements to reduce the space occupied by the log.  
-Redo Log only performs sequential append operations. When a transaction needs to be rolled back, its Redo Log records will not be deleted from Redo Log.  
-
-Contrary to Undo Log, Redo Log records a backup of new data. Before the transaction is committed, only the Redo Log needs to be persisted, and the data does not need to be persisted. When the system crashes, although the data is not persisted, Redo Log has persisted. The system can restore all data to the latest state according to the content of Redo Log.  
-
-**Simplified process of Undo + Redo transaction**  
-
-```
-A. Transaction start. B. Record A=1 to undo log. 
-C. Modify A=3. 
-D. Record A=3 to redo log. 
-E. Record B=2 to undo log. 
-F. Modify B=4. 
-G . Record B=4 to redo log. 
-H. Write redo log to disk. 
-I. Transaction commit
-```
-
-The AG process is carried out in memory, and the corresponding operations are recorded in redo log buffer (B&E), redo log buffer (E&G), transaction execution results (not submitted at this time) are also stored in db buffer (C&F), and the buffer is full If the number of transactions stored in the buffer is all 1, it means that the log is flushed to the disk immediately, and the data consistency is well guaranteed. If there are multiple storages, the redo log will be synchronized to the disk after a transaction is completed and there will be a status bit to record whether it is committed, then the transaction is actually committed, and the data in the db buffer will be synchronized to the disk of the DB. . To ensure that the contents of the db buffer are written to the disk database file, the contents of the log buffer should be written to the disk log file. This approach can reduce disk IO and increase throughput. However, this method is suitable for scenarios where consistency is not high. Because if there is a system failure such as a power failure, the completed transactions in the log buffer and db buffer have not been synchronized to the disk will be lost. For banks such as banks that require higher transaction consistency, it is necessary to ensure that each transaction is recorded to the disk. If the server is down, go to the redo log to recover and redo the committed transaction.  
-
-**the role of redo & undo log**  
-
-- Data persistence
-    - The buffer pool maintains a linked list in the order of dirty page modification, called flush_list. Flush data to persistent storage according to the order of pages in flush_list. The pages are arranged in the order of the earliest modification. Under normal circumstances, when is the dirty page flushed to the disk?  
-      - When the redo space is full, part of the dirty page will be flushed to the disk, and then part of the redo log will be released.
-      - When you need to allocate a page in the Buffer pool, but it is full, you must flush dirty pages to disk. Generally, this situation can be controlled by the startup parameter innodb_max_dirty_pages_pct. When the dirty page in the buffer pool reaches this ratio, the dirty page is flushed to the disk.
-      - When the system is detected to be idle, it will flush.
-
-- Data Recovery
-  - Over time, Redo Log will become very large. If you start to recover from the first record every time, the recovery process will be very slow and cannot be tolerated. In order to reduce the recovery time, the Checkpoint mechanism is introduced. Suppose that at a certain point in time, all dirty pages have been flushed to disk. All Redo Logs before this time point do not need to be redone. The system records the end of the redo log at this point in time as the checkpoint. When restoring, just start from this checkpoint position. The log before the checkpoint point is no longer needed and can be deleted.
-
-## Binary Log
-
-The redo log is specific to the InnoDB engine and keeps data safe, but how do other engines log data?  
-
-At the Server level, MySQL has its own log, that is bin-log (an archived log). You must look at MySQL in isolation. MySQL = Server + different data storage engines, not as a whole.  
-
-Binlog records a binary log of all changes to the MySQL database table structure and table data, but not the select and show queries. bin-loglogs are logged as events and include the time consumed by the statements.  
-
-The two most important scenarios for turning on Binlog logging are as follows:  
-
-- Parent-Child replication: enable the Binlog function in the primary library, so that the primary library can pass Binlog to the secondary library, and the secondary library can get Binlog and achieve data recovery to achieve primary-secondary data consistency.
-- Data recovery: recover data through tools such as mysqlbinlog.
-Bin-log files are logged in three modes: statement, rowand mixed, with row mode usually being used.  
-
-**The difference between bin log and redo log.**  
-
-- The content is different: redo log is a physical log and the content is based on the Page on disk, bin-log content is binary and depending on the binlog_format parameter, may be based on SQL statements, on the data itself, or a mixture of the two.
-- Different levels: redo log works with InnoDB and the engine, bin-log is located at the MySQL Server level and is available to all engines.
-- Different forms of disk storage: redo log writes cyclically, bin-log accumulates, so it can be used for data recovery or primary-secondary synchronization
-- The timing of writing is different: bin-logare written when a transaction usually commits or when N transactions commit once, redo log are written at a variety of times, either every time a transaction commits, by another threaded transaction, or every second when the disk is flushed. (Note: uncommitted transactions in redo log may also be flushed to disk)
-- Different roles: redo log is used for crash recovery to ensure that MySQL downtime does not affect persistence; bin-log is used for point-in-time recovery to ensure that the server can recover data based on the point in time, in addition bin-log is also used for primary-secondary replication.
-
-**Two-phase Commit**  
-Because redo-logis in the InnoDB tier and bin-logis in the Server tier, this introduces a new problem.  
-
-If the redo log is written successfully and the bin-log crashes before it is written to disk, the transaction has not yet been committed, so the new data written to the redo-log is invalid.  
-
-Restarting the database for data recovery restores the data in the redo-log to disk, which creates invalid data.  
-
-In this case, as you wisely know, a two-phase commit is introduced.  
-
-In the first stage, the redo-log is written and in the prepared state. After the Server layer saves the bin-log data and drops it to disk, the transaction commits the redo-log at the same time, so that the redo-log becomes committed, which ensures the consistency of the redo-log data and the bin-log data.  
-
-**The Execution of an Update Statement**  
-
-With the previous knowledge, you can now explore how the update statement is executed in MySQL.  
-
-Suppose we now execute the SQL : update table_test set a = a+1 where id = 2;  
-
-- First, the client connects via the connector and determines the permissions.
-- After verification, the SQL goes through the parser for lexical and syntax analysis (AST) and if it is an Update statement, MySQL will clear all the query cache for the query table table_test. (As you can see, it is not recommended to turn on the query cache)
-- The optimizer optimizes the validated SQL, plans to match the id index, and generates an execution plan.
-- The executor gets the final SQL and calls the interface of the corresponding storage engine to start executing the update SQL.
-- The InnoDB engine opens a transaction, the execution engine first queries from memory whether there is data with id=2, if it matches then the corresponding data with field+1, and then saves it to memory. If it does not query the data with id=2 then it will go to the disk, the query will read the data into memory in pages, then update it and save it to memory.
-- The InnoDB engine will then save the data rows to redo-log, which is pre-committed, notifying the Server’s executor that it is ready to commit the transaction.
-- The executor will generate the corresponding bin-log and write it to disk.
-- The transaction is committed and the redo-log is then committed.
-- This is where the execution of a transaction is complete.
+- Filesort를 사용한 정렬
+  - 인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함
 
 # 참고
-- [해커의 개발일기, 데이터베이스의 무결성을 보장해주는 Write-Ahead-Log](https://bourbonkk.tistory.com/86){:target="_blank"}
-- [alibabacloud, What are the Differences and Functions of the Redo Log, Undo Log, and Binlog in MySQL?](https://www.alibabacloud.com/blog/what-are-the-differences-and-functions-of-the-redo-log-undo-log-and-binlog-in-mysql_598035){:target="_blank"}
-- [Coralogix, 5 Essential MySQL Database Logs To Keep an Eye On](https://coralogix.com/blog/5-essential-mysql-database-logs-to-keep-an-eye-on/){:target="_blank"}
-- [scaling.dev, Transaction Log. Commit Log. WAL.](https://scaling.dev/replication/log){:target="_blank"}
-- [PostgreSQL 공식문서, Write-Ahead Logging (WAL)](https://www.postgresql.org/docs/current/wal-intro.html){:target="_blank"}
-- [Dwen, MySQL’s RedoLog and BinLog](https://betterprogramming.pub/mysqls-redolog-and-binlog-1a35bc052489){:target="_blank"}
-- [developPAPER, You must understand the three MySQL logs – binlog, redo log and undo log](https://developpaper.com/you-must-understand-the-three-mysql-logs-binlog-redo-log-and-undo-log/){:target="_blank"}
-- [MySQL 공식문서, 14.6.6 Redo Log](https://dev.mysql.com/doc/refman/5.7/en/innodb-redo-log.html){:target="_blank"}
-- [Katastros, InnoDB transaction log (redo log and undo log) detailed](https://blog.katastros.com/a?ID=01200-5fbbae7f-7eb9-4570-876c-23048d66fb82){:target="_blank"}
-- [heesuk-ahn, [데이터베이스] binary log 란?](https://github.com/heesuk-ahn/today-I-learned/blob/master/database/binary-log.md){:target="_blank"}
-- [The Binary Log](https://docs.oracle.com/cd/E17952_01/mysql-5.7-en/binary-log.html){:target="_blank"}
-- [Log-structured storage](https://jvns.ca/blog/2017/06/11/log-structured-storage/){:target="_blank"}
-- [ghyeong, 슬로우 쿼리(Slow Query) 조회 쿼리(Oracle, MS-SQL, Mysql, postgreSQL)](https://dreamcoding.tistory.com/62){:target="_blank"}
-- [MySQL 공식문서, The Slow Query Log](https://dev.mysql.com/doc/refman/8.0/en/slow-query-log.html){:target="_blank"}
+
+- [MySQL 공식문서: Optimizing SELECT Statements](https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html){:target="_blank"}  
+- [MySQL Performance Tuning and Optimization Tips](https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization){:target="_blank"}  
+- [ETL 성능 향상을 위한 몇 가지 팁들](https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html){:target="_blank"}  
+- [전지적 송윤섭시점 TIL, GROUP BY 최적화](https://til.songyunseop.com/mysql/group-by-optimization.html){:target="_blank"}  
+- [SQL 성능을 위한 25가지 규칙](https://otsteam.tistory.com/136){:target="_blank"}  
+- [패스트캠퍼스 SQL튜닝캠프 4일차 - 조인의 기본 원리와 활용](https://jojoldu.tistory.com/173?category=761883){:target="_blank"} 
+- [취미는 공부 특기는 기록, Nested Loop Join, Driving Table](https://brightestbulb.tistory.com/147){:target="_blank"} 
+- [stackoverflow, Does the join order matter in SQL?](https://stackoverflow.com/questions/9614922/does-the-join-order-matter-in-sql){:target="_blank"} 
+- [코딩팩토리, [DB] 데이터베이스 NESTED LOOPS JOIN (중첩 루프 조인)에 대하여](https://coding-factory.tistory.com/756){:target="_blank"} 
+- [고동의 데이터 분석, [SQL] "성능 관점"에서 보는 결합(Join)](https://schatz37.tistory.com/2){:target="_blank"} 
+- [고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)](https://schatz37.tistory.com/3?category=878798){:target="_blank"} 

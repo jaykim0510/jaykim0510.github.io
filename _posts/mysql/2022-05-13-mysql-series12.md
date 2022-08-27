@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part11] MySQL 서버 설치, 설정, 사용자 및 권한 관리'
+title:  'MySQL Series [Part12] MySQL 서버 설치, 설정, 사용자 및 권한 관리'
 description: 
 date:   2022-05-13 15:01:35 +0300
 image:  '/images/mysql_logo.webp'

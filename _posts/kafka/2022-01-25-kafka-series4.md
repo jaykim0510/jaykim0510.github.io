@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  'Kafka Series [Part10]: 카프카의 데이터 저장'
+title:  'Kafka Series [Part4]: 카프카의 데이터 저장'
 description: 
-date:   2022-05-14 15:01:35 +0300
-image:  '/images/kafka_logo.png'
+date:   2022-01-25 15:01:35 +0300
+image:  '/images/kafka_78.png'
 logo_image:  '/images/kafka_logo.png'
 categories:   DE
 tags: Kafka
