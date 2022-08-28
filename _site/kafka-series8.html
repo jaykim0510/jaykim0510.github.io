@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kafka Series [Part8]: MySQL Connector</title>
+  <title>Kafka Series [Part7]: Kafka Connector</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/kafka-series8">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kafka Series [Part8]: MySQL Connector – Code Museum">
+  <meta name="twitter:title" content="Kafka Series [Part7]: Kafka Connector – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/kafka_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kafka Series [Part8]: MySQL Connector – Code Museum">
+  <meta property="og:title" content="Kafka Series [Part7]: Kafka Connector – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -354,7 +354,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part8]: MySQL Connector">
+          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part7]: Kafka Connector">
         </div>
       </div>
       
@@ -375,7 +375,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Kafka Series [Part8]: MySQL Connector</h1>
+          <h1 class="post__title">Kafka Series [Part7]: Kafka Connector</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -423,10 +423,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kafka-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part7]: Kafka Connector</a>
+      <a href="/kafka-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]</a>
     
     
-      <a href="/kafka-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kafka-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part8]: MySQL Connector<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -435,64 +435,250 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#why-connector" id="markdown-toc-why-connector">Why Connector?</a></li>
+  <li><a href="#kafka-connect" id="markdown-toc-kafka-connect">Kafka Connect</a>    <ul>
+      <li><a href="#kafka-connect-구성요소" id="markdown-toc-kafka-connect-구성요소">Kafka Connect 구성요소</a></li>
+      <li><a href="#connect-connector" id="markdown-toc-connect-connector">Connect? Connector?</a></li>
+      <li><a href="#standalone과-distributed-workers" id="markdown-toc-standalone과-distributed-workers">Standalone과 Distributed Workers</a></li>
+    </ul>
+  </li>
+  <li><a href="#debezium" id="markdown-toc-debezium">Debezium</a></li>
+  <li><a href="#도커-컴포즈-파일" id="markdown-toc-도커-컴포즈-파일">도커 컴포즈 파일</a></li>
+  <li><a href="#kafka-컨테이너에서-워커-실행-모드-설정" id="markdown-toc-kafka-컨테이너에서-워커-실행-모드-설정">kafka 컨테이너에서 워커 실행 모드 설정</a></li>
+  <li><a href="#kafka-컨테이너에서-커넥터-워커-실행" id="markdown-toc-kafka-컨테이너에서-커넥터-워커-실행">kafka 컨테이너에서 커넥터 워커 실행</a></li>
+  <li><a href="#connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행" id="markdown-toc-connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행">connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행</a></li>
+  <li><a href="#기타-커넥터-관련-rest-api" id="markdown-toc-기타-커넥터-관련-rest-api">기타 커넥터 관련 REST API</a></li>
+  <li><a href="#커넥터와-백엔드java-spring의-관계" id="markdown-toc-커넥터와-백엔드java-spring의-관계">커넥터와 백엔드(Java Spring)의 관계</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -X POST -H'Accept:application/json' -H'Content-Type:application/json' http://connect1:8083/connectors \
--w "\n" \
--d '{"name": "mysql-sink",
-    "config": {
-    "connector.class":"io.confluent.connect.jdbc.JdbcSinkConnector",
-    "connection.user":"root",
-    "connection.password":"passwd",
-    "connection.url":"jdbc:mysql://root:passwd@mysql:3306",
-    "mode":"upsert",
-    "table.name.format":"taxi",
-    "topics.regex": "jdbc-connector-user",
-    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "key.converter.schemas.enable": "true",
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter.schemas.enable": "true"
-    }
-}'
+<h1 id="why-connector">Why Connector?</h1>
+
+<p>커넥터 없이도 프로듀서 컨슈머 사용 가능</p>
+
+<p>하지만 커넥터를 이용하면 카프카를 사용하면서 발생할 수 있는 장애에 대한 복구를 비롯한 필요한 기능들을 따로 개발할 필요없이 사용가능</p>
+
+<p><img src="/images/kafka_56.png" alt="" /></p>
+
+<h1 id="kafka-connect">Kafka Connect</h1>
+<ul>
+  <li>Kafka Connect는 다른 데이터 시스템을 Kafka와 통합하는 과정을 표준화한 프레임워크</li>
+  <li>통합을 위한 Connector 개발, 배포, 관리를 단순화</li>
+</ul>
+
+<h2 id="kafka-connect-구성요소">Kafka Connect 구성요소</h2>
+<ul>
+  <li><strong>Connector</strong>: Task를 관리하여 데이터 스트리밍을 조정하는 jar파일</li>
+  <li><strong>Task</strong>: 데이터 시스템간의 전송 방법을 구현한 구현체</li>
+  <li><strong>Worker</strong>: Connector와 Task를 실행하는 프로세스</li>
+  <li><strong>Converter</strong>: 데이터 포맷을 변환하는데 사용하는 구성요소</li>
+  <li><strong>Trasform</strong>: 데이터를 변환하는데 사용하는 구성요소</li>
+</ul>
+
+<p><img src="/images/kafka_55.png" alt="" /></p>
+
+<h2 id="connect-connector">Connect? Connector?</h2>
+<p>커넥트는 커넥터를 실행시키기 위한 환경(프레임워크)을 제공해줌. 커넥트 위에서 커넥터 설치하고 커넥터(jar파일) 실행하면 됨</p>
+
+<p>커넥트 이미지로 인스턴스 띄우고 거기서 각종 커넥터 다운로드 받아서 커넥터를 몽고db, mysql, s3같은데 RESTapi로 등록</p>
+
+<h2 id="standalone과-distributed-workers">Standalone과 Distributed Workers</h2>
+
+<p>Worker 프로세스를 한 개만 띄우는 Standalone 모드와 여러개 실행시키는 Distributed 모드가 있다.</p>
+
+<p>보통 확장성과 내결함성을 이유로 Distributed 모드를 많이 사용한다.</p>
+
+<p><img src="/images/kafka_61.png" alt="" /></p>
+
+<h1 id="debezium">Debezium</h1>
+
+<p>Debezium은 변경 데이터 캡처를 위한 오픈 소스 분산 플랫폼이다.</p>
+
+<p>Debezium 에서 변경된 데이터 캡쳐를 위해 mysql의 경우 binlog, postgresql의 경우 replica slot(logical)을 이용하여 데이터베이스에 커밋하는 데이터를 감시하여 Kakfa, DB, ElasticSearch 등 미들웨어에 이벤트를 전달한다</p>
+
+<h1 id="도커-컴포즈-파일">도커 컴포즈 파일</h1>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+
+  <span class="na">mongodb</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mongo:latest</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">mongodb</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">27017:27017"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MONGO_INITDB_ROOT_USERNAME</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MONGO_INITDB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+  
+
+  <span class="na">zookeeper</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">zookeeper:3.7</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">zookeeper</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">2181:2181"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">ZOO_MY_ID</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">ZOO_PORT</span><span class="pi">:</span> <span class="m">2181</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./data/zookeeper/data:/data</span>
+      <span class="pi">-</span> <span class="s">./data/zookeeper/datalog:/datalogco</span>
+
+  <span class="na">kafka</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">wurstmeister/kafka</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">kafka</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">9092:9092"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">KAFKA_BROKER_ID</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">KAFKA_ZOOKEEPER_CONNECT</span><span class="pi">:</span> <span class="s">zookeeper:2181</span>
+      <span class="na">KAFKA_LISTENERS</span><span class="pi">:</span> <span class="s">PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092</span>
+      <span class="na">KAFKA_ADVERTISED_LISTENERS</span><span class="pi">:</span> <span class="s">PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092</span>
+      <span class="na">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="pi">:</span> <span class="s">PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT</span>
+      <span class="na">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="pi">:</span> <span class="s">PLAINTEXT</span>
+      <span class="na">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="pi">:</span> <span class="m">1</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./data/kafka/data:/tmp/kafka-logs</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">zookeeper</span>
+  
+  <span class="na">connect</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">confluentinc/cp-kafka-connect:latest.arm64</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">connect1</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">kafka</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">CONNECT_BOOTSTRAP_SERVERS</span><span class="pi">:</span> <span class="s">kafka:29092</span>
+      <span class="na">CONNECT_REST_ADVERTISED_HOST_NAME</span><span class="pi">:</span> <span class="s">connect1</span>
+      <span class="na">CONNECT_GROUP_ID</span><span class="pi">:</span> <span class="s">connect-cluster</span>
+      <span class="na">CONNECT_KEY_CONVERTER</span><span class="pi">:</span> <span class="s">org.apache.kafka.connect.json.JsonConverter</span>
+      <span class="na">CONNECT_VALUE_CONVERTER</span><span class="pi">:</span> <span class="s">org.apache.kafka.connect.json.JsonConverter</span>
+      <span class="na">CONNECT_CONFIG_STORAGE_TOPIC</span><span class="pi">:</span> <span class="s">connect-configs</span>
+      <span class="na">CONNECT_OFFSET_STORAGE_TOPIC</span><span class="pi">:</span> <span class="s">connect-offsets</span>
+      <span class="na">CONNECT_STATUS_STORAGE_TOPIC</span><span class="pi">:</span> <span class="s">connect-status</span>
+      <span class="na">CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">CONNECT_STATUS_STORAGE_REPLICATION_FACTOR</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">CONNECT_PLUGIN_PATH</span><span class="pi">:</span> <span class="s">/usr/share/java/,/usr/share/confluent-hub-components/mongodb-kafka-connect-mongodb/lib/</span>
+      <span class="na">CONNECT_REST_PORT</span><span class="pi">:</span> <span class="m">8083</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">18083:8083</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./connectors/1:/usr/share/confluent-hub-components</span>
+    <span class="na">command</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">bash</span>
+      <span class="pi">-</span> <span class="s">-c</span>
+      <span class="pi">-</span> <span class="pi">|</span>
+        <span class="s">confluent-hub install --no-prompt mongodb/kafka-connect-mongodb:1.7.0</span>
+        <span class="s">/etc/confluent/docker/run &amp;</span>
+        <span class="s">sleep infinity</span>
+
+  <span class="na">producer</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">./</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile_producer</span>
+    <span class="na">stdin_open</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+
+  <span class="na">consumer</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">./</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile_consumer</span>
+    <span class="na">stdin_open</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="na">mongodb</span><span class="pi">:</span>
 </code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>create table `taxi` (
-    `VendorID` FLOAT,
-    `tpep_pickup_datetime` CHAR(30),
-    `tpep_dropoff_datetime` CHAR(30),
-    `passenger_count` FLOAT,
-    `trip_distance` FLOAT,
-    `RatecodeID` FLOAT,
-    `store_and_fwd_flag` CHAR(5),
-    `PULocationID` INT(10),
-    `DOLocationID` INT(10),
-    `payment_type` FLOAT,
-    `fare_amount` FLOAT,
-    `extra` FLOAT,
-    `mta_tax` FLOAT,
-    `tip_amount` FLOAT,
-    `tolls_amount` FLOAT,
-    `improvement_surcharge` FLOAT,
-    `total_amount` FLOAT,
-    `congestion_surcharge` FLOAT
-);
+<h1 id="kafka-컨테이너에서-워커-실행-모드-설정">kafka 컨테이너에서 워커 실행 모드 설정</h1>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>opt/kafka/config
+vi connect-distributed.properties
 </code></pre></div></div>
 
-<p>프로듀서와 컨슈머를 커넥터로 연결하고 나면 딱히 건드릴게 없다. 근데 생각해보면 프로듀서와 컨슈머 각각 설정할 configuration들이 굉장히 많다. 그러면 그런것들은 각각의 커넥터를 REST API로 등록할 때 바꿀 수 있는 것인가? <a href="https://devidea.tistory.com/96">devidea: [Kafka] Connector-level producer/consumer configuration</a> 글을 보면 그런 것 같은데 아직 Confuent 쪽에서는 커넥터에 관해 이런 Configuration을 커스텀하도록 fully 지원하지는 않는 것 같기도 하다. 아마 예를 들어 MongoDB, MySQL 등 각각의 프로듀서/컨슈머별로 지원해야 하는 특성들을 자기들 생각에는 잘 설정해놓았기 때문에 사용자들이 직접 건드릴 필요가 없다고 생각해서 그런 건가?</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># connect 컨테이너에서 커넥터(jar파일)가 설치되어 있는 경로 설정</span>
+plugin.path<span class="o">=</span>/usr/share/java/,/usr/share/confluent-hub-components/mongodb-kafka-connect-mongodb/lib/
+
+<span class="c"># 컨버터 설정</span>
+key.converter<span class="o">=</span>org.apache.kafka.connect.json.JsonConverter
+value.converter<span class="o">=</span>org.apache.kafka.connect.json.JsonConverter
+key.converter.schemas.enable<span class="o">=</span><span class="nb">false
+</span>value.converter.schemas.enable<span class="o">=</span><span class="nb">false</span>
+</code></pre></div></div>
+
+<h1 id="kafka-컨테이너에서-커넥터-워커-실행">kafka 컨테이너에서 커넥터 워커 실행</h1>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./bin/connect-distributed.sh ./config/connect-distributed.properties
+</code></pre></div></div>
+
+<h1 id="connect-제외한-아무-컨테이너나의-경우-kafka-컨테이너에서-rest-api를-이용해-커넥터-등록실행">connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행</h1>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-X</span> POST <span class="nt">-H</span><span class="s1">'Accept:application/json'</span> <span class="nt">-H</span><span class="s1">'Content-Type:application/json'</span> http://connect1:8083/connectors <span class="se">\</span>
+  <span class="nt">-w</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{"name": "mongo-sink",
+      "config": {
+         "connector.class":"com.mongodb.kafka.connect.MongoSinkConnector",
+         "connection.user": "root",
+         "connection.password": "root",
+         "connection.uri":"mongodb://root:root@mongodb:27017",
+         "database":"quickstart",
+         "collection":"topicData",
+         "topics":"taxi",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "key.converter.schemas.enable": "false",
+        "value.converter.schemas.enable": "false"
+         }
+     }'</span>
+</code></pre></div></div>
+
+<h1 id="기타-커넥터-관련-rest-api">기타 커넥터 관련 REST API</h1>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 커넥터 상태 확인(커넥터 등록과 태스크 실행이 RUNNING이면 성공)</span>
+curl <span class="nt">-X</span> GET http://connect1:8083/connectors/mongo-sink/status
+
+<span class="c"># 커넥터 삭제</span>
+curl <span class="nt">-X</span> DELETE http://connect1:8083/connectors/mongo-sink
+</code></pre></div></div>
+
+<h1 id="커넥터와-백엔드java-spring의-관계">커넥터와 백엔드(Java Spring)의 관계</h1>
+
+<p>커넥터가 있으면 알아서 커넥터가 토픽에서 데이터를 가져와 DB로 잘 반영을하는 것 같다.</p>
+
+<p>이런거보면 딱히 스프링부트 같은 걸 이용해서 백엔드 프로그램을 개발하지 않아도 되는 것 같아보인다.</p>
+
+<p>하지만 만약 내가 스프링부트 같은 거를 엄청 잘 알아서 직접 개발하는데 불편함이 없다면 왠만한 것들은 스프링 부트를 이용하고 부분적으로 특정 프로듀서/컨슈머는 커넥터를 사용하는 것이 아마 가장 좋은 방법이 아닐까 라는 생각이 든다.</p>
+
+<p>나는 지금 스프링부트를 모른다. 심지어 자바 언어도 써본 적이 없다. 커넥터는 아예 러닝 커브가 없는 것은 아니지만 훨씬 쉽다.</p>
+
+<p>하지만 백엔드의 중요한 철학들을 공부하는 것은 굉장히 중요해보인다.</p>
+
+<p>결론은 지금 당장 구현이 필요한 부분들은 커넥터로 구현을 하고, 백엔드 공부는 스프링 부트를 통해서 계속 하자.</p>
+
+<p>백엔드 공부를 스프링 부트로 하기로 한 이유는, 내가 사용하고 있는 언어는 파이썬이지만 데이터 엔지니어링 공부에서 자바 언어는 필요해보인다. (데이터 엔지니어링 분야의 관련 오픈 소스들이 자바로 많이 개발됨)</p>
+
+<p>파이썬으로 백엔드를 구현하도록 해주는 장고나 플라스크도 있지만, 아직은 스프링 부트를 사용하는 비중이 더 커보이고 뭔가 공부하는 관점에서는 스프링 부트가 더 도움이 많이 될 것 같다.</p>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://docs.confluent.io/kafka-connect-jdbc/current/sink-connector/sink_config_options.html" target="_blank">JDBC Sink Connector Configuration Properties</a></li>
-  <li><a href="https://presentlee.tistory.com/6" target="_blank">[Kafka] Sink Connector 생성</a></li>
-  <li><a href="https://docs.confluent.io/5.5.1/connect/kafka-connect-jdbc/index.html#mysql-server" target="_blank">JDBC Connector (Source and Sink) for Confluent Platform</a></li>
-  <li><a href="https://cjw-awdsd.tistory.com/53" target="_blank">[Kafka] Kafka Connect 개념/예제</a></li>
-  <li><a href="https://wecandev.tistory.com/110" target="_blank">[Kafka] Kafka Connect - JDBC Connector 예제</a></li>
-  <li><a href="https://www.projectpro.io/recipes/save-dataframe-mysql-pyspark" target="_blank">How to save a DataFrame to MySQL in PySpark</a></li>
-  <li><a href="https://devidea.tistory.com/96">devidea: [Kafka] Connector-level producer/consumer configuration</a></li>
+  <li><a href="https://docs.confluent.io/5.0.0/installation/docker/docs/installation/connect-avro-jdbc.html" target="_blank">Confluent 공식문서: Kafka Connect Tutorial on Docker</a></li>
+  <li><a href="https://hub.docker.com/r/confluentinc/cp-kafka-connect" target="_blank">Connect 도커 이미지</a></li>
+  <li><a href="https://www.confluent.io/hub/mongodb/kafka-connect-mongodb" target="_blank">Confluent 공식문서: MongoDB 커넥터</a></li>
+  <li><a href="https://www.mongodb.com/docs/kafka-connector/current/" target="_blank">MongoDB 공식문서: MongoDB 커넥터를 위한 Configuration</a></li>
+  <li><a href="https://kudl.tistory.com/entry/CDC-debezium-설정" target="_blank">kudl: CDC - debezium 설정</a></li>
+  <li><a href="https://developer.confluent.io/learn-kafka/kafka-connect/docker/" target="_blank">Confluent 공식문서: 커넥터 관련 강의</a></li>
+  <li><a href="https://docs.confluent.io/home/connect/self-managed/userguide.html" target="_blank">Confluent 공식문서: Connect 관련 configuration</a></li>
+  <li><a href="https://sup2is.github.io/2020/06/08/kafka-connect-example.html" target="_blank">sup2is: Kafka Connect로 데이터 허브 구축하기</a></li>
+  <li><a href="https://github.com/mongodb-university/kafka-edu/tree/main/docs-examples/examples/v1.7/quickstart" target="_blank">깃허브: mongodb-university/kafka-edu</a></li>
+  <li><a href="https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/" target="_blank">Kafka Connect Deep Dive – Converters and Serialization Explained</a></li>
+  <li><a href="https://mongsil-jeong.tistory.com/35" target="_blank">정몽실이: 카프카 커넥트 실행</a></li>
+  <li><a href="https://stackoverflow.com/questions/62728894/spring-kafka-jdbc-connector-compatibility">Stackoverflow: Connector and Spring Kafka</a></li>
 </ul>
 
     </div>
@@ -719,7 +905,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part8]:%20MySQL%20Connector&url=http://localhost:4000/kafka-series8"
+          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part7]:%20Kafka%20Connector&url=http://localhost:4000/kafka-series8"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -729,12 +915,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series8&amp;media=http://localhost:4000/images/kafka_logo.png&amp;description=Kafka%20Series%20[Part8]:%20MySQL%20Connector"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series8&amp;media=http://localhost:4000/images/kafka_logo.png&amp;description=Kafka%20Series%20[Part7]:%20Kafka%20Connector"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series8&title=Kafka%20Series%20[Part8]:%20MySQL%20Connector&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series8&title=Kafka%20Series%20[Part7]:%20Kafka%20Connector&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -762,10 +948,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kafka-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part7]: Kafka Connector</a>
+      <a href="/kafka-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]</a>
     
     
-      <a href="/kafka-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kafka-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part8]: MySQL Connector<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

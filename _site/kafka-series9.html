@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들</title>
+  <title>Kafka Series [Part8]: MySQL Connector</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/kafka-series9">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들 – Code Museum">
+  <meta name="twitter:title" content="Kafka Series [Part8]: MySQL Connector – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/kafka_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들 – Code Museum">
+  <meta property="og:title" content="Kafka Series [Part8]: MySQL Connector – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -354,7 +354,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들">
+          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part8]: MySQL Connector">
         </div>
       </div>
       
@@ -375,7 +375,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들</h1>
+          <h1 class="post__title">Kafka Series [Part8]: MySQL Connector</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -384,7 +384,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-05-11T21:01:35+09:00">11 May 2022</time>
+              <time class="post__date" datetime="2022-04-11T21:01:35+09:00">11 Apr 2022</time>
             </div>
           </div>
   
@@ -421,10 +421,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kafka-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part8]: MySQL Connector</a>
+      <a href="/kafka-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part7]: Kafka Connector</a>
     
     
-      <a href="/kafka-series11" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part11]: 실습을 통한 카프카 명령어와 옵션<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kafka-series10" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -433,18 +433,51 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#connect" id="markdown-toc-connect">Connect</a>    <ul>
-      <li><a href="#프로듀서컨슈머의-설정값과-커넥터의-관계" id="markdown-toc-프로듀서컨슈머의-설정값과-커넥터의-관계">프로듀서/컨슈머의 설정값과 커넥터의 관계</a></li>
-    </ul>
-  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="connect">Connect</h1>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl -X POST -H'Accept:application/json' -H'Content-Type:application/json' http://connect1:8083/connectors \
+-w "\n" \
+-d '{"name": "mysql-sink",
+    "config": {
+    "connector.class":"io.confluent.connect.jdbc.JdbcSinkConnector",
+    "connection.user":"root",
+    "connection.password":"passwd",
+    "connection.url":"jdbc:mysql://root:passwd@mysql:3306",
+    "mode":"upsert",
+    "table.name.format":"taxi",
+    "topics.regex": "jdbc-connector-user",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "true",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true"
+    }
+}'
+</code></pre></div></div>
 
-<h2 id="프로듀서컨슈머의-설정값과-커넥터의-관계">프로듀서/컨슈머의 설정값과 커넥터의 관계</h2>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>create table `taxi` (
+    `VendorID` FLOAT,
+    `tpep_pickup_datetime` CHAR(30),
+    `tpep_dropoff_datetime` CHAR(30),
+    `passenger_count` FLOAT,
+    `trip_distance` FLOAT,
+    `RatecodeID` FLOAT,
+    `store_and_fwd_flag` CHAR(5),
+    `PULocationID` INT(10),
+    `DOLocationID` INT(10),
+    `payment_type` FLOAT,
+    `fare_amount` FLOAT,
+    `extra` FLOAT,
+    `mta_tax` FLOAT,
+    `tip_amount` FLOAT,
+    `tolls_amount` FLOAT,
+    `improvement_surcharge` FLOAT,
+    `total_amount` FLOAT,
+    `congestion_surcharge` FLOAT
+);
+</code></pre></div></div>
 
 <p>프로듀서와 컨슈머를 커넥터로 연결하고 나면 딱히 건드릴게 없다. 근데 생각해보면 프로듀서와 컨슈머 각각 설정할 configuration들이 굉장히 많다. 그러면 그런것들은 각각의 커넥터를 REST API로 등록할 때 바꿀 수 있는 것인가? <a href="https://devidea.tistory.com/96">devidea: [Kafka] Connector-level producer/consumer configuration</a> 글을 보면 그런 것 같은데 아직 Confuent 쪽에서는 커넥터에 관해 이런 Configuration을 커스텀하도록 fully 지원하지는 않는 것 같기도 하다. 아마 예를 들어 MongoDB, MySQL 등 각각의 프로듀서/컨슈머별로 지원해야 하는 특성들을 자기들 생각에는 잘 설정해놓았기 때문에 사용자들이 직접 건드릴 필요가 없다고 생각해서 그런 건가?</p>
 
@@ -684,7 +717,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part9]:%20%EC%B9%B4%ED%94%84%EC%B9%B4%EB%A5%BC%20%EA%B3%B5%EB%B6%80%ED%95%98%EB%A9%B4%EC%84%9C%20%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%90%EB%93%A4&url=http://localhost:4000/kafka-series9"
+          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part8]:%20MySQL%20Connector&url=http://localhost:4000/kafka-series9"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -694,12 +727,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series9&amp;media=http://localhost:4000/images/kafka_logo.png&amp;description=Kafka%20Series%20[Part9]:%20%EC%B9%B4%ED%94%84%EC%B9%B4%EB%A5%BC%20%EA%B3%B5%EB%B6%80%ED%95%98%EB%A9%B4%EC%84%9C%20%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%90%EB%93%A4"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series9&amp;media=http://localhost:4000/images/kafka_logo.png&amp;description=Kafka%20Series%20[Part8]:%20MySQL%20Connector"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series9&title=Kafka%20Series%20[Part9]:%20%EC%B9%B4%ED%94%84%EC%B9%B4%EB%A5%BC%20%EA%B3%B5%EB%B6%80%ED%95%98%EB%A9%B4%EC%84%9C%20%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%90%EB%93%A4&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series9&title=Kafka%20Series%20[Part8]:%20MySQL%20Connector&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -725,10 +758,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kafka-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part8]: MySQL Connector</a>
+      <a href="/kafka-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part7]: Kafka Connector</a>
     
     
-      <a href="/kafka-series11" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part11]: 실습을 통한 카프카 명령어와 옵션<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kafka-series10" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

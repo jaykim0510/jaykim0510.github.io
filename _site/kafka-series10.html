@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kafka Series [Part11]: 실습을 통한 카프카 명령어와 옵션</title>
+  <title>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/kafka-series11">
+  <link rel="canonical" href="http://localhost:4000/kafka-series10">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kafka Series [Part11]: 실습을 통한 카프카 명령어와 옵션 – Code Museum">
+  <meta name="twitter:title" content="Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들 – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/kafka_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kafka Series [Part11]: 실습을 통한 카프카 명령어와 옵션 – Code Museum">
+  <meta property="og:title" content="Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들 – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -354,7 +354,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part11]: 실습을 통한 카프카 명령어와 옵션">
+          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들">
         </div>
       </div>
       
@@ -375,7 +375,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Kafka Series [Part11]: 실습을 통한 카프카 명령어와 옵션</h1>
+          <h1 class="post__title">Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -384,7 +384,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-06-23T21:01:35+09:00">23 Jun 2022</time>
+              <time class="post__date" datetime="2022-05-11T21:01:35+09:00">11 May 2022</time>
             </div>
           </div>
   
@@ -419,7 +419,7 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kafka-series9" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들</a>
+      <a href="/kafka-series9" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part8]: MySQL Connector</a>
     
     
       <a href="/kafka-series12" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part12]: 주키퍼 없이 카프카 사용하기<i class="ion ion-ios-arrow-forward"></i></a>
@@ -431,38 +431,32 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#카프카-cli" id="markdown-toc-카프카-cli">카프카 CLI</a>    <ul>
-      <li><a href="#토픽-생성" id="markdown-toc-토픽-생성">토픽 생성</a></li>
-      <li><a href="#토픽-리스트" id="markdown-toc-토픽-리스트">토픽 리스트</a></li>
-      <li><a href="#토픽-삭제" id="markdown-toc-토픽-삭제">토픽 삭제</a></li>
+  <li><a href="#connect" id="markdown-toc-connect">Connect</a>    <ul>
+      <li><a href="#프로듀서컨슈머의-설정값과-커넥터의-관계" id="markdown-toc-프로듀서컨슈머의-설정값과-커넥터의-관계">프로듀서/컨슈머의 설정값과 커넥터의 관계</a></li>
     </ul>
   </li>
-  <li><a href="#처리량을-높이고-싶은-경우" id="markdown-toc-처리량을-높이고-싶은-경우">처리량을 높이고 싶은 경우</a></li>
-  <li><a href="#지연율을-낮추고-싶은-경우" id="markdown-toc-지연율을-낮추고-싶은-경우">지연율을 낮추고 싶은 경우</a></li>
-  <li><a href="#순서-보장-정확히-한-번-전송" id="markdown-toc-순서-보장-정확히-한-번-전송">순서 보장, 정확히 한 번 전송</a></li>
-  <li><a href="#토픽-내-데이터를-주기적으로-삭제" id="markdown-toc-토픽-내-데이터를-주기적으로-삭제">토픽 내 데이터를 주기적으로 삭제</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="카프카-cli">카프카 CLI</h1>
+<h1 id="connect">Connect</h1>
 
-<h2 id="토픽-생성">토픽 생성</h2>
+<h2 id="프로듀서컨슈머의-설정값과-커넥터의-관계">프로듀서/컨슈머의 설정값과 커넥터의 관계</h2>
 
-<h2 id="토픽-리스트">토픽 리스트</h2>
-
-<h2 id="토픽-삭제">토픽 삭제</h2>
-
-<h1 id="처리량을-높이고-싶은-경우">처리량을 높이고 싶은 경우</h1>
-
-<h1 id="지연율을-낮추고-싶은-경우">지연율을 낮추고 싶은 경우</h1>
-
-<h1 id="순서-보장-정확히-한-번-전송">순서 보장, 정확히 한 번 전송</h1>
-
-<h1 id="토픽-내-데이터를-주기적으로-삭제">토픽 내 데이터를 주기적으로 삭제</h1>
+<p>프로듀서와 컨슈머를 커넥터로 연결하고 나면 딱히 건드릴게 없다. 근데 생각해보면 프로듀서와 컨슈머 각각 설정할 configuration들이 굉장히 많다. 그러면 그런것들은 각각의 커넥터를 REST API로 등록할 때 바꿀 수 있는 것인가? <a href="https://devidea.tistory.com/96">devidea: [Kafka] Connector-level producer/consumer configuration</a> 글을 보면 그런 것 같은데 아직 Confuent 쪽에서는 커넥터에 관해 이런 Configuration을 커스텀하도록 fully 지원하지는 않는 것 같기도 하다. 아마 예를 들어 MongoDB, MySQL 등 각각의 프로듀서/컨슈머별로 지원해야 하는 특성들을 자기들 생각에는 잘 설정해놓았기 때문에 사용자들이 직접 건드릴 필요가 없다고 생각해서 그런 건가?</p>
 
 <h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.confluent.io/kafka-connect-jdbc/current/sink-connector/sink_config_options.html" target="_blank">JDBC Sink Connector Configuration Properties</a></li>
+  <li><a href="https://presentlee.tistory.com/6" target="_blank">[Kafka] Sink Connector 생성</a></li>
+  <li><a href="https://docs.confluent.io/5.5.1/connect/kafka-connect-jdbc/index.html#mysql-server" target="_blank">JDBC Connector (Source and Sink) for Confluent Platform</a></li>
+  <li><a href="https://cjw-awdsd.tistory.com/53" target="_blank">[Kafka] Kafka Connect 개념/예제</a></li>
+  <li><a href="https://wecandev.tistory.com/110" target="_blank">[Kafka] Kafka Connect - JDBC Connector 예제</a></li>
+  <li><a href="https://www.projectpro.io/recipes/save-dataframe-mysql-pyspark" target="_blank">How to save a DataFrame to MySQL in PySpark</a></li>
+  <li><a href="https://devidea.tistory.com/96">devidea: [Kafka] Connector-level producer/consumer configuration</a></li>
+</ul>
 
     </div>
     <div class="post__tags_list">
@@ -688,22 +682,22 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part11]:%20%EC%8B%A4%EC%8A%B5%EC%9D%84%20%ED%86%B5%ED%95%9C%20%EC%B9%B4%ED%94%84%EC%B9%B4%20%EB%AA%85%EB%A0%B9%EC%96%B4%EC%99%80%20%EC%98%B5%EC%85%98&url=http://localhost:4000/kafka-series11"
+          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part9]:%20%EC%B9%B4%ED%94%84%EC%B9%B4%EB%A5%BC%20%EA%B3%B5%EB%B6%80%ED%95%98%EB%A9%B4%EC%84%9C%20%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%90%EB%93%A4&url=http://localhost:4000/kafka-series10"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/kafka-series11"
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/kafka-series10"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series11&amp;media=http://localhost:4000/images/kafka_logo.png&amp;description=Kafka%20Series%20[Part11]:%20%EC%8B%A4%EC%8A%B5%EC%9D%84%20%ED%86%B5%ED%95%9C%20%EC%B9%B4%ED%94%84%EC%B9%B4%20%EB%AA%85%EB%A0%B9%EC%96%B4%EC%99%80%20%EC%98%B5%EC%85%98"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series10&amp;media=http://localhost:4000/images/kafka_logo.png&amp;description=Kafka%20Series%20[Part9]:%20%EC%B9%B4%ED%94%84%EC%B9%B4%EB%A5%BC%20%EA%B3%B5%EB%B6%80%ED%95%98%EB%A9%B4%EC%84%9C%20%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%90%EB%93%A4"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series11&title=Kafka%20Series%20[Part11]:%20%EC%8B%A4%EC%8A%B5%EC%9D%84%20%ED%86%B5%ED%95%9C%20%EC%B9%B4%ED%94%84%EC%B9%B4%20%EB%AA%85%EB%A0%B9%EC%96%B4%EC%99%80%20%EC%98%B5%EC%85%98&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series10&title=Kafka%20Series%20[Part9]:%20%EC%B9%B4%ED%94%84%EC%B9%B4%EB%A5%BC%20%EA%B3%B5%EB%B6%80%ED%95%98%EB%A9%B4%EC%84%9C%20%EA%B6%81%EA%B8%88%ED%95%9C%20%EC%A0%90%EB%93%A4&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -727,7 +721,7 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kafka-series9" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들</a>
+      <a href="/kafka-series9" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part8]: MySQL Connector</a>
     
     
       <a href="/kafka-series12" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part12]: 주키퍼 없이 카프카 사용하기<i class="ion ion-ios-arrow-forward"></i></a>
