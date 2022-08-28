@@ -278,6 +278,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -503,6 +505,11 @@
       <li><a href="#encoding" id="markdown-toc-encoding">Encoding</a></li>
     </ul>
   </li>
+  <li><a href="#file-format" id="markdown-toc-file-format">File format</a>    <ul>
+      <li><a href="#binary-files" id="markdown-toc-binary-files">Binary Files</a></li>
+      <li><a href="#text-files" id="markdown-toc-text-files">Text Files</a></li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -641,6 +648,28 @@ fields: name, doc, type, default
 
 <p>With regard to a web service, you will probably be considering serializing/deserializing certain data for making/receiving requests/responses - effectively transporting “messages”. Encoding is at a lower level, like how your messaging/web service type/serialization mechanism works under the hood.</p>
 
+<h1 id="file-format">File format</h1>
+
+<p>All files can be categorized into one of two file formats — binary or text. The two file types may look the same on the surface, but they encode data differently. While both binary and text files contain data stored as a series of bits (binary values of 1s and 0s), the bits in text files represent characters, while the bits in binary files represent custom data.</p>
+
+<p>While text files contain only textual data, binary files may contain both textual and custom binary data.</p>
+
+<h2 id="binary-files">Binary Files</h2>
+<p>Binary files typically contain a sequence of bytes, or ordered groupings of eight bits. When creating a custom file format for a program, a developer arranges these bytes into a format that stores the necessary information for the application. Binary file formats may include multiple types of data in the same file, such as image, video, and audio data. This data can be interpreted by supporting programs, but will show up as garbled text in a text editor. Below is an example of a .PNG image file opened in an image viewer and a text editor.</p>
+
+<p><img src="/images/kafka_86.png" alt="" /></p>
+
+<p>As you can see, the image viewer recognizes the binary data and displays the picture. When the image is opened in a text editor, the binary data is converted to unrecognizable text. However, you may notice that some of the text is readable. This is because the PNG format includes small sections for storing textual data. The text editor, while not designed to read this file format, still displays this text when the file is opened. Many other binary file types include sections of readable text as well. Therefore, it may be possible to find out some information about an unknown binary file type by opening it in a text editor.</p>
+
+<p>Binary files often contain headers, which are bytes of data at the beginning of a file that identifies the file’s contents. Headers often include the file type and other descriptive information. For example, in the image above, the “PNG” text indicates the file is a PNG image. If a file has invalid header information, software programs may not open the file or they may report that the file is corrupted.</p>
+
+<h2 id="text-files">Text Files</h2>
+<p>Text files are more restrictive than binary files since they can only contain textual data. However, unlike binary files, they are less likely to become corrupted. While a small error in a binary file may make it unreadable, a small error in a text file may simply show up once the file has been opened. This is one of reasons Microsoft switched to a compressed text-based XML format for the Office 2007 file types.</p>
+
+<p>Text files may be saved in either a plain text (.TXT) format and rich text (.RTF) format. A typical plain text file contains several lines of text that are each followed by an End-of-Line (EOL) character. An End-of-File (EOF) marker is placed after the final character, which signals the end of the file. Rich text files use a similar file structure, but may also include text styles, such as bold and italics, as well as page formatting information. Both plain text and rich text files include a (character encoding, characterencoding) scheme that determines how the characters are interpreted and what characters can be displayed.</p>
+
+<p>Since text files use a simple, standard format, many programs are capable of reading and editing text files. Common text editors include Microsoft Notepad and WordPad, which are bundled with Windows, and Apple TextEdit, which is included with Mac OS X.</p>
+
 <h1 id="참고">참고</h1>
 
 <ul>
@@ -648,6 +677,7 @@ fields: name, doc, type, default
   <li><a href="https://jaemunbro.medium.com/avro-encoding-type%EA%B3%BC-avro-format%EC%97%90-%EB%8C%80%ED%95%B4-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90-1920fe7015ca" target="_blank">Jaemun Jung, [Avro] Data Encoding과 Avro Format</a></li>
   <li><a href="https://engineering.vcnc.co.kr/2018/05/parquet-and-spark/" target="_blank">VCNC Engineering: Apache Spark에서 컬럼 기반 저장 포맷 Parquet(파케이) 제대로 활용하기</a></li>
   <li><a href="https://www.youtube.com/watch?v=oipFhroPFVM" target="_blank">Youtube, Differences AVRO vs Protobuf vs Parquet vs ORC, JSON vs XML</a></li>
+  <li><a href="https://fileinfo.com/help/binary_vs_text_files" target="_blank">What is the difference between binary and text files?</a></li>
 </ul>
 
     </div>

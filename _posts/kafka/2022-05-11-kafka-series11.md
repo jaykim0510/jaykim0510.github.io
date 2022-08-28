@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kafka Series [Part9]: 카프카를 공부하면서 궁금한 점들'
+title:  'Kafka Series [Part11]: 카프카를 공부하면서 궁금한 점들'
 description: 
 date:   2022-05-11 15:01:35 +0300
 image:  '/images/kafka_logo.png'

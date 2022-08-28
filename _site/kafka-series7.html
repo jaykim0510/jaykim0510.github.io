@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]</title>
-  <meta name='description' content='클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다.'>
+  <title>Kafka Series [Part7]: Kafka Listeners – Explained[번역]</title>
+  <meta name='description' content='카프카 클라이언트가 카프카에 연결되기 위해서는 advertised.listeners를 external IP 주소로 설정해야 합니다.'>
 
   <link rel="canonical" href="http://localhost:4000/kafka-series7">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역] – Code Museum">
-  <meta name="twitter:description" content="클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다.">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/kafka_54.png">
+  <meta name="twitter:title" content="Kafka Series [Part7]: Kafka Listeners – Explained[번역] – Code Museum">
+  <meta name="twitter:description" content="카프카 클라이언트가 카프카에 연결되기 위해서는 advertised.listeners를 external IP 주소로 설정해야 합니다.">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/kafka_36.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역] – Code Museum">
-  <meta property="og:description" content="클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다.">
-  <meta property="og:image" content="http://localhost:4000/images/kafka_54.png">
+  <meta property="og:title" content="Kafka Series [Part7]: Kafka Listeners – Explained[번역] – Code Museum">
+  <meta property="og:description" content="카프카 클라이언트가 카프카에 연결되기 위해서는 advertised.listeners를 external IP 주소로 설정해야 합니다.">
+  <meta property="og:image" content="http://localhost:4000/images/kafka_36.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -276,6 +276,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -350,7 +352,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]">
+          <img class="lazy" data-src="/images/kafka_logo.png" alt="Kafka Series [Part7]: Kafka Listeners – Explained[번역]">
         </div>
       </div>
       
@@ -371,7 +373,7 @@
               </div>
             
  
-          <h1 class="post__title">Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]</h1>
+          <h1 class="post__title">Kafka Series [Part7]: Kafka Listeners – Explained[번역]</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -380,7 +382,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-01-31T21:01:35+09:00">31 Jan 2022</time>
+              <time class="post__date" datetime="2022-01-30T21:01:35+09:00">30 Jan 2022</time>
             </div>
           </div>
   
@@ -410,6 +412,8 @@
   
 
   
+
+  
   	
   	
   	
@@ -421,10 +425,10 @@
 
   <div class="post_pagination">
     
-      <a href="/kafka-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part5]: Kafka Listeners – Explained[번역]</a>
+      <a href="/kafka-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part6]: 데이터 파이프라인에서 카프카를 사용하는 목적</a>
     
     
-      <a href="/kafka-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part7]: Kafka Connector<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kafka-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part8]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -433,204 +437,230 @@
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#connection-client-to-broker" id="markdown-toc-connection-client-to-broker">Connection Client To Broker</a>    <ul>
-      <li><a href="#scenario-0-client-and-kafka-running-on-the-same-local-machine" id="markdown-toc-scenario-0-client-and-kafka-running-on-the-same-local-machine">Scenario 0: Client and Kafka running on the same local machine</a></li>
-      <li><a href="#scenario-1-client-and-kafka-running-on-the-different-machines" id="markdown-toc-scenario-1-client-and-kafka-running-on-the-different-machines">Scenario 1: Client and Kafka running on the different machines</a></li>
-      <li><a href="#scenario-2-kafka-and-client-running-in-docker" id="markdown-toc-scenario-2-kafka-and-client-running-in-docker">Scenario 2: Kafka and client running in Docker</a></li>
-      <li><a href="#scenario-3-kafka-in-docker-container-with-a-client-running-locally" id="markdown-toc-scenario-3-kafka-in-docker-container-with-a-client-running-locally">Scenario 3: Kafka in Docker container with a client running locally</a>        <ul>
-          <li><a href="#adding-a-new-listener-to-the-broker" id="markdown-toc-adding-a-new-listener-to-the-broker">Adding a new listener to the broker</a></li>
-        </ul>
-      </li>
-      <li><a href="#scenario-4-kafka-running-locally-with-a-client-in-docker-container" id="markdown-toc-scenario-4-kafka-running-locally-with-a-client-in-docker-container">Scenario 4: Kafka running locally with a client in Docker container</a></li>
+  <li><a href="#kafka-listeners" id="markdown-toc-kafka-listeners">Kafka Listeners</a></li>
+  <li><a href="#why-can-i-connect-to-the-broker-but-the-client-still-fails" id="markdown-toc-why-can-i-connect-to-the-broker-but-the-client-still-fails">Why can I connect to the broker, but the client still fails?</a></li>
+  <li><a href="#how-to-connecting-to-kafka-on-docker" id="markdown-toc-how-to-connecting-to-kafka-on-docker">HOW TO: Connecting to Kafka on Docker</a></li>
+  <li><a href="#how-to-connecting-to-kafka-on-iaascloud" id="markdown-toc-how-to-connecting-to-kafka-on-iaascloud">HOW TO: Connecting to Kafka on IaaS/Cloud</a>    <ul>
+      <li><a href="#option-1-external-address-is-resolvable-locally" id="markdown-toc-option-1-external-address-is-resolvable-locally">Option 1: External address is resolvable locally</a></li>
+      <li><a href="#option-2-external-address-is-not-resolvable-locally" id="markdown-toc-option-2-external-address-is-not-resolvable-locally">Option 2: External address is NOT resolvable locally</a></li>
     </ul>
   </li>
+  <li><a href="#exploring-listeners-with-docker" id="markdown-toc-exploring-listeners-with-docker">Exploring listeners with Docker</a></li>
 </ul>
 
 <hr />
 
-<p><a href="https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/?utm_source=github&amp;utm_medium=rmoff&amp;utm_campaign=ty.community.con.rmoff-listeners&amp;utm_term=rmoff-devx" target="_blank">원문: Confluent블로그</a></p>
+<p><a href="https://www.confluent.io/blog/kafka-listeners-explained/" target="_blank">원문: Confluent블로그</a></p>
 
-<h1 id="connection-client-to-broker">Connection Client To Broker</h1>
+<p><a href="https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/?utm_source=github&amp;utm_medium=rmoff&amp;utm_campaign=ty.community.con.rmoff-listeners&amp;utm_term=rmoff-devx" target="_blank">읽어보면 좋은 포스트</a></p>
 
-<p>클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다.</p>
+<h1 id="kafka-listeners">Kafka Listeners</h1>
 
-<ol>
-  <li>브로커와의 초기 연결. 연결이 되면 브로커는 클라이언트에게 연결 가능(resolvable and accessible from client machine)한 브로커의 엔드포인트 제공(<code class="language-plaintext highlighter-rouge">advertised.listeners</code>)</li>
-  <li>클라이언트와 연결 가능한 브로커와의 연결</li>
-</ol>
+<p>카프카 클라이언트가 카프카에 연결되기 위해서는 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>(또는 도커 이미지를 사용할 경우 <code class="language-plaintext highlighter-rouge">KAFKA_ADVERTISED_LISTENERS</code>)를 <strong>external IP 주소</strong>로 설정해야 합니다.</p>
 
-<p>초기 연결은 <code class="language-plaintext highlighter-rouge">producer = KafkaProducer(bootstrap_servers=["localhost:9092"])</code> 와 같이 bootstrap_servers 중 하나의 서버와 초기 연결된다. 그러면 연결된 서버는 클라이언트에게 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>를 노출해 연결되도록 한다.</p>
+<p><img src="/images/kafka_36.png" alt="" /></p>
 
-<p>예시로 클라이언트와 카프카가 서로 다른 머신에 있는 경우를 보자.</p>
+<p>아파치 카프카는 분산 시스템입니다. 데이터는 리더 파티션으로부터 쓰고 읽어지며 리더 파티션은 어떤 브로커에도 있을 수 있습니다. 그래서 클라이언트가 카프카에 연결되기 위해서는 해당 리더 파티션을 가지고 있는 브로커가 누구인지에 대한 메타데이터를 요청합니다. 이 메타데이터에는 리더 파티션을 가지는 브로커의 엔드포인트 정보를 포함하고 있으며 클라이언트는 이 정보를 이용해 카프카와 연결될 것입니다.</p>
 
-<p>연결이 성공되는 경우는 다음과 같다.</p>
+<p>만약 카프카가 도커와 같은 가상머신이 아닌 bare metal 위에서 동작한다면 이 엔드포인트는 그저 <code class="language-plaintext highlighter-rouge">hostname</code>이나 <code class="language-plaintext highlighter-rouge">localhost</code> 정도가 될 것입니다. 하지만 조금 더 복잡한 네트워크 환경 또는 멀티 노드 환경으로 오게 되면 조금 더 주의가 필요하게 됩니다.</p>
 
-<p><img src="/images/kafka_39.png" alt="" /></p>
+<p>초기에 브로커가 연결되면 실제로 리더 파티션을 가지는 브로커의 host와 IP의 정보를 돌려줍니다. 이러한 과정은 단일 노드 환경에서도 마찬가지입니다.</p>
 
-<p>연결이 실패되는 경우는 다음과 같다.</p>
-
-<p><img src="/images/kafka_40.png" alt="" /></p>
-
-<p>이러한 경우에는 <code class="language-plaintext highlighter-rouge">advertised.listeners</code>를 <code class="language-plaintext highlighter-rouge">localhost:9092</code>로 설정하면 안된다.</p>
-
-<h2 id="scenario-0-client-and-kafka-running-on-the-same-local-machine">Scenario 0: Client and Kafka running on the same local machine</h2>
-
-<p><img src="/images/kafka_41.png" alt="" /></p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bootstrap_servers = 'localhost:9092'
-advertised_listeners = 'localhost:9092'  
-</code></pre></div></div>
-<p>잘 동작한다.</p>
-
-<p>클라이언트에 전달되는 메타데이터는 192.168.10.83이다. 이 값은 로컬 머신의 IP 주소이다.</p>
-
-<h2 id="scenario-1-client-and-kafka-running-on-the-different-machines">Scenario 1: Client and Kafka running on the different machines</h2>
-
-<p>카프카 브로커가 다른 머신에서 동작하는 경우를 살펴보자. 예를 들면 AWS, GCP와 같은 클라우드에서 생성한 머신</p>
-
-<p><img src="/images/kafka_42.png" alt="" /></p>
-
-<p>여기 예제에서 클라이언트는 나의 노트북이고 카프카 브로커가 동작하고 있는 머신의 LAN은 <code class="language-plaintext highlighter-rouge">asgard03</code>이라고 해보자.</p>
-
-<p>초기 연결은 성공한다. 하지만 메타데이터에서 돌려주는 노출된 리스너는 <code class="language-plaintext highlighter-rouge">localhost</code>이다. 하지만 클라이언트의 <code class="language-plaintext highlighter-rouge">localhost</code>에는 카프카 브로커가 없으므로 연결은 실패한다.<br />
-<img src="/images/kafka_43.png" alt="" /></p>
-
-<p>이 문제를 해결하기 위해서는 <code class="language-plaintext highlighter-rouge">server.properties</code>에서 <code class="language-plaintext highlighter-rouge">advertised.listeners</code> 값을 수정해 <strong>클라이언트에서 접근 가능한 올바른 호스트네임과 포트를 제공</strong>해주어야 한다.</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># advertised.listeners 수정 전</span>
-advertised.listeners<span class="o">=</span>PLAINTEXT://localhost:9092
-<span class="nv">listeners</span><span class="o">=</span>PLAINTEXT://0.0.0.0:9092
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>KAFKA_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092
+KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
+KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
 </code></pre></div></div>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># advertised.listeners 수정 후</span>
-advertised.listeners<span class="o">=</span>PLAINTEXT://asgard03.moffatt.me:9092
-<span class="nv">listeners</span><span class="o">=</span>PLAINTEXT://0.0.0.0:9092
+<p><code class="language-plaintext highlighter-rouge">server.properties</code></p>
+
+<ul>
+  <li><strong>KAFKA_LISTENERS</strong>: 카프카가 리스닝하기 위해 노출하는 host/IP와 port</li>
+  <li><strong>KAFKA_ADVERTISED_LISTENERS</strong>: 클라이언트에게 알려주는 리스너의 host/IP와 port 리스트</li>
+  <li><strong>KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</strong>: 각 리스너들이 사용하는 security protocol</li>
+  <li><strong>KAFKA_INTER_BROKER_LISTENER_NAME</strong>: 브로커들 간의 통신을 위해 사용하는 리스너</li>
+</ul>
+
+<p>브로커에 연결되면 연결된 리스너가 반환됩니다. <code class="language-plaintext highlighter-rouge">kafkacat</code>은 이러한 정보를 알아보는 유용한 툴입니다. <code class="language-plaintext highlighter-rouge">-L</code>을 이용하면 연결된 리스너에 관한 메타데이터를 얻을 수 있습니다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 9092포트로 연결시, localhost:9092 리스너가 반환</span>
+<span class="nv">$ </span>kafkacat <span class="nt">-b</span> kafka0:9092 <span class="se">\</span>
+           <span class="nt">-L</span>
+Metadata <span class="k">for </span>all topics <span class="o">(</span>from broker <span class="nt">-1</span>: kafka0:9092/bootstrap<span class="o">)</span>:
+1 brokers:
+  broker 0 at localhost:9092
 </code></pre></div></div>
 
-<p><img src="/images/kafka_44.png" alt="" /></p>
-
-<h2 id="scenario-2-kafka-and-client-running-in-docker">Scenario 2: Kafka and client running in Docker</h2>
-
-<p>도커를 이용할 때 기억해야할 점은 도커는 컨테이너를 통해 그들만의 작은 세상을 만든다는 것이다. 컨테이너는 자체적인 호스트네임, 네트워크 주소, 파일 시스템을 가지고 있다. 따라서 컨테이너를 기준으로 localhost는 더이상 나의 노트북이 아니다. 도커 컨테이너에서 localhost는 컨테이너 자기 자신이다.</p>
-
-<p><img src="/images/kafka_46.png" alt="" /></p>
-
-<p>여기서는 카프카와 클라이언트를 모두 각각 도커 호스트 위에 컨테이너로 만들어 본다.</p>
-
-<p>클라이언트를 컨테이너로 만들어주는 Dockerfile이다.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">FROM python:3</span>
-
-<span class="c1"># We'll add netcat cos it's a really useful</span>
-<span class="c1"># network troubleshooting tool</span>
-<span class="s">RUN apt-get update</span>
-<span class="s">RUN apt-get install -y netcat</span>
-
-<span class="c1"># Install the Confluent Kafka python library</span>
-<span class="s">RUN pip install confluent_kafka</span>
-
-<span class="c1"># Add our script</span>
-<span class="s">ADD python_kafka_test_client.py /</span>
-<span class="s">ENTRYPOINT [ "python", "/python_kafka_test_client.py"]</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 29092포트로 연결시, kafka0:29092 리스너가 반환</span>
+<span class="nv">$ </span>kafkacat <span class="nt">-b</span> kafka0:29092 <span class="se">\</span>
+           <span class="nt">-L</span>
+Metadata <span class="k">for </span>all topics <span class="o">(</span>from broker 0: kafka0:29092/0<span class="o">)</span>:
+1 brokers:
+  broker 0 at kafka0:29092
 </code></pre></div></div>
 
-<p>위의 메니페스트를 이용해 클라이언트 이미지를 만든다.</p>
+<h1 id="why-can-i-connect-to-the-broker-but-the-client-still-fails">Why can I connect to the broker, but the client still fails?</h1>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build -t python_kafka_test_client .
+<p>초기 브로커 연결에 성공했다고 하더라도, 브로커가 반환하는 메타데이터 안에 있는 주소로 여전히 클라이언트가 접근하지 못하는 경우가 있습니다.</p>
+
+<ul>
+  <li>
+    <p>AWS EC2 인스턴스에 브로커를 만들어 로컬 머신에서 EC2에 있는 브로커로 메세지를 보내보려고 합니다. external hostname은 <code class="language-plaintext highlighter-rouge">ec2-54-191-84-122.us-west-2.compute.amazonaws.com</code>입니다. 로컬 머신과 EC2가 포트포워딩을 통해 연결되었는지 확인해보겠습니다.</p>
+  </li>
+  <li>
+    <p>우리의 로컬 머신은 <code class="language-plaintext highlighter-rouge">ec2-54-191-84-122.us-west-2.compute.amazonaws.com</code>을 <code class="language-plaintext highlighter-rouge">54.191.84.122</code>으로 성공적으로 리졸브(resolve) 합니다.</p>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ kafkacat -b ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 -L
+Metadata for all topics (from broker -1: ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092/bootstrap):
+1 brokers:
+  broker 0 at ip-172-31-18-160.us-west-2.compute.internal:9092
 </code></pre></div></div>
 
-<p>카프카 브로커를 생성하자.</p>
+<ul>
+  <li>
+    <p>hostname이 <code class="language-plaintext highlighter-rouge">ip-172-31-18-160.us-west-2.compute.internal</code>인 리스너를 반환합니다.</p>
+  </li>
+  <li>
+    <p>하지만 인터넷을 통해 <code class="language-plaintext highlighter-rouge">ip-172-31-18-160.us-west-2.compute.internal</code>은 not resolvable해서 클라이언트는 브로커에 메세지 전송을 실패합니다.</p>
+  </li>
+</ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker network create rmoff_kafka
-docker run <span class="nt">--network</span><span class="o">=</span>rmoff_kafka <span class="nt">--rm</span> <span class="nt">--detach</span> <span class="nt">--name</span> zookeeper <span class="nt">-e</span> <span class="nv">ZOOKEEPER_CLIENT_PORT</span><span class="o">=</span>2181 confluentinc/cp-zookeeper:5.5.0
-docker run <span class="nt">--network</span><span class="o">=</span>rmoff_kafka <span class="nt">--rm</span> <span class="nt">--detach</span> <span class="nt">--name</span> broker <span class="se">\</span>
-           <span class="nt">-p</span> 9092:9092 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_BROKER_ID</span><span class="o">=</span>1 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_ZOOKEEPER_CONNECT</span><span class="o">=</span>zookeeper:2181 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_ADVERTISED_LISTENERS</span><span class="o">=</span>PLAINTEXT://localhost:9092 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="o">=</span>1 <span class="se">\</span>
-           confluentinc/cp-kafka:5.5.0
-
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "test"|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&gt;&gt;[2018-07-30 15:08:41,932] ERROR Error when sending message to topic test with key: null, value: 4 bytes with error: (org.apache.kafka.clients.producer.internals.ErrorLoggingCallback)
+org.apache.kafka.common.errors.TimeoutException: Expiring 1 record(s) for test-0: 1547 ms has passed since batch creation plus linger time
 </code></pre></div></div>
 
-<p>쥬키퍼와 카프카 브로커가 컨테이너로 돌아가고 있다.</p>
+<ul>
+  <li>브로커가 설치된 서버의 클라이언트로는 문제없이 동작한다.</li>
+</ul>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker ps
-IMAGE                              STATUS              PORTS                          NAMES
-confluentinc/cp-kafka:5.5.0        Up 32 seconds       0.0.0.0:9092-&gt;9092/tcp         broker
-confluentinc/cp-zookeeper:5.5.0    Up 33 seconds       2181/tcp, 2888/tcp, 3888/tcp   zookeeper
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ echo "foo"|kafka-console-producer --broker-list ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test
+&gt;&gt;
+$ kafka-console-consumer --bootstrap-server ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092 --topic test --from-beginning
+foo
 </code></pre></div></div>
+<p>이러한 일이 발생하는 이유는 9092포트로 연결하는 리스너가 내부 리스너이기 때문이라고 한다. 그래서 브로커가 설치된 서버의 내부에서만 resolvable한 hostname인 <code class="language-plaintext highlighter-rouge">ip-172-31-18-160.us-west-2.compute.internal</code>을 리턴한다.</p>
 
-<p>위에서 우리는 우리만의 도커 네트워크를 만들었고 이제 이 네트워크를 통해 클라이언트와 브로커가 통신하도록 해보자</p>
+<h1 id="how-to-connecting-to-kafka-on-docker">HOW TO: Connecting to Kafka on Docker</h1>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker run --network=rmoff_kafka --rm --name python_kafka_test_client \
-        --tty python_kafka_test_client broker:9092
-</code></pre></div></div>
+<p><img src="/images/kafka_36.png" alt="" /></p>
 
-<p>결과를 보면 초기 연결은 성공하지만, 메타데이터로 <code class="language-plaintext highlighter-rouge">localhost</code>를 돌려주기 때문에 프로듀서와 클라이언트의 연결은 실패된다.</p>
+<p>도커에서 동작하기 위해서는 카프카의 두 개의 listener를 지정해야 한다.</p>
 
-<p><img src="/images/kafka_47.png" alt="" /></p>
+<ul>
+  <li>
+    <p><strong>도커 네트워크 내에서의 통신</strong>: 이것은 브로커간의 통신 또는 도커 안의 다른 컴포넌트와의 통신을 의미한다. 이를 위해서는 도커 네트워크 안에 있는 컨테이너의 호스트네임을 사용해야 한다. 각각의 브로커는 컨테이너의 호스트네임을 통해 서로 통신하게 될 것이다.</p>
+  </li>
+  <li>
+    <p><strong>도커가 아닌 네트워크로부터의 트래픽</strong>: 이것은 도커를 실행하는 서버에서 로컬로 동작하는 클라이언트가 될 수 있다. 이러한 경우 도커를 실행하는 서버(<code class="language-plaintext highlighter-rouge">localhost</code>)에서 컨테이너의 포트에 연결할 수 있다. 아래의 도커 컴포즈 스니펫을 한 번 보자.</p>
+  </li>
+</ul>
 
-<p>이를 해결하려면 advertise.listeners의 호스트네임을 컨테이너 이름으로 바꿔줘야 한다.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">[</span><span class="nv">…</span><span class="pi">]</span>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 수정 전</span>
-<span class="nt">-e</span> <span class="nv">KAFKA_ADVERTISED_LISTENERS</span><span class="o">=</span>PLAINTEXT://localhost:9092 <span class="se">\</span>
-</code></pre></div></div>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 수정 후 </span>
-<span class="nt">-e</span> <span class="nv">KAFKA_ADVERTISED_LISTENERS</span><span class="o">=</span>PLAINTEXT://broker:9092 <span class="se">\</span>
-</code></pre></div></div>
-
-<p><img src="/images/kafka_48.png" alt="" /></p>
-
-<p>최종적으로 브로커 설정을 다음과 같이 고칠 수 있다.</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop broker
-docker run <span class="nt">--network</span><span class="o">=</span>rmoff_kafka <span class="nt">--rm</span> <span class="nt">--detach</span> <span class="nt">--name</span> broker <span class="se">\</span>
-           <span class="nt">-p</span> 9092:9092 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_BROKER_ID</span><span class="o">=</span>1 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_ZOOKEEPER_CONNECT</span><span class="o">=</span>zookeeper:2181 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_ADVERTISED_LISTENERS</span><span class="o">=</span>PLAINTEXT://broker:9092 <span class="se">\</span>
-           <span class="nt">-e</span> <span class="nv">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="o">=</span>1 <span class="se">\</span>
-           confluentinc/cp-kafka:5.5.0
-
-</code></pre></div></div>
-
-<h2 id="scenario-3-kafka-in-docker-container-with-a-client-running-locally">Scenario 3: Kafka in Docker container with a client running locally</h2>
-
-<p><img src="/images/kafka_49.png" alt="" /></p>
-
-<p>위의 Scenario 2와 비교하여 클라이언트가 컨테이너화 되어 있다가 여기서는 따로 컨테이너화 되지 않고 로컬 머신 위에 있다. (이러한 차이로 위에서 하던 방식이 왜 안되는 건지 모르겠다…)</p>
-
-<p>로컬에 실행하는 클라이언트는 따로 네트워크가 구성되어 있지 않다. 그렇기 때문에 따로 특정 트래픽을 받기 위해서는 로컬의 포트를 열어 이를 통해 통신해야 한다. 아래 그림과 같이 <code class="language-plaintext highlighter-rouge">9092:9092 포트</code>를 열었다고 해보자. 클라이언트가 로컬의 9092포트 엔드포인트로 접근하기 위해서는 <code class="language-plaintext highlighter-rouge">bootstrap_servers='localhost:9092'</code>로 해야 한다. <code class="language-plaintext highlighter-rouge">advertised.listeners</code>는 <code class="language-plaintext highlighter-rouge">broker:9092</code>로 해야 한다(클라이언트와 <code class="language-plaintext highlighter-rouge">localhost</code>관계가 아니므로).</p>
-
-<p><img src="/images/kafka_50.png" alt="" /></p>
-
-<p>문제는 클라이언트 입장에서 <code class="language-plaintext highlighter-rouge">broker:9092</code>는 resolvable하지 않다.</p>
-
-<h3 id="adding-a-new-listener-to-the-broker">Adding a new listener to the broker</h3>
-<p>이 문제를 해결하는 방법은 다수의 리스너를 만드는 것이다.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
+<span class="na">kafka0</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">confluentinc/cp-enterprise-kafka:5.2.1"</span>
     <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">19092:19092"</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9092:9092'</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">29094:29094'</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">zookeeper</span>
     <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">KAFKA_ADVERTISED_LISTENERS</span><span class="pi">:</span> <span class="s">PLAINTEXT://broker:9092,CONNECTIONS_FROM_HOST://localhost:19092</span>
-      <span class="na">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="pi">:</span> <span class="s">PLAINTEXT:PLAINTEXT,CONNECTIONS_FROM_HOST:PLAINTEXT</span>
-<span class="nn">...</span>
+      <span class="pi">[</span><span class="nv">…</span><span class="pi">]</span>
+      <span class="c1"># For more details see See https://rmoff.net/2018/08/02/kafka-listeners-explained/</span>
+      <span class="na">KAFKA_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094</span>
+      <span class="na">KAFKA_ADVERTISED_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094</span>
+      <span class="na">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="pi">:</span> <span class="s">LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT</span>
+      <span class="na">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="pi">:</span> <span class="s">LISTENER_BOB</span>
+<span class="pi">[</span><span class="nv">…</span><span class="pi">]</span>
 </code></pre></div></div>
 
-<p><img src="/images/kafka_52.png" alt="" /></p>
+<ul>
+  <li>
+    <p>도커 네트워크 내에 클라이언트가 있다면 클라이언트는 <code class="language-plaintext highlighter-rouge">호스트네임 kafka0</code>, <code class="language-plaintext highlighter-rouge">29092 포트</code>를 이용한 <code class="language-plaintext highlighter-rouge">BOB</code> 리스너를 통해 브로커와 통신할 것입니다. 각각의 컨테이너(클라이언트, 브로커)는 kafka0를 도커 내부 네트워크를 통해 resolve합니다.</p>
+  </li>
+  <li>
+    <p>도커를 실행하는 호스트 머신(VM)에 있는 외부 클라이언트의 경우, <code class="language-plaintext highlighter-rouge">호스트 네임 localhost</code>, <code class="language-plaintext highlighter-rouge">9092 포트</code>를 이용한 <code class="language-plaintext highlighter-rouge">FRED</code> 리스너를 통해 브로커와 통신한다.</p>
+  </li>
+  <li>
+    <p>도커를 실행하는 호스트 머신(VM) 밖에 있는 외부 클라이언트는 위의 리스너를 통해 통신할 수 없다. 왜냐하면 <code class="language-plaintext highlighter-rouge">kafka0</code>도 <code class="language-plaintext highlighter-rouge">localhost</code>도 모두 resolvable하지 않기 때문이다.</p>
+  </li>
+</ul>
 
-<h2 id="scenario-4-kafka-running-locally-with-a-client-in-docker-container">Scenario 4: Kafka running locally with a client in Docker container</h2>
+<h1 id="how-to-connecting-to-kafka-on-iaascloud">HOW TO: Connecting to Kafka on IaaS/Cloud</h1>
 
-<p><img src="/images/kafka_53.png" alt="" /></p>
+<p>도커와의 차이점은, 도커에서 외부의 연결은 단순히 localhost에서 이루어진 반면, 클라우드 호스트 기반의 카프카는 클라이언트가 localhost에 존재하지 않는다는 것이다.</p>
 
-<p>이런 상황이 잘 있지는 않지만, 어쨋든 이런 경우에 대한 해결책은 있다. 다만 좀 임시방편적일 뿐이다.</p>
+<p>더 복잡한 것은 도커 네트워크가 호스트의 네트워크와는 크게 분리되어 있지만 IaaS에서는 외부 호스트 이름이 내부적으로 확인 가능한 경우가 많기 때문에 이러한 문제가 실제로 발생할 경우 호스트 이름이 잘못될 수 있다.</p>
 
-<p>만약 맥에서 도커가 동작하고 있다면, <code class="language-plaintext highlighter-rouge">host.docker.internal</code>을 이용할 수 있다.</p>
+<p>브로커에 연결할 외부 주소가 브로커에게 로컬로 확인할 수 있는지 여부에 따라 두 가지 방법이 있다.</p>
 
-<p><img src="/images/kafka_54.png" alt="" /></p>
+<h2 id="option-1-external-address-is-resolvable-locally">Option 1: External address is resolvable locally</h2>
+
+<p><img src="/images/kafka_37.png" alt="" /></p>
+
+<p>EC2 인스턴스의 IP 주소는 기본적으로 External IP. 만약 local에서 resolvable하다면, 로컬 내의 클라이언트, 외부 클라이언트 모두 이를 통해 통신 가능. 다만 외부 클라이언트는 밑의 설정만 추가해주면 된다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>advertised.listeners=PLAINTEXT://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
+</code></pre></div></div>
+
+<h2 id="option-2-external-address-is-not-resolvable-locally">Option 2: External address is NOT resolvable locally</h2>
+
+<p><img src="/images/kafka_38.png" alt="" /></p>
+
+<p>만약 로컬 내에서 resolvable하지 않다면, 두 가지 리스너가 필요하다.</p>
+
+<ul>
+  <li>VPC 내에서의 통신을 위해 local에서 resolvable한 Internal IP를 통해 내부에서 리슨한다</li>
+  <li>VPC 밖, 예를 들어 나의 노트북에서 접속하려는 경우 인스턴스의 External IP가 필요하다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>listeners=INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092
+listener.security.protocol.map=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+advertised.listeners=INTERNAL://ip-172-31-18-160.us-west-2.compute.internal:19092,EXTERNAL://ec2-54-191-84-122.us-west-2.compute.amazonaws.com:9092
+inter.broker.listener.name=INTERNAL
+</code></pre></div></div>
+
+<h1 id="exploring-listeners-with-docker">Exploring listeners with Docker</h1>
+
+<ul>
+  <li>Listener BOB (port 29092) for <strong>internal traffic on the Docker network</strong></li>
+  <li>Listener FRED (port 9092) for <strong>traffic from the Docker host machine (localhost)</strong></li>
+  <li>Listener ALICE (port 29094) for <strong>traffic from outside</strong>, reaching the Docker host on the DNS name never-gonna-give-you-up</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">2'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">zookeeper</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">confluentinc/cp-zookeeper:5.2.1"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">ZOOKEEPER_CLIENT_PORT</span><span class="pi">:</span> <span class="m">2181</span>
+      <span class="na">ZOOKEEPER_TICK_TIME</span><span class="pi">:</span> <span class="m">2000</span>
+  <span class="na">kafka0</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">confluentinc/cp-enterprise-kafka:5.2.1"</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">9092:9092'</span>
+      <span class="pi">-</span> <span class="s1">'</span><span class="s">29094:29094'</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">zookeeper</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">KAFKA_BROKER_ID</span><span class="pi">:</span> <span class="m">0</span>
+      <span class="na">KAFKA_ZOOKEEPER_CONNECT</span><span class="pi">:</span> <span class="s">zookeeper:2181</span>
+      <span class="na">KAFKA_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://kafka0:9092,LISTENER_ALICE://kafka0:29094</span>
+      <span class="na">KAFKA_ADVERTISED_LISTENERS</span><span class="pi">:</span> <span class="s">LISTENER_BOB://kafka0:29092,LISTENER_FRED://localhost:9092,LISTENER_ALICE://never-gonna-give-you-up:29094</span>
+      <span class="na">KAFKA_LISTENER_SECURITY_PROTOCOL_MAP</span><span class="pi">:</span> <span class="s">LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT,LISTENER_ALICE:PLAINTEXT</span>
+      <span class="na">KAFKA_INTER_BROKER_LISTENER_NAME</span><span class="pi">:</span> <span class="s">LISTENER_BOB</span>
+      <span class="na">KAFKA_AUTO_CREATE_TOPICS_ENABLE</span><span class="pi">:</span> <span class="s2">"</span><span class="s">false"</span>
+      <span class="na">KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS</span><span class="pi">:</span> <span class="m">100</span>
+
+  <span class="na">kafkacat</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">confluentinc/cp-kafkacat</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">sleep infinity</span>
+</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">
@@ -856,7 +886,7 @@ docker run <span class="nt">--network</span><span class="o">=</span>rmoff_kafka 
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part6]:%20Client%20Won%E2%80%99t%20Connect%20to%20Apache%20Kafka%20Cluster%20in%20Docker/AWS/My%20Laptop.[%EB%B2%88%EC%97%AD]&url=http://localhost:4000/kafka-series7"
+          href="https://twitter.com/intent/tweet?text=Kafka%20Series%20[Part7]:%20Kafka%20Listeners%20%E2%80%93%20Explained[%EB%B2%88%EC%97%AD]&url=http://localhost:4000/kafka-series7"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -866,12 +896,12 @@ docker run <span class="nt">--network</span><span class="o">=</span>rmoff_kafka 
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series7&amp;media=http://localhost:4000/images/kafka_54.png&amp;description=Kafka%20Series%20[Part6]:%20Client%20Won%E2%80%99t%20Connect%20to%20Apache%20Kafka%20Cluster%20in%20Docker/AWS/My%20Laptop.[%EB%B2%88%EC%97%AD]"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kafka-series7&amp;media=http://localhost:4000/images/kafka_36.png&amp;description=Kafka%20Series%20[Part7]:%20Kafka%20Listeners%20%E2%80%93%20Explained[%EB%B2%88%EC%97%AD]"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series7&title=Kafka%20Series%20[Part6]:%20Client%20Won%E2%80%99t%20Connect%20to%20Apache%20Kafka%20Cluster%20in%20Docker/AWS/My%20Laptop.[%EB%B2%88%EC%97%AD]&summary=%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%EC%99%80%20%EC%B9%B4%ED%94%84%EC%B9%B4%EA%B0%84%EC%9D%98%20%EB%A9%94%EC%84%B8%EC%A7%80%EB%A5%BC%20%EC%A3%BC%EA%B3%A0%EB%B0%9B%EA%B8%B0%20%EC%9C%84%ED%95%B4%EC%84%9C%EB%8A%94%20%EB%91%90%20%EA%B0%80%EC%A7%80%EC%9D%98%20%EC%97%B0%EA%B2%B0%EC%9D%B4%20%EB%B0%98%EB%93%9C%EC%8B%9C%20%EC%84%A0%ED%96%89%EB%90%98%EC%96%B4%EC%95%BC%20%ED%95%9C%EB%8B%A4.&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kafka-series7&title=Kafka%20Series%20[Part7]:%20Kafka%20Listeners%20%E2%80%93%20Explained[%EB%B2%88%EC%97%AD]&summary=%EC%B9%B4%ED%94%84%EC%B9%B4%20%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%EA%B0%80%20%EC%B9%B4%ED%94%84%EC%B9%B4%EC%97%90%20%EC%97%B0%EA%B2%B0%EB%90%98%EA%B8%B0%20%EC%9C%84%ED%95%B4%EC%84%9C%EB%8A%94%20advertised.listeners%EB%A5%BC%20external%20IP%20%EC%A3%BC%EC%86%8C%EB%A1%9C%20%EC%84%A4%EC%A0%95%ED%95%B4%EC%95%BC%20%ED%95%A9%EB%8B%88%EB%8B%A4.&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -880,6 +910,8 @@ docker run <span class="nt">--network</span><span class="o">=</span>rmoff_kafka 
 <!--첫 번째 문단-->
 
 
+
+  
 
   
 
@@ -901,10 +933,10 @@ docker run <span class="nt">--network</span><span class="o">=</span>rmoff_kafka 
 
   <div class="post_pagination">
     
-      <a href="/kafka-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part5]: Kafka Listeners – Explained[번역]</a>
+      <a href="/kafka-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kafka Series [Part6]: 데이터 파이프라인에서 카프카를 사용하는 목적</a>
     
     
-      <a href="/kafka-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part7]: Kafka Connector<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kafka-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kafka Series [Part8]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

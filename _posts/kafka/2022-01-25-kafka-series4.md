@@ -19,23 +19,30 @@ tags: Kafka
 
 # 카프카의 데이터 저장 방식
 
-Kafka is everywhere these days. With the advent of Microservices and distributed computing, Kafka has become a regular occurrence in the architecture of every product. In this article, I’ll try to explain how Kafka’s internal storage mechanism works.  
+Kafka is typically referred to as a Distributed, Replicated Messaging Queue, which although technically true, usually leads to some confusion depending on your definition of a messaging queue. Instead, I prefer to call it a **Distributed, Replicated Commit Log**. This, I think, clearly represents what Kafka does, as all of us understand how **logs** are written to disk. And in this case, it is the **messages pushed into Kafka that are stored to disk**.  
 
-Kafka is typically referred to as a Distributed, Replicated Messaging Queue, which although technically true, usually leads to some confusion depending on your definition of a messaging queue. Instead, I prefer to call it a Distributed, Replicated Commit Log. This, I think, clearly represents what Kafka does, as all of us understand how logs are written to disk. And in this case, it is the messages pushed into Kafka that are stored to disk.  
+- Kafka는 커밋 로그를 분산 복제하는 시스템
+- 여기서 로그는 우리가 디스크에 저장한 메세지를 의미
+- (우리의 메세지를 로그로 표현하려고 하는 이유는 아마 메세지 안에 보통 데이터 뿐만 아니라 다른 메타데이터도 들어 있어서?)
 
-Regarding storage in Kafka, you’ll always hear two terms - Partition and Topic. Partitions are the units of storage in Kafka for messages. And Topic can be thought of as being a container in which these partitions lie.  
+카프카의 데이터는 다음과 같은 구조로 이루어져 있다.  
 
 ![](/images/kafka_80.png)
 
+- Topic: namespace처럼 논리적으로 구분하는 기준. 데이터를 구분하는 가장 큰 구분 기준
+- Partition: 실제로 컨슈머가 담당하는 작업 단위(컨슈머 그룹내에서 파티션은 하나의 컨슈머에게만 할당 가능). 폴더로 구분
+- Segment: 여러 메세지를 묶어놓은 하나의 파일. 파티션 한 개에 여러 개의 세그먼트가 저장되어 있음.
+- Message: 우리가 실제로 보내는 데이터 + 생성된 타임스탬프 + 프로듀서 ID + ...로 이루어져 있음
+
 ## Partition
 
-I am going to start by creating a topic in Kafka with three partitions.  
+3개의 파티션을 가지는 토픽을 우선 한 개 만들어보자.  
 
 ```sh
 kafka-topics.sh --create --topic freblogg --partitions 3 --replication-factor 1 --zookeeper localhost:2181
 ```
 
-If I go into Kafka’s log directory, I see three directories created as follows.
+파티션이 저장되는 위치로 이동해 토픽 이름으로 시작하는 파티션을 검색해보면 3개의 폴더가 보인다.  
 
 ```
 $ tree freblogg*
@@ -56,11 +63,8 @@ freblogg-2
 `-- leader-epoch-checkpoint
 ```
 
-We have three directories created because we’ve given three partitions for our topic, which means that each partition gets a directory on the file system. You also see some files like index, log etc. We’ll get to them shortly.  
 
-One more thing that you should be able to see from here is that in Kafka, the topic is more of a logical grouping than anything else and that the Partition is the actual unit of storage in Kafka. That is what is physically stored on the disk. Let’s understand partitions in some more detail.  
-
-Now let us send a couple of messages and see what happens. To send the messages I’m using the console producer as follows:  
+다음과 같은 명령어를 실행해 브로커로 메세지를 보내보자.  
 
 ```
 kafka-console-producer.sh --topic freblogg --broker-list localhost:9092
@@ -90,22 +94,22 @@ total 21M
 - freblogg 197121  11 Aug  5 09:59 leader-epoch-checkpoint
 ```
 
-Our two messages went into two of the partitions where you can see that the log files have a non zero size. This is because the messages in the partition are stored in the ‘xxxx.log’ file. To confirm that the messages are indeed stored in the log file, we can just see what’s inside that log file.  
+두 개의 메세지를 보냈다. 결과를 확인해보면 두 개의 파티션이 가지는 00000000000000000000.log 라는 세그먼트 파일의 용량이 증가했다. 파일을 열어보면 다음과 같은 내용이 적혀있다.  
 
 ```
 $ cat freblogg-2/*.log
 @^@^BÂ°Â£Ã¦Ãƒ^@^K^XÃ¿Ã¿Ã¿Ã¿Ã¿Ã¿^@^@^@^A"^@^@^A^VHello World^@
 ```
 
-The file format of the ‘log’ file is not conducive for textual representation but, you should see the ‘Hello World’ at the end indicating that this file got updated when we have sent the message into the topic. The second message we have sent went into the other partition.  
+브로커에 저장된 메세지는 바이트 형태로 저장되기 때문에 제대로 디코딩하지 않으면 이상하게 읽힌다. 하지만 Hello World라고 적힌 것을 보아 .log라는 파일에 우리가 보낸 메세지가 저장된다는 것을 알 수 있다.  
 
-Notice that the first message we sent, went into the third partition (freblogg-2) and the second message went into the second partition (freblogg-1). This is because Kafka arbitrarily picks the partition for the first message and then distributes the messages to partitions in a round-robin fashion. If a third message comes now, it would go into freblogg-0 and this order of partition continues for any new message that comes in. We can also make Kafka choose the same partition for our messages by adding a key to the message. Kafka stores all the messages with the same key into a single partition.  
+메세지가 파티션에 하나씩 저장된 이유는 라운드 로빈 방식으로 메세지를 파티션에 할당하기 때문이다. 메세지 할당 방식은 카프카에서 제공하는 다른 방식을 사용할 수도 있고, 만약 메세지에 키를 설정해줬다면 키마다 파티션을 다르게 할당하도록 커스터마이징할 수도 있다.  
 
-Each new message in the partition gets an Id which is one more than the previous Id number. This Id number is also called the Offset. So, the first message is at ‘offset’ 0, the second message is at offset 1 and so on. These offset Id’s are always incremented from the previous value.  
+세그먼트는 여러 메세지를 하나로 묶어 저장하고 있고, 각각의 메세지는 1씩 증가하는 offset을 가진다. 각 세그먼트는 자신이 가지고 있는 메세지의 가장 처음 오프셋을 이름으로 한다.  
 
 ![](/images/kafka_75.png)
 
-We can understand those random characters in the log file, using a Kafka tool.  
+위와 같은 랜덤한 문자열들을 읽고 싶으면 Kafka 툴을 사용할 수 있다.  
 
 ```sh
 kafka-run-class.bat kafka.tools.DumpLogSegments --deep-iteration --print-data-log --files logs\freblogg-2\00000000000000000000.log
@@ -126,30 +130,21 @@ CreateTime과 같은 값은 컨슈머로 가져와서 사용할 수 있는 값�
 
 You can see that it stores information of the offset, time of creation, key and value sizes etc along with the actual message payload in the log file.  
 
-It is also important to note that a partition is tied to a broker. In other words, If we have three brokers and if the folder freblogg-0 exists on broker-1, you can be sure that it will not appear in any of the other brokers. Partitions of a topic can be spread out to multiple brokers but a partition is always present on one single Kafka broker (When the replication factor has its default value, which is 1. Replication is mentioned further below).  
-
 
 ## Segment
 
-We’ll finally talk about those index and log files we’ve seen in the partition directory. Partition might be the standard unit of storage in Kafka, but it is not the lowest level of abstraction provided. Each partition is divided into segments.  
+위에서 봤던 `.log`, `.index`, `.timeindex`을 모두 세그먼트 파일이라고 한다. 세그먼트 파일을 하나로 하지 않고, 나누어 저장하는 이유는 여러가지가 있다.  
 
-A segment is simply a collection of messages of a partition. Instead of storing all the messages of a partition in a single file (think of the log file analogy again), Kafka splits them into chunks called segments. Doing this provides several advantages. Divide and Conquer FTW!  
+그중에서도 데이터를 삭제할 때 이점이 있다는 것이다. Kafka는 구조적 특성으로 메세지마다 데이터를 삭제하는 것이 불가능하다. 유일하게 메세지를 삭제하는 방법은 바로 세그먼트 파일을 삭제하는 것이다. 보통 세그먼트 파일 삭제는 카프카 configuration을 통해 삭제하는 **Retention policy** 방법을 사용한다. (정책을 통해 주기적으로 삭제)   
 
-Most importantly, it makes purging data easy. As previously introduced partition is immutable from a consumer perspective. But Kafka can still remove the messages based on the “Retention policy” of the topic. Deleting segments is much simpler than deleting things from a single file, especially when a producer might be pushing data into it.  
+세그먼트 파일의 의미는 다음과 같다.   
 
-
-The directory has the following files  
-
+- `.index` file: This contains the mapping of message offset to its physical position in .log file.
 - `.log` file: This file contains the actual records and maintains the records up to a specific offset. The name of the file depicts the starting offset added to this file.
 - .index file: This file has an index that maps a record offset to the byte offset of the record within the** .log **file. This mapping is used to read the record from any specific offset.
 - `.timeindex` file: This file contains the mapping of the timestamp to record offset, which internally maps to the byte offset of the record using the .index file. This helps in accessing the records from the specific timestamp.
 - `.snapshot` file: contains a snapshot of the producer state regarding sequence IDs used to avoid duplicate records. It is used when, after a new leader is elected, the preferred one comes back and needs such a state to become a leader again. This is only available for the active segment (log file)
 - `.leader-epoch-checkpoint`: It refers to the number of leaders previously assigned by the controller. The replicas use the leader epoch as a means of verifying the current leader. The leader-epoch-checkpoint file contains two columns: epochs and offsets. Each row is a checkpoint for the latest recorded leader epoch and the leader's latest offset upon becoming leader
-
-
-Kafka always writes the messages into these segment files under a partition. There is always an active segment to which Kafka writes to. Once the segment’s size limit is reached, a new segment file is created and that becomes the active segment.  
-
-One of the common operations in Kafka is to read the message at a particular offset. For this, if it has to go to the log file to find the offset, it becomes an expensive task especially because the log file can grow to huge sizes (Default—1G). This is where the .index file becomes useful. Index file stores the offsets and physical position of the message in the log file.  
 
 An index file for the log file I’ve showed in the ‘Quick detour’ above would look something like this:  
 
@@ -161,9 +156,9 @@ If you need to read the message at offset 1, you first search for it in the inde
 
 # 저장된 데이터의 포맷(Kafka messages are just bytes)
 
-Kafka messages are just bytes. Kafka messages are organized into topics. Each message is a key/value, but that is all that Kafka requires. Both key and value are just bytes when they are stored in Kafka. This makes Kafka applicable to a wide range of use cases, but it also means that developers have the responsibility of deciding how to serialize the data.
+**Kafka messages are just bytes**. Kafka messages are organized into topics. Each message is a key/value, but that is all that Kafka requires. Both key and value are just bytes when they are stored in Kafka. This makes Kafka applicable to a **wide range of use cases**, but it also means that developers have the **responsibility of deciding how to serialize the data.**
 
-There are various serialization formats with common ones including:  
+There are various **serialization formats** with common ones including:  
 
 - JSON
 - Avro
@@ -174,7 +169,7 @@ There are advantages and disadvantages to each of these—well, except delimited
 
 Choosing a serialization format  
 
-- **Schema**: A lot of the time your data will have a schema to it. You may not like the fact, but it’s your responsibility as a developer to preserve and propagate this schema. The schema provides the contract between your services. Some message formats (such as Avro and Protobuf) have strong schema support, whilst others have lesser support (JSON) or none at all (delimited string).
+- **Schema**: A lot of the time your data will have a schema to it. You may not like the fact, but it’s your responsibility as a developer to preserve and propagate this schema. The schema provides the **contract between your services**. Some message formats (such as Avro and Protobuf) have strong schema support, whilst others have lesser support (JSON) or none at all (delimited string).
 - **Ecosystem compatibility**: Avro, Protobuf, and JSON are first-class citizens in the Confluent Platform, with native support from the  Confluent Schema Registry, Kafka Connect, ksqlDB, and more.
 - **Message size**: Whilst JSON is plain text and relies on any compression configured in Kafka itself, Avro and Protobuf are both binary formats and thus provide smaller message sizes.
 - **Language support**: For example, support for Avro is strong in the Java space, whilst if you’re using Go, chances are you’ll be expecting to use Protobuf.
@@ -287,10 +282,20 @@ value.converter.schemas.enable=false
 
 To guarantee the order of reading messages from a partition, Kafka restricts to having only one consumer (from a consumer group) per partition. So, if a partition gets messages a,f and k, the consumer will also read them in the order a,f and k. This is an important thing to make a note of as the order of message consumption is not guaranteed at a topic level when you have multiple partitions.  
 
-Just increasing the number of consumers won’t increase the parallelism. You need to scale your partitions accordingly. To read data from a topic in parallel with two consumers, you create two partitions so that each consumer can read from its own partition. Also since partitions of a topic can be on different brokers, two consumers of a topic can read the data from two different brokers.  
+파티션 내에서는 메세지의 순서가 지켜진다. 그래서 토픽을 이루는 파티션이 1개라면 메세지의 순서를 걱정할 필요가 없다. 하지만 파티션의 개수를 2개 이상으로 하면 메세지의 순서가 보장되지 않는다.  
+
+병렬 처리를 통해 성능을 높이고자 할 때, 파티션의 개수와 컨슈머의 개수를 늘려준다.  
+
+- 파티션의 수 >= 컨슈머 수
+- 병렬 정도 = MIN(파티션의 수, 컨슈머 수)
+- 파티션의 개수는 늘릴수만 있고 줄일 수는 없음
 
 # 장애 복구를 위한 복제
-Let’s talk about replication. Whenever we’re creating a topic in Kafka, we need to specify the replication factor we need for that topic. Let's say we've two brokers and so we've given the replication-factor as 2. What this means is that Kafka will try to always ensure that each partition of this topic has a backup/replica. The way Kafka distributes the partitions is quite similar to how HDFS distributes its data blocks across nodes.  
+복제는 특정 브로커 서버에 장애가 났을 경우를 대비하기 위한 용도다. 만약 브로커가 1대라면 복제는 아무 의미가 없다. 복제는 브로커의 개수만큼 설정하면 된다. 더 크게 더 적게 해도 되지만, 같게 하는 것이 제일 합당한 선택이다.  
+
+복제수는 토픽마다 다르게 설정할 수 있다. 복제 수는 늘리는 만큼 성능이 약간 떨어진다. 그래서 토픽의 중요도에 따라 다르게 설정하는 것이 좋다.  
+
+복제에 관해 이해하려면 리더/팔로워, 커밋과 같은 것들을 배워야 한다. 컨슈머는 리더 파티션만 가져갈 수 있다. 복제는 리더가 장애가 났을 경우를 대비하기 위한 용도다.  
 
 Say for the freblogg topic that we've been using so far, we've given the replication factor as 2. The resulting distribution of its three partitions will look something like this.  
 
@@ -305,77 +310,64 @@ A Leader and a Follower of a single partition are never in a single broker. It s
 
 Apache Kafka is a commit-log system. The records are appended at the end of each Partition, and each Partition is also split into segments. Segments help delete older records through Compaction, improve performance, and much more.  
 
-Kafka allows us to optimize the log-related configurations, we can control the rolling of segments, log retention, etc. These configurations determine how long the record will be stored and we’ll see how it impacts the broker's performance, especially when the cleanup policy is set to Delete.  
+Kafka allows us to optimize the log-related configurations, we can control the rolling of segments, log retention, etc. **These configurations determine how long the record will be stored** and we’ll see how it impacts the broker's performance, especially when the cleanup policy is set to Delete.  
 
 For better performance and maintainability, multiple segments get created, and rather than reading from one huge Partition, Consumers can now read faster from a smaller segment file. A directory with the partition name gets created and maintains all the segments for that partition as various files.  
 
 ![](/images/kafka_81.png)
 
-The active segment is the only file available for reading and writing while consumers can use other log segments (non-active) to read data. When the active segment becomes full (configured by log.segment.bytes, default 1 GB) or the configured time (log.roll.hours or log.roll.ms, default 7 days) passes, the segment gets rolled. This means that the active segment gets closed and re-opens with read-only mode and a new segment file (active segment) will be created in read-write mode.
+The active segment is the only file available for reading and writing while consumers can use other log segments (non-active) to read data. When the active segment becomes full (configured by `log.segment.bytes`, default 1 GB) or the configured time (`log.roll.hours` or `log.roll.ms`, default 7 days) passes, the segment gets rolled. This means that the **active segment gets closed and re-opens with read-only mode and a new segment file** (active segment) will be created in read-write mode.
 
 ## Role of Indexing within the Partition
-Indexing helps consumers to read data starting from any specific offset or using any time range. As mentioned previously, the .index file contains an index that maps the logical offset to the byte offset of the record within the .log file. You might expect that this mapping is available for each record, but it doesn’t work this way.  
+Indexing helps consumers to read data starting from any specific offset or using any time range. As mentioned previously, the `.index` file contains an index that maps the logical offset to the byte offset of the record within the `.log` file. **You might expect that this mapping is available for each record, but it doesn’t work this way.**  
 
-How these entries are added inside the index file is defined by the log.index.interval.bytes parameter, which is 4096 bytes by default. This means that after every 4096 bytes added to the log, an entry gets added to the index file. Suppose the producer is sending records of 100 bytes each to a Kafka topic. In this case, a new index entry will be added to the .index file after every 41 records (41*100 = 4100 bytes) appended to the log file.  
+**How these entries are added inside the index file is defined by the `log.index.interval.bytes` parameter, which is 4096 bytes by default.** This means that after every 4096 bytes added to the `.log` file, an entry gets added to the `.index` file. Suppose the producer is sending records of 100 bytes each to a Kafka topic. In this case, a new index entry will be added to the `.index` file after every 41 records (41*100 = 4100 bytes) appended to the log file.  
+
+(모든 레코드가 인덱싱되기는 하는데, 레코드 한 개 넣을때마다 인덱싱되는 것은 아니고 `.log` 파일 하나가 다 차고나면 해당 `.log` 파일의 레코드를 인덱싱해서 `.index` 파일을 만든다)  
 
 ![](/images/kafka_82.png)
 
-As we can see in the above diagram, the offset with id 41 is at 4100 bytes in the log file, offset 82 is at 8200 bytes in the log file, and so on.  
-
 If a consumer wants to read starting at a specific offset, a search for the record is made as follows:  
 
-- Search for the .index file based on its name. For e.g. If the offset is 1191, the index file will be searched whose name has a value less than 1191. The naming convention for the index file is the same as that of the log file
-- Search for an entry in the .index file where the requested offset falls.
-- Use the mapped byte offset to access the** .log** file and start consuming the records from that byte offset.
+- Search for the `.index` file based on its name. For e.g. If the offset is 1191, the index file will be searched whose name has a value less than 1191. The naming convention for the index file is the same as that of the log file
+- Search for an entry in the `.index` file where the requested offset falls.
+- Use the mapped byte offset to access the `.log` file and start consuming the records from that byte offset.
 
-As we mentioned, consumers may also want to read the records from a specific timestamp. This is where the .timeindex file comes into the picture. It maintains a timestamp and offset mapping (which maps to the corresponding entry in the .index file), which maps to the actual byte offset in the .log file.  
+As we mentioned, consumers may also want to read the records from a specific timestamp. This is where the `.timeindex` file comes into the picture. It maintains a timestamp and offset mapping (which maps to the corresponding entry in the `.index` file), which maps to the actual byte offset in the `.log` file. (특정 타임스탬프로 레코드 읽는 방법: `.timeindex` -> `.index` -> `.log`)  
 
 ![](/images/kafka_83.png)
 
 ## Rolling segments
 As discussed in the above sections, the active segment gets rolled once any of these conditions are met-
 
-1. Maximum segment size - configured by log.segment.bytes, defaults to 1 Gb
-2. Rolling segment time - configured by log.roll.ms and log.roll.hours, defaults to 7 days
-3. Index/timeindex is full - The index and timeindex share the same maximum size, which is defined by the** log.index.size.max.bytes**, defaults to 10 MB
+1. Maximum segment size - configured by `log.segment.bytes`, defaults to 1 Gb
+2. Rolling segment time - configured by `log.roll.ms` or `log.roll.hours`, defaults to 7 days
+3. Index/timeindex is full - The index and timeindex share the same maximum size, which is defined by the `log.index.size.max.bytes`, defaults to 10 MB
 
-
-The 3rd condition is not well known but it also impacts the segment rolling. We know that because** log.index.interval.bytes** is 4096 bytes by default, an entry is added in the index every 4096 bytes of records. It means that for a 1 GiB segment size, 1 GiB / 4096 bytes = 262144 entries are added to the index. One entry in the index file takes 8 bytes so this equals 2 MB of the index (262144 * 8 bytes). The default index size of 10 MB is enough to handle a segment size of 5 GiB.  
-
-By increasing the segment size over 5 GiB, you would also need to increase the index file size as well. Likewise, if you decide to reduce the index file size, it is possible that you might want to decrease the segment size accordingly.  
-
-The timeindex might also need attention. Because each timeindex entry is 1.5x bigger than an entry in the index (12 bytes versus 8 bytes), it can fill up earlier and cause a new segment to be rolled. For the same example as above, for 1 GiB segment size, the timeindex file will take 262144 * 12 = 3 MB.  
+(보통 1번 크기를 늘리면, 3번 크기도 늘려야 한다)  
 
 ## Impact of increasing/decreasing the segment size
-Generally you don’t want to increase/decrease the log.segment.bytes and keep it as default. But let’s discuss the impact of changing this value so that you can make an informed decision if there’s a need.  
-
-- Decrease this size for better compaction - You have the deletion policy as compact(Compaction is a separate topic which will be covered later) and the data coming to the topic is not very fast, so it may take a lot of time to compact the partition as compaction occurs only when the segment gets closed. Now, if the Producer is not sending a lot of data and the segment is not filling, it would be better to decrease **log.segment.bytes **to compact the partition effectively.
-- Increase the size if you have more partitions to host on a single broker - When a Producer produces the records, it gets appended to the active segment and the consumer can read records from any segment. The broker can host many partitions and there could be so many open files to produce and read data from.  
-
-The maximum open files (nofile) limit has a default value of 1024 on some versions of Linux. You might have encountered the “Too many open files” issue while working with Kafka and this is the reason for that. You can increase the value of nofile to the appropriate number and Kafka recommends this to be 100000. But in scenarios where you have a lot of partitions hosted on a single broker, you can keep within this limit by increasing the **log.segment.bytes **to a higher number (within the limit of the system’s RAM). Having a higher segment size decrease the number of segments (files), which will eventually decrease the number of open files.  
+Generally you don’t want to increase/decrease the `log.segment.bytes` and keep it as default. But let’s discuss the impact of changing this value so that you can make an informed decision if there’s a need.  
 
 ## Log retention - The records may persist longer than the retention time
 Kafka, with its feature of retaining the log for a longer duration rather than deleting it like traditional messaging queues once consumed, provides many added advantages. Multiple consumers can read the same data, apart from reading the data it can also be sent to data warehouses for further analytics.  
 
-How long is the data retained in Kafka? This is configurable using the maximum number of bytes to retain by using the** log.retention.bytes** parameter. If you want to set a retention period, you can use the log.retention.ms, log.retention.minutes, or log.retention.hours (7 days by default) parameters.  
+How long is the data retained in Kafka? This is configurable using the maximum number of bytes to retain by using the `log.retention.bytes` parameter. If you want to set a retention period, you can use the `log.retention.ms`, `log.retention.minutes`, or `log.retention.hours` (7 days by default) parameters.  
 
-Suppose you configure the topic by specifying a retention time of 600000 ms (10 mins) and a segment size of 16384 bytes, the expectation would be to roll the segment once its size reaches 16 Kb but this is the max size if the record to be inserted is of more size than available in the active segment, the segment will be rolled and the record will get saved in the new segment.  
 
-Regarding the log retention, the expectation would be that the record will be persisted for 10 mins and after that, it should get deleted. A segment, together with the records it contains, can be deleted only when it is closed. So the following things may impact when the records get deleted-
+The following things may impact when the records get deleted-
 
 - If the producer is slow and the maximum size of 16 Kb is not reached within 10 minutes, older records won’t be deleted. In this case, the log retention would be higher than 10 mins.
 - If the active segment is filled quickly, it will be closed but only get deleted once the last inserted record persists for 10 mins. So in this case as well, the latest inserted record would be persisted for more than 10 mins. - Suppose the segment is getting filled in 7 mins and getting closed, the last inserted record will stay for 10 mins so the actual retention time for the first record inserted into the segment would be 17 mins.
 - The log can be persisted for an even longer duration than the last added record in the segment. How? Because the thread which gets executed and checks which log segments need to be deleted runs every 5 mins. This is configurable using log.retention.check.interval.ms configurations. - Depending on the last added record to the segment, this cleanup thread can miss the 10 min retention deadline. So in our example above instead of persisting the segment for 17 mins, it could be persisted for 22 mins.
 - Do you think that this would be the maximum time the record is persisted in Kafka? No, the cleaner thread checks and just marks the segment to be deleted. The log.segment.delete.delay.ms broker parameter defines when the file will actually be removed from the file system when it’s marked as “deleted” (default, 1 min) - Going back to our example the log is still available even after 23 mins, which is way longer than the retention time of 10 mins.
 
-So The usual retention limits are set by using log.retention.ms defines a kind of minimum time the record will be persisted in the file system.  
+So The usual retention limits are set by using `log.retention.ms` defines a kind of minimum time the record will be persisted in the file system.  
 
 Consumers get records from closed segments but not from deleted ones, even if they are just marked as “deleted” but not actually removed from the file system.  
 
-Note: I have described a single record getting appended to the segment for simplicity and to let you understand the concept clearly but in actuality multiple records (record batch) get appended to the segment file.  
-
 ## Conclusion
-As discussed in this blog, configuration parameters can have a surprisingly big influence on how long your data is retained. Understanding these parameters and how you can adjust them gives you a lot more control over how you handle your data. Let’s summarize what parameters we have discussed here-  
+
 
 ![](/images/kafka_84.png)
 

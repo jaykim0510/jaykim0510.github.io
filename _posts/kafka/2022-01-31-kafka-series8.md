@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kafka Series [Part6]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]'
+title:  'Kafka Series [Part8]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]'
 description: 클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다. 
 date:   2022-01-31 15:01:35 +0300
 image:  '/images/kafka_54.png'

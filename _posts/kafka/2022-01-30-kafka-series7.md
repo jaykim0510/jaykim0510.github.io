@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kafka Series [Part5]: Kafka Listeners – Explained[번역]'
+title:  'Kafka Series [Part7]: Kafka Listeners – Explained[번역]'
 description: 카프카 클라이언트가 카프카에 연결되기 위해서는 advertised.listeners를 external IP 주소로 설정해야 합니다.
 date:   2022-01-30 15:01:35 +0300
 image:  '/images/kafka_36.png'
