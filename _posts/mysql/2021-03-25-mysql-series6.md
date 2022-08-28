@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part5] 데이터베이스 모델링'
+title:  'MySQL Series [Part6] 데이터베이스 모델링'
 description: 
 date:   2021-03-22 15:01:35 +0300
 image:  '/images/sql_13.png'

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part3] 데이터 관리(1): CRUD를 이용해 데이터 관리하기'
+title:  'MySQL Series [Part4] 데이터 관리(1): CRUD를 이용해 데이터 관리하기'
 description: 
 date:   2021-03-21 15:01:35 +0300
 image:  '/images/mysql_logo.webp'

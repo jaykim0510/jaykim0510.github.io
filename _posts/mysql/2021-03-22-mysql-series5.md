@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part4] 데이터 관리(2): 테이블 설정을 통해 데이터 관리하기'
+title:  'MySQL Series [Part5] 데이터 관리(2): 테이블 설정을 통해 데이터 관리하기'
 description: 
 date:   2021-03-22 15:01:35 +0300
 image:  '/images/sql_2.png'
