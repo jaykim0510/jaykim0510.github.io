@@ -1,0 +1,155 @@
+I"|H<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#테이블-정보-확인" id="markdown-toc-테이블-정보-확인">테이블 정보 확인</a></li>
+  <li><a href="#테이블-생성" id="markdown-toc-테이블-생성">테이블 생성</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="테이블-정보-확인">테이블 정보 확인</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DESCRIBE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+<span class="k">SHOW</span> <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h1 id="테이블-생성">테이블 생성</h1>
+
+<p>공식문서에서 [table_options]와 [partition_options] 부분만 제외하고 (create_definition)만 가지고 와봤다. 공식문서는 아래 참고란에 주석을 달아놓았다. 대략적인 공식문서를 해석하는 방법은 다음과 같다.</p>
+
+<ul>
+  <li>(): 반드시 필요한 설정</li>
+  <li>[]: optional한 설정</li>
+  <li>{}: | 기호와 함께 사용되어 {A|B|C}인 경우 A 또는 B또는 C중 하나를 반드시 선택해야 한다는 의미</li>
+</ul>
+
+<details>
+<summary>공식문서 참고</summary>
+<div>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="p">[</span><span class="k">TEMPORARY</span><span class="p">]</span> <span class="k">TABLE</span> <span class="p">[</span><span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
+    <span class="p">(</span><span class="n">create_definition</span><span class="p">,...)</span>
+    <span class="p">[</span><span class="n">table_options</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">partition_options</span><span class="p">]</span>
+
+<span class="k">CREATE</span> <span class="p">[</span><span class="k">TEMPORARY</span><span class="p">]</span> <span class="k">TABLE</span> <span class="p">[</span><span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
+    <span class="p">[(</span><span class="n">create_definition</span><span class="p">,...)]</span>
+    <span class="p">[</span><span class="n">table_options</span><span class="p">]</span>
+    <span class="p">[</span><span class="n">partition_options</span><span class="p">]</span>
+    <span class="p">[</span><span class="k">IGNORE</span> <span class="o">|</span> <span class="k">REPLACE</span><span class="p">]</span>
+    <span class="p">[</span><span class="k">AS</span><span class="p">]</span> <span class="n">query_expression</span>
+
+<span class="k">CREATE</span> <span class="p">[</span><span class="k">TEMPORARY</span><span class="p">]</span> <span class="k">TABLE</span> <span class="p">[</span><span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span><span class="p">]</span> <span class="n">tbl_name</span>
+    <span class="p">{</span> <span class="k">LIKE</span> <span class="n">old_tbl_name</span> <span class="o">|</span> <span class="p">(</span><span class="k">LIKE</span> <span class="n">old_tbl_name</span><span class="p">)</span> <span class="p">}</span>
+
+<span class="n">create_definition</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">col_name</span> <span class="n">column_definition</span>
+  <span class="o">|</span> <span class="p">{</span><span class="k">INDEX</span> <span class="o">|</span> <span class="k">KEY</span><span class="p">}</span> <span class="p">[</span><span class="n">index_name</span><span class="p">]</span> <span class="p">[</span><span class="n">index_type</span><span class="p">]</span> <span class="p">(</span><span class="n">key_part</span><span class="p">,...)</span>
+      <span class="p">[</span><span class="n">index_option</span><span class="p">]</span> <span class="p">...</span>
+  <span class="o">|</span> <span class="p">{</span><span class="n">FULLTEXT</span> <span class="o">|</span> <span class="n">SPATIAL</span><span class="p">}</span> <span class="p">[</span><span class="k">INDEX</span> <span class="o">|</span> <span class="k">KEY</span><span class="p">]</span> <span class="p">[</span><span class="n">index_name</span><span class="p">]</span> <span class="p">(</span><span class="n">key_part</span><span class="p">,...)</span>
+      <span class="p">[</span><span class="n">index_option</span><span class="p">]</span> <span class="p">...</span>
+  <span class="o">|</span> <span class="p">[</span><span class="k">CONSTRAINT</span> <span class="p">[</span><span class="n">symbol</span><span class="p">]]</span> <span class="k">PRIMARY</span> <span class="k">KEY</span>
+      <span class="p">[</span><span class="n">index_type</span><span class="p">]</span> <span class="p">(</span><span class="n">key_part</span><span class="p">,...)</span>
+      <span class="p">[</span><span class="n">index_option</span><span class="p">]</span> <span class="p">...</span>
+  <span class="o">|</span> <span class="p">[</span><span class="k">CONSTRAINT</span> <span class="p">[</span><span class="n">symbol</span><span class="p">]]</span> <span class="k">UNIQUE</span> <span class="p">[</span><span class="k">INDEX</span> <span class="o">|</span> <span class="k">KEY</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">index_name</span><span class="p">]</span> <span class="p">[</span><span class="n">index_type</span><span class="p">]</span> <span class="p">(</span><span class="n">key_part</span><span class="p">,...)</span>
+      <span class="p">[</span><span class="n">index_option</span><span class="p">]</span> <span class="p">...</span>
+  <span class="o">|</span> <span class="p">[</span><span class="k">CONSTRAINT</span> <span class="p">[</span><span class="n">symbol</span><span class="p">]]</span> <span class="k">FOREIGN</span> <span class="k">KEY</span>
+      <span class="p">[</span><span class="n">index_name</span><span class="p">]</span> <span class="p">(</span><span class="n">col_name</span><span class="p">,...)</span>
+      <span class="n">reference_definition</span>
+  <span class="o">|</span> <span class="n">check_constraint_definition</span>
+<span class="p">}</span>
+
+<span class="n">column_definition</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">data_type</span> <span class="p">[</span><span class="k">NOT</span> <span class="k">NULL</span> <span class="o">|</span> <span class="k">NULL</span><span class="p">]</span> <span class="p">[</span><span class="k">DEFAULT</span> <span class="p">{</span><span class="n">literal</span> <span class="o">|</span> <span class="p">(</span><span class="n">expr</span><span class="p">)}</span> <span class="p">]</span>
+      <span class="p">[</span><span class="n">VISIBLE</span> <span class="o">|</span> <span class="n">INVISIBLE</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">AUTO_INCREMENT</span><span class="p">]</span> <span class="p">[</span><span class="k">UNIQUE</span> <span class="p">[</span><span class="k">KEY</span><span class="p">]]</span> <span class="p">[[</span><span class="k">PRIMARY</span><span class="p">]</span> <span class="k">KEY</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">COMMENT</span> <span class="s1">'string'</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">COLLATE</span> <span class="k">collation_name</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">COLUMN_FORMAT</span> <span class="p">{</span><span class="nb">FIXED</span> <span class="o">|</span> <span class="k">DYNAMIC</span> <span class="o">|</span> <span class="k">DEFAULT</span><span class="p">}]</span>
+      <span class="p">[</span><span class="n">ENGINE_ATTRIBUTE</span> <span class="p">[</span><span class="o">=</span><span class="p">]</span> <span class="s1">'string'</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">SECONDARY_ENGINE_ATTRIBUTE</span> <span class="p">[</span><span class="o">=</span><span class="p">]</span> <span class="s1">'string'</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">STORAGE</span> <span class="p">{</span><span class="n">DISK</span> <span class="o">|</span> <span class="n">MEMORY</span><span class="p">}]</span>
+      <span class="p">[</span><span class="n">reference_definition</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">check_constraint_definition</span><span class="p">]</span>
+  <span class="o">|</span> <span class="n">data_type</span>
+      <span class="p">[</span><span class="k">COLLATE</span> <span class="k">collation_name</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">GENERATED</span> <span class="n">ALWAYS</span><span class="p">]</span> <span class="k">AS</span> <span class="p">(</span><span class="n">expr</span><span class="p">)</span>
+      <span class="p">[</span><span class="n">VIRTUAL</span> <span class="o">|</span> <span class="n">STORED</span><span class="p">]</span> <span class="p">[</span><span class="k">NOT</span> <span class="k">NULL</span> <span class="o">|</span> <span class="k">NULL</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">VISIBLE</span> <span class="o">|</span> <span class="n">INVISIBLE</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">UNIQUE</span> <span class="p">[</span><span class="k">KEY</span><span class="p">]]</span> <span class="p">[[</span><span class="k">PRIMARY</span><span class="p">]</span> <span class="k">KEY</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">COMMENT</span> <span class="s1">'string'</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">reference_definition</span><span class="p">]</span>
+      <span class="p">[</span><span class="n">check_constraint_definition</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">data_type</span><span class="p">:</span>
+    <span class="p">(</span><span class="n">see</span> <span class="n">Chapter</span> <span class="mi">11</span><span class="p">,</span> <span class="k">Data</span> <span class="n">Types</span><span class="p">)</span>
+
+<span class="n">key_part</span><span class="p">:</span> <span class="p">{</span><span class="n">col_name</span> <span class="p">[(</span><span class="k">length</span><span class="p">)]</span> <span class="o">|</span> <span class="p">(</span><span class="n">expr</span><span class="p">)}</span> <span class="p">[</span><span class="k">ASC</span> <span class="o">|</span> <span class="k">DESC</span><span class="p">]</span>
+
+<span class="n">index_type</span><span class="p">:</span>
+    <span class="k">USING</span> <span class="p">{</span><span class="n">BTREE</span> <span class="o">|</span> <span class="n">HASH</span><span class="p">}</span>
+
+<span class="n">index_option</span><span class="p">:</span> <span class="p">{</span>
+    <span class="n">KEY_BLOCK_SIZE</span> <span class="p">[</span><span class="o">=</span><span class="p">]</span> <span class="n">value</span>
+  <span class="o">|</span> <span class="n">index_type</span>
+  <span class="o">|</span> <span class="k">WITH</span> <span class="n">PARSER</span> <span class="n">parser_name</span>
+  <span class="o">|</span> <span class="k">COMMENT</span> <span class="s1">'string'</span>
+  <span class="o">|</span> <span class="p">{</span><span class="n">VISIBLE</span> <span class="o">|</span> <span class="n">INVISIBLE</span><span class="p">}</span>
+  <span class="o">|</span><span class="n">ENGINE_ATTRIBUTE</span> <span class="p">[</span><span class="o">=</span><span class="p">]</span> <span class="s1">'string'</span>
+  <span class="o">|</span><span class="n">SECONDARY_ENGINE_ATTRIBUTE</span> <span class="p">[</span><span class="o">=</span><span class="p">]</span> <span class="s1">'string'</span>
+<span class="p">}</span>
+
+<span class="n">check_constraint_definition</span><span class="p">:</span>
+    <span class="p">[</span><span class="k">CONSTRAINT</span> <span class="p">[</span><span class="n">symbol</span><span class="p">]]</span> <span class="k">CHECK</span> <span class="p">(</span><span class="n">expr</span><span class="p">)</span> <span class="p">[[</span><span class="k">NOT</span><span class="p">]</span> <span class="n">ENFORCED</span><span class="p">]</span>
+
+<span class="n">reference_definition</span><span class="p">:</span>
+    <span class="k">REFERENCES</span> <span class="n">tbl_name</span> <span class="p">(</span><span class="n">key_part</span><span class="p">,...)</span>
+      <span class="p">[</span><span class="k">MATCH</span> <span class="k">FULL</span> <span class="o">|</span> <span class="k">MATCH</span> <span class="k">PARTIAL</span> <span class="o">|</span> <span class="k">MATCH</span> <span class="k">SIMPLE</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">ON</span> <span class="k">DELETE</span> <span class="n">reference_option</span><span class="p">]</span>
+      <span class="p">[</span><span class="k">ON</span> <span class="k">UPDATE</span> <span class="n">reference_option</span><span class="p">]</span>
+
+<span class="n">reference_option</span><span class="p">:</span>
+    <span class="k">RESTRICT</span> <span class="o">|</span> <span class="k">CASCADE</span> <span class="o">|</span> <span class="k">SET</span> <span class="k">NULL</span> <span class="o">|</span> <span class="k">NO</span> <span class="n">ACTION</span> <span class="o">|</span> <span class="k">SET</span> <span class="k">DEFAULT</span>
+</code></pre></div>    </div>
+
+  </div>
+</details>
+
+<div>
+ 
+</div>
+
+<p>내가 생각했을 때 자주 사용할만한 문법들을 종합했을 때 다음과 같다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="p">[</span><span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span><span class="p">]</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span> <span class="p">(</span>
+    <span class="o">&lt;</span><span class="err">컬럼명</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="err">컬럼타입</span><span class="o">&gt;</span> <span class="p">[</span><span class="nb">UNSIGNED</span><span class="p">]</span> <span class="p">[</span><span class="k">NOT</span> <span class="k">NULL</span><span class="p">]</span> <span class="p">[</span><span class="k">DEFAULT</span> <span class="o">&lt;</span><span class="err">디폴트값</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="n">AUTO_INCREMENT</span><span class="p">]</span> <span class="p">[</span><span class="k">COMMENT</span> <span class="o">&lt;</span><span class="err">코멘트</span><span class="o">&gt;</span><span class="p">],</span>
+    <span class="p">...</span>
+    <span class="p">[</span><span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="o">&lt;</span><span class="p">(</span><span class="err">프라이머리</span> <span class="err">키</span> <span class="err">컬럼명</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,]</span>
+    <span class="p">[</span><span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="o">&lt;</span><span class="p">(</span><span class="err">외래</span> <span class="err">키</span> <span class="err">컬럼명</span><span class="p">)</span><span class="o">&gt;</span> <span class="k">REFERENCES</span> <span class="o">&lt;</span><span class="err">부모테이블</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="p">(</span><span class="err">부모</span> <span class="err">컬럼명</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">[</span><span class="k">ON</span> <span class="k">DELETE</span> <span class="o">&lt;</span><span class="k">DELETE</span> <span class="err">정책</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">[</span><span class="k">ON</span> <span class="k">UPDATE</span> <span class="o">&lt;</span><span class="k">UPDATE</span> <span class="err">정책</span><span class="o">&gt;</span><span class="p">],]</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>하지만 보통 테이블 생성을 위해 처음부터 이렇게 스키마를 다 정해서 만들기는 힘들고, 이렇게 꼭 할 필요도 없다.</p>
+
+<p>왜냐하면 뒤에서 배울 ALTER라는 것이 새로운 컬럼을 추가하거나, 외래키를 설정하거나 하는 모든 추가적인 적용을 가능하게 하기 때문이다.</p>
+
+<p>또한 기존 테이블의 테이블 구조로 새로운 테이블을 만들 수도 있다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span> <span class="k">LIKE</span> <span class="o">&lt;</span><span class="err">기존</span> <span class="err">테이블명</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<p>기존 테이블 구조에 데이터까지 가져와 새로운 테이블로 만들 수도 있다.<br />
+(인덱스는 복사 안됨. 그래서 프라이머리 키, 외래키와 같은 설정은 다시 직접 해줘야함)</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span> <span class="k">AS</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="o">&lt;</span><span class="err">기존</span> <span class="err">테이블명</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/create-table.html" target="_blank">MySQL 공식문서13.1.20 CREATE TABLE Statement</a></li>
+</ul>
+:ET

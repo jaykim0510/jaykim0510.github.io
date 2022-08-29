@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 28 Aug 2022 22:34:14 +0900</pubDate>
-        <lastBuildDate>Sun, 28 Aug 2022 22:34:14 +0900</lastBuildDate>
+        <pubDate>Mon, 29 Aug 2022 14:05:54 +0900</pubDate>
+        <lastBuildDate>Mon, 29 Aug 2022 14:05:54 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -504,555 +504,15 @@ stored inside of key value pairs. so think about a json object you have the key 
             </item>
         
             <item>
-                <title>Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration</title>
+                <title>MySQL Series [Part23] 유틸리티(View, Trigger, Function, Procedure, CTE, INDEX)</title>
                 <description>&lt;hr /&gt;
-
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#introduction&quot; id=&quot;markdown-toc-introduction&quot;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#two-complications&quot; id=&quot;markdown-toc-two-complications&quot;&gt;Two Complications&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#data-is-more-diverse&quot; id=&quot;markdown-toc-data-is-more-diverse&quot;&gt;Data is More Diverse&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#the-explosion-of-specialized-data-systems&quot; id=&quot;markdown-toc-the-explosion-of-specialized-data-systems&quot;&gt;The Explosion of Specialized Data Systems&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#log-structured-data-flow&quot; id=&quot;markdown-toc-log-structured-data-flow&quot;&gt;Log-Structured Data Flow&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#experience-at-linkedin&quot; id=&quot;markdown-toc-experience-at-linkedin&quot;&gt;Experience at LinkedIn&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#relationship-to-etl-and-data-warehouse&quot; id=&quot;markdown-toc-relationship-to-etl-and-data-warehouse&quot;&gt;Relationship to ETL and Data Warehouse&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#etl-and-scalability&quot; id=&quot;markdown-toc-etl-and-scalability&quot;&gt;ETL and Scalability&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#where-should-we-put-the-data-transformations&quot; id=&quot;markdown-toc-where-should-we-put-the-data-transformations&quot;&gt;Where Should We Put the Data Transformations?&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#decoupling-systems&quot; id=&quot;markdown-toc-decoupling-systems&quot;&gt;Decoupling Systems&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#scaling-a-log&quot; id=&quot;markdown-toc-scaling-a-log&quot;&gt;Scaling a Log&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 
 &lt;hr /&gt;
-
-&lt;h1 id=&quot;introduction&quot;&gt;Introduction&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Data Integration and Logs&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Data Integration means making available all the data (that an organization has) to all the services and systems that need it&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;The more recognizable term ETL(populating a relational data warehouse) usually covers only a limited part of data integration.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Capturing all the relevant data and being able to put it together in an applicable processing environment&lt;/li&gt;
-  &lt;li&gt;This data has to be modeled in a uniform way to make it easy to read and process&lt;/li&gt;
-  &lt;li&gt;Process this data in various ways: MapReduce, real-time query systems, ans so on&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;strong&gt;Focus on step-by-step&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Reliable and complete data flow&lt;/li&gt;
-  &lt;li&gt;Refining data modeling and consistency&lt;/li&gt;
-  &lt;li&gt;Better visualization, reporting, algorithmic processing and prediction&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;How can we build reliable data flow throughout all the data systems?&lt;/p&gt;
-
-&lt;h1 id=&quot;two-complications&quot;&gt;Two Complications&lt;/h1&gt;
-
-&lt;p&gt;Two things have made data integration an increasingly difficult proflem.&lt;/p&gt;
-
-&lt;h2 id=&quot;data-is-more-diverse&quot;&gt;Data is More Diverse&lt;/h2&gt;
-
-&lt;p&gt;Transactional data - things that &lt;strong&gt;are&lt;/strong&gt;,  Event data - things that &lt;strong&gt;happen&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Log = Data structure what event data is logged&lt;/p&gt;
-
-&lt;p&gt;Event data is generated from Web service, Financial organization, IoT&lt;/p&gt;
-
-&lt;p&gt;This type of event data shakes up traditional data integration approaches because it tends to be several orders of magnitude larger than transactional data.&lt;/p&gt;
-
-&lt;h2 id=&quot;the-explosion-of-specialized-data-systems&quot;&gt;The Explosion of Specialized Data Systems&lt;/h2&gt;
-
-&lt;p&gt;ex. OLAP, Search service, Batch processing, Graph analysis&lt;/p&gt;
-
-&lt;h1 id=&quot;log-structured-data-flow&quot;&gt;Log-Structured Data Flow&lt;/h1&gt;
-
-&lt;p&gt;Log is the natural problem data structure for handling data flow between systems.&lt;/p&gt;
-
-&lt;h1 id=&quot;experience-at-linkedin&quot;&gt;Experience at LinkedIn&lt;/h1&gt;
-
-&lt;h1 id=&quot;relationship-to-etl-and-data-warehouse&quot;&gt;Relationship to ETL and Data Warehouse&lt;/h1&gt;
-
-&lt;h1 id=&quot;etl-and-scalability&quot;&gt;ETL and Scalability&lt;/h1&gt;
-
-&lt;h1 id=&quot;where-should-we-put-the-data-transformations&quot;&gt;Where Should We Put the Data Transformations?&lt;/h1&gt;
-
-&lt;h1 id=&quot;decoupling-systems&quot;&gt;Decoupling Systems&lt;/h1&gt;
-
-&lt;h1 id=&quot;scaling-a-log&quot;&gt;Scaling a Log&lt;/h1&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewEng.laf?barcode=9781491909386&amp;amp;ejkGb=BNT&amp;amp;mallGb=ENG&quot; target=&quot;_blank&quot;&gt;책 I Heart Logs&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://medium.com/logika-io/try-kill-batch-processing-with-unified-log-stream-processing-d92709117f74&quot; target=&quot;_blank&quot;&gt;Try Kill batch processing with unified log stream processing…&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
                 <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/data-engineering-series26</link>
-                <guid isPermaLink="true">http://localhost:4000/data-engineering-series26</guid>
-                
-                <category>Data_Engineering</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Data Engineering Series [Part25]: I 🤍 Logs(1) Introduction</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#what-is-a-log&quot; id=&quot;markdown-toc-what-is-a-log&quot;&gt;What Is a Log?&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#logs-in-database&quot; id=&quot;markdown-toc-logs-in-database&quot;&gt;Logs in Database&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#logs-in-distributed-system&quot; id=&quot;markdown-toc-logs-in-distributed-system&quot;&gt;Logs in Distributed System&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#log-centric-design-pattern&quot; id=&quot;markdown-toc-log-centric-design-pattern&quot;&gt;Log-Centric Design Pattern&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;what-is-a-log&quot;&gt;What Is a Log?&lt;/h1&gt;
-
-&lt;p&gt;Yet other than perhaps occasionally tailing a log file, most engineers don’t think much about logs. To help remedy that, I’ll give an overview of how logs work in distributed systems, and then give some practical applications of these concepts to a variety of common uses: data integration, enterprise architecture, real-time data processing, and data system design.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[2022-07-02 05:30:44] method=POST user=crazyboy0510 path=/movies/comment-create/ movie_id=16
-[2022-07-02 05:30:57] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
-[2022-07-02 05:31:15] method=GET user=crazyboy0510 path=/movies/movie-play/16 movie_id=16
-[2022-07-02 05:31:18] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
-[2022-07-02 05:31:19] method=GET user=crazyboy0510 path=/movies/movie-play/7 movie_id=7
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Every programmer is familiar with this kind of log - a series of loosely structured requests, errors, or other messages in a sequence of rotating text files.&lt;/p&gt;
-
-&lt;p&gt;The purpose of logs quickly becomes an input to queries in order to understand behavior across many machines, something that English text in files is not nearly as appropriate for as the kind of structured log I’ll be talking about.&lt;/p&gt;
-
-&lt;p&gt;The log I’ll be discussing is a little more general and closer to what in the database or systems called a ‘commit log’. It is append-only sequence of records ordered by time.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/logs_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Each rectangle represents a record that was appended to the log. Records are stored in the order they were appended. The contents and format of the records aren’t important for the purposes of this discussion. To be concrete, we can just imagine each record to be a JSON blob.&lt;/p&gt;
-
-&lt;p&gt;The log entry number can be thought of as the ‘timestamp’ of the entry. this is convenient property of being decoupled from any particular physical clock. This property is essential as we get to distributed systems.&lt;/p&gt;
-
-&lt;p&gt;A log is just kind of table or file where the records are sorted by time&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;table: array of records  
-file: array of bytes  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;However it is important that we thing about the log as an &lt;strong&gt;abstract data structure, not a text file&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;p&gt;Logs have a specific purpose: &lt;strong&gt;they record what happened and when&lt;/strong&gt;. For distributed data systems, this is the heart of the problem.&lt;/p&gt;
-
-&lt;h1 id=&quot;logs-in-database&quot;&gt;Logs in Database&lt;/h1&gt;
-
-&lt;p&gt;The usage in databases has to do with keeping in sync a variety of data structures and indexes in the presence of crashes. To make this atomic and durable, a database uses a log to write out information about the records it will be modifying before applying the changes to all the various data structures that it maintains.&lt;/p&gt;
-
-&lt;p&gt;The log is the record of what happened, and each table or index is a projection of this history into some useful data structure or index.&lt;/p&gt;
-
-&lt;p&gt;Over time, the usage of the log grew from &lt;strong&gt;an implementation detail of the ACID database properties&lt;/strong&gt; to a &lt;strong&gt;method for replicating data between databases&lt;/strong&gt;. It turns out that the sequence of changes that happened on the database is exactly what is needed to keep a remote replica database in sync. Oracle, MySQL, PostreSQL, and MongoDB include log shipping protocols to transmit portions of a log to replica databases that act as slaves. The slaves can then apply the changes recorded in the log to their own local data structures to stay in sync with the master.&lt;/p&gt;
-
-&lt;p&gt;In fact, the use of logs is variations on the two uses in database internals:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;The log is used as a publish/subscribe mechanism to transmit data to other replicas&lt;/li&gt;
-  &lt;li&gt;The log is used as a consistency mechanism to order the updates that are applied to multiple replicas&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;logs-in-distributed-system&quot;&gt;Logs in Distributed System&lt;/h1&gt;
-
-&lt;p&gt;The same problems that databases solve with logs (like distributing data to replicas and agreeing on update order) are among the most fundamental problems for all distributed systems.&lt;/p&gt;
-
-&lt;p&gt;The log-centric approach to distributed systems arises from a simple observation&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;If two identical, deterministic processes begin in the same state and get the same inputs in the same order, they will produce the same output and end in the same state&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;(Desterministic means that the processing isn’t timing dependent)&lt;/p&gt;
-
-&lt;p&gt;The application to distributed computing is pretty obvious. You can reduce the problem of making multiple machines all do the same thing to the problem of implementaing a consistent log to feed input to theses processes. The purpose of the log here is to squeeze all the nondeterminism out of the input stream to ensure that each replica stays in sync.&lt;/p&gt;
-
-&lt;p&gt;Discrete log entry numbers act as a clock for the state of the replicas - you can describe the state of each replica by a single number: the timestamp for the maximum log entry that it has processed. Two replicas at the same time will be in the same state.&lt;/p&gt;
-
-&lt;h2 id=&quot;log-centric-design-pattern&quot;&gt;Log-Centric Design Pattern&lt;/h2&gt;
-
-&lt;p&gt;There are many variations on how this principle can be applied., depending on what is put in the log. For example, we can log the incoming requests to a service and have each replica process these independently. Or we can have one instance that processed requests and log the state changes that the service undergoes in response to a request.&lt;/p&gt;
-
-&lt;p&gt;Database people generally differentiate between physical and logical logging. Physical or row-based logging means logging the contents of each row that is changed (로우별 실제 변경된 데이터를 저장하는 것). Logical or statement logging  means logging the SQL commands that lead to the row changes (insert, update, and delete statements).&lt;/p&gt;
-
-&lt;p&gt;The distributed systems distinguished two broad approaches to processing and replication. The &lt;strong&gt;state machine model&lt;/strong&gt; keep a log of the incoming requests and &lt;strong&gt;each replica processes each request&lt;/strong&gt; in log order. &lt;strong&gt;primary backup&lt;/strong&gt; elect one replica as the leader. This leader processes requests in the order they arrive and logs the changes to its state that occur as a result of processing the requests.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/logs_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/data-engineering-series25</link>
-                <guid isPermaLink="true">http://localhost:4000/data-engineering-series25</guid>
-                
-                <category>Data_Engineering</category>
-                
-                
-                <category>DE</category>
-                
-            </item>
-        
-            <item>
-                <title>Coding Test Series [Part22]: 행렬(Matrix) - 문제</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#matrix&quot; id=&quot;markdown-toc-matrix&quot;&gt;Matrix&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;matrix&quot;&gt;Matrix&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://leetcode.com/tag/matrix/&quot; target=&quot;_blank&quot;&gt;Leetcode: Two-Pointers&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;💟 ✅ ❎&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;문제 리스트
----------------------------------------------EASY 3문제
-- Richest Customer Wealth
-- Flipping an Image
-- Matrix Diagonal Sum
-- The K Weakest Rows in a Matrix
-- Toeplitz Matrix
-- Shift 2D Grid
-- Transpose Matrix
-
----------------------------------------------MEDIUM 5문제
-- Sort the Matrix Diagonally
-- Remove All Ones With Row and Column Flips
-- Candy Crush
-- Max Area of Island
-- Rotate Image
-- Sparse Matrix Multiplication
-- Game of Life
-- Construct Quad Tree
-- Spiral Matrix II
-- Walls and Gates
-- Number of Islands
-- Rotting Oranges
-- Shortest Path in Binary Matrix
-- Word Search
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-</description>
-                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/matrix</link>
-                <guid isPermaLink="true">http://localhost:4000/matrix</guid>
-                
-                <category>Coding_Test</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>MySQL Series [Part15z] MySQL Optimizing SELECT Statements</title>
-                <description>&lt;hr /&gt;
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#optimization-overview&quot; id=&quot;markdown-toc-optimization-overview&quot;&gt;Optimization Overview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#things-to-consider-for-optimization&quot; id=&quot;markdown-toc-things-to-consider-for-optimization&quot;&gt;Things to Consider for Optimization&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#select&quot; id=&quot;markdown-toc-select&quot;&gt;SELECT&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#where&quot; id=&quot;markdown-toc-where&quot;&gt;WHERE&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#group-by&quot; id=&quot;markdown-toc-group-by&quot;&gt;GROUP BY&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#join&quot; id=&quot;markdown-toc-join&quot;&gt;JOIN&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#subquery&quot; id=&quot;markdown-toc-subquery&quot;&gt;Subquery&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#temporary-table&quot; id=&quot;markdown-toc-temporary-table&quot;&gt;Temporary Table&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#order-by&quot; id=&quot;markdown-toc-order-by&quot;&gt;ORDER BY&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#정렬-처리-방법&quot; id=&quot;markdown-toc-정렬-처리-방법&quot;&gt;정렬 처리 방법&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-&lt;h1 id=&quot;optimization-overview&quot;&gt;Optimization Overview&lt;/h1&gt;
-
-&lt;p&gt;Database performance depends on several factors at the database level, such as tables, queries, and configuration settings. These software constructs result in CPU and I/O operations at the hardware level, which you must minimize and make as efficient as possible.&lt;/p&gt;
-
-&lt;h1 id=&quot;things-to-consider-for-optimization&quot;&gt;Things to Consider for Optimization&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are the tables structured properly? In particular, do the columns have the right data types, and does each table have the appropriate columns for the type of work? For example, applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are the right indexes in place to make queries efficient?&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are you using the appropriate storage engine for each table, and taking advantage of the strengths and features of each storage engine you use? In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Does each table use an appropriate row format? This choice also depends on the storage engine used for the table. In particular, compressed tables use less disk space and so require less disk I/O to read and write the data. Compression is available for all kinds of workloads with InnoDB tables, and for read-only MyISAM tables.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;select&quot;&gt;SELECT&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Avoid using *&lt;/li&gt;
-  &lt;li&gt;Avoid using DISTINCT -&amp;gt; 중복 데이터 제거를 위해 테이블 풀 스캔 해야함&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;where&quot;&gt;WHERE&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use Indexes Where Appropriate&lt;/li&gt;
-  &lt;li&gt;Avoid % Wildcard in a Predicate&lt;/li&gt;
-  &lt;li&gt;Avoid using a function in the predicate of a query&lt;/li&gt;
-  &lt;li&gt;BETWEEN, IN, &amp;lt;, &amp;gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;group-by&quot;&gt;GROUP BY&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;GROUP BY 작업은 크게 인덱스를 사용하는 경우와 사용할 수 없는 경우(임시 테이블을 사용)&lt;/li&gt;
-  &lt;li&gt;인덱스를 사용할 수 없는 경우, 전체 테이블을 스캔하여 각 그룹의 모든 행이 연속되는 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것
-    &lt;ul&gt;
-      &lt;li&gt;이렇게 인덱스를 사용할 수 없을 때 할 수 있는 최선의 방법은 WHERE절을 이용해 GROUP BY 하기 전에 데이터량을 줄이는 것&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;인덱스를 잘 설정한다면 임시 테이블을 생성하지 않고 빠르게 데이터를 가져올 수 있다
-    &lt;ul&gt;
-      &lt;li&gt;인덱스를 최대로 활용하기 위해서는 GROUP BY 컬럼과, 인덱스되어 있는 컬럼간의 순서가 중요함&lt;/li&gt;
-      &lt;li&gt;SELECT절에 사용되는 집계함수의 경우 MIN(), MAX()는 인덱스의 성능을 최대로 활용할 수 있도록 함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;참고로 MySQL 8.0부터는 GROUP BY를 한다고 해서 암묵적으로 정렬이 이루어지지 않음 -&amp;gt; 정렬 필요하면 명시적으로 ORDER BY 써야함&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;루스 인덱스 스캔을 사용할 수 있는 경우
-    &lt;ul&gt;
-      &lt;li&gt;루스 인덱스 스캔은 레코드를 건너뛰면서 필요한 부분만 가져오는 스캔 방식&lt;/li&gt;
-      &lt;li&gt;EXPLAIN을 통헤 실행 계획을 확인해보면 Extra 컬럼에 ‘Using index for group-by’ 라고 표기됨&lt;/li&gt;
-      &lt;li&gt;MIN(), MAX() 이외의 함수가 SELECT 절에 사용되면 루스 인덱스 스캔을 사용할 수 없음&lt;/li&gt;
-      &lt;li&gt;인덱스가 (col1 col2, col3) 일 때 , GROUP BY col1, col2 과 같아야 함 (GROUP BY col2, col3은 안됨)&lt;/li&gt;
-      &lt;li&gt;SELECT 절과 GROUP BY 절의 컬럼이 일치해야 함. SELECT col1, col2, MAX(col3) GROUP BY col1, col2 과 같아야 함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;타이트 인덱스 스캔을 사용하는 경우
-    &lt;ul&gt;
-      &lt;li&gt;SELECT 절과 GROUP BY 절의 컬럼이 일치하지 않지만, 조건절을 이용해 범위 스캔이 가능한 경우
-        &lt;ul&gt;
-          &lt;li&gt;SELECT c1, c2, c3 FROM t1 WHERE c2 = ‘a’ GROUP BY c1, c3;&lt;/li&gt;
-          &lt;li&gt;SELECT c1, c2, c3 FROM t1 WHERE c1 = ‘a’ GROUP BY c2, c3;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;join&quot;&gt;JOIN&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;INNER joins, order doesn’t matter&lt;/li&gt;
-  &lt;li&gt;OUTER joins, the order matters&lt;/li&gt;
-  &lt;li&gt;여러 조인을 포함하는 LOOP JOIN 에서는 드라이빙 테이블(Driving Table)이 행들을 최소한으로 리턴하도록 해야됨&lt;/li&gt;
-  &lt;li&gt;JOIN 되는 컬럼의 한쪽에만 INDEX가 있는 경우는 INDEX가 지정된 TABLE이 DRIVING TABLE이 된다&lt;/li&gt;
-  &lt;li&gt;JOIN 시 자주 사용하는 칼럼은 인덱스로 등록한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;인덱스 레인지 스캔은 인덱스를 탐색(Index Seek)하는 단계와 인덱스를 스캔(Index Scan)하는 과정으로 구분해 볼 수 있다. 일반적으로 인덱스를 이용해서 쿼리하는 작업에서는 가져오는 레코드의 건수가 소량(전체 데이터 크기의 20% 이내)이기 때문에 인덱스 스캔 작업은 부하가 작고, 특정 인덱스 키를 찾는 인덱스 탐색 작업이 부하가 높은 편이다.&lt;/p&gt;
-
-&lt;p&gt;JOIN 작업에서 드라이빙 테이블을 읽을 때는 인덱스 탐색 작업을 단 한 번만 수행하고, 그 이후부터는 스캔만 실행하면 된다.&lt;/p&gt;
-
-&lt;p&gt;하지만 드리븐 테이블에서는 인덱스 탐색 작업과 스캔 작업을 드라이빙 테이블에서 읽은 레코드 건수만큼 반복한다.&lt;/p&gt;
-
-&lt;p&gt;드라이빙 테이블과 드리븐 테이블이 1:1 조인되더라도 &lt;strong&gt;드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지&lt;/strong&gt;한다.&lt;/p&gt;
-
-&lt;p&gt;그래서 옵티마이저는 항상 드라이빙 테이블이 아니라 드리븐 테이블을 최적으로 읽을 수 있게 실행 계획을 수립한다.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&quot;language-SQL&quot;&gt;SELECT *
-FROM employees e, dept_emp de
-WHERE e.emp_no=de.emp_no
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;여기서 각 테이블의 emp_no 컬럼에 인덱스가 있을 때와 없을 때 조인 순서가 어떻게 달라지는 한 번 살펴보자.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;두 컬럼 모두 인덱스가 있는 경우
-    &lt;ul&gt;
-      &lt;li&gt;어느 테이블을 드라이빙으로 선택하든 인덱스를 이용해 드리븐 테이블의 검색 작업을 빠르게 처리할 수 있다&lt;/li&gt;
-      &lt;li&gt;보통의 경우 어느 쪽 테이블이 드라이빙 테이블이 되든 옵티마이저가 선택하는 방법이 최적일 때가 많다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;employees 테이블에만 인덱스가 있는경우
-    &lt;ul&gt;
-      &lt;li&gt;이 때는 employees 테이블을 드리븐 테이블로 선택한다&lt;/li&gt;
-      &lt;li&gt;드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지하기 때문에 드리븐 테이블에서 인덱스를 활용하는 것이 중요한다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;INNER JOIN은 조인 대상 테이블 모두에 해당하는 레코드만 반환한다. 이같은 특성 때문에 OUTER JOIN으로만 조인을 실행하는 쿼리들도 자주 보인다. 하지만 대개의 경우 OUTER JOIN은 대상 테이블들의 데이터가 일관되지 않은 경우에만 필요하다.&lt;/p&gt;
-
-&lt;p&gt;MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN B에서 B)을 드라이빙 테이블로 선택하지 못하기 때문에 무조건 앞에 등장하는 테이블을 드라이빙 테이블로 선택한다. 그 결과 인덱스 유무에 따라 조인 순서를 변경함으로써 얻게 되는 최적화의 이점을 얻지 못하기 때문에 쿼리 성능이 나빠질 수 있다. 그래서 꼭 필요한 경우가 아니라면 INNER JOIN을 사용하는 것이 쿼리의 성능에 도움이 된다.&lt;/p&gt;
-
-&lt;p&gt;JOIN의 순서&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;INNER JOIN인 경우
-    &lt;ul&gt;
-      &lt;li&gt;어차피 A and B and C 이기 때문에 A JOIN B JOIN C이든 B JOIN A JOIN C이든 같다.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;LEFT JOIN의 경우 결과도 성능도 달라진다.
-    &lt;ul&gt;
-      &lt;li&gt;일단 가장 먼저 등장하는 테이블이 드라이빙 테이블이 된다 -&amp;gt; 이 말은 뒤에 따라오는 테이블은 드리븐 테이블이 된다는 말이다 -&amp;gt; 드리븐 테이블은 인덱스가 없으면 성능이 떨어진다 -&amp;gt; 뒤에 조인되는 테이블의 인덱스 유무에 따라 쿼리 성능이 달라진다&lt;/li&gt;
-      &lt;li&gt;결과 자체도 맨 앞에 등장하는 테이블의 모든 레코드가 기준이 되기 때문에 순서에 따라 달라진다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;INNER JOIN과 OUTER JOIN이 결합되는 경우
-    &lt;ul&gt;
-      &lt;li&gt;가능하다면 INNER JOIN이 앞에 오도록 하는 것이 좋다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;subquery&quot;&gt;Subquery&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Avoid correlated sub queries as it searches row by row, impacting the speed of SQL query processing&lt;/li&gt;
-  &lt;li&gt;JOIN으로 해결되면 서브쿼리 대신 JOIN을 사용하자&lt;/li&gt;
-  &lt;li&gt;서브쿼리 안에 where절과 group by를 통해 불러오는 데이터양을 감소시킬 수 있습니다&lt;/li&gt;
-  &lt;li&gt;서브쿼리는 인덱스 또는 제약 정보를 가지지 않기 때문에 최적화되지 못한다&lt;/li&gt;
-  &lt;li&gt;윈도우 함수를 고려해보자&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;temporary-table&quot;&gt;Temporary Table&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use a temporary table to handle bulk data&lt;/li&gt;
-  &lt;li&gt;Temporary table vs Using index access&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;order-by&quot;&gt;ORDER BY&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;대부분의 SELECT 쿼리에서 정렬은 필수적&lt;/li&gt;
-  &lt;li&gt;정렬을 처리하는 방법은 &lt;strong&gt;인덱스를 이용하는 방법&lt;/strong&gt;과 &lt;strong&gt;Filesort&lt;/strong&gt;라는 별도의 처리를 이용하는 방법&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;방법&lt;/td&gt;
-      &lt;td&gt;장점&lt;/td&gt;
-      &lt;td&gt;단점&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;인덱스 이용&lt;/td&gt;
-      &lt;td&gt;SELECT 문을 실행할 때 이미 인덱스가 정렬돼 있어 순서대로 읽기만 하면 되므로 매우 빠르다&lt;/td&gt;
-      &lt;td&gt;INSERT, UPDATE, DELETE 작업시 부가적인 인덱스 추가/삭제 작업이 필요하므로 느리다&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Filesort 이용&lt;/td&gt;
-      &lt;td&gt;인덱스 이용과 반대로 INSERT, UPDATE, DELETE 작업이 빠르다&lt;/td&gt;
-      &lt;td&gt;정렬 작업이 쿼리 실행 시 처리되어 쿼리의 응답 속도가 느려진다&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;&lt;strong&gt;Filesort를 사용해야 하는 경우&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;정렬 기준이 너무 많아서 모든 인덱스를 생성하는 것이 불가능한 경우&lt;/li&gt;
-  &lt;li&gt;어떤 처리의 결과를 정렬해야 하는 경우&lt;/li&gt;
-  &lt;li&gt;랜덤하게 결과 레코드를 가져와야 하는 경우&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;소트 버퍼&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;MySQL은 정렬을 수행하기 위해 별도의 메모리 공간을 할당받아서 사용하는데 이 메모리 공간을 소트 버퍼라고 한다&lt;/li&gt;
-  &lt;li&gt;정렬해야 할 레코드의 건수가 소트 버퍼의 크기보다 크다면 어떻게 해야 할까?
-    &lt;ul&gt;
-      &lt;li&gt;정렬해야 할 레코드를 여러 조각으로 나눠서 처리하게 됨. 이 과정에서 임시 저장을 위해 디스크를 사용&lt;/li&gt;
-      &lt;li&gt;일부를 처리하고 디스크에 저장하기를 반복 수행함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;정렬 알고리즘&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;정렬 대상 컬럼과 프라이머리 키만 가져와서 정렬하는 방식
-    &lt;ul&gt;
-      &lt;li&gt;정렬 대상 컬럼과 프라이머리 키 값만 소트 버퍼에 담아 정렬을 수행&lt;/li&gt;
-      &lt;li&gt;그리고 다시 정렬 순서대로 프라이머리 키로 테이블을 읽어서 SELECT할 컬럼을 가져옴&lt;/li&gt;
-      &lt;li&gt;가져오는 컬럼이 두 개 뿐이라 소트 버퍼에 많은 레코드를 한 번에 읽어올 수 있음&lt;/li&gt;
-      &lt;li&gt;단점은 테이블을 두 번 읽어야 함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;정렬 대상 컬럼과 SELECT문으로 요청한 컬럼을 모두 가져와서 정렬하는 방식
-    &lt;ul&gt;
-      &lt;li&gt;최신 버전의 MySQL에서 일반적으로 사용하는 방식&lt;/li&gt;
-      &lt;li&gt;SELECT 문에서 요청한 컬럼의 개수가 많아지면 계속 분할해서 소트 버퍼에 읽어와야함&lt;/li&gt;
-      &lt;li&gt;레코드의 크기나 건수가 작은 경우 성능이 좋음&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;정렬-처리-방법&quot;&gt;정렬 처리 방법&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;인덱스를 사용한 정렬
-    &lt;ul&gt;
-      &lt;li&gt;인덱스를 이용해 정렬을 하기 위해서는 반드시 ORDER BY의 순서대로 생성된 인덱스가 있어야 함&lt;/li&gt;
-      &lt;li&gt;인덱스를 이용해 정렬이 가능한 이유는 B-Tree 인덱스가 키 값으로 정렬되어 있기 때문&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Filesort를 사용한 정렬
-    &lt;ul&gt;
-      &lt;li&gt;인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html&quot; target=&quot;_blank&quot;&gt;MySQL 공식문서: Optimizing SELECT Statements&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization&quot; target=&quot;_blank&quot;&gt;MySQL Performance Tuning and Optimization Tips&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html&quot; target=&quot;_blank&quot;&gt;ETL 성능 향상을 위한 몇 가지 팁들&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://til.songyunseop.com/mysql/group-by-optimization.html&quot; target=&quot;_blank&quot;&gt;전지적 송윤섭시점 TIL, GROUP BY 최적화&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://otsteam.tistory.com/136&quot; target=&quot;_blank&quot;&gt;SQL 성능을 위한 25가지 규칙&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://jojoldu.tistory.com/173?category=761883&quot; target=&quot;_blank&quot;&gt;패스트캠퍼스 SQL튜닝캠프 4일차 - 조인의 기본 원리와 활용&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://brightestbulb.tistory.com/147&quot; target=&quot;_blank&quot;&gt;취미는 공부 특기는 기록, Nested Loop Join, Driving Table&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/9614922/does-the-join-order-matter-in-sql&quot; target=&quot;_blank&quot;&gt;stackoverflow, Does the join order matter in SQL?&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://coding-factory.tistory.com/756&quot; target=&quot;_blank&quot;&gt;코딩팩토리, [DB] 데이터베이스 NESTED LOOPS JOIN (중첩 루프 조인)에 대하여&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://schatz37.tistory.com/2&quot; target=&quot;_blank&quot;&gt;고동의 데이터 분석, [SQL] “성능 관점”에서 보는 결합(Join)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://schatz37.tistory.com/3?category=878798&quot; target=&quot;_blank&quot;&gt;고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Fri, 29 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/mysql-series15</link>
-                <guid isPermaLink="true">http://localhost:4000/mysql-series15</guid>
+                <link>http://localhost:4000/mysql-series23</link>
+                <guid isPermaLink="true">http://localhost:4000/mysql-series23</guid>
                 
                 <category>MySQL</category>
                 
@@ -1062,36 +522,349 @@ WHERE e.emp_no=de.emp_no
             </item>
         
             <item>
-                <title>Coding Test Series [Part21]: 파이썬 문법</title>
+                <title>MySQL Series [Part22] TCL: COMMIT, ROLLBACK, SAVEPOINT</title>
                 <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 
+&lt;hr /&gt;
+</description>
+                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mysql-series22</link>
+                <guid isPermaLink="true">http://localhost:4000/mysql-series22</guid>
+                
+                <category>MySQL</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>MySQL Series [Part21] DDL(1): CREATE, ALTER, RENAME, DROP, TRUNCATE</title>
+                <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#in-python-and-operation-will-not-return-a-boolean-value&quot; id=&quot;markdown-toc-in-python-and-operation-will-not-return-a-boolean-value&quot;&gt;In python, ‘and’ operation will not return a boolean value&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#테이블-정보-확인&quot; id=&quot;markdown-toc-테이블-정보-확인&quot;&gt;테이블 정보 확인&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#테이블-생성&quot; id=&quot;markdown-toc-테이블-생성&quot;&gt;테이블 생성&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#테이블-설정-추가&quot; id=&quot;markdown-toc-테이블-설정-추가&quot;&gt;테이블 설정 추가&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#컬럼-추가-이름-변경&quot; id=&quot;markdown-toc-컬럼-추가-이름-변경&quot;&gt;컬럼 추가, 이름 변경&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#컬럼-삭제&quot; id=&quot;markdown-toc-컬럼-삭제&quot;&gt;컬럼 삭제&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#컬럼-타입-변경&quot; id=&quot;markdown-toc-컬럼-타입-변경&quot;&gt;컬럼 타입 변경&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#컬럼-속성-변경&quot; id=&quot;markdown-toc-컬럼-속성-변경&quot;&gt;컬럼 속성 변경&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#테이블에-제약-사항-걸기&quot; id=&quot;markdown-toc-테이블에-제약-사항-걸기&quot;&gt;테이블에 제약 사항 걸기&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#테이블의-제약-사항-삭제&quot; id=&quot;markdown-toc-테이블의-제약-사항-삭제&quot;&gt;테이블의 제약 사항 삭제&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#컬럼-순서-앞으로-당기기&quot; id=&quot;markdown-toc-컬럼-순서-앞으로-당기기&quot;&gt;컬럼 순서 앞으로 당기기&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#컬럼-순서-정하기&quot; id=&quot;markdown-toc-컬럼-순서-정하기&quot;&gt;컬럼 순서 정하기&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#컬럼명-속성-동시에-바꾸기&quot; id=&quot;markdown-toc-컬럼명-속성-동시에-바꾸기&quot;&gt;컬럼명 속성 동시에 바꾸기&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#외래키-설정&quot; id=&quot;markdown-toc-외래키-설정&quot;&gt;외래키 설정&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#외래키-정책&quot; id=&quot;markdown-toc-외래키-정책&quot;&gt;외래키 정책&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#외래키-삭제&quot; id=&quot;markdown-toc-외래키-삭제&quot;&gt;외래키 삭제&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#외래키-파악&quot; id=&quot;markdown-toc-외래키-파악&quot;&gt;외래키 파악&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
 
-&lt;h1 id=&quot;in-python-and-operation-will-not-return-a-boolean-value&quot;&gt;In python, ‘and’ operation will not return a boolean value&lt;/h1&gt;
+&lt;h1 id=&quot;테이블-정보-확인&quot;&gt;테이블 정보 확인&lt;/h1&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;DESCRIBE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SHOW&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;테이블-생성&quot;&gt;테이블 생성&lt;/h1&gt;
+
+&lt;p&gt;공식문서에서 [table_options]와 [partition_options] 부분만 제외하고 (create_definition)만 가지고 와봤다. 공식문서는 아래 참고란에 주석을 달아놓았다. 대략적인 공식문서를 해석하는 방법은 다음과 같다.&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;If it’s true, it will return the last true value, remember is the value, not True. Otherwise, it will return the first false value.&lt;/li&gt;
+  &lt;li&gt;(): 반드시 필요한 설정&lt;/li&gt;
+  &lt;li&gt;[]: optional한 설정&lt;/li&gt;
+  &lt;li&gt;{}: | 기호와 함께 사용되어 {A|B|C}인 경우 A 또는 B또는 C중 하나를 반드시 선택해야 한다는 의미&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;'ban' and 'car' -&amp;gt; 'car'
-0 and 'car' -&amp;gt; 0
-'ban' and False -&amp;gt; False
-'ban' or False -&amp;gt; 'ban'
+&lt;details&gt;
+&lt;summary&gt;공식문서 참고&lt;/summary&gt;
+&lt;div&gt;
+
+    &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;TEMPORARY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EXISTS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tbl_name&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table_options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;partition_options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;TEMPORARY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EXISTS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tbl_name&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;table_options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;partition_options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;IGNORE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;REPLACE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;query_expression&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;TEMPORARY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EXISTS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tbl_name&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LIKE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;old_tbl_name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;LIKE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;old_tbl_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;create_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;col_name&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;column_definition&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;INDEX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key_part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FULLTEXT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SPATIAL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;INDEX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key_part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CONSTRAINT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PRIMARY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key_part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CONSTRAINT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNIQUE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;INDEX&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key_part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CONSTRAINT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FOREIGN&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;reference_definition&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;check_constraint_definition&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;column_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;data_type&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;literal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VISIBLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVISIBLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AUTO_INCREMENT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;UNIQUE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;PRIMARY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;COMMENT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'string'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;COLLATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;collation_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;COLUMN_FORMAT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;FIXED&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DYNAMIC&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ENGINE_ATTRIBUTE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'string'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SECONDARY_ENGINE_ATTRIBUTE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'string'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;STORAGE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DISK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MEMORY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reference_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_constraint_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data_type&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;COLLATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;collation_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;GENERATED&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ALWAYS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VIRTUAL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;STORED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VISIBLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVISIBLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;UNIQUE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;PRIMARY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;COMMENT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'string'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reference_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;check_constraint_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;data_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;see&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Chapter&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;Data&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;key_part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col_name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)}&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ASC&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;index_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;USING&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BTREE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HASH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;index_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;KEY_BLOCK_SIZE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index_type&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WITH&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PARSER&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;parser_name&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COMMENT&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'string'&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VISIBLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVISIBLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ENGINE_ATTRIBUTE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'string'&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SECONDARY_ENGINE_ATTRIBUTE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'string'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;check_constraint_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CONSTRAINT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;symbol&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CHECK&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ENFORCED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;reference_definition&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;REFERENCES&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tbl_name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;key_part&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,...)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;MATCH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FULL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;MATCH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PARTIAL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;MATCH&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SIMPLE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DELETE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reference_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reference_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;reference_option&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;RESTRICT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CASCADE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NO&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ACTION&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/details&gt;
+
+&lt;p&gt;내가 생각했을 때 자주 사용할만한 문법들을 종합했을 때 다음과 같다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;EXISTS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;컬럼타입&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;UNSIGNED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;디폴트값&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AUTO_INCREMENT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;COMMENT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;코멘트&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;PRIMARY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;프라이머리&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;키&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;FOREIGN&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;외래&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;키&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;REFERENCES&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;부모테이블&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;부모&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DELETE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DELETE&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;정책&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;정책&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;하지만 보통 테이블 생성을 위해 처음부터 이렇게 스키마를 다 정해서 만들기는 힘들고, 이렇게 꼭 할 필요도 없다.&lt;/p&gt;
+
+&lt;p&gt;왜냐하면 뒤에서 배울 ALTER라는 것이 새로운 컬럼을 추가하거나, 외래키를 설정하거나 하는 모든 추가적인 적용을 가능하게 하기 때문이다.&lt;/p&gt;
+
+&lt;p&gt;또한 기존 테이블의 테이블 구조로 새로운 테이블을 만들 수도 있다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LIKE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;기존&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;기존 테이블 구조에 데이터까지 가져와 새로운 테이블로 만들 수도 있다.&lt;br /&gt;
+(인덱스는 복사 안됨. 그래서 프라이머리 키, 외래키와 같은 설정은 다시 직접 해줘야함)&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;기존&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;테이블-설정-추가&quot;&gt;테이블 설정 추가&lt;/h1&gt;
+
+&lt;h2 id=&quot;컬럼-추가-이름-변경&quot;&gt;컬럼 추가, 이름 변경&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;ADD&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;추가할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;CHAR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RENAME&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COLUMN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;원래&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TO&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;바꿀&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;컬럼-삭제&quot;&gt;컬럼 삭제&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;DROP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;COLUMN&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;삭제할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;컬럼-타입-변경&quot;&gt;컬럼 타입 변경&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;변경할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;INT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;컬럼-속성-변경&quot;&gt;컬럼 속성 변경&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;속성&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;변경할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;INT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;속성&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;변경할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;INT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;주고&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;싶은&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;값&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;TIMESTAMP&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;타입에&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;줄&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;수&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;있는&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;특별한&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;속성&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CURRENT_TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;값&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;입력&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;안되면&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;로&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;현재&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;시간&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;입력&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;변경할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CURRENT_TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;처음&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;로&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;현재&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;시간&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;넣어주고&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;데이터&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;갱신될&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;때&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;마다&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;갱신된&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;시간&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;넣어줌&lt;/span&gt;  
+&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;변경할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DATETIME&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DEFAULT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CURRENT_TIMESTAMP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CURRENT_TIMESTAMP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNIQUE&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;속성&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNIQUE&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;는&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PRIMARY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;와&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;다르게&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;허용&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;변경할&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;INT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UNIQUE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;테이블에-제약-사항-걸기&quot;&gt;테이블에 제약 사항 걸기&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ADD&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CONSTRAINT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;제약&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;사항&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;네이밍&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CHECK&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;제약&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;사항&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;age&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;테이블의-제약-사항-삭제&quot;&gt;테이블의 제약 사항 삭제&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;DROP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CONSTRAINT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;제약&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;사항&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;컬럼-순서-앞으로-당기기&quot;&gt;컬럼 순서 앞으로 당기기&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;INT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FIRST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;컬럼-순서-정하기&quot;&gt;컬럼 순서 정하기&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;MODIFY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;뒤에&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;올&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;INT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AFTER&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;앞에&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;있는&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;컬럼명-속성-동시에-바꾸기&quot;&gt;컬럼명 속성 동시에 바꾸기&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TALBE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;CHANGE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;원래&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;바꿀&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;VARCHAR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;외래키-설정&quot;&gt;외래키 설정&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ADD&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CONSTRAINT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;제약&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;사항&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;네이밍&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;FOREIGN&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;자식테이블의&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;REFERENCES&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;부모테이블&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;부모테이블의&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;컬럼&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DELETE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;DELETE&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;정책&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;정책&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;외래키-정책&quot;&gt;외래키 정책&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;RESTRICT&lt;/strong&gt;: 자식 테이블에서 삭제/갱신해야만 부모 테이블에서도 삭제/갱신 가능&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;CASCADE&lt;/strong&gt;: 부모 테이블의 데이터 삭제/갱신하면 관련 자식 테이블 데이터도 같이 삭제/갱신&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;SET NULL&lt;/strong&gt;: 부모 테이블의 데이터 삭제/갱신하면 관련 자식 테이블 데이터의 컬럼에 NULL 지정&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;외래키-삭제&quot;&gt;외래키 삭제&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;DROP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FOREIGN&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;제약&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;사항이&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;걸린&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;외래키-파악&quot;&gt;외래키 파악&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE_SCHEMA&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;TABLE_NAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CONSTRAINT_TYPE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CONSTRAINT_NAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;REFERENCED_TABLE_NAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;REFERENCED_COLUMN_NAME&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;information_schema&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TABLE_CONSTRAINTS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;LEFT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;JOIN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;information_schema&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KEY_COLUMN_USAGE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;USING&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CONSTRAINT_NAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CONSTRAINT_TYPE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'FOREIGN KEY'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dev.mysql.com/doc/refman/8.0/en/create-table.html&quot; target=&quot;_blank&quot;&gt;MySQL 공식문서13.1.20 CREATE TABLE Statement&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
-                <pubDate>Fri, 29 Jul 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/python-things</link>
-                <guid isPermaLink="true">http://localhost:4000/python-things</guid>
+                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mysql-series21</link>
+                <guid isPermaLink="true">http://localhost:4000/mysql-series21</guid>
                 
-                <category>Coding_Test</category>
+                <category>MySQL</category>
                 
                 
-                <category>CS</category>
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>MySQL Series [Part20] DCL(1): GRANT</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mysql-series20</link>
+                <guid isPermaLink="true">http://localhost:4000/mysql-series20</guid>
+                
+                <category>MySQL</category>
+                
+                
+                <category>DE</category>
+                
+            </item>
+        
+            <item>
+                <title>MySQL Series [Part19] DML(4): INSERT, UPDATE, DELETE</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mysql-series19</link>
+                <guid isPermaLink="true">http://localhost:4000/mysql-series19</guid>
+                
+                <category>MySQL</category>
+                
+                
+                <category>DE</category>
                 
             </item>
         

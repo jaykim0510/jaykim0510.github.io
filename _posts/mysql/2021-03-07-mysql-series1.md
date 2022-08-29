@@ -43,7 +43,7 @@ MySQL은 가장 처음 MySQL AB라고 하는 스웨덴 회사에서 개발되었
 ## DBMS의 종류  
 위와 같이 많은 회사에서 성능 향상과 목적에 맞게 SQL이라는 언어를 조금씩 변형, 개선하여 새로운 DBMS로 개발해왔습니다. 이러한 이유로 MySQL과 같이 ~SQL이라는 용어도 사실상은 그 언어를 지원하는 DBMS 자체를 의미하게 되었습니다. 그래서 약간 헷갈리지만 관계형 데이터를 위한 DBMS의 경우 RDBMS, 비 관계형 데이터를 위한 DBMS의 경우 NoSQL이라고 하게 되었습니다.  
 
-**RDBMS**: MySQL, Oracle, MariaDB(MySQL 개발자들이 만든 오픈소스), SQLite 등  
+**RDBMS**: MySQL, Oracle, MariaDB(MySQL 개발자들이 만든 오픈소스), PostgreSQL 등  
 **NoSQL**: MongoDB, ElasticSearch, Cassandra 등
 
 ## DBMS의 구조  
@@ -54,6 +54,28 @@ MySQL은 가장 처음 MySQL AB라고 하는 스웨덴 회사에서 개발되었
 - **server(서버 프로그램)**: client로부터 SQL 문 등을 전달받아 데이터베이스 관련 작업을 직접 처리하는 프로그램
 
 MySQL에서 서버 프로그램의 이름은 `mysqld`, 클라이언트 프로그램 이름은 `mysql`입니다. mysql은 보통 CLI 환경에서 사용하는 프로그램입니다. CLI 환경이 아니라 GUI 환경에서 mysql을 사용하려면 mysql을 GUI 환경에서 사용할 수 있도록 해주는 프로그램을 사용하면 됩니다. 대표적으로 Oracle이 공식적으로 제공하는 `MySQL Workbench`라는 프로그램이 있습니다. 
+
+# SQL의 분류
+
+## DCL
+
+- 데이터베이스 접근 권한과 관련한 명령어
+- GRANT, REVOKE, DENY
+
+## DDL
+
+- 테이블과 같은 데이터 구조를 정의하는데 사용되는 명령어
+- CREATE, ALTER, RENAME, DROP, TRUNCATE
+
+## DML
+
+- 데이터 조회/삽입/수정/삭제와 관련한 명령어
+- SELECT, INSERT, UPDATE, DELETE
+
+## TCL
+
+- 데이터를 트랜잭션 단위로 처리하는데 필요한 명령어
+- COMMIT, ROLLBACK, SAVEPOINT
 
 # SELECT문  
 MySQL에서 데이터를 **조회하거나 분석**할 때 필요한 **SELECT문**에 대해서 간단히 정리해 보겠습니다.  
