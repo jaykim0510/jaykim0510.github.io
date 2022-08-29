@@ -20,14 +20,14 @@ tags: MySQL
 # 데이터베이스 생성
 
 ```sql
-# 데이터베이스 생성
+--데이터베이스 생성
 CREATE DATABASE <DB이름>
 CREATE DATABASE IF NOT EXISTS <DB이름>
 
-# 데이터베이스 지정
+--데이터베이스 지정
 USE <DB이름>
 
-# 데이터베이스 삭제
+--데이터베이스 삭제
 DROP DATABASE <DB이름>
 ```
 
@@ -201,25 +201,25 @@ ALTER TABLE <테이블 이름>
 ## 컬럼 속성 변경  
 
 ```sql
-# NOT NULL 속성
+-- NOT NULL 속성
 ALTER TABLE <테이블 이름>
      MODIFY <변경할 컬럼명> INT NOT NULL;
 
-# DEFAULT 속성
+-- DEFAULT 속성
 ALTER TABLE <테이블 이름>
      MODIFY <변경할 컬럼명> INT NOT NULL DEFAULT <주고 싶은 default값>;
 
-# DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
-# DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
+-- DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
+-- DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
 ALTER TABLE <테이블 이름>
      MODIFY <변경할 컬럼명> DATETIME DEFAULT CURRENT_TIMESTAMP;
 
-# 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
+-- 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
 ALTER TABLE <테이블 이름>
      MODIFY <변경할 컬럼명> DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-# UNIQUE 속성
-# UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
+-- UNIQUE 속성
+-- UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
 ALTER TABLE <테이블 이름>
      MODIFY <변경할 컬럼명> INT UNIQUE;
 ```  

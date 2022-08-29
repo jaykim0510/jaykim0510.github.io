@@ -1,0 +1,46 @@
+I""<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#데이터-추가" id="markdown-toc-데이터-추가">데이터 추가</a></li>
+  <li><a href="#데이터-갱신" id="markdown-toc-데이터-갱신">데이터 갱신</a></li>
+  <li><a href="#데이터-삭제" id="markdown-toc-데이터-삭제">데이터 삭제</a></li>
+</ul>
+
+<hr />
+
+<h1 id="데이터-추가">데이터 추가</h1>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- 데이터 추가</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="n">col3</span><span class="p">,</span> <span class="p">...)</span>
+     <span class="k">VALUES</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="n">col3</span><span class="p">,</span> <span class="p">...);</span>
+
+<span class="c1">-- 특정 col에만 데이터 넣을 수도 있다</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col3</span><span class="p">)</span>
+     <span class="k">VALUES</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col3</span><span class="p">);</span>
+
+<span class="c1">-- SET을 이용한 방법</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span> 
+        <span class="k">SET</span> <span class="n">col1</span><span class="o">=</span><span class="n">val1</span><span class="p">,</span> <span class="n">col2</span><span class="o">=</span><span class="n">val2</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h1 id="데이터-갱신">데이터 갱신</h1>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- 데이터 갱신</span>
+<span class="k">UPDATE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+   <span class="k">SET</span> <span class="n">col1</span> <span class="o">=</span> <span class="o">&lt;</span><span class="err">갱신</span> <span class="err">데이터</span><span class="o">&gt;</span> <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span><span class="p">;</span> 
+
+<span class="c1">-- 기존 값을 기준으로 갱신</span>
+<span class="k">UPDATE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+   <span class="k">SET</span> <span class="n">col1</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">col1</span> <span class="o">+</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span><span class="p">;</span> 
+</code></pre></div></div>
+
+<h1 id="데이터-삭제">데이터 삭제</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- 테이블을 사용했던 흔적이 남는다 </span>
+<span class="c1">-- (AUTO_INCREMENT된 프라이머리키가 15에서 모두 삭제돼도 다음 삽입되는 프라이머리 키가 1이 아니라 16이 됨)</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+      <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span>
+
+<span class="c1">-- 테이블을 사용했던 흔적을 아예 없앤다</span>
+<span class="k">TRUNCATE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+   <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span>
+</code></pre></div></div>
+:ET

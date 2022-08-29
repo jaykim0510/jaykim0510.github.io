@@ -40,25 +40,25 @@ SET AUTOCOMMIT = FALSE
 # 트랜잭션 처리
 
 ```sql
-# DML 작업을 한 후
+-- DML 작업을 한 후
 UPDATE <테이블> SET <컬럼명> = <값> WHERE <조건>
 
-# 커밋하고 싶은 경우
+-- 커밋하고 싶은 경우
 COMMIT
 
-# 롤백하고 싶은 경우
+-- 롤백하고 싶은 경우
 ROLLBACK
 ```
 
 # 상태 저장
 
 ```sql
-# DML 작업을 한 후
+-- DML 작업을 한 후
 UPDATE <테이블> SET <컬럼명> = <값> WHERE <조건>
 
-# 이전 까지의 상태를 x로 저장
+-- 이전 까지의 상태를 x로 저장
 SAVEPOINT x
 
-# x 상태로 롤백
+-- x 상태로 롤백
 ROLLBACK TO SAVEPOINT x
 ```

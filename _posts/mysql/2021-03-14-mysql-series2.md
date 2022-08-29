@@ -25,14 +25,14 @@ tags: MySQL
 
 ![](/images/sql_3.png)  
 
-```
+```sql
 SELECT 
     p.name
     p.team
     r.team
     r.region
 FROM player AS p LEFT OUTER JOIN region AS r
-ON p.team = r.team # ON 대신 USING(team) 이렇게 할 수도 있음
+ON p.team = r.team -- ON 대신 USING(team) 이렇게 할 수도 있음
 ```  
 
 ### LEFT OUTER JOIN  
@@ -57,7 +57,7 @@ ON p.team = r.team # ON 대신 USING(team) 이렇게 할 수도 있음
 
 ![](/images/sql_8.png)  
 
-```
+```sql
 SELECT * FROM old_player
 UNION
 SELECT * FROM new_player;

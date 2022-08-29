@@ -127,7 +127,7 @@ post는 `pipeline` 또는 각각의 `stage`가 실행된 후 **조건에 따라 
 |**값**|`string`, `text`, `booleanParam`, `choice`, `password`|
 |**위치**|`pipeline` block|
 
-```
+```sh
 pipeline {
     agent any
     parameters {
@@ -183,7 +183,7 @@ pipeline {
 |**값**|`branch`, `buildingTag`, `environment`, `equals`, `expression`, `tag`, `not`, `allOf`, `anyOf` 등|
 |**위치**|`stage` block|
 
-```
+```sh
 pipeline {
     agent any
     stages {
@@ -204,7 +204,7 @@ pipeline {
 }
 ```
 
-```
+```sh
 pipeline {
     agent any
     stages {
@@ -228,7 +228,7 @@ pipeline {
 }
 ```
 
-```
+```sh
     agent any
     stages {
         stage('Example Build') {

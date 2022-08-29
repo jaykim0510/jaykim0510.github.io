@@ -1,0 +1,57 @@
+I"<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#오토커밋-확인하기" id="markdown-toc-오토커밋-확인하기">오토커밋 확인하기</a></li>
+  <li><a href="#트랜잭션-기능-활성화" id="markdown-toc-트랜잭션-기능-활성화">트랜잭션 기능 활성화</a></li>
+  <li><a href="#트랜잭션-처리" id="markdown-toc-트랜잭션-처리">트랜잭션 처리</a></li>
+  <li><a href="#상태-저장" id="markdown-toc-상태-저장">상태 저장</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>트랜잭션은 Session 단위로 제어됨</li>
+  <li>DDL 작업에 대해서는 ROLLBACK 적용 안됨 (DDL은 AutoCommit)</li>
+</ul>
+
+<h1 id="오토커밋-확인하기">오토커밋 확인하기</h1>
+
+<ul>
+  <li>AutoCommit은 DML 실행문이 자동으로 커밋되는 것을 의미</li>
+  <li>해제해야 트랜잭션 처리 가능</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">VARIABLES</span> <span class="k">LIKE</span> <span class="s1">'%commit%'</span>
+</code></pre></div></div>
+
+<h1 id="트랜잭션-기능-활성화">트랜잭션 기능 활성화</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">START</span> <span class="n">TRANSACTION</span>
+
+<span class="k">SET</span> <span class="n">AUTOCOMMIT</span> <span class="o">=</span> <span class="k">FALSE</span>
+</code></pre></div></div>
+
+<h1 id="트랜잭션-처리">트랜잭션 처리</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- DML 작업을 한 후</span>
+<span class="k">UPDATE</span> <span class="o">&lt;</span><span class="err">테이블</span><span class="o">&gt;</span> <span class="k">SET</span> <span class="o">&lt;</span><span class="err">컬럼명</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">&lt;</span><span class="err">값</span><span class="o">&gt;</span> <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span>
+
+<span class="c1">-- 커밋하고 싶은 경우</span>
+<span class="k">COMMIT</span>
+
+<span class="c1">-- 롤백하고 싶은 경우</span>
+<span class="k">ROLLBACK</span>
+</code></pre></div></div>
+
+<h1 id="상태-저장">상태 저장</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- DML 작업을 한 후</span>
+<span class="k">UPDATE</span> <span class="o">&lt;</span><span class="err">테이블</span><span class="o">&gt;</span> <span class="k">SET</span> <span class="o">&lt;</span><span class="err">컬럼명</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">&lt;</span><span class="err">값</span><span class="o">&gt;</span> <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span>
+
+<span class="c1">-- 이전 까지의 상태를 x로 저장</span>
+<span class="n">SAVEPOINT</span> <span class="n">x</span>
+
+<span class="c1">-- x 상태로 롤백</span>
+<span class="k">ROLLBACK</span> <span class="k">TO</span> <span class="n">SAVEPOINT</span> <span class="n">x</span>
+</code></pre></div></div>
+:ET

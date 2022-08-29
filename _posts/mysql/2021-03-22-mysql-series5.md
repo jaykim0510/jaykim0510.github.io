@@ -23,107 +23,107 @@ tags: MySQL
 
 ## 테이블의 컬럼 구조 확인하기  
 
-```
+```sql
 DESCRIBE [테이블 이름]
 ```  
 
 ## 컬럼 추가, 이름 변경  
 
-```
+```sql
 ALTER TABLE [테이블 이름] 
 ADD [추가할 컬럼] CHAR(10) NULL;
 ```
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 RENAME COLUMN [원래 컬럼명] TO [바꿀 컬럼명];
 ```
 
 ## 컬럼 삭제
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 DROP COLUMN [삭제할 컬럼명];
 ```
 
 ## 컬럼 타입 변경  
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 MODIFY [변경할 컬럼명] INT;
 ```  
 
 ## 컬럼 속성 변경  
 
-```
-# NOT NULL 속성
+```sql
+-- NOT NULL 속성
 ALTER TABLE [테이블 이름]
 MODIFY [변경할 컬럼명] INT NOT NULL;
 
-# DEFAULT 속성
+-- DEFAULT 속성
 ALTER TABLE [테이블 이름]
 MODIFY [변경할 컬럼명] INT NOT NULL DEFAULT [주고 싶은 default값];
 
-# DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
-# DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
+-- DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
+-- DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
 ALTER TABLE [테이블 이름]
 MODIFY [변경할 컬럼명] DATETIME DEFAULT CURRENT_TIMESTAMP;
 
-# 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
+-- 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
 ALTER TABLE [테이블 이름]
 MODIFY [변경할 컬럼명] DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-# UNIQUE 속성
-# UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
+-- UNIQUE 속성
+-- UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
 ALTER TABLE [테이블 이름]
 MODIFY [변경할 컬럼명] INT UNIQUE;
 ```  
 
 ## 테이블에 제약 사항 걸기  
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 ADD CONSTRAINT [제약 사항 네이밍] CHECK [제약 사항(ex. age < 100)];
 ```  
 
 ## 테이블의 제약 사항 삭제
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 DROP CONSTRAINT [제약 사항 이름];
 ```
 
 ## 컬럼 순서 앞으로 당기기  
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 MODIFY [컬럼명] INT FIRST;
 ```
 
 ## 컬럼 순서 정하기
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 MODIFY [뒤에 올 컬럼명] INT AFTER [앞에 있는 컬럼명];
 ```  
 
 ## 컬럼명 속성 동시에 바꾸기
 
-```
+```sql
 ALTER TALBE [테이블 이름]
 CHANGE [원래 컬럼명] [바꿀 컬럼명] VARCHAR(10) NOT NULL;
 ```  
 
 ## 테이블 복제하기
 
-```
+```sql
 CREATE TABLE [복제한 테이블의 이름]
 AS SELECT * FROM [원본 테이블의 이름]
 ```
 
 ## 테이블 뼈대만 복제하기
 
-```
+```sql
 CREATE TABLE [복제한 테이블의 이름]
 LIKE [원본 테이블의 이름]
 ```  
@@ -140,7 +140,7 @@ LIKE [원본 테이블의 이름]
 
 ## 외래키 설정
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 ADD CONSTRAINT [제약 사항 네이밍]
     FOREIGN KEY (자식테이블의 컬럼)
@@ -156,14 +156,14 @@ ADD CONSTRAINT [제약 사항 네이밍]
 
 ## 외래키 삭제
 
-```
+```sql
 ALTER TABLE [테이블 이름]
 DROP FOREIGN KEY [제약 사항이 걸린 테이블];
 ```
 
 ## 외래키 파악
 
-```
+```sql
 SELECT
     i.TABLE_SCHEMA, i.TABLE_NAME, i.CONSTRAINT_TYPE, i.CONSTRAINT_NAME,
     k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME
