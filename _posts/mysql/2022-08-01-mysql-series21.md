@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part21] DDL(1): CREATE, ALTER, RENAME, DROP, TRUNCATE'
+title:  'MySQL Series [Part21] DDL: CREATE, ALTER, RENAME, DROP, TRUNCATE'
 description: 
 date:   2022-08-01 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
@@ -16,6 +16,20 @@ tags: MySQL
 {:toc}
 
 ---
+
+# 데이터베이스 생성
+
+```sql
+# 데이터베이스 생성
+CREATE DATABASE <DB이름>
+CREATE DATABASE IF NOT EXISTS <DB이름>
+
+# 데이터베이스 지정
+USE <DB이름>
+
+# 데이터베이스 삭제
+DROP DATABASE <DB이름>
+```
 
 # 테이블 정보 확인
 
@@ -162,11 +176,11 @@ CREATE TABLE <테이블명> AS SELECT * FROM <기존 테이블명>
 
 ```sql
 ALTER TABLE <테이블 이름> 
-ADD <추가할 컬럼> CHAR(10) NULL;
+        ADD <추가할 컬럼> CHAR(10) NULL;
 ```
 
 ```sql
-ALTER TABLE <테이블 이름>
+  ALTER TABLE <테이블 이름>
 RENAME COLUMN <원래 컬럼명> TO <바꿀 컬럼명>;
 ```
 
@@ -181,7 +195,7 @@ DROP COLUMN <삭제할 컬럼명>;
 
 ```sql
 ALTER TABLE <테이블 이름>
-MODIFY <변경할 컬럼명> INT;
+     MODIFY <변경할 컬럼명> INT;
 ```  
 
 ## 컬럼 속성 변경  
@@ -189,38 +203,38 @@ MODIFY <변경할 컬럼명> INT;
 ```sql
 # NOT NULL 속성
 ALTER TABLE <테이블 이름>
-MODIFY <변경할 컬럼명> INT NOT NULL;
+     MODIFY <변경할 컬럼명> INT NOT NULL;
 
 # DEFAULT 속성
 ALTER TABLE <테이블 이름>
-MODIFY <변경할 컬럼명> INT NOT NULL DEFAULT <주고 싶은 default값>;
+     MODIFY <변경할 컬럼명> INT NOT NULL DEFAULT <주고 싶은 default값>;
 
 # DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
 # DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
 ALTER TABLE <테이블 이름>
-MODIFY <변경할 컬럼명> DATETIME DEFAULT CURRENT_TIMESTAMP;
+     MODIFY <변경할 컬럼명> DATETIME DEFAULT CURRENT_TIMESTAMP;
 
 # 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
 ALTER TABLE <테이블 이름>
-MODIFY <변경할 컬럼명> DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+     MODIFY <변경할 컬럼명> DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 # UNIQUE 속성
 # UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
 ALTER TABLE <테이블 이름>
-MODIFY <변경할 컬럼명> INT UNIQUE;
+     MODIFY <변경할 컬럼명> INT UNIQUE;
 ```  
 
 ## 테이블에 제약 사항 걸기  
 
 ```sql
-ALTER TABLE <테이블 이름>
+   ALTER TABLE <테이블 이름>
 ADD CONSTRAINT <제약 사항 네이밍> CHECK <제약 사항(ex. age < 100)>;
 ```  
 
 ## 테이블의 제약 사항 삭제
 
 ```sql
-ALTER TABLE <테이블 이름>
+    ALTER TABLE <테이블 이름>
 DROP CONSTRAINT <제약 사항 이름>;
 ```
 
@@ -228,32 +242,37 @@ DROP CONSTRAINT <제약 사항 이름>;
 
 ```sql
 ALTER TABLE <테이블 이름>
-MODIFY <컬럼명> INT FIRST;
+     MODIFY <컬럼명> INT FIRST;
 ```
 
 ## 컬럼 순서 정하기
 
 ```sql
 ALTER TABLE <테이블 이름>
-MODIFY <뒤에 올 컬럼명] INT AFTER <앞에 있는 컬럼명>;
+     MODIFY <뒤에 올 컬럼명] INT AFTER <앞에 있는 컬럼명>;
 ```  
 
 ## 컬럼명 속성 동시에 바꾸기
 
 ```sql
-ALTER TALBE <테이블 이름>
+ ALTER TALBE <테이블 이름>
 CHANGE <원래 컬럼명> <바꿀 컬럼명> VARCHAR(10) NOT NULL;
 ```  
 
 ## 외래키 설정
+외래키(Foreign Key)란 한 테이블의 컬럼 중에서 **다른 테이블의 특정 컬럼을 식별할 수 있는 컬럼**을 말합니다. 그리고 외래키에 의해 참조당하는 테이블을 **부모 테이블(parent table)**, **참조당하는 테이블(referenced table)**이라고 합니다. 외래키를 이용하면 **테이블간의 참조 무결성**을 지킬 수 있습니다. 참조 무결성이란 아래 그림과 같이 두 테이블 간에 참조 관계가 있을 때 각 데이터 간에 유지되어야 하는 정확성과 일관성을 의미합니다.  
+
+예를 들어, 강의 평가인 review 테이블에는 '컴퓨터 개론'에 관한 평가 데이터가 남아있지만, 강의 목록을 나타내는 course 테이블에는 '컴퓨터 개론' 과목이 삭제된다면 이상한 상황이 벌어질 것입니다. 이 때 외래키를 통해 지정해 놓으면 이런 상황을 해결할 수 있습니다. 
+
+![](/images/sql_2.png)  
 
 ```sql
-ALTER TABLE <테이블 이름>
+   ALTER TABLE <테이블 이름>
 ADD CONSTRAINT <제약 사항 네이밍>
-    FOREIGN KEY (자식테이블의 컬럼)
+   FOREIGN KEY (자식테이블의 컬럼)
     REFERENCES 부모테이블 (부모테이블의 컬럼)
-    ON DELETE <DELETE정책>
-    ON UPDATE <UPDATE정책>;
+     ON DELETE <DELETE정책>
+     ON UPDATE <UPDATE정책>;
 ```  
 
 ## 외래키 정책
@@ -264,7 +283,7 @@ ADD CONSTRAINT <제약 사항 네이밍>
 ## 외래키 삭제
 
 ```sql
-ALTER TABLE <테이블 이름>
+     ALTER TABLE <테이블 이름>
 DROP FOREIGN KEY <제약 사항이 걸린 테이블>;
 ```
 
@@ -272,12 +291,12 @@ DROP FOREIGN KEY <제약 사항이 걸린 테이블>;
 
 ```sql
 SELECT
-    i.TABLE_SCHEMA, i.TABLE_NAME, i.CONSTRAINT_TYPE, i.CONSTRAINT_NAME,
-    k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME
-FROM information_schema.TABLE_CONSTRAINTS i
+          i.TABLE_SCHEMA, i.TABLE_NAME, i.CONSTRAINT_TYPE, i.CONSTRAINT_NAME,
+          k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME
+     FROM information_schema.TABLE_CONSTRAINTS i
 LEFT JOIN information_schema.KEY_COLUMN_USAGE k
-USING(CONSTRAINT_NAME)
-WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY';
+    USING (CONSTRAINT_NAME)
+    WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY';
 ```
 
 

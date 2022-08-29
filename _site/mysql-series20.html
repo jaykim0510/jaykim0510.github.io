@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part20] DCL(1): GRANT</title>
+  <title>MySQL Series [Part20] DCL(1): GRANT, REVOKE</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/mysql-series20">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part20] DCL(1): GRANT – Code Museum">
+  <meta name="twitter:title" content="MySQL Series [Part20] DCL(1): GRANT, REVOKE – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/mysql_logo.webp">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part20] DCL(1): GRANT – Code Museum">
+  <meta property="og:title" content="MySQL Series [Part20] DCL(1): GRANT, REVOKE – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -358,7 +358,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part20] DCL(1): GRANT">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part20] DCL(1): GRANT, REVOKE">
         </div>
       </div>
       
@@ -379,7 +379,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part20] DCL(1): GRANT</h1>
+          <h1 class="post__title">MySQL Series [Part20] DCL(1): GRANT, REVOKE</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -430,7 +430,7 @@ Table of Contents
       <a href="/mysql-series19" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part19] DML(4): INSERT, UPDATE, DELETE</a>
     
     
-      <a href="/mysql-series21" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part21] DDL(1): CREATE, ALTER, RENAME, DROP, TRUNCATE<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series21" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part21] DDL: CREATE, ALTER, RENAME, DROP, TRUNCATE<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -438,8 +438,57 @@ Table of Contents
 
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#유저-생성하기" id="markdown-toc-유저-생성하기">유저 생성하기</a></li>
+  <li><a href="#권한-부여" id="markdown-toc-권한-부여">권한 부여</a></li>
+  <li><a href="#권한-적용" id="markdown-toc-권한-적용">권한 적용</a></li>
+  <li><a href="#권한-확인" id="markdown-toc-권한-확인">권한 확인</a></li>
+  <li><a href="#권한-삭제" id="markdown-toc-권한-삭제">권한 삭제</a></li>
+  <li><a href="#유저-삭제" id="markdown-toc-유저-삭제">유저 삭제</a></li>
+  <li><a href="#현재-서버-사용중인-유저" id="markdown-toc-현재-서버-사용중인-유저">현재 서버 사용중인 유저</a></li>
+</ul>
 
 <hr />
+
+<h1 id="유저-생성하기">유저 생성하기</h1>
+
+<pre><code class="language-SQL"># 유저명, 호스트, 비밀번호는 따옴표로 감싸줘도 된다
+# 호스트는 보통 localhost 또는 % 또는 IP주소를 사용한다. %는 모든 IP주소를 허용한다는 의미
+CREATE USER &lt;유저명&gt;@&lt;호스트&gt; IDENTIFIED BY &lt;비밀번호&gt;
+</code></pre>
+
+<h1 id="권한-부여">권한 부여</h1>
+
+<pre><code class="language-SQL"># 모든DB, 모든 테이블은 각각 *(asterisk)로 표현 가능하다
+# *.*: 모든 DB의 모든 테이블에 대해 권한을 준다
+GRANT ALL PRIVILEGES ON &lt;DB명&gt;.&lt;테이블명&gt; TO &lt;유저명&gt;@&lt;호스트&gt;
+</code></pre>
+
+<h1 id="권한-적용">권한 적용</h1>
+
+<pre><code class="language-SQL"># 권한 적용하기
+FLUSH PRIVILEGES
+</code></pre>
+
+<h1 id="권한-확인">권한 확인</h1>
+
+<pre><code class="language-SQL">SHOW GRANT FOR &lt;유저명&gt;&gt;@&lt;호스트&gt;
+</code></pre>
+
+<h1 id="권한-삭제">권한 삭제</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">REVOKE</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="o">&lt;</span><span class="n">DB</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="err">테이블</span><span class="o">&gt;</span> <span class="k">FROM</span> <span class="o">&lt;</span><span class="err">유저</span><span class="o">&gt;@&lt;</span><span class="err">호스트</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h1 id="유저-삭제">유저 삭제</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">USER</span> <span class="o">&lt;</span><span class="err">유저</span><span class="o">&gt;@&lt;</span><span class="err">호스트</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h1 id="현재-서버-사용중인-유저">현재 서버 사용중인 유저</h1>
+
+<pre><code class="language-SQL">SELECT CURRENT_USER()
+</code></pre>
 
     </div>
     <div class="post__tags_list">
@@ -665,7 +714,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part20]%20DCL(1):%20GRANT&url=http://localhost:4000/mysql-series20"
+          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part20]%20DCL(1):%20GRANT,%20REVOKE&url=http://localhost:4000/mysql-series20"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -675,12 +724,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series20&amp;media=http://localhost:4000/images/mysql_logo.webp&amp;description=MySQL%20Series%20[Part20]%20DCL(1):%20GRANT"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series20&amp;media=http://localhost:4000/images/mysql_logo.webp&amp;description=MySQL%20Series%20[Part20]%20DCL(1):%20GRANT,%20REVOKE"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series20&title=MySQL%20Series%20[Part20]%20DCL(1):%20GRANT&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series20&title=MySQL%20Series%20[Part20]%20DCL(1):%20GRANT,%20REVOKE&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -711,7 +760,7 @@ Table of Contents
       <a href="/mysql-series19" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part19] DML(4): INSERT, UPDATE, DELETE</a>
     
     
-      <a href="/mysql-series21" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part21] DDL(1): CREATE, ALTER, RENAME, DROP, TRUNCATE<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series21" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part21] DDL: CREATE, ALTER, RENAME, DROP, TRUNCATE<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

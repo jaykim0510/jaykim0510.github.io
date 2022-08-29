@@ -1,6 +1,7 @@
-I"0d<hr />
+I"C�<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#데이터베이스-생성" id="markdown-toc-데이터베이스-생성">데이터베이스 생성</a></li>
   <li><a href="#테이블-정보-확인" id="markdown-toc-테이블-정보-확인">테이블 정보 확인</a></li>
   <li><a href="#테이블-생성" id="markdown-toc-테이블-생성">테이블 생성</a></li>
   <li><a href="#테이블-설정-추가" id="markdown-toc-테이블-설정-추가">테이블 설정 추가</a>    <ul>
@@ -23,6 +24,19 @@
 </ul>
 
 <hr />
+
+<h1 id="데이터베이스-생성">데이터베이스 생성</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="err">데이터베이스</span> <span class="err">생성</span>
+<span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="o">&lt;</span><span class="n">DB</span><span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="o">&lt;</span><span class="n">DB</span><span class="err">이름</span><span class="o">&gt;</span>
+
+<span class="o">#</span> <span class="err">데이터베이스</span> <span class="err">지정</span>
+<span class="n">USE</span> <span class="o">&lt;</span><span class="n">DB</span><span class="err">이름</span><span class="o">&gt;</span>
+
+<span class="o">#</span> <span class="err">데이터베이스</span> <span class="err">삭제</span>
+<span class="k">DROP</span> <span class="k">DATABASE</span> <span class="o">&lt;</span><span class="n">DB</span><span class="err">이름</span><span class="o">&gt;</span>
+</code></pre></div></div>
 
 <h1 id="테이블-정보-확인">테이블 정보 확인</h1>
 
@@ -163,89 +177,94 @@
 
 <h2 id="컬럼-추가-이름-변경">컬럼 추가, 이름 변경</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt; 
-ADD &lt;추가할 컬럼&gt; CHAR(10) NULL;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span> 
+        <span class="k">ADD</span> <span class="o">&lt;</span><span class="err">추가할</span> <span class="err">컬럼</span><span class="o">&gt;</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">NULL</span><span class="p">;</span>
 </code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-RENAME COLUMN &lt;원래 컬럼명&gt; TO &lt;바꿀 컬럼명&gt;;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">RENAME</span> <span class="k">COLUMN</span> <span class="o">&lt;</span><span class="err">원래</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="k">TO</span> <span class="o">&lt;</span><span class="err">바꿀</span> <span class="err">컬럼명</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="컬럼-삭제">컬럼 삭제</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-DROP COLUMN &lt;삭제할 컬럼명&gt;;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">DROP</span> <span class="k">COLUMN</span> <span class="o">&lt;</span><span class="err">삭제할</span> <span class="err">컬럼명</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="컬럼-타입-변경">컬럼 타입 변경</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;변경할 컬럼명&gt; INT;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="컬럼-속성-변경">컬럼 속성 변경</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># NOT NULL 속성
-ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;변경할 컬럼명&gt; INT NOT NULL;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="err">속성</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">;</span>
 
-# DEFAULT 속성
-ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;변경할 컬럼명&gt; INT NOT NULL DEFAULT &lt;주고 싶은 default값&gt;;
+<span class="o">#</span> <span class="k">DEFAULT</span> <span class="err">속성</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="o">&lt;</span><span class="err">주고</span> <span class="err">싶은</span> <span class="k">default</span><span class="err">값</span><span class="o">&gt;</span><span class="p">;</span>
 
-# DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성
-# DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력
-ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;변경할 컬럼명&gt; DATETIME DEFAULT CURRENT_TIMESTAMP;
+<span class="o">#</span> <span class="nb">DATETIME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span> <span class="err">타입에</span> <span class="err">줄</span> <span class="err">수</span> <span class="err">있는</span> <span class="err">특별한</span> <span class="err">속성</span>
+<span class="o">#</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">:</span> <span class="err">값</span> <span class="err">입력</span> <span class="err">안되면</span> <span class="k">default</span><span class="err">로</span> <span class="err">현재</span> <span class="err">시간</span> <span class="err">입력</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">DATETIME</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">;</span>
 
-# 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  
-ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;변경할 컬럼명&gt; DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+<span class="o">#</span> <span class="err">처음</span> <span class="k">default</span><span class="err">로</span> <span class="err">현재</span> <span class="err">시간</span> <span class="err">넣어주고</span><span class="p">,</span> <span class="err">데이터</span> <span class="err">갱신될</span> <span class="err">때</span> <span class="err">마다</span> <span class="err">갱신된</span> <span class="err">시간</span> <span class="err">넣어줌</span>  
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">DATETIME</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">;</span>
 
-# UNIQUE 속성
-# UNIQUE는 PRIMARY KEY와 다르게 NULL 허용
-ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;변경할 컬럼명&gt; INT UNIQUE;
+<span class="o">#</span> <span class="k">UNIQUE</span> <span class="err">속성</span>
+<span class="o">#</span> <span class="k">UNIQUE</span><span class="err">는</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="err">와</span> <span class="err">다르게</span> <span class="k">NULL</span> <span class="err">허용</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span> <span class="k">UNIQUE</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="테이블에-제약-사항-걸기">테이블에 제약 사항 걸기</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-ADD CONSTRAINT &lt;제약 사항 네이밍&gt; CHECK &lt;제약 사항(ex. age &lt; 100)&gt;;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="o">&lt;</span><span class="err">제약</span> <span class="err">사항</span> <span class="err">네이밍</span><span class="o">&gt;</span> <span class="k">CHECK</span> <span class="o">&lt;</span><span class="err">제약</span> <span class="err">사항</span><span class="p">(</span><span class="n">ex</span><span class="p">.</span> <span class="n">age</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="테이블의-제약-사항-삭제">테이블의 제약 사항 삭제</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-DROP CONSTRAINT &lt;제약 사항 이름&gt;;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">DROP</span> <span class="k">CONSTRAINT</span> <span class="o">&lt;</span><span class="err">제약</span> <span class="err">사항</span> <span class="err">이름</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="컬럼-순서-앞으로-당기기">컬럼 순서 앞으로 당기기</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;컬럼명&gt; INT FIRST;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span> <span class="k">FIRST</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="컬럼-순서-정하기">컬럼 순서 정하기</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-MODIFY &lt;뒤에 올 컬럼명] INT AFTER &lt;앞에 있는 컬럼명&gt;;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+     <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">뒤에</span> <span class="err">올</span> <span class="err">컬럼명</span><span class="p">]</span> <span class="nb">INT</span> <span class="k">AFTER</span> <span class="o">&lt;</span><span class="err">앞에</span> <span class="err">있는</span> <span class="err">컬럼명</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="컬럼명-속성-동시에-바꾸기">컬럼명 속성 동시에 바꾸기</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TALBE &lt;테이블 이름&gt;
-CHANGE &lt;원래 컬럼명&gt; &lt;바꿀 컬럼명&gt; VARCHAR(10) NOT NULL;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">ALTER</span> <span class="n">TALBE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="n">CHANGE</span> <span class="o">&lt;</span><span class="err">원래</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="err">바꿀</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="외래키-설정">외래키 설정</h2>
+<p>외래키(Foreign Key)란 한 테이블의 컬럼 중에서 <strong>다른 테이블의 특정 컬럼을 식별할 수 있는 컬럼</strong>을 말합니다. 그리고 외래키에 의해 참조당하는 테이블을 <strong>부모 테이블(parent table)</strong>, <strong>참조당하는 테이블(referenced table)</strong>이라고 합니다. 외래키를 이용하면 <strong>테이블간의 참조 무결성</strong>을 지킬 수 있습니다. 참조 무결성이란 아래 그림과 같이 두 테이블 간에 참조 관계가 있을 때 각 데이터 간에 유지되어야 하는 정확성과 일관성을 의미합니다.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-ADD CONSTRAINT &lt;제약 사항 네이밍&gt;
-    FOREIGN KEY (자식테이블의 컬럼)
-    REFERENCES 부모테이블 (부모테이블의 컬럼)
-    ON DELETE &lt;DELETE정책&gt;
-    ON UPDATE &lt;UPDATE정책&gt;;
+<p>예를 들어, 강의 평가인 review 테이블에는 ‘컴퓨터 개론’에 관한 평가 데이터가 남아있지만, 강의 목록을 나타내는 course 테이블에는 ‘컴퓨터 개론’ 과목이 삭제된다면 이상한 상황이 벌어질 것입니다. 이 때 외래키를 통해 지정해 놓으면 이런 상황을 해결할 수 있습니다.</p>
+
+<p><img src="/images/sql_2.png" alt="" /></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="o">&lt;</span><span class="err">제약</span> <span class="err">사항</span> <span class="err">네이밍</span><span class="o">&gt;</span>
+   <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="err">자식테이블의</span> <span class="err">컬럼</span><span class="p">)</span>
+    <span class="k">REFERENCES</span> <span class="err">부모테이블</span> <span class="p">(</span><span class="err">부모테이블의</span> <span class="err">컬럼</span><span class="p">)</span>
+     <span class="k">ON</span> <span class="k">DELETE</span> <span class="o">&lt;</span><span class="k">DELETE</span><span class="err">정책</span><span class="o">&gt;</span>
+     <span class="k">ON</span> <span class="k">UPDATE</span> <span class="o">&lt;</span><span class="k">UPDATE</span><span class="err">정책</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="외래키-정책">외래키 정책</h2>
@@ -257,19 +276,19 @@ ADD CONSTRAINT &lt;제약 사항 네이밍&gt;
 
 <h2 id="외래키-삭제">외래키 삭제</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE &lt;테이블 이름&gt;
-DROP FOREIGN KEY &lt;제약 사항이 걸린 테이블&gt;;
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">DROP</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="o">&lt;</span><span class="err">제약</span> <span class="err">사항이</span> <span class="err">걸린</span> <span class="err">테이블</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h2 id="외래키-파악">외래키 파악</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SELECT
-    i.TABLE_SCHEMA, i.TABLE_NAME, i.CONSTRAINT_TYPE, i.CONSTRAINT_NAME,
-    k.REFERENCED_TABLE_NAME, k.REFERENCED_COLUMN_NAME
-FROM information_schema.TABLE_CONSTRAINTS i
-LEFT JOIN information_schema.KEY_COLUMN_USAGE k
-USING(CONSTRAINT_NAME)
-WHERE i.CONSTRAINT_TYPE = 'FOREIGN KEY';
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
+          <span class="n">i</span><span class="p">.</span><span class="n">TABLE_SCHEMA</span><span class="p">,</span> <span class="n">i</span><span class="p">.</span><span class="k">TABLE_NAME</span><span class="p">,</span> <span class="n">i</span><span class="p">.</span><span class="n">CONSTRAINT_TYPE</span><span class="p">,</span> <span class="n">i</span><span class="p">.</span><span class="k">CONSTRAINT_NAME</span><span class="p">,</span>
+          <span class="n">k</span><span class="p">.</span><span class="n">REFERENCED_TABLE_NAME</span><span class="p">,</span> <span class="n">k</span><span class="p">.</span><span class="n">REFERENCED_COLUMN_NAME</span>
+     <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">TABLE_CONSTRAINTS</span> <span class="n">i</span>
+<span class="k">LEFT</span> <span class="k">JOIN</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">KEY_COLUMN_USAGE</span> <span class="n">k</span>
+    <span class="k">USING</span> <span class="p">(</span><span class="k">CONSTRAINT_NAME</span><span class="p">)</span>
+    <span class="k">WHERE</span> <span class="n">i</span><span class="p">.</span><span class="n">CONSTRAINT_TYPE</span> <span class="o">=</span> <span class="s1">'FOREIGN KEY'</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h1 id="참고">참고</h1>
