@@ -5,8 +5,8 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 30 Aug 2022 02:59:53 +0900</pubDate>
-        <lastBuildDate>Tue, 30 Aug 2022 02:59:53 +0900</lastBuildDate>
+        <pubDate>Tue, 30 Aug 2022 07:09:12 +0900</pubDate>
+        <lastBuildDate>Tue, 30 Aug 2022 07:09:12 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -507,8 +507,150 @@ stored inside of key value pairs. so think about a json object you have the key 
                 <title>MySQL Series [Part23] 유틸리티(View, CTE, INDEX)</title>
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#view&quot; id=&quot;markdown-toc-view&quot;&gt;View&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#장점&quot; id=&quot;markdown-toc-장점&quot;&gt;장점&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#단점&quot; id=&quot;markdown-toc-단점&quot;&gt;단점&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#생성&quot; id=&quot;markdown-toc-생성&quot;&gt;생성&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#수정&quot; id=&quot;markdown-toc-수정&quot;&gt;수정&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#삭제&quot; id=&quot;markdown-toc-삭제&quot;&gt;삭제&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#정보-확인&quot; id=&quot;markdown-toc-정보-확인&quot;&gt;정보 확인&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#ctecommon-table-expression&quot; id=&quot;markdown-toc-ctecommon-table-expression&quot;&gt;CTE(Common Table Expression)&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#recursive-cte&quot; id=&quot;markdown-toc-recursive-cte&quot;&gt;RECURSIVE CTE&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#table-vs-view&quot; id=&quot;markdown-toc-table-vs-view&quot;&gt;Table vs View&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#view-vs-cte&quot; id=&quot;markdown-toc-view-vs-cte&quot;&gt;View vs CTE&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#cte-vs-subquery&quot; id=&quot;markdown-toc-cte-vs-subquery&quot;&gt;CTE vs Subquery&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;hr /&gt;
+
+&lt;h1 id=&quot;view&quot;&gt;View&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;뷰(view)는 데이터베이스에 존재하는 일종의 가상 테이블&lt;/li&gt;
+  &lt;li&gt;실제로 데이터를 저장하고 있지는 않음&lt;/li&gt;
+  &lt;li&gt;테이블은 실제 데이터를 저장, 뷰는 그저 SELECT문이 실행되고 난 후의 이미지 같은 느낌&lt;/li&gt;
+  &lt;li&gt;때에 따라 서브쿼리가 이중 중첩, 삼중 중첩되는 경우&lt;/li&gt;
+  &lt;li&gt;이 때 생기는 SELECT문의 복잡성을 줄이고자 뷰를 사용&lt;/li&gt;
+  &lt;li&gt;특정 역할을 하는 SELECT문들을 뷰로 저장&lt;/li&gt;
+  &lt;li&gt;코드 스니펫처럼 필요할 때마다 가져와서 사용 가능&lt;/li&gt;
+  &lt;li&gt;뷰는 백엔드 개발자들의 자산&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;장점&quot;&gt;장점&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;특정 사용자에게 테이블 전체가 아닌 필요한 필드만을 보여줄 수 있음&lt;/li&gt;
+  &lt;li&gt;쿼리의 재사용성&lt;/li&gt;
+  &lt;li&gt;이미 실행된 서브쿼리라는 점에서 더 빠르다고 할 수 있음&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;단점&quot;&gt;단점&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;뷰는 수정할 수 없는 경우가 많음
+    &lt;ul&gt;
+      &lt;li&gt;SUM, AVG와 같은 집계 함수가 있는 경우, UNION ALL, DISTINCT, GROUP BY가 포함된 경우&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;삽입, 삭제, 갱신 작업에 제한 사항이 많음&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;생성&quot;&gt;생성&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;VIEW&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;뷰&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;필드&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;필드&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;조건&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;수정&quot;&gt;수정&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;VIEW&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;뷰&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;필드&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;필드&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;테이블&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h2 id=&quot;삭제&quot;&gt;삭제&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;DROP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;VIEW&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;뷰&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;정보-확인&quot;&gt;정보 확인&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SHOW&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TABLES&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SHOW&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;VIEW&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;뷰&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;DESC&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;뷰&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;이름&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;information_schema&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;views&lt;/span&gt;
+ &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;table_schema&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DB&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;ctecommon-table-expression&quot;&gt;CTE(Common Table Expression)&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;메모리에 임시 결과로 올려놓고 재사용&lt;/li&gt;
+  &lt;li&gt;쿼리가 실행중인 동안만큼은 데이터가 메모리에 올라와 있음&lt;/li&gt;
+  &lt;li&gt;순차적으로 쿼리 작성 가능&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;recursive-cte&quot;&gt;RECURSIVE CTE&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;스스로 추가적인 Record를 생성할 수 있음&lt;/li&gt;
+  &lt;li&gt;그래서 반드시 UNION 사용해야함&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/mysql_40.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;table-vs-view&quot;&gt;Table vs View&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Table: Table is a preliminary storage for storing data and information in RDBMS. A table is a collection of related data entries and it consists of columns and rows.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;View: A view is a virtual table whose contents are defined by a query. Unless indexed, a view does not exist as a stored set of data values in a database. Advantages over table are&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can combine columns/rows from multiple table or another view and have a consolidated view.
+Views can be used as security mechanisms by letting users access data through the view, without granting the users permissions to directly access the underlying base tables of the view
+It acts as abstract layer to downstream systems, so any change in schema is not exposed and hence the downstream systems doesn’t get affected.&lt;/p&gt;
+
+&lt;h2 id=&quot;view-vs-cte&quot;&gt;View vs CTE&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;A view is an object in the database&lt;/li&gt;
+  &lt;li&gt;Views can be indexed&lt;/li&gt;
+  &lt;li&gt;A CTE only exists for the duration of a single query&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;CTE can’t be indexed&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Ad-hoc queries&lt;/strong&gt;: For queries that are referenced occasionally (or just once), it’s usually better to use a CTE. If you need the query again, you can just copy the CTE and modify it if necessary.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Frequently used queries&lt;/strong&gt;: If you tend to reference the same query often, creating a corresponding view is a good idea. However, you’ll need create view permission in your database to create a view.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Access management&lt;/strong&gt;: A view might be used to restrict particular users’ database access while still allowing them to get the information they need. You can give users access to specific views that query the data they’re allowed to see without exposing the whole database. In such a case, a view provides an additional access layer.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;cte-vs-subquery&quot;&gt;CTE vs Subquery&lt;/h2&gt;
+
+&lt;p&gt;CTE is just syntax so in theory it is just a subquery. you may not get any performance difference while using CTE and Subquery.&lt;/p&gt;
+
+&lt;p&gt;I think the biggest benefit for using CTEs is readability. It makes it much easier to see what queries are being used as subqueries, and then it’s easy to join them into a query, much like a view.&lt;/p&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/6015175/difference-between-view-and-table-in-sql&quot; target=&quot;_blank&quot;&gt;stackoverflow, Difference between View and table in sql&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/6026842/cte-vs-view-performance-in-sql-server&quot; target=&quot;_blank&quot;&gt;stackoverflow, CTE vs View Performance in SQL Server&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learnsql.com/blog/difference-between-sql-cte-and-view/&quot; target=&quot;_blank&quot;&gt;LearnSQL, What’s the Difference Between SQL CTEs and Views?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/52771879/is-there-any-performance-difference-btw-using-cte-view-and-subquery&quot; target=&quot;_blank&quot;&gt;stackoverflow, Is there any performance difference btw using CTE, view and subquery?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://inpa.tistory.com/entry/MYSQL-%F0%9F%93%9A-WITH-%EC%9E%84%EC%8B%9C-%ED%85%8C%EC%9D%B4%EB%B8%94?category=890808&quot; target=&quot;_blank&quot;&gt;인파, [MYSQL] 📚 WITH (임시 테이블 생성)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <pubDate>Mon, 01 Aug 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/mysql-series23</link>
@@ -600,6 +742,7 @@ stored inside of key value pairs. so think about a json object you have the key 
   &lt;li&gt;&lt;a href=&quot;#테이블-정보-확인&quot; id=&quot;markdown-toc-테이블-정보-확인&quot;&gt;테이블 정보 확인&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#테이블-생성&quot; id=&quot;markdown-toc-테이블-생성&quot;&gt;테이블 생성&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#테이블-설정-추가&quot; id=&quot;markdown-toc-테이블-설정-추가&quot;&gt;테이블 설정 추가&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#테이블-이름-변경&quot; id=&quot;markdown-toc-테이블-이름-변경&quot;&gt;테이블 이름 변경&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#컬럼-추가-이름-변경&quot; id=&quot;markdown-toc-컬럼-추가-이름-변경&quot;&gt;컬럼 추가, 이름 변경&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#컬럼-삭제&quot; id=&quot;markdown-toc-컬럼-삭제&quot;&gt;컬럼 삭제&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#컬럼-타입-변경&quot; id=&quot;markdown-toc-컬럼-타입-변경&quot;&gt;컬럼 타입 변경&lt;/a&gt;&lt;/li&gt;
@@ -769,6 +912,11 @@ stored inside of key value pairs. so think about a json object you have the key 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h1 id=&quot;테이블-설정-추가&quot;&gt;테이블 설정 추가&lt;/h1&gt;
+
+&lt;h2 id=&quot;테이블-이름-변경&quot;&gt;테이블 이름 변경&lt;/h2&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;ALTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TABLE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;기존&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;RENAME&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;새로운&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h2 id=&quot;컬럼-추가-이름-변경&quot;&gt;컬럼 추가, 이름 변경&lt;/h2&gt;
 
@@ -985,11 +1133,11 @@ stored inside of key value pairs. so think about a json object you have the key 
 &lt;h1 id=&quot;데이터-추가&quot;&gt;데이터 추가&lt;/h1&gt;
 &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;-- 데이터 추가&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...)&lt;/span&gt;
-     &lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...);&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...);&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;-- 특정 col에만 데이터 넣을 수도 있다&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-     &lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;val1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;val3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
 
 &lt;span class=&quot;c1&quot;&gt;-- SET을 이용한 방법&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;테이블명&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 

@@ -21,11 +21,11 @@ tags: MySQL
 ```sql
 -- 데이터 추가
 INSERT INTO <테이블명> (col1, col2, col3, ...)
-     VALUES (col1, col2, col3, ...);
+     VALUES (val1, val2, val3, ...);
 
 -- 특정 col에만 데이터 넣을 수도 있다
 INSERT INTO <테이블명> (col1, col3)
-     VALUES (col1, col3);
+     VALUES (val1, val3);
 
 -- SET을 이용한 방법
 INSERT INTO <테이블명> 

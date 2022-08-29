@@ -85,7 +85,7 @@ JOIN 작업에서 드라이빙 테이블을 읽을 때는 인덱스 탐색 작�
 
 그래서 옵티마이저는 항상 드라이빙 테이블이 아니라 드리븐 테이블을 최적으로 읽을 수 있게 실행 계획을 수립한다.  
 
-```SQL
+```sql
 SELECT *
 FROM employees e, dept_emp de
 WHERE e.emp_no=de.emp_no

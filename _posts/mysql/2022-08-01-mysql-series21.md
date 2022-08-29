@@ -172,6 +172,12 @@ CREATE TABLE <테이블명> AS SELECT * FROM <기존 테이블명>
 
 # 테이블 설정 추가
 
+## 테이블 이름 변경
+
+```sql
+ALTER TABLE <기존 테이블명> RENAME <새로운 테이블명>
+```
+
 ## 컬럼 추가, 이름 변경  
 
 ```sql

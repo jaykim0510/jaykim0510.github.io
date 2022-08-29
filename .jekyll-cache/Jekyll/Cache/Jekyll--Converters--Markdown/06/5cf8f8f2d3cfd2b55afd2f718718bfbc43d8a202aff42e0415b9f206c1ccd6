@@ -1,10 +1,11 @@
-I"�<hr />
+I"��<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#데이터베이스-생성" id="markdown-toc-데이터베이스-생성">데이터베이스 생성</a></li>
   <li><a href="#테이블-정보-확인" id="markdown-toc-테이블-정보-확인">테이블 정보 확인</a></li>
   <li><a href="#테이블-생성" id="markdown-toc-테이블-생성">테이블 생성</a></li>
   <li><a href="#테이블-설정-추가" id="markdown-toc-테이블-설정-추가">테이블 설정 추가</a>    <ul>
+      <li><a href="#테이블-이름-변경" id="markdown-toc-테이블-이름-변경">테이블 이름 변경</a></li>
       <li><a href="#컬럼-추가-이름-변경" id="markdown-toc-컬럼-추가-이름-변경">컬럼 추가, 이름 변경</a></li>
       <li><a href="#컬럼-삭제" id="markdown-toc-컬럼-삭제">컬럼 삭제</a></li>
       <li><a href="#컬럼-타입-변경" id="markdown-toc-컬럼-타입-변경">컬럼 타입 변경</a></li>
@@ -175,6 +176,11 @@
 
 <h1 id="테이블-설정-추가">테이블 설정 추가</h1>
 
+<h2 id="테이블-이름-변경">테이블 이름 변경</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">기존</span> <span class="err">테이블명</span><span class="o">&gt;</span> <span class="k">RENAME</span> <span class="o">&lt;</span><span class="err">새로운</span> <span class="err">테이블명</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
 <h2 id="컬럼-추가-이름-변경">컬럼 추가, 이름 변경</h2>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span> 
@@ -199,25 +205,25 @@
 
 <h2 id="컬럼-속성-변경">컬럼 속성 변경</h2>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--NOT NULL 속성</span>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- NOT NULL 속성</span>
 <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
      <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">;</span>
 
-<span class="c1">--DEFAULT 속성</span>
+<span class="c1">-- DEFAULT 속성</span>
 <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
      <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="o">&lt;</span><span class="err">주고</span> <span class="err">싶은</span> <span class="k">default</span><span class="err">값</span><span class="o">&gt;</span><span class="p">;</span>
 
-<span class="c1">--DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성</span>
-<span class="c1">--DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력</span>
+<span class="c1">-- DATETIME, TIMESTAMP 타입에 줄 수 있는 특별한 속성</span>
+<span class="c1">-- DEFAULT CURRENT_TIMESTAMP: 값 입력 안되면 default로 현재 시간 입력</span>
 <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
      <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">DATETIME</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">;</span>
 
-<span class="c1">--처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  </span>
+<span class="c1">-- 처음 default로 현재 시간 넣어주고, 데이터 갱신될 때 마다 갱신된 시간 넣어줌  </span>
 <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
      <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">DATETIME</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">;</span>
 
-<span class="c1">--UNIQUE 속성</span>
-<span class="c1">--UNIQUE는 PRIMARY KEY와 다르게 NULL 허용</span>
+<span class="c1">-- UNIQUE 속성</span>
+<span class="c1">-- UNIQUE는 PRIMARY KEY와 다르게 NULL 허용</span>
 <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블</span> <span class="err">이름</span><span class="o">&gt;</span>
      <span class="k">MODIFY</span> <span class="o">&lt;</span><span class="err">변경할</span> <span class="err">컬럼명</span><span class="o">&gt;</span> <span class="nb">INT</span> <span class="k">UNIQUE</span><span class="p">;</span>
 </code></pre></div></div>
