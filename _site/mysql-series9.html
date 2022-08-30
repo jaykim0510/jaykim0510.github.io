@@ -441,6 +441,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -594,7 +596,7 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
 
 <h1 id="b-tree-인덱스">B-Tree 인덱스</h1>
 
-<p>디스크 기반 스토리지는 하드웨어적 특성으로 I/O의 <strong>가장 작은 단위가 페이지</strong>가 됩니다. 디스크 기반 자료구조는 디스크 접근 횟수를 최소화 하기 위해 데이터의 지역성을 높여야 한다. 이렇게 <strong>지역성을 높이는 방법은 페이지를 만들 때 비슷하게 참조되는 데이터를 페이지로 만드는 것</strong>입니다. 비슷하게 참조되는 데이터를 페이지로 만듦으로써 데이터를 조회할 때 페이지를 넘나드는 포인터를 최소화할 수 있습니다.</p>
+<p>디스크 기반 스토리지는 하드웨어적 특성으로 I/O의 <strong>가장 작은 단위가 페이지</strong>가 됩니다. 디스크 기반 자료구조는 디스크 접근 횟수를 최소화 하기 위해 데이터의 지역성을 높여야 합니다. 이렇게 <strong>지역성을 높이는 방법은 페이지를 만들 때 비슷하게 참조되는 데이터를 페이지로 만드는 것</strong>입니다. 비슷하게 참조되는 데이터를 페이지로 만듦으로써 데이터를 조회할 때 페이지를 넘나드는 포인터를 최소화할 수 있습니다.</p>
 
 <p>이렇게 만든 <strong>페이지가 B-트리에서 노드</strong>가 됩니다. 다시 말해 <strong>B-트리는 페이지 기반 자료구조</strong>입니다.</p>
 
@@ -633,6 +635,19 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
   <li>반드시 프라이머리 키를 저장하고 있는 B-Tree를 다시 한번 검색해야 함</li>
   <li>InnoDB 엔진에서 데이터 파일은 프라이머리 키 인덱스 자체</li>
 </ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>한 가지 짚고 넘어갈 점은 위와 같이 인덱스 키 하나에 매칭되는 레코드 하나가 매핑되는 경우는 
+프라이머리 키 인덱스나 유니크 키 인덱스 같은 특별한 경우이고 
+보통은 인덱스 키 하나에 여러 개의 레코드가 매핑된다.
+
+근데 인덱스를 이용해서 레코드를 찾을 때는 테이블에서 그냥 레코드를 찾는 것보다 5배 정도 더 큰 비용이 들어간다. 
+여기서 5배라는 거는 복합적인 요인이 합해져서 5배 정도되는 것 같다.
+
+- 우선 인덱스 키를 가지고 해당 리프 노드를 찾아가는데 걸리는 시간
+- 그 리프 노드에서 해당 키를 찾는데 걸리는 시간 (이 시간은 리프 노드의 사이즈에 따라 또 달라짐)
+- 그리고 키에 매핑되는 데이터의 실제 주소를 알았을 때 데이터 파일의 해당 주소로 찾아가는데 걸리는 시간. (이 경우 한 건 한건이 모두 랜덤 I/O임)
+- 그리고 조건절에 사용된 인덱스가 = 과 같은 것이 아니라 범위 조건절이면 리프 노드간 이동도 해야함
+</code></pre></div></div>
 
 <h2 id="데이터의-insert-update-delete시-인덱스에서의-동작">데이터의 Insert, Update, Delete시 인덱스에서의 동작</h2>
 
@@ -696,8 +711,8 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
 <h3 id="선택도유니크한-값의-수">선택도(유니크한 값의 수)</h3>
 
 <ul>
-  <li>모든 인덱스 키 값 가운데 유니크한 값의 수</li>
-  <li>전체 인덱스 키 값은 100개인데 그중에서 유니크한 값의 수가 10개라면 선택도는 10</li>
+  <li>인덱스 컬럼 값중 유니크한 값의 수</li>
+  <li>인덱스 컬럼이 100개의 값을 가지는데 그중에서 유니크한 값의 수가 10개라면 선택도는 10</li>
   <li>인덱스는 선택도가 높을수록 검색 대상이 줄어들고 검색 성능이 빨라짐</li>
 </ul>
 
@@ -767,10 +782,10 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
   <li>인덱스 레인지 스캔과 비슷하게 동작하지만 중간에 필요치 않은 인덱스 키 값은 무시(Skip)하고 넘어가는 형태로 처리</li>
   <li>일반적으로 GROUP BY 또는 집합 함수 가운데 MAX(), MIN() 함수에 대해 최적화 하는 경우에 사용</li>
   <li>아래의 쿼리문이 있을 때, 인덱스가 (dept_no emp_no) 조합으로 정렬되어 있다면, WHERE절을 만족하는 각 dept_no별로 제일 첫 번째 emp_no만 읽어오고 나머지 인덱스는 스킵할 수 있음
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  SELECT dept_no, MIN(emp_no)
-  FROM dept_emp
-  WHERE dept_no BETWEEN 'd002' AND 'd004'
-  GROUP BY dept_no;
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SELECT</span> <span class="n">dept_no</span><span class="p">,</span> <span class="k">MIN</span><span class="p">(</span><span class="n">emp_no</span><span class="p">)</span>
+  <span class="k">FROM</span> <span class="n">dept_emp</span>
+  <span class="k">WHERE</span> <span class="n">dept_no</span> <span class="k">BETWEEN</span> <span class="s1">'d002'</span> <span class="k">AND</span> <span class="s1">'d004'</span>
+  <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">dept_no</span><span class="p">;</span>
 </code></pre></div>    </div>
   </li>
 </ul>
@@ -781,13 +796,13 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
   <li>데이터베이스에서 인덱스의 핵심은 값이 정렬돼 있다는 사실 -&gt; 이로 인해 인덱스를 구성하는 컬럼의 순서가 매우 중요</li>
   <li>(A, B)라는 인덱스가 있을 때 이 인덱스를 사용해 쿼리문의 빠른 처리를 하려면 WHERE 조건절에 A에 관한 조건이 반드시 제일 앞에 등장해야 함. (WHERE A=1000, 또는 WHERE A=1000 AND B=’M’)</li>
   <li>나의 쿼리문에 WHERE 조건절에 A랑 B가 있다면 (A, B)라는 인덱스를 생성해주면 쿼리 성능을 향상시킬 수 있음
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE INDEX &lt;인덱스명&gt; ON &lt;테이블명&gt; ( 컬럼명1, 컬럼명2, ... );
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="o">&lt;</span><span class="err">인덱스명</span><span class="o">&gt;</span> <span class="k">ON</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span> <span class="p">(</span> <span class="err">컬럼명</span><span class="mi">1</span><span class="p">,</span> <span class="err">컬럼명</span><span class="mi">2</span><span class="p">,</span> <span class="p">...</span> <span class="p">);</span>
 
-ALTER TABLE &lt;테이블명&gt;
-ADD INDEX &lt;인덱스명&gt; (컬럼명1, 컬럼명2, ...);
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+<span class="k">ADD</span> <span class="k">INDEX</span> <span class="o">&lt;</span><span class="err">인덱스명</span><span class="o">&gt;</span> <span class="p">(</span><span class="err">컬럼명</span><span class="mi">1</span><span class="p">,</span> <span class="err">컬럼명</span><span class="mi">2</span><span class="p">,</span> <span class="p">...);</span>
 
-CREATE TABLE &lt;테이블명&gt;
-&lt;인덱스명&gt; (컬럼명1, 컬럼명2, ...);
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="err">테이블명</span><span class="o">&gt;</span>
+<span class="k">INDEX</span> <span class="o">&lt;</span><span class="err">인덱스명</span><span class="o">&gt;</span> <span class="p">(</span><span class="err">컬럼명</span><span class="mi">1</span><span class="p">,</span> <span class="err">컬럼명</span><span class="mi">2</span><span class="p">,</span> <span class="p">...);</span>
 </code></pre></div>    </div>
   </li>
   <li>MySQL 8.0부터 WHERE B=’M’과 같이 A에 관한 조건절이 없어도 인덱스 (A, B)를 이용해 인덱스 스킵 스캔을 할 수 있도록하는 최적화 기능이 도입됨</li>
@@ -1134,6 +1149,8 @@ CREATE TABLE &lt;테이블명&gt;
   
 
   
+
+  
   	
   	
   	
@@ -1273,8 +1290,8 @@ CREATE TABLE &lt;테이블명&gt;
       
 
       
-      <a class="article__image" href="/mysql-series23">
-        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part23] 유틸리티(View, CTE, INDEX)">
+      <a class="article__image" href="/mysql-series24">
+        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part24] 인덱스">
       </a>
       
 
@@ -1283,7 +1300,7 @@ CREATE TABLE &lt;테이블명&gt;
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/mysql-series23">MySQL Series [Part23] 유틸리티(View, CTE, INDEX)</a>
+        <a href="/mysql-series24">MySQL Series [Part24] 인덱스</a>
       </h2>
 
       
@@ -1312,8 +1329,8 @@ CREATE TABLE &lt;테이블명&gt;
       
 
       
-      <a class="article__image" href="/mysql-series22">
-        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part22] TCL: COMMIT, ROLLBACK, SAVEPOINT">
+      <a class="article__image" href="/mysql-series23">
+        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part23] 유틸리티(View, CTE)">
       </a>
       
 
@@ -1322,7 +1339,7 @@ CREATE TABLE &lt;테이블명&gt;
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/mysql-series22">MySQL Series [Part22] TCL: COMMIT, ROLLBACK, SAVEPOINT</a>
+        <a href="/mysql-series23">MySQL Series [Part23] 유틸리티(View, CTE)</a>
       </h2>
 
       
