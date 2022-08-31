@@ -417,6 +417,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -431,7 +433,7 @@ Table of Contents
       <a href="/os-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>OS Series [Part2]: 컴퓨터의 기본 구조</a>
     
     
-      <a href="/os-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>OS Series [Part4]: 메모리<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/os-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>OS Series [Part5]: Sync vs Async vs Concurrent vs Parallel<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -448,11 +450,7 @@ Table of Contents
       <li><a href="#프로세스의-계층-구조" id="markdown-toc-프로세스의-계층-구조">프로세스의 계층 구조</a></li>
     </ul>
   </li>
-  <li><a href="#스레드" id="markdown-toc-스레드">스레드</a>    <ul>
-      <li><a href="#스레드의-개념" id="markdown-toc-스레드의-개념">스레드의 개념</a></li>
-      <li><a href="#멀티스레드" id="markdown-toc-멀티스레드">멀티스레드</a></li>
-    </ul>
-  </li>
+  <li><a href="#스레드" id="markdown-toc-스레드">스레드</a></li>
   <li><a href="#프로세스-간-통신" id="markdown-toc-프로세스-간-통신">프로세스 간 통신</a>    <ul>
       <li><a href="#동기화" id="markdown-toc-동기화">동기화</a></li>
       <li><a href="#프로세스-간-통신의-종류" id="markdown-toc-프로세스-간-통신의-종류">프로세스 간 통신의 종류</a>        <ul>
@@ -477,14 +475,10 @@ Table of Contents
       </li>
     </ul>
   </li>
-  <li><a href="#프로세스와-스레드-비교-그리고-비동기-프로그래밍" id="markdown-toc-프로세스와-스레드-비교-그리고-비동기-프로그래밍">프로세스와 스레드 비교 그리고 비동기 프로그래밍</a>    <ul>
+  <li><a href="#멀티-프로세싱-멀티-스레딩" id="markdown-toc-멀티-프로세싱-멀티-스레딩">멀티 프로세싱, 멀티 스레딩</a>    <ul>
       <li><a href="#멀티-태스킹" id="markdown-toc-멀티-태스킹">멀티 태스킹</a></li>
       <li><a href="#멀티-프로세싱" id="markdown-toc-멀티-프로세싱">멀티 프로세싱</a></li>
-      <li><a href="#멀티-스레딩과-비동기-프로그래밍은-다르다" id="markdown-toc-멀티-스레딩과-비동기-프로그래밍은-다르다">멀티 스레딩과 비동기 프로그래밍은 다르다</a></li>
-      <li><a href="#콜백-함수" id="markdown-toc-콜백-함수">콜백 함수</a></li>
-      <li><a href="#thread-safe" id="markdown-toc-thread-safe">Thread Safe</a></li>
-      <li><a href="#1개의-코어에-2개의-스레드할-때-그-스레드랑-같은-의미인가" id="markdown-toc-1개의-코어에-2개의-스레드할-때-그-스레드랑-같은-의미인가">‘1개의 코어에 2개의 스레드’할 때 그 스레드랑 같은 의미인가?</a></li>
-      <li><a href="#멀티-코어를-가진-cpu-1개-vs-싱글-코어를-가진-cpu-여러개" id="markdown-toc-멀티-코어를-가진-cpu-1개-vs-싱글-코어를-가진-cpu-여러개">멀티 코어를 가진 CPU 1개 vs 싱글 코어를 가진 CPU 여러개</a></li>
+      <li><a href="#멀티-스레딩" id="markdown-toc-멀티-스레딩">멀티 스레딩</a></li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -682,87 +676,58 @@ Table of Contents
 
 <h1 id="스레드">스레드</h1>
 
-<p>오늘날의 운영체제는 프로세스의 낭비 요소를 제거하고, 프로세스 작업의 유연성을 얻기 위해 멀티스레드를 사용한다.</p>
-
-<h2 id="스레드의-개념">스레드의 개념</h2>
-
-<p>프로세스는 요리 작업 전체, 스레드는 요리를 완성하기 위해 수행하는 각각의 조리에 해당</p>
-
-<p>CPU 스케줄러가 CPU에 전달하는 일 하나가 스레드. 그러므로 CPU가 처리하는 작업의 단위는 프로세스로부터 전달받은 스레드</p>
-
-<p>운영체제 입장에서의 작업 단위는 프로세스이고, CPU 입장에서의 작업 단위는 스레드</p>
-
-<p>프로세스의 코드에 정의된 절차에 따라 CPU에 작업 요청을 하는 실행 단위</p>
-
-<p><strong>프로세스와 스레드의 차이</strong></p>
-
-<p>프로세스끼리는 약하게 연결되어 있는 반면, 스레드끼리는 강하게 연결되어 있음</p>
-
-<p>프로세스는 스테이크, 스프와 같이 서로 큰 영향을 미치지 않음</p>
-
-<p>스레드는 스테이크 요리 내에서 고기 굽기, 채소 굽기, 소스 뿌리기와 같이 서로 강하게 연결되어 있음</p>
-
-<p><strong>멀티 태스크</strong></p>
-
-<p>운영체제가 CPU에 작업을 줄 때 시간을 잘게 나누어 배분하는 기법</p>
-
-<p>시분할 시스템에서 운영체제가 CPU에 전달하는 작업은 프로세스가 아니라 스레드이다.</p>
-
-<p>서로 독립적인 여러 개의 프로세스로 구성</p>
-
-<p>프로세스 간 데이터를 주고 받기 위해 IPC(Inter Process Communication)을 이용한다.</p>
-
-<p><strong>멀티 프로세싱</strong></p>
-
-<p>멀티프로세싱은 CPU를 여러 개 사용하여 여러 개의 스레드를 동시에 처리하는 작업 환경을 말한다.</p>
-
-<p>멀티프로세싱은 하나의 컴퓨터에 여러 개의 CPU 혹은 하나의 CPU내 여러 개의 코어에 스레드를 배정하여 동시에 작동하는 것.</p>
-
-<p><strong>멀티 스레드</strong></p>
-
-<p>멀티스레드는 프로세스 내 작업을 여러 개의 스레드로 분할함으로써 작업의 부담을 줄이는 프로세스 운영 기법</p>
-
-<p>멀티스레드는 변수나 파일 등을 공유하고 전역 변수나 함수 호출 등의 방법으로 스레드간 통신을 한다.</p>
-
-<p><strong>CPU 멀티 스레드</strong></p>
-
-<p>CPU 멀티스레드는 한 번에 하나씩 처리해야 하는 스레드를 파이프라인 기법을 이용하여 동시에 여러 스레드를 처리하도록 만든 병렬 처리 기법</p>
-
-<p>하드웨어적인 방법으로 하나의 CPU에서 여러 스레드를 동시에 처리하는 병렬 처리 기법<br />
-(멀티스레드는 운영체제가 소프트웨어적으로 프로세스를 작은 단위의 스레드로 분할하여 운영하는 기법)</p>
-
-<h2 id="멀티스레드">멀티스레드</h2>
-
-<p>CPU와 프로그래밍 기술이 발전하면서 여러 개의 코어를 가진 CPU가 생겨나 멀티스레드를 지원하기 시작</p>
-
-<p><strong>멀티스레드의 구조</strong></p>
-
-<p>스레드가 어떻게 생겨나고 어떻게 구성되는지 프로세스의 입장에서 살펴보자. C언어와 같은 절차지향 프로그래밍 언어는 순차적으로 실행되기 때문에 프로세스로 여러 개의 작업을 동시에 처리하기가 불편했다. 여러 개의 작업을 동시에 처리하기 위해 fork() 시스템 호출을 사용해 프로세스를 생성하는 방법을 이용했다. 그러나 fork()는 코드 영역과 데이터 영역의 일부가 메모리에 중복되어 존재하는 낭비 요소가 생길 수 밖에 없었다.</p>
-
-<p>예를 들어, 워드프로세서 같은 문서 편집기를 이용해 숙제, 편지쓰기, 자료 정리 작업을 동시에 진행한다고 해보자. 이 때 각각의 워드프로세서를 여러 개 실행할 경우, 내부적으로는 fork() 시스템 호출이 발생한다. 이렇게 되면 워드프로세서의 코드 일부, 프로세스 제어 블록, 공유 변수가 메모리의 여러 곳에 중복되어 메모리가 낭비된다.</p>
-
-<p>스레드는 이러한 멀티태스킹의 낭비 요소를 제거하기 위해 사용한다. 비슷한 일을 하는 2개의 프로세스를 만드는 대신, 코드, 데이터 등을 공유하면서 여러 개의 일을 하나의 프로세스 내에서 하는 것이다.</p>
-
-<p>프로세스는 크게 정적인 영역과 동적인 영역으로 구분된다. 동적인 영역의 대표적인 예는 레지스터 값, 스택, 힙 등이다.</p>
-
-<p>오늘날에는 여러 작업을 하기 위해 fork() 시스템 호출 대신 하나의 프로세스에 여러 개의 스레드를 만들어 사용한다.</p>
-
-<p>멀티스레드는 코드, 파일 등의 자원을 공유함으로써 자원의 낭비를 막고 효율성을 향상한다.</p>
-
-<p><img src="/images/os_8.png" alt="" /></p>
-
-<p><strong>멀티스레드의 장점</strong></p>
+<p>스레드는 다음과 같은 내용에서 많이 등장하는 단어이다.</p>
 
 <ul>
-  <li>응답성 향상: 한 스레드가 입출력으로 인해 작업이 진행되지 않더라도 다른 스레드가 작업을 계속하여 사용자의 작업 요구에 빨리 응답할 수 있다</li>
-  <li>자원 공유: 한 프로세스 내에서 독립적인 스레드를 생성하면 프로세스가 가진 자원을 모든 스레드가 공유하게 되어 작업을 원활하게 진행할 수 있다</li>
-  <li>효율성 향상: 불필요한 자원의 중복을 막음으로써 시스템의 효율이 향상된다</li>
-  <li>다중 CPU 지원: 2개 이상의 CPU를 가진 컴퓨터에서 멀티스레드를 사용하면 다중 CPU가 멀티스레드를 동시에 처리하여 CPU 사용량이 증가하고 프로세스의 처리 시간이 단축된다</li>
+  <li><strong>프로세스와 스레드의 차이</strong></li>
+  <li><strong>CPU 코어 1개에 스레드 2개</strong></li>
+  <li><strong>멀티 스레딩</strong></li>
 </ul>
 
-<p><strong>멀티스레드의 단점</strong></p>
+<p>먼저 프로세스는 OS가 메모리에 올라가는 단위. 또는 OS로부터 자원을 할당받는 단위라고 생각하면 된다.</p>
 
-<p>모든 스레드가 자원을 공유하기 때문에 한 스레드에 문제가 생기면 전체 프로세스에 영향을 미친다.</p>
+<p>스레드는 <strong>프로세스를 실행하는 작업의 단위</strong>라고 생각하면 된다.</p>
+
+<p>그래서 프로세스는 메모리에 올라가는 물리적인 단위, <strong>스레드는 실행 단위. 즉 논리적인 단위</strong>라고 할 수 있다.</p>
+
+<p>CPU 코어당 스레드 2개를 무슨 말일까? 난 처음에 CPU에서 프로세서에 해당하는 코어에 뭔가 2개로 나뉜 스레드라는게 있는 줄 알았다.</p>
+
+<p>근데 그런게 아니고, 코어 1개를 이용해 최대 2개의 스레드를 할당해 처리하도록 할 수 있다는 뜻이다. 3개 이상을 사용하지 않는 이유는, 코어 1개가 스레드 3개를 할당하면 오히려 복잡도로 인해 성능이 떨어지기 때문이라고 한다.</p>
+
+<details>
+<summary>자세한 내용은 여기를 참고해주세요</summary>
+<div>
+
+    <p>Threads don’t exist in the CPU. They are a feature of the operating system, used in programs for concurrent programming. Meaning, having different threads of a program running at the same time. While you could just have a process rather than a thread, it’s less efficient, and harder to communicate between the pieces.</p>
+
+    <p>As for cores, that is a CPU thing. Starting in the 1970s, the microprocessor could run one program at a time. Into the 80s, and 90s, they still could run only one program at a time. The operating system simply switched programs as needed, giving each program a time slice of the CPU time. For example, simplistically, 10 programs could each be run 1/10s during a second ( that’s not really how it’s done, but good enough for this discussion.)</p>
+
+    <p>CPUs eventually hit a performance wall. The ability to make their clock speed faster became harder to do. To compensate, they started effectively putting more than one CPU on the silicon die. So that multiple programs could run truly simultaneously. <strong>The more cores, the more programs that can run at the same time</strong>. Of course there are way more programs running on a typical Windows or Linux computer than your CPU has cores. So there still needs to be some sharing of the CPU, which is handled by the operating system.</p>
+
+    <p>Note that many programs could be seen as consisting of a single thread. And some programs have more than one thread. Multiple threaded programs may also be happy to have more CPU cores, as they may run faster, depending on the program. For example, there are applications, for example video editing, where the programs will work better with more cores. I mention this, because this may be one reason people associate threads and cores.</p>
+
+    <p>스레드가 CPU에 물리적으로 존재하는게 아니라 논리적인 존재라면 왜 최대 2개 밖에 안되는걸까?</p>
+
+    <p>Because running more than 2 threads on a single core would increase core complexity without improving performance.</p>
+
+    <p>Even having 2 threads running simultaneous on a single CPU core is not universal. CPU cores were originally designed to run 1 thread at a time. A multitasking OS on a single core machine gives the illusion that it runs multiple threads at the same time, but it does so by running a single thread for a limited amount of time before switching to the next thread.</p>
+
+    <p>However, for a while now, CPU cores have had more than one execution unit. For instance, the original Intel Pentium CPU (which is a single core CPU) had 2 integer execution units and 1 floating point unit. This means that it can, in principle, perform multiple instructions at the same time. However, this is only possible when running a single thread, if consecutive instructions are independent of each other, which means that the input of the second instruction does not depend on the output of the first one.</p>
+
+    <p>Modern CPUs, such as the Intel i3/i5/i7 series have as many as 8 execution units per core, and they can start execution of 4 new instructions each clock cycle. Even with some instructions taking more than 1 clock cycle, this means that most of the time, some of the execution units have nothing to do.</p>
+
+    <p>Hyperthreading is a technology, originally introduced by Intel in its Pentium 4 processors, to fill up these unused execution units with instructions from a different thread. So a CPU core with hyperthreading can run 2 threads at the same time.</p>
+
+    <p>Now we finally come to your question: why does hyperthreading limit itself to 2 threads? why not more? The answer is that a single hyperthreading core running 2 threads is nowhere near as fast as two separate cores running these same threads. Since each thread has to make do with the execution units not used by the other one, neither thread runs at maximum speed. If you were to allow more than 2 threads on a single core, this would increase core complexity considerably without much tangible benefit.</p>
+
+  </div>
+</details>
+
+<p>그러면 스레드는 어떤 기준으로 정해주어야 할까? 스레드는 컴퓨터가 자동으로 나누어주는 것은 아니고, 프로그래머가 프로그램을 개발할 때 <strong>스레드로 만들어 줄 수 있고, 스레드로 만들었을 때 원하는 성능 향상을 얻을 수 있는 경우 스레드로 만들어준다.</strong></p>
+
+<p>그러면 <strong>언제 스레드가 필요한지, 어떤 조건이 갖추어졌을 때 스레드가 될 수 있는지</strong> 알아보자.</p>
+
+<p>멀티스레딩에 관한 얘기는 뒤에서 멀티 프로세싱과 비교하며 설명할 것이다.</p>
 
 <h1 id="프로세스-간-통신">프로세스 간 통신</h1>
 
@@ -948,7 +913,23 @@ Table of Contents
   </li>
 </ul>
 
-<h1 id="프로세스와-스레드-비교-그리고-비동기-프로그래밍">프로세스와 스레드 비교 그리고 비동기 프로그래밍</h1>
+<h1 id="멀티-프로세싱-멀티-스레딩">멀티 프로세싱, 멀티 스레딩</h1>
+
+<p>197년대 까지는 프로세서는 하나의 프로세스를 실행해서 종료하고, 또 하나의 프로세스를 실행하고 종료하는 방식으로 동작했다. 다시 말해 멀티 태스킹을 할 수 없었다. 그러다 80년대에 들어서 운영체제(OS)에서 <strong>멀티 태스킹</strong>을 지원하기 시작했다. 멀티 태스킹은 OS의 스케줄링을 이용해 여러 프로세스를 시분할로 함께 실행시키는 것이다. 예를 들어 10개의 프로그램을 실행했을 때, CPU는 각 프로세스에 작은 단위의 시간을 할당해 마치 여러 프로세스가 동시에 실행되는 듯하게 만드는 것이다.</p>
+
+<p>그러나 시대가 계속 발전함에 따라 우리는 프로세스 하나의 더 높은 성능을 기대하기 시작했다. 그래서 인텔과 같이 CPU를 만드는 회사에서는 CPU 한개에 여러 개의 코어를 탑재한 멀티 코어 칩을 만들어 냈다. 우리는 이제 정말로 동시에 여러 프로세스를 실행할 수 있게 되었다. 이는 코어 하나에 온전히 하나의 프로세스만 할당함으로써 프로세스의 성능을 높게 유지할 수 있었다.</p>
+
+<p>그러나 소프트웨어 개발자들은 여기서 그치지 않고, 하나의 프로세스를 여러 프로세서가 협력해 처리하는 병렬 처리를 통해 프로세스 하나의 성능을 극대화 시키는 방법을 고민하고 있었다. 그렇게 등장한 것이 바로 <strong>멀티 프로세싱</strong>이다. 멀티 프로세싱은 하나의 프로세스를 여러 프로세서가 병렬 처리하는 것을 말한다. 하나의 프로세스를 여러 프로세서가 나눠서 처리하기 위해 프로세스를 나누는 작업은 프로그래머의 몫이다.</p>
+
+<p>마지막으로 작업을 프로세서에게 나눠주는 단위를 프로세스가 아니라 스레드 단위로 할 수도 있다. 이를 <strong>멀티 스레딩</strong>이라 한다. 스레드는 스택 영역만 분리되고 나머지 영역은 공유한다. 그리고 스레드는 하나의 프로세서에 최대 2개의 스레드를 할당할 수 있다. (하지만 코어가 스레드 2개를 병렬처리하는 것은 아니고 컨텍스트 스위칭을 통해 번갈아가며 처리한다)</p>
+
+<p>하나의 프로세스를 처리하기 위해 2개 이상의 프로세서를 사용하는 것을 <strong>병렬 컴퓨팅</strong>이라 한다.</p>
+
+<p>하나의 프로세서가 여러 개의 프로세스 또는 스레드를 처리하도록 하는 것을 <strong>동시성 프로그래밍</strong>이라 한다.</p>
+
+<p>지금까지 멀티 태스킹, 멀티 프로세싱, 멀티 스레딩에 관한 개념이 등장하게 된 배경에 대해 설명했다.</p>
+
+<p>이제 각각의 특징과 장단점에 관해 조금 더 얘기해보자.</p>
 
 <ul>
   <li>프로세스
@@ -967,45 +948,104 @@ Table of Contents
 
 <h2 id="멀티-태스킹">멀티 태스킹</h2>
 
+<p>멀티 태스킹은 task를 OS의 스케쥴링에 의해 task를 번갈아가며 수행하는 것을 의미한다. 여러개의 task를 자주 번갈아가며 수행하다보니 사용자는 동시에 여러 task가 수행되고 있다고 느끼게 된다. 현대 컴퓨터도 OS의 스케줄링을 이용해 시분할 방식으로 멀티 태스킹을 지원하고 있다.</p>
+
 <h2 id="멀티-프로세싱">멀티 프로세싱</h2>
 
-<h2 id="멀티-스레딩과-비동기-프로그래밍은-다르다">멀티 스레딩과 비동기 프로그래밍은 다르다</h2>
+<p>멀티 프로세싱은 다수의 프로세서가 서로 협력적으로 일을 처리하는 것을 의미한다. 프로세스 간 통신을 하기 위해서는 IPC를 통해야 한다.</p>
 
-<h2 id="콜백-함수">콜백 함수</h2>
+<p><img src="/images/os_31.png" alt="" /></p>
 
 <ul>
-  <li>함수 안에 인자로 전달되는 함수</li>
-  <li>fun1(fun2) -&gt; fun1 함수를 실행하는 도중에 fun2 함수가 실행되고 fun2 함수가 종료된 후 fun1 함수가 마저 실행됨</li>
-  <li>fun2와 같은 함수를 콜백 함수라고 함</li>
+  <li>장점
+    <ul>
+      <li>독립된 구조로 안전성이 높은 장점이 있다.</li>
+      <li>프로세스 중 하나에 문제가 생겨도 다른 프로세스에 영향을 주지 않아, 작업속도가 느려지는 손해정도는 생기지만 정지되거나 하는 문제는 발생하지 않는다.</li>
+    </ul>
+  </li>
+  <li>단점
+    <ul>
+      <li>메모리 사용량이 많다</li>
+      <li>독립된 메모리 영역이기 때문에 작업량이 많을수록( Context Switching이 자주 일어나서 주소 공간의 공유가 잦을 경우) 오버헤드가 발생하여 성능저하가 발생 할 수 있다.</li>
+      <li>Context Switching 과정에서 캐시 메모리 초기화 등 무거운 작업이 진행되고 시간이 소모되는 등 오버헤드가 발생한다.</li>
+    </ul>
+  </li>
 </ul>
 
-<h2 id="thread-safe">Thread Safe</h2>
+<h2 id="멀티-스레딩">멀티 스레딩</h2>
 
-<h2 id="1개의-코어에-2개의-스레드할-때-그-스레드랑-같은-의미인가">‘1개의 코어에 2개의 스레드’할 때 그 스레드랑 같은 의미인가?</h2>
+<p>멀티 스레딩은 하나의 프로세스를 스레드 단위로 프로세서에게 할당해 병렬 처리하는 것을 의미하며, 여러 개의 스레드는 서로 자원을 공유할 수 있다.</p>
 
-<p>Threads don’t exist in the CPU. They are a feature of the operating system, used in programs for concurrent programming. Meaning, having different threads of a program running at the same time. While you could just have a process rather than a thread, it’s less efficient, and harder to communicate between the pieces.</p>
+<p><img src="/images/os_32.png" alt="" /></p>
 
-<p>As for cores, that is a CPU thing. Starting in the 1970s, the microprocessor could run one program at a time. Into the 80s, and 90s, they still could run only one program at a time. The operating system simply switched programs as needed, giving each program a time slice of the CPU time. For example, simplistically, 10 programs could each be run 1/10s during a second ( that’s not really how it’s done, but good enough for this discussion.)</p>
+<ul>
+  <li>
+    <p>장점</p>
 
-<p>CPUs eventually hit a performance wall. The ability to make their clock speed faster became harder to do. To compensate, they started effectively putting more than one CPU on the silicon die. So that multiple programs could run truly simultaneously. <strong>The more cores, the more programs that can run at the same time</strong>. Of course there are way more programs running on a typical Windows or Linux computer than your CPU has cores. So there still needs to be some sharing of the CPU, which is handled by the operating system.</p>
+    <ul>
+      <li>응답성 향상: 한 스레드가 입출력으로 인해 작업이 진행되지 않더라도 다른 스레드가 작업을 계속하여 사용자의 작업 요구에 빨리 응답할 수 있다</li>
+      <li>자원 공유: 한 프로세스 내에서 독립적인 스레드를 생성하면 프로세스가 가진 자원을 모든 스레드가 공유하게 되어 작업을 원활하게 진행할 수 있다</li>
+      <li>효율성 향상: 불필요한 자원의 중복을 막음으로써 시스템의 효율이 향상된다</li>
+      <li>다중 CPU 지원: 2개 이상의 CPU를 가진 컴퓨터에서 멀티스레드를 사용하면 다중 CPU가 멀티스레드를 동시에 처리하여 CPU 사용량이 증가하고 프로세스의 처리 시간이 단축된다</li>
+      <li>시스템 자원소모 감소 (자원의 효율성 증대)
+        <ul>
+          <li>프로세스를 생성하여 자원을 할당하는 시스템 콜이 줄어 자원을 효율적으로 관리할 수 있다.</li>
+        </ul>
+      </li>
+      <li>시스템 처리율 향상 (처리비용 감소)
+        <ul>
+          <li>스레드 간 데이터를 주고 받는 것이 간단해지고 시스템 자원 소모가 줄어든다.</li>
+          <li>스레드 사이 작업량이 작아 Context Switching이 빠르다. (캐시 메모리를 비울 필요가 없다.)</li>
+        </ul>
+      </li>
+      <li>간단한 통신 방법으로 프로그램 응답시간 단축
+        <ul>
+          <li>스레드는 프로세스 내 스택영역을 제외한 메모리 영역을 공유하기에 통신 비용이 적다.</li>
+          <li>힙 영역을 공유하므로 데이터를 주고 받을 수 있다.</li>
+        </ul>
+      </li>
+      <li>운영체제가 시스템 자원을 효율적으로 관리하기 위해 스레드를 사용한다.</li>
+      <li>멀티 프로세스로 실행되는 작업을 멀티 스레드로 실행할 경우, 프로세스를 생성하여 자원을 할당하는 시스템 콜이 줄어들어 자원을 효율적으로 관리할 수 있다.</li>
+      <li>또한, 프로세스 간의 통신보다 스레드 간의 통신 비용이 적으므로 작업들 간 통신의 부담이 줄어든다. (처리비용 감소. 프로세스는 독립구조이기 때문)</li>
+    </ul>
+  </li>
+  <li>
+    <p>단점</p>
+    <ul>
+      <li>모든 스레드가 자원을 공유하기 때문에 한 스레드에 문제가 생기면 전체 프로세스에 영향을 미친다.</li>
+      <li>자원을 공유하기에 동기화 문제가 발생할 수 있다. (병목현상, 데드락 등)</li>
+      <li>주의 깊은 설계가 필요하고 디버깅이 어렵다. (불필요 부분까지 동기화하면, 대기시간으로 인해 성능저하 발생)</li>
+      <li>하나의 스레드에 문제가 생기면 전체 프로세스가 영향을 받는다.</li>
+      <li>단일 프로세스 시스템의 경우 효과를 기대하기 어렵다.</li>
+      <li>스레드를 활용하면 자원의 효율성이 증가하기도 하지만, 스레드 간의 자원 공유는 전역 변수를 이용하므로 동기화 문제가 발생 할 수 있으므로 프로그래머의 주의가 필요하다.</li>
+      <li>스레드 하나가 프로세스 내 자원을 망쳐버린다면 모든 프로세스가 종료될 수 있다.</li>
+      <li>자원을 공유하기 때문에 필연적으로 동기화 문제가 발생할 수밖에 없다.</li>
+      <li>동기화 그리고 교착상태가 발생하지 않도록 주의해야 한다.</li>
+      <li>자식 스레드 중 하나에 문제가 생긴경우 전체 프로세스에 영향을 줄 수 있다.</li>
+    </ul>
+  </li>
+</ul>
 
-<p>Note that many programs could be seen as consisting of a single thread. And some programs have more than one thread. Multiple threaded programs may also be happy to have more CPU cores, as they may run faster, depending on the program. For example, there are applications, for example video editing, where the programs will work better with more cores. I mention this, because this may be one reason people associate threads and cores.</p>
+<p>자원의 효율성증대<br />
+멀티 프로세스로 실행되는 작업을 멀티 스레드로 실행할 경우 프로세스를 생성하여 자원을 할당하는 비용이 적고, 스레드는 프로세스 내의 메모리를 공유하기 때문에 독립적인 프로세스와 달리 스레드 간 데이터를 주고 받는 것이 간단해지고 시스템 자원 소모가 줄어든다.</p>
 
-<p>스레드가 CPU에 물리적으로 존재하는게 아니라 논리적인 존재라면 왜 최대 2개 밖에 안되는걸까?</p>
+<p>응답 시간 단축 및 처리 비용 감소<br />
+프로세스간 IPC를 사용하여 통신하는 것은 상대적으로 비용이 크다.</p>
 
-<p>Because running more than 2 threads on a single core would increase core complexity without improving performance.</p>
+<p>하지만 스레드는 프로세스의 메모리 영역을 공유하여 스레드 간의 통신 비용이 적게 든다.</p>
 
-<p>Even having 2 threads running simultaneous on a single CPU core is not universal. CPU cores were originally designed to run 1 thread at a time. A multitasking OS on a single core machine gives the illusion that it runs multiple threads at the same time, but it does so by running a single thread for a limited amount of time before switching to the next thread.</p>
+<p>또한 프로세스간의 Context Switching은 느린 반면 쓰레드간의 Context Switching 은 빠른데, 그 이유는 Context Switching 시 스레드는 Stack 영역만 처리하면 되기 때문이다.</p>
 
-<p>However, for a while now, CPU cores have had more than one execution unit. For instance, the original Intel Pentium CPU (which is a single core CPU) had 2 integer execution units and 1 floating point unit. This means that it can, in principle, perform multiple instructions at the same time. However, this is only possible when running a single thread, if consecutive instructions are independent of each other, which means that the input of the second instruction does not depend on the output of the first one.</p>
+<p>멀티 스레드의 안정성 문제<br />
+여러 개의 스레드가 동일한 데이터 공간(Critical Section)을 공유하면서 이들을 수정한다는 점에 필연적으로 생기는 문제이다.</p>
 
-<p>Modern CPUs, such as the Intel i3/i5/i7 series have as many as 8 execution units per core, and they can start execution of 4 new instructions each clock cycle. Even with some instructions taking more than 1 clock cycle, this means that most of the time, some of the execution units have nothing to do.</p>
+<p>Tip<br />
+Critical Section: <br />
+임계 구역(critical section) 또는 공유변수 영역은 둘 이상의 스레드가 동시에 접근해서는 안되는 공유 자원(자료 구조 또는 장치)을 접근하는 코드의 일부를 말한다.</p>
 
-<p>Hyperthreading is a technology, originally introduced by Intel in its Pentium 4 processors, to fill up these unused execution units with instructions from a different thread. So a CPU core with hyperthreading can run 2 threads at the same time.</p>
+<p>멀티 프로세스의 프로그램은 문제가 생기면 해당 프로세스가 중단되거나 중단 시키고 다시 시작 하면된다.</p>
 
-<p>Now we finally come to your question: why does hyperthreading limit itself to 2 threads? why not more? The answer is that a single hyperthreading core running 2 threads is nowhere near as fast as two separate cores running these same threads. Since each thread has to make do with the execution units not used by the other one, neither thread runs at maximum speed. If you were to allow more than 2 threads on a single core, this would increase core complexity considerably without much tangible benefit.</p>
-
-<h2 id="멀티-코어를-가진-cpu-1개-vs-싱글-코어를-가진-cpu-여러개">멀티 코어를 가진 CPU 1개 vs 싱글 코어를 가진 CPU 여러개</h2>
+<p>하지만 멀티 스레드 방식의 프로그램에서는 하나의 스레드가 자신이 사용하던 데이터 공간을 망가뜨린다면, 해당 데이터 공간을 공유하는 모든 스레드를 망가뜨릴 수 있다.</p>
 
 <h1 id="참고">참고</h1>
 
@@ -1019,6 +1059,8 @@ Table of Contents
   <li><a href="https://jayhyun-hwang.github.io/2021/09/02/The-Difference-Between-Asynchronous-And-Multi-Threading/" target="_blank">비동기와 멀티스레딩</a></li>
   <li><a href="https://kishoreconnect.com/understanding-processes-threads-and-cpu-cores" target="_blank">Kishore’s Blog, Process vs Thread vs Core</a></li>
   <li><a href="https://www.quora.com/Why-does-a-core-only-have-two-threads-in-a-processor" target="_blank">Quora, Why does a core only have two threads in a processor?</a></li>
+  <li><a href="https://britishgeologicalsurvey.github.io/science/python-forking-vs-spawn/" target="_blank">Fork vs Spawn in Python Multiprocessing</a></li>
+  <li><a href="https://oxylabs.io/blog/concurrency-vs-parallelism" target="_blank">oxylabs, Concurrency vs Parallelism: The Main Differences</a></li>
 </ul>
 
     </div>
@@ -1273,6 +1315,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -1287,7 +1331,7 @@ Table of Contents
       <a href="/os-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>OS Series [Part2]: 컴퓨터의 기본 구조</a>
     
     
-      <a href="/os-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>OS Series [Part4]: 메모리<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/os-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>OS Series [Part5]: Sync vs Async vs Concurrent vs Parallel<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

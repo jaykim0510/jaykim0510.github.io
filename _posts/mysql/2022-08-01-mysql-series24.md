@@ -143,6 +143,7 @@ EXPLAIN SELECT ...
 # Sargable Query
 
 인덱스를 효율적으로 사용할 수 없는 경우: 인덱스 풀 스캔하는 경우
+인덱스를 효율적으로 사용하는 경우: 인덱스 레인지 스캔, 루스 인덱스 스캔을 사용 -> 사거블(Sargable) 하다고 함
 
 - where, order by, group by 등에는 가능한 index가 걸린 컬럼 사용.
 - where 절에 함수, 연산, Like(시작 부분 %)문은 사거블하지 않다!
