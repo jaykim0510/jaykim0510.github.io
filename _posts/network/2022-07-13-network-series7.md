@@ -120,5 +120,5 @@ If you have multiple connections to the same website (assuming the website uses 
 ![](/images/network_41.png)
 
 # 참고
-
+- [정상우, 쿠키와 세션에 대해 알아보자](https://pronist.dev/145){:target="_blank"}
 - [CLOUD FLARE: What are cookies?, Cookies definition](https://www.cloudflare.com/ko-kr/learning/privacy/what-are-cookies/){:target="_blank"}
