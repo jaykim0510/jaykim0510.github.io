@@ -19,7 +19,7 @@
 Table of Contents
 
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/os_3.png">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/os_35.png">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="OS Series [Part5]: Sync vs Async vs Concurrent vs Parallel – Code Museum">
@@ -27,7 +27,7 @@ Table of Contents
 Table of Contents
 
 ">
-  <meta property="og:image" content="http://localhost:4000/images/os_3.png">
+  <meta property="og:image" content="http://localhost:4000/images/os_35.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -286,6 +286,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -415,6 +417,8 @@ Table of Contents
 
 
   
+
+  
   	
   	
   	
@@ -429,7 +433,7 @@ Table of Contents
       <a href="/os-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>OS Series [Part4]: 메모리</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/linux-series1" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Linux Series [Part1]: 리눅스 커널<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -441,13 +445,10 @@ Table of Contents
   <li><a href="#sync-vs-async" id="markdown-toc-sync-vs-async">Sync vs. Async</a></li>
   <li><a href="#sync" id="markdown-toc-sync">Sync</a></li>
   <li><a href="#async" id="markdown-toc-async">Async</a></li>
-  <li><a href="#con" id="markdown-toc-con">con</a></li>
-  <li><a href="#parallel" id="markdown-toc-parallel">parallel</a>    <ul>
-      <li><a href="#멀티-프로세싱" id="markdown-toc-멀티-프로세싱">멀티 프로세싱</a></li>
-      <li><a href="#멀티-스레딩" id="markdown-toc-멀티-스레딩">멀티 스레딩</a></li>
-    </ul>
-  </li>
-  <li><a href="#there-are-several-scenarios-in-which-concurrency-can-occur" id="markdown-toc-there-are-several-scenarios-in-which-concurrency-can-occur">There are several scenarios in which concurrency can occur:</a></li>
+  <li><a href="#동시성concurrency" id="markdown-toc-동시성concurrency">동시성(Concurrency)</a></li>
+  <li><a href="#병렬성parallel" id="markdown-toc-병렬성parallel">병렬성(Parallel)</a></li>
+  <li><a href="#멀티-프로세싱" id="markdown-toc-멀티-프로세싱">멀티 프로세싱</a></li>
+  <li><a href="#멀티-스레딩" id="markdown-toc-멀티-스레딩">멀티 스레딩</a></li>
   <li><a href="#global-interpreter-lock" id="markdown-toc-global-interpreter-lock">Global Interpreter Lock</a></li>
   <li><a href="#콜백-함수" id="markdown-toc-콜백-함수">콜백 함수</a></li>
   <li><a href="#thread-safe" id="markdown-toc-thread-safe">Thread Safe</a>    <ul>
@@ -475,38 +476,34 @@ Table of Contents
 <h1 id="sync-vs-async">Sync vs. Async</h1>
 <p>Sync and async are two different programming models, which refer to styles of programming - how you should write code and how your code will run.</p>
 
-<p>Synchronous tasks happen in order — you must finish task one before moving on to the next. Asynchronous tasks can be executed in any order, or even simultaneously. How can this be understood in terms of programming?</p>
+<p>동기 프로그래밍에서 작업은 순차적으로 처리된다. 비동기 프로그래밍에서 작업은 어떤 순서로도 처리될 수 있다. 심지어 동시에 처리될 수도 있다.</p>
 
-<p>Understanding how these two models differ is critical in building application programming interfaces (APIs), creating event-based architectures, and deciding how to handle long-running tasks. In choosing which method to use and when, it’s important to know a few key things about synchronous programming and asynchronous programming.</p>
+<p>이 두 모델은 API, 또는 이벤트 기반 아키텍처, long-running 작업을 핸들링하기 위해 반드시 이해해야 한다.</p>
 
-<p>The differences between asynchronous and synchronous include:</p>
+<p>동기와 비동기의 차이는 다음을 포함한다.</p>
 
-<p>Async is multi-thread, which means operations or programs can run in parallel. Sync is single-thread, so only one operation or program will run at a time.<br />
-Async is non-blocking, which means it will send multiple requests to a server. Sync is blocking — it will only send the server one request at a time and will wait for that request to be answered by the server.<br />
-Async increases throughput because multiple operations can run at the same time. Sync is slower and more methodical.
-Differences aside, asynchronous and synchronous methods both offer advantages, but for different stakeholders: async for users, sync for developers.</p>
+<ul>
+  <li>Async is multi-thread, which means operations or programs can run in parallel. Sync is single-thread, so only one operation or program will run at a time.</li>
+  <li>Async is non-blocking, which means it will send multiple requests to a server. Sync is blocking — it will only send the server one request at a time and will wait for that request to be answered by the server.</li>
+  <li>Async increases throughput because multiple operations can run at the same time. Sync is slower and more methodical.</li>
+  <li>Differences aside, asynchronous and synchronous methods both offer advantages, but for different stakeholders: async for users, sync for developers.</li>
+</ul>
 
-<p>Asynchronous programming enhances a user’s experience by decreasing the lag time between when a function is called and when the value of that function is returned. In the real world, this translates to a faster, more seamless flow. For example, users want their apps to run fast, but it takes time to fetch data from an application programming interface (API). In these cases, asynchronous programming helps the app screens load faster, improving the user experience.</p>
+<p>비동기 프로그래밍은 대개 유저 경험을 향상시킨다. 작업을 순차적으로 처리하지 않고, 동시다발적으로 처리하기 때문에 요청에서 응답까지의 시간을 줄일 수 있다.</p>
 
-<p>Synchronous programming, on the other hand, is advantageous for developers. Quite simply, synchronous programming is much easier to code. It’s well supported among all programming languages, and as the default programming method, developers don’t have to spend time learning something new that could open the door to bugs.</p>
+<p>동기 프로그래밍은 개발자에게 이점을 준다. 쉽게 말해 코드를 작성하기가 훨씬 수월하다.</p>
 
-<p>When to use async<br />
-Asynchronous programming should only be used in programming independent tasks, where it plays a critical role. For instance, asynchronous programs are ideal for development projects with a large number of iterations. Because steps don’t have to follow a fixed sequence, asynchronous programming keeps development moving forward.</p>
+<p>언제 비동기 프로그래밍을 사용해야 할까?</p>
 
-<p>Responsive UI is a great use case for asynchronous planning. Take, for example, a shopping app. When a user pulls up their order, the font size should increase. Instead of first waiting to load the history and update the font size, asynchronous programming can make both actions happen simultaneously.</p>
+<p>비동기 작업은 독립적인 태스크들에 사용돼야 한다. 반응형 UI와 같은 작업을 예로 들어보자. 사용자가 주문을 할 때 폰트가 커져야 한다고 할 때, 이전 주문 내역을 불러오는 일과 폰트가 커지는 작업을 굳이 순서대로 할 필요가 없다. 이러한 작업은 함께 처리되도록 하는 것이 낫다.</p>
 
-<p>When to use sync<br />
-Asynchronous programming is relatively complex. It can overcomplicate things and make code difficult to read. Synchronous programming, on the other hand, is fairly straightforward; its code is easier to write and doesn’t require tracking and measuring process flows (as async does). Because tasks are dependent on each other, there’s a need to know if they could run independently without interrupting each other.</p>
-
-<p>Synchronous programming could be appropriate for a shopping app, for example. When checking out online, a user wants to buy all of their items together, not individually. Instead of completing an order every time the user adds something to their cart, synchronous programming ensures that the payment method and shipping destination for all items are selected at the same time.</p>
+<p>동기 작업은 우선 코드를 작성하고 읽는데 부담이 줄어든다. 또한 만약 사용자가 상품들을 구매한다고 할 때, 상품 선택과 구매는 동기 작업으로 이루어져야 한다. 이렇게 의존적인 관계에 있는 태스크들은 동기 프로그래밍해야 한다.</p>
 
 <h1 id="sync">Sync</h1>
 
-<p>Synchronous is known as a blocking architecture and is ideal for programming reactive systems. As a single-thread model, it follows a strict set of sequences, which means that operations are performed one at a time, in perfect order. While one operation is being performed, other operations’ instructions are blocked. The completion of the first task triggers the next, and so on.</p>
+<p>동기 프로그래밍은 blocking 아키텍처이다. 이는 작업의 실행이 시간마다 하나씩만 실행될 수 있으며 하나의 작업이 실행되는 동안 다른 작업은 blocked된다. 하나의 작업의 종료가 다른 작업의 시작을 트리거한다.</p>
 
-<p>To illustrate how synchronous programming works, think of a telephone. During a phone call, while one person speaks, the other listens. When the first person finishes, the second tends to respond immediately.</p>
-
-<p>동기 프로그래밍으로 작성된 코드는 내가 작성한 순서대로 실행될 것이다.</p>
+<p>동기 프로그래밍으로 작성된 코드는 내가 작성한 순서대로 실행된다.</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">func</span> <span class="nx">step1</span><span class="p">()</span> <span class="p">{</span> <span class="nx">print</span><span class="p">(</span><span class="dl">"</span><span class="s2">1</span><span class="dl">"</span><span class="p">)</span> <span class="p">}</span>
 <span class="nx">func</span> <span class="nx">step2</span><span class="p">()</span> <span class="p">{</span> <span class="nx">print</span><span class="p">(</span><span class="dl">"</span><span class="s2">2</span><span class="dl">"</span><span class="p">)</span> <span class="p">}</span>
@@ -523,12 +520,11 @@ Asynchronous programming is relatively complex. It can overcomplicate things and
 
 <h1 id="async">Async</h1>
 
-<p>Asynchronous programming, conversely, is a multithreaded model that’s most applicable to networking and communications. Asynchronous is a non-blocking architecture, which means it doesn’t block further execution while one or more operations are in progress.</p>
+<p>비동기 프로그래밍은 반대로 non-blocking 아키텍처다. 이 말은 하나의 작업이 다른 작업의 실행을 방해하지 않는다는 뜻이다. 그래서 여러 개의 작업이 concurrent하게 실행될 수 있고, 서로가 다른 작업의 시작과 끝을 기다리지 않는다.</p>
 
-<p>With asynchronous programming, multiple related operations can run concurrently without waiting for other tasks to complete. During asynchronous communication, parties receive and process messages when it’s convenient or possible to do so, rather than responding immediately upon receipt.</p>
+<p>채팅 프로그램이 비동기 프로그래밍의 좋은 예가 된다. 한 사람이 텍스트를 보내는 작업이 다른 사람의 텍스트 전송 작업을 막지 못한다.</p>
 
-<p>Texting is an asynchronous communication method. One person can send a text message and the recipient can respond at their leisure. In the meantime, the sender may do other things while waiting for a response.<br />
-비동기 프로그래밍으로 작성된 코드는 내부에 작성된 작업들이 동시다발적으로 실행된다.</p>
+<p>비동기 프로그래밍으로 작성된 코드는 내부에 작성된 작업들이 동시다발적으로 실행된다.</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">func</span> <span class="nx">task1</span><span class="p">()</span> <span class="p">{</span> <span class="nx">print</span><span class="p">(</span><span class="dl">"</span><span class="s2">1</span><span class="dl">"</span><span class="p">)</span> <span class="p">}</span>
 <span class="nx">func</span> <span class="nx">task2</span><span class="p">()</span> <span class="p">{</span> <span class="nx">print</span><span class="p">(</span><span class="dl">"</span><span class="s2">2</span><span class="dl">"</span><span class="p">)</span> <span class="p">}</span>
@@ -543,30 +539,25 @@ Asynchronous programming is relatively complex. It can overcomplicate things and
 
 <p>위의 결과를 보면 결과가 undeterministic하다. 이러한 특성 때문에 비동기 프로그래밍을 unpredictable programming model이라고도 한다. 비동기 프로그래밍은 각각의 작업이 서로 의존적이지 않은 경우, 그리고 순서가 중요하지 않은 경우에 사용할 수 있다.</p>
 
-<h1 id="con">con</h1>
+<p>비동기 프로그래밍은 멀티 코어 환경일 경우 동시성과 병렬성, 싱글 코어 환경일 경우 동시성을 제공한다.</p>
+
+<h1 id="동시성concurrency">동시성(Concurrency)</h1>
 
 <p><img src="/images/os_33.png" alt="" /></p>
 
 <p>동시성(Concurrency)를 얻으려면 무조건 비동기 프로그래밍으로 코드를 작성해야 한다.</p>
 
-<p>Concurrent and parallel are effectively the same principle as you correctly surmise, both are related to tasks being executed simultaneously although I would say that parallel tasks should be truly multitasking, executed “at the same time” whereas concurrent could mean that the tasks are sharing the execution thread while still appearing to be executing in parallel.</p>
+<p>동시성과 병렬성은 얼핏 헷갈린다. 왜냐하면 둘 다 여러 작업을 처리하기 때문이다. 하지만 동시성은 <strong>여러 작업이 스레드 또는 코어를 공유한다는 개념</strong>에 더 가깝다. 정말로 우리가 생각하는 여러 작업이 동시에 실행되는 것을 병렬성이라고 얘기한다.</p>
 
-<p>Asynchronous methods aren’t directly related to the previous two concepts, asynchrony is used to present the impression of concurrent or parallel tasking but effectively an asynchronous method call is normally used for a process that needs to do work away from the current application and we don’t want to wait and block our application awaiting the response.</p>
+<p>동시성은 작업을 하나씩 순차적으로 실행하는 것이 아니라, 여러 작업을 번갈아가며 실행하는 것을 의미한다. 만약 싱글 코어 환경이라면, 동시성은 컨텍스트 스위칭을 통해 얻어진다.</p>
 
-<p>For example, getting data from a database could take time but we don’t want to block our UI waiting for the data. The async call takes a call-back reference and returns execution back to your code as soon as the request has been placed with the remote system. Your UI can continue to respond to the user while the remote system does whatever processing is required, once it returns the data to your call-back method then that method can update the UI (or handoff that update) as appropriate.</p>
+<h1 id="병렬성parallel">병렬성(Parallel)</h1>
 
-<p>Concurrency means executing multiple tasks at the same time but not necessarily simultaneously. When you have to perform more than one task but you have a single resource then we go for concurrency. In a single-core environment, concurrency is achieved by context switching.</p>
-
-<p>Parallelism is like performing more than one task simultaneously like you can sing and bath together. Now you are doing the tasks in parallel.</p>
-
-<p>The term asynchronous is related to thread execution. In an asynchronous model, when one task gets executed, you can switch to a different task without waiting for the previous task to get completed.</p>
-
-<p>Asynchronous programming helps us to achieve concurrency. Asynchronous programming in a multi-threaded environment is a way to achieve parallelism.</p>
-
-<h1 id="parallel">parallel</h1>
+<p>병렬성은 여러 작업이 정말로 동시에 처리되는 것을 의미한다. 병렬성은 반드시 멀티 코어 환경에서만 얻을 수 있다.</p>
 
 <p><img src="/images/os_34.png" alt="" /></p>
-<h2 id="멀티-프로세싱">멀티 프로세싱</h2>
+
+<h1 id="멀티-프로세싱">멀티 프로세싱</h1>
 
 <p>멀티 프로세싱은 다수의 프로세서가 서로 협력적으로 일을 처리하는 것을 의미한다. 프로세스 간 통신을 하기 위해서는 IPC를 통해야 한다.</p>
 
@@ -582,22 +573,20 @@ Asynchronous programming is relatively complex. It can overcomplicate things and
   <li>단점
     <ul>
       <li>메모리 사용량이 많다</li>
-      <li>독립된 메모리 영역이기 때문에 작업량이 많을수록( Context Switching이 자주 일어나서 주소 공간의 공유가 잦을 경우) 오버헤드가 발생하여 성능저하가 발생 할 수 있다.</li>
+      <li>독립된 메모리 영역이기 때문에 작업량이 많을수록(Context Switching이 자주 일어나서 주소 공간의 공유가 잦을 경우) 오버헤드가 발생하여 성능저하가 발생 할 수 있다.</li>
       <li>Context Switching 과정에서 캐시 메모리 초기화 등 무거운 작업이 진행되고 시간이 소모되는 등 오버헤드가 발생한다.</li>
     </ul>
   </li>
 </ul>
 
-<h2 id="멀티-스레딩">멀티 스레딩</h2>
+<h1 id="멀티-스레딩">멀티 스레딩</h1>
 
 <p>멀티 스레딩은 하나의 프로세스를 스레드 단위로 프로세서에게 할당해 병렬 처리하는 것을 의미하며, 여러 개의 스레드는 서로 자원을 공유할 수 있다.</p>
 
 <p><img src="/images/os_32.png" alt="" /></p>
 
 <ul>
-  <li>
-    <p>장점</p>
-
+  <li>장점
     <ul>
       <li>응답성 향상: 한 스레드가 입출력으로 인해 작업이 진행되지 않더라도 다른 스레드가 작업을 계속하여 사용자의 작업 요구에 빨리 응답할 수 있다</li>
       <li>자원 공유: 한 프로세스 내에서 독립적인 스레드를 생성하면 프로세스가 가진 자원을 모든 스레드가 공유하게 되어 작업을 원활하게 진행할 수 있다</li>
@@ -625,8 +614,7 @@ Asynchronous programming is relatively complex. It can overcomplicate things and
       <li>또한, 프로세스 간의 통신보다 스레드 간의 통신 비용이 적으므로 작업들 간 통신의 부담이 줄어든다. (처리비용 감소. 프로세스는 독립구조이기 때문)</li>
     </ul>
   </li>
-  <li>
-    <p>단점</p>
+  <li>단점
     <ul>
       <li>모든 스레드가 자원을 공유하기 때문에 한 스레드에 문제가 생기면 전체 프로세스에 영향을 미친다.</li>
       <li>자원을 공유하기에 동기화 문제가 발생할 수 있다. (병목현상, 데드락 등)</li>
@@ -635,7 +623,7 @@ Asynchronous programming is relatively complex. It can overcomplicate things and
       <li>단일 프로세스 시스템의 경우 효과를 기대하기 어렵다.</li>
       <li>스레드를 활용하면 자원의 효율성이 증가하기도 하지만, 스레드 간의 자원 공유는 전역 변수를 이용하므로 동기화 문제가 발생 할 수 있으므로 프로그래머의 주의가 필요하다.</li>
       <li>스레드 하나가 프로세스 내 자원을 망쳐버린다면 모든 프로세스가 종료될 수 있다.</li>
-      <li>자원을 공유하기 때문에 필연적으로 동기화 문제가 발생할 수밖에 없다.</li>
+      <li>자원을 공유하기 때문에 필연적으로 동기화 문제가 발생할 수밖에 없다.</li>
       <li>동기화 그리고 교착상태가 발생하지 않도록 주의해야 한다.</li>
       <li>자식 스레드 중 하나에 문제가 생긴경우 전체 프로세스에 영향을 줄 수 있다.</li>
       <li>race condition, deadlocks, shared resources, and callbacks events 같은 문제들을 처리해야한다.</li>
@@ -664,15 +652,23 @@ Critical Section: <br />
 
 <p>하지만 멀티 스레드 방식의 프로그램에서는 하나의 스레드가 자신이 사용하던 데이터 공간을 망가뜨린다면, 해당 데이터 공간을 공유하는 모든 스레드를 망가뜨릴 수 있다.</p>
 
-<h1 id="there-are-several-scenarios-in-which-concurrency-can-occur">There are several scenarios in which concurrency can occur:</h1>
-
-<p>Asynchrony— This means that your program performs non-blocking operations. For example, it can initiate a request for a remote resource via HTTP and then go on to do some other task while it waits for the response to be received. It’s a bit like when you send an email and then go on with your life without waiting for a response.</p>
-
-<p>Parallelism— This means that your program leverages the hardware of multi-core machines to execute tasks at the same time by breaking up work into tasks, each of which is executed on a separate core. It’s a bit like singing in the shower: you’re actually doing two things at exactly the same time.</p>
-
-<p>Multithreading— This is a software implementation allowing different threads to be executed concurrently. A multithreaded program appears to be doing several things at the same time even when it’s running on a single-core machine. This is a bit like chatting with different people through various IM windows; although you’re actually switching back and forth, the net result is that you’re having multiple conversations at the same time.</p>
-
 <h1 id="global-interpreter-lock">Global Interpreter Lock</h1>
+
+<ul>
+  <li>GIL은 파이썬에서 멀티스레드에 관해 얘기할 때 자주 등장하는 용어다</li>
+  <li>파이썬은 C언어 같은 언어와 다르게 메모리 관리를 자동 지원한다. 이를 돕는 것을 가비지 컬렉터(GC, Garbage Collector)라고 한다</li>
+  <li>가비지 컬렉터는 객체가 가지고 있는 참조 횟수 카운트를 보고 카운트가 0인 객체는 더 이상 사용되지 않는다고 판단하고 메모리를 회수한다</li>
+  <li>근데 여기서 멀티스레드를 사용한다고 하면, 여러 스레드에서 하나의 객체의 참조 횟수 카운트(refcount)를 수정하려고 접근할 수 있다</li>
+  <li>이 때 파이썬은 문제가 될 것이라고 판단하고, 이로 인해 GC가 제대로 된 기능을 못하게 되는 것을 방지하고자 GIL이라는 개념을 도입했다</li>
+  <li>GIL은 임계 구역 문제를 해결하고자 사용하는 뮤텍스와 같은 것이다</li>
+  <li>뮤텍스는 하나의 공간을 여러 사용자가 접근하고자 할 때 한 명만 접근하도록 허용하고 나머지는 기다리도록 하기 위해 접근 가능한 사용자에게만 주는 일종의 열쇠이다</li>
+  <li>이 열쇠를 건네받는 사용자만 이 공간을 사용할 수 있다</li>
+  <li>GIL이 파이썬에서 이 뮤텍스(열쇠)다</li>
+  <li>GIL로 다른 스레드의 접근을 막고 본인 스레드만 객체의 참조 횟수 카운트를 바꿀 수 있도록 하는 것이다</li>
+  <li>그래야 가비지 컬렉터에게 생기는 혼란을 방지할 수 있고 메모리 관리를 차질없이 할 수 있게 된다</li>
+  <li><a href="https://it-eldorado.tistory.com/160" target="_blank"><strong>피그브라더, [Python] GIL (Global Interpreter Lock) 이해하기 참고</strong></a></li>
+  <li><a href="https://8iggy.tistory.com/241" target="_blank"><strong>스터디룸, Python GIL(Global Interpreter Lock) 참고</strong></a></li>
+</ul>
 
 <h1 id="콜백-함수">콜백 함수</h1>
 
@@ -746,6 +742,7 @@ Critical Section: <br />
   <li><a href="https://jayhyun-hwang.github.io/2021/09/02/The-Difference-Between-Asynchronous-And-Multi-Threading/" target="_blank">비동기와 멀티스레딩</a></li>
   <li><a href="https://it-eldorado.tistory.com/160" target="_blank">피그브라더, [Python] GIL (Global Interpreter Lock) 이해하기</a></li>
   <li><a href="https://8iggy.tistory.com/241" target="_blank">스터디룸, Python GIL(Global Interpreter Lock)</a></li>
+  <li><a href="https://wooono.tistory.com/523" target="_blank">우노, [OS] 쓰레드 세이프(Tread Safe)란?</a></li>
 </ul>
 
     </div>
@@ -982,7 +979,7 @@ Critical Section: <br />
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/os-series5&amp;media=http://localhost:4000/images/os_3.png&amp;description=OS%20Series%20[Part5]:%20Sync%20vs%20Async%20vs%20Concurrent%20vs%20Parallel"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/os-series5&amp;media=http://localhost:4000/images/os_35.png&amp;description=OS%20Series%20[Part5]:%20Sync%20vs%20Async%20vs%20Concurrent%20vs%20Parallel"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
@@ -996,6 +993,8 @@ Critical Section: <br />
 <!--첫 번째 문단-->
 
 
+
+  
 
   
   	
@@ -1012,7 +1011,7 @@ Critical Section: <br />
       <a href="/os-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>OS Series [Part4]: 메모리</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/linux-series1" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Linux Series [Part1]: 리눅스 커널<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1345,7 +1344,7 @@ Critical Section: <br />
 
       
       <a class="article__image" href="/network-series11">
-        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 활용편(5) 도커 네트워크와 AWS 네트워크">
+        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 용어">
       </a>
       
 
@@ -1354,7 +1353,7 @@ Critical Section: <br />
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/network-series11">Network Series [Part11]: 네트워크 활용편(5) 도커 네트워크와 AWS 네트워크</a>
+        <a href="/network-series11">Network Series [Part11]: 네트워크 용어</a>
       </h2>
 
       

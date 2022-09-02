@@ -1,0 +1,54 @@
+I"C<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#grpc" id="markdown-toc-grpc">gRPC</a></li>
+  <li><a href="#nat" id="markdown-toc-nat">NAT</a></li>
+  <li><a href="#dhcp" id="markdown-toc-dhcp">DHCP</a></li>
+  <li><a href="#ssh" id="markdown-toc-ssh">SSH</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+<hr />
+
+<h1 id="grpc">gRPC</h1>
+<h1 id="nat">NAT</h1>
+<ul>
+  <li>포트 포워딩</li>
+  <li>IP 주소 공간 부족
+    <h1 id="dhcp">DHCP</h1>
+  </li>
+</ul>
+
+<p>IP 주소를 할당하기란 쉽지 않은 일입니다. 특히 IP 주소 할당 과정에서 문제가 생기면 누군가의 인터넷 연결이 끊어질 수도 있습니다. 이때 DHCP를 이용하면 IP 주소 할당을 더욱 수월하게 진행할 수 있습니다.</p>
+
+<p>DHCP는 ‘Dynamic Host Configuration Protocol(동적 호스트 구성 프로토콜)’의 약자로, IP 네트워크에 사용되는 네트워크 프로토콜입니다. DHCP는 IP 주소 및 기타 통신 매개변수를 네트워크에 연결된 장치에 자동으로 할당합니다. 대부분의 가정용 네트워크에서는 라우터가 IP 주소를 장치에 할당하는 DHCP 서버의 역할을 합니다.</p>
+
+<p>DHCP는 네트워크 관리자가 해야 할 작업을 간소화합니다. DHCP 사용 없이는 수동으로 IP 주소를 할당해야 합니다. DHCP 설정 없이 수동으로 IP 주소를 할당하면 비효울적이고 시간이 지나치게 많이 소요되며 오류가 발생할 가능성이 높습니다.</p>
+
+<p>이제 DHCP 동작 과정에 대해 알아보겠습니다. 장치는 네트워크에 연결 시 IP 주소를 요청합니다. 요청은 DHCP 서버로 전달되며, 서버는 주소를 할당하고 주소의 이용을 모니터링하며 장치의 연결이 해제되면 주소를 다시 가져옵니다. 해당 IP 주소는 다른 장치에 재할당할 수 있으며, 장치는 IP 주소를 이용해 내부 및 공용 네트워크와 통신할 수 있습니다.</p>
+
+<p>DHCP 서버는 DHCP 매개변수(DHCP 옵션)를 제공합니다. DHCP 매개변수에서는 IP 주소의 다양한 정보(사용 가능 시간)를 확인할 수 있습니다. DHCP 옵션에서는 보통 다음 내용이 포함됩니다.</p>
+
+<ul>
+  <li>현지 네트워크와 인터넷 사이의 데이터를 라우팅하는 기본 게이트웨이</li>
+  <li>IP 주소 내의 호스트 주소와 네트워크 주소를 분리하는 서브넷 마스크</li>
+  <li>IP 주소의 이름을 사람이 기억할 수 있는 이름으로 변환하는 DNS 서버</li>
+</ul>
+
+<p>DHCP의 IP 주소 할당 방식은 다음과 같습니다.</p>
+
+<ul>
+  <li>동적 할당(Dynamic Allocation): 관리자가 DHCP에 IP 주소를 유보해놓는 경우에 동적 할당 방식이 활용됩니다. 로컬 네트워크에 있는 DHCP 클라이언트는 네트워크 초기화 단계에서 DHCP 서버 로부터 IP를 요청합니다. 이 모든 과정은 DHCP 서버가 이용되지 않은 IP 주소를 다시 클레임하고 다시 할당할 수 있는 시간 동안 진행됩니다.</li>
+  <li>자동 할당(Automatic allocation): DHCP 서버는 관리자가 정한 규칙에 따라 IP 주소를 클라이언트에 영구 할당하는 방식입니다. 자동 할당 방식은 DHCP 서버에 이전 IP 주소 할당 데이터가 있고 동일한 IP 주소를 동일한 클라이언트에게 재할당할 수 있다는 점에서 동적 할당과는 다릅니다.</li>
+  <li>수동 할당(Manual allocation): 관리자가 각 클라이언트에 대한 고유한 식별자를 IP 주소에 수동 할당하는 방식입니다. DHCP 서버는 DHCP 서버에 연결할 수 없을 때 다른 할당 방식으로 전환하도록 구성되어 있습니다.</li>
+</ul>
+
+<h1 id="ssh">SSH</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://nordvpn.com/ko/blog/what-is-dhcp/" target="_blank">NordVPN, DHCP의 정의와 DHCP를 이용해야 하는 이유</a></li>
+  <li><a href="https://docs.microsoft.com/ko-kr/azure/rtos/netx-duo/netx-duo-nat/chapter1" target="_blank">Microsoft, NAT(Network Address Translation) 소개</a></li>
+  <li><a href="https://www.stevenjlee.net/2020/07/11/%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-nat-network-address-translation-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-%EC%A3%BC%EC%86%8C-%EB%B3%80%ED%99%98/" target="_blank">STEVEN J.LEE, NAT이해하기</a></li>
+</ul>
+:ET

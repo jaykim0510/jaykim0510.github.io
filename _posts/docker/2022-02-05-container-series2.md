@@ -74,6 +74,10 @@ Docker에서 runc는 목적은 단 하나인데요, 바로 **Container 생성**�
 
 ![](/images/docker_25.png)
 
+# OCI
+
+# CRI
+
 # 참고
 - [Johan Fischer, Comparing Container Runtimes: containerd vs. Docker](https://earthly.dev/blog/containerd-vs-docker/){:target="_blank"}
 - [tutorialworks: The differences between Docker, containerd, CRI-O and runc](https://www.tutorialworks.com/difference-docker-containerd-runc-crio-oci/){:target="_blank"}

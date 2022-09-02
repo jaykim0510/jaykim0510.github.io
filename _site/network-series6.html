@@ -294,6 +294,8 @@ IP(Internet Protocol)
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -459,9 +461,18 @@ IP(Internet Protocol)
   <li><a href="#ipinternet-protocol" id="markdown-toc-ipinternet-protocol">IP(Internet Protocol)</a>    <ul>
       <li><a href="#ip-주소" id="markdown-toc-ip-주소">IP 주소</a></li>
       <li><a href="#서브넷-마스크subnet-mask" id="markdown-toc-서브넷-마스크subnet-mask">서브넷 마스크(Subnet Mask)</a></li>
+      <li><a href="#ip-주소-예시" id="markdown-toc-ip-주소-예시">IP 주소 예시</a></li>
     </ul>
   </li>
-  <li><a href="#dnsdomain-name-system-서버" id="markdown-toc-dnsdomain-name-system-서버">DNS(Domain Name System) 서버</a></li>
+  <li><a href="#dnsdomain-name-system-서버" id="markdown-toc-dnsdomain-name-system-서버">DNS(Domain Name System) 서버</a>    <ul>
+      <li><a href="#etchosts" id="markdown-toc-etchosts">/etc/hosts</a></li>
+      <li><a href="#etchostconf" id="markdown-toc-etchostconf">/etc/host.conf</a></li>
+      <li><a href="#etcresolvconf" id="markdown-toc-etcresolvconf">/etc/resolv.conf</a></li>
+      <li><a href="#리눅스-dns-질의-과정과-우선순위" id="markdown-toc-리눅스-dns-질의-과정과-우선순위">리눅스 DNS 질의 과정과 우선순위</a></li>
+      <li><a href="#nameserver" id="markdown-toc-nameserver">nameserver</a></li>
+      <li><a href="#dns" id="markdown-toc-dns">DNS</a></li>
+    </ul>
+  </li>
   <li><a href="#라우팅" id="markdown-toc-라우팅">라우팅</a>    <ul>
       <li><a href="#라우팅-테이블" id="markdown-toc-라우팅-테이블">라우팅 테이블</a></li>
       <li><a href="#게이트웨이" id="markdown-toc-게이트웨이">게이트웨이</a></li>
@@ -473,6 +484,8 @@ IP(Internet Protocol)
 <h1 id="ipinternet-protocol">IP(Internet Protocol)</h1>
 
 <p>IP는 네트워크 상에서 데이터를 목적지로 보내는 역할을 하는 인터넷 계층에서 사용하는 프로토콜</p>
+
+<p><img src="/images/ip_1.png" alt="" /></p>
 
 <h2 id="ip-주소">IP 주소</h2>
 <p>IP 주소는 인터넷에 연결하고자 하는 <strong>디바이스가 가지고 있는 NIC(Network Interface Controller)의 고유한 주소</strong>를 뜻합니다. 편지를 주고 받기 위해서는 서로의 주소가 필요한 것처럼 디바이스간 통신을 위해서는 IP주소가 필요합니다. IP주소는 <strong>네트워크 번호와 호스트 번호로 이루어진 32비트 숫자</strong>입니다.(IPv4 기준)</p>
@@ -495,7 +508,7 @@ IP(Internet Protocol)
         <ul>
           <li>호스트 수가 가장 많은 클래스</li>
           <li>앞의 8비트가 네트워크 부분, 나머지 24비트가 호스트 부분</li>
-          <li>1.0.0.0 ~ 126.0.0.0 까지로 규정 (0 시작과 127 시작은 제외) -&gt; 126개의 네트워크, 각각의 네트워크는 라우터 없이 통신</li>
+          <li><code class="language-plaintext highlighter-rouge">1.0.0.0</code> ~ <code class="language-plaintext highlighter-rouge">126.0.0.0</code> 까지로 규정 (0 시작과 127 시작은 제외) -&gt; 126개의 네트워크, 각각의 네트워크는 라우터 없이 통신</li>
           <li>호스트는 2의 24승 - 2개(모두 0인 경우, 모두 1인 경우) = 16,777,214개 -&gt; 16,777,214개의 호스트가 하나의 네트워크에 연결</li>
           <li>따라서 IP 주소를 모두 클래스 A로만 구성한다면 -&gt; 126개의 네트워크 * 16,777,214개의 호스트</li>
         </ul>
@@ -503,13 +516,13 @@ IP(Internet Protocol)
       <li>클래스 B는 맨 앞이 10으로 시작
         <ul>
           <li>앞의 16비트가 네트워크 부분</li>
-          <li>128.0.0.0 ~ 191.255.0.0 까지로 규정</li>
+          <li><code class="language-plaintext highlighter-rouge">128.0.0.0</code> ~ <code class="language-plaintext highlighter-rouge">191.255.0.0</code> 까지로 규정</li>
         </ul>
       </li>
       <li>클래스 C는 맨 앞이 110으로 시작
         <ul>
           <li>앞의 24비트가 네트워크 부분</li>
-          <li>192.0.0.0 ~ 223.255.255.0 까지로 규정</li>
+          <li><code class="language-plaintext highlighter-rouge">192.0.0.0</code> ~ <code class="language-plaintext highlighter-rouge">223.255.255.0</code> 까지로 규정</li>
         </ul>
       </li>
     </ul>
@@ -532,15 +545,15 @@ IP(Internet Protocol)
   <li>우리가 부여받은 net을 여러개의 subnet으로 나눈다는 의미</li>
   <li>서브넷마스크를 통해 나누어진 서브넷간의 통신은 라우터를 거쳐야함</li>
   <li>모든 IP 주소에는 서브넷 마스크가 따라다님. 쓰지 않더라도. 그래야 지금 IP 주소가 마스킹 된건지 아닌지 알 수 있음</li>
-  <li>클래스 A의 기본 서브넷 마스크는 255.0.0.0, B는 255.255.0.0, C는 255.255.255.0</li>
+  <li>클래스 A의 기본 서브넷 마스크는 <code class="language-plaintext highlighter-rouge">255.0.0.0</code>, B는 <code class="language-plaintext highlighter-rouge">255.255.0.0</code>, C는 <code class="language-plaintext highlighter-rouge">255.255.255.0</code></li>
   <li>서브넷 마스크는 IP주소의 어디까지가 네트워크 부분이고, 어디까지가 호스트 부분인지를 나타내는 역할을 함</li>
   <li>서브넷 마스크의 이진수 1은 네트워크 부분, 이진수 0은 호스트 부분을 의미함</li>
   <li>즉, 서브넷 마스킹은 기존 IP 주소의 호스트 부분의 일부를 네트워크 부분으로 바꾸는 작업</li>
 </ul>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>기존 네트워크: 150.150.100.1 =&gt; 1001 0110 1001 0110 0110 0100 0000 0001 =&gt; 클래스 B =&gt; 150.150.0.0이 네트워크를 의미
-서브넷 마스크: 255.255.255.0 =&gt; 1111 1111 1111 1111 1111 1111 0000 0000 =&gt; 네트워크 자리를 24자리 까지로 늘림 (호스트를 8자리로 줄임)
----------------------------------------------------------------------
+서브넷 마스크: 255.255.255.0 =&gt; 1111 1111 1111 1111 1111 1111 0000 0000 =&gt; 네트워크 자리가 16자리에서 24자리 까지로 늘림 (호스트를 8자리로 줄임)
+------------------------------------------------------------------------------------------------------------------------------
 서브넷: 150.150.100.0 =&gt; 1001 01110 1001 01110 01110 0100 0000 0000 =&gt; 최종적으로 서브넷 네트워크가 150.150.100.0가 됨
 </code></pre></div></div>
 
@@ -549,10 +562,216 @@ IP(Internet Protocol)
   <li>또 호스트 부분이 255인 주소 역시 호스트 주소로 사용할 수 없음. 브로드캐스트 주소 (모든 호스트에게 메시지 보낼 때 사용하는 주소)</li>
 </ul>
 
+<h2 id="ip-주소-예시">IP 주소 예시</h2>
+
+<ul>
+  <li>나의 IP 주소가 <code class="language-plaintext highlighter-rouge">150.150.100.1</code>이라고 해보자.</li>
+  <li>그러면 내가 부여받은 IP 주소의 네트워크 주소는?
+    <ul>
+      <li>이 물음에 대답하려면 먼저 내 IP주소의 클래스가 뭔지 알아야 한다.</li>
+      <li>150.<em>.</em>.*는 클래스 B에 속한다 -&gt; 앞의 16자리가 네트워크 주소이다</li>
+      <li>즉 네트워크 주소는 <code class="language-plaintext highlighter-rouge">150.150.0.0</code>이다</li>
+    </ul>
+  </li>
+  <li>만약 내가 AWS의 VPC와 같은 서비스를 이용해 가상 네트워크를 부여 받았는데 그 값이 <code class="language-plaintext highlighter-rouge">150.150.0.0</code>이라 해보자</li>
+  <li><code class="language-plaintext highlighter-rouge">150.150.0.0</code>의 나머지 16비트를 이용해 호스트에게 IP 주소를 부여할 수 있다. -&gt; 2^16개이므로 65,536개. 여기서 2개를 빼면 65,534개를 호스트에 부여할 수 있다</li>
+  <li>여기서 10비트를 더 사용해 서브네팅해보자.</li>
+</ul>
+
+<p><img src="/images/subnet_1.png" alt="" /></p>
+
+<p><img src="/images/subnet_2.png" alt="" /></p>
+
+<ul>
+  <li>여기서 IP주소를 하나 가져와보자. <code class="language-plaintext highlighter-rouge">150.150.252.211/26</code>을 예로 들어보자. 이 IP주소를 보고 가질 수 있는 물음은 다음과 같다
+    <ul>
+      <li><strong>이 IP주소의 네트워크 주소는?</strong>
+        <ul>
+          <li>26비트가 네트워크 주소이므로, 24자리 150.150.252까지는 당연하고,</li>
+          <li>나머지 211을 이진수로 나타내면 1101 0011인데 이중 왼쪽 2자리까지가 네트워크 주소에 포함되므로,</li>
+          <li><code class="language-plaintext highlighter-rouge">150.150.252.192.0</code>이 서브넷 네트워크 주소가 된다</li>
+        </ul>
+      </li>
+      <li><strong>이 IP주소의 기본 서브넷 사용시 네트워크 주소는?</strong>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">150.150.252.211/26</code>는 클래스 B이므로 기본 서브넷은 16비트일 것이다</li>
+          <li>그러면 기본 네트워크 주소는 <code class="language-plaintext highlighter-rouge">150.150.0.0</code>이 될 것이다</li>
+        </ul>
+      </li>
+      <li><strong>이 IP주소는</strong> <code class="language-plaintext highlighter-rouge">150.150.255.193</code><strong>과 같은 서브넷 안에 있는가? (라우팅 없이 통신이 가능한가?)</strong>
+        <ul>
+          <li>라우팅 없이 통신이 가능한지 보려면 같은 네트워크 주소가 같은지 확인해보면 된다</li>
+          <li><code class="language-plaintext highlighter-rouge">150.150.252.211/26</code>는 <code class="language-plaintext highlighter-rouge">150.150.252.192.0</code>였고,</li>
+          <li><code class="language-plaintext highlighter-rouge">150.150.255.193</code>는 <code class="language-plaintext highlighter-rouge">150.150.255.192</code>이므로 서로 다른 네트워크 상에 있다 -&gt; 라우터가 있어야 한다</li>
+        </ul>
+      </li>
+      <li><strong>이 IP주소가 속한 네트워크의 브로드캐스트 주소는?</strong>
+        <ul>
+          <li>이를 구하려면 나의 IP주소 중 호스트 부분을 모두 1로 바꾸면 된다</li>
+          <li><code class="language-plaintext highlighter-rouge">150.150.252.255/26</code>가 될 것이다</li>
+          <li>주의할 점은 브로드캐스트 주소는 무조건 끝자리가 255로 끝나지는 않는다.
+            <ul>
+              <li>이를 확인하기 위해 <code class="language-plaintext highlighter-rouge">150.150.0.130/26</code>가 있는 네트워크 상의 브로드캐스트 주소를 한 번 구해보자</li>
+              <li>이는 2진수로 1001 0110. 1001 0110. 0000 0000. 1000 0010인데 여기서 호스트 부분이 오른쪽 6자리를 1로 바꿔보자</li>
+              <li>1001 0110. 1001 0110. 0000 0000. 1011 1111 -&gt; <code class="language-plaintext highlighter-rouge">150.150.0.191/26</code>이 브로드캐스트 주소가 된다</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
 <h1 id="dnsdomain-name-system-서버">DNS(Domain Name System) 서버</h1>
 <p>DNS 서버는 도메인 네임을 IP주소로 매핑하여 보관하고 있는 서버입니다. 하지만 모든 도메인 정보를 저장할 수는 없고 저장한다고 해도 IP주소를 가지고 오는데 많은 시간이 소요됩니다. 이를 해결하기 위해 DNS 서버를 계층적으로 구성해 IP 주소를 가져오도록 했으며 한 번 가져온 정보는 캐시에 저장해둡니다. 하지만 캐시에 저장된 후 정보가 변경될 수 있기 때문에 캐시에 저장된 정보는 유효기간이 지나면 캐시에서 삭제됩니다.</p>
 
 <p><img src="../../images/network_4.png" alt="" /></p>
+
+<h2 id="etchosts">/etc/hosts</h2>
+
+<p>DNS가 없던 아주 옛날에는 모든 서버의 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일에는 아래와 같은 형식으로 domain과 IP주소의 짝을 직접 등록하여 도메인에 대한 IP주소를 찾아가도록 하였다. DNS서버를 운영할때 기본값으로 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일을 먼저 읽어 들인다. 요청받은 도메인이 이 곳에 등록되어 있다면 DNS요청을 네임서버에 보내지않고 이 곳에 등록되어 있는 주소로 연결이 된다. 그리하여 일종의 트릭으로 원하는 IP와 도메인명을 등록하고 사용할 수도 있다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;IP주소&gt;    &lt;hostname&gt;
+127.0.0.1  localhost
+</code></pre></div></div>
+
+<h2 id="etchostconf">/etc/host.conf</h2>
+
+<p>이 파일은 어떤 특정 도메인에 대해 IP주소값을 찾을 때, 주소 값을 어디에서 찾을 것인가를 결정하는 파일이다.</p>
+
+<p><img src="/images/ip_2.png" alt="" /></p>
+
+<p>hosts : <code class="language-plaintext highlighter-rouge">/etc/hosts</code>파일을 말한다.bind : DNS를 말한다. 즉, <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code>에 정의된 nameserver를 의미한다.nis : NIS에 의한 도메인 쿼리를 말한다. 위의 내용으로 예를 들면 어떤 PC로 부터 자신(DNS서버)에게 도메인 주소를 IP로 알려달라는 질의 요청이 왔다. 맨 처음은 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일에서 찾아본 후, 없으면 <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code>파일에 정의된 nameserver에게 쿼리하는 순서이다. 즉, 도메인 네임 서비스를 어디서 받을 것인가를 정의해 놓은 파일이라는 것이다.</p>
+
+<h2 id="etcresolvconf">/etc/resolv.conf</h2>
+<p>이 파일은 사용하고자 하는 네임서버를 지정하는 파일이다.</p>
+
+<p>구성을 보도록 하자.</p>
+
+<p><img src="/images/ip_3.png" alt="" /></p>
+
+<p>search는 호스트+도메인으로 사용할 도메인 명을 지정해둔 것이다. 거의 모두 호스트명과 도메인 명을 함께 사용한다. 하지만 특별하게 호스트명만 사용되었을 때 사용하게될 기본 도메인명을 의미하는 것이다.예를 들어 search abc.com 이라고 가정하자. 그럼 “telnet 호스트명”과 같이 “telnet www”라고 하였을 경우에 자동으로 “telnet www.abc.com”으로 인식하는 것이다. nameserver는 말 그대로 이 서버에서 사용할 네임서버를 지정해둔 것이다.</p>
+
+<h2 id="리눅스-dns-질의-과정과-우선순위">리눅스 DNS 질의 과정과 우선순위</h2>
+
+<ol>
+  <li>nscd ( Name Service Cache Daemon ) - nscd 데몬이 설치되었을 경우에만 활성화. 윈도우의 dns cache와 같다.</li>
+  <li><code class="language-plaintext highlighter-rouge">/etc/host.conf</code> 파일의 설정에 따라서 순서가 바뀔 수 있다. 기본 설정으로는 /etc/hosts 파일을 참조한다. 두번째로 bind 패키지를 따른다. bind 패키지로 리눅스 DNS 서버를 구축할 수 있다. 이는 패키지가 설치되어 있을 경우에만 활성화된다. bind 내부 설정에 따른 순위 변화는 생략.</li>
+  <li>리눅스에 따라 GUI 환경의 네트워크 설정 어플리케이션으로 DNS 설정(리눅스마다 약간씩 차이가 있을 수 있음. 보통은 GUI 환경에서 설정하는 것이 우선적으로 작용한다.)</li>
+  <li><code class="language-plaintext highlighter-rouge">/etc/resolvconf/resolv.conf.d</code> 디렉토리 내부 설정. 이 디렉토리는 base, head 파일과 <code class="language-plaintext highlighter-rouge">/etc/network/interfaces</code> 파일을 이용하여 <code class="language-plaintext highlighter-rouge">resolv.conf</code> 파일을 수정함.(리눅스마다 약간씩 차이가 있을 수 있음. 우분투에서 확인)</li>
+  <li><code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> 파일 : 윈도우의 네트워크 인터페이스 설정과 같음.</li>
+  <li>내부 네트워크 DNS 질의 - 5번 과정에서 내부 네트워크 DNS로 맵핑했을 경우. ex) Kerberos Linux DNS server, Active Directory DNS, VMWare의 Gateway 등.</li>
+  <li>외부 네트워크 DNS 질의</li>
+</ol>
+
+<p>위의 과정을 크게 나누어 보면 아래와 같다.</p>
+
+<ol>
+  <li>Local 환경 쿼리 (자기 자신)</li>
+  <li>내부 네트워크 쿼리</li>
+  <li>외부 공인 DNS 쿼리</li>
+</ol>
+
+<p>리눅스에서 DNS 질의 과정 추적 명령어 dig를 사용할 수 있다. 윈도우는 따로 설치해야 한다.</p>
+
+<p>추가 : 공유기에서 할당하는 DNS 설정은 보통 KT, SKT 등의 통신사 DNS 서버인데, 공유기에서 설정하는 값 보다 시스템에서 설정하는 값이 먼저이다. 하지만 별도의 설정이 없다면 OS 부팅 시 DHCP를 공유기 정보에서 받아 설정하도록 되어있다.</p>
+
+<h2 id="nameserver">nameserver</h2>
+
+<p><a href="https://kinsta.com/knowledgebase/what-is-a-nameserver/" target="_blank">kinsta, What Is a Nameserver? Why Are Nameservers Important?</a></p>
+
+<p>If you’re trying to point your domain name to your web hosting, you’ve probably come across the term nameserver. So, what is a nameserver?</p>
+
+<p>Nameservers help connect URLs with the IP address of web servers. Nameservers are an important part of the Domain Name System (DNS), which many people call the “phone book of the Internet”.</p>
+
+<p><strong>What Is a Nameserver? Explained in More Detail</strong></p>
+
+<p>When a user enters a URL in their browser, like “kinsta.com, there needs to be some way to connect that URL with the underlying web server that powers the website at that domain name.</p>
+
+<p>Think how difficult it would be if you had to enter the actual IP address of a web server every time you wanted to visit a website. You wouldn’t be able to remember whether it was 159.89.229.118 or 159.89.229.119 — it would be a mess!</p>
+
+<p>Nameservers play an important role in connecting a URL with a server IP address in a much more human-friendly way.</p>
+
+<p>Nameservers look like any other domain name. When you look at a website’s nameservers, you’ll typically see a minimum of two nameservers (though you can use more). Here’s an example of what they look like:</p>
+
+<ul>
+  <li>ns-380.awsdns-47.com</li>
+  <li>Ns-1076.awsdns-06.org</li>
+</ul>
+
+<p>Only instead of serving up a website, those nameservers help direct traffic.</p>
+
+<p>To illustrate the role that nameservers play in directing traffic on the Internet, let’s look at a real example.</p>
+
+<p>Let’s say you want to visit the Kinsta homepage. On the surface, this action is simple: you type “kinsta.com” into your browser’s address bar and you see the Kinsta homepage. Easy, right?</p>
+
+<p>But behind-the-scenes, the high-level process actually goes something like this:</p>
+
+<ul>
+  <li>You type “kinsta.com” into the address bar and hit enter</li>
+  <li>Your browser sends a request to that domain’s nameservers</li>
+  <li>The nameservers respond back with the IP address of the website’s server</li>
+  <li>Your browser requests the website content from that IP address</li>
+  <li>Your browser retrieves the content and renders it in your browser</li>
+</ul>
+
+<p>In order to visit a website you must first access a Domain Name Server. If there’s an issue with In the the decentralized naming systems responsible for turning hostnames into IP addresses, you might experience a message such as “DNS server not responding”.</p>
+
+<p>Nameservers vs DNS Records<br />
+In the example above, we left out one point for simplicity:</p>
+
+<p>DNS records are what contain the actual information that other browsers or services need to interact with, like your server’s IP address.</p>
+
+<p>Nameservers, on the other hand, help store and organize those individual DNS records.</p>
+
+<p>Earlier, we referred to DNS as the phone book of the Internet. But a more specific analogy would be that:</p>
+
+<ul>
+  <li>Nameservers are the physical phone book itself.</li>
+  <li>DNS records are the individual entries in the phone book.</li>
+</ul>
+
+<p>If you wanted to find someone’s phone number (back when phone books existed!), you’d first grab the phone book itself. Then, you’d open the phone book and go through the entries to find the specific information that you need.</p>
+
+<p>Armed with that knowledge, let’s look at a fuller sequence of what happens when you visit a website:</p>
+
+<ul>
+  <li>You type “kinsta.com” into the address bar and hit enter</li>
+  <li>Your browser uses DNS to retrieve the domain’s nameservers</li>
+  <li>Your browser asks for the A record that contains the IP address of the web server (a specific DNS record)</li>
+  <li>The nameservers provide the IP address from the A record</li>
+  <li>Your browser requests the website content from that IP address</li>
+  <li>Your browser retrieves the content and renders it in your browser</li>
+</ul>
+
+<p><strong>How to Use Nameservers in the Real World</strong><br />
+In the real world, you’ll use nameservers and DNS records primarily to point your domain name towards your hosting.</p>
+
+<p>You also might use the DNS records supplied by your nameservers in other ways, like setting up your email account with MX records or verifying your domain name with Google Search Console.</p>
+
+<p>Where Are Your Domain’s Nameservers Located?</p>
+
+<p>The answer to this question is that “it depends”.</p>
+
+<p>When you register your domain name through a domain registrar, your domain is usually pointed towards your domain registrar’s nameservers at first. Your domain registrar is also where you can edit your domain’s nameservers.</p>
+
+<p>If you wanted to, you could leave your nameservers at your domain registrar and just edit the DNS records to point your domain name towards your web hosting.</p>
+
+<p>However, many web hosts recommend that you change your domain’s nameservers to nameservers provided by the host. For example, here at Kinsta, we provide premium nameservers powered by Amazon Route 53 that you can use (though you don’t have to):</p>
+
+<p>To change your nameservers, you’ll need to use the interface at the domain registrar where you purchased your domain name.</p>
+
+<p>For example, here’s what it looks like to change the nameservers at a domain registered through Google Domains.</p>
+
+<p>You can see that the domain is originally configured to use the Google Domains nameservers:</p>
+
+<h2 id="dns">DNS</h2>
+
+<p><a href="https://kinsta.com/knowledgebase/what-is-dns/" target="_blank">kinsta, What Is DNS? Domain Name System Explained</a></p>
+
+<p>DNS, short for Domain Name System, is one of the most common yet misunderstood components of the web landscape. To put it simply, DNS helps direct traffic on the Internet by connecting domain names with actual web servers. Essentially, it takes a human-friendly request – a domain name like kinsta.com – and translates it into a computer-friendly server IP address – like 216.3.128.12.</p>
+
+<p>Because DNS is all about looking up addresses and connecting devices, many people call DNS the “phonebook of the Internet”. Without DNS, you’d have to memorize every site’s IP address to access it which… well, that just wouldn’t work!</p>
 
 <h1 id="라우팅">라우팅</h1>
 
@@ -576,18 +795,16 @@ IP(Internet Protocol)
 
 <p>MAC addresses are only significant on a LAN. They are in the frame headers, and frames are stripped at layer-3 boundaries (routers). The routers then use the layer-3 headers with the layer-3 address to forward a packet to the next interface, where</p>
 
-<h2 id="게이트웨이">게이트웨이</h2>
-
 <p><img src="/images/network_46.png" alt="" /></p>
 
 <ul>
   <li>서버든 라우터든 패킷을 보내기 위해서는 일단 라우팅 테이블을 참조함</li>
-  <li>라우팅 테이블을 보니 라우팅 엔트리는 1.1.1.0/24, Gateway는 없음 -&gt; 목적지 주소가 나와 같은 네트워크에 존재함을 확인
+  <li>라우팅 테이블을 보니 라우팅 엔트리는 <code class="language-plaintext highlighter-rouge">1.1.1.0/24</code>, Gateway는 없음 -&gt; 목적지 주소가 나와 같은 네트워크에 존재함을 확인
 <img src="/images/network_47.png" alt="" /></li>
-  <li>이제 Server1은 목적지 주소 1.1.1.20에 대한 MAC 주소를 알기위해 자신의 ARP 테이블을 참조함</li>
+  <li>이제 Server1은 목적지 주소 <code class="language-plaintext highlighter-rouge">1.1.1.20</code>에 대한 MAC 주소를 알기위해 자신의 ARP 테이블을 참조함</li>
   <li>그런데 ARP 테이블이 비어있음 -&gt; ARP miss
 <img src="/images/network_48.png" alt="" /></li>
-  <li>Server1은 Server2(1.1.1.20)의 MAC 주소를 알아내기 위해 lan1 포트로 ARP request 패킷을 보냄</li>
+  <li>Server1은 Server2(<code class="language-plaintext highlighter-rouge">1.1.1.20</code>)의 MAC 주소를 알아내기 위해 lan1 포트로 ARP request 패킷을 보냄</li>
   <li>Switch1은 이 패킷을 수신하고, 수신 패킷의 Source MAC 주소를 배웁니다
     <ul>
       <li>(Switch1의 MAC 테이블에 Server1의 MAC주소와 Switch1의 port를 기록)
@@ -603,12 +820,55 @@ IP(Internet Protocol)
   <li>Server1은 자신의 ARP 테이블에 MAC 주소를 기록
 <img src="/images/network_51.png" alt="" /></li>
   <li>이제 Server1은 Server2로 IP 패킷을 보냄</li>
-  <li>Server1은 목적지 주소 1.1.1.20에 대한 MAC 주소를 ARP 테이블에서 얻어오고 이동해야할 포트 번호를 MAC 테이블을 통해 확인</li>
+  <li>Server1은 목적지 주소 <code class="language-plaintext highlighter-rouge">1.1.1.20</code>에 대한 MAC 주소를 ARP 테이블에서 얻어오고 이동해야할 포트 번호를 MAC 테이블을 통해 확인</li>
   <li>이 패킷은 fe2 포트를 통해 나가고, Server2가 패킷을 수신</li>
 </ul>
 
+<h2 id="게이트웨이">게이트웨이</h2>
+<p>다른 네트워크로 가기위한 통로</p>
+
+<p>A traditional “gateway” can mean a device that (sometimes) is able to route traffic, but
+whose primary goal is to <em>translate</em> from one protocol to another. For example- I would
+use a “gateway” if I wanted to send packets from my IPv4 network to/from a IPv6 network,
+or maybe an AppleTalk network to/from a Token Ring network.</p>
+
+<p>게이트웨이는 개념적인 용어, 라우터는 장비</p>
+
+<p>네트워크 구성환경에 따라 라우터가 게이트웨이 역할을 할 수도 있고, 다른 장비나 소프트웨어가 게이트웨이 역할을 할 수도 있다.</p>
+
+<p>더 깊게 들어가면 L3 장비들인데요.  Layer3 는 IP를 와 연관되어 있습니다.<br />
+source: 192.168.1.10 / destination : 8.8.8.8</p>
+
+<p>source 가 되는 PC에도 routing table 이 있습니다. (cmd - route print)<br />
+여기에 목적지 정보가 없으면 무조건 gateway 로 패킷을 보냅니다.<br />
+즉, 어떤 host 에게 Gateway 란건 내 패킷을 무조건 라우팅 시켜줄 통로입니다.</p>
+
+<p>gateway 가 되는 장비들이 L3 장비들이고 Router 가 되겠죠.</p>
+
+<p>공유기는 간단히 표현하면 Router + DHCP + NAT 역할을 합니다<br />
+방화벽은 간단히 표현하면 Router + ACL + Firewall 등등의 기능을 합니다.</p>
+
+<p>다시 정리하자면.. Gateway 는 개념이지 장비명이 아닙니다.</p>
+
+<p>결론적으로 말하자면 cisco에서 얘기하는 게이트웨이 모드는 간단하게 얘기했을 때 우리가 흔히 말하는 공유기처럼 NAT가 활성화된 상태를 말하고, 라우터 모드는 NAT가 비활성화된 상태를 말합니다.</p>
+
+<p>사실 게이트웨이라는 것은 라우터와 구분되는 개념이 아니라, 라우터 중에서 관문(gateway) 역할을 하는 라우터를 게이트웨이 라우터라고 하는데 이를 그냥 게이트웨이라고 짧게 부르는 것 뿐입니다.</p>
+
+<p>고속도로로 비유한다면 게이트웨이가 아닌 라우터는 JC이고 게이트웨이인 라우터는 IC라고 볼 수 있겠네요. 둘다 도로와 도로를 이어주는 역할을 수행하지만(routing) IC는 특히 일반도로에서 고속도로로 진입하는 관문(gateway) 역할을 하는 점에서 생각해보면 될 것 같습니다.</p>
+
+<p>네트워크와 네트워크 사이를 이어주는 역할을 하는 것이 라우터이고, 그 중에서도 가장 끄트머리에 위치한 네트워크(가정이나 회사)를 중앙(인터넷 등)으로 연결해주는 라우터를 그저 좀 특별하게 부르는 것이 게이트웨이인 것입니다.</p>
+
+<p>방화벽 그자체의 의미로는 라우팅의 개념은 전혀 없고 단지 조건에 따라 패킷을 걸러주는 역할을 하는 것 뿐입니다. 방화벽 장비 중에 라우팅 역할도 하는 장비가 있을 뿐이지요.</p>
+
 <h1 id="참고">참고</h1>
 <ul>
+  <li><a href="https://docs.microsoft.com/en-us/troubleshoot/windows-client/networking/tcpip-addressing-and-subnetting" target="_blank">Microsoft, Understand TCP/IP addressing and subnetting basics</a></li>
+  <li><a href="https://velog.io/@dnstlr2933/%EC%84%9C%EB%B8%8C%EB%84%B7%EA%B3%BC-Broadcast-%EC%A3%BC%EC%86%8C" target="_blank">groom, 서브넷과 Broadcast 주소</a></li>
+  <li><a href="https://itdexter.tistory.com/261" target="_blank">IT_Dexter:티스토리</a></li>
+  <li><a href="https://whackur.tistory.com/45" target="_blank">Whackur’s Blog:티스토리</a></li>
+  <li><a href="https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/" target="_blank">How To Set Permanent DNS Nameservers in Ubuntu and Debian</a></li>
+  <li><a href="https://kinsta.com/knowledgebase/what-is-dns/" target="_blank">kinsta, What Is DNS? Domain Name System Explained</a></li>
+  <li><a href="https://kinsta.com/knowledgebase/what-is-a-nameserver/" target="_blank">kinsta, What Is a Nameserver? Why Are Nameservers Important?</a></li>
   <li><a href="https://www.netmanias.com/ko/?m=view&amp;id=blog&amp;no=5501" target="_blank">스위칭과 라우팅… 참 쉽죠잉~ (1편: Ethernet 스위칭)</a></li>
   <li><a href="https://www.netmanias.com/ko/?m=view&amp;id=blog&amp;no=5502" target="_blank">스위칭과 라우팅… 참 쉽죠잉~ (2편: IP 라우팅)</a></li>
 </ul>
@@ -1220,7 +1480,7 @@ IP(Internet Protocol)
 
       
       <a class="article__image" href="/network-series11">
-        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 활용편(5) 도커 네트워크와 AWS 네트워크">
+        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 용어">
       </a>
       
 
@@ -1229,7 +1489,7 @@ IP(Internet Protocol)
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/network-series11">Network Series [Part11]: 네트워크 활용편(5) 도커 네트워크와 AWS 네트워크</a>
+        <a href="/network-series11">Network Series [Part11]: 네트워크 용어</a>
       </h2>
 
       

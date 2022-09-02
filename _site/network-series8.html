@@ -286,6 +286,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -444,39 +446,27 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#http-api-rest-api" id="markdown-toc-http-api-rest-api">HTTP API? REST API?</a></li>
+  <li><a href="#rest-api" id="markdown-toc-rest-api">REST API</a></li>
+  <li><a href="#restful" id="markdown-toc-restful">RESTful</a>    <ul>
+      <li><a href="#uri-규칙" id="markdown-toc-uri-규칙">URI 규칙</a></li>
+      <li><a href="#http-method-활용" id="markdown-toc-http-method-활용">HTTP Method 활용</a></li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 <hr />
 
-<p><strong>REpresentational State Transfer</strong></p>
-
-<p>HTTP API와 REST API는 사실 거의 같은 의미로 사용됩니다.</p>
-
-<p>그런데 디테일하게 들어가면 차이가 있습니다.</p>
-
-<p>HTTP API는 HTTP를 사용해서 서로 정해둔 스펙으로 데이터를 주고 받으며 통신하는 것으로 이해하시면 됩니다.</p>
-
-<p>그래서 상당히 넓은 의미로 사용됩니다.</p>
-
-<p>반면에 REST API는 HTTP API에 여러가지 제약 조건이 추가됩니다.</p>
+<h1 id="http-api-rest-api">HTTP API? REST API?</h1>
+<p>HTTP API와 REST API는 사실 거의 같은 의미로 사용됩니다. 그런데 디테일하게 들어가면 차이가 있습니다. HTTP API는 HTTP를 사용해서 서로 정해둔 스펙으로 데이터를 주고 받으며 통신하는 것으로 이해하시면 됩니다. 그래서 상당히 넓은 의미로 사용됩니다. 반면에 REST API는 HTTP API에 여러가지 <strong>제약 조건이 추가</strong>됩니다.</p>
 
 <p>REST는 다음 4가지 제약조건을 만족해야 합니다.</p>
 
-<p>(https://ko.wikipedia.org/wiki/REST)</p>
-
 <ul>
-  <li>
-    <p>자원의 식별</p>
-  </li>
-  <li>
-    <p>메시지를 통한 리소스 조작</p>
-  </li>
-  <li>
-    <p>자기서술적 메서지</p>
-  </li>
-  <li>
-    <p>애플리케이션의 상태에 대한 엔진으로서 하이퍼미디어</p>
-  </li>
+  <li>자원의 식별</li>
+  <li>메시지를 통한 리소스 조작</li>
+  <li>자기서술적 메서지</li>
+  <li>애플리케이션의 상태에 대한 엔진으로서 하이퍼미디어</li>
 </ul>
 
 <p>여러가지가 있지만 대표적으로 구현하기 어려운 부분이 마지막에 있는 부분인데요. 이것은 HTML처럼 하이퍼링크가 추가되어서 다음에 어떤 API를 호출해야 하는지를 해당 링크를 통해서 받을 수 있어야 합니다.</p>
@@ -487,12 +477,130 @@ Table of Contents
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/RP_f5dMoHFc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
 
+<h1 id="rest-api">REST API</h1>
+
+<ul>
+  <li><strong>REpresentational State Transfer</strong></li>
+  <li>프론트엔드에서 백엔드의 데이터를 가져올 때 가장 많이 사용하는 자원 식별/처리 방식</li>
+  <li>URI로 자원을 요청하여 특정 형태로 표현</li>
+  <li>HTTP API를 활용해 행동을 표현</li>
+  <li>
+    <p>REST API의 요청에 대한 응답은 대체로 JSON으로 표현</p>
+  </li>
+  <li>REST API는 무상태(Stateless)환경에서 동작하는 것을 전제로 함</li>
+  <li>따라서 보안 및 인증에 대해서는 JWT(JSON Web Token), OAuth와 같은 토큰 인증이 사용</li>
+  <li>상태 유지를 위한 세션(Sessions)은 사용하지 않음</li>
+  <li>자주 사용하는 자원에 대해서는 ETag, Last-Modified 헤더를 통한 캐싱도 가능</li>
+</ul>
+
+<h1 id="restful">RESTful</h1>
+
+<ul>
+  <li>URI로 자원을 표현하고, HTTP Method로 행동을 표현</li>
+</ul>
+
+<h2 id="uri-규칙">URI 규칙</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>규칙</strong></td>
+      <td><strong>좋은 예</strong></td>
+      <td><strong>나쁜 예</strong></td>
+    </tr>
+    <tr>
+      <td>마지막이 /로 끝나면 안된다</td>
+      <td>http://api.test.com/users</td>
+      <td>http://api.test.com/users/</td>
+    </tr>
+    <tr>
+      <td>_대신 -를 사용한다</td>
+      <td>http://api.test.com/tag/rest-api</td>
+      <td>http://api.test.com/tag/rest_api</td>
+    </tr>
+    <tr>
+      <td>소문자로 구성한다</td>
+      <td>http://api.test.com/tag/rest-api</td>
+      <td>http://api.test.com/tag/REST-api</td>
+    </tr>
+    <tr>
+      <td>동사 URI로 포함시키지 않는다</td>
+      <td>http://api.test.com/user/1</td>
+      <td>http://api.test.com/delete-user/1</td>
+    </tr>
+    <tr>
+      <td>파일 확장자는 표시하지 않는다</td>
+      <td>http://api.test.com/users/1/profile</td>
+      <td>http://api.test.com/users/1/profile.png</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="http-method-활용">HTTP Method 활용</h2>
+
+<ul>
+  <li>행위에 대한 표현은 URI에서 하지 않고 HTTP Method를 이용하도록 한다</li>
+  <li>가장 많이 사용하는 메서드는 GET, POST, PUT, DELETE 이다</li>
+</ul>
+
+<p><img src="/images/rest_1.png" alt="" /></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>상태코드</td>
+      <td>설명</td>
+    </tr>
+    <tr>
+      <td>200 OK</td>
+      <td>요청이 올바르게 수행되었음(GET, PUT)</td>
+    </tr>
+    <tr>
+      <td>201 Created</td>
+      <td>서버가 새로운 리소스를 생성했음(POST)</td>
+    </tr>
+    <tr>
+      <td>204 No Content</td>
+      <td>응답할 데이터가 없음(HTTP Body가 없음) (DELETE, PUT)</td>
+    </tr>
+    <tr>
+      <td>400 Bad Request</td>
+      <td>요청이 잘못되었음</td>
+    </tr>
+    <tr>
+      <td>401 Unauthorized</td>
+      <td>인증(로그인)이 필요함</td>
+    </tr>
+    <tr>
+      <td>403 Forbidden</td>
+      <td>로그인 되었으나 해당 자원에 대한 권한이 없음</td>
+    </tr>
+    <tr>
+      <td>404 Not Found</td>
+      <td>존재하지 않는 자원에 대해 요청했음 (URI가 잘못된 경우?)</td>
+    </tr>
+    <tr>
+      <td>405 Method Not Allowed</td>
+      <td>자원이 지원하지 않는 메소드임 (Method가 잘못된 경우?)</td>
+    </tr>
+    <tr>
+      <td>409 Confilct</td>
+      <td>비지니스 로직상 요청을 처리하지 못한 경우</td>
+    </tr>
+    <tr>
+      <td>429 Too Many Requests</td>
+      <td>요청을 너무 많이한 경우</td>
+    </tr>
+  </tbody>
+</table>
+
 <h1 id="참고">참고</h1>
 
 <ul>
   <li><a href="https://www.inflearn.com/questions/126743" target="_blank">이영한님의 HTTP API와 REST API의 차이에 관한 질문에 대한 답변</a></li>
   <li><a href="https://restfulapi.net/" target="_blank">REST 논문을 정리한 자료</a></li>
   <li><a href="https://pronist.dev/146" target="_blank">정상우, REST를 보다 RESTful 하게 API 만들기</a></li>
+  <li><a href="https://ko.wikipedia.org/wiki/REST" target="_blank">위키백과 REST</a></li>
 </ul>
 
     </div>
@@ -1098,7 +1206,7 @@ Table of Contents
 
       
       <a class="article__image" href="/network-series11">
-        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 활용편(5) 도커 네트워크와 AWS 네트워크">
+        <img class="lazy" data-src="/images/cs_logo.jpeg" alt="Network Series [Part11]: 네트워크 용어">
       </a>
       
 
@@ -1107,7 +1215,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/network-series11">Network Series [Part11]: 네트워크 활용편(5) 도커 네트워크와 AWS 네트워크</a>
+        <a href="/network-series11">Network Series [Part11]: 네트워크 용어</a>
       </h2>
 
       
