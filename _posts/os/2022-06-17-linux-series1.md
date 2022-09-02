@@ -3,8 +3,8 @@ layout: post
 title:  'Linux Series [Part1]: 리눅스 커널'
 description: 
 date:   2022-06-17 15:01:35 +0300
-image:  '/images/os_35.png'
-logo_image:  '/images/os_logo.png'
+image:  '/images/linux_logo.png'
+logo_image:  '/images/linux_logo.png'
 categories: CS
 tags: OS
 ---
