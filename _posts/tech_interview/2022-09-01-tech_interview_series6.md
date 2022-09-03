@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Tech Interview Series [Part6]: Python'
+title:  'Tech Interview Series [Part6]: Computer Architecture'
 description: 
 date:   2022-09-01 15:01:35 +0300
 image:  '/images/tech_interview_logo.png'
@@ -16,6 +16,13 @@ tags: tech_interview
 {:toc}
 
 ---
+
+- 컴퓨터의 구성
+- 중앙처리장치(CPU) 작동 원리
+- 캐시 메모리(Cache Memory)
+- 고정 소수점 & 부동 소수점
+- 패리티 비트 & 해밍 코드
+- ARM 프로세서
 
 # 참고
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner){:target="_blank"}

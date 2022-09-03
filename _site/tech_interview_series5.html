@@ -431,6 +431,8 @@
   
 
   
+
+  
   	
   	
   	
@@ -445,7 +447,7 @@
       <a href="/tech_interview_series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Tech Interview Series [Part4]: Network</a>
     
     
-      <a href="/tech_interview_series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Tech Interview Series [Part6]: Python<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/tech_interview_series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Tech Interview Series [Part6]: Computer Architecture<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -455,10 +457,117 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#데이터베이스" id="markdown-toc-데이터베이스">데이터베이스</a>    <ul>
+      <li><a href="#데이터베이스를-사용하는-이유" id="markdown-toc-데이터베이스를-사용하는-이유">데이터베이스를 사용하는 이유</a></li>
+      <li><a href="#데이터베이스-성능" id="markdown-toc-데이터베이스-성능">데이터베이스 성능</a></li>
+      <li><a href="#복제" id="markdown-toc-복제">복제</a></li>
+      <li><a href="#파티셔닝" id="markdown-toc-파티셔닝">파티셔닝</a></li>
+      <li><a href="#샤딩" id="markdown-toc-샤딩">샤딩</a></li>
+      <li><a href="#orm" id="markdown-toc-orm">ORM</a></li>
+    </ul>
+  </li>
+  <li><a href="#index" id="markdown-toc-index">Index</a>    <ul>
+      <li><a href="#index-란-무엇인가" id="markdown-toc-index-란-무엇인가">Index 란 무엇인가</a></li>
+      <li><a href="#index-의-자료구조" id="markdown-toc-index-의-자료구조">Index 의 자료구조</a></li>
+      <li><a href="#primary-index-vs-secondary-index" id="markdown-toc-primary-index-vs-secondary-index">Primary index vs Secondary index</a></li>
+      <li><a href="#composite-index" id="markdown-toc-composite-index">Composite index</a></li>
+      <li><a href="#index-의-성능과-고려해야할-사항" id="markdown-toc-index-의-성능과-고려해야할-사항">Index 의 성능과 고려해야할 사항</a></li>
+    </ul>
+  </li>
+  <li><a href="#정규화에-대해서" id="markdown-toc-정규화에-대해서">정규화에 대해서</a>    <ul>
+      <li><a href="#정규화-탄생-배경" id="markdown-toc-정규화-탄생-배경">정규화 탄생 배경</a></li>
+      <li><a href="#정규화란-무엇인가" id="markdown-toc-정규화란-무엇인가">정규화란 무엇인가</a></li>
+      <li><a href="#정규화의-종류" id="markdown-toc-정규화의-종류">정규화의 종류</a></li>
+      <li><a href="#정규화의-장단점" id="markdown-toc-정규화의-장단점">정규화의 장단점</a></li>
+    </ul>
+  </li>
+  <li><a href="#transaction" id="markdown-toc-transaction">Transaction</a>    <ul>
+      <li><a href="#트랜잭션transaction이란-무엇인가" id="markdown-toc-트랜잭션transaction이란-무엇인가">트랜잭션(Transaction)이란 무엇인가?</a></li>
+      <li><a href="#트랜잭션과-lock" id="markdown-toc-트랜잭션과-lock">트랜잭션과 Lock</a></li>
+      <li><a href="#트랜잭션의-특성" id="markdown-toc-트랜잭션의-특성">트랜잭션의 특성</a></li>
+      <li><a href="#트랜잭션을-사용할-때-주의할-점" id="markdown-toc-트랜잭션을-사용할-때-주의할-점">트랜잭션을 사용할 때 주의할 점</a></li>
+      <li><a href="#트랜잭션-격리-수준" id="markdown-toc-트랜잭션-격리-수준">트랜잭션 격리 수준</a></li>
+    </ul>
+  </li>
+  <li><a href="#교착상태" id="markdown-toc-교착상태">교착상태</a>    <ul>
+      <li><a href="#교착상태란-무엇인가" id="markdown-toc-교착상태란-무엇인가">교착상태란 무엇인가</a></li>
+      <li><a href="#교착상태의-예mysql" id="markdown-toc-교착상태의-예mysql">교착상태의 예(MySQL)</a></li>
+      <li><a href="#교착-상태의-빈도를-낮추는-방법" id="markdown-toc-교착-상태의-빈도를-낮추는-방법">교착 상태의 빈도를 낮추는 방법</a></li>
+    </ul>
+  </li>
+  <li><a href="#sql" id="markdown-toc-sql">SQL</a>    <ul>
+      <li><a href="#join" id="markdown-toc-join">JOIN</a></li>
+      <li><a href="#sargable" id="markdown-toc-sargable">Sargable</a></li>
+      <li><a href="#optimizer" id="markdown-toc-optimizer">Optimizer</a></li>
+      <li><a href="#statement-vs-preparedstatement" id="markdown-toc-statement-vs-preparedstatement">Statement vs PreparedStatement</a></li>
+      <li><a href="#sql-injection" id="markdown-toc-sql-injection">SQL Injection</a></li>
+    </ul>
+  </li>
+  <li><a href="#nosql" id="markdown-toc-nosql">NoSQL</a>    <ul>
+      <li><a href="#정의" id="markdown-toc-정의">정의</a></li>
+      <li><a href="#cap-이론" id="markdown-toc-cap-이론">CAP 이론</a>        <ul>
+          <li><a href="#일관성" id="markdown-toc-일관성">일관성</a></li>
+          <li><a href="#가용성" id="markdown-toc-가용성">가용성</a></li>
+          <li><a href="#네트워크-분할-허용성" id="markdown-toc-네트워크-분할-허용성">네트워크 분할 허용성</a></li>
+        </ul>
+      </li>
+      <li><a href="#저장방식에-따른-분류" id="markdown-toc-저장방식에-따른-분류">저장방식에 따른 분류</a>        <ul>
+          <li><a href="#key-value-model" id="markdown-toc-key-value-model">Key-Value Model</a></li>
+          <li><a href="#document-model" id="markdown-toc-document-model">Document Model</a></li>
+          <li><a href="#column-model" id="markdown-toc-column-model">Column Model</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
+
+<h1 id="데이터베이스">데이터베이스</h1>
+<h2 id="데이터베이스를-사용하는-이유">데이터베이스를 사용하는 이유</h2>
+<h2 id="데이터베이스-성능">데이터베이스 성능</h2>
+<h2 id="복제">복제</h2>
+<h2 id="파티셔닝">파티셔닝</h2>
+<h2 id="샤딩">샤딩</h2>
+<h2 id="orm">ORM</h2>
+<h1 id="index">Index</h1>
+<h2 id="index-란-무엇인가">Index 란 무엇인가</h2>
+<h2 id="index-의-자료구조">Index 의 자료구조</h2>
+<h2 id="primary-index-vs-secondary-index">Primary index vs Secondary index</h2>
+<h2 id="composite-index">Composite index</h2>
+<h2 id="index-의-성능과-고려해야할-사항">Index 의 성능과 고려해야할 사항</h2>
+<h1 id="정규화에-대해서">정규화에 대해서</h1>
+<h2 id="정규화-탄생-배경">정규화 탄생 배경</h2>
+<h2 id="정규화란-무엇인가">정규화란 무엇인가</h2>
+<h2 id="정규화의-종류">정규화의 종류</h2>
+<h2 id="정규화의-장단점">정규화의 장단점</h2>
+<h1 id="transaction">Transaction</h1>
+<h2 id="트랜잭션transaction이란-무엇인가">트랜잭션(Transaction)이란 무엇인가?</h2>
+<h2 id="트랜잭션과-lock">트랜잭션과 Lock</h2>
+<h2 id="트랜잭션의-특성">트랜잭션의 특성</h2>
+<h2 id="트랜잭션을-사용할-때-주의할-점">트랜잭션을 사용할 때 주의할 점</h2>
+<h2 id="트랜잭션-격리-수준">트랜잭션 격리 수준</h2>
+<h1 id="교착상태">교착상태</h1>
+<h2 id="교착상태란-무엇인가">교착상태란 무엇인가</h2>
+<h2 id="교착상태의-예mysql">교착상태의 예(MySQL)</h2>
+<h2 id="교착-상태의-빈도를-낮추는-방법">교착 상태의 빈도를 낮추는 방법</h2>
+<h1 id="sql">SQL</h1>
+<h2 id="join">JOIN</h2>
+<h2 id="sargable">Sargable</h2>
+<h2 id="optimizer">Optimizer</h2>
+<h2 id="statement-vs-preparedstatement">Statement vs PreparedStatement</h2>
+<h2 id="sql-injection">SQL Injection</h2>
+<h1 id="nosql">NoSQL</h1>
+<h2 id="정의">정의</h2>
+<h2 id="cap-이론">CAP 이론</h2>
+<h3 id="일관성">일관성</h3>
+<h3 id="가용성">가용성</h3>
+<h3 id="네트워크-분할-허용성">네트워크 분할 허용성</h3>
+<h2 id="저장방식에-따른-분류">저장방식에 따른 분류</h2>
+<h3 id="key-value-model">Key-Value Model</h3>
+<h3 id="document-model">Document Model</h3>
+<h3 id="column-model">Column Model</h3>
 
 <h1 id="참고">참고</h1>
 <ul>
@@ -737,6 +846,8 @@
   
 
   
+
+  
   	
   	
   	
@@ -751,7 +862,7 @@
       <a href="/tech_interview_series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Tech Interview Series [Part4]: Network</a>
     
     
-      <a href="/tech_interview_series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Tech Interview Series [Part6]: Python<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/tech_interview_series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Tech Interview Series [Part6]: Computer Architecture<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -809,8 +920,8 @@
       
 
       
-      <a class="article__image" href="/tech_interview_series8">
-        <img class="lazy" data-src="/images/tech_interview_logo.png" alt="Tech Interview Series [Part8]: Data Engineering(2)">
+      <a class="article__image" href="/tech_interview_series9">
+        <img class="lazy" data-src="/images/tech_interview_logo.png" alt="Tech Interview Series [Part9]: Data Engineering(2)">
       </a>
       
 
@@ -819,7 +930,46 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/tech_interview_series8">Tech Interview Series [Part8]: Data Engineering(2)</a>
+        <a href="/tech_interview_series9">Tech Interview Series [Part9]: Data Engineering(2)</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-09-01T21:01:35+09:00">01 Sep 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/tech_interview_series8">
+        <img class="lazy" data-src="/images/tech_interview_logo.png" alt="Tech Interview Series [Part8]: Data Engineering(1)">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/tech_interview_series8">Tech Interview Series [Part8]: Data Engineering(1)</a>
       </h2>
 
       
@@ -849,7 +999,7 @@
 
       
       <a class="article__image" href="/tech_interview_series7">
-        <img class="lazy" data-src="/images/tech_interview_logo.png" alt="Tech Interview Series [Part7]: Data Engineering(1)">
+        <img class="lazy" data-src="/images/tech_interview_logo.png" alt="Tech Interview Series [Part7]: Python">
       </a>
       
 
@@ -858,46 +1008,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/tech_interview_series7">Tech Interview Series [Part7]: Data Engineering(1)</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-09-01T21:01:35+09:00">01 Sep 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/tech_interview_series6">
-        <img class="lazy" data-src="/images/tech_interview_logo.png" alt="Tech Interview Series [Part6]: Python">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/tech_interview_series6">Tech Interview Series [Part6]: Python</a>
+        <a href="/tech_interview_series7">Tech Interview Series [Part7]: Python</a>
       </h2>
 
       

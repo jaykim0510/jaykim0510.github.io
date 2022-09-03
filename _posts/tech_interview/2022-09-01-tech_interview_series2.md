@@ -17,6 +17,31 @@ tags: tech_interview
 
 ---
 
+# 정렬 알고리즘(Sorting Algorithm)
+
+## 거품 정렬(Bubble Sort)
+## 선택 정렬(Selection Sort)
+## 삽입 정렬(Insertion Sort)
+## 퀵 정렬(Quick Sort)
+## 병합 정렬(Merge Sort)
+## 힙 정렬(Heap Sort)
+## 팀 정렬(Tim Sort)
+## 위상 정렬(Kahn's Algorithm)
+
+# 탐색 알고리즘
+
+## Binary Search
+## 탐욕 알고리즘(Greedy Algorithm)
+## 동적 프로그래밍(Dynamic Programming)
+## 분할 정복(Divide and Conquer)
+## Binary Search Tree
+## DFS
+## BFS
+## Dijkstra
+## Kruskal
+## 최장 증가 수열(LIS)
+## 최소 공통 조상(LCA)
+
 # 참고
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner){:target="_blank"}
 - [WeareSoft/tech-interview](https://github.com/WeareSoft/tech-interview){:target="_blank"}

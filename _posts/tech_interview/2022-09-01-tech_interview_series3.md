@@ -17,6 +17,32 @@ tags: tech_interview
 
 ---
 
+# 프로세스
+## 운영체제란?
+## 프로세스와 스레드
+## 멀티 프로세스 vs 멀티 스레드
+## 스케줄러
+## 동기와 비동기
+## 프로세스 동기화
+## 프로세스 주소 공간
+## 인터럽트(Interrupt)
+## 시스템 콜(System Call)
+## PCB와 Context Switching
+## IPC(Inter Process Communication)
+## 임계 구역(Critical Section)
+## 데드락(DeadLock)
+## 경쟁 상태(Race Condition)
+## 세마포어와 뮤텍스
+## 스레드 세이프(Thread-safe)
+
+
+# 메모리
+## 메모리 관리 전략
+## 가상 메모리
+## 캐시의 지역성
+## 페이징과 세그먼테이션
+## 페이지 교체 알고리즘
+
 # 참고
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner){:target="_blank"}
 - [WeareSoft/tech-interview](https://github.com/WeareSoft/tech-interview){:target="_blank"}

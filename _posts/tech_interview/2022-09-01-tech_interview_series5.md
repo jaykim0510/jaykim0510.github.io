@@ -17,6 +17,57 @@ tags: tech_interview
 
 ---
 
+
+
+# 데이터베이스
+## 데이터베이스를 사용하는 이유
+## 데이터베이스 성능
+## 복제
+## 파티셔닝
+## 샤딩
+## ORM
+# Index
+## Index 란 무엇인가
+## Index 의 자료구조
+## Primary index vs Secondary index
+## Composite index
+## Index 의 성능과 고려해야할 사항
+# 정규화에 대해서
+## 정규화 탄생 배경
+## 정규화란 무엇인가
+## 정규화의 종류
+## 정규화의 장단점
+# Transaction
+## 트랜잭션(Transaction)이란 무엇인가?
+## 트랜잭션과 Lock
+## 트랜잭션의 특성
+## 트랜잭션을 사용할 때 주의할 점
+## 트랜잭션 격리 수준
+# 교착상태
+## 교착상태란 무엇인가
+## 교착상태의 예(MySQL)
+## 교착 상태의 빈도를 낮추는 방법
+# SQL
+## JOIN
+## Sargable
+## Optimizer
+## Statement vs PreparedStatement
+## SQL Injection
+# NoSQL
+## 정의
+## CAP 이론
+### 일관성
+### 가용성
+### 네트워크 분할 허용성
+## 저장방식에 따른 분류
+### Key-Value Model
+### Document Model
+### Column Model
+
+
+
+
+
 # 참고
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner){:target="_blank"}
 - [WeareSoft/tech-interview](https://github.com/WeareSoft/tech-interview){:target="_blank"}
