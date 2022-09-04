@@ -19,14 +19,75 @@ tags: tech_interview
 
 # 정렬 알고리즘(Sorting Algorithm)
 
-## 거품 정렬(Bubble Sort)
+## 버블 정렬(Bubble Sort)
+
+- 첫 번쨰 for문에서 위치(i)를 정한다
+- 두 번째 for문에서 i에 있는 값과 비교해 바꾼다
+
+```python
+def bubble_sort(x: List, order="asc"):
+    for i in range(len(x)):
+        for j in range(i + 1, len(x)):
+            if order == "asc":
+                if x[i] > x[j]:
+                    x[i], x[j] = x[j], x[i]
+            elif order == "desc":
+                 if x[i] < x[j]:
+                    x[i], x[j] = x[j], x[i]               
+    return x
+
+
+x = [3, 5, 1, 2, 3, 4, 5, 6, 12, 23, 25, 32, 3, 8, 14]
+print(bubble_sort(x))
+----------------------------------------------------
+[1, 2, 3, 3, 3, 4, 5, 5, 6, 8, 12, 14, 23, 25, 32]
+
+print(bubble_sort(x, "desc"))
+----------------------------------------------------
+[32, 25, 23, 14, 12, 8, 6, 5, 5, 4, 3, 3, 3, 2, 1]
+```
+
 ## 선택 정렬(Selection Sort)
+
+- 버블 정렬과 거의 유사하다. 차이점은 바로 바꾸지 않고 변수에 저장해둔다
+- 첫 번째 for문에서 위치(i)를 정한다
+- 두 번째 for문에서 해당 위치에 올 값을 찾는다
+- 두 번째 for문이 끝나면 찾아둔 값과 i위치의 값을 바꾼다
+
+```python
+def selection_sort(x: List):
+    for i in range(len(x)):
+        min_idx, min_num = i, float('inf')
+        for j in range(i, len(x)):
+            if min_num > x[j]:
+                min_idx, min_num = j, x[j]
+        x[i], x[min_idx] = x[min_idx], x[i]
+    return x
+```
+
+
 ## 삽입 정렬(Insertion Sort)
+
+- 첫 번째 for문의 값을 삽입할 위치를 찾는다
+- 두 번째 for문을 첫 번째 for문의 왼쪽으로 이동하면서, 삽입될 수 있는 가장 작은 인덱스를 찾는다
+
+```python
+def insertion_sort(x: List):
+    for i in range(1, len(x)):
+        min_idx = i
+        for j in range(i - 1, -1, -1):
+            if x[i] < x[j]:
+                min_idx = j
+        if min_idx != i:
+            x.insert(min_idx, x.pop(i))
+    return x
+```
+
 ## 퀵 정렬(Quick Sort)
 ## 병합 정렬(Merge Sort)
 ## 힙 정렬(Heap Sort)
 ## 팀 정렬(Tim Sort)
-## 위상 정렬(Kahn's Algorithm)
+
 
 # 탐색 알고리즘
 
