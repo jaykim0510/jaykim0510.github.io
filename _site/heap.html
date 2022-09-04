@@ -600,95 +600,70 @@ right child node: 2*n + 1
     </ul>
   </li>
   <li>heapify
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">class</span> <span class="nc">MinHeap</span><span class="p">:</span>
-      <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">heapSize</span><span class="p">):</span>
-
-          <span class="bp">self</span><span class="p">.</span><span class="n">heapSize</span> <span class="o">=</span> <span class="n">heapSize</span>
-
-          <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">heapSize</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-
-          <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">=</span> <span class="mi">0</span>
-
-
-      <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
-          <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">+=</span> <span class="mi">1</span>
-          <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">heapSize</span><span class="p">:</span>
-              <span class="k">print</span><span class="p">(</span><span class="s">"Added too many elements!"</span><span class="p">)</span>
-              <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">-=</span> <span class="mi">1</span>
-              <span class="k">return</span>
-          <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">realSize</span><span class="p">]</span> <span class="o">=</span> <span class="n">element</span>
-          <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span>
-
-          <span class="n">parent</span> <span class="o">=</span> <span class="n">index</span> <span class="o">//</span> <span class="mi">2</span>
-
-          <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="ow">and</span> <span class="n">index</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
-              <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">parent</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
-              <span class="n">index</span> <span class="o">=</span> <span class="n">parent</span>
-              <span class="n">parent</span> <span class="o">=</span> <span class="n">index</span> <span class="o">//</span> <span class="mi">2</span>
-        
-
-      <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-          <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        
-
-      <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-          <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-              <span class="k">print</span><span class="p">(</span><span class="s">"Don't have any element!"</span><span class="p">)</span>
-              <span class="k">return</span> <span class="n">sys</span><span class="p">.</span><span class="n">maxsize</span>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1"># 추출, 힙리스트, 힙정렬 모든 곳에 쓰임
+</span>  <span class="k">def</span> <span class="nf">heapify</span><span class="p">(</span><span class="n">myheap</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+      <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">myheap</span><span class="p">)</span>
+      <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+          <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">idx</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+          <span class="n">smallest_idx</span> <span class="o">=</span> <span class="n">idx</span>
+          <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="ow">and</span> <span class="n">myheap</span><span class="p">[</span><span class="n">smallest_idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">myheap</span><span class="p">[</span><span class="n">left</span><span class="p">]:</span>
+              <span class="n">smallest_idx</span> <span class="o">=</span> <span class="n">left</span>
+          <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">right</span> <span class="o">&lt;</span> <span class="n">size</span> <span class="ow">and</span> <span class="n">myheap</span><span class="p">[</span><span class="n">smallest_idx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">myheap</span><span class="p">[</span><span class="n">right</span><span class="p">]:</span>
+              <span class="n">smallest_idx</span> <span class="o">=</span> <span class="n">right</span>
+          <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="n">smallest_idx</span><span class="p">:</span>
+              <span class="n">myheap</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">myheap</span><span class="p">[</span><span class="n">smallest_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">myheap</span><span class="p">[</span><span class="n">smallest_idx</span><span class="p">],</span> <span class="n">myheap</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+              <span class="n">idx</span> <span class="o">=</span> <span class="n">smallest_idx</span>
           <span class="k">else</span><span class="p">:</span>
+              <span class="k">break</span>
 
-              <span class="n">removeElement</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-              <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">realSize</span><span class="p">]</span>
-              <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">-=</span> <span class="mi">1</span>
-              <span class="n">index</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="c1"># heap에 원소 삽입
+</span>  <span class="k">def</span> <span class="nf">heap_push</span><span class="p">(</span><span class="n">myheap</span><span class="p">,</span> <span class="n">elem</span><span class="p">):</span>
+      <span class="n">myheap</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+      <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">myheap</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="k">while</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+          <span class="n">parent</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">//</span> <span class="mi">2</span>
+          <span class="k">if</span> <span class="n">myheap</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">myheap</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+              <span class="n">myheap</span><span class="p">[</span><span class="n">parent</span><span class="p">],</span> <span class="n">myheap</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">myheap</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">myheap</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span>
+              <span class="n">idx</span> <span class="o">=</span> <span class="n">parent</span>
+          <span class="k">else</span><span class="p">:</span>
+              <span class="k">break</span>
 
-              <span class="k">while</span> <span class="p">(</span><span class="n">index</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">//</span> <span class="mi">2</span><span class="p">):</span>
 
-                  <span class="n">left</span> <span class="o">=</span> <span class="n">index</span> <span class="o">*</span> <span class="mi">2</span>
+  <span class="c1"># heap에서 루트 노드를 추출
+</span>  <span class="k">def</span> <span class="nf">heap_pop</span><span class="p">(</span><span class="n">myheap</span><span class="p">):</span>
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">myheap</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+          <span class="k">print</span><span class="p">(</span><span class="s">"There is no element to pop"</span><span class="p">)</span>
+          <span class="k">return</span>
+      <span class="n">pop_elem</span> <span class="o">=</span> <span class="n">myheap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># 8
+</span>      <span class="n">new_root</span> <span class="o">=</span> <span class="n">myheap</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span> <span class="c1"># 9
+</span>      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">myheap</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+          <span class="n">myheap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_root</span>
+          <span class="n">heapify</span><span class="p">(</span><span class="n">myheap</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">pop_elem</span>
 
-                  <span class="n">right</span> <span class="o">=</span> <span class="p">(</span><span class="n">index</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="c1"># 임의의 heap으로 만든다
+</span>  <span class="k">def</span> <span class="nf">heap_list</span><span class="p">(</span><span class="n">mylist</span><span class="p">):</span>
+      <span class="n">myheap</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">mylist</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">myheap</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+          <span class="n">heapify</span><span class="p">(</span><span class="n">myheap</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">myheap</span>
 
-                  <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">right</span><span class="p">]):</span>
-                      <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">left</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">right</span><span class="p">]:</span>
-                          <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">left</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">left</span><span class="p">]</span>
-                          <span class="n">index</span> <span class="o">=</span> <span class="n">left</span>
-                      <span class="k">else</span><span class="p">:</span>
-                          <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">right</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="n">right</span><span class="p">]</span>
-                          <span class="n">index</span> <span class="o">=</span> <span class="n">right</span>
-                  <span class="k">else</span><span class="p">:</span>
-                      <span class="k">break</span>
-              <span class="k">return</span> <span class="n">removeElement</span>
-        
-      <span class="c1"># return the number of elements in the Heap
-</span>      <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-          <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span>
-        
-      <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-          <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">minheap</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="bp">self</span><span class="p">.</span><span class="n">realSize</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
-            
+  <span class="c1"># heap을 입력 받아서 정렬된 리스트를 리턴
+</span>  <span class="k">def</span> <span class="nf">heap_sort</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+      <span class="n">answer</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="n">len_heap</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_heap</span><span class="p">):</span>
+          <span class="n">answer</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">heap_pop</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+      <span class="k">return</span> <span class="n">answer</span>
 
-  <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
-          <span class="c1"># Test cases
-</span>          <span class="n">minHeap</span> <span class="o">=</span> <span class="n">MinHeap</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-          <span class="n">minHeap</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-          <span class="n">minHeap</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-          <span class="n">minHeap</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-          <span class="c1"># [1,3,2]
-</span>          <span class="k">print</span><span class="p">(</span><span class="n">minHeap</span><span class="p">)</span>
-          <span class="c1"># 1
-</span>          <span class="k">print</span><span class="p">(</span><span class="n">minHeap</span><span class="p">.</span><span class="n">peek</span><span class="p">())</span>
-          <span class="c1"># 1
-</span>          <span class="k">print</span><span class="p">(</span><span class="n">minHeap</span><span class="p">.</span><span class="n">pop</span><span class="p">())</span>
-          <span class="c1"># 2
-</span>          <span class="k">print</span><span class="p">(</span><span class="n">minHeap</span><span class="p">.</span><span class="n">pop</span><span class="p">())</span>
-          <span class="c1"># 3
-</span>          <span class="k">print</span><span class="p">(</span><span class="n">minHeap</span><span class="p">.</span><span class="n">pop</span><span class="p">())</span>
-          <span class="n">minHeap</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-          <span class="n">minHeap</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-          <span class="c1"># [4,5]
-</span>          <span class="k">print</span><span class="p">(</span><span class="n">minHeap</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+  <span class="n">heap_x</span> <span class="o">=</span> <span class="n">heap_list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"주어진 힙: </span><span class="si">{</span><span class="n">heap_x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"정렬된 리스트: </span><span class="si">{</span><span class="n">heap_sort</span><span class="p">(</span><span class="n">heap_x</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+  <span class="o">-----------------------------------------------------</span>
+  <span class="n">주어진</span> <span class="n">힙</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+  <span class="n">정렬된</span> <span class="n">리스트</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
 </code></pre></div>    </div>
   </li>
 </ul>
