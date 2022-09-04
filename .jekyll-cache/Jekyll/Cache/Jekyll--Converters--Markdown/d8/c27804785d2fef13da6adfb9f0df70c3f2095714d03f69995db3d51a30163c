@@ -1,4 +1,4 @@
-I"�)<hr />
+I"�9<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -109,7 +109,8 @@
 
 <ul>
   <li>리스트에서 임의의 값 하나를 피봇으로 사용한다 (여기서는 가장 끝 값을 피봇으로 사용하겠다)</li>
-  <li>변수 i로 비교하며, 피봇값이 더 크다면 i를 +1, 피봇값이 더 작다면 피봇값과 b의 값을 서로 바꾼 뒤, b와 i를 각각 + 1 해준다</li>
+  <li>변수 i로 비교하며, 비교값이 피봇값보다 더 크다면 i를 +1</li>
+  <li>비교값이 피봇값보다 더 작다면 Big 그룹 왼쪽에 있어야 하므로, 현재 Big 그룹의 가장 첫 부분을 가리키는 b와 값을 바꾼 후 i와 b를 각각 +1</li>
 </ul>
 
 <p><img src="/images/div_con_3.png" alt="" /></p>
@@ -118,6 +119,33 @@
 
 <p><img src="/images/div_con_5.png" alt="" /></p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<p><img src="/images/div_con_6.png" alt="" /></p>
+
+<p><img src="/images/div_con_7.png" alt="" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">quick_sort</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">b</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>              
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">a</span><span class="p">[:</span><span class="n">b</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">:]</span>
+
+    <span class="k">def</span> <span class="nf">conquer</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">combine</span><span class="p">(</span><span class="n">conquer</span><span class="p">(</span><span class="n">left</span><span class="p">),</span> <span class="n">conquer</span><span class="p">(</span><span class="n">right</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">left_list</span><span class="p">,</span> <span class="n">right_list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">left_list</span> <span class="o">+</span> <span class="n">right_list</span>
+    
+    <span class="k">return</span> <span class="n">conquer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div></div>
 :ET

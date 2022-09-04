@@ -112,14 +112,40 @@ def merge_sort(x: List):
 **파티션 하는 방법**  
 
 - 리스트에서 임의의 값 하나를 피봇으로 사용한다 (여기서는 가장 끝 값을 피봇으로 사용하겠다)  
-- 변수 i로 비교하며, 피봇값이 더 크다면 i를 +1, 피봇값이 더 작다면 피봇값과 b의 값을 서로 바꾼 뒤, b와 i를 각각 + 1 해준다
+- 변수 i로 비교하며, 비교값이 피봇값보다 더 크다면 i를 +1
+- 비교값이 피봇값보다 더 작다면 Big 그룹 왼쪽에 있어야 하므로, 현재 Big 그룹의 가장 첫 부분을 가리키는 b와 값을 바꾼 후 i와 b를 각각 +1 
 
 ![](/images/div_con_3.png)
 
 ![](/images/div_con_4.png)
 
-![](/images/div_con_5.png)
+![](/images/div_con_6.png)
+
+![](/images/div_con_7.png)
 
 ```python
+def quick_sort(x: List):
+    def divide(a):
+        b = i = 0
+        while i < len(a) - 1:
+            if a[i] <= a[-1]:
+                a[i], a[b] = a[b], a[i]
+                i += 1
+                b += 1
+            else:              
+                i += 1
+        a[b], a[-1] = a[-1], a[b]
 
+        return a[:b], a[b:]
+
+    def conquer(a):
+        if len(a) <= 1:
+            return a
+        left, right = divide(a)
+        return combine(conquer(left), conquer(right))
+
+    def combine(left_list, right_list):
+        return left_list + right_list
+    
+    return conquer(x)
 ```
