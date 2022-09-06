@@ -1,0 +1,121 @@
+I"�$<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#이터레이터iterator" id="markdown-toc-이터레이터iterator">이터레이터(Iterator)</a>    <ul>
+      <li><a href="#이터레이터-객체-생성" id="markdown-toc-이터레이터-객체-생성">이터레이터 객체 생성</a></li>
+      <li><a href="#반복문" id="markdown-toc-반복문">반복문</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="이터레이터iterator">이터레이터(Iterator)</h1>
+
+<ul>
+  <li>이터레이터 객체는 컨테이너 객체가 가지고 있는 원소들을 순회(iterate)하도록 해준다.</li>
+  <li>이터레이터 객체는 <code class="language-plaintext highlighter-rouge">__iter__</code> 메서드와, <code class="language-plaintext highlighter-rouge">__next__</code> 메서드를 가지고 있다</li>
+  <li>이터레이터 객체는 보통 이터러블(iterable)한 객체가 <code class="language-plaintext highlighter-rouge">__iter__</code> 메서드를 호출함으로써 생성된다</li>
+</ul>
+
+<p>이터러블 객체와 이터레이터 객체를 정리하면 다음과 같다</p>
+
+<ul>
+  <li><strong>iterable</strong>: an object that has the <code class="language-plaintext highlighter-rouge">_iter_</code> method defined</li>
+  <li><strong>iterator</strong>: an object that has both <code class="language-plaintext highlighter-rouge">_iter_</code> and <code class="language-plaintext highlighter-rouge">_next_</code> defined where <code class="language-plaintext highlighter-rouge">_iter_</code> will return the iterator object and <code class="language-plaintext highlighter-rouge">_next_</code> will return the next element in the iteration.</li>
+</ul>
+
+<p><img src="/images/it_gen_1.png" alt="" /></p>
+
+<p>참고로, 보통 많이 사용하는 <code class="language-plaintext highlighter-rouge">list</code>, <code class="language-plaintext highlighter-rouge">tuple</code>, <code class="language-plaintext highlighter-rouge">str</code>, <code class="language-plaintext highlighter-rouge">dict</code>, <code class="language-plaintext highlighter-rouge">set</code> 등 대부분이 <code class="language-plaintext highlighter-rouge">__contains__</code>와, <code class="language-plaintext highlighter-rouge">__iter__</code>를 가지는 이터러블 객체이다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># Container 객체
+Containers are any object that holds an arbitrary number of other objects. Generally, containers provide a way to access the contained objects and to iterate over them.
+
+Examples of containers include tuple, list, set, dict; these are the built-in containers. More container types are available in the collections module.
+</code></pre></div></div>
+
+<p>그러면 이제 이터레이터 객체를 생성하고, 원소들을 순회해 보자.</p>
+
+<h2 id="이터레이터-객체-생성">이터레이터 객체 생성</h2>
+
+<ul>
+  <li>이터레이터 객체는 크게 두 가지 방법으로 생성한다</li>
+  <li>
+    <ol>
+      <li>이터레이터 객체가 <code class="language-plaintext highlighter-rouge">__iter__</code> 메서드를 호출해 자기 자신(<code class="language-plaintext highlighter-rouge">self</code>)을 리턴한다</li>
+    </ol>
+  </li>
+  <li>
+    <ol>
+      <li>이터러블 객체가 <code class="language-plaintext highlighter-rouge">__iter__</code> 메서드를 호출해 별도로 정의된 이터레이터 객체를 리턴한다.</li>
+    </ol>
+  </li>
+  <li>보통 직접 클래스를 만들 때는 1번 방법을 많이 사용하고, 내장된 데이터 타입(tuple, list, str 등)은 2번을 사용한다</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 직접 이터레이터 클래스 정의
+</span><span class="k">class</span> <span class="nc">SequenceOfNumbers</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">current</span> <span class="o">=</span> <span class="n">start</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">current</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">current</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">current</span>
+
+
+<span class="n">seq</span> <span class="o">=</span> <span class="n">SequenceOfNumbers</span><span class="p">()</span>
+<span class="n">seq_iterator</span> <span class="o">=</span> <span class="n">seq</span><span class="p">.</span><span class="n">__iter__</span><span class="p">()</span> <span class="c1"># 또는 iter(seq)
+</span>
+<span class="k">print</span><span class="p">(</span><span class="n">seq_iterator</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span> <span class="c1"># 또는 next(seq_iterator)
+</span><span class="k">print</span><span class="p">(</span><span class="n">seq_iterator</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="n">seq_iterator</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+<span class="o">---------------------------------</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 내장된 이터러블 객체
+</span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="c1"># 참고로 이렇게 이터러블 객체 자체는 next메서드가 없기 때문에 이런식으로 순회(iterate)가 안된다
+</span><span class="o">--------------------------------------------</span>
+<span class="nb">TypeError</span><span class="p">:</span> <span class="s">'list'</span> <span class="nb">object</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">an</span> <span class="n">iterator</span>
+
+
+<span class="n">x_iterator</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">__iter__</span><span class="p">()</span> <span class="c1"># 또는 iter(x)
+</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x_iterator</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span> <span class="c1"># 또는 next(x_iterator)
+</span><span class="k">print</span><span class="p">(</span><span class="n">x_iterator</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x_iterator</span><span class="p">.</span><span class="n">__next__</span><span class="p">())</span>
+<span class="o">---------------------------------------------------</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iterable객체와 iterator객체의 관계: iter(iterable객체) -&gt; iterator객체
+</code></pre></div></div>
+
+<h2 id="반복문">반복문</h2>
+
+<ul>
+  <li>반복문은 알아서 <code class="language-plaintext highlighter-rouge">__next__</code>함수를 호출해준다</li>
+  <li>만약 이터러블 객체(list, tuple 등)라면 알아서 <code class="language-plaintext highlighter-rouge">__iter__</code>함수를 호출해 이터레이터 객체로 만들어준다</li>
+  <li>순회(iterate)가 끝나면 알아서 <code class="language-plaintext highlighter-rouge">StopIteration</code> 예외를 발생시키고 순회를 종료해준다</li>
+  <li>참고로 반복문은 꼭 __next__만으로 순회를 하지는 않는다. <code class="language-plaintext highlighter-rouge">__getitem__</code>과 <code class="language-plaintext highlighter-rouge">__len__</code>으로도 순회할 수 있다</li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://stackoverflow.com/questions/11575925/what-exactly-are-containers-in-python-and-what-are-all-the-python-container">stackoverflow, What exactly are “containers” in python? (And what are all the python container types?)</a></li>
+</ul>
+:ET

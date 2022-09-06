@@ -1,0 +1,155 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#리눅스" id="markdown-toc-리눅스">리눅스</a>    <ul>
+      <li><a href="#3개의-주요-리눅스-계열" id="markdown-toc-3개의-주요-리눅스-계열">3개의 주요 리눅스 계열</a></li>
+    </ul>
+  </li>
+  <li><a href="#리눅스-커널" id="markdown-toc-리눅스-커널">리눅스 커널</a>    <ul>
+      <li><a href="#리눅스-커널-구조" id="markdown-toc-리눅스-커널-구조">리눅스 커널 구조</a></li>
+    </ul>
+  </li>
+  <li><a href="#리눅스-커널의-핵심-역할" id="markdown-toc-리눅스-커널의-핵심-역할">리눅스 커널의 핵심 역할</a>    <ul>
+      <li><a href="#하드웨어-관리-및-추상화" id="markdown-toc-하드웨어-관리-및-추상화">하드웨어 관리 및 추상화</a></li>
+      <li><a href="#프로세스와-스레드-관리" id="markdown-toc-프로세스와-스레드-관리">프로세스와 스레드 관리</a></li>
+      <li><a href="#메모리-관리" id="markdown-toc-메모리-관리">메모리 관리</a></li>
+      <li><a href="#io-관리" id="markdown-toc-io-관리">I/O 관리</a></li>
+    </ul>
+  </li>
+  <li><a href="#컨테이너-기술을-위한-커널의-핵심-기능" id="markdown-toc-컨테이너-기술을-위한-커널의-핵심-기능">컨테이너 기술을 위한 커널의 핵심 기능</a>    <ul>
+      <li><a href="#cgroup" id="markdown-toc-cgroup">cgroup</a></li>
+      <li><a href="#namespace" id="markdown-toc-namespace">namespace</a></li>
+      <li><a href="#union-file-system" id="markdown-toc-union-file-system">union file system</a></li>
+    </ul>
+  </li>
+</ul>
+<hr />
+<h1 id="리눅스">리눅스</h1>
+
+<ul>
+  <li>전 세계적으로 약 300여 가지의 리눅스 배포판이 존재</li>
+</ul>
+
+<h2 id="3개의-주요-리눅스-계열">3개의 주요 리눅스 계열</h2>
+
+<ul>
+  <li>Debian
+    <ul>
+      <li>Debian, Ubuntu, Mint Linux</li>
+      <li>오픈 소스, 안정성에 초점</li>
+    </ul>
+  </li>
+  <li>Red Hat/Fedora
+    <ul>
+      <li>Fedora, Red Hat, CentOS, Amazon Linux</li>
+      <li>엔터프라이즈 서버 환경을 타겟</li>
+    </ul>
+  </li>
+  <li>openSUSE
+    <ul>
+      <li>openSUSE, SUSE LInux Enterprise Server</li>
+      <li>오픈소스, 안정성에 초점</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="리눅스-커널">리눅스 커널</h1>
+
+<ul>
+  <li>커널: 컴퓨터 운영 체제의 핵심이 되는 컴퓨터 프로그램</li>
+  <li>운영 체제의 다른 부분, 응용 프로그램에 필요한 여러 가지 서비스를 제공 (open, read, write, close, wait, fork, exec 등)</li>
+  <li>응용 프로그램이 하드웨어에 직접 접근하도록 허용하는 것은 위험 -&gt; 커널이 중간에서 그 역할을 담당</li>
+  <li>오픈 소스 유닉스 계열의 모놀리틱 구조</li>
+</ul>
+
+<p><img src="/images/os_52.png" alt="" /></p>
+
+<h2 id="리눅스-커널-구조">리눅스 커널 구조</h2>
+
+<p><img src="/images/os_51.png" alt="" /></p>
+
+<ul>
+  <li>모노리틱 커널
+    <ul>
+      <li>장점: 구현이 간단하다. 성능이 좋다(커널 문맥에서 많은 부분이 처리되어 시스템 자원을 효율적으로 사용)</li>
+      <li>단점: 커널 코드에 오류가 생기면 시스템 전체에 영향을 끼친다</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="리눅스-커널의-핵심-역할">리눅스 커널의 핵심 역할</h1>
+
+<ul>
+  <li>하드웨어 관리 및 추상화</li>
+  <li>프로세스와 스레드 관리</li>
+  <li>메모리 관리</li>
+  <li>I/O 관리</li>
+</ul>
+
+<h2 id="하드웨어-관리-및-추상화">하드웨어 관리 및 추상화</h2>
+
+<ul>
+  <li>서버 관리자 입장에서는 응용 프로그램이 서버의 하드웨어에 직접 접근하지 못하기 때문에 하드웨어 관리에 대한 부담이 없음</li>
+  <li>사용자 프로그램은 데이터가 디스크의 어느 위치에 있는지 몰라도 됨. 어떤 디바이스(HDD, SSD, USB 등)를 사용하는지 걱정하지 않아도 됨</li>
+</ul>
+
+<h2 id="프로세스와-스레드-관리">프로세스와 스레드 관리</h2>
+
+<ul>
+  <li>프로세스(또는 스레드)에 CPU 사용 시간을 적절히 할당해 줌으로써 멀티 태스킹을 가능하게 함</li>
+</ul>
+
+<h2 id="메모리-관리">메모리 관리</h2>
+
+<ul>
+  <li>개별 프로세스에 가상의 연속된 메모리 공간을 제공</li>
+  <li>물리 메모리봅다 더 큰 크기의 프로그램을 실행 가능하도록 해줌</li>
+</ul>
+
+<h2 id="io-관리">I/O 관리</h2>
+
+<ul>
+  <li>모든 것은 파일(파일 디스크립터)이다</li>
+  <li>VFS -&gt; 하부 시스템 구성에 상관없이 파일 입출력 제어 가능</li>
+</ul>
+
+<p><img src="/images/os_53.png" alt="" /></p>
+
+<p><img src="/images/os_54.png" alt="" /></p>
+
+<h1 id="컨테이너-기술을-위한-커널의-핵심-기능">컨테이너 기술을 위한 커널의 핵심 기능</h1>
+
+<ul>
+  <li>cgroups</li>
+  <li>namespaces</li>
+  <li>union file system</li>
+</ul>
+
+<h2 id="cgroup">cgroup</h2>
+
+<ul>
+  <li>프로세스들이 사용하는 시스템 자원을 제한</li>
+  <li>제한 가능한 자원: CPU, Memory, Network, Block I/O</li>
+  <li>활용 예시: runc, YARN</li>
+</ul>
+
+<p><img src="/images/os_55.png" alt="" /></p>
+
+<h2 id="namespace">namespace</h2>
+
+<ul>
+  <li>프로세스별로 커널이 사용하는 공간을 분할</li>
+  <li>논리적 구분 공간 -&gt; 볼 수 잇는 범위를 제한</li>
+</ul>
+
+<p><img src="/images/os_56.png" alt="" /></p>
+
+<h2 id="union-file-system">union file system</h2>
+
+<ul>
+  <li>하나의 디렉토리 위치에 여러 개의 디렉토리를 마운트 -&gt; 하나의 통합된 디렉토리를 제공</li>
+  <li>CoW(Copy-on-write): 파일 변경이 생기면 새로운 파일을 복사해서 쓴다</li>
+</ul>
+
+<p><img src="/images/os_57.png" alt="" /></p>
+:ET

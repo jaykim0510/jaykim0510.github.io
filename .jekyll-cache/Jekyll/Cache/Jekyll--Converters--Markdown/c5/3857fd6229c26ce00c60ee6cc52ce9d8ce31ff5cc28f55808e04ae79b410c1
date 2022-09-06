@@ -1,0 +1,99 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#n-ary-tree" id="markdown-toc-n-ary-tree">N-ary Tree</a></li>
+  <li><a href="#trie" id="markdown-toc-trie">Trie</a>    <ul>
+      <li><a href="#trie-만들기" id="markdown-toc-trie-만들기">Trie 만들기</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="n-ary-tree">N-ary Tree</h1>
+
+<h1 id="trie">Trie</h1>
+
+<p>Trie, also called prefix tree, is a special form of a N-ary tree.</p>
+
+<p>트라이(Trie)는 prefix tree라고도 불린다. 트라이는 N-ary 트리의 특별한 형태이다.</p>
+
+<p>트라이는 보통 문자열을 저장하는 목적으로 사용된다. 트라이의 각 노드는 prefix string을 나타낸다. prefix tree의 모습은 아래와 같다.</p>
+
+<p><img src="/images/trie_1.png" alt="" /></p>
+
+<p>루트 노드는 보통 빈 문자열인 경우가 많다(“”)</p>
+
+<p>트라이는 자동 완성, 스펠링 체크과 같이 굉장히 다양한 용도로 사용된다.</p>
+
+<p>트라이는 어떻게 표현(구현)할 수 있을까? -&gt; 배열 또는 해시테이블로 구현할 수 있다</p>
+
+<ul>
+  <li>배열로 자식 노드들을 저장한다 -&gt; 빠르다. 메모리 낭비가 생길 수 있다</li>
+  <li>해시테이블로 자식 노드들을 저장한다 -&gt; 배열보다 느릴 수 있다, 메모리 낭비가 없다</li>
+</ul>
+
+<p>각 노드마다 플래그를 이용해 우리가 찾는 문자열인지 아닌지 확인할 수도 있다.</p>
+
+<h2 id="trie-만들기">Trie 만들기</h2>
+
+<p>트라이는 사실 연산을 계속 함으로써 얻어진다.</p>
+
+<p>트라이가 만들어지면 이를 이용해 우리가 원하는 단어를 찾을 수 있다.</p>
+
+<ul>
+  <li>단어를 넣고 이 단어가 있는지 찾는 용도
+    <ul>
+      <li>단어인지 prefix인지 알기위해서는 단어에 flag 표시를 한다</li>
+    </ul>
+  </li>
+  <li>prefix를 넣고 prefix로 시작하는 단어가 있는지 찾는 용도</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">TrieNode</span><span class="p">:</span>
+        <span class="c1"># Initialize your data structure here.
+</span>        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">word</span><span class="o">=</span><span class="bp">False</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">children</span><span class="o">=</span><span class="p">{}</span>
+    
+<span class="k">class</span> <span class="nc">Trie</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">TrieNode</span><span class="p">()</span>
+
+    <span class="c1"># @param {string} word
+</span>    <span class="c1"># @return {void}
+</span>    <span class="c1"># Inserts a word into the trie.
+</span>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+        <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">root</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">word</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">TrieNode</span><span class="p">()</span>
+            <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">word</span><span class="o">=</span><span class="bp">True</span>
+
+    <span class="c1"># @param {string} word
+</span>    <span class="c1"># @return {boolean}
+</span>    <span class="c1"># Returns if the word is in the trie.
+</span>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
+        <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">root</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">word</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+            <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">node</span><span class="p">.</span><span class="n">word</span>
+
+    <span class="c1"># @param {string} prefix
+</span>    <span class="c1"># @return {boolean}
+</span>    <span class="c1"># Returns if there is any word in the trie
+</span>    <span class="c1"># that starts with the given prefix.
+</span>    <span class="k">def</span> <span class="nf">startsWith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="n">node</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">root</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">prefix</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+            <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</code></pre></div></div>
+:ET

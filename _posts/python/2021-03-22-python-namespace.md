@@ -347,5 +347,5 @@ Local variable
 
 # 참고
 
-- [Real Python, Namespaces and Scope in Python](https://realpython.com/python-namespaces-scope/)
-- [홍러닝, 파이썬의 Namespace와 Scope](https://hongl.tistory.com/260?category=928855)
+- [Real Python, Namespaces and Scope in Python](https://realpython.com/python-namespaces-scope/){:target="_blank"}
+- [홍러닝, 파이썬의 Namespace와 Scope](https://hongl.tistory.com/260?category=928855){:target="_blank"}

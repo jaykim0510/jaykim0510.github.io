@@ -1,0 +1,83 @@
+I"<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a></li>
+  <li><a href="#use-case" id="markdown-toc-use-case">Use Case</a></li>
+  <li><a href="#examples" id="markdown-toc-examples">Examples</a>    <ul>
+      <li><a href="#클러스터-생성" id="markdown-toc-클러스터-생성">클러스터 생성</a></li>
+      <li><a href="#스키마-생성" id="markdown-toc-스키마-생성">스키마 생성</a></li>
+      <li><a href="#쿼리-및-분석" id="markdown-toc-쿼리-및-분석">쿼리 및 분석</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Amazon Redshift is a fully managed(setting up, operating, and scaling a data warehouse, provisioning capacity, monitoring and backing up the cluster), petabyte-scale data warehouse service in the cloud. You can start with just a few hundred gigabytes of data and scale to a petabyte or more. This enables you to use your data to acquire new insights for your business and customers.</p>
+
+<p>The first step to create a data warehouse is to launch a set of nodes, called an Amazon Redshift cluster. After you provision your cluster, you can upload your data set and then perform data analysis queries. Regardless of the size of the data set, Amazon Redshift offers fast query performance using the same SQL-based tools and business intelligence applications that you use today.</p>
+
+<p>Redshift is an OLAP-style (Online Analytical Processing) column-oriented database. It is based on PostgreSQL version 8.0.2. This means regular SQL queries can be used with Redshift. But this is not what separates it from other services. The fast delivery to queries made on a large database with exabytes of data is what helps Redshift stand out.</p>
+
+<p>Fast querying is made possible by Massively Parallel Processing design or MPP. The technology was developed by ParAccel. With MPP, a large number of computer processors work in parallel to deliver the required computations. Sometimes processors situated across multiple servers can be used to deliver a process.</p>
+
+<h1 id="use-case">Use Case</h1>
+
+<p>Amazon Redshift is used when the data to be analyzed is humongous. The data has to be at least of a petabyte-scale (1015 bytes) for Redshift to be a viable solution. The MPP technology used by Redshift can be leveraged only at that scale. Beyond the size of data, there are some specific use cases that warrant its use.</p>
+
+<p>(쿼리의 성능이 극대화됨 -&gt; 대용량 데이터 or 실시간 분석에 적합 -&gt; 그 외의 경우 요구사항 대비 지나친 성능으로 낭비가 될 수 있음)</p>
+
+<ul>
+  <li>more than petabyte-scale</li>
+  <li>processing real-time analytics</li>
+  <li>combining multiple data sources</li>
+  <li>business intelligence</li>
+  <li>log analysis</li>
+</ul>
+
+<h1 id="examples">Examples</h1>
+
+<h2 id="클러스터-생성">클러스터 생성</h2>
+
+<ul>
+  <li>노드 유형, 개수는 작게 시작하는 것이 좋다 (Redshift는 비싸니까)</li>
+  <li>IAM 역할을 제대로 지정안하면 안됨 -&gt; 나의 경우 Athena, Glue, S3의 FullAccess를 이용
+    <ul>
+      <li>처음에 RedshiftFullAccess도 추가해줬었는데 왜인지 모르겠지만 에러남</li>
+      <li>(왜 Redshift를 이용할 때 RedshiftFullAccess를 추가하면 에러가 날까)</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/images/redshift_2.png" alt="" /></p>
+
+<h2 id="스키마-생성">스키마 생성</h2>
+
+<ul>
+  <li>Glue의 Catalog가 있으면 Redshift를 사용할 때도 정말 편하다</li>
+  <li>Catalog 없으면 [Create Schema] -&gt; [Create Table] -&gt; [Load Data] 해줘야됨</li>
+</ul>
+
+<p><img src="/images/redshift_3.png" alt="" /></p>
+
+<h2 id="쿼리-및-분석">쿼리 및 분석</h2>
+
+<ul>
+  <li>MongoDB에서 저장할 때 requirements라는 속성을 array형태로 저장했었다</li>
+  <li>array가 있으면 쿼리시 에러가 난다 -&gt; unnesting을 진행했다</li>
+</ul>
+
+<p><img src="/images/redshift_1.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html" target="_blank">AWS docs, Redshift</a></li>
+  <li><a href="https://docs.aws.amazon.com/redshift/latest/dg/query-super.html" target="_blank">AWS docs, Querying semistructured data</a></li>
+  <li><a href="https://www.cloudzero.com/blog/aws-redshift" target="_blank">CLOUDZERO, AWS Redshift 101: What Is It and When Should You Use It?</a></li>
+</ul>
+:ET

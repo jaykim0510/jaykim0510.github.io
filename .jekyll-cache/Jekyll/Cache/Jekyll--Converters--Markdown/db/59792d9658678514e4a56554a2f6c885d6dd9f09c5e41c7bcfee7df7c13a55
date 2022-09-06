@@ -1,0 +1,396 @@
+I"��<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#카프카의-데이터-저장-방식" id="markdown-toc-카프카의-데이터-저장-방식">카프카의 데이터 저장 방식</a>    <ul>
+      <li><a href="#partition" id="markdown-toc-partition">Partition</a></li>
+      <li><a href="#segment" id="markdown-toc-segment">Segment</a></li>
+    </ul>
+  </li>
+  <li><a href="#저장된-데이터의-포맷kafka-messages-are-just-bytes" id="markdown-toc-저장된-데이터의-포맷kafka-messages-are-just-bytes">저장된 데이터의 포맷(Kafka messages are just bytes)</a></li>
+  <li><a href="#성능-향상을-위한-파티션-수" id="markdown-toc-성능-향상을-위한-파티션-수">성능 향상을 위한 파티션 수</a></li>
+  <li><a href="#장애-복구를-위한-복제" id="markdown-toc-장애-복구를-위한-복제">장애 복구를 위한 복제</a></li>
+  <li><a href="#로그-설정을-통해-효율적으로-보관하기log-retention" id="markdown-toc-로그-설정을-통해-효율적으로-보관하기log-retention">로그 설정을 통해 효율적으로 보관하기(Log Retention)</a>    <ul>
+      <li><a href="#role-of-indexing-within-the-partition" id="markdown-toc-role-of-indexing-within-the-partition">Role of Indexing within the Partition</a></li>
+      <li><a href="#rolling-segments" id="markdown-toc-rolling-segments">Rolling segments</a></li>
+      <li><a href="#impact-of-increasingdecreasing-the-segment-size" id="markdown-toc-impact-of-increasingdecreasing-the-segment-size">Impact of increasing/decreasing the segment size</a></li>
+      <li><a href="#log-retention---the-records-may-persist-longer-than-the-retention-time" id="markdown-toc-log-retention---the-records-may-persist-longer-than-the-retention-time">Log retention - The records may persist longer than the retention time</a></li>
+      <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="카프카의-데이터-저장-방식">카프카의 데이터 저장 방식</h1>
+
+<p>Kafka is typically referred to as a Distributed, Replicated Messaging Queue, which although technically true, usually leads to some confusion depending on your definition of a messaging queue. Instead, I prefer to call it a <strong>Distributed, Replicated Commit Log</strong>. This, I think, clearly represents what Kafka does, as all of us understand how <strong>logs</strong> are written to disk. And in this case, it is the <strong>messages pushed into Kafka that are stored to disk</strong>.</p>
+
+<ul>
+  <li>Kafka는 커밋 로그를 분산 복제하는 시스템</li>
+  <li>여기서 로그는 우리가 디스크에 저장한 메세지를 의미</li>
+  <li>(우리의 메세지를 로그로 표현하려고 하는 이유는 아마 메세지 안에 보통 데이터 뿐만 아니라 다른 메타데이터도 들어 있어서?)</li>
+</ul>
+
+<p>카프카의 데이터는 다음과 같은 구조로 이루어져 있다.</p>
+
+<p><img src="/images/kafka_80.png" alt="" /></p>
+
+<ul>
+  <li>Topic: namespace처럼 논리적으로 구분하는 기준. 데이터를 구분하는 가장 큰 구분 기준</li>
+  <li>Partition: 실제로 컨슈머가 담당하는 작업 단위(컨슈머 그룹내에서 파티션은 하나의 컨슈머에게만 할당 가능). 폴더로 구분</li>
+  <li>Segment: 여러 메세지를 묶어놓은 하나의 파일. 파티션 한 개에 여러 개의 세그먼트가 저장되어 있음.</li>
+  <li>Message: 우리가 실제로 보내는 데이터 + 생성된 타임스탬프 + 프로듀서 ID + …로 이루어져 있음</li>
+</ul>
+
+<h2 id="partition">Partition</h2>
+
+<p>3개의 파티션을 가지는 토픽을 우선 한 개 만들어보자.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kafka-topics.sh <span class="nt">--create</span> <span class="nt">--topic</span> freblogg <span class="nt">--partitions</span> 3 <span class="nt">--replication-factor</span> 1 <span class="nt">--zookeeper</span> localhost:2181
+</code></pre></div></div>
+
+<p>파티션이 저장되는 위치로 이동해 토픽 이름으로 시작하는 파티션을 검색해보면 3개의 폴더가 보인다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ tree freblogg*
+freblogg-0
+|-- 00000000000000000000.index
+|-- 00000000000000000000.log
+|-- 00000000000000000000.timeindex
+`-- leader-epoch-checkpoint
+freblogg-1
+|-- 00000000000000000000.index
+|-- 00000000000000000000.log
+|-- 00000000000000000000.timeindex
+`-- leader-epoch-checkpoint
+freblogg-2
+|-- 00000000000000000000.index
+|-- 00000000000000000000.log
+|-- 00000000000000000000.timeindex
+`-- leader-epoch-checkpoint
+</code></pre></div></div>
+
+<p>다음과 같은 명령어를 실행해 브로커로 메세지를 보내보자.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kafka-console-producer.sh --topic freblogg --broker-list localhost:9092
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ls -lh freblogg*
+freblogg-0:
+total 20M
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.index
+- freblogg 197121   0 Aug  5 08:26 00000000000000000000.log
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.timeindex
+- freblogg 197121   0 Aug  5 08:26 leader-epoch-checkpoint
+
+freblogg-1:
+total 21M
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.index
+- freblogg 197121  68 Aug  5 10:15 00000000000000000000.log
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.timeindex
+- freblogg 197121  11 Aug  5 10:15 leader-epoch-checkpoint
+
+freblogg-2:
+total 21M
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.index
+- freblogg 197121  79 Aug  5 09:59 00000000000000000000.log
+- freblogg 197121 10M Aug  5 08:26 00000000000000000000.timeindex
+- freblogg 197121  11 Aug  5 09:59 leader-epoch-checkpoint
+</code></pre></div></div>
+
+<p>두 개의 메세지를 보냈다. 결과를 확인해보면 두 개의 파티션이 가지는 00000000000000000000.log 라는 세그먼트 파일의 용량이 증가했다. 파일을 열어보면 다음과 같은 내용이 적혀있다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cat freblogg-2/*.log
+@^@^BÂ°Â£Ã¦Ãƒ^@^K^XÃ¿Ã¿Ã¿Ã¿Ã¿Ã¿^@^@^@^A"^@^@^A^VHello World^@
+</code></pre></div></div>
+
+<p>브로커에 저장된 메세지는 바이트 형태로 저장되기 때문에 제대로 디코딩하지 않으면 이상하게 읽힌다. 하지만 Hello World라고 적힌 것을 보아 .log라는 파일에 우리가 보낸 메세지가 저장된다는 것을 알 수 있다.</p>
+
+<p>메세지가 파티션에 하나씩 저장된 이유는 라운드 로빈 방식으로 메세지를 파티션에 할당하기 때문이다. 메세지 할당 방식은 카프카에서 제공하는 다른 방식을 사용할 수도 있고, 만약 메세지에 키를 설정해줬다면 키마다 파티션을 다르게 할당하도록 커스터마이징할 수도 있다.</p>
+
+<p>세그먼트는 여러 메세지를 하나로 묶어 저장하고 있고, 각각의 메세지는 1씩 증가하는 offset을 가진다. 각 세그먼트는 자신이 가지고 있는 메세지의 가장 처음 오프셋을 이름으로 한다.</p>
+
+<p><img src="/images/kafka_75.png" alt="" /></p>
+
+<p>위와 같은 랜덤한 문자열들을 읽고 싶으면 Kafka 툴을 사용할 수 있다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kafka-run-class.bat kafka.tools.DumpLogSegments <span class="nt">--deep-iteration</span> <span class="nt">--print-data-log</span> <span class="nt">--files</span> logs<span class="se">\f</span>reblogg-2<span class="se">\0</span>0000000000000000000.log
+</code></pre></div></div>
+
+<p>This gives the output</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Dumping logs<span class="se">\f</span>reblogg-2<span class="se">\0</span>0000000000000000000.log
+Starting offset: 0
+
+offset: 0 position: 0 CreateTime: 1533443377944 isvalid: <span class="nb">true </span>keysize: <span class="nt">-1</span> valuesize: 11 producerId: <span class="nt">-1</span> headerKeys: <span class="o">[]</span> payload: Hello World
+
+offset: 1 position: 79 CreateTime: 1533462689974 isvalid: <span class="nb">true </span>keysize: <span class="nt">-1</span> valuesize: 6 producerId: <span class="nt">-1</span> headerKeys: <span class="o">[]</span> payload: amazon
+</code></pre></div></div>
+
+<p>CreateTime과 같은 값은 컨슈머로 가져와서 사용할 수 있는 값이 아니다. 카프카 내부적으로 가지고 있는 메타데이터이다. 그렇기 때문에 데이터의 타임스탬프가 필요하다면, 데이터를 생성할 때 내부적으로 메세지에 명시적으로 담아서 브로커에 담아야 한다.</p>
+
+<p>You can see that it stores information of the offset, time of creation, key and value sizes etc along with the actual message payload in the log file.</p>
+
+<h2 id="segment">Segment</h2>
+
+<p>위에서 봤던 <code class="language-plaintext highlighter-rouge">.log</code>, <code class="language-plaintext highlighter-rouge">.index</code>, <code class="language-plaintext highlighter-rouge">.timeindex</code>을 모두 세그먼트 파일이라고 한다. 세그먼트 파일을 하나로 하지 않고, 나누어 저장하는 이유는 여러가지가 있다.</p>
+
+<p>그중에서도 데이터를 삭제할 때 이점이 있다는 것이다. Kafka는 구조적 특성으로 메세지마다 데이터를 삭제하는 것이 불가능하다. 유일하게 메세지를 삭제하는 방법은 바로 세그먼트 파일을 삭제하는 것이다. 보통 세그먼트 파일 삭제는 카프카 configuration을 통해 삭제하는 <strong>Retention policy</strong> 방법을 사용한다. (정책을 통해 주기적으로 삭제)</p>
+
+<p>세그먼트 파일의 의미는 다음과 같다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">.index</code> file: This contains the mapping of message offset to its physical position in .log file.</li>
+  <li><code class="language-plaintext highlighter-rouge">.log</code> file: This file contains the actual records and maintains the records up to a specific offset. The name of the file depicts the starting offset added to this file.</li>
+  <li>.index file: This file has an index that maps a record offset to the byte offset of the record within the** .log **file. This mapping is used to read the record from any specific offset.</li>
+  <li><code class="language-plaintext highlighter-rouge">.timeindex</code> file: This file contains the mapping of the timestamp to record offset, which internally maps to the byte offset of the record using the .index file. This helps in accessing the records from the specific timestamp.</li>
+  <li><code class="language-plaintext highlighter-rouge">.snapshot</code> file: contains a snapshot of the producer state regarding sequence IDs used to avoid duplicate records. It is used when, after a new leader is elected, the preferred one comes back and needs such a state to become a leader again. This is only available for the active segment (log file)</li>
+  <li><code class="language-plaintext highlighter-rouge">.leader-epoch-checkpoint</code>: It refers to the number of leaders previously assigned by the controller. The replicas use the leader epoch as a means of verifying the current leader. The leader-epoch-checkpoint file contains two columns: epochs and offsets. Each row is a checkpoint for the latest recorded leader epoch and the leader’s latest offset upon becoming leader</li>
+</ul>
+
+<p>An index file for the log file I’ve showed in the ‘Quick detour’ above would look something like this:</p>
+
+<p><img src="/images/kafka_76.png" alt="" /></p>
+
+<p>If you need to read the message at offset 1, you first search for it in the index file and figure out that the message is in position 79. Then you directly go to position 79 in the log file and start reading. This makes it quite effective as you can use binary search to quickly get to the correct offset in the already sorted index file.</p>
+
+<p><img src="/images/kafka_81.png" alt="" /></p>
+
+<h1 id="저장된-데이터의-포맷kafka-messages-are-just-bytes">저장된 데이터의 포맷(Kafka messages are just bytes)</h1>
+
+<p><strong>Kafka messages are just bytes</strong>. Kafka messages are organized into topics. Each message is a key/value, but that is all that Kafka requires. Both key and value are just bytes when they are stored in Kafka. This makes Kafka applicable to a <strong>wide range of use cases</strong>, but it also means that developers have the <strong>responsibility of deciding how to serialize the data.</strong></p>
+
+<p>There are various <strong>serialization formats</strong> with common ones including:</p>
+
+<ul>
+  <li>JSON</li>
+  <li>Avro</li>
+  <li>Protobuf</li>
+  <li>String delimited (e.g., CSV</li>
+</ul>
+
+<p>There are advantages and disadvantages to each of these—well, except delimited, in which case it’s only disadvantages 😉</p>
+
+<p>Choosing a serialization format</p>
+
+<ul>
+  <li><strong>Schema</strong>: A lot of the time your data will have a schema to it. You may not like the fact, but it’s your responsibility as a developer to preserve and propagate this schema. The schema provides the <strong>contract between your services</strong>. Some message formats (such as Avro and Protobuf) have strong schema support, whilst others have lesser support (JSON) or none at all (delimited string).</li>
+  <li><strong>Ecosystem compatibility</strong>: Avro, Protobuf, and JSON are first-class citizens in the Confluent Platform, with native support from the  Confluent Schema Registry, Kafka Connect, ksqlDB, and more.</li>
+  <li><strong>Message size</strong>: Whilst JSON is plain text and relies on any compression configured in Kafka itself, Avro and Protobuf are both binary formats and thus provide smaller message sizes.</li>
+  <li><strong>Language support</strong>: For example, support for Avro is strong in the Java space, whilst if you’re using Go, chances are you’ll be expecting to use Protobuf.</li>
+</ul>
+
+<p>데이터를 브로커에 저장할 때는 전송된 데이터의 포맷과는 상관없이 원하는 포맷으로 브로커에 저장할 수 있다. 예를 들어 프로듀서가 JSON으로 보냈다고 하더라도 브로커에 저장할 때 포맷은 Avro, Parquet, String 뭘 하든 상관없다. 다만 중요한 것은 Serializer로 Avro를 선택했다면, Deserializer도 반드시 Avro를 선택해야 한다. 그러고 나면 컨슈머에서 전달 받는 데이터의 포맷은 자연스럽게 다시 JSON 형태를 얻게 된다.</p>
+
+<p><img src="/images/kafka_78.png" alt="" /></p>
+
+<p>Remember, Kafka messages are just pairs of key/value bytes, and you need to specify the converter for both keys and value, using the <code class="language-plaintext highlighter-rouge">key.converter</code> and <code class="language-plaintext highlighter-rouge">value.converter</code> configuration setting. In some situations, you may use different converters for the key and the value.</p>
+
+<p>Here’s an example of using the String converter. Since it’s just a string, there’s no schema to the data, and thus it’s not so useful to use for the value:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"key.converter"</span>: <span class="s2">"org.apache.kafka.connect.storage.StringConverter"</span>,
+</code></pre></div></div>
+
+<p>Some converters have additional configuration. For Avro, you need to specify the Schema Registry. For JSON, you need to specify if you want Kafka Connect to embed the schema in the JSON itself. When you specify converter-specific configurations, always use the <code class="language-plaintext highlighter-rouge">key.converter</code>. or <code class="language-plaintext highlighter-rouge">value.converter</code>. prefix. For example, to use Avro for the message payload, you’d specify the following:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"value.converter": "io.confluent.connect.avro.AvroConverter",
+"value.converter.schema.registry.url": "http://schema-registry:8081",
+</code></pre></div></div>
+
+<p>Common converters include:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Avro</span>
+io.confluent.connect.avro.AvroConverter
+
+<span class="c"># Protobuf</span>
+io.confluent.connect.protobuf.ProtobufConverter
+
+<span class="c"># String</span>
+org.apache.kafka.connect.storage.StringConverter
+
+<span class="c"># JSON</span>
+org.apache.kafka.connect.json.JsonConverter
+
+<span class="c"># JSON schema</span>
+io.confluent.connect.json.JsonSchemaConverter
+
+<span class="c"># ByteArray</span>
+org.apache.kafka.connect.converters.ByteArrayConverter
+</code></pre></div></div>
+
+<p>JSON의 경우 스키마가 설정을 안하는 것이 디폴트다. 하지만 스키마를 고정하고 싶은 경우 두 가지 방법을 사용할 수 있다.</p>
+
+<ol>
+  <li>JSON schema <code class="language-plaintext highlighter-rouge">io.confluent.connect.json.JsonSchemaConverter</code>를 쓴다 (with 스키마 레지스트리)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"value.converter": "io.confluent.connect.json.JsonSchemaConverter",
+"value.converter.schema.registry.url": "http://schema-registry:8081",
+</code></pre></div>    </div>
+  </li>
+  <li>비효율적이지만 매번 메시지에 스키마를 담아서 전송/저장한다.
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>value.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter.schemas.enable=true
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>2번 방식을 사용하면 메세지가 다음과 같이 schema 부분과, payload 부분이 함께 저장된다.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"schema"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"struct"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"int64"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"optional"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"registertime"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"optional"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"userid"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"optional"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"regionid"</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"optional"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"gender"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"optional"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ksql.users"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"payload"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello World"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>이렇게 하면 메세지 사이즈가 커지기 때문에 비효율적이다. 그래서 스키마가 필요한 경우에는 스키마 레지스트리를 사용하는 것이 효율적이다.</p>
+
+<p>만약 컨버터에 JSON serializer를 사용했고 스키마를 따로 설정하지 않을거라면,</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>value.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter.schemas.enable=false
+</code></pre></div></div>
+
+<p>이렇게 schema를 찾을 필요 없다고 명시해주자. (디폴트가 false인데 왜 해줘야하는거지..?)</p>
+
+<p>아래 표는 serializer와 deserializer의 싱크를 어떻게 맞춰야 에러가 안나는지 알려준다. 기본적으로 serializer는 메세지나 상황에 맞게 원하는 것을 선택하고, deserializer는 serializer와 같은 포맷을 사용하도록 하면 된다.</p>
+
+<p><img src="/images/kafka_79.png" alt="" /></p>
+
+<h1 id="성능-향상을-위한-파티션-수">성능 향상을 위한 파티션 수</h1>
+
+<p>To guarantee the order of reading messages from a partition, Kafka restricts to having only one consumer (from a consumer group) per partition. So, if a partition gets messages a,f and k, the consumer will also read them in the order a,f and k. This is an important thing to make a note of as the order of message consumption is not guaranteed at a topic level when you have multiple partitions.</p>
+
+<p>파티션 내에서는 메세지의 순서가 지켜진다. 그래서 토픽을 이루는 파티션이 1개라면 메세지의 순서를 걱정할 필요가 없다. 하지만 파티션의 개수를 2개 이상으로 하면 메세지의 순서가 보장되지 않는다.</p>
+
+<p>병렬 처리를 통해 성능을 높이고자 할 때, 파티션의 개수와 컨슈머의 개수를 늘려준다.</p>
+
+<ul>
+  <li>파티션의 수 &gt;= 컨슈머 수</li>
+  <li>병렬 정도 = MIN(파티션의 수, 컨슈머 수)</li>
+  <li>파티션의 개수는 늘릴수만 있고 줄일 수는 없음</li>
+</ul>
+
+<h1 id="장애-복구를-위한-복제">장애 복구를 위한 복제</h1>
+<p>복제는 특정 브로커 서버에 장애가 났을 경우를 대비하기 위한 용도다. 만약 브로커가 1대라면 복제는 아무 의미가 없다. 복제는 브로커의 개수만큼 설정하면 된다. 더 크게 더 적게 해도 되지만, 같게 하는 것이 제일 합당한 선택이다.</p>
+
+<p>복제수는 토픽마다 다르게 설정할 수 있다. 복제 수는 늘리는 만큼 성능이 약간 떨어진다. 그래서 토픽의 중요도에 따라 다르게 설정하는 것이 좋다.</p>
+
+<p>복제에 관해 이해하려면 리더/팔로워, 커밋과 같은 것들을 배워야 한다. 컨슈머는 리더 파티션만 가져갈 수 있다. 복제는 리더가 장애가 났을 경우를 대비하기 위한 용도다.</p>
+
+<p>Say for the freblogg topic that we’ve been using so far, we’ve given the replication factor as 2. The resulting distribution of its three partitions will look something like this.</p>
+
+<p><img src="/images/kafka_77.png" alt="" /></p>
+
+<p>Even when you have a replicated partition on a different broker, Kafka wouldn’t let you read from it because in each replicated set of partitions, there is a LEADER and the rest of them are just mere FOLLOWERS serving as backup. The followers keep on syncing the data from the leader partition periodically, waiting for their chance to shine. When the leader goes down, one of the in-sync follower partitions is chosen as the new leader and now you can consume data from this partition.</p>
+
+<p>A Leader and a Follower of a single partition are never in a single broker. It should be quite obvious why that is so.</p>
+
+<h1 id="로그-설정을-통해-효율적으로-보관하기log-retention">로그 설정을 통해 효율적으로 보관하기(Log Retention)</h1>
+
+<p>Apache Kafka is a commit-log system. The records are appended at the end of each Partition, and each Partition is also split into segments. Segments help delete older records through Compaction, improve performance, and much more.</p>
+
+<p>Kafka allows us to optimize the log-related configurations, we can control the rolling of segments, log retention, etc. <strong>These configurations determine how long the record will be stored</strong> and we’ll see how it impacts the broker’s performance, especially when the cleanup policy is set to Delete.</p>
+
+<p>For better performance and maintainability, multiple segments get created, and rather than reading from one huge Partition, Consumers can now read faster from a smaller segment file. A directory with the partition name gets created and maintains all the segments for that partition as various files.</p>
+
+<p><img src="/images/kafka_81.png" alt="" /></p>
+
+<p>The active segment is the only file available for reading and writing while consumers can use other log segments (non-active) to read data. When the active segment becomes full (configured by <code class="language-plaintext highlighter-rouge">log.segment.bytes</code>, default 1 GB) or the configured time (<code class="language-plaintext highlighter-rouge">log.roll.hours</code> or <code class="language-plaintext highlighter-rouge">log.roll.ms</code>, default 7 days) passes, the segment gets rolled. This means that the <strong>active segment gets closed and re-opens with read-only mode and a new segment file</strong> (active segment) will be created in read-write mode.</p>
+
+<h2 id="role-of-indexing-within-the-partition">Role of Indexing within the Partition</h2>
+<p>Indexing helps consumers to read data starting from any specific offset or using any time range. As mentioned previously, the <code class="language-plaintext highlighter-rouge">.index</code> file contains an index that maps the logical offset to the byte offset of the record within the <code class="language-plaintext highlighter-rouge">.log</code> file. <strong>You might expect that this mapping is available for each record, but it doesn’t work this way.</strong></p>
+
+<p><strong>How these entries are added inside the index file is defined by the <code class="language-plaintext highlighter-rouge">log.index.interval.bytes</code> parameter, which is 4096 bytes by default.</strong> This means that after every 4096 bytes added to the <code class="language-plaintext highlighter-rouge">.log</code> file, an entry gets added to the <code class="language-plaintext highlighter-rouge">.index</code> file. Suppose the producer is sending records of 100 bytes each to a Kafka topic. In this case, a new index entry will be added to the <code class="language-plaintext highlighter-rouge">.index</code> file after every 41 records (41*100 = 4100 bytes) appended to the log file.</p>
+
+<p>(모든 레코드가 인덱싱되기는 하는데, 레코드 한 개 넣을때마다 인덱싱되는 것은 아니고 <code class="language-plaintext highlighter-rouge">.log</code> 파일 하나가 다 차고나면 해당 <code class="language-plaintext highlighter-rouge">.log</code> 파일의 레코드를 인덱싱해서 <code class="language-plaintext highlighter-rouge">.index</code> 파일을 만든다)</p>
+
+<p><img src="/images/kafka_82.png" alt="" /></p>
+
+<p>If a consumer wants to read starting at a specific offset, a search for the record is made as follows:</p>
+
+<ul>
+  <li>Search for the <code class="language-plaintext highlighter-rouge">.index</code> file based on its name. For e.g. If the offset is 1191, the index file will be searched whose name has a value less than 1191. The naming convention for the index file is the same as that of the log file</li>
+  <li>Search for an entry in the <code class="language-plaintext highlighter-rouge">.index</code> file where the requested offset falls.</li>
+  <li>Use the mapped byte offset to access the <code class="language-plaintext highlighter-rouge">.log</code> file and start consuming the records from that byte offset.</li>
+</ul>
+
+<p>As we mentioned, consumers may also want to read the records from a specific timestamp. This is where the <code class="language-plaintext highlighter-rouge">.timeindex</code> file comes into the picture. It maintains a timestamp and offset mapping (which maps to the corresponding entry in the <code class="language-plaintext highlighter-rouge">.index</code> file), which maps to the actual byte offset in the <code class="language-plaintext highlighter-rouge">.log</code> file. (특정 타임스탬프로 레코드 읽는 방법: <code class="language-plaintext highlighter-rouge">.timeindex</code> -&gt; <code class="language-plaintext highlighter-rouge">.index</code> -&gt; <code class="language-plaintext highlighter-rouge">.log</code>)</p>
+
+<p><img src="/images/kafka_83.png" alt="" /></p>
+
+<h2 id="rolling-segments">Rolling segments</h2>
+<p>As discussed in the above sections, the active segment gets rolled once any of these conditions are met-</p>
+
+<ol>
+  <li>Maximum segment size - configured by <code class="language-plaintext highlighter-rouge">log.segment.bytes</code>, defaults to 1 Gb</li>
+  <li>Rolling segment time - configured by <code class="language-plaintext highlighter-rouge">log.roll.ms</code> or <code class="language-plaintext highlighter-rouge">log.roll.hours</code>, defaults to 7 days</li>
+  <li>Index/timeindex is full - The index and timeindex share the same maximum size, which is defined by the <code class="language-plaintext highlighter-rouge">log.index.size.max.bytes</code>, defaults to 10 MB</li>
+</ol>
+
+<p>(보통 1번 크기를 늘리면, 3번 크기도 늘려야 한다)</p>
+
+<h2 id="impact-of-increasingdecreasing-the-segment-size">Impact of increasing/decreasing the segment size</h2>
+<p>Generally you don’t want to increase/decrease the <code class="language-plaintext highlighter-rouge">log.segment.bytes</code> and keep it as default. But let’s discuss the impact of changing this value so that you can make an informed decision if there’s a need.</p>
+
+<h2 id="log-retention---the-records-may-persist-longer-than-the-retention-time">Log retention - The records may persist longer than the retention time</h2>
+<p>Kafka, with its feature of retaining the log for a longer duration rather than deleting it like traditional messaging queues once consumed, provides many added advantages. Multiple consumers can read the same data, apart from reading the data it can also be sent to data warehouses for further analytics.</p>
+
+<p>How long is the data retained in Kafka? This is configurable using the maximum number of bytes to retain by using the <code class="language-plaintext highlighter-rouge">log.retention.bytes</code> parameter. If you want to set a retention period, you can use the <code class="language-plaintext highlighter-rouge">log.retention.ms</code>, <code class="language-plaintext highlighter-rouge">log.retention.minutes</code>, or <code class="language-plaintext highlighter-rouge">log.retention.hours</code> (7 days by default) parameters.</p>
+
+<p>The following things may impact when the records get deleted-</p>
+
+<ul>
+  <li>If the producer is slow and the maximum size of 16 Kb is not reached within 10 minutes, older records won’t be deleted. In this case, the log retention would be higher than 10 mins.</li>
+  <li>If the active segment is filled quickly, it will be closed but only get deleted once the last inserted record persists for 10 mins. So in this case as well, the latest inserted record would be persisted for more than 10 mins. - Suppose the segment is getting filled in 7 mins and getting closed, the last inserted record will stay for 10 mins so the actual retention time for the first record inserted into the segment would be 17 mins.</li>
+  <li>The log can be persisted for an even longer duration than the last added record in the segment. How? Because the thread which gets executed and checks which log segments need to be deleted runs every 5 mins. This is configurable using log.retention.check.interval.ms configurations. - Depending on the last added record to the segment, this cleanup thread can miss the 10 min retention deadline. So in our example above instead of persisting the segment for 17 mins, it could be persisted for 22 mins.</li>
+  <li>Do you think that this would be the maximum time the record is persisted in Kafka? No, the cleaner thread checks and just marks the segment to be deleted. The log.segment.delete.delay.ms broker parameter defines when the file will actually be removed from the file system when it’s marked as “deleted” (default, 1 min) - Going back to our example the log is still available even after 23 mins, which is way longer than the retention time of 10 mins.</li>
+</ul>
+
+<p>So The usual retention limits are set by using <code class="language-plaintext highlighter-rouge">log.retention.ms</code> defines a kind of minimum time the record will be persisted in the file system.</p>
+
+<p>Consumers get records from closed segments but not from deleted ones, even if they are just marked as “deleted” but not actually removed from the file system.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p><img src="/images/kafka_84.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://docs.cloudera.com/csa/1.2.0/flink-sql-table-api/topics/csa-kafka-sql-datatypes.html" target="_blank">Data types for Kafka connector</a></li>
+  <li><a href="https://www.confluent.io/blog/kafka-connect-deep-dive-converters-serialization-explained/" target="_blank">Kafka Connect Deep Dive – Converters and Serialization Explained</a></li>
+  <li><a href="https://dol9.tistory.com/274" target="_blank">dol9, Kafka 스키마 관리, Schema Registry</a></li>
+  <li><a href="https://www.freblogg.com/kafka-storage-internals" target="_blank">A Practical Introduction to Kafka Storage Internals</a></li>
+  <li><a href="https://www.freecodecamp.org/news/what-makes-apache-kafka-so-fast-a8d4f94ab145/" target="_blank">Here’s what makes Apache Kafka so fast</a></li>
+  <li><a href="https://stackoverflow.com/questions/40369238/which-directory-does-apache-kafka-store-the-data-in-broker-nodes#" target="_blank">stackoverflow: Which directory does apache kafka store the data in broker nodes</a></li>
+  <li><a href="https://medium.com/@abhisheksharma_59226/how-kafka-stores-data-37ee611c89a2" target="_blank">Abhishek Sharma, How kafka stores data</a></li>
+  <li><a href="https://rohithsankepally.github.io/Kafka-Storage-Internals/" target="_blank">Rohith Sankepally:g Deep Dive Into Apache Kafka. Storage Internals</a></li>
+  <li><a href="https://towardsdatascience.com/log-compacted-topics-in-apache-kafka-b1aa1e4665a7" target="_blank">towardsdatascience, Log Compacted Topics in Apache Kafka</a></li>
+  <li><a href="https://www.conduktor.io/understanding-kafkas-internal-storage-and-log-retention" target="_blank">conduktor, Understanding Kafka’s Internal Storage and Log Retention</a></li>
+  <li><a href="https://dev.to/heroku/what-is-a-commit-log-and-why-should-you-care-pib" target="_blank">What is a commit log and why should you care?</a></li>
+</ul>
+:ET
