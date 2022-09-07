@@ -62,18 +62,6 @@ Database examples
 
 ![](/images/data_engineering_4.png)
 
-데이터 웨어하우스는 정보에 입각한 의사 결정을 내릴 수 있도록 분석 가능한 정보의 중앙 repository다
-트랜잭션 시스템, RDB 및 기타 소스의 데이터들이 데이터웨어하우스에 들어간다(insert)
-
-이렇게 데이터웨어하우스에 있는 데이터들을 Business Analyst나 Data Scientist 와 같은 사람들이 BI(Business Inteligence)나 SQL 등을 이용해서 데이터에 액세스 한다
-
-하단 티어 즉 최하위에 있는 부분은 Data 부분인 위에서 말했던 트랜잭션 시스템, RDB 등을 비롯한 데이터들이고 이것들이 ETL(Extract Transform Load) 과정을 거쳐서 Data Warehouse에 적재가 된다
-
-중간 티어 OLAP Server는 데이터에 액세스하고 분석하는데 사용되는 분석엔진 들이다, 여기서 OLAP란 OnLine Analytical Processing을 말한다.
-
-상위 티어는 사용자가 실제로 데이터를 분석하고 마이닝을 하고 또 보고할 때 사용하게 되는 frontend가 존재하는 티어다.
-
-이렇게 이루어진 데이터 웨어하우스는 데이터를 정수, 데이터 필드 또는 문자열과 같은 레이아웃 및 유형들을 설명하는 스키마로 구성함으로써 동작하게 된다. 즉 ETL, 데이터를 추출해서 변환해서 스키마에 적재해두는 것이다
 
 A data warehouse is a unified data repository for storing large amounts of information from multiple sources within an organization. A data warehouse represents a single source of “data truth” in an organization and serves as a core reporting and business analytics component.  
 
@@ -81,23 +69,47 @@ Typically, data warehouses store historical data by combining relational data se
 
 Data warehouses enable business analysts, data engineers, and decision-makers to access data via BI tools, SQL clients, and other less advanced (i.e., non-data science) analytics applications.  
 
-Note that data warehouses are not intended to satisfy the transaction and concurrency needs of an application. If an organization determines they will benefit from a data warehouse, they will need a separate database or databases to power their daily operations.
+A data warehouse is a system that stores highly structured information from various sources. Data warehouses typically store current and historical data from one or more systems. The goal of using a data warehouse is to combine disparate data sources in order to analyze the data, look for insights, and create business intelligence (BI) in the form of reports and dashboards.
+
+You might be wondering, "Is a data warehouse a database?" Yes, a data warehouse is a giant database that is optimized for analytics.
+
+## Data warehouse characteristics
+Data warehouses store large amounts of current and historical data from various sources. They contain a range of data, from raw ingested data to highly curated, cleansed, filtered, and aggregated data.  
+
+Extract, transform, load (ETL) processes move data from its original source to the data warehouse. The ETL processes move data on a regular schedule (for example, hourly or daily), so data in the data warehouse may not reflect the most up-to-date state of the systems.  
+
+Data warehouses typically have a pre-defined and fixed relational schema. Therefore, they work well with structured data. Some data warehouses also support semi-structured data.  
+
+Once the data is in the warehouse, business analysts can connect data warehouses with BI tools. These tools allow business analysts and data scientists to explore the data, look for insights, and generate reports for business stakeholders.  
+
+## Why use a data warehouse?
+Data warehouses are a good option when you need to store large amounts of historical data and/or perform in-depth analysis of your data to generate business intelligence. Due to their highly structured nature, analyzing the data in data warehouses is relatively straightforward and can be performed by business analysts and data scientists.  
+
+Note that data warehouses are not intended to satisfy the transaction and concurrency needs of an application. If an organization determines they will benefit from a data warehouse, they will need a separate database or databases to power their daily operations.   
+
+Improving data standardization, quality, and consistency: Organizations generate data from various sources, including sales, users, and transactional data. Data warehousing consolidates corporate data into a consistent, standardized format that can serve as a single source of data truth, giving the organization the confidence to rely on the data for business needs.  
+
+Delivering enhanced business intelligence: Data warehousing bridges the gap between voluminous raw data, often collected automatically as a matter of practice, and the curated data that offers insights. They serve as the data storage backbone for organizations, allowing them to answer complex questions about their data and use the answers to make informed business decisions.  
+
+Increasing the power and speed of data analytics and business intelligence workloads: Data warehouses speed up the time required to prepare and analyze data. Since the data warehouse’s data is consistent and accurate, they can effortlessly connect to data analytics and business intelligence tools. Data warehouses also cut down the time required to gather data and give teams the power to leverage data for reports, dashboards, and other analytics needs.  
+
+Improving the overall decision-making process: Data warehousing improves decision-making by providing a single repository of current and historical data. Decision-makers can evaluate risks, understand customers’ needs, and improve products and services by transforming data in data warehouses for accurate insights.   
+
+## Data warehouse examples
+Examples of data warehouses include:  
 
 - Amazon Redshift.
 - Google BigQuery.
 - IBM Db2 Warehouse.
 - Microsoft Azure Synapse.
 - Oracle Autonomous Data Warehouse.
-- Snowflake. (YOUR DATA WAREHOUSE AND DATA LAKE)
+- Snowflake.
 - Teradata Vantage.
+
+
 
 # Data Lake
 
-데이터 레이크는 데이터 웨어하우스와는 달리 별도로 정형화나 정규화 등을 하지 않고 데이터를 있는 그대로 원시데이터 상태를 저장한다는 것이다.  
-
-데이터 레이크로 유입되는 데이터들은 자신의 출처와 시간 같은 메타데이터가 존재하여야 한다.  
-
-데이터 레이크는 그 크기가 매우 커질것이고 대부분의 저장소는 스키마가 없는 큰 규모의 구조를 지향하기 때문에 일반적으로 데이터 레이크를 구현을 할 때 Hadoop과 HDFS를 비롯한 에코시스템을 사용하는 것이다. (?)  
 
 A data lake is a centralized, highly flexible storage repository that stores large amounts of structured and unstructured data in its raw, original, and unformatted form. In contrast to data warehouses, which store already “cleaned” relational data, a data lake stores data using a flat architecture and object storage in its raw form. Data lakes are flexible, durable, and cost-effective and enable organizations to gain advanced insight from unstructured data, unlike data warehouses that struggle with data in this format.  
 
@@ -107,9 +119,12 @@ A data lake is a repository of data from disparate sources that is stored in its
 
 Typically, the primary purpose of a data lake is to analyze the data to gain insights. However, organizations sometimes use data lakes simply for their cheap storage with the idea that the data may be used for analytics in the future.  
 
+## Is a data lake a database?
+
 You might be wondering, "Is a data lake a database?" A data lake is a repository for data stored in a variety of ways including databases. With modern tools and technologies, a data lake can also form the storage layer of a database. Tools like Starburst, Presto, Dremio, and Atlas Data Lake can give a database-like view into the data stored in your data lake. In many cases, these tools can power the same analytical workloads as a data warehouse.  
 (데이터 레이크는 데이터 분석 단계에서 사용할 목적으로 수집한 저장소는 아니다. 하지만 Presto 같은 걸 사용하면 데이터 레이크에서도 데이터 웨어하우스나 데이터베이스에서 처럼 데이터 분석을 할 수 있다)
 
+## Data lake characteristics
 
 Data lakes store large amounts of structured, semi-structured, and unstructured data. They can contain everything from relational data to JSON documents to PDFs to audio files.  
 
@@ -121,15 +136,27 @@ The flexible nature of data lakes enables business analysts and data scientists 
 
 Data in data lakes can be processed with a variety of OLAP systems and visualized with BI tools.  
 
+## Why use a data lake?
+
 Data lakes are a cost-effective way to store huge amounts of data. Use a data lake when you want to gain insights into your current and historical data in its raw form without having to transform and move it. Data lakes also support machine learning and predictive analytics.  
 
 Like data warehouses, data lakes are not intended to satisfy the transaction and concurrency needs of an application.  
+
+Data consolidation: Data lakes can store both structured and unstructured data to eliminate the need to store both data formats in different environments. They provide a central repository to store all types of organizational data.  
+
+Data flexibility: A significant benefit of data lakes is their flexibility; you can store data in any format or medium without the need to have a predefined schema. Allowing the data to remain in its native format allows for more data for analysis and caters to future data use cases.  
+
+Cost savings: Data lakes are less expensive than traditional data warehouses; they are designed to be stored on low-cost commodity hardware, like object storage, usually optimized for a lower cost per GB stored. For example, Amazon S3 standard object storage offers an unbelievable low price of $0.023 per GB for the first 50 TB/month.  
+
+Support for a wide variety of data science and machine learning use cases: Data in data lakes is stored in an open, raw format, making it easier to apply various machine and deep learning algorithms to process the data to produce meaningful insights.  
+
+## Data lake examples
 
 - AWS S3
 - Azure Data Lake Storage Gen2
 - Google Cloud Storage
 
-Other technologies enable organizing and querying data in data lakes, including:  
+Other technologies enable organizing and querying data in data lakes, including:   
 
 - MongoDB Atlas Data Lake.
 - AWS Athena.
