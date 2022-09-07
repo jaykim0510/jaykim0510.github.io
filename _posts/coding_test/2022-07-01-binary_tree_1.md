@@ -17,11 +17,26 @@ tags: Coding_Test
 
 ---
 
-![](/images/b_tree_1.png)
+# 이진 트리를 순회하는 방법
 
-# Iteration
+이진 트리를 순회하는 방법은 크게 Preorder, Inorder, Postorder, Level-order가 있다.  
 
-## Preorder
+- **Preorder**: 자신의 노드 방문 -> 왼쪽 자식 노드 방문 -> 오른쪽 자식 노드 방문 (Graph의 DFS와 결과가 같다)
+- **Inorder**: 왼쪽 자식 노드 방문 -> 자신의 노드 방문 -> 오른쪽 자식 노드 방문
+- **Postorder**: 왼쪽 자식 노드 방문 -> 오른쪽 자식 노드 방문 -> 자신의 노드 방문
+- **Level-order**: 루트 노드 방문 -> 깊이가 1인 노드 방문 -> 깊이가 2인 노드 방문 .. -> 리프 노드 방문
+
+![](/images/tree_traverse.png)
+
+
+
+# 이진 트리 순회를 구현하는 방법
+
+![](/images/traverse_b_tree_1.png)
+
+## Iteration
+
+### Preorder
 
 ```
 첫 번째 방법
@@ -55,7 +70,7 @@ def preorder(root):
 ```
 
 ```python
-def postorder(root):
+def preorder(root):
     res, stack = [], [(root, False)]
     while stack:
         node, visited = stack.pop()
@@ -69,7 +84,7 @@ def postorder(root):
     return res
 ```
 
-## Inorder
+### Inorder
 
 ```
 첫 번째 방법
@@ -122,7 +137,7 @@ def inorder(root):
         root = node.right    
 ```
 
-## Postorder
+### Postorder
 
 ```
 첫 번째 방법
@@ -146,7 +161,59 @@ def postorder(root):
     return res
 ```
 
-# Recursion
+### Level-order
+
+```
+순서는 문맥상 Preorder와 비슷하다
+하지만 Preorder는 노드를 스택에 쌓아서 순회하기 때문에 자신의 오른쪽 노드를 방문하기 전에 계속 왼쪽으로 깊이 들어간다
+Level-order는 큐에 쌓아서 순회하기 때문에 자신의 할 일을 다하고 자식 노드에 넘겨준다
+```
+
+```python
+from collections import deque
+
+def level_order_traverse(root):
+    res = []
+    queue = deque([root])
+    while queue:
+        cur_node = queue.popleft()
+        if cur_node:
+            res.append(cur_node.val)
+            queue.append(cur_node.left)
+            queue.append(cur_node.right)
+
+    return res
+```
+
+그래프를 직접 만들어 실행해보면 결과는 다음과 같다.  
+
+```python
+from collections import deque
+
+class Node:
+    def __init__(self, val, left=None, right=None) -> None:
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+g_node = Node("G")
+f_node = Node("F")
+e_node = Node("E", g_node)
+d_node = Node("D")
+c_node = Node("C", f_node)
+b_node = Node("B", d_node, e_node)
+a_node = Node("A", b_node, c_node)
+
+root_node = a_node
+
+print(level_order_traverse(root_node))
+--------------------------------------------------
+['A', 'B', 'C', 'D', 'E', 'F', 'G']
+```
+
+
+## Recursion
 
 트리 순회를 Recursion으로 구현할 때는 크게 **Top-Down approach**와 **Bottom-Up approach**가 있습니다.  
 
@@ -173,7 +240,7 @@ def f(node):
   return f(node.left) + f(node.right) + [node.val]
 ```
 
-## Preorder
+### Preorder
 
 ```python
 # Bottom-Up
@@ -197,7 +264,7 @@ def helper(root, res):
         helper(root.right, res)
 ```
 
-## Inorder
+### Inorder
 
 ```python
 # Bottom-Up
@@ -221,7 +288,7 @@ def helper(root, res):
         helper(root.right, res)
 ```
 
-## Postorder
+### Postorder
 
 ```python
 # Bottom-Up
