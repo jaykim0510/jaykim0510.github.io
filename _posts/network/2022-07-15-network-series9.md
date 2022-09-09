@@ -3,7 +3,7 @@ layout: post
 title:  'Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어'
 description: 
 date:   2022-07-15 15:01:35 +0300
-image:  '/images/cs_logo.jpeg'
+image:  '/images/network_linux_logo.png'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network

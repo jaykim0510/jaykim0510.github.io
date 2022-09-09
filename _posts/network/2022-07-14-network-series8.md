@@ -3,7 +3,7 @@ layout: post
 title:  'Network Series [Part8]: 네트워크 활용편(2) REST API'
 description: 
 date:   2022-07-14 15:01:35 +0300
-image:  '/images/cs_logo.jpeg'
+image:  '/images/rest_logo.png'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network

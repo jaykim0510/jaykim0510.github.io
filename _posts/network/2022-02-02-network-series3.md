@@ -3,7 +3,7 @@ layout: post
 title:  'Network Series [Part3]: 네트워크 계층 TCP/IP 4계층과 OSI 7계층'
 description: 
 date:   2022-02-02 15:01:35 +0300
-image:  '/images/cs_logo.jpeg'
+image:  '/images/net_12.png'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network

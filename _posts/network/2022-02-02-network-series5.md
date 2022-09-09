@@ -3,7 +3,7 @@ layout: post
 title:  'Network Series [Part5]: 네트워크 프로토콜(2) TCP, UDP'
 description: 
 date:   2022-02-02 15:01:35 +0300
-image:  '/images/cs_logo.jpeg'
+image:  '/images/network_32.png'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network

@@ -3,7 +3,7 @@ layout: post
 title:  'Network Series [Part10]: 네트워크 활용편(4) 로드 밸런서(Load Balancer)'
 description: 
 date:   2022-07-16 15:01:35 +0300
-image:  '/images/cs_logo.jpeg'
+image:  '/images/lb_logo.png'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network

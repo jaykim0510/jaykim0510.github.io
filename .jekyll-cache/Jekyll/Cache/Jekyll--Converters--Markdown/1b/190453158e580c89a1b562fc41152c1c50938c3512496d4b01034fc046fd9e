@@ -1,0 +1,207 @@
+I"8<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#socket" id="markdown-toc-socket">Socket</a>    <ul>
+      <li><a href="#소켓을-이용한-통신-메커니즘" id="markdown-toc-소켓을-이용한-통신-메커니즘">소켓을 이용한 통신 메커니즘</a></li>
+      <li><a href="#소켓의-종류" id="markdown-toc-소켓의-종류">소켓의 종류</a></li>
+    </ul>
+  </li>
+  <li><a href="#웹소켓" id="markdown-toc-웹소켓">웹소켓</a>    <ul>
+      <li><a href="#what-is-web-socket" id="markdown-toc-what-is-web-socket">What is Web Socket?</a>        <ul>
+          <li><a href="#history-of-web-socket" id="markdown-toc-history-of-web-socket">History of Web Socket</a></li>
+          <li><a href="#how-does-web-socket-work" id="markdown-toc-how-does-web-socket-work">How Does Web Socket Work?</a></li>
+          <li><a href="#web-socket-pros-and-cons" id="markdown-toc-web-socket-pros-and-cons">Web Socket Pros and Cons</a></li>
+          <li><a href="#applications-of-web-socket" id="markdown-toc-applications-of-web-socket">Applications of Web Socket</a></li>
+        </ul>
+      </li>
+      <li><a href="#what-is-http" id="markdown-toc-what-is-http">What is HTTP?</a>        <ul>
+          <li><a href="#how-http-works" id="markdown-toc-how-http-works">How HTTP works?</a></li>
+          <li><a href="#http-pros-and-cons" id="markdown-toc-http-pros-and-cons">HTTP Pros and Cons</a></li>
+          <li><a href="#applications-of-http" id="markdown-toc-applications-of-http">Applications of HTTP</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+<hr />
+
+<h1 id="socket">Socket</h1>
+
+<ul>
+  <li>소켓은 응용 계층에서 두 프로세스(클라이언트-서버)간의 통신을 위한 엔드포인트를 제공하는 소프트웨어다 -&gt; 서로 다른 서버의 프로세스간의 통신</li>
+  <li>유닉스 계열의 운영체제에서 IPC를 위한 엔드포인트 -&gt; 같은 서버안에 있는 프로세스간의 통신</li>
+  <li>소켓은 결국 어떤 종류의 통신이든 필요로 하는 가상의 네트워크 장비이다</li>
+  <li>SSH, FTP, HTTP, 웹소켓 통신과 같은 모든 응용 계층에서의 통신은 결국 소켓을 필요로 한다</li>
+  <li>소켓 프로그래밍을 통해 HTTP와 같은 단방향 통신이 아닌 양방향 통신을 가능하게 하는 프로토콜을 직접 만들어 쓸 수도 있다(ex. 웹소켓)</li>
+  <li>소켓은 응용 계층에 사용되는 프로토콜을 실제로 코드로 구현해 놓은 소프트웨어라고 할 수 있다</li>
+  <li>각 소켓은 IP주소와 Port번호로 이루어진 특정 주소를 가지고 있다</li>
+</ul>
+
+<p><img src="/images/socket_2.png" alt="" /></p>
+
+<h2 id="소켓을-이용한-통신-메커니즘">소켓을 이용한 통신 메커니즘</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- 클라이언트와 서버에서 각각 소켓을 생성한다
+- 서버는 클라이언트가 서버를 찾을 수 있도록 소켓에 주소를 bind 한다
+- 그리고 클라이언트의 요청을 기다린다
+- 클라이언트가 서버에 연결을 요청하고, 서버가 이를 수락하면 통신이 가능해진다
+</code></pre></div></div>
+
+<p><img src="/images/socket_4.png" alt="" /></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">socket()</code>을 호출하면 통신을 위한 엔드포인트를 나타내는 소켓 디스크립터를 리턴한다</li>
+  <li>서버는 <code class="language-plaintext highlighter-rouge">bind()</code>를 호출해 클라이언트가 서버를 찾을 수 있도록 소켓에 주소를 바인딩한다</li>
+  <li><code class="language-plaintext highlighter-rouge">listen()</code>은 서버가 클라이언트의 요청을 받을 준비가 되었다는 신호를 의미한다</li>
+  <li>클라이언트는 <code class="language-plaintext highlighter-rouge">connect()</code>를 이용해 서버에 연결을 요청한다</li>
+  <li>클라이언트는 <code class="language-plaintext highlighter-rouge">accept()</code>를 통해 요청을 받아들인다</li>
+  <li>서버와 클라이언트는 <code class="language-plaintext highlighter-rouge">recv()</code>, <code class="language-plaintext highlighter-rouge">send()</code>, <code class="language-plaintext highlighter-rouge">read()</code>, <code class="language-plaintext highlighter-rouge">write()</code>와 같은 전송 API를 이용해 데이터를 주고 받는다</li>
+  <li>서버 또는 클라이언트가 연결을 종료하고 싶을 때는 <code class="language-plaintext highlighter-rouge">close()</code>를 호출하여 연결을 종료한다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The socket APIs are located in the communications model between the application layer and the transport layer. 
+The socket APIs are not a layer in the communication model. 
+Socket APIs allow applications to interact with the transport or networking layers of the typical communications model.
+</code></pre></div></div>
+
+<h2 id="소켓의-종류">소켓의 종류</h2>
+
+<ul>
+  <li>소켓의 종류에 따라 L4(Transport Layer)의 프로토콜이 달라진다</li>
+  <li>
+    <p>또는 원하는 L4의 프로토콜에 따라 소켓의 종류를 사용해야 한다</p>
+  </li>
+  <li><strong>Datagram Socket</strong>
+    <ul>
+      <li>데이터그램 소켓의 연결은 단방향이고 신뢰할 수 없다.</li>
+      <li>또한 수신 측에서 데이터를 순서대로 받는다고 보장할 수도 없다. 데이터그램은 L4 계층에서 UDP(User Datagram Protocol)라는 표준 프로토콜을 사용한다.</li>
+      <li>안전장치도 별로 없어서 단순하고 간단하고, 가벼운 방법이다. 고로, 부하가 매우 적다.</li>
+      <li>패킷 손실이 허용되기도 한다.</li>
+      <li>보통, 네트워크 게임이나 미디어 스트리밍에서 자주 쓰인다.</li>
+    </ul>
+  </li>
+  <li><strong>Stream Socket</strong>
+    <ul>
+      <li>전화와 같이 믿을 수 있는 양방향 통신을 제공한다.</li>
+      <li>한쪽에서 다른 한쪽으로의 연결을 초기화하고, 연결이 생성된 후에는 어느 쪽에서든 다른 쪽으로 통신할 수 있다.</li>
+      <li>보낸 내용이 실제로 도착했는지도 즉각 확인할 수 있다. 스트림 소켓은 TCP(Transmission Control Protocol)라 불리는 표준 통신 프로토콜을 사용한다.</li>
+      <li>TCP는 패킷이 오류 없이 순서대로 도착하도록 설계되었다.</li>
+      <li>웹서버, 메일서버, 각 클라이언트 애플리케이션 모두는 TCP와 스트림 소켓을 사용한다.</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="웹소켓">웹소켓</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>There are two significant API types when it comes to web communication. 
+Whether to use HTTPS or Web Socket is a crucial decision while deploying projects / applications. 
+The choice would depend on which technology best fits actual client requirements and situations.
+</code></pre></div></div>
+
+<ul>
+  <li>웹소켓은 HTTP통신과 자주 비교된다</li>
+  <li>왜냐하면 HTTP통신의 단방향, 실시간 통신에 약하다는 단점을 웹소켓이 해결해주기 때문이다</li>
+</ul>
+
+<h2 id="what-is-web-socket">What is Web Socket?</h2>
+<p>Web Socket is a standard protocol for two-way data transfer between client and server. 
+The Web Socket protocol is built over TCP. Web sockets are mainly used to push messages to a client in real time updates. 
+Web Socket is designed to work over HTTP ports 443 and 80 to support HTTP proxies and interfaces. 
+Web socket protocol enables interaction between web browser and web server with lower overhead than HTTP polling and facilitates real time data transfer to / from the server. 
+Most browsers support the protocol such as Google chrome, Firefox, Microsoft Edge, Internet Explorer, Safari and Opera. Web socket enables streams of messages over TCP.</p>
+
+<h3 id="history-of-web-socket">History of Web Socket</h3>
+<p>Web Socket protocol was first referred to as TCP connection in the HTML5 specification, in June 2008 several discussions led by Michael Carter established the first version of Web socket protocol. In December 2009 Google Chrome was the first browser launched with web socket enabled by default.</p>
+
+<h3 id="how-does-web-socket-work">How Does Web Socket Work?</h3>
+
+<p>It is a stateful protocol which means connection between client and server will keep alive until it terminates by either side party (Client or server). When a connection is initiated between client and server, the client-server makes the handshake and decides to create a new connection and connection is kept alive till terminated by either of them. When connection is established and alive the communication happens over the same connection channel till it gets terminated.</p>
+
+<p>The new connection is known as Web Socket once the communication link is established and the connection is opened, message exchange takes place in bidirectional mode until connection is alive. If anyone decides to close the connection the connection is closed by both the parties.</p>
+
+<h3 id="web-socket-pros-and-cons">Web Socket Pros and Cons</h3>
+
+<ul>
+  <li><strong>장점</strong>
+    <ul>
+      <li>Faster and uses less resources</li>
+      <li>Streaming of requests and responses</li>
+      <li>Higher amount of efficiency</li>
+      <li>Eliminate latency problems</li>
+      <li>Supports duplex connection</li>
+      <li>Cross platform compatibility</li>
+      <li>Replaces long polling</li>
+    </ul>
+  </li>
+  <li><strong>단점</strong>
+    <ul>
+      <li>Web browser must be fully HTML5 compliant</li>
+      <li>Intermediary / Edge caching not possible</li>
+      <li>Not suitable if lot of dynamic interaction not required (bit complex)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="applications-of-web-socket">Applications of Web Socket</h3>
+<ul>
+  <li>Ideal for real time web applications such as trading site or bitcoin trading , gaming applications and chat applications</li>
+</ul>
+
+<h2 id="what-is-http">What is HTTP?</h2>
+<p>HTTP is a communication protocol of the World Wide Web. Http works as a request-response protocol in the client-server computing model.<br />
+It is the most common version of HTTP used in modern web browsers and servers.<br />
+HTTP/1.1 version could implement crucial performance optimization and features such as persistent and pipelined connections, chunked transfers, new header fields in request / response body etc.</p>
+
+<p>Two important headers in HTTP are:</p>
+
+<p>Keep-Alive – header to establish policies for long lived communications between hosts (Per connection timeout period and maximum request count)
+Upgrade – header to switch enhanced protocol connection mode such as HTTP 2.0 or web sockets</p>
+
+<p>HTTP is a uni-directional protocol where the client sends the request and the server sends the response. 
+Each request is associated with a corresponding response , after the response is sent and connection gets closed each HTTP or HTTPS request establishes a new connection to the server every time and post getting response connection gets terminated itself.</p>
+
+<p>HTTP is a stateless protocol that runs on TCP which is a connection-oriented protocol and delivery of data packet transfer is guaranteed using the three-way handshake methods and re-transmission of lost packets.</p>
+
+<h3 id="how-http-works">How HTTP works?</h3>
+
+<p>HTTP message information is encoded in ASCII and each HTTP request message comprising HTTP protocol version (HTTP/1.1, HTTP/2), HTTP methods (GET/POST etc.) , HTTP headers (content type, content length) , host details etc. and the body which contain the actual message sent to server. HTTP headers size varies from 200 bytes to 2 KB in size.</p>
+
+<h3 id="http-pros-and-cons">HTTP Pros and Cons</h3>
+<ul>
+  <li><strong>장점</strong>
+    <ul>
+      <li>Advanced addressing scheme by assigning IP Addresses with recognizable names for ease of identification on World Wide web</li>
+      <li>Capability to download extensions or plugins and display relevant data</li>
+      <li>Chance of interception during transmission is minimized as each file download happens from independent connection and gets closed</li>
+      <li>Less latency due to no handshaking following the request except during initial stage when connection is established</li>
+      <li>All HTTP page gets stored inside the Internet cache for quick content loading</li>
+    </ul>
+  </li>
+  <li><strong>단점</strong>
+    <ul>
+      <li>Data integrity is an issue as hacker manage to intercept the request, they can view all the content present on web page</li>
+      <li>Client don’t take any measures to close connection once all data is received hence during this time-period server may not be present</li>
+      <li>HTTP needs multiple connections causing administrative overhead</li>
+      <li>Not suitable for IoT devices as it uses number of system resources which leads to more consumption of power</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="applications-of-http">Applications of HTTP</h3>
+<ul>
+  <li>Fetching /transferring old data</li>
+  <li>Simple RESTful applications use HTTP</li>
+</ul>
+
+<p><img src="/images/socket_5.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://velog.io/@rhdmstj17/%EC%86%8C%EC%BC%93%EA%B3%BC-%EC%9B%B9%EC%86%8C%EC%BC%93-%ED%95%9C-%EB%B2%88%EC%97%90-%EC%A0%95%EB%A6%AC-1" target="_blank">[소켓과 웹소켓] 한 번에 정리 (1),소켓이란?, 소켓 API의 실행 흐름, 클라이언트 소켓과 서버 소켓</a></li>
+  <li><a href="https://www.baeldung.com/cs/port-vs-socket" target="_blank">baeldung, The Difference Between a Port and a Socket</a></li>
+  <li><a href="https://ipwithease.com/web-socket-vs-http/" target="_blank">Web Socket vs HTTP: What to choose for your next API Design</a></li>
+  <li><a href="https://www.geeksforgeeks.org/what-is-web-socket-and-how-it-is-different-from-the-http/" target="_blank">What is web socket and how it is different from the HTTP?</a></li>
+</ul>
+:ET
