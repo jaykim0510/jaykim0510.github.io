@@ -1,4 +1,4 @@
-I"<hr />
+I"�%<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#nat" id="markdown-toc-nat">NAT</a>    <ul>
@@ -11,6 +11,7 @@
       <li><a href="#nat의-종류" id="markdown-toc-nat의-종류">NAT의 종류</a>        <ul>
           <li><a href="#static-nat" id="markdown-toc-static-nat">Static NAT</a></li>
           <li><a href="#dynamic-nat" id="markdown-toc-dynamic-nat">Dynamic NAT</a></li>
+          <li><a href="#patport-address-translation" id="markdown-toc-patport-address-translation">PAT(Port Address Translation)</a></li>
         </ul>
       </li>
       <li><a href="#nat의-동작-원리" id="markdown-toc-nat의-동작-원리">NAT의 동작 원리</a></li>
@@ -66,15 +67,27 @@
 <h3 id="dynamic-nat">Dynamic NAT</h3>
 
 <ul>
-  <li>사설 IP주소와 공인 IP주소를 N:1로 매핑</li>
+  <li>사설 IP주소와 공인 IP주소를 N:M로 매핑 (N &gt; M)</li>
   <li>공인 IP주소로 데이터가 들어오면 NAT가 적절한 사설 IP주소로 변환해 준다</li>
 </ul>
 
-<p>Instead of choosing the same IP address every time, this NAT goes through a pool of public IP addresses. This results in the router or NAT device getting a different address each time the router translates the local address to a public address.</p>
+<h3 id="patport-address-translation">PAT(Port Address Translation)</h3>
+
+<ul>
+  <li><a href="https://www.geeksforgeeks.org/port-address-translation-pat-mapping-to-private-ips/" target="_blank">GeeksforGeeks, Port Address Translation (PAT) mapping to Private IPs</a></li>
+</ul>
 
 <h2 id="nat의-동작-원리">NAT의 동작 원리</h2>
 
 <p><img src="/images/nat_2.png" alt="" /></p>
+
+<p>한 가지 궁금한 것은 NAT가 무엇을 이용해 공인 IP주소를 N개의 사설 IP주소중 하나로 변환할까?</p>
+
+<p>As a NAT network address translation example, an inside host may want to communicate with a destination network address translation web server address in the outside world. For further communication, it will send a data packet to the network’s NAT gateway router.</p>
+
+<p>The NAT gateway router determines whether the packet meets the condition for translation by learning the source IP address of the packet and looking it up in the table. It can locate authenticated hosts for the internal network translation purposes on its access control list (ACL), and then complete the translation, producing an inside global IP address from the inside local IP address.</p>
+
+<p>Finally, the NAT gateway router will route the packet to the destination after saving the translation in the NAT table. The packet reverts to the global IP address of the router when the internet’s web server reverts to the request. Referring back to the NAT table, the router can determine which translated IP address corresponds to which global address, translate it to the inside local address, and deliver the data packet to the host at their IP address. The data packet is discarded if no match is found.</p>
 
 <h1 id="dhcp">DHCP</h1>
 
@@ -111,5 +124,6 @@
   <li><a href="https://www.comptia.org/content/guides/what-is-network-address-translation" target="_blank">CompTIA, What Is NAT?</a></li>
   <li><a href="https://www.geeksforgeeks.org/network-address-translation-nat/" target="_blank">GeeksforGeeks, Network Address Translation (NAT)</a></li>
   <li><a href="https://avinetworks.com/glossary/network-address-translation/" target="_blank">AVI Networks, Network Address Translation Definition</a></li>
+  <li><a href="https://www.geeksforgeeks.org/port-address-translation-pat-mapping-to-private-ips/" target="_blank">GeeksforGeeks, Port Address Translation (PAT) mapping to Private IPs</a></li>
 </ul>
 :ET
