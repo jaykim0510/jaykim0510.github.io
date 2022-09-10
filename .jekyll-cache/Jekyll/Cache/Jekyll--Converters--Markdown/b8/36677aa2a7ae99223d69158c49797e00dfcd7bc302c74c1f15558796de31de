@@ -1,0 +1,98 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#airflow란" id="markdown-toc-airflow란">Airflow란?</a></li>
+  <li><a href="#airflow-동작원리" id="markdown-toc-airflow-동작원리">Airflow 동작원리</a></li>
+  <li><a href="#dag-skeleton" id="markdown-toc-dag-skeleton">DAG Skeleton</a>    <ul>
+      <li><a href="#operators" id="markdown-toc-operators">Operators</a></li>
+      <li><a href="#sensors" id="markdown-toc-sensors">Sensors</a></li>
+    </ul>
+  </li>
+  <li><a href="#dashboard" id="markdown-toc-dashboard">Dashboard</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DAGs, Operators, Tasks, Sensors, Executor, Scheduler
+</code></pre></div></div>
+
+<h1 id="airflow란">Airflow란?</h1>
+
+<ul>
+  <li>2014년 에어비앤비(Airbnb)에서 시작되어, 현재 아파치(Apache) 재단 탑레벨 프로젝트</li>
+  <li>Airflow는 Python 코드로 워크플로우(workflow)를 작성하고, 스케줄링, 모니터링 하는 플랫폼</li>
+  <li>Airflow를 통해서 데이터엔지니어링의 ETL 작업을 자동화하고, DAG(Directed Acyclic Graph) 형태의 워크플로우 작성이 가능</li>
+  <li>AWS, GCP 모두 Airflow managed service를 제공할 정도로 널리 사용</li>
+</ul>
+
+<p><img src="/images/airflow_2.png" alt="" /></p>
+
+<h1 id="airflow-동작원리">Airflow 동작원리</h1>
+
+<p><img src="/images/airflow_1.png" alt="" /></p>
+
+<ul>
+  <li>유저는 Web Server를 통해 Airflow를 모니터링, 조작</li>
+  <li>유저가 정의한 DAG는 DAGs에 저장</li>
+  <li>Scheduler는 DAGs에 저장된 DAG를 주기적으로 실행</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Scheduler가 DAG를 실행하면 DagRun 오브젝트 생성됨
+2. DagRun 오브젝트는 안에 정의된 Operator를 Task로 인스턴스화
+3. Task들이 Scheduler에 의해 Worker에게 전달됨
+</code></pre></div></div>
+
+<p><img src="/images/airflow_3.png" alt="" /></p>
+
+<h1 id="dag-skeleton">DAG Skeleton</h1>
+
+<ul>
+  <li>DAG(Directed Acyclic Graph): 워크플로우를 파이썬 언어로 코드화한 것</li>
+  <li>Airflow의 핵심은 DAG를 잘 작성하는 것</li>
+  <li>DAG는 크게 DAG 선언, Operator, Sensor, Operator간 의존성 주입</li>
+</ul>
+
+<h2 id="operators">Operators</h2>
+
+<ul>
+  <li>DAG에 작업(Task)을 템플릿 형태로 미리 정의해둔 것 (Operator, Sensor를 클래스, Task를 객체로 생각할 수 있음)</li>
+  <li>에어플로우 설치시 함께 제공되는 built-in Operator와, 필요할 때 별도로 설치 가능한 Operator가 있음</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># built-in
+
+BashOperator: 쉘 커맨드 실행
+PythonOperator: 파이썬 함수 호출
+EmailOperator: 이메일 전송
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># providers
+
+SimpleHttpOperator: HTTP 메세지 전송
+MySqlOperator: SQL문 실행
+PostgresOperator
+JdbcOperator
+DockerOperator
+HiveOperator
+S3FileTransformOperator
+PrestoToMySqlOperator
+SlackAPIOperator
+</code></pre></div></div>
+
+<h2 id="sensors">Sensors</h2>
+
+<h1 id="dashboard">Dashboard</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://airflow.apache.org/docs/apache-airflow/stable/concepts/index.html" target="_blank">Airflow 공식문서</a></li>
+  <li><a href="https://www.bucketplace.com/post/2021-04-13-%EB%B2%84%ED%82%B7%ED%94%8C%EB%A0%88%EC%9D%B4%EC%8A%A4-airflow-%EB%8F%84%EC%9E%85%EA%B8%B0/" target="_blank">버킷플레이스 Airflow 도입기</a></li>
+  <li><a href="https://magpienote.tistory.com/192" target="_blank">까치의 일상 노트, [Airflow 기본 내용] Airflow란? 구성요소, 구동원리, 개념, 용어 정리</a></li>
+  <li><a href="https://velog.io/@makengi/AirFlow-AirFlow-%EC%9A%A9%EC%96%B4-%EC%A0%95%EB%A6%AC" target="_blank">[AirFlow] AirFlow 용어 정리</a></li>
+  <li><a href="" target="_blank"></a></li>
+  <li><a href="" target="_blank"></a></li>
+</ul>
+:ET

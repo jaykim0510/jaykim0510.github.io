@@ -1,0 +1,64 @@
+I"=<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#쿼리-분석" id="markdown-toc-쿼리-분석">쿼리 분석</a></li>
+  <li><a href="#시스템-분석" id="markdown-toc-시스템-분석">시스템 분석</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 점검 대상이 되는 것
+
+- 연결(Connection)
+- 쿼리
+- 인덱스
+- 스토리지 엔진
+- 메모리
+- MySQL 서버
+
+</code></pre></div></div>
+
+<h1 id="쿼리-분석">쿼리 분석</h1>
+
+<ul>
+  <li>내가 실행한 쿼리에 대한 분석</li>
+  <li>쿼리, 인덱스 튜닝에 대한 힌트를 제공</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span>
+<span class="k">SELECT</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="err">슬로우</span> <span class="err">로그</span> <span class="err">조회하기</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">mysql</span><span class="p">.</span><span class="n">slow_log</span><span class="p">;</span>
+<span class="o">#</span> <span class="err">또는</span>
+<span class="k">SELECT</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">user_host</span><span class="p">,</span> <span class="n">query_time</span><span class="p">,</span> <span class="n">lock_time</span><span class="p">,</span> <span class="n">rows_sent</span><span class="p">,</span> <span class="n">rows_examined</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="k">CONVERT</span><span class="p">(</span><span class="n">sql_text</span> <span class="k">USING</span> <span class="n">utf8</span> <span class="p">)</span> <span class="n">sql_text</span>
+<span class="k">FROM</span> <span class="n">mysql</span><span class="p">.</span><span class="n">slow_log</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h1 id="시스템-분석">시스템 분석</h1>
+
+<ul>
+  <li>시스템/서버 설정에 대한 분석</li>
+  <li>그라파나와 같은 모니터링 툴을 이용해 상황에 맞게 설정해야함</li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://m.blog.naver.com/islove8587/221976843118" target="_blank">islove8587, MySQL 대용량 테이블의 성능에 영향을 줄 수 있는 10가지 방법</a></li>
+  <li><a href="https://m.blog.naver.com/islove8587/221977641268" target="_blank">islove8587, MySQL 시스템 관련 튜닝</a></li>
+  <li><a href="http://cloudrain21.com/mysql-innodb-basic-performance-tunning" target="_blank">cloudrain21, MySQL InnoDB 성능 튜닝 기본</a></li>
+  <li><a href="https://myinfrabox.tistory.com/249" target="_blank">MyInfraBox, [MySQL] MySQL Tuning(튜닝) 그리고 Optimization(최적화)</a></li>
+  <li><a href="https://happist.com/577204/db-%ED%8A%9C%EB%8B%9D%EC%9C%BC%EB%A1%9C-mysql-%EC%B5%9C%EC%A0%81%ED%99%94" target="_blank">happist, MySql 최적화로 빨라질 사이트 DB 튜닝 방법</a></li>
+  <li><a href="https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;blogId=ksf1990&amp;logNo=221569426999" target="_blank">OGG, MySQL Tuning point</a></li>
+  <li><a href="https://rockplace.co.kr/edm/201412/download/Session%203.%20MySQL%20Performance%20and%20Tuning_full_notes.pdf" target="_blank">MySQL Performance Tuning pdf</a></li>
+</ul>
+:ET

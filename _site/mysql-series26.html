@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part26] 성능 점검/튜닝하기</title>
+  <title>MySQL Series [Part26] MySQL 성능 점검/튜닝하기</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/mysql-series26">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part26] 성능 점검/튜닝하기 – Code Museum">
+  <meta name="twitter:title" content="MySQL Series [Part26] MySQL 성능 점검/튜닝하기 – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/mysql_logo.webp">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part26] 성능 점검/튜닝하기 – Code Museum">
+  <meta property="og:title" content="MySQL Series [Part26] MySQL 성능 점검/튜닝하기 – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -379,7 +379,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part26] 성능 점검/튜닝하기">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part26] MySQL 성능 점검/튜닝하기">
         </div>
       </div>
       
@@ -400,7 +400,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part26] 성능 점검/튜닝하기</h1>
+          <h1 class="post__title">MySQL Series [Part26] MySQL 성능 점검/튜닝하기</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -454,10 +454,54 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#쿼리-분석" id="markdown-toc-쿼리-분석">쿼리 분석</a></li>
+  <li><a href="#시스템-분석" id="markdown-toc-시스템-분석">시스템 분석</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 점검 대상이 되는 것
+
+- 연결(Connection)
+- 쿼리
+- 인덱스
+- 스토리지 엔진
+- 메모리
+- MySQL 서버
+
+</code></pre></div></div>
+
+<h1 id="쿼리-분석">쿼리 분석</h1>
+
+<ul>
+  <li>내가 실행한 쿼리에 대한 분석</li>
+  <li>쿼리, 인덱스 튜닝에 대한 힌트를 제공</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span>
+<span class="k">SELECT</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="err">슬로우</span> <span class="err">로그</span> <span class="err">조회하기</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">mysql</span><span class="p">.</span><span class="n">slow_log</span><span class="p">;</span>
+<span class="o">#</span> <span class="err">또는</span>
+<span class="k">SELECT</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">user_host</span><span class="p">,</span> <span class="n">query_time</span><span class="p">,</span> <span class="n">lock_time</span><span class="p">,</span> <span class="n">rows_sent</span><span class="p">,</span> <span class="n">rows_examined</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="k">CONVERT</span><span class="p">(</span><span class="n">sql_text</span> <span class="k">USING</span> <span class="n">utf8</span> <span class="p">)</span> <span class="n">sql_text</span>
+<span class="k">FROM</span> <span class="n">mysql</span><span class="p">.</span><span class="n">slow_log</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h1 id="시스템-분석">시스템 분석</h1>
+
+<ul>
+  <li>시스템/서버 설정에 대한 분석</li>
+  <li>그라파나와 같은 모니터링 툴을 이용해 상황에 맞게 설정해야함</li>
+</ul>
 
 <h1 id="참고">참고</h1>
 
@@ -465,9 +509,10 @@ Table of Contents
   <li><a href="https://m.blog.naver.com/islove8587/221976843118" target="_blank">islove8587, MySQL 대용량 테이블의 성능에 영향을 줄 수 있는 10가지 방법</a></li>
   <li><a href="https://m.blog.naver.com/islove8587/221977641268" target="_blank">islove8587, MySQL 시스템 관련 튜닝</a></li>
   <li><a href="http://cloudrain21.com/mysql-innodb-basic-performance-tunning" target="_blank">cloudrain21, MySQL InnoDB 성능 튜닝 기본</a></li>
-  <li><a href="" target="_blank"></a></li>
-  <li><a href="" target="_blank"></a></li>
-  <li><a href="" target="_blank"></a></li>
+  <li><a href="https://myinfrabox.tistory.com/249" target="_blank">MyInfraBox, [MySQL] MySQL Tuning(튜닝) 그리고 Optimization(최적화)</a></li>
+  <li><a href="https://happist.com/577204/db-%ED%8A%9C%EB%8B%9D%EC%9C%BC%EB%A1%9C-mysql-%EC%B5%9C%EC%A0%81%ED%99%94" target="_blank">happist, MySql 최적화로 빨라질 사이트 DB 튜닝 방법</a></li>
+  <li><a href="https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;blogId=ksf1990&amp;logNo=221569426999" target="_blank">OGG, MySQL Tuning point</a></li>
+  <li><a href="https://rockplace.co.kr/edm/201412/download/Session%203.%20MySQL%20Performance%20and%20Tuning_full_notes.pdf" target="_blank">MySQL Performance Tuning pdf</a></li>
 </ul>
 
     </div>
@@ -704,7 +749,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part26]%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0&url=http://localhost:4000/mysql-series26"
+          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part26]%20MySQL%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0&url=http://localhost:4000/mysql-series26"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -714,12 +759,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series26&amp;media=http://localhost:4000/images/mysql_logo.webp&amp;description=MySQL%20Series%20[Part26]%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series26&amp;media=http://localhost:4000/images/mysql_logo.webp&amp;description=MySQL%20Series%20[Part26]%20MySQL%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series26&title=MySQL%20Series%20[Part26]%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series26&title=MySQL%20Series%20[Part26]%20MySQL%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
