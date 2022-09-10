@@ -3,8 +3,8 @@ layout: post
 title:  'Coding Test Series [Part21]: 파이썬 문법'
 description: 
 date:   2022-07-29 15:01:35 +0300
-image:  '/images/algorithm_logo.webp'
-logo_image:  '/images/algorithm_logo.webp'
+image:  '/images/coding_test_problem.jpg'
+logo_image:  '/images/coding_test_problem.jpg'
 categories: CS
 tags: Coding_Test
 ---
