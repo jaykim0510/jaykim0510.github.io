@@ -1,0 +1,89 @@
+I"	<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#ipc" id="markdown-toc-ipc">IPC</a>    <ul>
+      <li><a href="#use-cases" id="markdown-toc-use-cases">Use Cases</a></li>
+      <li><a href="#공유-메모리" id="markdown-toc-공유-메모리">공유 메모리</a></li>
+      <li><a href="#파일" id="markdown-toc-파일">파일</a></li>
+      <li><a href="#파이프" id="markdown-toc-파이프">파이프</a></li>
+      <li><a href="#소켓" id="markdown-toc-소켓">소켓</a></li>
+      <li><a href="#메세지-큐" id="markdown-toc-메세지-큐">메세지 큐</a></li>
+    </ul>
+  </li>
+  <li><a href="#rpc" id="markdown-toc-rpc">RPC</a>    <ul>
+      <li><a href="#grpc" id="markdown-toc-grpc">gRPC</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+<hr />
+
+<h1 id="ipc">IPC</h1>
+
+<ul>
+  <li>Inter-Process Communication의 줄임말 -&gt; 프로세스간 통신을 의미</li>
+  <li>프로세스끼리 서로 데이터를 주고 받는 방법들을 일컫어 IPC라고 함</li>
+  <li>스레드끼리는 메모리를 공유한다 -&gt; 공유하는 공간이 있기 때문에 데이터를 주고 받는데 크게 어려움이 없다</li>
+  <li>프로세스는 별도의 메모리에 생성된다 -&gt; 공유하는 공간이 없다 -&gt; 이를 위해 운영체제 커널에서 IPC를 위한 여러 도구를 제공</li>
+  <li>공유 메모리, 파일, 파이프, 소켓, 메세지 큐, RPC</li>
+</ul>
+
+<h2 id="use-cases">Use Cases</h2>
+<p>There are several good reasons and common use cases for IPC:</p>
+
+<ul>
+  <li><strong>Sharing information/data</strong> – Share data between processes to synchronize different applications</li>
+  <li><strong>Computational Speedups</strong> – Sending data off site for processing</li>
+  <li><strong>Modularity</strong> – Google Chrome separates each tab into a separate process to help avoid crashes, as well as security.</li>
+  <li><strong>Development</strong> – Often it is easier to have two teams build separate programs. By building them with IPC in mind you can essentially “plugin” to any programs which need similar functionality without any recompiling</li>
+  <li><strong>Security</strong> – It is often useful to separate processes to ensure system security. Each process has it’s own memory and if they communicate as opposed to sharing memory the process will be modularized and possibly more secure.</li>
+</ul>
+
+<h2 id="공유-메모리">공유 메모리</h2>
+
+<blockquote>
+  <p>Shared memory IPCs refer to sharing a physical memory location where multiple processes read and write to. The processes do this by mapping local memory to the shared physical memory location (via pointers or some other method). The physical memory is then used throughout the processes life spawn, meaning some processes can finish and close, but the physical memory remains until it is released (and all processes detach).</p>
+</blockquote>
+
+<blockquote>
+  <p>It is possible (and advised) to address the issue of mutual exclusion by building a mutex that spans processes. Programers must recognize this and program accordingly.</p>
+</blockquote>
+
+<ul>
+  <li>프로세스간 read, write를 모두 필요로 할 때 사용</li>
+  <li>중개자 없이 메모리에 바로 접근 가능 -&gt; 모든 IPC 방법 중에 가장 빠름</li>
+</ul>
+
+<p><img src="/images/ipc_1.png" alt="" /></p>
+
+<h2 id="파일">파일</h2>
+
+<h2 id="파이프">파이프</h2>
+
+<blockquote>
+  <p>Pipes are relatively straight forward. Instead of using shared/mapped memory to share data among processes, instead we “pipe” data across processes with the help of the operating system. Although this does not mean that less memory is used necessarily (by the system), but it does remove the programmers requirement to manage it. The major advantage they have over the shared or mapped memory IPCs is that the programmer does not have to worry about does not have to worry about mutual exclusion for read/writing, the operating system handles it all.</p>
+</blockquote>
+
+<p><img src="/images/ipc_2.png" alt="" /></p>
+
+<h2 id="소켓">소켓</h2>
+
+<h2 id="메세지-큐">메세지 큐</h2>
+
+<h1 id="rpc">RPC</h1>
+
+<h2 id="grpc">gRPC</h2>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://austingwalters.com/introduction-to-ipc-interprocess-communication/">Austin G. Walters, Intro to IPC</a></li>
+  <li><a href="https://dar0m.tistory.com/233" target="_blank">DR-kim, 프로세스간 통신 방법</a></li>
+  <li><a href="https://heeonii.tistory.com/13" target="_blank">우당탕탕 히온이네, [운영체제] IPC 프로세스간 통신</a></li>
+  <li><a href="https://blog.naver.com/PostView.nhn?isHttpsRedirect=true&amp;blogId=bycho211&amp;logNo=220985701140" target="_blank">bycho211, 프로세스간 통신(IPC)</a></li>
+  <li><a href="https://frozenpond.tistory.com/126" target="_blank">얼음연못, [개발상식] 프로세스간 통신(IPC)</a></li>
+  <li><a href="https://coder-in-war.tistory.com/entry/OS-01-%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4%EA%B0%84-%ED%86%B5%EC%8B%A0-IPC-RPC" target="_blank">프로세스간 통신 IPC, RPC</a></li>
+  <li><a href="https://nesoy.github.io/articles/2019-07/RPC" target="_blank">nesoy, RPC란?</a></li>
+  <li><a href="https://velog.io/@jakeseo_me/RPC%EB%9E%80" target="_blank">jakeseo, RPC란?</a></li>
+</ul>
+:ET

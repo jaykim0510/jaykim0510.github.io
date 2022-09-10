@@ -152,5 +152,5 @@ Spark는 여러 모듈로 구성되어 있습니다. 크게 두 부분으로 나
 # 참고
 - [빅데이터 분석을 위한 스파크2 프로그래밍 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158391034&orderClick=LEa&Kc=){:target="_blank"}
 - [stackoverflow: Understand Spark: Cluster Manager, Master and Driver nodes (훌륭한 질문과 훌륭한 대답)](https://stackoverflow.com/questions/34722415/understand-spark-cluster-manager-master-and-driver-nodes){:target="_blank"}
-- [
-How Applications are Executed on a Spark Cluster](https://www.informit.com/articles/article.aspx?p=2928186){:target="_blank"}
+- [How Applications are Executed on a Spark Cluster](https://www.informit.com/articles/article.aspx?p=2928186){:target="_blank"}
+- [타다 테크 블로그, Hadoop대신 Spark를 선택한 이유](https://blog-tech.tadatada.com/2015-05-18-data-analysis-with-spark){:target="_blank"}
