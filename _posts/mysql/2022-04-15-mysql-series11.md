@@ -144,3 +144,5 @@ WHERE first_name='ABC';
 # 참고
 
 - [Real MySQL 8.0 (1권) 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158392703&orderClick=LAG&Kc=){:target="_blank"}
+- [nomadlee, MySQL Explain 실행계획 사용법 및 분석](https://nomadlee.com/mysql-explain-sql/){:target="_blank"}
+- [EXPLAIN 관련 블로그](https://mysqldba.tistory.com/162?category=537180){:target="_blank"}

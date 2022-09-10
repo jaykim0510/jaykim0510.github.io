@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part15] MySQL Optimizing SELECT Statements'
+title:  'MySQL Series [Part15] MySQL 쿼리 튜닝/최적화하기'
 description: 
 date:   2022-07-29 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
@@ -16,6 +16,14 @@ tags: MySQL
 {:toc}
 
 ---
+
+# Query Optimization
+- MySQL Query Processing
+- Understanding the Query Plan
+- Using EXPLAIN
+- Improving Query Performance
+- Indexing
+
 # Optimization Overview
 
 Database performance depends on several factors at the database level, such as tables, queries, and configuration settings. These software constructs result in CPU and I/O operations at the hardware level, which you must minimize and make as efficient as possible. 
@@ -33,6 +41,8 @@ Database performance depends on several factors at the database level, such as t
 - Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code.
 
 - Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.
+
+# SELECT문 최적화
 
 ## SELECT
 
@@ -171,6 +181,8 @@ MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN 
 
 - Filesort를 사용한 정렬
   - 인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함
+
+# INSERT, UPDATE, DELETE문
 
 # 참고
 

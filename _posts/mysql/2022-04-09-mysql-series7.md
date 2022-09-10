@@ -245,4 +245,4 @@ InnoDB Adaptive Hash Index는 B-Tree의 한계를 보완할 수 있는 굉장히
 - [MySQL 공식문서: The InnoDB Storage Engine](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html){:target="_blank"}
 - [MyInfraBox: InnoDB Architecture](https://myinfrabox.tistory.com/42){:target="_blank"}
 - [gywndi's database, InnoDB의 Adaptive Hash Index로 쿼리 성능에 날개를 달아보자!!](https://gywn.net/2015/01/innodb-adaptive-hash-index/){:target="_blank"}
-- [](){:target="_blank"}
+- [nomadlee, 스토리지 엔진 비교](https://nomadlee.com/mysql-%ec%8a%a4%ed%86%a0%eb%a6%ac%ec%a7%80-%ec%97%94%ec%a7%84-%ec%a2%85%eb%a5%98-%eb%b0%8f-%ed%8a%b9%ec%a7%95/){:target="_blank"}
