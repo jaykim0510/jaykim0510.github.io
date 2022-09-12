@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Coding Test Series [Part21]: 파이썬 문법'
+title:  'Coding Test Problem Series [Part11]: 파이썬 문법'
 description: 
 date:   2022-07-29 15:01:35 +0300
 image:  '/images/coding_test_problem.jpg'

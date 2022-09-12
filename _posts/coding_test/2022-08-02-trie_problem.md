@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Coding Test Series [Part22]: 트라이(Trie) - 문제'
+title:  'Coding Test Problem Series [Part13]: 트라이(Trie) - 문제'
 description: 
 date:   2022-08-01 15:01:35 +0300
 image:  '/images/coding_test_problem.jpg'

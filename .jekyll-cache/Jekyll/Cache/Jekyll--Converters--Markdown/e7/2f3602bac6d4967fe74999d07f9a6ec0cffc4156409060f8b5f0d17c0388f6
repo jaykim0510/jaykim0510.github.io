@@ -1,0 +1,190 @@
+I"�Y<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#정렬-알고리즘sorting-algorithm" id="markdown-toc-정렬-알고리즘sorting-algorithm">정렬 알고리즘(Sorting Algorithm)</a>    <ul>
+      <li><a href="#버블-정렬bubble-sort" id="markdown-toc-버블-정렬bubble-sort">버블 정렬(Bubble Sort)</a></li>
+      <li><a href="#선택-정렬selection-sort" id="markdown-toc-선택-정렬selection-sort">선택 정렬(Selection Sort)</a></li>
+      <li><a href="#삽입-정렬insertion-sort" id="markdown-toc-삽입-정렬insertion-sort">삽입 정렬(Insertion Sort)</a></li>
+      <li><a href="#병합-정렬merge-sort" id="markdown-toc-병합-정렬merge-sort">병합 정렬(Merge Sort)</a></li>
+      <li><a href="#퀵-정렬quick-sort" id="markdown-toc-퀵-정렬quick-sort">퀵 정렬(Quick Sort)</a></li>
+      <li><a href="#힙-정렬heap-sort" id="markdown-toc-힙-정렬heap-sort">힙 정렬(Heap Sort)</a></li>
+      <li><a href="#팀-정렬tim-sort" id="markdown-toc-팀-정렬tim-sort">팀 정렬(Tim Sort)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<p><a href="https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html" target="_blank"><strong>정렬 알고리즘 애니메이션 참고</strong></a></p>
+
+<h1 id="정렬-알고리즘sorting-algorithm">정렬 알고리즘(Sorting Algorithm)</h1>
+
+<h2 id="버블-정렬bubble-sort">버블 정렬(Bubble Sort)</h2>
+
+<ul>
+  <li>첫 번쨰 for문에서 위치(i)를 정한다</li>
+  <li>두 번째 for문에서 i에 있는 값과 비교해 바꾼다</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">bubble_sort</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s">"asc"</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="s">"asc"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">order</span> <span class="o">==</span> <span class="s">"desc"</span><span class="p">:</span>
+                 <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>               
+    <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">14</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">bubble_sort</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="o">----------------------------------------------------</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">bubble_sort</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">"desc"</span><span class="p">))</span>
+<span class="o">----------------------------------------------------</span>
+<span class="p">[</span><span class="mi">32</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="선택-정렬selection-sort">선택 정렬(Selection Sort)</h2>
+
+<ul>
+  <li>버블 정렬과 거의 유사하다. 차이점은 바로 바꾸지 않고 변수에 저장해둔다</li>
+  <li>첫 번째 for문에서 위치(i)를 정한다</li>
+  <li>두 번째 for문에서 해당 위치에 올 값을 찾는다</li>
+  <li>두 번째 for문이 끝나면 찾아둔 값과 i위치의 값을 바꾼다</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">selection_sort</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+        <span class="n">min_idx</span><span class="p">,</span> <span class="n">min_num</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s">'inf'</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">min_num</span> <span class="o">&gt;</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                <span class="n">min_idx</span><span class="p">,</span> <span class="n">min_num</span> <span class="o">=</span> <span class="n">j</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">min_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">min_idx</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">x</span>
+</code></pre></div></div>
+
+<h2 id="삽입-정렬insertion-sort">삽입 정렬(Insertion Sort)</h2>
+
+<ul>
+  <li>첫 번째 for문의 값을 삽입할 위치를 찾는다</li>
+  <li>두 번째 for문을 첫 번째 for문의 왼쪽으로 이동하면서, 삽입될 수 있는 가장 작은 인덱스를 찾는다</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">insertion_sort</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+        <span class="n">min_idx</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                <span class="n">min_idx</span> <span class="o">=</span> <span class="n">j</span>
+        <span class="k">if</span> <span class="n">min_idx</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">min_idx</span><span class="p">,</span> <span class="n">x</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">x</span>
+</code></pre></div></div>
+
+<h2 id="병합-정렬merge-sort">병합 정렬(Merge Sort)</h2>
+
+<ul>
+  <li>분할 정복을 활용한 정렬(sorting) 알고리즘</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">merge_sort</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">pivot</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span><span class="p">[:</span><span class="n">pivot</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">pivot</span><span class="p">:]</span>
+
+
+    <span class="k">def</span> <span class="nf">conquer</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+        <span class="n">pivot</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">pivot</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">pivot</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">combine</span><span class="p">(</span><span class="n">conquer</span><span class="p">(</span><span class="n">left</span><span class="p">),</span> <span class="n">conquer</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">left_list</span><span class="p">,</span> <span class="n">right_list</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">merged_list</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">left_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">right_list</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                <span class="n">merged_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">right_list</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span> <span class="p">:</span>
+                <span class="n">merged_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">left_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_list</span><span class="p">):</span>
+            <span class="n">merged_list</span> <span class="o">+=</span> <span class="n">right_list</span><span class="p">[</span><span class="n">j</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">merged_list</span> <span class="o">+=</span> <span class="n">left_list</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">merged_list</span>
+
+
+    <span class="k">return</span> <span class="n">conquer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>보면 분할 정복 알고리즘은</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">divide</code>는 단순히 나누는 역할을 담당하고</li>
+  <li><code class="language-plaintext highlighter-rouge">conquer</code>는 <code class="language-plaintext highlighter-rouge">divide</code>, <code class="language-plaintext highlighter-rouge">conquer</code>, <code class="language-plaintext highlighter-rouge">combine</code>을 재귀적으로 호출 하는 역할,</li>
+  <li><code class="language-plaintext highlighter-rouge">combine</code>은 분할된 두 리스트를 하나로 합치는 역할을 한다</li>
+</ul>
+
+<p><img src="/images/div_con_2.png" alt="" /></p>
+
+<h2 id="퀵-정렬quick-sort">퀵 정렬(Quick Sort)</h2>
+<ul>
+  <li>퀵 정렬은 divide 함수가 복잡한 편이다</li>
+  <li><code class="language-plaintext highlighter-rouge">divide</code>: 피봇(pivot)을 기준으로 피봇보다 작은 값은 왼쪽, 큰 값은 오른쪽에 둔다 -&gt; 이 과정을 파티션(partition)이라고도 한다</li>
+  <li><code class="language-plaintext highlighter-rouge">conquer</code>: 재귀적으로 <code class="language-plaintext highlighter-rouge">divide</code>, <code class="language-plaintext highlighter-rouge">conquer</code>를 호출하며 왼쪽과 오른쪽을 각각 정렬한다</li>
+</ul>
+
+<p><strong>파티션 하는 방법</strong></p>
+
+<ul>
+  <li>리스트에서 임의의 값 하나를 피봇으로 사용한다 (여기서는 가장 끝 값을 피봇으로 사용하겠다)</li>
+  <li>변수 i로 비교하며, 비교값이 피봇값보다 더 크다면 i를 +1</li>
+  <li>비교값이 피봇값보다 더 작다면 Big 그룹 왼쪽에 있어야 하므로, 현재 Big 그룹의 가장 첫 부분을 가리키는 b와 값을 바꾼 후 i와 b를 각각 +1</li>
+</ul>
+
+<p><img src="/images/div_con_3.png" alt="" /></p>
+
+<p><img src="/images/div_con_4.png" alt="" /></p>
+
+<p><img src="/images/div_con_6.png" alt="" /></p>
+
+<p><img src="/images/div_con_7.png" alt="" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">quick_sort</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">b</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>              
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">a</span><span class="p">[:</span><span class="n">b</span><span class="p">],</span> <span class="n">a</span><span class="p">[</span><span class="n">b</span><span class="p">:]</span>
+
+    <span class="k">def</span> <span class="nf">conquer</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">a</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">divide</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">combine</span><span class="p">(</span><span class="n">conquer</span><span class="p">(</span><span class="n">left</span><span class="p">),</span> <span class="n">conquer</span><span class="p">(</span><span class="n">right</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">left_list</span><span class="p">,</span> <span class="n">right_list</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">left_list</span> <span class="o">+</span> <span class="n">right_list</span>
+    
+    <span class="k">return</span> <span class="n">conquer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="힙-정렬heap-sort">힙 정렬(Heap Sort)</h2>
+<h2 id="팀-정렬tim-sort">팀 정렬(Tim Sort)</h2>
+:ET

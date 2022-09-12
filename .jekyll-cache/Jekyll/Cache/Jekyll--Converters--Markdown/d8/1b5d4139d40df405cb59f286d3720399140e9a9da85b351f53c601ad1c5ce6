@@ -1,0 +1,111 @@
+I"GJ<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#최장-공통-부분-문자열lcs" id="markdown-toc-최장-공통-부분-문자열lcs">최장 공통 부분 문자열(LCS)</a></li>
+  <li><a href="#최장-공통-부분-수열lcs" id="markdown-toc-최장-공통-부분-수열lcs">최장 공통 부분 수열(LCS)</a></li>
+</ul>
+
+<hr />
+
+<h1 id="최장-공통-부분-문자열lcs">최장 공통 부분 문자열(LCS)</h1>
+
+<ul>
+  <li>Longest Common Substring</li>
+  <li>문자열 -&gt; 연속해서 같아야함 -&gt; <code class="language-plaintext highlighter-rouge">s1</code>의 <code class="language-plaintext highlighter-rouge">i</code>번 째 문자와 <code class="language-plaintext highlighter-rouge">s2</code>의 <code class="language-plaintext highlighter-rouge">j</code>번 째 문자가 다르면 -&gt; <code class="language-plaintext highlighter-rouge">mat[i][j] = 0</code></li>
+  <li>두 문자열이 같다면 -&gt; 바로 이 전까지의 길이 + 1 -&gt; <code class="language-plaintext highlighter-rouge">mat[i][j] = mat[i - 1][j - 1] + 1</code></li>
+  <li>최장 문자열의 길이(<code class="language-plaintext highlighter-rouge">max_len</code>)와 마지막 위치(<code class="language-plaintext highlighter-rouge">max_pos</code>)를 기록해뒀다가 부분 문자열 추출</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">s1</span> <span class="o">=</span> <span class="s">"ABCDEFG"</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="s">"AAEF"</span>
+
+<span class="n">mat</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">))]</span>
+<span class="n">max_len</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">' '</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">s2</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">s2</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span> 
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">max_len</span> <span class="o">&lt;</span> <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]:</span>
+                <span class="n">max_len</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">max_pos</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
+
+<span class="n">answer</span> <span class="o">=</span> <span class="n">s1</span><span class="p">[</span><span class="n">max_pos</span> <span class="o">-</span> <span class="n">max_len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="n">max_pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"최장 공통 부분 문자열: </span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">-------------------------------------------------------------</span>
+  <span class="p">[</span><span class="s">'A'</span><span class="p">,</span> <span class="s">'A'</span><span class="p">,</span> <span class="s">'E'</span><span class="p">,</span> <span class="s">'F'</span><span class="p">]</span>
+<span class="n">A</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">]</span>
+<span class="n">B</span> <span class="p">[</span><span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">]</span>
+<span class="n">C</span> <span class="p">[</span><span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">]</span>
+<span class="n">D</span> <span class="p">[</span><span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">]</span>
+<span class="n">E</span> <span class="p">[</span><span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">]</span>
+<span class="n">F</span> <span class="p">[</span><span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">]</span>
+<span class="n">G</span> <span class="p">[</span><span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">,</span> <span class="s">'0'</span><span class="p">]</span>
+<span class="n">최장</span> <span class="n">공통</span> <span class="n">부분</span> <span class="n">문자열</span><span class="p">:</span> <span class="n">EF</span>
+</code></pre></div></div>
+
+<h1 id="최장-공통-부분-수열lcs">최장 공통 부분 수열(LCS)</h1>
+
+<ul>
+  <li>Longest Common Subsequence</li>
+  <li>수열 -&gt; 연속 아니어도 됨 -&gt; <code class="language-plaintext highlighter-rouge">s1</code>의 <code class="language-plaintext highlighter-rouge">i</code>번 째 문자와 <code class="language-plaintext highlighter-rouge">s2</code>의 <code class="language-plaintext highlighter-rouge">j</code>번 째 문자가 다르면 0이 아니고,
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">s1</code>이 한 칸 이전인 상황 또는 <code class="language-plaintext highlighter-rouge">s2</code>가 한 칸 이전인 상황중 가장 긴 길이 -&gt; <code class="language-plaintext highlighter-rouge">mat[i][j] = max(mat[i][j - 1], mat[i - 1][j])</code></li>
+    </ul>
+  </li>
+  <li>두 문자열이 같다면 -&gt; 바로 이 전까지의 길이 + 1 -&gt; <code class="language-plaintext highlighter-rouge">mat[i][j] = mat[i - 1][j - 1] + 1</code></li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">s1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s">"ACBDDED"</span><span class="p">)</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s">"ABDED"</span><span class="p">)</span>
+
+<span class="n">mat</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">))]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">' '</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">s2</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">s2</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mat</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">mat</span><span class="p">[</span><span class="n">i</span><span class="p">])))</span>
+
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="s">""</span>
+<span class="k">while</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">mat</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">]</span> <span class="o">==</span> <span class="n">mat</span><span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">y</span><span class="p">]:</span>
+        <span class="n">x</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">y</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">mat</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">]</span> <span class="o">==</span> <span class="n">mat</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
+        <span class="n">y</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">answer</span> <span class="o">+=</span> <span class="n">s1</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="n">y</span> <span class="o">-=</span> <span class="mi">1</span>
+
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"최장 부분 수열: </span><span class="si">{</span><span class="n">answer</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">------------------------------------------------------------</span>
+  <span class="p">[</span><span class="s">'A'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="s">'D'</span><span class="p">,</span> <span class="s">'E'</span><span class="p">,</span> <span class="s">'D'</span><span class="p">]</span>
+<span class="n">A</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">]</span>
+<span class="n">C</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">,</span> <span class="s">'1'</span><span class="p">]</span>
+<span class="n">B</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">]</span>
+<span class="n">D</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">]</span>
+<span class="n">D</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'4'</span><span class="p">]</span>
+<span class="n">E</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'4'</span><span class="p">,</span> <span class="s">'4'</span><span class="p">]</span>
+<span class="n">D</span> <span class="p">[</span><span class="s">'1'</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'3'</span><span class="p">,</span> <span class="s">'4'</span><span class="p">,</span> <span class="s">'5'</span><span class="p">]</span>
+<span class="n">최장</span> <span class="n">부분</span> <span class="n">수열</span><span class="p">:</span> <span class="n">ABDED</span>
+</code></pre></div></div>
+:ET
