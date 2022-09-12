@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Python Basic Series [Part6]: 파이썬의 네임스페이스와 스코프'
+title:  'Python Basic Series [Part7]: 파이썬의 네임스페이스와 스코프'
 description:
-date:   2021-03-21 15:01:35 +0300
+date:   2021-03-22 15:01:35 +0300
 image:  '/images/python_logo.jpg'
 logo_image: '/images/python_logo.jpg'
 categories: programming_language
