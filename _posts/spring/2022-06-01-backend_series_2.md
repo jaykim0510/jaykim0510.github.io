@@ -70,7 +70,7 @@ Design patterns have two major benefits. First, they provide you with a way to s
 
 # 참고
 
-- [GeeksforGeeks, Design Patterns | Set 1 (Introduction)](https://www.geeksforgeeks.org/design-patterns-set-1-introduction/){:target="_blank"}
+- [GeeksforGeeks, Design Patterns (Introduction)](https://www.geeksforgeeks.org/design-patterns-set-1-introduction/){:target="_blank"}
 - [한빛 출판 네트워크, [Design pattern] 많이 쓰는 14가지 핵심 GoF 디자인 패턴의 종류](https://www.hanbit.co.kr/channel/category/category_view.html?cms_code=CMS8616098823){:target="_blank"}
 - [준비된 개발자, [생성 패턴] 싱글톤(Singleton) 패턴을 구현하는 6가지 방법](https://readystory.tistory.com/116?category=822867){:target="_blank"}
 - [얄팍한 코딩사전 유튜브, 객체지향 디자인패턴 1](https://www.youtube.com/watch?v=lJES5TQTTWE){:target="_blank"}
