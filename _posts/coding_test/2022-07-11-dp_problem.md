@@ -41,13 +41,13 @@ tags: Coding_Test
 - Longest Palindromic Subsequence 💟 ❎
 - Minimum ASCII Delete Sum for Two Strings
 - Minimum Path Sum 💟 ✅ 
-- Flip String to Monotone Increasing
-- Maximum Sum of Two Non-Overlapping Subarrays
+- Flip String to Monotone Increasing 💟 ❎ ✅ 
+- Maximum Sum of Two Non-Overlapping Subarrays 💟 ❎(너무 어렵다..)
 - Longest String Chain
 - Champagne Tower
 - Longest Increasing Subsequence
 - House Robber 💟 ✅ 
-- Maximum Subarray 💟
+- Maximum Subarray 💟 ❎
 - Word Break
 - Maximal Square
 - Maximum Length of Subarray With Positive Product
