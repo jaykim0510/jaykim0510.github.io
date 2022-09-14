@@ -137,41 +137,150 @@ tags: Spring
 - 기능 변경으로 인한 코드 변경은 `AppConfig`에서만 일어난다
 - `AppConfig`는 의존관계 주입뿐만 아니라, **제어의 흐름**까지 담당 -> 구현 객체는 자신의 로직을 실행하는 역할만 담당
 - 이러한 `AppConfig` 클래스를 IoC 컨테이너 또는 **DI 컨테이너**라고 함
-- 스프링에서는 이러한 `AppConfig`를 담당하는 클래스에 `@Configuration`을 붙여줌
-- 그리고 `AppConfig`에서 각 구현체를 리턴하는 메서드에는 `@Bean`을 붙여줌 -> 스프링 컨테이너에 스프링 빈으로 등록됨 -> 스프링 컨테이너의 관리 대상이됨
+- 스프링에서는 이러한 `AppConfig`를 담당하는 클래스에 `@Configuration`을 붙여줌 (`@Configuration`이 빈의 싱글톤을 보장)
+- 그리고 `AppConfig`에서 각 구현체를 리턴하는 메서드에는 `@Bean`을 붙여줌 -> 스프링 컨테이너에 스프링 빈으로 등록됨 -> 스프링 컨테이너의 관리 대상이 됨
+- (`@Bean`이 붙은 메서드마다 이미 스프링 빈이 존재하면 존재하는 빈을 반환하고, 없으면 생성해서 스프링 컨테이너에 등록하고 반환)
 
+```java
+@Configuration
+public class AppConfig {
+  
+  @Bean
+  public MemberService memberService() {
+    return new MemberServiceImpl(memberRepository());
+  }
+
+  @Bean
+  public MemberRepository memberRepository() {
+    return new MemoryRepository();
+  }
+}
+```
+
+```java
+public static void main(String[] args) {
+  AppConfig appConfig = new AppConfig();
+  MemberService memberService = appConfig.memberService();
+}
+```
 
 ## ApplicationContext
 - **ApplicationContext**를 스프링 컨테이너라 함
-- 스프링 컨테이너는 AppConfig 내의 구현 객체를 스프링 컨테이너에 빈으로 알아서 등록하고 알아서 의존관계를 주입해줌
+- ApplicationContext는 인터페이스이다
+- 스프링 컨테이너는 DI 컨테이너를 더욱 사용하기 편하게 만든 것
+- 스프링 컨테이너는 `AppConfig` 내의 구현 객체를 스프링 컨테이너에 빈으로 알아서 등록하고 알아서 의존관계를 주입해줌
 - 빈(Bean)은 의존관계 주입을 위해 스프링 컨테이너에서 기다리는 구현 객체라고 생각하면 됨
+
+```java
+// AnnotationConfigApplicationContext는 ApplicationContext을 구현한 것중 하나
+// ac가 우리의 빈을 관리해주는 스프링 컨테이너
+ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+
+MemberService memberService = applicationContext.getBean("memberService", MemberService.class);
+
+```
 
 # 싱글톤 컨테이너
 
 - 스프링은 태생이 기업용 온라인 서비스 기술을 지원하기 위해 탄생
 - 웹 애플리케이션은 보통 여러 고객이 동시에 요청
-- `AppConfig` 클래스가 요청이 들어올 때마다 새로운 객체를 생성함 -> 메모리 낭비가 커짐 -> 객체를 1개만 생성하고 공유하도록 설계
+- `AppConfig` 클래스가 요청이 들어올 때마다 새로운 객체를 생성함 -> 메모리 낭비가 커짐 -> **객체를 1개만 생성하고 공유하도록 설계**
 - `private static final SingletonService instance = new SingletonService();`
 - 스프링 컨테이너는 싱글톤 패턴의 문제점(DIP, OCP 위반 가능성. 유연성 떨어짐)을 해결하면서, 객체 인스턴스를 싱글톤으로 관리
-- 스프링 빈이 바로 싱글톤으로 관리되는 빈
-- 객체 인스턴스를 공유하기 때문에 싱글톤 객체(스프링 빈)를 무상태로 설계해야함 -> 특정 클라이언트에 의존적인 필드가 있으면 안됨, 가급적 읽기만 가능해야함 
+- 스프링 **빈(Bean)이 바로 싱글톤으로 관리되는 객체**
+- 객체 인스턴스를 공유하기 때문에 싱글톤 객체(스프링 빈)를 **무상태로 설계**해야함 -> 특정 클라이언트에 의존적인 필드가 있으면 안됨, 가급적 읽기만 가능해야함 
 
 
 # 컴포넌트 스캔
 
 - 스프링에서 설정 정보가 없어도 자동으로 스프링 빈을 등록하는 도와주는 기능
+- 원래는 `AppConfig` 내에 구현체를 리턴하는 메서드를 정의하고 위에 @Bean을 붙이는 작업을 직접해야 했음
   ```java
   @Configuration
-  @ComponentScanpublic class AppConfig {
-      ...
+  public class AppConfig {
+    
+    @Bean
+    public MemberService memberService() {
+      return new MemberServiceImpl(memberRepository());
+    }
+
+    @Bean
+    public MemberRepository memberRepository() {
+      return new MemoryRepository();
+    }
+  }
+  ```
+- 이제는 이렇게 `AppConfig`에 `@ComponentScan`을 붙이고, 각 구현체에 `@Component`만 붙여주면 됨 (리턴하는 메서드를 정의, `@Bean`의 수고가 사라짐) 
+  ```java
+  @Configuration
+  @ComponentScan
+  public class AppConfig {
+      
   }
   ```
 - `@Component`이 붙은 클래스를 스캔해서 스프링 빈으로 등록해줌
+  ```java
+  @Component
+  public class MemoryMemberRepository implements MemberRepository {}
+  ```
+- 근데 원래 `AppConfig`내에서 의존 관계를 주입했었는데, 의존관계는 이제 어떻게 해결하나? -> `@Autowired`
+  ```java
+  @Configuration
+  public class AppConfig {
+    
+    @Bean
+    public MemberService memberService() {
+      return new MemberServiceImpl(memberRepository()); // memberService와 memberRepository간의 의존 관계가 이렇게 정의되어 있었음
+    }
+  }
+  ```
 
 # 의존관계 자동 주입
 
-- 의존관계도 자동으로 주입
-- `@Autowired`
+- `@Autowired`가 의존관계를 자동으로 주입
+
+```java
+@Component
+public class MemberServiceImpl implements MerberService {
+  private final MemberRepository memberRepository;
+
+  @Autowired
+  public MemberServiceImpl(MemberRepository memberRepository) {
+    this.memberRepository = memberRepository;
+  }
+}
+```
+
+# 빈 생명주기 콜백
+
+- DB 커넥션 풀, 네트워크 소켓처럼 애플리케이션 시작 시점에 필요한 연결을 미리 해두고, 애플리케이션 종료 시점에 연결을 모두 종료하는 작업을 진행하려면 객체의 초기화와 종료 작업이 필요하다
+- 스프링 빈은 객체를 생성하고, 의존관계 주입이 다 끝난 다음에야 필요한 데이터를 사용할 수 있는 준비가 완료되고 초기화 작업을 할 수 있다
+  ```
+  객체 생성 -> 의존관계 주입 -> 초기화
+  ```
+- 의존관계 주입이 완료되는 시점에 스프링이 콜백 함수를 통해 초기화 시점을 알려준다. 또한 스프링 컨테이너가 종료되기 직전에 소멸 콜백 함수로 종료 시점을 알려준다
+
+```
+스프링 컨테이너 생성 -> 빈 생성 -> 의존관계 주입 -> 초기화 콜백 -> 사용 -> 소멸전 콜백 -> 스프링 종료
+```
+
+- 스프링은 크게 3가지 방법으로 빈 생명주기 콜백을 지원 -> 하지만 가장 많이 사용하는 방식은 `@PostConstruct`, `@PreDestory` 애노테이션
+- 의존관계가 주입되고 실행되길 원하는 초기화 함수에 `@PostConstruct` 애노테이션을 붙여준다
+  ```java
+  @PostConstruct
+  public void init() {
+    System.out.println("NetworkClient.init);
+    connect();
+  }
+  ```
 
 # 빈 스코프
 
+- 스프링 빈은 기본적으로 싱글톤 스코프로 생성 -> 스프링 컨테이너의 시작과 함께 생성되고 컨테이너가 종료될 떼까지 유지됨
+- 스프링은 다양한 스코프를 지원
+  - 싱글톤: 가장 넓은 범위의 스코프
+  - 프로토타입: 빈의 생성과 의존관계 주입까지만 스프링 컨테이너가 관여 -> 매우 짧은 범위의 스코프
+  - 웹 관련 스코프
+    - request: 웹 요청이 들어오고 나갈때 까지 유지되는 스코프
+    - session: 웹 세션이 생성되고 종료될 때 까지 유지되는 스코프
+    - application: 웹의 서블릿 컨텍스트와 같은 범위로 유지되는 스코프
