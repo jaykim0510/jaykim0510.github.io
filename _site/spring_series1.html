@@ -484,7 +484,12 @@
   <li><a href="#싱글톤-컨테이너" id="markdown-toc-싱글톤-컨테이너">싱글톤 컨테이너</a></li>
   <li><a href="#컴포넌트-스캔" id="markdown-toc-컴포넌트-스캔">컴포넌트 스캔</a></li>
   <li><a href="#의존관계-자동-주입" id="markdown-toc-의존관계-자동-주입">의존관계 자동 주입</a></li>
-  <li><a href="#빈-스코프" id="markdown-toc-빈-스코프">빈 스코프</a></li>
+  <li><a href="#빈-생명주기-콜백" id="markdown-toc-빈-생명주기-콜백">빈 생명주기 콜백</a></li>
+  <li><a href="#빈-스코프" id="markdown-toc-빈-스코프">빈 스코프</a>    <ul>
+      <li><a href="#프로토타입-스코프" id="markdown-toc-프로토타입-스코프">프로토타입 스코프</a></li>
+      <li><a href="#request-스코프" id="markdown-toc-request-스코프">request 스코프</a></li>
+    </ul>
+  </li>
 </ul>
 
 <hr />
@@ -664,45 +669,254 @@
   <li>기능 변경으로 인한 코드 변경은 <code class="language-plaintext highlighter-rouge">AppConfig</code>에서만 일어난다</li>
   <li><code class="language-plaintext highlighter-rouge">AppConfig</code>는 의존관계 주입뿐만 아니라, <strong>제어의 흐름</strong>까지 담당 -&gt; 구현 객체는 자신의 로직을 실행하는 역할만 담당</li>
   <li>이러한 <code class="language-plaintext highlighter-rouge">AppConfig</code> 클래스를 IoC 컨테이너 또는 <strong>DI 컨테이너</strong>라고 함</li>
-  <li>스프링에서는 이러한 <code class="language-plaintext highlighter-rouge">AppConfig</code>를 담당하는 클래스에 <code class="language-plaintext highlighter-rouge">@Configuration</code>을 붙여줌</li>
-  <li>그리고 <code class="language-plaintext highlighter-rouge">AppConfig</code>에서 각 구현체를 리턴하는 메서드에는 <code class="language-plaintext highlighter-rouge">@Bean</code>을 붙여줌 -&gt; 스프링 컨테이너에 스프링 빈으로 등록됨 -&gt; 스프링 컨테이너의 관리 대상이됨</li>
+  <li>스프링에서는 이러한 <code class="language-plaintext highlighter-rouge">AppConfig</code>를 담당하는 클래스에 <code class="language-plaintext highlighter-rouge">@Configuration</code>을 붙여줌 (<code class="language-plaintext highlighter-rouge">@Configuration</code>이 빈의 싱글톤을 보장)</li>
+  <li>그리고 <code class="language-plaintext highlighter-rouge">AppConfig</code>에서 각 구현체를 리턴하는 메서드에는 <code class="language-plaintext highlighter-rouge">@Bean</code>을 붙여줌 -&gt; 스프링 컨테이너에 스프링 빈으로 등록됨 -&gt; 스프링 컨테이너의 관리 대상이 됨</li>
+  <li>(<code class="language-plaintext highlighter-rouge">@Bean</code>이 붙은 메서드마다 이미 스프링 빈이 존재하면 존재하는 빈을 반환하고, 없으면 생성해서 스프링 컨테이너에 등록하고 반환)</li>
 </ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AppConfig</span> <span class="o">{</span>
+  
+  <span class="nd">@Bean</span>
+  <span class="kd">public</span> <span class="nc">MemberService</span> <span class="nf">memberService</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">MemberServiceImpl</span><span class="o">(</span><span class="n">memberRepository</span><span class="o">());</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Bean</span>
+  <span class="kd">public</span> <span class="nc">MemberRepository</span> <span class="nf">memberRepository</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">MemoryRepository</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+  <span class="nc">AppConfig</span> <span class="n">appConfig</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AppConfig</span><span class="o">();</span>
+  <span class="nc">MemberService</span> <span class="n">memberService</span> <span class="o">=</span> <span class="n">appConfig</span><span class="o">.</span><span class="na">memberService</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
 <h2 id="applicationcontext">ApplicationContext</h2>
 <ul>
   <li><strong>ApplicationContext</strong>를 스프링 컨테이너라 함</li>
-  <li>스프링 컨테이너는 AppConfig 내의 구현 객체를 스프링 컨테이너에 빈으로 알아서 등록하고 알아서 의존관계를 주입해줌</li>
+  <li>ApplicationContext는 인터페이스이다</li>
+  <li>스프링 컨테이너는 DI 컨테이너를 더욱 사용하기 편하게 만든 것</li>
+  <li>스프링 컨테이너는 <code class="language-plaintext highlighter-rouge">AppConfig</code> 내의 구현 객체를 스프링 컨테이너에 빈으로 알아서 등록하고 알아서 의존관계를 주입해줌</li>
   <li>빈(Bean)은 의존관계 주입을 위해 스프링 컨테이너에서 기다리는 구현 객체라고 생각하면 됨</li>
 </ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// AnnotationConfigApplicationContext는 ApplicationContext을 구현한 것중 하나</span>
+<span class="c1">// ac가 우리의 빈을 관리해주는 스프링 컨테이너</span>
+<span class="nc">ApplicationContext</span> <span class="n">ac</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">AnnotationConfigApplicationContext</span><span class="o">(</span><span class="nc">AppConfig</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+<span class="nc">MemberService</span> <span class="n">memberService</span> <span class="o">=</span> <span class="n">applicationContext</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="s">"memberService"</span><span class="o">,</span> <span class="nc">MemberService</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+</code></pre></div></div>
 
 <h1 id="싱글톤-컨테이너">싱글톤 컨테이너</h1>
 
 <ul>
   <li>스프링은 태생이 기업용 온라인 서비스 기술을 지원하기 위해 탄생</li>
   <li>웹 애플리케이션은 보통 여러 고객이 동시에 요청</li>
-  <li><code class="language-plaintext highlighter-rouge">AppConfig</code> 클래스가 요청이 들어올 때마다 새로운 객체를 생성함 -&gt; 메모리 낭비가 커짐 -&gt; 객체를 1개만 생성하고 공유하도록 설계</li>
+  <li><code class="language-plaintext highlighter-rouge">AppConfig</code> 클래스가 요청이 들어올 때마다 새로운 객체를 생성함 -&gt; 메모리 낭비가 커짐 -&gt; <strong>객체를 1개만 생성하고 공유하도록 설계</strong></li>
   <li><code class="language-plaintext highlighter-rouge">private static final SingletonService instance = new SingletonService();</code></li>
   <li>스프링 컨테이너는 싱글톤 패턴의 문제점(DIP, OCP 위반 가능성. 유연성 떨어짐)을 해결하면서, 객체 인스턴스를 싱글톤으로 관리</li>
-  <li>스프링 빈이 바로 싱글톤으로 관리되는 빈</li>
-  <li>객체 인스턴스를 공유하기 때문에 싱글톤 객체(스프링 빈)를 무상태로 설계해야함 -&gt; 특정 클라이언트에 의존적인 필드가 있으면 안됨, 가급적 읽기만 가능해야함</li>
+  <li>스프링 <strong>빈(Bean)이 바로 싱글톤으로 관리되는 객체</strong></li>
+  <li>객체 인스턴스를 공유하기 때문에 싱글톤 객체(스프링 빈)를 <strong>무상태로 설계</strong>해야함 -&gt; 특정 클라이언트에 의존적인 필드가 있으면 안됨, 가급적 읽기만 가능해야함</li>
 </ul>
 
 <h1 id="컴포넌트-스캔">컴포넌트 스캔</h1>
 
 <ul>
   <li>스프링에서 설정 정보가 없어도 자동으로 스프링 빈을 등록하는 도와주는 기능</li>
-  <li><code class="language-plaintext highlighter-rouge">@ComponentScan</code></li>
+  <li>원래는 <code class="language-plaintext highlighter-rouge">AppConfig</code> 내에 구현체를 리턴하는 메서드를 정의하고 위에 @Bean을 붙이는 작업을 직접해야 했음
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AppConfig</span> <span class="o">{</span>
+    
+  <span class="nd">@Bean</span>
+  <span class="kd">public</span> <span class="nc">MemberService</span> <span class="nf">memberService</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">MemberServiceImpl</span><span class="o">(</span><span class="n">memberRepository</span><span class="o">());</span>
+  <span class="o">}</span>
+
+  <span class="nd">@Bean</span>
+  <span class="kd">public</span> <span class="nc">MemberRepository</span> <span class="nf">memberRepository</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">MemoryRepository</span><span class="o">();</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>이제는 이렇게 <code class="language-plaintext highlighter-rouge">AppConfig</code>에 <code class="language-plaintext highlighter-rouge">@ComponentScan</code>을 붙이고, 각 구현체에 <code class="language-plaintext highlighter-rouge">@Component</code>만 붙여주면 됨 (리턴하는 메서드를 정의, <code class="language-plaintext highlighter-rouge">@Bean</code>의 수고가 사라짐)
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="nd">@ComponentScan</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AppConfig</span> <span class="o">{</span>
+      
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">@Component</code>이 붙은 클래스를 스캔해서 스프링 빈으로 등록해줌
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemoryMemberRepository</span> <span class="kd">implements</span> <span class="nc">MemberRepository</span> <span class="o">{}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>근데 원래 <code class="language-plaintext highlighter-rouge">AppConfig</code>내에서 의존 관계를 주입했었는데, 의존관계는 이제 어떻게 해결하나? -&gt; <code class="language-plaintext highlighter-rouge">@Autowired</code>
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Configuration</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">AppConfig</span> <span class="o">{</span>
+    
+  <span class="nd">@Bean</span>
+  <span class="kd">public</span> <span class="nc">MemberService</span> <span class="nf">memberService</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">MemberServiceImpl</span><span class="o">(</span><span class="n">memberRepository</span><span class="o">());</span> <span class="c1">// memberService와 memberRepository간의 의존 관계가 이렇게 정의되어 있었음</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
 </ul>
 
 <h1 id="의존관계-자동-주입">의존관계 자동 주입</h1>
 
 <ul>
-  <li>의존관계도 자동으로 주입</li>
-  <li><code class="language-plaintext highlighter-rouge">@Autowired</code></li>
+  <li><code class="language-plaintext highlighter-rouge">@Autowired</code>가 의존관계를 자동으로 주입</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MemberServiceImpl</span> <span class="kd">implements</span> <span class="nc">MerberService</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="nc">MemberRepository</span> <span class="n">memberRepository</span><span class="o">;</span>
+
+  <span class="nd">@Autowired</span>
+  <span class="kd">public</span> <span class="nf">MemberServiceImpl</span><span class="o">(</span><span class="nc">MemberRepository</span> <span class="n">memberRepository</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">memberRepository</span> <span class="o">=</span> <span class="n">memberRepository</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h1 id="빈-생명주기-콜백">빈 생명주기 콜백</h1>
+
+<ul>
+  <li>DB 커넥션 풀, 네트워크 소켓처럼 애플리케이션 시작 시점에 필요한 연결을 미리 해두고, 애플리케이션 종료 시점에 연결을 모두 종료하는 작업을 진행하려면 객체의 초기화와 종료 작업이 필요하다</li>
+  <li>스프링 빈은 객체를 생성하고, 의존관계 주입이 다 끝난 다음에야 필요한 데이터를 사용할 수 있는 준비가 완료되고 초기화 작업을 할 수 있다
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>객체 생성 -&gt; 의존관계 주입 -&gt; 초기화
+</code></pre></div>    </div>
+  </li>
+  <li>의존관계 주입이 완료되는 시점에 스프링이 콜백 함수를 통해 초기화 시점을 알려준다. 또한 스프링 컨테이너가 종료되기 직전에 소멸 콜백 함수로 종료 시점을 알려준다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>스프링 컨테이너 생성 -&gt; 빈 생성 -&gt; 의존관계 주입 -&gt; 초기화 콜백 -&gt; 사용 -&gt; 소멸전 콜백 -&gt; 스프링 종료
+</code></pre></div></div>
+
+<ul>
+  <li>스프링은 크게 3가지 방법으로 빈 생명주기 콜백을 지원 -&gt; 하지만 가장 많이 사용하는 방식은 <code class="language-plaintext highlighter-rouge">@PostConstruct</code>, <code class="language-plaintext highlighter-rouge">@PreDestory</code> 애노테이션</li>
+  <li>의존관계가 주입되고 실행되길 원하는 초기화 함수에 <code class="language-plaintext highlighter-rouge">@PostConstruct</code> 애노테이션을 붙여준다
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@PostConstruct</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+  <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="err">"</span><span class="nc">NetworkClient</span><span class="o">.</span><span class="na">init</span><span class="o">);</span>
+  <span class="n">connect</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
 </ul>
 
 <h1 id="빈-스코프">빈 스코프</h1>
 
+<ul>
+  <li>스프링 빈은 기본적으로 싱글톤 스코프로 생성 -&gt; 스프링 컨테이너의 시작과 함께 생성되고 컨테이너가 종료될 떼까지 유지됨</li>
+  <li>스프링은 다양한 스코프를 지원
+    <ul>
+      <li>싱글톤: 가장 넓은 범위의 스코프</li>
+      <li>프로토타입: 빈의 생성과 의존관계 주입까지만 스프링 컨테이너가 관여 -&gt; 매우 짧은 범위의 스코프</li>
+      <li>웹 관련 스코프
+        <ul>
+          <li>request: 웹 요청이 들어오고 나갈때 까지 유지되는 스코프</li>
+          <li>session: 웹 세션이 생성되고 종료될 때 까지 유지되는 스코프</li>
+          <li>application: 웹의 서블릿 컨텍스트와 같은 범위로 유지되는 스코프</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Scope</span><span class="o">(</span><span class="s">"prototype"</span><span class="o">)</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloBean</span> <span class="o">{}</span>
+
+<span class="c1">// 또는</span>
+
+<span class="nd">@Scope</span><span class="o">(</span><span class="s">"prototype"</span><span class="o">)</span>
+<span class="nd">@Bean</span>
+<span class="nc">PrototypeBean</span> <span class="nf">HelloBean</span><span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nf">HelloBean</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="프로토타입-스코프">프로토타입 스코프</h2>
+<ul>
+  <li>빈의 생성과 의존관계 주입, 초기화까지만 스프링 컨테이너가 관여 -&gt; 이 후 클라이언트에 빈을 반환하고, 스프링 컨테이너는 더이상 빈을 관리 안함</li>
+  <li>이후 빈을 종료하고 싶으면 그때는 클라이언트 빈이 해줘야함</li>
+  <li>프로토타입 스코프의 빈을 컨테이너에 조회하면 스프링 컨테이너는 항상 새로운 인스턴스를 생성해서 반환</li>
+  <li>스프링은 일반적으로 싱글톤 빈을 사용 -&gt; 싱글톤 빈이 보통 프로토타입 빈을 사용</li>
+  <li>근데 싱글톤 빈은 생성 시점에만 의존관계 주입을 받기 때문에, 프로토타입 빈이 새로 생성되기는 하지만, 싱글톤 빈과 함께 계속 유지되는 것이 문제</li>
+  <li>어떻게 하면 사용할 때마다 항상 새로운 프로토타입 빈을 생성할 수 있을까 -&gt; 싱글톤 빈이 프로토타입을 사용할 떄마다 스프링 컨테이너에 새로 요청
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">class</span> <span class="nc">ClientBean</span> <span class="o">{</span>
+    
+  <span class="nd">@Autowired</span>
+  <span class="kd">private</span> <span class="nc">ApplicationContext</span> <span class="n">ac</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">logic</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">PrototypeBean</span> <span class="n">prototypeBean</span> <span class="o">=</span> <span class="n">ac</span><span class="o">.</span><span class="na">getBean</span><span class="o">(</span><span class="nc">PrototypeBean</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>이렇게 의존관계를 외부에서 주입 받는게 아니라, 직접 필요한 의존관계를 찾는 것을 의존관계 조회(Dependency Lookup)라고 한다</li>
+  <li>그런데 이렇게 스프링의 애플리케이션 컨텍스트 전체를 주입받게 되면, 스프링 컨테이너에 종속적인 코드가 되고, 단위 테스트도 어려워진다</li>
+  <li><code class="language-plaintext highlighter-rouge">ObjectProvider</code>는 딱 의존관계 조회 정도의 기능만 제공해준다
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">class</span> <span class="nc">ClientBean</span> <span class="o">{</span>
+
+  <span class="nd">@Autowired</span>
+  <span class="kd">private</span> <span class="nc">ObjectProvider</span><span class="o">&lt;</span><span class="nc">PrototypeBean</span><span class="o">&gt;</span> <span class="n">prototypeBeanProvider</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">int</span> <span class="nf">logic</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">PrototypeBean</span> <span class="n">prototypeBean</span> <span class="o">=</span> <span class="n">prototypeBeanProvider</span><span class="o">.</span><span class="na">getObject</span><span class="o">();</span>
+    <span class="o">...</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="request-스코프">request 스코프</h2>
+
+<ul>
+  <li>웹 스코프의 일종</li>
+  <li>웹 스코프는 웹 환경에서만 동작</li>
+  <li><strong>HTTP 요청 1개</strong>가 들어오고 나갈떄 까지 유지되는 스코프</li>
+  <li>동시에 여러 HTTP 요청이 오면 정확히 어떤 요청이 남긴 로그인지 구분하기 어렵다 -&gt; 이럴 때 request 스코프 사용</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@Component</span>
+<span class="nd">@Scope</span><span class="o">(</span><span class="n">value</span><span class="o">=</span><span class="err">'</span><span class="n">request</span><span class="err">'</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyLogger</span> <span class="o">{</span>
+
+  <span class="kd">private</span> <span class="nc">String</span> <span class="n">uuid</span><span class="o">;</span>
+  <span class="kd">private</span> <span class="nc">String</span> <span class="n">requestURL</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setRequestURL</span><span class="o">(</span><span class="nc">String</span> <span class="n">requestURL</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">requestURL</span> <span class="o">=</span> <span class="n">requestURL</span><span class="o">;</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">log</span><span class="o">(</span><span class="nc">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="sc">'['</span> <span class="o">+</span> <span class="n">uuid</span> <span class="o">+</span> <span class="sc">']'</span> <span class="o">+</span> <span class="sc">'['</span> <span class="o">+</span> <span class="n">requestURL</span> <span class="o">+</span> <span class="sc">']'</span> <span class="o">+</span> <span class="n">message</span><span class="o">);</span>
+  <span class="o">}</span>
+
+  <span class="nd">@PostConstruct</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">uuid</span> <span class="o">=</span> <span class="no">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>
+  <span class="o">}</span>
+
+  <span class="nd">@PreDestroy</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">close</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="sc">'['</span> <span class="o">+</span> <span class="n">uuid</span> <span class="o">+</span> <span class="err">'</span><span class="o">]</span> <span class="n">request</span> <span class="n">scope</span> <span class="n">bean</span> <span class="nl">close:</span><span class="err">'</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">

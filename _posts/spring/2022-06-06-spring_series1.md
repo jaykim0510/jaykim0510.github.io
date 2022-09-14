@@ -284,3 +284,88 @@ public class MemberServiceImpl implements MerberService {
     - request: 웹 요청이 들어오고 나갈때 까지 유지되는 스코프
     - session: 웹 세션이 생성되고 종료될 때 까지 유지되는 스코프
     - application: 웹의 서블릿 컨텍스트와 같은 범위로 유지되는 스코프
+
+```java
+@Scope("prototype")
+@Component
+public class HelloBean {}
+
+// 또는
+
+@Scope("prototype")
+@Bean
+PrototypeBean HelloBean() {
+  return new HelloBean();
+}
+```
+
+## 프로토타입 스코프
+- 빈의 생성과 의존관계 주입, 초기화까지만 스프링 컨테이너가 관여 -> 이 후 클라이언트에 빈을 반환하고, 스프링 컨테이너는 더이상 빈을 관리 안함
+- 이후 빈을 종료하고 싶으면 그때는 클라이언트 빈이 해줘야함
+- 프로토타입 스코프의 빈을 컨테이너에 조회하면 스프링 컨테이너는 항상 새로운 인스턴스를 생성해서 반환
+- 스프링은 일반적으로 싱글톤 빈을 사용 -> 싱글톤 빈이 보통 프로토타입 빈을 사용
+- 근데 싱글톤 빈은 생성 시점에만 의존관계 주입을 받기 때문에, 프로토타입 빈이 새로 생성되기는 하지만, 싱글톤 빈과 함께 계속 유지되는 것이 문제
+- 어떻게 하면 사용할 때마다 항상 새로운 프로토타입 빈을 생성할 수 있을까 -> 싱글톤 빈이 프로토타입을 사용할 떄마다 스프링 컨테이너에 새로 요청
+  ```java
+  static class ClientBean {
+    
+    @Autowired
+    private ApplicationContext ac;
+
+    public int logic() {
+      PrototypeBean prototypeBean = ac.getBean(PrototypeBean.class);
+      ...
+    }
+  }
+  ```
+- 이렇게 의존관계를 외부에서 주입 받는게 아니라, 직접 필요한 의존관계를 찾는 것을 의존관계 조회(Dependency Lookup)라고 한다
+- 그런데 이렇게 스프링의 애플리케이션 컨텍스트 전체를 주입받게 되면, 스프링 컨테이너에 종속적인 코드가 되고, 단위 테스트도 어려워진다
+- `ObjectProvider`는 딱 의존관계 조회 정도의 기능만 제공해준다
+  ```java
+  static class ClientBean {
+
+    @Autowired
+    private ObjectProvider<PrototypeBean> prototypeBeanProvider;
+
+    public int logic() {
+      PrototypeBean prototypeBean = prototypeBeanProvider.getObject();
+      ...
+    }
+  }
+  ```
+
+
+## request 스코프
+
+- 웹 스코프의 일종
+- 웹 스코프는 웹 환경에서만 동작
+- **HTTP 요청 1개**가 들어오고 나갈떄 까지 유지되는 스코프
+- 동시에 여러 HTTP 요청이 오면 정확히 어떤 요청이 남긴 로그인지 구분하기 어렵다 -> 이럴 때 request 스코프 사용
+
+```java
+@Component
+@Scope(value='request')
+public class MyLogger {
+
+  private String uuid;
+  private String requestURL;
+
+  public void setRequestURL(String requestURL) {
+    this.requestURL = requestURL;
+  }
+
+  public void log(String message) {
+    System.out.println('[' + uuid + ']' + '[' + requestURL + ']' + message);
+  }
+
+  @PostConstruct
+  public void init() {
+    uuid = UUID.randomUUID().toString();
+  }
+
+  @PreDestroy
+  public void close() {
+    System.out.println('[' + uuid + '] request scope bean close:' + this);
+  }
+}
+```
