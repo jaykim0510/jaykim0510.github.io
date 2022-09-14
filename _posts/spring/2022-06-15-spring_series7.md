@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Spring Series [Part4]: JPA'
+title:  'Spring Series [Part7]: JPA'
 description: 
-date:   2022-06-07 15:01:35 +0300
+date:   2022-06-15 15:01:35 +0300
 image:  '/images/spring_logo.png'
 logo_image:  '/images/spring_logo.png'
 categories:   web_development

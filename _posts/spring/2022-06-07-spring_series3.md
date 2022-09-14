@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Spring Series [Part3]: JDBC'
+title:  'Spring Series [Part3]: 스프링 MVC'
 description: 
 date:   2022-06-07 15:01:35 +0300
 image:  '/images/spring_logo.png'
@@ -17,8 +17,4 @@ tags: Spring
 
 ---
 
-# JDBC
-
-# JDBC Template
-
-# MyBatis
+# Spring MVC
