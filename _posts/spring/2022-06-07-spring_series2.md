@@ -70,3 +70,24 @@ public class HelloServlet extends HttpServlet {
 ![](/images/servlet_1.png)
 
 - 서블릿은 멀티 스레드 처리도 지원
+
+# Rendering
+
+## 서버 사이드 렌더링
+
+- SSR: Server Side Rendering
+- HTML을 서버에서 만들어서 웹 브라우저에 전달
+- 주로 정적인 화면에 사용, 백엔드 개발자가 간단하게 렌더링 하고 싶을 때 많이 사용
+- 스프링을 주로 사용하는 백엔드 개발자들은 **뷰(View) 템플릿으로 주로 타임리프를 많이 사용**
+- ex. JSP, 타임리프
+
+![](/images/ssr_1.png)
+
+## 클라이언트 사이드 렌더링 
+
+- CSR: Client Side Rendering
+- 서버에서 웹 브라우저로 자바 스크립트를 전달 -> 웹 브라우저에서 동적으로 HTML 생성
+- 주로 동적인 화면에 사용
+- ex. React, Vue.js
+
+![](/images/csr_1.png)

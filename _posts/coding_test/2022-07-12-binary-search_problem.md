@@ -34,8 +34,8 @@ tags: Coding_Test
 - Binary Search 💟 ✅
 - First Bad Version 💟 ✅
 ---------------------------------------------MEDIUM 12문제
-- Capacity To Ship Packages Within D Days
-- Max Consecutive Ones III
+- Capacity To Ship Packages Within D Days 💟 ✅
+- Max Consecutive Ones III 💟 ❎
 - Find the Duplicate Number
 - Koko Eating Bananas
 - Time Based Key-Value Store
@@ -52,3 +52,6 @@ tags: Coding_Test
 - Median of Two Sorted Arrays
 ```
 
+# 좋은 풀이
+
+- [[C++/Python] 3 solutions - Easy to understand - Clean & Concise](https://leetcode.com/problems/max-consecutive-ones-iii/discuss/1304883/C%2B%2BPython-3-solutions-Easy-to-understand-Clean-and-Concise){:target="_blank"}  
