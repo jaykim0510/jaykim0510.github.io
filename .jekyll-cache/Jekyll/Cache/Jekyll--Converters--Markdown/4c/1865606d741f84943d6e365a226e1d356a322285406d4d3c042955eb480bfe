@@ -1,0 +1,42 @@
+I"[<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#template" id="markdown-toc-template">Template</a></li>
+</ul>
+
+<hr />
+<p>Binary Search is quite easy to understand conceptually. Basically, it splits the search space into two halves and only keep the half that probably has the search target and throw away the other half that would not possibly have the answer. In this manner, we reduce the search space to half the size at every step, until we find the target. Binary Search helps us reduce the search time from linear O(n) to logarithmic O(log n). But when it comes to implementation, it’s rather difficult to write a bug-free code in just a few minutes. Some of the most common problems include:</p>
+
+<ul>
+  <li>When to exit the loop? Should we use <code class="language-plaintext highlighter-rouge">left &lt; right</code> or <code class="language-plaintext highlighter-rouge">left &lt;= right</code> as the while loop condition?</li>
+  <li>How to initialize the boundary variable <code class="language-plaintext highlighter-rouge">left</code> and <code class="language-plaintext highlighter-rouge">right</code>?</li>
+  <li>How to update the boundary? How to choose the appropriate combination from <code class="language-plaintext highlighter-rouge">left = mid</code>, <code class="language-plaintext highlighter-rouge">left = mid + 1</code> and <code class="language-plaintext highlighter-rouge">right = mid</code>, <code class="language-plaintext highlighter-rouge">right = mid - 1</code>?</li>
+</ul>
+
+<p>A rather common misunderstanding of binary search is that people often think this technique could only be used in simple scenario like “Given a sorted array, find a specific value in it”. As a matter of fact, it can be applied to much more complicated situations.</p>
+
+<h1 id="template">Template</h1>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">condition</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">condition</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">left</span>
+</code></pre></div></div>
+
+<p>What’s really nice of this template is that, for most of the binary search problems, we only need to modify three parts after copy-pasting this template, and never need to worry about corner cases and bugs in code any more:</p>
+
+<ul>
+  <li>Correctly initialize the boundary variables <code class="language-plaintext highlighter-rouge">left</code> and <code class="language-plaintext highlighter-rouge">right</code>. Only one rule: set up the boundary to include all possible elements;</li>
+  <li>Decide return value. Is it <code class="language-plaintext highlighter-rouge">return left</code> or <code class="language-plaintext highlighter-rouge">return left - 1</code>? Remember this: after exiting the while loop, left is the minimal k satisfying the <code class="language-plaintext highlighter-rouge">condition</code> function;</li>
+  <li>Design the <code class="language-plaintext highlighter-rouge">condition</code> function. This is the most difficult and most beautiful part. Needs lots of practice.</li>
+</ul>
+:ET

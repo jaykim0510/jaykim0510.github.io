@@ -27,14 +27,23 @@ tags: Coding_Test
 
 ```
 문제 리스트
----------------------------------------------EASY 3문제
+---------------------------------------------EASY
 - Reverse String ✅
 - Count Binary Substrings 💟 ❎
----------------------------------------------MEDIUM 5문제
+- Merge Sorted Array 💟 ✅
+- Remove Palindromic Subsequences ❎
+---------------------------------------------MEDIUM
 - Interval List Intersections 💟 ✅
 - Longest String Chain 💟 ❎
 - String Compression 💟 ❎
 - 3Sum With Multiplicity ❎
 - Next Permutation 💟 ❎
+- Container With Most Water
+- Boats to Save People 💟 ✅
+- Shortest Unsorted Continuous Subarray
+- Find the Duplicate Number
+- 3Sum Closest
+- Sort Colors
+- Find K Closest Elements
 ```
 
