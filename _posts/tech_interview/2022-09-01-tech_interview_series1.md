@@ -5,7 +5,7 @@ description:
 date:   2022-09-01 15:01:35 +0300
 image:  '/images/tech_interview_logo.png'
 logo_image:  '/images/tech_interview_logo.png'
-categories: tech_interview
+categories: CS
 tags: tech_interview
 ---
 ---
