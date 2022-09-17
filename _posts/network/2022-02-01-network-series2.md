@@ -73,3 +73,6 @@ tags: Network
 라우터는 네트워크를 분할하고 두 네트워크 간의 통신을 가능하게 해준다.
 ```
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/bj-Yfakjllc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/H7-NR3Q3BeI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
