@@ -17,38 +17,51 @@ tags: MySQL
 
 ---
 
-# Query Optimization
-- MySQL Query Processing
-- Understanding the Query Plan
-- Using EXPLAIN
-- Improving Query Performance
-- Indexing
-
 # Optimization Overview
 
-Database performance depends on several factors at the database level, such as tables, queries, and configuration settings. These software constructs result in CPU and I/O operations at the hardware level, which you must minimize and make as efficient as possible. 
+- 데이터베이스의 성능은 테이블, 쿼리, 서버 설정과 같은 몇 가지 요소에 따라 달라짐
+- 데이터베이스를 잘 설계함으로써 CPU, I/O 작업과 같은 하드웨어적인 요소들을 최적화 할 수 있음
 
 # Things to Consider for Optimization
 
-- Are the tables structured properly? In particular, do the columns have the right data types, and does each table have the appropriate columns for the type of work? For example, applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns.
+## 테이블
 
-- Are the right indexes in place to make queries efficient?
+- 컬럼의 타입
+- 컬럼 개수
+- 제약조건
+- 인덱스
 
-- Are you using the appropriate storage engine for each table, and taking advantage of the strengths and features of each storage engine you use? In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability.
+```
+applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns
+```
 
-- Does each table use an appropriate row format? This choice also depends on the storage engine used for the table. In particular, compressed tables use less disk space and so require less disk I/O to read and write the data. Compression is available for all kinds of workloads with InnoDB tables, and for read-only MyISAM tables.
+ ## 인덱스 설계
 
-- Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code.
+```
+Are the right indexes in place to make queries efficient?
+```
 
-- Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.
+## 스토리지 엔진 선택
+
+```
+In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability
+```
+
+## DB서버 설정
+
+```
+Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code
+
+Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache
+```
 
 
-# 옵티마이저
+# Optimizer
 
-옵티마이저: 쿼리를 최적으로 실행하기 위해 각 테이블의 데이터가 어떤 분포로 저장돼 있는지 통계 정보를 참조하여 최적의 실행 계획을 수립  
+- 쿼리를 최적으로 실행하기 위해 각 테이블의 데이터가 어떤 분포로 저장돼 있는지 통계 정보를 참조하여 최적의 실행 계획을 수립  
 
 
-**쿼리 실행 절차**  
+## 쿼리 실행 절차
 
 1. MySQL 엔진의 SQL파서에서 SQL을 트리 형태로 파싱한다
 2. MySQL 엔진의 옵티마이저에서 파싱 정보를 확인하면서 통계 정보를 활용해 어떤 인덱스를 이용해 테이블을 읽을지 선택한다
@@ -58,26 +71,24 @@ Database performance depends on several factors at the database level, such as t
 
 
 
-# SELECT문 최적화
+# Query Optimization
 
 ## SELECT
 
-- Avoid using *
-- Avoid using DISTINCT -> 중복 데이터 제거를 위해 테이블 풀 스캔 해야함
+- 컬럼을 선택할 때 * 사용을 피해라
+- DISTINCT 사용을 피해라 -> 중복 데이터 제거를 위해 테이블 풀 스캔 해야함
 
 ## WHERE
 
-- Use Indexes Where Appropriate
-- Avoid % Wildcard in a Predicate
-- Avoid using a function in the predicate of a query
-- BETWEEN, IN, <, >
+- 인덱스를 잘 활용해라
+- % 를 맨 앞에 쓰지마라
+- 함수 사용을 피해라
+- BETWEEN, IN, <, > 사용을 피해라
 
 ## GROUP BY
-- GROUP BY에 사용된 HAVING절은 인덱스를 사용해서 처리될 수 없으므로 굳이 튜닝하려고 할 필요 없다
-- GROUP BY 처리는 인덱스를 사용할 수 있는 경우와 그렇지 못한 경우가 있음
-- 인덱스가 있으면 인덱스를 차례대로 읽으면서 그루핑 작업을 수행
+- HAVING절은 인덱스를 사용해서 처리될 수 없으므로 굳이 튜닝하려고 할 필요 없다
 - GROUP BY 작업은 크게 인덱스를 사용하는 경우와 사용할 수 없는 경우(임시 테이블을 사용)
-- 인덱스를 사용할 수 없는 경우, 전체 테이블을 스캔하여 각 그룹의 모든 행이 연속되는 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것
+- 인덱스를 사용할 수 없는 경우, 전체 테이블을 스캔하여 각 그룹마다 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것
   - 이렇게 인덱스를 사용할 수 없을 때 할 수 있는 최선의 방법은 WHERE절을 이용해 GROUP BY 하기 전에 데이터량을 줄이는 것
 - 인덱스를 잘 설정한다면 임시 테이블을 생성하지 않고 빠르게 데이터를 가져올 수 있다
   - 인덱스를 최대로 활용하기 위해서는 GROUP BY 컬럼과, 인덱스되어 있는 컬럼간의 순서가 중요함
@@ -87,85 +98,46 @@ Database performance depends on several factors at the database level, such as t
 
 - 루스 인덱스 스캔을 사용할 수 있는 경우
   - 루스 인덱스 스캔은 레코드를 건너뛰면서 필요한 부분만 가져오는 스캔 방식
-  - EXPLAIN을 통헤 실행 계획을 확인해보면 Extra 컬럼에 'Using index for group-by' 라고 표기됨
+  - EXPLAIN을 통해 실행 계획을 확인해보면 Extra 컬럼에 'Using index for group-by' 라고 표기됨
   - MIN(), MAX() 이외의 함수가 SELECT 절에 사용되면 루스 인덱스 스캔을 사용할 수 없음
-  - 인덱스가 (col1 col2, col3) 일 때 , GROUP BY col1, col2 과 같아야 함 (GROUP BY col2, col3은 안됨)
-  - SELECT 절과 GROUP BY 절의 컬럼이 일치해야 함. SELECT col1, col2, MAX(col3) GROUP BY col1, col2 과 같아야 함
+  - 인덱스와 GROUP BY의 컬럼 순서가 처음부터 일치해야함
+    - ex. 인덱스가 (col1 col2, col3) 일 때 , GROUP BY col1, col2 과 같아야 함 (GROUP BY col2, col3은 안됨)
+  - SELECT 절과 GROUP BY 절의 컬럼이 일치해야 함
+    - ex. SELECT col1, col2, MAX(col3) GROUP BY col1, col2
 - 타이트 인덱스 스캔을 사용하는 경우
   - SELECT 절과 GROUP BY 절의 컬럼이 일치하지 않지만, 조건절을 이용해 범위 스캔이 가능한 경우
-    - SELECT c1, c2, c3 FROM t1 WHERE c2 = 'a' GROUP BY c1, c3; 
-    - SELECT c1, c2, c3 FROM t1 WHERE c1 = 'a' GROUP BY c2, c3;
+    - ex. SELECT c1, c2, c3 FROM t1 WHERE c2 = 'a' GROUP BY c1, c3; 
+    - ex. SELECT c1, c2, c3 FROM t1 WHERE c1 = 'a' GROUP BY c2, c3;
 
 ## JOIN
 
-- INNER joins, order doesn't matter
-- OUTER joins, the order matters
-- 여러 조인을 포함하는 LOOP JOIN 에서는 드라이빙 테이블(Driving Table)이 행들을 최소한으로 리턴하도록 해야됨
-- JOIN 되는 컬럼의 한쪽에만 INDEX가 있는 경우는 INDEX가 지정된 TABLE이 DRIVING TABLE이 된다
-- JOIN 시 자주 사용하는 칼럼은 인덱스로 등록한다
+- OUTER JOIN보다는 INNER JOIN이 낫다
+- 드라이빙 테이블(Driving Table)은 레코드 수가 적은 것이 낫다
+- 드리븐 테이블은 인덱스를 가지는 것이 중요하다
+- JOIN의 조건절로 자주 사용하는 칼럼은 인덱스로 등록한다
+- INNER JOIN은 순서를 신경쓰지 않고 편하게 사용 가능하다
+- OUTER JOIN은 결과가 상관 없다면, 인덱스를 가지는 테이블이 드리븐 테이블로 오도록 하는 것이 중요하다
 
-인덱스 레인지 스캔은 인덱스를 탐색(Index Seek)하는 단계와 인덱스를 스캔(Index Scan)하는 과정으로 구분해 볼 수 있다. 일반적으로 인덱스를 이용해서 쿼리하는 작업에서는 가져오는 레코드의 건수가 소량(전체 데이터 크기의 20% 이내)이기 때문에 인덱스 스캔 작업은 부하가 작고, 특정 인덱스 키를 찾는 인덱스 탐색 작업이 부하가 높은 편이다.  
-
-JOIN 작업에서 드라이빙 테이블을 읽을 때는 인덱스 탐색 작업을 단 한 번만 수행하고, 그 이후부터는 스캔만 실행하면 된다.  
-
-하지만 드리븐 테이블에서는 인덱스 탐색 작업과 스캔 작업을 드라이빙 테이블에서 읽은 레코드 건수만큼 반복한다.  
-
-드라이빙 테이블과 드리븐 테이블이 1:1 조인되더라도 **드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지**한다.  
-
-그래서 옵티마이저는 항상 드라이빙 테이블이 아니라 드리븐 테이블을 최적으로 읽을 수 있게 실행 계획을 수립한다.  
-
-```sql
-SELECT *
-FROM employees e, dept_emp de
-WHERE e.emp_no=de.emp_no
-```
-여기서 각 테이블의 emp_no 컬럼에 인덱스가 있을 때와 없을 때 조인 순서가 어떻게 달라지는 한 번 살펴보자.  
-
-- 두 컬럼 모두 인덱스가 있는 경우
-  - 어느 테이블을 드라이빙으로 선택하든 인덱스를 이용해 드리븐 테이블의 검색 작업을 빠르게 처리할 수 있다
-  - 보통의 경우 어느 쪽 테이블이 드라이빙 테이블이 되든 옵티마이저가 선택하는 방법이 최적일 때가 많다
-- employees 테이블에만 인덱스가 있는경우
-  - 이 때는 employees 테이블을 드리븐 테이블로 선택한다
-  - 드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지하기 때문에 드리븐 테이블에서 인덱스를 활용하는 것이 중요한다
-
-
-INNER JOIN은 조인 대상 테이블 모두에 해당하는 레코드만 반환한다. 이같은 특성 때문에 OUTER JOIN으로만 조인을 실행하는 쿼리들도 자주 보인다. 하지만 대개의 경우 OUTER JOIN은 대상 테이블들의 데이터가 일관되지 않은 경우에만 필요하다.  
-
-MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN B에서 B)을 드라이빙 테이블로 선택하지 못하기 때문에 무조건 앞에 등장하는 테이블을 드라이빙 테이블로 선택한다. 그 결과 인덱스 유무에 따라 조인 순서를 변경함으로써 얻게 되는 최적화의 이점을 얻지 못하기 때문에 쿼리 성능이 나빠질 수 있다. 그래서 꼭 필요한 경우가 아니라면 INNER JOIN을 사용하는 것이 쿼리의 성능에 도움이 된다.  
-
- JOIN의 순서  
-
- - INNER JOIN인 경우
-   - 어차피 A and B and C 이기 때문에 A JOIN B JOIN C이든 B JOIN A JOIN C이든 같다.
- - LEFT JOIN의 경우 결과도 성능도 달라진다. 
-   - 일단 가장 먼저 등장하는 테이블이 드라이빙 테이블이 된다 -> 이 말은 뒤에 따라오는 테이블은 드리븐 테이블이 된다는 말이다 -> 드리븐 테이블은 인덱스가 없으면 성능이 떨어진다 -> 뒤에 조인되는 테이블의 인덱스 유무에 따라 쿼리 성능이 달라진다
-   - 결과 자체도 맨 앞에 등장하는 테이블의 모든 레코드가 기준이 되기 때문에 순서에 따라 달라진다
- - INNER JOIN과 OUTER JOIN이 결합되는 경우
-   - 가능하다면 INNER JOIN이 앞에 오도록 하는 것이 좋다
-
-
-## Subquery
-
-- Avoid correlated sub queries as it searches row by row, impacting the speed of SQL query processing
-- JOIN으로 해결되면 서브쿼리 대신 JOIN을 사용하자
-- 서브쿼리 안에 where절과 group by를 통해 불러오는 데이터양을 감소시킬 수 있습니다
-- 서브쿼리는 인덱스 또는 제약 정보를 가지지 않기 때문에 최적화되지 못한다
-- 윈도우 함수를 고려해보자
-
-
-## Temporary Table
-
-- Use a temporary table to handle bulk data
-- Temporary table vs Using index access
 
 ## ORDER BY
 
 - 대부분의 SELECT 쿼리에서 정렬은 필수적
 - 정렬을 처리하는 방법은 **인덱스를 이용하는 방법**과 **Filesort**라는 별도의 처리를 이용하는 방법
 
-|방법|장점|단점|
-|인덱스 이용|SELECT 문을 실행할 때 이미 인덱스가 정렬돼 있어 순서대로 읽기만 하면 되므로 매우 빠르다|INSERT, UPDATE, DELETE 작업시 부가적인 인덱스 추가/삭제 작업이 필요하므로 느리다|
-|Filesort 이용|인덱스 이용과 반대로 INSERT, UPDATE, DELETE 작업이 빠르다|정렬 작업이 쿼리 실행 시 처리되어 쿼리의 응답 속도가 느려진다|
+
+### 정렬 처리 방법
+
+- 인덱스를 사용한 정렬
+  - 인덱스를 이용해 정렬을 하기 위해서는 반드시 ORDER BY의 순서대로 생성된 인덱스가 있어야 함
+  - 인덱스를 이용해 정렬이 가능한 이유는 B-Tree 인덱스가 키 값으로 정렬되어 있기 때문
+
+- Filesort를 사용한 정렬
+  - 인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함
+
+
+|**방법**|**장점**|**단점**|
+|**인덱스 이용**|SELECT 문을 실행할 때 이미 인덱스가 정렬돼 있어 순서대로 읽기만 하면 되므로 매우 빠르다|INSERT, UPDATE, DELETE 작업시 부가적인 인덱스 추가/삭제 작업이 필요하므로 느리다|
+|**Filesort 이용**|인덱스 이용과 반대로 INSERT, UPDATE, DELETE 작업이 빠르다|정렬 작업이 쿼리 실행 시 처리되어 쿼리의 응답 속도가 느려진다|
 
 **Filesort를 사용해야 하는 경우**  
 
@@ -192,17 +164,6 @@ MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN 
   - SELECT 문에서 요청한 컬럼의 개수가 많아지면 계속 분할해서 소트 버퍼에 읽어와야함
   - 레코드의 크기나 건수가 작은 경우 성능이 좋음
 
-
-### 정렬 처리 방법
-
-- 인덱스를 사용한 정렬
-  - 인덱스를 이용해 정렬을 하기 위해서는 반드시 ORDER BY의 순서대로 생성된 인덱스가 있어야 함
-  - 인덱스를 이용해 정렬이 가능한 이유는 B-Tree 인덱스가 키 값으로 정렬되어 있기 때문
-
-- Filesort를 사용한 정렬
-  - 인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함
-
-
 ## DISTINCT 처리
 
 - DISTINCT는 SELECT하는 레코드를 유니크하게 SELECT 하는 것이지, 특정 컬럼만 유니크하게 조회하는 것이 아님
@@ -211,40 +172,52 @@ MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN 
   - 그래서 결론적으로 first_name과 last_name의 조합이 유니크한 레코드를 가져오게 됨
 - 집합 함수(COUNT(), MIN(), MAX()) 같은 집합 함수 내에서 DISTINCT 키워드가 사용된 경우는 함수의 인자로 전달된 컬럼값이 유니크한 것들을 가져온다
 
+## Subquery
+
+- JOIN으로 해결되면 서브쿼리 대신 JOIN을 사용하자
+- 서브쿼리 안에 where절과 group by를 통해 불러오는 데이터양을 감소시킬 수 있습니다
+- 서브쿼리는 인덱스 또는 제약 정보를 가지지 않기 때문에 최적화되지 못한다
+- 윈도우 함수를 고려해보자
+
+## Temporary Table
+
+- Use a temporary table to handle bulk data
+- Temporary table vs Using index access
+
 # INSERT, UPDATE, DELETE문
 
 
 # 실행 계획
 
-실행 계획을 이해하고 실행 계획의 불합리한 부분을 찾아내고, 더 최적화된 방법으로 실행 계획을 수립하도록 유도하는 법을 배우자  
+- 실행 계획을 통해 쿼리의 불합리한 부분을 찾아내고, 더 최적화된 방법을 모색해보자
+- 옵티마이저가 마법처럼 가장 최적의 방법을 찾아내진 못한다 -> 개발자의 역량이 중요
+- EXPLAIN 명령을 통해 실행 계획 확인
 
-옵티마이저가 사용자의 개입 없이 항상 좋은 실행 계획을 만들어낼 수 있는 것은 아니다  
-
-사용자가 보완할 수 있도록 EXPLAIN 명령으로 옵티마이저가 수립한 실행 계획을 확인할 수 있게 해준다.  
-
-```
-실행 계획 출력
+```sql
+-- 실행 계획 출력
 EXPLAIN
-SELECT문
+SELECT
+...
 ```
 
-```
-쿼리의 실행 계획과 단계별 소요된 시간 정보 출력
+```sql
+-- 쿼리의 실행 계획과 단계별 소요된 시간 정보 출력
 EXPLAIN ANALYZE
-SELECT문
+SELECT
+...
 ```
 
-실행 계획에 가장 큰 영향을 미치는 것은 통계 정보  
+## 통계정보
 
-**통계 정보**  
-
-- 테이블의 전체 레코드 수
-- 인덱스된 컬럼이 가지는 유니크한 값의 개수
-- 각 컬럼의 데이터 분포도(히스토그램)
+- 옵티마이저는 실행 계획을 세울 때 통계 정보를 가장 많이 활용
+- 통계 정보는 다음과 같은 것들을 의미
+  - 테이블의 전체 레코드 수
+  - 인덱스된 컬럼이 가지는 유니크한 값의 개수
+  - 각 컬럼의 데이터 분포도(히스토그램)
 
 ## 실행 계획 분석
 
-```
+```sql
 EXPLAIN
 SELECT *
 FROM employees AS e
@@ -259,11 +232,11 @@ WHERE first_name='ABC';
 
 표의 각 라인은 쿼리 문장에서 사용된 테이블의 개수만큼 출력된다. 실행 순서는 위에서 아래로 순서대로 표시된다  
 
-- id 컬럼
+- id
   - SELECT 쿼리별로 부여되는 식별자 값
   - SELECT 문장은 하나인데, 여러 개의 테이블이 조인되는 경우에는 id값이 증가하지 않고 같은 id 값이 부여된다
   - 테이블 접근 순서와 무관
-- select_type 컬럼
+- select_type
   - 각 단위 SELECT 쿼리가 어떤 타입의 쿼리인지 표시되는 컬럼
   - 표시될 수 있는 값은 SIMPLE, PRIMARY, UNION, DEPENDENT UNION, SUBQUERY 등
 
