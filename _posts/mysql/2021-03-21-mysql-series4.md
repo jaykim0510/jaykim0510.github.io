@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  'MySQL Series [Part4] 데이터 관리(1): CRUD를 이용해 데이터 관리하기'
+title:  'MySQL Series [Part4] DML(4): INSERT, UPDATE, DELETE'
 description: 
 date:   2021-03-21 15:01:35 +0300
-image:  '/images/mysql_logo.webp'
+image:  '/images/insert_logo.png'
 logo_image: '/images/mysql_logo.webp'
 categories: DE
 tags: MySQL
@@ -17,35 +17,49 @@ tags: MySQL
 
 ---  
 
-앞에서 저희가 배웠던 SQL문들은 모두 **이미 테이블이 주어졌고 그 테이블에 데이터가 쌓여있는 상태에서 원하는 데이터를 조회**하는 방법에 관한 것들이었습니다.  
-
-하지만 저희가 **직접 테이블을 생성하고 데이터를 쌓아야 하는 순간도 있을 것**입니다. 이번 포스트에서는 이러한 순간에 필요한 SQL문에 대해 배워 보겠습니다.  
-
-# 테이블 생성 및 삭제
+# INSERT
 
 ```sql
--- 데이터베이스 생성
-CREATE DATABASE [생성할 데이터베이스 이름]
-CREATE DATABASE IF NOT EXISTS [생성할 데이터베이스 이름]
+-- 데이터 추가
+INSERT INTO <테이블명> (col1, col2, col3, ...)
+     VALUES (val1, val2, val3, ...);
 
--- 데이터베이스 지정
-USE [생성한 데이터베이스 이름]
+-- 특정 col에만 데이터 넣을 수도 있다
+INSERT INTO <테이블명> (col1, col3)
+     VALUES (val1, val3);
+
+-- SET을 이용한 방법
+INSERT INTO <테이블명> 
+        SET col1=val1, col2=val2;
 ```
+
+# UPDATE
 
 ```sql
--- 테이블 생성
-CREATE TABLE [데이터베이스 이름].[생성할 테이블 이름] (
-    [컬럼1] INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    [컬럼2] VARCHAR(20) NULL,
-    [컬럼3] VARCHAR(15) NULL,
-    또는 PRIMARY KEY (['컬럼1'])
-);
+-- 데이터 갱신
+UPDATE <테이블명>
+   SET col1 = <갱신 데이터> WHERE <조건>; 
 
--- 테이블 삭제
-DROP TABLE [테이블 이름]
+-- 기존 값을 기준으로 갱신
+UPDATE <테이블명>
+   SET col1 = <col1 + 3> WHERE <조건>; 
 ```
 
-## SQL문 데이터 타입  
+# DELETE
+
+```sql
+-- 테이블을 사용했던 흔적이 남는다 
+-- (AUTO_INCREMENT된 프라이머리키가 15에서 모두 삭제돼도 다음 삽입되는 프라이머리 키가 1이 아니라 16이 됨)
+DELETE FROM <테이블명>
+      WHERE <조건>
+
+-- 테이블을 사용했던 흔적을 아예 없앤다
+TRUNCATE <테이블명>
+   WHERE <조건>
+```
+
+
+# SQL문 데이터 타입  
 
 |**종류**|**타입**|
 |**정수형**|TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT|
@@ -102,36 +116,3 @@ VARCHAR(30): 최대 30자의 문자열을 저장 (0~65536까지 가능)
 
 - **TEXT**  
 문자열이 아주 긴 상황에 적합  
-
-# 데이터 CRUD 
-
-## 데이터 추가
-```sql
--- 데이터 추가
-INSERT INTO [사용할 테이블 이름] (컬럼1, 컬럼2, 컬럼3, ...)
-VALUES (컬럼1의 데이터, 컬럼2의 데이터, 컬럼3의 데이터, ...);
-
--- 특정 컬럼에만 데이터 넣을 수도 있다
-INSERT INTO [사용할 테이블 이름] (컬럼1, 컬럼3)
-VALUES (컬럼1의 데이터, 컬럼3의 데이터);
-```
-
-## 데이터 갱신
-```sql
--- 데이터 갱신
-UPDATE [사용할 테이블 이름]
-    SET 컬럼1 = [갱신 데이터] WHERE [조건]; 
-
--- 기존 값을 기준으로 갱신
-UPDATE [사용할 테이블 이름]
-SET 컬럼1 = [컬럼1 + 3] WHERE [조건]; 
-```
-
-## 데이터 삭제
-
-```sql
-DELETE FROM [사용할 테이블 이름]
-WHERE [조건]
-```
-
-

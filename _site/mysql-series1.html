@@ -6,22 +6,26 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part1] 데이터 조회 및 분석(1): SQL소개와 MySQL 문법 정리</title>
-  <meta name='description' content='데이터베이스를 체계적으로 작동할 수 있도록 돕는 소프트웨어가 나오게 되었으며 이를 DBMS라고 한다'>
+  <title>MySQL Series [Part1] DML(1): SELECT 기초</title>
+  <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/mysql-series1">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part1] 데이터 조회 및 분석(1): SQL소개와 MySQL 문법 정리 – Code Museum">
-  <meta name="twitter:description" content="데이터베이스를 체계적으로 작동할 수 있도록 돕는 소프트웨어가 나오게 되었으며 이를 DBMS라고 한다">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/mysql_1.png">
+  <meta name="twitter:title" content="MySQL Series [Part1] DML(1): SELECT 기초 – Code Museum">
+  <meta name="twitter:description" content="
+Table of Contents
+">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/select_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part1] 데이터 조회 및 분석(1): SQL소개와 MySQL 문법 정리 – Code Museum">
-  <meta property="og:description" content="데이터베이스를 체계적으로 작동할 수 있도록 돕는 소프트웨어가 나오게 되었으며 이를 DBMS라고 한다">
-  <meta property="og:image" content="http://localhost:4000/images/mysql_1.png">
+  <meta property="og:title" content="MySQL Series [Part1] DML(1): SELECT 기초 – Code Museum">
+  <meta property="og:description" content="
+Table of Contents
+">
+  <meta property="og:image" content="http://localhost:4000/images/select_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -377,7 +381,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part1] 데이터 조회 및 분석(1): SQL소개와 MySQL 문법 정리">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part1] DML(1): SELECT 기초">
         </div>
       </div>
       
@@ -398,7 +402,7 @@
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part1] 데이터 조회 및 분석(1): SQL소개와 MySQL 문법 정리</h1>
+          <h1 class="post__title">MySQL Series [Part1] DML(1): SELECT 기초</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -407,7 +411,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2021-03-07T21:01:35+09:00">07 Mar 2021</time>
+              <time class="post__date" datetime="2021-03-11T21:01:35+09:00">11 Mar 2021</time>
             </div>
           </div>
   
@@ -467,18 +471,6 @@
   
 
   
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
   	
   	
   	
@@ -490,10 +482,10 @@
 
   <div class="post_pagination">
     
-      <a href="#" class="pagination__prev pagination__item disabled">첫 번째 글입니다</a>
+      <a href="/mysql-series0" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part0] MySQL 소개</a>
     
     
-      <a href="/mysql-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part2] 데이터 조회 및 분석(2): 조인(JOIN)과 서브쿼리(SUBQUERY)<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part2] DML(2): SELECT 중급 JOIN, SUBQUERY<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -502,23 +494,7 @@
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#dbms" id="markdown-toc-dbms">DBMS</a>    <ul>
-      <li><a href="#database" id="markdown-toc-database">Database</a></li>
-      <li><a href="#dbms-1" id="markdown-toc-dbms-1">DBMS</a></li>
-      <li><a href="#sql" id="markdown-toc-sql">SQL</a></li>
-      <li><a href="#mysql" id="markdown-toc-mysql">MySQL</a></li>
-      <li><a href="#dbms의-종류" id="markdown-toc-dbms의-종류">DBMS의 종류</a></li>
-      <li><a href="#dbms의-구조" id="markdown-toc-dbms의-구조">DBMS의 구조</a></li>
-    </ul>
-  </li>
-  <li><a href="#sql의-분류" id="markdown-toc-sql의-분류">SQL의 분류</a>    <ul>
-      <li><a href="#dcl" id="markdown-toc-dcl">DCL</a></li>
-      <li><a href="#ddl" id="markdown-toc-ddl">DDL</a></li>
-      <li><a href="#dml" id="markdown-toc-dml">DML</a></li>
-      <li><a href="#tcl" id="markdown-toc-tcl">TCL</a></li>
-    </ul>
-  </li>
-  <li><a href="#select문" id="markdown-toc-select문">SELECT문</a>    <ul>
+  <li><a href="#select-statement" id="markdown-toc-select-statement">SELECT Statement</a>    <ul>
       <li><a href="#select" id="markdown-toc-select">SELECT</a></li>
       <li><a href="#from" id="markdown-toc-from">FROM</a></li>
       <li><a href="#where" id="markdown-toc-where">WHERE</a></li>
@@ -531,83 +507,13 @@
       <li><a href="#null-데이터-다루는-방법" id="markdown-toc-null-데이터-다루는-방법">NULL 데이터 다루는 방법</a></li>
     </ul>
   </li>
-  <li><a href="#마치며" id="markdown-toc-마치며">마치며</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="dbms">DBMS</h1>
-<p>빅 데이터 시대에서 데이터 저장은 가장 중요한 부분 중 하나입니다. 힘들게 얻은 데이터를 저장하지 않는다면 큰 자원 낭비겠죠. 하지만 중요한 것은 단순히 저장에 그치는 것이 아니라, <strong>어떤 식으로 저장해 그 후 데이터를 추가, 갱신, 삭제 할 때 문제(NULL, 중복 등)가 생기지 않도록 할 것인지에 대한 고민</strong>도 이루어져야 한다는 것 입니다. 이번 MySQL 시리즈에서 이런 문제들을 어떻게 해결할 것인지에 대해 공부해보도록 하겠습니다.</p>
+<h1 id="select-statement">SELECT Statement</h1>
 
-<h2 id="database">Database</h2>
-<p>데이터베이스는 <strong>데이터의 집합</strong> 또는 <strong>데이터 저장소</strong>라고 정의할 수 있습니다.</p>
-
-<h2 id="dbms-1">DBMS</h2>
-<p>데이터베이스를 보통 직접적으로 접근하지는 않습니다. 사용자들이 데이터베이스를 그냥 접근한다면 데이터의 일관성도 떨어질 것이고, 관리도 쉽지 않을 것 입니다. 이러한 이유로 <strong>데이터베이스를 체계적으로 작동할 수 있도록 돕는 소프트웨어가 나오게 되었으며 이를 DBMS(DataBase Management System)</strong>이라고 합니다.</p>
-
-<p>DBMS는 데이터베이스를 구축하는 틀을 제공하고, 효율적으로 데이터를 검색하고 저장하는 기능을 제공합니다. 또한 응용 프로그램들이 데이터베이스에 접근할 수 있는 인터페이스를 제공하고, 장애에 대한 복구 기능, 사용자 권한에 따른 보안성 유지 기능 등을 제공합니다.</p>
-
-<h2 id="sql">SQL</h2>
-<p>DBMS를 이용해 데이터베이스를 사용하게 됩니다. 그렇다면 저희는 DBMS와 소통하는 방법을 알아야 합니다. 여기서 DBMS와 소통하기 위한 언어를 SQL(Structured Query Language)라고 합니다. SQL을 이용하면 데이터베이스 조작에 필요한 모든 명령어를 DBMS에 전달함으로써 수행할 수 있습니다.</p>
-
-<h2 id="mysql">MySQL</h2>
-<p>처음 SQL이라는 언어는 IBM이라고 하는 회사에서 System/R이라는 DBMS와, 이것을 사용하기 위해 필요한 언어인 SEQUEL을 만들면서 처음 등장했습니다. 그런데 SEQUEL(Structured English Query Language)은 그 단어가 이미 다른 곳에서 사용되고 있다는 문제(상표권 문제) 때문에 그 이름이 SQL(Structured Query Language)로 변경되었습니다. 그러다가 1987년, 국제 표준화 기구(ISO)에서 SQL에 관한 국제 표준(ISO 9075:1987)이 제정되었습니다.</p>
-
-<p>하지만 우리가 실제로 사용하는 SQL은 이 국제 표준에 완벽히 부합하지는 않습니다. Oracle, Microsoft SQL Server, MySQL 등의 DBMS에서 지원되는 SQL이 표준을 완벽히 준수하지는 않는다는 뜻입니다. 그 이유는 다양하지만 일단 많은 DBMS 회사들이 성능 향상과 더 다양한 기능 제공을 위해서, 차라리 표준을 일부 벗어나는 것을 택하는 경우가 많기 때문입니다.</p>
-
-<p>MySQL은 가장 처음 MySQL AB라고 하는 스웨덴 회사에서 개발되었습니다. 현재는 인수 과정을 거쳐 Oracle의 소유입니다. 이로 인해 지금 Oracle에는 Oracle(회사명과 같은 DBMS)과 MySQL이라는 서비스를 함께 제공하고 있습니다.</p>
-
-<p>두 DBMS의 시장에서의 쓰임새를 보면 약간의 차이가 있습니다. 은행, 거래소 등과 같이 데이터 처리의 정확성, 운영의 안정성 등이 엄격하게 요구되는 분야에서는 오라클이 주로 사용되고 있고, 우리가 흔히 쓰는 앱, 웹 사이트 같은 서비스를 만들 때는 MySQL을 쓰는 경우가 많습니다.</p>
-
-<h2 id="dbms의-종류">DBMS의 종류</h2>
-<p>위와 같이 많은 회사에서 성능 향상과 목적에 맞게 SQL이라는 언어를 조금씩 변형, 개선하여 새로운 DBMS로 개발해왔습니다. 이러한 이유로 MySQL과 같이 ~SQL이라는 용어도 사실상은 그 언어를 지원하는 DBMS 자체를 의미하게 되었습니다. 그래서 약간 헷갈리지만 관계형 데이터를 위한 DBMS의 경우 RDBMS, 비 관계형 데이터를 위한 DBMS의 경우 NoSQL이라고 하게 되었습니다.</p>
-
-<p><strong>RDBMS</strong>: MySQL, Oracle, MariaDB(MySQL 개발자들이 만든 오픈소스), PostgreSQL 등<br />
-<strong>NoSQL</strong>: MongoDB, ElasticSearch, Cassandra 등</p>
-
-<h2 id="dbms의-구조">DBMS의 구조</h2>
-
-<p><img src="/images/mysql_1.png" alt="" /></p>
-
-<ul>
-  <li><strong>client(클라이언트 프로그램)</strong>: 유저의 데이터베이스 관련 작업을 위해, SQL을 입력할 수 있는 화면 등을 제공하는 프로그램</li>
-  <li><strong>server(서버 프로그램)</strong>: client로부터 SQL 문 등을 전달받아 데이터베이스 관련 작업을 직접 처리하는 프로그램</li>
-</ul>
-
-<p>MySQL에서 서버 프로그램의 이름은 <code class="language-plaintext highlighter-rouge">mysqld</code>, 클라이언트 프로그램 이름은 <code class="language-plaintext highlighter-rouge">mysql</code>입니다. mysql은 보통 CLI 환경에서 사용하는 프로그램입니다. CLI 환경이 아니라 GUI 환경에서 mysql을 사용하려면 mysql을 GUI 환경에서 사용할 수 있도록 해주는 프로그램을 사용하면 됩니다. 대표적으로 Oracle이 공식적으로 제공하는 <code class="language-plaintext highlighter-rouge">MySQL Workbench</code>라는 프로그램이 있습니다.</p>
-
-<h1 id="sql의-분류">SQL의 분류</h1>
-
-<h2 id="dcl">DCL</h2>
-
-<ul>
-  <li>데이터베이스 접근 권한과 관련한 명령어</li>
-  <li>GRANT, REVOKE, DENY</li>
-</ul>
-
-<h2 id="ddl">DDL</h2>
-
-<ul>
-  <li>테이블과 같은 데이터 구조를 정의하는데 사용되는 명령어</li>
-  <li>CREATE, ALTER, RENAME, DROP, TRUNCATE</li>
-</ul>
-
-<h2 id="dml">DML</h2>
-
-<ul>
-  <li>데이터 조회/삽입/수정/삭제와 관련한 명령어</li>
-  <li>SELECT, INSERT, UPDATE, DELETE</li>
-</ul>
-
-<h2 id="tcl">TCL</h2>
-
-<ul>
-  <li>데이터를 트랜잭션 단위로 처리하는데 필요한 명령어</li>
-  <li>COMMIT, ROLLBACK, SAVEPOINT</li>
-</ul>
-
-<h1 id="select문">SELECT문</h1>
 <p>MySQL에서 데이터를 <strong>조회하거나 분석</strong>할 때 필요한 <strong>SELECT문</strong>에 대해서 간단히 정리해 보겠습니다.</p>
 
 <h2 id="select">SELECT</h2>
@@ -641,7 +547,7 @@
 
 <h2 id="where">WHERE</h2>
 <ul>
-  <li>컬럼에 조건을 지정</li>
+  <li>조회할 데이터를 필터링 하기 위해, 컬럼에 조건을 지정</li>
 </ul>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WHERE</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">20</span>
@@ -769,6 +675,19 @@
 <span class="k">LIMIT</span> 
 </code></pre></div></div>
 
+<p><strong>JOIN 문이 있을 때 실행 순서</strong></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span>
+<span class="k">ON</span>
+<span class="k">JOIN</span>
+<span class="k">WHERE</span>
+<span class="k">GROUP</span> <span class="k">BY</span>
+<span class="k">HAVING</span>
+<span class="k">SELECT</span>
+<span class="k">ORDER</span> <span class="k">BY</span>
+<span class="k">LIMIT</span>
+</code></pre></div></div>
+
 <h2 id="sql에서-제공하는-함수">SQL에서 제공하는 함수</h2>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- 모든 데이터 타입</span>
@@ -847,9 +766,6 @@
     <span class="k">END</span>
 <span class="k">FROM</span> <span class="n">customers</span><span class="p">;</span>
 </code></pre></div></div>
-
-<h1 id="마치며">마치며</h1>
-<p>여기까지 테이블 한 개에 대해서 데이터를 조회하고 분석하는 방법에 대해 살펴보았습니다. 다음 포스트에서는 테이블이 여러 개인 경우에 대해 데이터를 조회하고 분석할 때 필요한 문법에 대해 알아보겠습니다.</p>
 
 <h1 id="참고">참고</h1>
 
@@ -1061,11 +977,6 @@
           
             
               
-              <li class="tag__item"><a href="/tech_interview" class="post_category_list">#tech_interview</a></li>
-            
-          
-            
-              
               <li class="tag__item"><a href="/web_development" class="post_category_list">#web_development</a></li>
             
           
@@ -1096,7 +1007,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part1]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%A1%B0%ED%9A%8C%20%EB%B0%8F%20%EB%B6%84%EC%84%9D(1):%20SQL%EC%86%8C%EA%B0%9C%EC%99%80%20MySQL%20%EB%AC%B8%EB%B2%95%20%EC%A0%95%EB%A6%AC&url=http://localhost:4000/mysql-series1"
+          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part1]%20DML(1):%20SELECT%20%EA%B8%B0%EC%B4%88&url=http://localhost:4000/mysql-series1"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -1106,12 +1017,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series1&amp;media=http://localhost:4000/images/mysql_1.png&amp;description=MySQL%20Series%20[Part1]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%A1%B0%ED%9A%8C%20%EB%B0%8F%20%EB%B6%84%EC%84%9D(1):%20SQL%EC%86%8C%EA%B0%9C%EC%99%80%20MySQL%20%EB%AC%B8%EB%B2%95%20%EC%A0%95%EB%A6%AC"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series1&amp;media=http://localhost:4000/images/select_logo.png&amp;description=MySQL%20Series%20[Part1]%20DML(1):%20SELECT%20%EA%B8%B0%EC%B4%88"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series1&title=MySQL%20Series%20[Part1]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%A1%B0%ED%9A%8C%20%EB%B0%8F%20%EB%B6%84%EC%84%9D(1):%20SQL%EC%86%8C%EA%B0%9C%EC%99%80%20MySQL%20%EB%AC%B8%EB%B2%95%20%EC%A0%95%EB%A6%AC&summary=%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EB%A5%BC%20%EC%B2%B4%EA%B3%84%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%9E%91%EB%8F%99%ED%95%A0%20%EC%88%98%20%EC%9E%88%EB%8F%84%EB%A1%9D%20%EB%8F%95%EB%8A%94%20%EC%86%8C%ED%94%84%ED%8A%B8%EC%9B%A8%EC%96%B4%EA%B0%80%20%EB%82%98%EC%98%A4%EA%B2%8C%20%EB%90%98%EC%97%88%EC%9C%BC%EB%A9%B0%20%EC%9D%B4%EB%A5%BC%20DBMS%EB%9D%BC%EA%B3%A0%20%ED%95%9C%EB%8B%A4&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series1&title=MySQL%20Series%20[Part1]%20DML(1):%20SELECT%20%EA%B8%B0%EC%B4%88&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -1120,18 +1031,6 @@
 <!--첫 번째 문단-->
 
 
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 
@@ -1183,10 +1082,10 @@
 
   <div class="post_pagination">
     
-      <a href="#" class="pagination__prev pagination__item disabled">첫 번째 글입니다</a>
+      <a href="/mysql-series0" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part0] MySQL 소개</a>
     
     
-      <a href="/mysql-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part2] 데이터 조회 및 분석(2): 조인(JOIN)과 서브쿼리(SUBQUERY)<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part2] DML(2): SELECT 중급 JOIN, SUBQUERY<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1374,8 +1273,8 @@
       
 
       
-      <a class="article__image" href="/mysql-series26">
-        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part26] MySQL 성능 점검/튜닝하기">
+      <a class="article__image" href="/data-engineering-series27">
+        <img class="lazy" data-src="/images/redis_logo.png" alt="Data Engineering Series [Part27]: Redis">
       </a>
       
 
@@ -1384,7 +1283,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/mysql-series26">MySQL Series [Part26] MySQL 성능 점검/튜닝하기</a>
+        <a href="/data-engineering-series27">Data Engineering Series [Part27]: Redis</a>
       </h2>
 
       
@@ -1408,13 +1307,13 @@
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-08-02T21:01:35+09:00">02 Aug 2022</time>
+      <time class="article__date" datetime="2022-08-01T21:01:35+09:00">01 Aug 2022</time>
 
       
 
       
-      <a class="article__image" href="/mysql-series25">
-        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part25] 그라파나를 이용해 MySQL 서버 모니터링 하기">
+      <a class="article__image" href="/data-engineering-series26">
+        <img class="lazy" data-src="/images/i_heart_log.png" alt="Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration">
       </a>
       
 
@@ -1423,7 +1322,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/mysql-series25">MySQL Series [Part25] 그라파나를 이용해 MySQL 서버 모니터링 하기</a>
+        <a href="/data-engineering-series26">Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration</a>
       </h2>
 
       

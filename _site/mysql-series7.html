@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part7] 아키텍처</title>
+  <title>MySQL Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/mysql-series7">
@@ -14,18 +14,18 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part7] 아키텍처 – Code Museum">
+  <meta name="twitter:title" content="MySQL Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/mysql_3.png">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/commit_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part7] 아키텍처 – Code Museum">
+  <meta property="og:title" content="MySQL Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
-  <meta property="og:image" content="http://localhost:4000/images/mysql_3.png">
+  <meta property="og:image" content="http://localhost:4000/images/commit_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -381,7 +381,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part7] 아키텍처">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT">
         </div>
       </div>
       
@@ -402,7 +402,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part7] 아키텍처</h1>
+          <h1 class="post__title">MySQL Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -411,7 +411,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-04-09T21:01:35+09:00">09 Apr 2022</time>
+              <time class="post__date" datetime="2021-03-27T21:01:35+09:00">27 Mar 2021</time>
             </div>
           </div>
   
@@ -459,18 +459,6 @@ Table of Contents
   
 
   
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
   	
   	
   	
@@ -482,10 +470,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part6] 데이터베이스 모델링</a>
+      <a href="/mysql-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part6] DCL: GRANT, REVOKE</a>
     
     
-      <a href="/mysql-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part8] 트랜잭션과 잠금<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part8] 유틸리티(View, CTE)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -494,295 +482,59 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#mysql의-전체-구조" id="markdown-toc-mysql의-전체-구조">MySQL의 전체 구조</a></li>
-  <li><a href="#mysql-엔진-아키텍처" id="markdown-toc-mysql-엔진-아키텍처">MySQL 엔진 아키텍처</a></li>
-  <li><a href="#innodb-스토리지-엔진-아키텍처" id="markdown-toc-innodb-스토리지-엔진-아키텍처">InnoDB 스토리지 엔진 아키텍처</a>    <ul>
-      <li><a href="#innodb-버퍼-풀" id="markdown-toc-innodb-버퍼-풀">InnoDB 버퍼 풀</a>        <ul>
-          <li><a href="#lru-알고리즘" id="markdown-toc-lru-알고리즘">LRU 알고리즘</a></li>
-        </ul>
-      </li>
-      <li><a href="#체인지-버퍼" id="markdown-toc-체인지-버퍼">체인지 버퍼</a></li>
-      <li><a href="#로그-버퍼" id="markdown-toc-로그-버퍼">로그 버퍼</a></li>
-      <li><a href="#리두-로그" id="markdown-toc-리두-로그">리두 로그</a>        <ul>
-          <li><a href="#버퍼-풀과-리두-로그의-관계" id="markdown-toc-버퍼-풀과-리두-로그의-관계">버퍼 풀과 리두 로그의 관계</a></li>
-          <li><a href="#버퍼-풀-플러시" id="markdown-toc-버퍼-풀-플러시">버퍼 풀 플러시</a></li>
-        </ul>
-      </li>
-      <li><a href="#언두-로그" id="markdown-toc-언두-로그">언두 로그</a></li>
-      <li><a href="#테이블-스페이스" id="markdown-toc-테이블-스페이스">테이블 스페이스</a>        <ul>
-          <li><a href="#the-system-tablespace" id="markdown-toc-the-system-tablespace">The System Tablespace</a></li>
-          <li><a href="#file-per-table-tablespaces" id="markdown-toc-file-per-table-tablespaces">File-Per-Table Tablespaces</a></li>
-          <li><a href="#general-tablespaces" id="markdown-toc-general-tablespaces">General Tablespaces</a></li>
-          <li><a href="#undo-tablespaces" id="markdown-toc-undo-tablespaces">Undo Tablespaces</a></li>
-          <li><a href="#temporary-tablespaces" id="markdown-toc-temporary-tablespaces">Temporary Tablespaces</a></li>
-        </ul>
-      </li>
-      <li><a href="#어댑티브-해시-인덱스" id="markdown-toc-어댑티브-해시-인덱스">어댑티브 해시 인덱스</a></li>
-    </ul>
-  </li>
-  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+  <li><a href="#오토커밋-확인하기" id="markdown-toc-오토커밋-확인하기">오토커밋 확인하기</a></li>
+  <li><a href="#트랜잭션-기능-활성화" id="markdown-toc-트랜잭션-기능-활성화">트랜잭션 기능 활성화</a></li>
+  <li><a href="#트랜잭션-처리" id="markdown-toc-트랜잭션-처리">트랜잭션 처리</a></li>
+  <li><a href="#상태-저장" id="markdown-toc-상태-저장">상태 저장</a></li>
 </ul>
 
 <hr />
 
-<h1 id="mysql의-전체-구조">MySQL의 전체 구조</h1>
-
-<p><img src="/images/mysql_2.png" alt="" /></p>
-
 <ul>
-  <li><strong>MySQL 엔진</strong>: 요청된 SQL문장을 분석하거나 최적화하는 등 DBMS의 두뇌에 해당하는 처리를 수행</li>
-  <li><strong>스토리지 엔진</strong>: 데이터를 디스크에 저장하거나 디스크로부터 읽어오는 역할</li>
+  <li>트랜잭션은 Session 단위로 제어됨</li>
+  <li>DDL 작업에 대해서는 ROLLBACK 적용 안됨 (DDL은 AutoCommit)</li>
 </ul>
 
-<h1 id="mysql-엔진-아키텍처">MySQL 엔진 아키텍처</h1>
+<h1 id="오토커밋-확인하기">오토커밋 확인하기</h1>
 
 <ul>
-  <li><strong>커넥션 핸들러</strong>: 클라이언트의 접속, 쿼리 요청을 처리</li>
-  <li><strong>SQL 파서</strong>: 실행 이전에 문법성 오류 체크</li>
-  <li><strong>SQL 옵티마이저</strong>: 쿼리의 최적화</li>
+  <li>AutoCommit은 DML 실행문이 자동으로 커밋되는 것을 의미</li>
+  <li>해제해야 트랜잭션 처리 가능</li>
 </ul>
 
-<h1 id="innodb-스토리지-엔진-아키텍처">InnoDB 스토리지 엔진 아키텍처</h1>
-
-<p><img src="/images/mysql_3.png" alt="" /></p>
-
-<p>There is a metadata file (ibdata1, which holds, by default, data pages, index pages, table metadata and MVCC information), also known as the InnoDB tablespace file.</p>
-
-<ul>
-  <li>You can have more than one ibdata file (see innodb_data_file_path)</li>
-  <li>There are redo logs (ib_logfile0 and ib_logfile1)</li>
-  <li>You can have more than two redo logs (see innodb_log_files_in_group)</li>
-  <li>You can spread data and indexes across multiple ibdata files if innodb_file_per_table is disabled</li>
-  <li>You can separate data and index pages from ibdata into separate tablespace files (see innodb_file_per_table and StackOverflow Post on how to set this up)</li>
-</ul>
-
-<h2 id="innodb-버퍼-풀">InnoDB 버퍼 풀</h2>
-
-<ul>
-  <li>스토리지 엔진에서 가장 핵심적인 부분</li>
-  <li><strong>데이터 캐시</strong>: 디스크의 데이터 파일이나 인덱스 정보를 메모리에 캐시해 두는 공간</li>
-  <li><strong>쓰기 버퍼링</strong>: 쓰기 작업을 지연시켜 일괄 작업으로 처리할 수 있게 해주는 버퍼 역할</li>
-  <li>페이지 크기의 조각으로 쪼개어 디스크로부터 읽어온 페이지를 저장</li>
-  <li>
-    <p>메모리 공간을 관리하기 위해 LRU리스트, 플러시 리스트, 프리 리스트라는 자료구조를 관리</p>
-  </li>
-  <li>The buffer pool is an area in main memory where InnoDB caches table and index data as it is accessed.</li>
-  <li>The buffer pool permits frequently used data to be accessed directly from memory, which speeds up processing.</li>
-  <li>On dedicated servers, up to 80% of physical memory is often assigned to the buffer pool.</li>
-  <li>For efficiency of <strong>high-volume read</strong> operations, the buffer pool is divided into pages that can potentially hold multiple rows.</li>
-  <li>For efficiency of cache management, <strong>the buffer pool is implemented as a linked list of pages</strong>; data that is rarely used is aged out of the cache using a variation of the least recently used (LRU) algorithm.</li>
-</ul>
-
-<h3 id="lru-알고리즘">LRU 알고리즘</h3>
-
-<p><img src="/images/buffer_pool_1.png" alt="" /></p>
-
-<ul>
-  <li>테이블 데이터와 인덱스 데이터를 버퍼 풀에 캐시한다</li>
-  <li>새로운 위치의 테이블 데이터 또는 인덱스 데이터를 버퍼 풀에 캐시하려는데 메모리에 더 이상 자리가 없다</li>
-  <li>버퍼 풀에서 한동안 사용되지 않았던 페이지를 버퍼 풀에서 제거한다(만약 더티 페이지라면 플러시 후 제거)</li>
-  <li>버퍼 풀에 있는 페이지들은 링크드 리스트 구조로 되어 있음</li>
-  <li>이 링크드 리스트는 크게 두 개의 서브리스트로 구분됨 (New Sublist와 Old Sublist)</li>
-  <li>(저는 New대신 Young이라고 하겠습니다. 공식 문서에서도 Young이라고도 하는데, 저는 Young이 더 와닿기 때문에)</li>
-  <li>Young 서브리스트는 링크드 리스트의 HEAD에 가까운 5/8, Old 서브리스트는 링크드 리스트의 TAIL에 가까운 3/8</li>
-  <li>이 Old 서브리스트가 삭제되는 페이지의 후보들이다(무조건 3/8이 다 삭제되는게 아니라, 필요한만큼 삭제됨)</li>
-  <li>새로운 페이지는 Old 서브리스트의 HEAD로 감. 이 부분을 Midpoint라고도 함</li>
-  <li>페이지들은 어떤 작업에 의해 젊어지고 늙어갈까?
-    <ol>
-      <li>유저의 SELECT 연산에 의해 데이터가 읽어지면 young해지고 Young 서브리스트의 제일 머리로 올라간다</li>
-      <li>InnoDB에 의해 자동적으로 수행되는 Read-ahead 작업으로 데이터가 young해질 수도 있음</li>
-      <li>SELECT 연산이 WHERE 조건문이 없으면 테이블 풀 스캔 -&gt; young해질 수도 있음</li>
-    </ol>
-  </li>
-  <li>자동적으로 위와 같은 작업에 해당되지 않는 데이터들은 old해짐</li>
-  <li>하지만 2번과 3번은 정말 의미있는 데이터를 young해지도록 하는 것은 아님 -&gt; 이로 인해 오히려 중요한 데이터가 old해지는 악영향을 초래할 수도 있음
-    <ul>
-      <li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-performance-midpoint_insertion.html" target="_blank">MySQL 공식문서: Making the Buffer Pool Scan Resistant</a></li>
-      <li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-performance-read_ahead.html" target="_blank">MySQL 공식문서: Configuring InnoDB Buffer Pool Prefetching (Read-Ahead)</a></li>
-      <li>위의 문서를 참고하면, 중요한 데이터를 버퍼 풀에 고정시키는 방법과 같은 것들을 알 수 있음</li>
-    </ul>
-  </li>
-</ul>
-
-<p><strong>read-ahead</strong><br />
-A type of I/O request that prefetches a group of pages (an entire extent) into the buffer pool asynchronously, in case these pages are needed soon. The linear read-ahead technique prefetches all the pages of one extent based on access patterns for pages in the preceding extent. The random read-ahead technique prefetches all the pages for an extent once a certain number of pages from the same extent are in the buffer pool. Random read-ahead is not part of MySQL 5.5, but is re-introduced in MySQL 5.6 under the control of the <code class="language-plaintext highlighter-rouge">innodb_random_read_ahead</code> configuration option.</p>
-
-<h2 id="체인지-버퍼">체인지 버퍼</h2>
-
-<blockquote>
-  <p>The change buffer is a special data structure that caches changes to secondary index pages when those pages are not in the buffer pool. The buffered changes, which may result from INSERT, UPDATE, or DELETE operations (DML), are merged later when the pages are loaded into the buffer pool by other read operations.</p>
-</blockquote>
-
-<p><img src="/images/change_buffer_1.png" alt="" /></p>
-
-<ul>
-  <li>세컨더리 인덱스는 보통 유니크하지 않은 경우가 많다</li>
-  <li>그리고 세컨더리 인덱스에 삽입하는 데이터는 보통 한 곳에서 순차적으로 발생하지 않고, 랜덤한 곳에서 발생한다</li>
-  <li><code class="language-plaintext highlighter-rouge">INSERT</code>, <code class="language-plaintext highlighter-rouge">UPDATE</code>, <code class="language-plaintext highlighter-rouge">DELETE</code>와 같은 DML작업이 세컨더리 인덱스(secondary index)를 가지는 컬럼에 발생했을 때,</li>
-  <li>해당 변경사항을 반영하기 위해 세컨더리 인덱스를 업데이트 해야한다.</li>
-  <li>이 때 만약 세컨더리 인덱스 페이지가 버퍼 풀에 없다면,</li>
-  <li>세컨더리 인덱스 페이지를 업데이트 하기 위해 디스크에 접근하게 되면 디스크 I/O로 인해 성능 저하</li>
-  <li>-&gt; 세컨더리 인덱스 페이지의 변경사항을 체인지 버퍼에 캐시해둔다</li>
-  <li>나중에 <code class="language-plaintext highlighter-rouge">SELECT</code> 연산에 의해 버퍼 풀에 인덱스 페이지가 로드되면, 그 때 체인지 버퍼에 캐시된 변경사항을 버퍼 풀로 병합시킨다</li>
-  <li>그래서 대량의 DML 작업이 발생할 때, 체인지 버퍼는 많은 도움이 된다</li>
-  <li>하지만 체인지 버퍼는 버퍼 풀 메모리의 일부를 차지하고 있다</li>
-  <li>그래서 만약 주로 읽기 작업이 발생하는 OLAP를 위해 사용하고 있거나, 세컨더리 인덱스가 별로 없는 경우에는 체인지 버퍼의 기능을 꺼두는 것이 좋다</li>
-  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-change-buffer.html" target="_blank">MySQL 공식문서 참고. 내용 좋음</a></li>
-</ul>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>기본적으로 데이터/인덱스 변경사항은 버퍼 풀에 반영된다
-근데 그중에서 세컨더리 인덱스에 한해,
-버퍼 풀에 세컨더리 인덱스 페이지가 없을 때 변경 사항을 체인지 버퍼에 캐시해둔다
-읽기 작업으로 버퍼 풀에 세컨더리 인덱스 페이지가 생겼으면 버퍼 풀에 있는 세컨더리 인덱스 페이지로 변경 사항을 병합한다
-
--&gt; 체인지 버퍼는 세컨더리 인덱스 페이지가 버퍼 풀에 없는 경우에만 유용하다
--&gt; 세컨더리 인덱스 페이지가 버퍼 풀에 있으면 변경 사항은 바로 버퍼 풀에 반영된다
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">VARIABLES</span> <span class="k">LIKE</span> <span class="s1">'%commit%'</span>
 </code></pre></div></div>
 
-<h2 id="로그-버퍼">로그 버퍼</h2>
+<h1 id="트랜잭션-기능-활성화">트랜잭션 기능 활성화</h1>
 
-<blockquote>
-  <p>The log buffer is the memory area that holds data to be written to the log files on disk. Log buffer size is defined by the innodb_log_buffer_size variable. The default size is 16MB. The contents of the log buffer are periodically flushed to disk. A large log buffer enables large transactions to run without the need to write redo log data to disk before the transactions commit. Thus, if you have transactions that update, insert, or delete many rows, increasing the size of the log buffer saves disk I/O.</p>
-</blockquote>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">START</span> <span class="n">TRANSACTION</span>
 
-<ul>
-  <li>디스크의 로그 파일에 쓸 데이터를 버퍼링하는 메모리 영역</li>
-  <li>기본 크기는 <code class="language-plaintext highlighter-rouge">innodb_log_buffer_size</code>=16MB</li>
-  <li>로그 버퍼의 내용은 주기적으로 디스크로 플러시</li>
-  <li>로그 버퍼 사이즈를 크게하면 대량의 트랜잭션을 커밋하기 전에 리두 로그를 디스크에 쓰지 않아도 된다</li>
-  <li>만약 많은 레코드에 변경사항이 생기는 트랜잭션을 수행해야 한다면 로그 퍼버 사이즈를 키우는 것이 성능 향상에 도움이 된다</li>
-</ul>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 로그 버퍼와 관련한 몇가지 설정
-
-- innodb_log_buffer_size: 로그 버퍼의 크기. 기본값은 16MB
-- innodb_flush_log_at_trx_commit: 트랜잭션을 얼마나 엄격하게 지킬 것인지
-    - default 1: 트랜잭션의 ACID 특성을 완전히 준수 -&gt; 트랜잭션이 커밋될 때마다 로그 버퍼상의 로그를 디스크의 로그 파일로 바로 플러시
-    - 0: 1초마다 로그 버퍼에 로그가 쓰여지고 플러시 된다. 트랜잭션을 수행했지만 그 사이에 충돌이 나서 로그를 쓰지 못하게 될 경우 데이터 손실이 발생할 수 있다
-    - 2: 로그 버퍼에 로그를 쓰는 시점은 각 트랜잭션이 커밋된 후다. 버퍼에 쓰인 로그가 플러시 되는 주기는 0과 같이 1초다.
-    - 어떤 모드를 선택하는가에 따라 안전한 트랜잭션 처리 vs 성능 간의 트레이드 오프가 있다
-
-- innodb_flush_log_at_timeout: 메모리 상의 로그 버퍼를 디스크에 있는 로그 파일로 플러시하는 주기
+<span class="k">SET</span> <span class="n">AUTOCOMMIT</span> <span class="o">=</span> <span class="k">FALSE</span>
 </code></pre></div></div>
 
-<h2 id="리두-로그">리두 로그</h2>
+<h1 id="트랜잭션-처리">트랜잭션 처리</h1>
 
-<blockquote>
-  <p>The redo log is a disk-based data structure used during crash recovery to correct data written by incomplete transactions. During normal operations, the redo log encodes requests to change table data that result from SQL statements or low-level API calls. Modifications that did not finish updating data files before an unexpected shutdown are replayed automatically during initialization and before connections are accepted. The redo log is physically represented on disk by redo log files. Data that is written to redo log files is encoded in terms of records affected, and this data is collectively referred to as redo. The passage of data through redo log files is represented by an ever-increasing LSN value. Redo log data is appended as data modifications occur, and the oldest data is truncated as the checkpoint progresses.</p>
-</blockquote>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- DML 작업을 한 후</span>
+<span class="k">UPDATE</span> <span class="o">&lt;</span><span class="err">테이블</span><span class="o">&gt;</span> <span class="k">SET</span> <span class="o">&lt;</span><span class="err">컬럼명</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">&lt;</span><span class="err">값</span><span class="o">&gt;</span> <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span>
 
-<ul>
-  <li>데이터의 변경 내용을 기록하는 디스크 기반 자료구조</li>
-  <li>ACID의 D(Durable)에 해당하는 영속성과 가장 밀접하게 연관</li>
-  <li>장애로 데이터 파일에 기록되지 못한 데이터를 잃지 않게 해주는 역할</li>
-  <li>상대적으로 비용이 높은 쓰기 작업의 성능 향상을 위해 로그 버퍼에 리두 로그를 버퍼링한 후 디스크 영역에 저장</li>
-  <li>데이터가 데이터 파일에 저장되는 시점보다 리두 로그가 로그 파일에 먼저 저장 -&gt; 리두 로그를 WAL 로그라고도 함</li>
-  <li>(참고로 트랜잭션 커밋이 플러시를 포함하지는 않음. 커밋은 트랜잭션에서 요구한 데이터 변경사항대로 버퍼 풀에서 데이터에 변경이 이루어졌다는 것을 의미. 만약 autoflush=True라면, 트랜잭션 커밋마다 디스크에 플러시를 수반할 것이다)</li>
-</ul>
+<span class="c1">-- 커밋하고 싶은 경우</span>
+<span class="k">COMMIT</span>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 리두 로그와 관련된 몇 가지 옵션
-
-- innodb_redo_log_capacity: 리두 로그 사이즈. 리두 로그는 로그 데이터의 플러시 주기를 늦출 수 있다. 디스크 I/O을 줄일 수 있다
-- innodb_log_file_size: 디스크에 있는 로그 파일의 크기
-- innodb_log_files_in_group: 디스크에 있는 로그 파일의 개수
+<span class="c1">-- 롤백하고 싶은 경우</span>
+<span class="k">ROLLBACK</span>
 </code></pre></div></div>
 
-<h3 id="버퍼-풀과-리두-로그의-관계">버퍼 풀과 리두 로그의 관계</h3>
+<h1 id="상태-저장">상태 저장</h1>
 
-<ul>
-  <li>버퍼 풀과 리두 로그의 관계를 이해하면 버퍼 풀 성능 향상에 도움이 되는 요소를 알 수 있음</li>
-  <li>데이터 변경이 발생하면 버퍼 풀에는 더티 페이지가 생기고, 로그 버퍼에는 리두 로그 레코드가 버퍼링</li>
-  <li>이 두가지 요소는 체크포인트마다 디스크로 동기화되어야 함</li>
-  <li>체크포인트는 장애 발생시 리두 로그의 어느 부분부터 복구를 실행해야 할지 판단하는 기준점</li>
-</ul>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- DML 작업을 한 후</span>
+<span class="k">UPDATE</span> <span class="o">&lt;</span><span class="err">테이블</span><span class="o">&gt;</span> <span class="k">SET</span> <span class="o">&lt;</span><span class="err">컬럼명</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">&lt;</span><span class="err">값</span><span class="o">&gt;</span> <span class="k">WHERE</span> <span class="o">&lt;</span><span class="err">조건</span><span class="o">&gt;</span>
 
-<h3 id="버퍼-풀-플러시">버퍼 풀 플러시</h3>
+<span class="c1">-- 이전 까지의 상태를 x로 저장</span>
+<span class="n">SAVEPOINT</span> <span class="n">x</span>
 
-<ul>
-  <li>버퍼 풀을 플러시하면 버퍼 풀 메모리 공간과 리두 로그 공간을 모두 얻을 수 있음</li>
-  <li>버퍼 풀을 플러시(더티 페이지들을 디스크에 동기화)하면 오래된 리두 로그 공간을 지울 수 있음</li>
-  <li>이를 위해 InnoDB 스토리지 엔진은 주기적으로 플러시 리스트 플러시 함수를 호출</li>
-  <li>플러시 리스트에서 오래 전에 변경된 데이터 페이지 순서대로 디스크에 동기화</li>
-  <li>또한 사용 빈도가 낮은 데이터 페이지를 제거하기 위해 LRU 리스트 플러시 함수를 호출</li>
-  <li>이 때 InnoDB 스토리지 엔진은 버퍼 풀을 스캔하며 더티 페이지는 동기화 클린 페이지는 프리 리스트로 옮김</li>
-</ul>
-
-<h2 id="언두-로그">언두 로그</h2>
-
-<ul>
-  <li>DML(INSERT, UPDATE, DELETE)로 변경되기 이전 버전의 백업된 데이터를 기록해두는 디스크 기반 자료구조</li>
-  <li><strong>트랜잭션 보장</strong>: 트랜잭션이 롤백될 경우 원래 데이터로 복구하기 위해 언두 로그에 백업해둔 데이터를 이용</li>
-  <li><strong>격리수준 보장</strong>: 특정 커넥션이 변경 중인 레코드에 다른 커넥션이 접근할 경우 격리수준에 맞게 언두 로그의 이전 데이터 제공</li>
-  <li>대용량 데이터를 변경하거나, 오랜 시간 유지되는 트랜잭션이 증가할 경우 언두 로그의 크기 급격히 증가</li>
-  <li>언두 로그의 사이즈가 커지면 쿼리 실행시 스토리지 엔진은 언두 로그를 필요한 만큼 스캔해야해서 쿼리의 성능이 감소</li>
-</ul>
-
-<h2 id="테이블-스페이스">테이블 스페이스</h2>
-
-<h3 id="the-system-tablespace">The System Tablespace</h3>
-<p>The system tablespace is the storage area for the change buffer. It may also contain table and index data if tables are created in the system tablespace rather than file-per-table or general tablespaces. In previous MySQL versions, the system tablespace contained the InnoDB data dictionary. In MySQL 8.0, InnoDB stores metadata in the MySQL data dictionary. See Chapter 14, MySQL Data Dictionary. In previous MySQL releases, the system tablespace also contained the doublewrite buffer storage area. This storage area resides in separate doublewrite files as of MySQL 8.0.20. See Section 15.6.4, “Doublewrite Buffer”.</p>
-
-<p>The system tablespace can have one or more data files. By default, a single system tablespace data file, named ibdata1, is created in the data directory. The size and number of system tablespace data files is defined by the <code class="language-plaintext highlighter-rouge">innodb_data_file_path</code> startup option. For configuration information, see System Tablespace Data File Configuration.</p>
-
-<h3 id="file-per-table-tablespaces">File-Per-Table Tablespaces</h3>
-<p>A file-per-table tablespace contains data and indexes for a single InnoDB table, and is stored on the file system in a single data file.</p>
-
-<p>A file-per-table tablespace is created in an <code class="language-plaintext highlighter-rouge">.ibd</code> data file in a schema directory under the MySQL data directory. The <code class="language-plaintext highlighter-rouge">.ibd</code> file is named for the table (table_name.ibd).</p>
-
-<h3 id="general-tablespaces">General Tablespaces</h3>
-<p>A general tablespace is a shared InnoDB tablespace that is created using <code class="language-plaintext highlighter-rouge">CREATE TABLESPACE</code> syntax.</p>
-
-<h3 id="undo-tablespaces">Undo Tablespaces</h3>
-<p>Undo tablespaces contain undo logs, which are collections of records containing information about how to undo the latest change by a transaction to a clustered index record.</p>
-
-<h3 id="temporary-tablespaces">Temporary Tablespaces</h3>
-<p>InnoDB uses session temporary tablespaces and a global temporary tablespace.</p>
-
-<p>Session temporary tablespaces store user-created temporary tables and internal temporary tables created by the optimizer when InnoDB is configured as the storage engine for on-disk internal temporary tables. Beginning with MySQL 8.0.16, the storage engine used for on-disk internal temporary tables is InnoDB. (Previously, the storage engine was determined by the value of <code class="language-plaintext highlighter-rouge">internal_tmp_disk_storage_engine</code>.)<br />
-`
-Session temporary tablespaces are allocated to a session from a pool of temporary tablespaces on the first request to create an on-disk temporary table. A maximum of two tablespaces is allocated to a session, one for user-created temporary tables and the other for internal temporary tables created by the optimizer. The temporary tablespaces allocated to a session are used for all on-disk temporary tables created by the session. When a session disconnects, its temporary tablespaces are truncated and released back to the pool. A pool of 10 temporary tablespaces is created when the server is started. The size of the pool never shrinks and tablespaces are added to the pool automatically as necessary. The pool of temporary tablespaces is removed on normal shutdown or on an aborted initialization. Session temporary tablespace files are five pages in size when created and have an <code class="language-plaintext highlighter-rouge">.ibt</code> file name extension.</p>
-
-<h2 id="어댑티브-해시-인덱스">어댑티브 해시 인덱스</h2>
-
-<p>MySQL과 같은 RDBMS에서 대표적으로 가장 많이 사용되는 자료 구조는 B-Tree입니다. 데이터 사이즈가 아무리 커져도 특정 데이터 접근에 소요되는 비용이 크게 증가되지 않기 때문에 어느정도 예상할 수 있는 퍼포먼스를 제공할 수 있기 때문이죠. 그치만 상황에 따라서, B-Tree 사용에 따른 잠금 현상으로 최대의 퍼포먼스를 발휘하지 못하는 경우도 있습니다.</p>
-
-<p>B-Tree를 통하여 굉장히 빈도있게 데이터로 접근한다면, 어떻게 될까요? DB 자체적으로는 꽤 좋은 쿼리 처리량을 보일지는 몰라도, 특정 데이터 노드에 접근하기 위해서 매번 트리의 경로를 쫓아가야하기 때문에, “공유 자원에 대한 잠금”이 발생할 수 밖에 없습니다. 즉, Mutex Lock이 과도하게 잡힐 수 있는데, 이 경우 비록 데이터 셋이 메모리보다 적음에도 불구하고 DB 효율이 굉장히 떨어지게 됩니다.</p>
-
-<p>이에 대한 해결책으로 InnoDB에는 Adaptive Hash Index 기능이 있다.</p>
-
-<p>“Adpative”라는 말에서 느껴지듯이, 이 특별한 자료구조는 명쾌하게 동작하지는 않고, “자주” 사용되는 데이터 값을 InnoDB 내부적으로 판단하여 상황에 맞게 해시를 생성” 합니다.</p>
-
-<p><img src="/images/adaptive_1.png" alt="" /></p>
-
-<p>위 그림에서 자주 사용되는 데이터들이 1,5,13,40이라고 가정할 때 위와 같이 내부적으로 판단하여 트리를 통하지 않고 “직접 원하는 데이터로 접근할 수 있는 해시 인덱스”를 통해 직접 데이터에 접근합니다.</p>
-
-<p>참고로, Adative Hash Index에 할당되는 메모리는 전체 Innodb_Buffer_Pool_Size의 1/64만큼으로 초기화됩니다. 단, 최소 메모리 할당은 저렇게 할당되나, 최대 사용되는 메모리 양은 알 수는 없습니다. (경우에 따라 다르지만, Adaptive Hash Index가 사용하는 인덱스 사이즈를 반드시 모니터링해야 합니다.)</p>
-
-<p>자주 사용되는 데이터는 해시를 통해서 직접 접근할 수 있기에, Mutex Lock으로 인한 지연은 확연하게 줄어듭니다. 게다가 B-Tree의 데이터 접근 비용(O(LogN))에 비해, 해시 데이터 접근 비용인 O(1)으로 굉장히 빠른 속도로 데이터 처리할 수 있습니다.</p>
-
-<p>단, “자주” 사용되는 자원만을 해시로 생성하기 때문에, 단 건 SELECT로 인하여 반드시 해당 자원을 향한 직접적인 해시 값이 만들어지지 않습니다.</p>
-
-<p>InnoDB는 Primary Key를 통한 데이터 접근을 제일 선호하기는 하지만, 만약 PK접근일지라도 정말 빈도있게 사용되는 데이터라면 이 역시 Hash Index를 생성합니다.</p>
-
-<p>InnoDB Adaptive Hash Index는 B-Tree의 한계를 보완할 수 있는 굉장히 좋은 기능임에는 틀림 없습니다. 특히나 Mutex와 같은 내부적인 잠금으로 인한 퍼포먼스 저하 상황에서는 좋은 튜닝요소가 될 수 있습니다.</p>
-
-<p>그러나, “자주” 사용되는 데이터를 옵티마이저가 판단하여 해시 키로 만들기 때문에 제어가 어려우며, 테이블 Drop 시 영향을 줄 수 있습니다. Hash Index 구조가 단일 Mutex로 관리되기 때문에, 수개월간 테이블이 사용되지 않던 상황에서도 문제가 발생할 수 있는 것입니다.</p>
-
-<p>굉장한 SELECT를 Adaptive Hash Index로 멋지게 해결하고 있다면, 이에 따른 Side Effect도 반드시 인지하고 잠재적인 장애에 대해서 미리 대비하시기 바래요. ^^</p>
-
-<p><a href="https://gywn.net/2015/01/innodb-adaptive-hash-index/" target="_blank"><strong>gywndi’s database, InnoDB의 Adaptive Hash Index로 쿼리 성능에 날개를 달아보자!! 포스트 참고</strong></a></p>
-
-<h1 id="참고">참고</h1>
-
-<ul>
-  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791158392703&amp;orderClick=LAG&amp;Kc=" target="_blank">Real MySQL 8.0 (1권) 책</a></li>
-  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-buffer-pool.html" target="_blank">MySQL 공식문서: InnoDB Buffer Pool</a></li>
-  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-change-buffer.html" target="_blank">MySQL 공식문서: Change Buffer</a></li>
-  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html" target="_blank">MySQL 공식문서: The InnoDB Storage Engine</a></li>
-  <li><a href="https://myinfrabox.tistory.com/42" target="_blank">MyInfraBox: InnoDB Architecture</a></li>
-  <li><a href="https://gywn.net/2015/01/innodb-adaptive-hash-index/" target="_blank">gywndi’s database, InnoDB의 Adaptive Hash Index로 쿼리 성능에 날개를 달아보자!!</a></li>
-  <li><a href="https://nomadlee.com/mysql-%ec%8a%a4%ed%86%a0%eb%a6%ac%ec%a7%80-%ec%97%94%ec%a7%84-%ec%a2%85%eb%a5%98-%eb%b0%8f-%ed%8a%b9%ec%a7%95/" target="_blank">nomadlee, 스토리지 엔진 비교</a></li>
-</ul>
+<span class="c1">-- x 상태로 롤백</span>
+<span class="k">ROLLBACK</span> <span class="k">TO</span> <span class="n">SAVEPOINT</span> <span class="n">x</span>
+</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">
@@ -983,11 +735,6 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
           
             
               
-              <li class="tag__item"><a href="/tech_interview" class="post_category_list">#tech_interview</a></li>
-            
-          
-            
-              
               <li class="tag__item"><a href="/web_development" class="post_category_list">#web_development</a></li>
             
           
@@ -1018,7 +765,7 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part7]%20%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98&url=http://localhost:4000/mysql-series7"
+          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part7]%20TCL:%20COMMIT,%20ROLLBACK,%20SAVEPOINT&url=http://localhost:4000/mysql-series7"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -1028,12 +775,12 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series7&amp;media=http://localhost:4000/images/mysql_3.png&amp;description=MySQL%20Series%20[Part7]%20%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series7&amp;media=http://localhost:4000/images/commit_logo.png&amp;description=MySQL%20Series%20[Part7]%20TCL:%20COMMIT,%20ROLLBACK,%20SAVEPOINT"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series7&title=MySQL%20Series%20[Part7]%20%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series7&title=MySQL%20Series%20[Part7]%20TCL:%20COMMIT,%20ROLLBACK,%20SAVEPOINT&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -1042,18 +789,6 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
 <!--첫 번째 문단-->
 
 
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 
@@ -1093,10 +828,10 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
 
   <div class="post_pagination">
     
-      <a href="/mysql-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part6] 데이터베이스 모델링</a>
+      <a href="/mysql-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part6] DCL: GRANT, REVOKE</a>
     
     
-      <a href="/mysql-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part8] 트랜잭션과 잠금<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part8] 유틸리티(View, CTE)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1284,8 +1019,8 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
       
 
       
-      <a class="article__image" href="/mysql-series26">
-        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part26] MySQL 성능 점검/튜닝하기">
+      <a class="article__image" href="/data-engineering-series27">
+        <img class="lazy" data-src="/images/redis_logo.png" alt="Data Engineering Series [Part27]: Redis">
       </a>
       
 
@@ -1294,7 +1029,7 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/mysql-series26">MySQL Series [Part26] MySQL 성능 점검/튜닝하기</a>
+        <a href="/data-engineering-series27">Data Engineering Series [Part27]: Redis</a>
       </h2>
 
       
@@ -1318,13 +1053,13 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-08-02T21:01:35+09:00">02 Aug 2022</time>
+      <time class="article__date" datetime="2022-08-01T21:01:35+09:00">01 Aug 2022</time>
 
       
 
       
-      <a class="article__image" href="/mysql-series25">
-        <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part25] 그라파나를 이용해 MySQL 서버 모니터링 하기">
+      <a class="article__image" href="/data-engineering-series26">
+        <img class="lazy" data-src="/images/i_heart_log.png" alt="Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration">
       </a>
       
 
@@ -1333,7 +1068,7 @@ Session temporary tablespaces are allocated to a session from a pool of temporar
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/mysql-series25">MySQL Series [Part25] 그라파나를 이용해 MySQL 서버 모니터링 하기</a>
+        <a href="/data-engineering-series26">Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration</a>
       </h2>
 
       

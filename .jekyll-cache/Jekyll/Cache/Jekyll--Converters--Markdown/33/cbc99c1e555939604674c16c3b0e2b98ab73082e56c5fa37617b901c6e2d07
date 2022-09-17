@@ -1,0 +1,96 @@
+I"y<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#서로-구조가-다른-테이블간의-조인" id="markdown-toc-서로-구조가-다른-테이블간의-조인">서로 구조가 다른 테이블간의 조인</a>    <ul>
+      <li><a href="#left-outer-join" id="markdown-toc-left-outer-join">LEFT OUTER JOIN</a></li>
+      <li><a href="#right-outer-join" id="markdown-toc-right-outer-join">RIGHT OUTER JOIN</a></li>
+      <li><a href="#inner-join" id="markdown-toc-inner-join">INNER JOIN</a></li>
+    </ul>
+  </li>
+  <li><a href="#구조가-같은-테이블간의-조인" id="markdown-toc-구조가-같은-테이블간의-조인">구조가 같은 테이블간의 조인</a>    <ul>
+      <li><a href="#union" id="markdown-toc-union">UNION</a></li>
+      <li><a href="#union-all" id="markdown-toc-union-all">UNION ALL</a></li>
+      <li><a href="#intersect" id="markdown-toc-intersect">INTERSECT</a></li>
+      <li><a href="#minus" id="markdown-toc-minus">MINUS</a></li>
+    </ul>
+  </li>
+  <li><a href="#서브쿼리" id="markdown-toc-서브쿼리">서브쿼리</a></li>
+  <li><a href="#마치며" id="markdown-toc-마치며">마치며</a></li>
+</ul>
+
+<hr />
+
+<h2 id="서로-구조가-다른-테이블간의-조인">서로 구조가 다른 테이블간의 조인</h2>
+<ul>
+  <li>서로 구조가 다른 테이블을 특정 컬럼을 기준으로 조인</li>
+</ul>
+
+<p><img src="/images/sql_3.png" alt="" /></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> 
+    <span class="n">p</span><span class="p">.</span><span class="n">name</span>
+    <span class="n">p</span><span class="p">.</span><span class="n">team</span>
+    <span class="n">r</span><span class="p">.</span><span class="n">team</span>
+    <span class="n">r</span><span class="p">.</span><span class="n">region</span>
+<span class="k">FROM</span> <span class="n">player</span> <span class="k">AS</span> <span class="n">p</span> <span class="k">LEFT</span> <span class="k">OUTER</span> <span class="k">JOIN</span> <span class="n">region</span> <span class="k">AS</span> <span class="n">r</span>
+<span class="k">ON</span> <span class="n">p</span><span class="p">.</span><span class="n">team</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">team</span> <span class="c1">-- ON 대신 USING(team) 이렇게 할 수도 있음</span>
+</code></pre></div></div>
+
+<h3 id="left-outer-join">LEFT OUTER JOIN</h3>
+
+<p><img src="/images/sql_5.png" alt="" /></p>
+
+<h3 id="right-outer-join">RIGHT OUTER JOIN</h3>
+
+<p><img src="/images/sql_6.png" alt="" /></p>
+
+<h3 id="inner-join">INNER JOIN</h3>
+
+<p><img src="/images/sql_7.png" alt="" /></p>
+
+<h2 id="구조가-같은-테이블간의-조인">구조가 같은 테이블간의 조인</h2>
+
+<p><img src="/images/sql_4.png" alt="" /></p>
+
+<h3 id="union">UNION</h3>
+<ul>
+  <li>중복을 허용하지 않는 합집합</li>
+</ul>
+
+<p><img src="/images/sql_8.png" alt="" /></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">old_player</span>
+<span class="k">UNION</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">new_player</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="union-all">UNION ALL</h3>
+<ul>
+  <li>중복을 허용하는 합집합</li>
+</ul>
+
+<p><img src="/images/sql_9.png" alt="" /></p>
+
+<h3 id="intersect">INTERSECT</h3>
+<ul>
+  <li>교집합</li>
+  <li>MySQL에서는 지원 하지 않음</li>
+  <li>INNER JOIN으로 해결</li>
+</ul>
+
+<h3 id="minus">MINUS</h3>
+<ul>
+  <li>차집합</li>
+  <li>MySQL에서는 지원 하지 않음</li>
+  <li>LEFT/RIGHT OUTER JOIN으로 해결</li>
+</ul>
+
+<h1 id="서브쿼리">서브쿼리</h1>
+
+<ul>
+  <li>SELECT문의 결과로 나온 값/열/테이블을 적재적소에 맞게 다른 SELECT문의 입력으로 사용할 수 있습니다</li>
+</ul>
+
+<h1 id="마치며">마치며</h1>
+<p>지쳐서 너무 대충해버렸다…생각날 때마다 조금씩 보충해야겠다</p>
+:ET
