@@ -294,8 +294,6 @@ Table of Contents
               
                 
               
-                
-              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -467,8 +465,6 @@ Table of Contents
   
 
   
-
-  
   	
   	
   	
@@ -495,6 +491,7 @@ Table of Contents
   <li><a href="#join-statement" id="markdown-toc-join-statement">JOIN Statement</a></li>
   <li><a href="#inner-join" id="markdown-toc-inner-join">INNER JOIN</a></li>
   <li><a href="#outer-join" id="markdown-toc-outer-join">OUTER JOIN</a></li>
+  <li><a href="#join-최적화" id="markdown-toc-join-최적화">JOIN 최적화</a></li>
   <li><a href="#union" id="markdown-toc-union">UNION</a></li>
   <li><a href="#subquery" id="markdown-toc-subquery">Subquery</a>    <ul>
       <li><a href="#서브쿼리를-사용할-수-있는-위치" id="markdown-toc-서브쿼리를-사용할-수-있는-위치">서브쿼리를 사용할 수 있는 위치</a></li>
@@ -576,6 +573,64 @@ Table of Contents
 <span class="k">ON</span> <span class="n">STUDENT</span><span class="p">.</span><span class="n">PID</span> <span class="o">=</span> <span class="n">PROFESSOR</span><span class="p">.</span><span class="n">ID</span> 
 <span class="k">WHERE</span> <span class="n">GRADE</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></div>
+
+<h1 id="join-최적화">JOIN 최적화</h1>
+
+<p>인덱스 레인지 스캔은 인덱스를 탐색(Index Seek)하는 단계와 인덱스를 스캔(Index Scan)하는 과정으로 구분해 볼 수 있다. 일반적으로 인덱스를 이용해서 쿼리하는 작업에서는 가져오는 레코드의 건수가 소량(전체 데이터 크기의 20% 이내)이기 때문에 인덱스 스캔 작업은 부하가 작고, 특정 인덱스 키를 찾는 인덱스 탐색 작업이 부하가 높은 편이다.</p>
+
+<p>JOIN 작업에서 드라이빙 테이블을 읽을 때는 인덱스 탐색 작업을 단 한 번만 수행하고, 그 이후부터는 스캔만 실행하면 된다.</p>
+
+<p>하지만 드리븐 테이블에서는 인덱스 탐색 작업과 스캔 작업을 드라이빙 테이블에서 읽은 레코드 건수만큼 반복한다.</p>
+
+<p>드라이빙 테이블과 드리븐 테이블이 1:1 조인되더라도 <strong>드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지</strong>한다.</p>
+
+<p>그래서 옵티마이저는 항상 드라이빙 테이블이 아니라 드리븐 테이블을 최적으로 읽을 수 있게 실행 계획을 수립한다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">employees</span> <span class="n">e</span><span class="p">,</span> <span class="n">dept_emp</span> <span class="n">de</span>
+<span class="k">WHERE</span> <span class="n">e</span><span class="p">.</span><span class="n">emp_no</span><span class="o">=</span><span class="n">de</span><span class="p">.</span><span class="n">emp_no</span>
+</code></pre></div></div>
+<p>여기서 각 테이블의 emp_no 컬럼에 인덱스가 있을 때와 없을 때 조인 순서가 어떻게 달라지는 한 번 살펴보자.</p>
+
+<ul>
+  <li>두 컬럼 모두 인덱스가 있는 경우
+    <ul>
+      <li>어느 테이블을 드라이빙으로 선택하든 인덱스를 이용해 드리븐 테이블의 검색 작업을 빠르게 처리할 수 있다</li>
+      <li>보통의 경우 어느 쪽 테이블이 드라이빙 테이블이 되든 옵티마이저가 선택하는 방법이 최적일 때가 많다</li>
+    </ul>
+  </li>
+  <li>employees 테이블에만 인덱스가 있는경우
+    <ul>
+      <li>이 때는 employees 테이블을 드리븐 테이블로 선택한다</li>
+      <li>드리븐 테이블을 읽는 것이 훨씬 더 큰 부하를 차지하기 때문에 드리븐 테이블에서 인덱스를 활용하는 것이 중요한다</li>
+    </ul>
+  </li>
+</ul>
+
+<p>INNER JOIN은 조인 대상 테이블 모두에 해당하는 레코드만 반환한다. 이같은 특성 때문에 OUTER JOIN으로만 조인을 실행하는 쿼리들도 자주 보인다. 하지만 대개의 경우 OUTER JOIN은 대상 테이블들의 데이터가 일관되지 않은 경우에만 필요하다.</p>
+
+<p>MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN B에서 B)을 드라이빙 테이블로 선택하지 못하기 때문에 무조건 앞에 등장하는 테이블을 드라이빙 테이블로 선택한다. 그 결과 인덱스 유무에 따라 조인 순서를 변경함으로써 얻게 되는 최적화의 이점을 얻지 못하기 때문에 쿼리 성능이 나빠질 수 있다. 그래서 꼭 필요한 경우가 아니라면 INNER JOIN을 사용하는 것이 쿼리의 성능에 도움이 된다.</p>
+
+<p>JOIN의 순서</p>
+
+<ul>
+  <li>INNER JOIN인 경우
+    <ul>
+      <li>어차피 A and B and C 이기 때문에 A JOIN B JOIN C이든 B JOIN A JOIN C이든 같다.</li>
+    </ul>
+  </li>
+  <li>LEFT JOIN의 경우 결과도 성능도 달라진다.
+    <ul>
+      <li>일단 가장 먼저 등장하는 테이블이 드라이빙 테이블이 된다 -&gt; 이 말은 뒤에 따라오는 테이블은 드리븐 테이블이 된다는 말이다 -&gt; 드리븐 테이블은 인덱스가 없으면 성능이 떨어진다 -&gt; 뒤에 조인되는 테이블의 인덱스 유무에 따라 쿼리 성능이 달라진다</li>
+      <li>결과 자체도 맨 앞에 등장하는 테이블의 모든 레코드가 기준이 되기 때문에 순서에 따라 달라진다</li>
+    </ul>
+  </li>
+  <li>INNER JOIN과 OUTER JOIN이 결합되는 경우
+    <ul>
+      <li>가능하다면 INNER JOIN이 앞에 오도록 하는 것이 좋다</li>
+    </ul>
+  </li>
+</ul>
 
 <h1 id="union">UNION</h1>
 
@@ -875,8 +930,6 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
-
-  
 
   
 
