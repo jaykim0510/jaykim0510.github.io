@@ -349,5 +349,6 @@ gateway 가 되는 장비들이 L3 장비들이고 Router 가 되겠죠.
 - [How To Set Permanent DNS Nameservers in Ubuntu and Debian](https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/){:target="_blank"}
 - [kinsta, What Is DNS? Domain Name System Explained](https://kinsta.com/knowledgebase/what-is-dns/){:target="_blank"}
 - [kinsta, What Is a Nameserver? Why Are Nameservers Important?](https://kinsta.com/knowledgebase/what-is-a-nameserver/){:target="_blank"}
+- [CLOUDFLARE, What is DNS?](https://www.cloudflare.com/ko-kr/learning/dns/what-is-dns/){:target="_blank"}
 - [스위칭과 라우팅... 참 쉽죠잉~ (1편: Ethernet 스위칭)](https://www.netmanias.com/ko/?m=view&id=blog&no=5501){:target="_blank"}
 - [스위칭과 라우팅... 참 쉽죠잉~ (2편: IP 라우팅)](https://www.netmanias.com/ko/?m=view&id=blog&no=5502){:target="_blank"}
