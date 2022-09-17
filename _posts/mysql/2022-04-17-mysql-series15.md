@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part16] MySQL 쿼리 튜닝/최적화하기'
+title:  'MySQL Series [Part15] MySQL 쿼리 튜닝/최적화하기'
 description: 
 date:   2022-04-17 15:01:35 +0300
 image:  '/images/mysql_opt_logo.jpeg'
@@ -42,6 +42,22 @@ Database performance depends on several factors at the database level, such as t
 
 - Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache.
 
+
+# 옵티마이저
+
+옵티마이저: 쿼리를 최적으로 실행하기 위해 각 테이블의 데이터가 어떤 분포로 저장돼 있는지 통계 정보를 참조하여 최적의 실행 계획을 수립  
+
+
+**쿼리 실행 절차**  
+
+1. MySQL 엔진의 SQL파서에서 SQL을 트리 형태로 파싱한다
+2. MySQL 엔진의 옵티마이저에서 파싱 정보를 확인하면서 통계 정보를 활용해 어떤 인덱스를 이용해 테이블을 읽을지 선택한다
+3. 2 단계가 완료되면 실행 계획이 만들어진다
+4. 스토리지 엔진에 실행 계획대로 레코드를 읽어오도록 요청한다
+5. MySQL 엔진의 SQL 실행기가 스토리지 엔진으로부터 받아온 레코드를 조인하거나 정렬하는 작업을 수행한다
+
+
+
 # SELECT문 최적화
 
 ## SELECT
@@ -57,6 +73,9 @@ Database performance depends on several factors at the database level, such as t
 - BETWEEN, IN, <, >
 
 ## GROUP BY
+- GROUP BY에 사용된 HAVING절은 인덱스를 사용해서 처리될 수 없으므로 굳이 튜닝하려고 할 필요 없다
+- GROUP BY 처리는 인덱스를 사용할 수 있는 경우와 그렇지 못한 경우가 있음
+- 인덱스가 있으면 인덱스를 차례대로 읽으면서 그루핑 작업을 수행
 - GROUP BY 작업은 크게 인덱스를 사용하는 경우와 사용할 수 없는 경우(임시 테이블을 사용)
 - 인덱스를 사용할 수 없는 경우, 전체 테이블을 스캔하여 각 그룹의 모든 행이 연속되는 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것
   - 이렇게 인덱스를 사용할 수 없을 때 할 수 있는 최선의 방법은 WHERE절을 이용해 GROUP BY 하기 전에 데이터량을 줄이는 것
@@ -173,6 +192,7 @@ MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN 
   - SELECT 문에서 요청한 컬럼의 개수가 많아지면 계속 분할해서 소트 버퍼에 읽어와야함
   - 레코드의 크기나 건수가 작은 경우 성능이 좋음
 
+
 ### 정렬 처리 방법
 
 - 인덱스를 사용한 정렬
@@ -182,12 +202,78 @@ MySQL 옵티마이저는 OUTER JOIN시 조인 되는 테이블(FROM A LEFT JOIN 
 - Filesort를 사용한 정렬
   - 인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함
 
+
+## DISTINCT 처리
+
+- DISTINCT는 SELECT하는 레코드를 유니크하게 SELECT 하는 것이지, 특정 컬럼만 유니크하게 조회하는 것이 아님
+- ```SELECT DISTINCT(first_name), last_name FROM employees;```
+  - DISTINCT는 함수가 아니라서 위처럼 괄호를 해놓아도 그냥 무시함
+  - 그래서 결론적으로 first_name과 last_name의 조합이 유니크한 레코드를 가져오게 됨
+- 집합 함수(COUNT(), MIN(), MAX()) 같은 집합 함수 내에서 DISTINCT 키워드가 사용된 경우는 함수의 인자로 전달된 컬럼값이 유니크한 것들을 가져온다
+
 # INSERT, UPDATE, DELETE문
+
+
+# 실행 계획
+
+실행 계획을 이해하고 실행 계획의 불합리한 부분을 찾아내고, 더 최적화된 방법으로 실행 계획을 수립하도록 유도하는 법을 배우자  
+
+옵티마이저가 사용자의 개입 없이 항상 좋은 실행 계획을 만들어낼 수 있는 것은 아니다  
+
+사용자가 보완할 수 있도록 EXPLAIN 명령으로 옵티마이저가 수립한 실행 계획을 확인할 수 있게 해준다.  
+
+```
+실행 계획 출력
+EXPLAIN
+SELECT문
+```
+
+```
+쿼리의 실행 계획과 단계별 소요된 시간 정보 출력
+EXPLAIN ANALYZE
+SELECT문
+```
+
+실행 계획에 가장 큰 영향을 미치는 것은 통계 정보  
+
+**통계 정보**  
+
+- 테이블의 전체 레코드 수
+- 인덱스된 컬럼이 가지는 유니크한 값의 개수
+- 각 컬럼의 데이터 분포도(히스토그램)
+
+## 실행 계획 분석
+
+```
+EXPLAIN
+SELECT *
+FROM employees AS e
+INNER JOIN salaries AS s
+ON s.emp_no=e.emp_no
+WHERE first_name='ABC'; 
+```
+
+|id|select_type|table|partitions|type|possible_keys|key|key_len|ref|rows|filtered|Extra|
+|1|SIMPLE|e|NULL|ref|PRIMARY,ix_firstname|ix_firstname|58|const|1|100.00|NULL|
+|1|SIMPLE|s|NULL|ref|PRIMARY|PRIMARY|4|employees.e.emp_no|10|100.00|NULL|
+
+표의 각 라인은 쿼리 문장에서 사용된 테이블의 개수만큼 출력된다. 실행 순서는 위에서 아래로 순서대로 표시된다  
+
+- id 컬럼
+  - SELECT 쿼리별로 부여되는 식별자 값
+  - SELECT 문장은 하나인데, 여러 개의 테이블이 조인되는 경우에는 id값이 증가하지 않고 같은 id 값이 부여된다
+  - 테이블 접근 순서와 무관
+- select_type 컬럼
+  - 각 단위 SELECT 쿼리가 어떤 타입의 쿼리인지 표시되는 컬럼
+  - 표시될 수 있는 값은 SIMPLE, PRIMARY, UNION, DEPENDENT UNION, SUBQUERY 등
+
 
 # 참고
 
 - [MySQL 공식문서: Optimizing SELECT Statements](https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html){:target="_blank"}  
-- [MySQL Performance Tuning and Optimization Tips](https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization){:target="_blank"}  
+- [MySQL Performance Tuning and Optimization Tips](https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization){:target="_blank"} 
+- [nomadlee, MySQL Explain 실행계획 사용법 및 분석](https://nomadlee.com/mysql-explain-sql/){:target="_blank"}
+- [EXPLAIN 관련 블로그](https://mysqldba.tistory.com/162?category=537180){:target="_blank"} 
 - [ETL 성능 향상을 위한 몇 가지 팁들](https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html){:target="_blank"}  
 - [전지적 송윤섭시점 TIL, GROUP BY 최적화](https://til.songyunseop.com/mysql/group-by-optimization.html){:target="_blank"}  
 - [SQL 성능을 위한 25가지 규칙](https://otsteam.tistory.com/136){:target="_blank"}  
