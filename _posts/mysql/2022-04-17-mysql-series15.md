@@ -186,6 +186,15 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
 
 # INSERT, UPDATE, DELETE문
 
+- INSERT, UPDATE, DELETE 문은 크게 성능에 대해 고려할 부분이 많지 않음
+- **테이블의 구조가 더 큰 영향을 미침**
+- **인덱스를 잘 설계하는 것이 중요**
+  - **단조 증가하는 컬럼**을 프라이머리 키로 선택하는 것이 좋음
+  - (SELECT문은 쿼리의 조건을 기준으로 프라이머리 키를 선택하는 것이 좋음)
+  - 보통 INSERT를 위한 프라이머리 키와 SELECT를 위한 프라이머리 키는 성능적인 측면에서 둘 중 하나를 선택해야함
+  - INSERT를 위해서는 **보조인덱스가 적을수록 좋음**
+  - (SELECT를 위해서는 쿼리에 이용되는 인덱스면 있는게 좋음)
+
 
 # 실행 계획
 
