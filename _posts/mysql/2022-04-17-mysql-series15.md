@@ -204,6 +204,46 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
 
 # WHERE, GROUP BY, ORDER BY의 인덱스 사용
 
+```
+WHERE, GROUP BY, ORDER BY 모두 인덱스를 사용하려면 컬럼의 값을 변환하지 않고 사용해야함
+```
+
+## WHERE 절의 인덱스 사용
+
+- 작업 범위를 결정하기 위해 인덱스 사용
+- 조건절에 사용된 컬럼과, 인덱스의 컬럼 구성이 왼쪽부터 비교해 얼마나 일치하는가에 따라 달라짐
+- 순서가 다르더라도 MySQL 서버 옵티마이저는 인덱스를 사용할 수 있는 조건들을 뽑아서 최적화를 수행
+- WHERE 조건절에 사용된 컬럼의 순서는 중요하지 않다 -> WHERE절의 조건 순서는 편하게 나열해도 된다
+- 인덱스의 컬럼 순서는 중요하다
+- WHERE 조건절에 사용된 컬럼의 **구성**은 중요하다
+
+![](/images/index_where.png)
+
+- 지금까지 설명은 WHERE 조건들이 서로 AND 관계일 때를 얘기한 것이다
+- OR로 연결될 경우
+  - OR에 연결된 모든 컬럼들이 인덱스를 가지는 경우: 인덱스 머지 후 스캔 
+    - (풀 테이블 스캔보단 빠르지만 인덱스 레인지 스캔보다는 느림)
+  - OR에 연결된 컬럼중 하나라도 인덱스가 없는 경우: 풀 테이블 스캔
+    - (풀 테이블 스캔 + 인덱스 레인지 스캔보다는 풀 테이블 스캔 1번이 더 빠르므로)
+
+## GROUP BY 절의 인덱스 사용
+
+- WHERE절과는 달리 인덱스의 컬럼 순서와 GROUP BY 절의 컬럼 순서, 위치가 같아야 함
+- 인덱스의 컬럼과 GROUP BY 절의 컬럼은 왼쪽부터 일치해야함
+- GROUP BY 에서 인덱스에 없는 컬럼을 하나라도 사용하면 인덱스 사용 못함
+
+![](/images/index_group_by.png)
+
+## ORDER BY 절의 인덱스 사용
+
+- GROUP BY와 거의 유사하다
+- 한 가지 추가되는 조건은 인덱스의 각 컬럼의 ASC/DESC 이,
+- ORDER BY의 각 컬럼의 ASC/DESC 과 모두 같거나 모두 반대인 경우에만 인덱스를 사용할 수 있다
+
+## WHERE + (GROUP BY | ORDER BY) 의 인덱스 사용
+
+
+![](/images/index_order_by.png)
 
 # INSERT, UPDATE, DELETE문
 
