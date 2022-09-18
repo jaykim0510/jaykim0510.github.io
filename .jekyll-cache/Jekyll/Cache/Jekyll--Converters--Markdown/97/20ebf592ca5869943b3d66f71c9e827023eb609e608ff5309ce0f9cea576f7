@@ -1,4 +1,4 @@
-I"mn<hr />
+I"�<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#optimization-overview" id="markdown-toc-optimization-overview">Optimization Overview</a></li>
@@ -14,7 +14,10 @@
   </li>
   <li><a href="#query-optimization" id="markdown-toc-query-optimization">Query Optimization</a>    <ul>
       <li><a href="#select" id="markdown-toc-select">SELECT</a></li>
-      <li><a href="#where" id="markdown-toc-where">WHERE</a></li>
+      <li><a href="#where" id="markdown-toc-where">WHERE</a>        <ul>
+          <li><a href="#in-vs-exists" id="markdown-toc-in-vs-exists">IN vs EXISTS</a></li>
+        </ul>
+      </li>
       <li><a href="#group-by" id="markdown-toc-group-by">GROUP BY</a></li>
       <li><a href="#join" id="markdown-toc-join">JOIN</a></li>
       <li><a href="#order-by" id="markdown-toc-order-by">ORDER BY</a>        <ul>
@@ -24,6 +27,15 @@
       <li><a href="#distinct-처리" id="markdown-toc-distinct-처리">DISTINCT 처리</a></li>
       <li><a href="#subquery" id="markdown-toc-subquery">Subquery</a></li>
       <li><a href="#temporary-table" id="markdown-toc-temporary-table">Temporary Table</a></li>
+    </ul>
+  </li>
+  <li><a href="#where-group-by-order-by의-인덱스-사용" id="markdown-toc-where-group-by-order-by의-인덱스-사용">WHERE, GROUP BY, ORDER BY의 인덱스 사용</a>    <ul>
+      <li><a href="#where-절의-인덱스-사용" id="markdown-toc-where-절의-인덱스-사용">WHERE 절의 인덱스 사용</a></li>
+      <li><a href="#group-by-절의-인덱스-사용" id="markdown-toc-group-by-절의-인덱스-사용">GROUP BY 절의 인덱스 사용</a></li>
+      <li><a href="#order-by-절의-인덱스-사용" id="markdown-toc-order-by-절의-인덱스-사용">ORDER BY 절의 인덱스 사용</a></li>
+      <li><a href="#where--group-by--order-by-의-인덱스-사용" id="markdown-toc-where--group-by--order-by-의-인덱스-사용">WHERE + (GROUP BY | ORDER BY) 의 인덱스 사용</a></li>
+      <li><a href="#group-by--order-by-의-인덱스-사용" id="markdown-toc-group-by--order-by-의-인덱스-사용">GROUP BY + ORDER BY 의 인덱스 사용</a></li>
+      <li><a href="#where--group-by--order-by-의-인덱스-사용-1" id="markdown-toc-where--group-by--order-by-의-인덱스-사용-1">WHERE + GROUP BY + ORDER BY 의 인덱스 사용</a></li>
     </ul>
   </li>
   <li><a href="#insert-update-delete문" id="markdown-toc-insert-update-delete문">INSERT, UPDATE, DELETE문</a></li>
@@ -118,6 +130,31 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
   <li>% 를 맨 앞에 쓰지마라</li>
   <li>함수 사용을 피해라</li>
   <li>BETWEEN, IN, &lt;, &gt; 사용을 피해라</li>
+</ul>
+
+<h3 id="in-vs-exists">IN vs EXISTS</h3>
+
+<ul>
+  <li><strong>IN</strong>
+    <ul>
+      <li>IN can be used as a replacement for multiple OR operators</li>
+      <li>IN works faster than the EXISTS Operator when If the sub-query result is small</li>
+      <li>In the IN-condition SQL Engine compares all the values in the IN Clause</li>
+      <li>To check against only a single column, IN operator can be used</li>
+      <li>The IN operator cannot compare anything with NULL values</li>
+      <li>A direct set of values can be given for comparison</li>
+    </ul>
+  </li>
+  <li><strong>EXISTS</strong>
+    <ul>
+      <li>To determine if any values are returned or not, we use EXISTS</li>
+      <li>If the sub-query result is larger, then EXISTS works faster than the IN Operator</li>
+      <li>Once true is evaluated in the EXISTS condition then the SQL Engine will stop the process of further matching</li>
+      <li>For checking against more than one single column, you can use the EXISTS Operator</li>
+      <li>The EXISTS clause can compare everything with NULLs</li>
+      <li>Cannot compare directly the values, sub-query needs to be given</li>
+    </ul>
+  </li>
 </ul>
 
 <h2 id="group-by">GROUP BY</h2>
@@ -290,7 +327,97 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
   <li>Temporary table vs Using index access</li>
 </ul>
 
+<h1 id="where-group-by-order-by의-인덱스-사용">WHERE, GROUP BY, ORDER BY의 인덱스 사용</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WHERE, GROUP BY, ORDER BY 모두 인덱스를 사용하려면 컬럼의 값을 변환하지 않고 사용해야함
+</code></pre></div></div>
+
+<h2 id="where-절의-인덱스-사용">WHERE 절의 인덱스 사용</h2>
+
+<ul>
+  <li>작업 범위를 결정하기 위해 인덱스 사용</li>
+  <li>조건절에 사용된 컬럼과, 인덱스의 컬럼 구성이 왼쪽부터 비교해 얼마나 일치하는가에 따라 달라짐</li>
+  <li>순서가 다르더라도 MySQL 서버 옵티마이저는 인덱스를 사용할 수 있는 조건들을 뽑아서 최적화를 수행</li>
+  <li>WHERE 조건절에 사용된 컬럼의 순서는 중요하지 않다 -&gt; WHERE절의 조건 순서는 편하게 나열해도 된다</li>
+  <li>인덱스의 컬럼 순서는 중요하다</li>
+  <li>WHERE 조건절에 사용된 컬럼의 <strong>구성</strong>은 중요하다</li>
+</ul>
+
+<p><img src="/images/index_where.png" alt="" /></p>
+
+<ul>
+  <li>지금까지 설명은 WHERE 조건들이 서로 AND 관계일 때를 얘기한 것이다</li>
+  <li>OR로 연결될 경우
+    <ul>
+      <li>OR에 연결된 모든 컬럼들이 인덱스를 가지는 경우: 인덱스 머지 후 스캔
+        <ul>
+          <li>(풀 테이블 스캔보단 빠르지만 인덱스 레인지 스캔보다는 느림)</li>
+        </ul>
+      </li>
+      <li>OR에 연결된 컬럼중 하나라도 인덱스가 없는 경우: 풀 테이블 스캔
+        <ul>
+          <li>(풀 테이블 스캔 + 인덱스 레인지 스캔보다는 풀 테이블 스캔 1번이 더 빠르므로)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="group-by-절의-인덱스-사용">GROUP BY 절의 인덱스 사용</h2>
+
+<ul>
+  <li>WHERE절과는 달리 인덱스의 컬럼 순서와 GROUP BY 절의 컬럼 순서, 위치가 같아야 함</li>
+  <li>인덱스의 컬럼과 GROUP BY 절의 컬럼은 왼쪽부터 일치해야함</li>
+  <li>GROUP BY 에서 인덱스에 없는 컬럼을 하나라도 사용하면 인덱스 사용 못함</li>
+</ul>
+
+<p><img src="/images/index_group_by.png" alt="" /></p>
+
+<h2 id="order-by-절의-인덱스-사용">ORDER BY 절의 인덱스 사용</h2>
+
+<ul>
+  <li>GROUP BY와 거의 유사하다</li>
+  <li>한 가지 추가되는 조건은 인덱스의 각 컬럼의 ASC/DESC 이,</li>
+  <li>ORDER BY의 각 컬럼의 ASC/DESC 과 모두 같거나 모두 반대인 경우에만 인덱스를 사용할 수 있다</li>
+</ul>
+
+<p><img src="/images/index_order_by.png" alt="" /></p>
+
+<h2 id="where--group-by--order-by-의-인덱스-사용">WHERE + (GROUP BY | ORDER BY) 의 인덱스 사용</h2>
+
+<ul>
+  <li>WHERE 절의 컬럼과 GROUP(ORDER) BY 절의 컬럼을 순서대로 나열했을 때 연속하면 둘 다 인덱스 사용 가능</li>
+  <li>중간에 빠지는 컬럼이 있으면 WHERE 절만 인덱스 사용 (가장 오른쪽 그림 참고)</li>
+</ul>
+
+<p><img src="/images/index_where_group.png" alt="" /></p>
+
+<h2 id="group-by--order-by-의-인덱스-사용">GROUP BY + ORDER BY 의 인덱스 사용</h2>
+
+<ul>
+  <li>두 절 모두 컬럼의 구성과 순서가 서로 같아야함</li>
+  <li>둘중 하나라도 인덱스를 사용할 수 없으면 둘 다 인덱스 사용 못함</li>
+</ul>
+
+<h2 id="where--group-by--order-by-의-인덱스-사용-1">WHERE + GROUP BY + ORDER BY 의 인덱스 사용</h2>
+
+<p><img src="/images/index_all.png" alt="" /></p>
+
 <h1 id="insert-update-delete문">INSERT, UPDATE, DELETE문</h1>
+
+<ul>
+  <li>INSERT, UPDATE, DELETE 문은 크게 성능에 대해 고려할 부분이 많지 않음</li>
+  <li><strong>테이블의 구조가 더 큰 영향을 미침</strong></li>
+  <li><strong>인덱스를 잘 설계하는 것이 중요</strong>
+    <ul>
+      <li><strong>단조 증가하는 컬럼</strong>을 프라이머리 키로 선택하는 것이 좋음</li>
+      <li>(SELECT문은 쿼리의 조건을 기준으로 프라이머리 키를 선택하는 것이 좋음)</li>
+      <li>보통 INSERT를 위한 프라이머리 키와 SELECT를 위한 프라이머리 키는 성능적인 측면에서 둘 중 하나를 선택해야함</li>
+      <li>INSERT를 위해서는 <strong>보조인덱스가 적을수록 좋음</strong></li>
+      <li>(SELECT를 위해서는 쿼리에 이용되는 인덱스면 있는게 좋음)</li>
+    </ul>
+  </li>
+</ul>
 
 <h1 id="실행-계획">실행 계획</h1>
 
@@ -607,5 +734,6 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
   <li><a href="https://coding-factory.tistory.com/756" target="_blank">코딩팩토리, [DB] 데이터베이스 NESTED LOOPS JOIN (중첩 루프 조인)에 대하여</a></li>
   <li><a href="https://schatz37.tistory.com/2" target="_blank">고동의 데이터 분석, [SQL] “성능 관점”에서 보는 결합(Join)</a></li>
   <li><a href="https://schatz37.tistory.com/3?category=878798" target="_blank">고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)</a></li>
+  <li><a href="https://www.geeksforgeeks.org/in-vs-exists-in-sql/" target="_blank">GeeksforGeeks, IN vs EXISTS in SQL</a></li>
 </ul>
 :ET

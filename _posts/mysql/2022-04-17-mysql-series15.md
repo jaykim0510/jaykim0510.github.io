@@ -240,10 +240,24 @@ WHERE, GROUP BY, ORDER BY 모두 인덱스를 사용하려면 컬럼의 값을 �
 - 한 가지 추가되는 조건은 인덱스의 각 컬럼의 ASC/DESC 이,
 - ORDER BY의 각 컬럼의 ASC/DESC 과 모두 같거나 모두 반대인 경우에만 인덱스를 사용할 수 있다
 
+![](/images/index_order_by.png)
+
+
 ## WHERE + (GROUP BY | ORDER BY) 의 인덱스 사용
 
+- WHERE 절의 컬럼과 GROUP(ORDER) BY 절의 컬럼을 순서대로 나열했을 때 연속하면 둘 다 인덱스 사용 가능
+- 중간에 빠지는 컬럼이 있으면 WHERE 절만 인덱스 사용 (가장 오른쪽 그림 참고)
 
-![](/images/index_order_by.png)
+![](/images/index_where_group.png)
+
+## GROUP BY + ORDER BY 의 인덱스 사용
+
+- 두 절 모두 컬럼의 구성과 순서가 서로 같아야함
+- 둘중 하나라도 인덱스를 사용할 수 없으면 둘 다 인덱스 사용 못함
+
+## WHERE + GROUP BY + ORDER BY 의 인덱스 사용
+
+![](/images/index_all.png)
 
 # INSERT, UPDATE, DELETE문
 
