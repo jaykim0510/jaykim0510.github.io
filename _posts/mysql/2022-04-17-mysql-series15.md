@@ -85,6 +85,24 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
 - 함수 사용을 피해라
 - BETWEEN, IN, <, > 사용을 피해라
 
+### IN vs EXISTS
+
+- **IN**
+  - IN can be used as a replacement for multiple OR operators
+  - IN works faster than the EXISTS Operator when If the sub-query result is small
+  - In the IN-condition SQL Engine compares all the values in the IN Clause
+  - To check against only a single column, IN operator can be used
+  - The IN operator cannot compare anything with NULL values
+  - A direct set of values can be given for comparison
+
+- **EXISTS**
+  - To determine if any values are returned or not, we use EXISTS
+  - If the sub-query result is larger, then EXISTS works faster than the IN Operator
+  - Once true is evaluated in the EXISTS condition then the SQL Engine will stop the process of further matching
+  - For checking against more than one single column, you can use the EXISTS Operator
+  - The EXISTS clause can compare everything with NULLs
+  - Cannot compare directly the values, sub-query needs to be given
+
 ## GROUP BY
 - HAVING절은 인덱스를 사용해서 처리될 수 없으므로 굳이 튜닝하려고 할 필요 없다
 - GROUP BY 작업은 크게 인덱스를 사용하는 경우와 사용할 수 없는 경우(임시 테이블을 사용)
@@ -329,3 +347,4 @@ MySQL Explain 상 일반적으로 데이터가 많은 경우 Using Filesort 와 
 - [코딩팩토리, [DB] 데이터베이스 NESTED LOOPS JOIN (중첩 루프 조인)에 대하여](https://coding-factory.tistory.com/756){:target="_blank"} 
 - [고동의 데이터 분석, [SQL] "성능 관점"에서 보는 결합(Join)](https://schatz37.tistory.com/2){:target="_blank"} 
 - [고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)](https://schatz37.tistory.com/3?category=878798){:target="_blank"} 
+- [GeeksforGeeks, IN vs EXISTS in SQL](https://www.geeksforgeeks.org/in-vs-exists-in-sql/){:target="_blank"} 
