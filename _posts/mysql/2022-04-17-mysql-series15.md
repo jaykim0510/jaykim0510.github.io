@@ -202,6 +202,9 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
 - Use a temporary table to handle bulk data
 - Temporary table vs Using index access
 
+# WHERE, GROUP BY, ORDER BY의 인덱스 사용
+
+
 # INSERT, UPDATE, DELETE문
 
 - INSERT, UPDATE, DELETE 문은 크게 성능에 대해 고려할 부분이 많지 않음
