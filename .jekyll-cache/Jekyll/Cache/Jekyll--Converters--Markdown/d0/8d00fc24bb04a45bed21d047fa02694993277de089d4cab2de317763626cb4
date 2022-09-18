@@ -1,8 +1,22 @@
-I"z<hr />
+I"x<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#쿼리-분석" id="markdown-toc-쿼리-분석">쿼리 분석</a></li>
-  <li><a href="#시스템-분석" id="markdown-toc-시스템-분석">시스템 분석</a></li>
+  <li><a href="#시스템-분석" id="markdown-toc-시스템-분석">시스템 분석</a>    <ul>
+      <li><a href="#연결connection" id="markdown-toc-연결connection">연결(Connection)</a>        <ul>
+          <li><a href="#모니터링을-위한-status" id="markdown-toc-모니터링을-위한-status">모니터링을 위한 status</a></li>
+          <li><a href="#튜닝을-위한-system-variables" id="markdown-toc-튜닝을-위한-system-variables">튜닝을 위한 system variables</a></li>
+        </ul>
+      </li>
+      <li><a href="#스토리지-엔진" id="markdown-toc-스토리지-엔진">스토리지 엔진</a>        <ul>
+          <li><a href="#myisam과-innodb-비교" id="markdown-toc-myisam과-innodb-비교">MyISAM과 InnoDB 비교</a></li>
+          <li><a href="#innodb-관련-설정" id="markdown-toc-innodb-관련-설정">InnoDB 관련 설정</a></li>
+        </ul>
+      </li>
+      <li><a href="#메모리memory" id="markdown-toc-메모리memory">메모리(Memory)</a></li>
+      <li><a href="#mysql-서버" id="markdown-toc-mysql-서버">MySQL 서버</a></li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -50,6 +64,50 @@
   <li>시스템/서버 설정에 대한 분석</li>
   <li>그라파나와 같은 모니터링 툴을 이용해 상황에 맞게 설정해야함</li>
 </ul>
+
+<h2 id="연결connection">연결(Connection)</h2>
+
+<ul>
+  <li>MySQL은 오픈 소스임에도 높은 성능을 제공해준다는 점에서 웹 서비스의 DB로 많이 사용됨</li>
+  <li>웹 서비스에서 사용되는 OLTP는 대용량 데이터 처리보다는 많은 사용자의 동시 접속을 제어하는 것이 중요한 요소임</li>
+</ul>
+
+<h3 id="모니터링을-위한-status">모니터링을 위한 status</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">STATUS</span> <span class="k">LIKE</span> <span class="s1">'%connect%'</span><span class="p">;</span>
+<span class="k">SHOW</span> <span class="n">STATUS</span> <span class="k">LIKE</span> <span class="s1">'%client%'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>Aborted_clients</strong>: 클라이언트 프로그램이 비 정상적으로 종료된 수</li>
+  <li><strong>Aborted_connects</strong>: MySQL 서버에 접속이 실패된 수</li>
+  <li><strong>Max_used_connections</strong>: 최대로 동시에 접속한 수</li>
+  <li><strong>Threads_cached</strong>: Thread Cache의 Thread 수</li>
+  <li><strong>Threads_connected</strong>: 현재 연결된 Thread 수</li>
+  <li><strong>Threads_created</strong>: 접속을 위해 생성된 Thread 수</li>
+  <li><strong>Threads_running</strong>: Sleeping 되어 있지 않은 Thread 수</li>
+</ul>
+
+<h3 id="튜닝을-위한-system-variables">튜닝을 위한 system variables</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">VARIABLES</span> <span class="k">LIKE</span> <span class="s1">'%connection%'</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>wait_timeout</strong>: 종료전까지 요청이 없이 기다리는 시간 ( TCP/IP 연결, Shell 상의 접속이 아닌 경우 )</li>
+  <li><strong>thread_cache_size</strong>: thread 재 사용을 위한 Thread Cache 수로써, Cache 에 있는 Thread 수보다 접속이 많으면 새롭게 Thread를 생성한다.</li>
+  <li><strong>max_connections</strong>: 최대 동시 접속 가능 수. 늘어나면 날수록 메모리가 고갈되고 스케줄링 오버헤드도 증가</li>
+</ul>
+
+<h2 id="스토리지-엔진">스토리지 엔진</h2>
+
+<h3 id="myisam과-innodb-비교">MyISAM과 InnoDB 비교</h3>
+
+<h3 id="innodb-관련-설정">InnoDB 관련 설정</h3>
+
+<h2 id="메모리memory">메모리(Memory)</h2>
+
+<h2 id="mysql-서버">MySQL 서버</h2>
 
 <h1 id="참고">참고</h1>
 
