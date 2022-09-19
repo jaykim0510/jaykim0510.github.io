@@ -40,6 +40,9 @@ tags: Java
 
 이러한 자바의 높은 호환성은 애플리케이션의 특징과도 잘 맞아떨어지기 때문에, 애플리케이션 개발에 활발히 사용되고 있죠.  
 
+# Package, Class
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Zt4Ze4jNDUE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 # JDK, JRE, JVM
 
@@ -47,15 +50,17 @@ JVM을 사용해서 마음껏 개발할 수 있는 환경을 JRE (Java Runtime E
 
 ![](/images/jdk.png)
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/VvVruEDCSSY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 # Maven, Gradle
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/3Jp9kGDb01g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/3Jp9kGDb01g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/L19wXSpv5cs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ntOH2bWLWQs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-# Build
+# Compile, Build
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/6SvUZqbU37E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
