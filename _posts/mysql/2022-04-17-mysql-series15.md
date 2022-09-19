@@ -3,7 +3,7 @@ layout: post
 title:  'MySQL Series [Part15] MySQL 파티션'
 description: 
 date:   2022-04-17 15:01:35 +0300
-image:  '/images/mysql_opt_logo.jpeg'
+image:  '/images/partition_logo_logo.jpeg'
 logo_image: '/images/mysql_logo.webp'
 categories: DE
 tags: MySQL

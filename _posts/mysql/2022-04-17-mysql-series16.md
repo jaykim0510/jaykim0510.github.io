@@ -318,8 +318,8 @@ WHERE first_name='ABC';
 
 |**구분**|**설명**|
 |**id**|select 아이디로 SELECT를 구분하는 번호|
-|**table**|참조하는 테이블|
 |**select_type**|select에 대한 타입|
+|**table**|참조하는 테이블|
 |**type**|조인 혹은 조회 타입|
 |**possible_keys**|데이터를 조회할 때 DB에서 사용할 수 있는 인덱스 리스트|
 |**key**|실제로 사용할 인덱스|
@@ -332,9 +332,6 @@ WHERE first_name='ABC';
 
 행이 어떤 SELECT 구문을 나타내는 지를 알려주는 것으로 구문에 서브 쿼리나 UNION이 없다면 SELECT는 하나밖에 없기 때문에 모든 행에 대해 1이란 값이 부여되지만 이외의 경우에는 원 구문에서 순서에 따라 각 SELECT 구문들에 순차적으로 번호가 부여된다. (SELECT 문장은 하나인데, 여러 개의 테이블이 조인되는 경우에는 id값이 증가하지 않고 같은 id 값이 부여된다). 테이블 접근 순서와는 무관하다
 
-
-### table
-행이 어떤 테이블에 접근하는 지를 보여주는 것으로 대부분의 경우 테이블 이름이나 SQL에서 지정된 별명 같은 값을 나타낸다.
 
 ### select_type
 
@@ -349,6 +346,10 @@ WHERE first_name='ABC';
 |**DERIVED**|SELECT로 추출된 테이블 (FROM 절 에서의 서브쿼리 또는 Inline View)|
 |**UNCACHEABLE SUBQUERY**|Sub Query와 동일하지만 공급되는 모든 값에 대해 Sub Query를 재처리. 외부쿼리에서 공급되는 값이 동이라더라도 Cache된 결과를 사용할 수 없음|
 |**UNCACHEABLE UNION**|UNION 과 동일하지만 공급되는 모든 값에 대하여 UNION 쿼리를 재처리|
+
+
+### table
+행이 어떤 테이블에 접근하는 지를 보여주는 것으로 대부분의 경우 테이블 이름이나 SQL에서 지정된 별명 같은 값을 나타낸다.
 
 ### type
 
