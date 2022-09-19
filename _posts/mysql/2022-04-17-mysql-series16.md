@@ -359,7 +359,7 @@ WHERE first_name='ABC';
 
 |**구분**|**설명**|
 |**system**|테이블에 단 한개의 데이터만 있는 경우|
-|**const**|SELECT에서 Primary Key 혹은 Unique Key를 살수로 조회하는 경우로 많아야 한 건의 데이터만 있음|
+|**const**|SELECT에서 Primary Key 혹은 Unique Key를 상수로 조회하는 경우로 많아야 한 건의 데이터만 있음|
 |**eq_ref**|조인을 할 때 Primary Key|
 |**ref**|조인을 할 때 Primary Key 혹은 Unique Key가 아닌 Key로 매칭하는 경우|
 |**ref_or_null**|ref 와 같지만 null 이 추가되어 검색되는 경우|
@@ -369,7 +369,10 @@ WHERE first_name='ABC';
 |**range**|특정 범위 내에서 인덱스를 사용하여 원하는 데이터를 추출하는 경우로, 데이터가 방대하지 않다면 단순 SELECT 에서는 나쁘지 않음|
 |**index**|인덱스를 처음부터 끝까지 찾아서 검색하는 경우로, 일반적으로 인덱스 풀스캔이라고 함|
 |**all**|테이블을 처음부터 끝까지 검색하는 경우로, 일반적으로 테이블 풀스캔이라고 함|
-|**possible_keys**|쿼리에서 접근하는 컬럼 들과 사용된 비교 연산자들을 바탕으로 어떤 인덱스를 사용할 수 있는 지를 표시해준다.|
+
+
+### possible_keys
+쿼리에서 접근하는 컬럼 들과 사용된 비교 연산자들을 바탕으로 어떤 인덱스를 사용할 수 있는 지를 표시해준다.  
 
 ### key
 테이블에 접근하는 방법을 최적화 하기 위해 어떤 인덱스를 사용하기로 결정했는 지를 나타낸다.
@@ -401,7 +404,6 @@ MySQL Explain 상 일반적으로 데이터가 많은 경우 Using Filesort 와 
 - [MySQL 공식문서: Optimizing SELECT Statements](https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html){:target="_blank"}  
 - [MySQL Performance Tuning and Optimization Tips](https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization){:target="_blank"} 
 - [nomadlee, MySQL Explain 실행계획 사용법 및 분석](https://nomadlee.com/mysql-explain-sql/){:target="_blank"}
-- [EXPLAIN 관련 블로그](https://mysqldba.tistory.com/162?category=537180){:target="_blank"} 
 - [ETL 성능 향상을 위한 몇 가지 팁들](https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html){:target="_blank"}  
 - [전지적 송윤섭시점 TIL, GROUP BY 최적화](https://til.songyunseop.com/mysql/group-by-optimization.html){:target="_blank"}  
 - [SQL 성능을 위한 25가지 규칙](https://otsteam.tistory.com/136){:target="_blank"}  
