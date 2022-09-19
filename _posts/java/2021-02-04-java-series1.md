@@ -21,7 +21,7 @@ tags: Java
 ![](/images/java_1.png){: width="100%"}  
 
 
-## 자바와 가상머신
+# 자바와 가상머신
 
 > 한 번만 작성하면, 어디서든 동작한다. (Write Once, Run Anywhere.)  
 
@@ -41,4 +41,24 @@ tags: Java
 이러한 자바의 높은 호환성은 애플리케이션의 특징과도 잘 맞아떨어지기 때문에, 애플리케이션 개발에 활발히 사용되고 있죠.  
 
 
+# JDK, JRE, JVM
+
 JVM을 사용해서 마음껏 개발할 수 있는 환경을 JRE (Java Runtime Environment) 라고 부르며, 내 컴퓨터에 이런 환경을 만들기 위해서는 JDK (Java Development Kit) 라는 것을 설치하면 됩니다.  
+
+![](/images/jdk.png)
+
+# Maven, Gradle
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3Jp9kGDb01g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/3Jp9kGDb01g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ntOH2bWLWQs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+# Build
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6SvUZqbU37E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zeDh2mMd_fc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JgRCaVwkPE8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
