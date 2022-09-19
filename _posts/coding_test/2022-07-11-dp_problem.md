@@ -43,6 +43,8 @@ tags: Coding_Test
 - Minimum Path Sum 💟 ✅ 
 - Flip String to Monotone Increasing 💟 ❎ ✅ 
 - Maximum Sum of Two Non-Overlapping Subarrays 💟 ❎(너무 어렵다..)
+- Longest Common Subsequence
+- Delete Operation for Two Strings
 - Longest String Chain
 - Champagne Tower
 - Longest Increasing Subsequence
