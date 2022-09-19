@@ -18,13 +18,10 @@ tags: MySQL
 ---
 
 # View
-- 뷰(view)는 데이터베이스에 존재하는 일종의 가상 테이블
-- 실제로 데이터를 저장하고 있지는 않음
+- 뷰(view)는 데이터베이스에 존재하는 일종의 가상 테이블로, 실제로 데이터를 저장하고 있지는 않음
 - 테이블은 실제 데이터를 저장, 뷰는 그저 SELECT문이 실행되고 난 후의 이미지 같은 느낌
-- 때에 따라 서브쿼리가 이중 중첩, 삼중 중첩되는 경우 
-- 이 때 생기는 SELECT문의 복잡성을 줄이고자 뷰를 사용
-- 특정 역할을 하는 SELECT문들을 뷰로 저장  
-- 코드 스니펫처럼 필요할 때마다 가져와서 사용 가능
+- 때에 따라 서브쿼리가 이중 중첩, 삼중 중첩되는 경우, 이 때 생기는 SELECT문의 복잡성을 줄이고자 뷰를 사용
+- 특정 역할을 하는 SELECT문들을 뷰로 저장해서, 코드 스니펫처럼 필요할 때마다 가져와서 사용
 - 뷰는 백엔드 개발자들의 자산
 
 ## 장점
@@ -73,8 +70,20 @@ SELECT * FROM information_schema.views
 # CTE(Common Table Expression)
 
 - 메모리에 임시 결과로 올려놓고 재사용
-- 쿼리가 실행중인 동안만큼은 데이터가 메모리에 올라와 있음
+- 쿼리가 실행중인 동안에만 데이터가 메모리에 올라와 있음
 - 순차적으로 쿼리 작성 가능
+
+```sql
+-- CTE 한 개 생성
+WITH <CTE 테이블명> AS 
+(SELECT ...) 
+
+-- CTE 여러 개 생성
+WITH 
+<CTE 테이블명1> AS (SELECT ...),
+<CTE 테이블명2> AS (SELECT ...),
+```
+
 
 ## RECURSIVE CTE
 
@@ -83,36 +92,24 @@ SELECT * FROM information_schema.views
 
 ![](/images/mysql_40.png)
 
-```sql
-
-```
-
 ## Table vs View
 
-- Table: Table is a preliminary storage for storing data and information in RDBMS. A table is a collection of related data entries and it consists of columns and rows.
-
-- View: A view is a virtual table whose contents are defined by a query. Unless indexed, a view does not exist as a stored set of data values in a database. Advantages over table are
-
-We can combine columns/rows from multiple table or another view and have a consolidated view.
-Views can be used as security mechanisms by letting users access data through the view, without granting the users permissions to directly access the underlying base tables of the view
-It acts as abstract layer to downstream systems, so any change in schema is not exposed and hence the downstream systems doesn't get affected.  
+- 테이블은 데이터와 RDBMS에 관한 정보를 영구적으로 저장하는 저장소
+- 뷰는 어떤 쿼리에 의해 생성된 가상의 테이블. 인덱싱 해놓지 않으면 데이터베이스에 별도로 저장되지 않음
 
 ## View vs CTE
 
-- A view is an object in the database
-- Views can be indexed
-- A CTE only exists for the duration of a single query
-- CTE can't be indexed
-
-- **Ad-hoc queries**: For queries that are referenced occasionally (or just once), it’s usually better to use a CTE. If you need the query again, you can just copy the CTE and modify it if necessary.
-- **Frequently used queries**: If you tend to reference the same query often, creating a corresponding view is a good idea. However, you’ll need create view permission in your database to create a view.
-- **Access management**: A view might be used to restrict particular users’ database access while still allowing them to get the information they need. You can give users access to specific views that query the data they’re allowed to see without exposing the whole database. In such a case, a view provides an additional access layer.
+- 뷰는 데이터베이스에 존재하는 일종의 오브젝트(Object)
+  - 다른 곳에서도 쓰일 일이 있는 쿼리라면 뷰
+  - 다른 사용자들에게 데이터의 일부만 제공하고자 하는 경우 뷰
+- CTE는 쿼리가 실행되는 동안에만 존재하는 임시 테이블
+  - Ad-hoc하게 사용하려는 경우 CTE
 
 ## CTE vs Subquery
 
-CTE is just syntax so in theory it is just a subquery. you may not get any performance difference while using CTE and Subquery.  
+- CTE와 서브쿼리는 성능이나 결과적인 측면에서 다른 점이 없다
+- 차이점은 CTE가 가독성이 더 좋다는 것, CTE는 재귀적으로 호출해 완전히 새로운 테이블을 만들 수 있다
 
-I think the biggest benefit for using CTEs is readability. It makes it much easier to see what queries are being used as subqueries, and then it's easy to join them into a query, much like a view.  
 
 # 참고
 
