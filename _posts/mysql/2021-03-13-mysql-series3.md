@@ -23,7 +23,7 @@ tags: MySQL
 - MySQL에서 제공하는 윈도우 함수라고 따로 정의해둔 윈도우 함수 묶음이 있음
   ![](/images/mysql_45.png)
 - 집계 함수도 OVER절을 이용해 범위를 정의하면 윈도우 함수로 사용할 수 있음(Most aggregate functions also can be used as window functions, [MySQL 공식문서](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html){:target="_blank"})
-- 사용 방법: [윈도우 함수] + [OVER 절] or [집계 함수] + [OVER 절]
+- 사용 방법: `[윈도우 함수] + OVER` or `[집계 함수] + OVER`
 - 범위마다 함수를 적용한다는 점에서 GROUP BY와 비슷하게 느껴지지만, GROUP BY는 집계된 결과를 테이블로 보여주는 반면, 윈도우 함수는 집계된 결과를 기존 테이블에 하나의 열로 추가하여 결과를 볼 수 있음
   ![](/images/mysql_46.png)
 
@@ -35,7 +35,7 @@ tags: MySQL
 - 이러한 윈도우가 OVER절에 의해 정의됨
 - OVER clause which has three possible elements: partition definition, order definition, and frame definition.
   ```
-  {window_function(expression)] \| [aggregation_function(expression)} OVER ( 
+  {window_function(expression)] | [aggregation_function(expression)} OVER ( 
    [partition_defintion]
    [order_definition]
    [frame_definition]
