@@ -1,4 +1,4 @@
-I"�<hr />
+I"]�<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#optimization-overview" id="markdown-toc-optimization-overview">Optimization Overview</a></li>
@@ -43,9 +43,10 @@
       <li><a href="#통계정보" id="markdown-toc-통계정보">통계정보</a></li>
       <li><a href="#실행-계획-분석" id="markdown-toc-실행-계획-분석">실행 계획 분석</a>        <ul>
           <li><a href="#id" id="markdown-toc-id">id</a></li>
-          <li><a href="#table" id="markdown-toc-table">table</a></li>
           <li><a href="#select_type" id="markdown-toc-select_type">select_type</a></li>
+          <li><a href="#table" id="markdown-toc-table">table</a></li>
           <li><a href="#type" id="markdown-toc-type">type</a></li>
+          <li><a href="#possible_keys" id="markdown-toc-possible_keys">possible_keys</a></li>
           <li><a href="#key" id="markdown-toc-key">key</a></li>
           <li><a href="#key_len" id="markdown-toc-key_len">key_len</a></li>
           <li><a href="#ref" id="markdown-toc-ref">ref</a></li>
@@ -522,12 +523,12 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
       <td>select 아이디로 SELECT를 구분하는 번호</td>
     </tr>
     <tr>
-      <td><strong>table</strong></td>
-      <td>참조하는 테이블</td>
-    </tr>
-    <tr>
       <td><strong>select_type</strong></td>
       <td>select에 대한 타입</td>
+    </tr>
+    <tr>
+      <td><strong>table</strong></td>
+      <td>참조하는 테이블</td>
     </tr>
     <tr>
       <td><strong>type</strong></td>
@@ -562,12 +563,17 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
 
 <h3 id="id">id</h3>
 
-<p>행이 어떤 SELECT 구문을 나타내는 지를 알려주는 것으로 구문에 서브 쿼리나 UNION이 없다면 SELECT는 하나밖에 없기 때문에 모든 행에 대해 1이란 값이 부여되지만 이외의 경우에는 원 구문에서 순서에 따라 각 SELECT 구문들에 순차적으로 번호가 부여된다. (SELECT 문장은 하나인데, 여러 개의 테이블이 조인되는 경우에는 id값이 증가하지 않고 같은 id 값이 부여된다). 테이블 접근 순서와는 무관하다</p>
-
-<h3 id="table">table</h3>
-<p>행이 어떤 테이블에 접근하는 지를 보여주는 것으로 대부분의 경우 테이블 이름이나 SQL에서 지정된 별명 같은 값을 나타낸다.</p>
+<ul>
+  <li>행이 어떤 SELECT 구문을 나타내는 지를 알려주는 것으로 구문에 서브 쿼리나 UNION이 없다면 SELECT는 하나밖에 없기 때문에 모든 행에 대해 1이란 값이 부여되지만 이외의 경우에는 원 구문에서 순서에 따라 각 SELECT 구문들에 순차적으로 번호가 부여된다.</li>
+  <li>(SELECT 문장은 하나인데, 여러 개의 테이블이 조인되는 경우에는 id값이 증가하지 않고 같은 id 값이 부여된다).</li>
+  <li>테이블 접근 순서와는 무관하다</li>
+</ul>
 
 <h3 id="select_type">select_type</h3>
+
+<ul>
+  <li>select에 대한 타입</li>
+</ul>
 
 <table>
   <tbody>
@@ -618,7 +624,22 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
   </tbody>
 </table>
 
+<h3 id="table">table</h3>
+
+<ul>
+  <li>행이 어떤 테이블에 접근하는 지를 보여주는 것으로 대부분의 경우 테이블 이름이나 SQL에서 지정된 별명 같은 값을 나타낸다.</li>
+</ul>
+
 <h3 id="type">type</h3>
+
+<ul>
+  <li>쿼리 실행 계획에서 type 이후의 컬럼은 MySQL서버가 각 테이블의 레코드를 어떤 방식으로 읽었는지를 나타냄</li>
+  <li>(type, possible_keys, key, ..)</li>
+  <li>여기서 말하는 방식은 인덱스 레인지 스캔, 인덱스 풀 스캔, 테이블 풀 스캔 등을 의미</li>
+  <li>보통 <code class="language-plaintext highlighter-rouge">WHERE</code>, <code class="language-plaintext highlighter-rouge">ON</code>과 같은 조건절에 어떤 컬럼, 어떤 연산자를 사용했는지에 따라 달라짐</li>
+  <li>만약 type의 결과가 <code class="language-plaintext highlighter-rouge">system</code>, <code class="language-plaintext highlighter-rouge">const</code>, <code class="language-plaintext highlighter-rouge">eq_ref</code>, <code class="language-plaintext highlighter-rouge">ref</code>인 경우에는 쿼리문을 튜닝하지 않아도 됨</li>
+  <li>아래의 접근 방식은 성능이 빠른 순서대로 나열된 것</li>
+</ul>
 
 <table>
   <tbody>
@@ -628,68 +649,92 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
     </tr>
     <tr>
       <td><strong>system</strong></td>
-      <td>테이블에 단 한개의 데이터만 있는 경우</td>
+      <td>1개 이하의 레코드를 가지는 테이블을 참조하는 경우</td>
     </tr>
     <tr>
       <td><strong>const</strong></td>
-      <td>SELECT에서 Primary Key 혹은 Unique Key를 살수로 조회하는 경우로 많아야 한 건의 데이터만 있음</td>
+      <td>쿼리의 WHERE 조건절에 프라이머리 키 또는 유니크 키 컬럼을 이용해 1건의 레코드를 반환하는 경우</td>
     </tr>
     <tr>
       <td><strong>eq_ref</strong></td>
-      <td>조인을 할 때 Primary Key</td>
+      <td>조인이 포함된 쿼리에서 조인할 때 이용한 컬럼이 프라이머리 키인 경우 -&gt; 1건의 레코드만 존재 -&gt; const만큼 빠름</td>
     </tr>
     <tr>
       <td><strong>ref</strong></td>
-      <td>조인을 할 때 Primary Key 혹은 Unique Key가 아닌 Key로 매칭하는 경우</td>
+      <td>조인을 할 때 프라이머리 키 또는 유니크 키가 아닌 키로 매칭하는 경우</td>
+    </tr>
+    <tr>
+      <td><strong>fulltext</strong></td>
+      <td>전문 검색 인덱스를 사용해 레코드를 읽는 접근 방법</td>
     </tr>
     <tr>
       <td><strong>ref_or_null</strong></td>
       <td>ref 와 같지만 null 이 추가되어 검색되는 경우</td>
     </tr>
     <tr>
+      <td><strong>unique_subquery</strong></td>
+      <td>WHERE col1 IN (subquery) 에서 subquery의 결과가 col1에 대해 유니크한 경우</td>
+    </tr>
+    <tr>
+      <td><strong>index_subquery</strong></td>
+      <td>WHERE col1 IN (subquery) 에서 subquery의 결과가 col1에 대해 유니크하지 않은 경우</td>
+    </tr>
+    <tr>
+      <td><strong>range</strong></td>
+      <td>인덱스 레인지 스캔. 인덱스를 &lt;, &gt;, IS NULL, BETWEEN, IN, LIKE와 같은 연산자를 이용해 검색할 때</td>
+    </tr>
+    <tr>
       <td><strong>index_merge</strong></td>
       <td>두 개의 인덱스가 병합되어 검색이 이루어지는 경우</td>
     </tr>
     <tr>
-      <td><strong>unique_subquery</strong></td>
-      <td>다음과 같이 IN 절 안의 서브쿼리에서 Primary Key가 오는 특수한 경우. SELECT * FROM tab01 WHERE col01 IN (SELECT Primary Key FROM tab01);</td>
-    </tr>
-    <tr>
-      <td><strong>index_subquery</strong></td>
-      <td>unique_subquery와 비슷하나 Primary Key가 아닌 인덱스인 경우. SELECT * FROM tab01 WHERE col01 IN (SELECT key01 FROM tab02);</td>
-    </tr>
-    <tr>
-      <td><strong>range</strong></td>
-      <td>특정 범위 내에서 인덱스를 사용하여 원하는 데이터를 추출하는 경우로, 데이터가 방대하지 않다면 단순 SELECT 에서는 나쁘지 않음</td>
-    </tr>
-    <tr>
       <td><strong>index</strong></td>
-      <td>인덱스를 처음부터 끝까지 찾아서 검색하는 경우로, 일반적으로 인덱스 풀스캔이라고 함</td>
+      <td>인덱스 풀 스캔. 주어진 조건절로 인덱스 레인지 스캔을 할 수 없는 경우. 인덱스 컬럼만으로 결과를 반환할 수 있는 경우. 테이블 풀 스캔보다는 빠름</td>
     </tr>
     <tr>
-      <td><strong>all</strong></td>
-      <td>테이블을 처음부터 끝까지 검색하는 경우로, 일반적으로 테이블 풀스캔이라고 함</td>
-    </tr>
-    <tr>
-      <td><strong>possible_keys</strong></td>
-      <td>쿼리에서 접근하는 컬럼 들과 사용된 비교 연산자들을 바탕으로 어떤 인덱스를 사용할 수 있는 지를 표시해준다.</td>
+      <td><strong>ALL</strong></td>
+      <td>테이블 풀 스캔. 위에서 하나도 해당되는 경우가 없을 때, 테이블 크기가 그렇게 크지 않을 때 사용</td>
     </tr>
   </tbody>
 </table>
 
+<h3 id="possible_keys">possible_keys</h3>
+
+<ul>
+  <li>쿼리에서 접근하는 컬럼들과 사용된 비교 연산자들을 바탕으로 <strong>어떤 인덱스를 사용할 수 있는지를 표시</strong>해준다.</li>
+</ul>
+
 <h3 id="key">key</h3>
-<p>테이블에 접근하는 방법을 최적화 하기 위해 어떤 인덱스를 사용하기로 결정했는 지를 나타낸다.</p>
+
+<ul>
+  <li>테이블에 접근하는 방법을 최적화 하기 위해 <strong>어떤 인덱스를 사용하기로 결정했는지를 나타낸다.</strong></li>
+  <li>표시된 값이 PRIMARY인 경우에는 프라이머리 키를 사용한다는 의미. 나머지는 인덱스에 부여한 이름</li>
+</ul>
 
 <h3 id="key_len">key_len</h3>
-<p>MySQL이 인덱스에 얼마나 많은 바이트를 사용하고 있는 지를 보여준다. MySQL에서 인덱스에 있는 컬럼들 중 일부만 사용한다면 이 값을 통해 어떤 컬럼들이 사용되는 지를 계산할 수 있다.</p>
+
+<ul>
+  <li>MySQL이 인덱스에 얼마나 많은 바이트를 사용하고 있는 지를 보여준다. MySQL에서 인덱스에 있는 컬럼들 중 일부만 사용한다면 이 값을 통해 어떤 컬럼들이 사용되는지를 계산할 수 있다.</li>
+</ul>
 
 <h3 id="ref">ref</h3>
-<p>키 컬럼에 나와 있는 인덱스에서 값을 찾기 위해 선행 테이블의 어떤 컬럼이 사용되었는 지를 나타낸다.</p>
+
+<ul>
+  <li>동등 비교 조건으로 어떤 값을 참조했는지를 나타낸다</li>
+  <li>상수값이면 const, 다른 테이블의 컬럼을 참조한 경우 컬럼명으로 표시된다</li>
+</ul>
 
 <h3 id="rows">rows</h3>
-<p>원하는 행을 찾기 위해 얼마나 많은 행을 읽어야 할 지에 대한 예측값을 의미한다.</p>
+
+<ul>
+  <li>원하는 행을 찾기 위해 얼마나 많은 행을 읽어야 할 지에 대한 예측값을 의미한다.</li>
+</ul>
 
 <h3 id="extra">extra</h3>
+
+<ul>
+  <li>추가 정보</li>
+</ul>
 
 <table>
   <tbody>
@@ -724,7 +769,6 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
   <li><a href="https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html" target="_blank">MySQL 공식문서: Optimizing SELECT Statements</a></li>
   <li><a href="https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization" target="_blank">MySQL Performance Tuning and Optimization Tips</a></li>
   <li><a href="https://nomadlee.com/mysql-explain-sql/" target="_blank">nomadlee, MySQL Explain 실행계획 사용법 및 분석</a></li>
-  <li><a href="https://mysqldba.tistory.com/162?category=537180" target="_blank">EXPLAIN 관련 블로그</a></li>
   <li><a href="https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html" target="_blank">ETL 성능 향상을 위한 몇 가지 팁들</a></li>
   <li><a href="https://til.songyunseop.com/mysql/group-by-optimization.html" target="_blank">전지적 송윤섭시점 TIL, GROUP BY 최적화</a></li>
   <li><a href="https://otsteam.tistory.com/136" target="_blank">SQL 성능을 위한 25가지 규칙</a></li>

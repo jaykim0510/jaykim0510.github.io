@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part16] MySQL 성능 점검/튜닝하기</title>
+  <title>MySQL Series [Part16] MySQL 쿼리 튜닝/최적화하기</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/mysql-series16">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part16] MySQL 성능 점검/튜닝하기 – Code Museum">
+  <meta name="twitter:title" content="MySQL Series [Part16] MySQL 쿼리 튜닝/최적화하기 – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/mysql_opt_logo.jpeg">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part16] MySQL 성능 점검/튜닝하기 – Code Museum">
+  <meta property="og:title" content="MySQL Series [Part16] MySQL 쿼리 튜닝/최적화하기 – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -294,6 +294,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -379,7 +381,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part16] MySQL 성능 점검/튜닝하기">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part16] MySQL 쿼리 튜닝/최적화하기">
         </div>
       </div>
       
@@ -400,7 +402,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part16] MySQL 성능 점검/튜닝하기</h1>
+          <h1 class="post__title">MySQL Series [Part16] MySQL 쿼리 튜닝/최적화하기</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -409,7 +411,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-07-02T21:01:35+09:00">02 Jul 2022</time>
+              <time class="post__date" datetime="2022-04-17T21:01:35+09:00">17 Apr 2022</time>
             </div>
           </div>
   
@@ -437,6 +439,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -448,10 +452,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part15] MySQL 쿼리 튜닝/최적화하기</a>
+      <a href="/mysql-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part15] MySQL 파티션</a>
     
     
-      <a href="/mysql-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part17] 그라파나를 이용해 MySQL 서버 모니터링 하기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part17] MySQL 성능 점검/튜닝하기<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -460,19 +464,59 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#쿼리-분석" id="markdown-toc-쿼리-분석">쿼리 분석</a></li>
-  <li><a href="#시스템-분석" id="markdown-toc-시스템-분석">시스템 분석</a>    <ul>
-      <li><a href="#연결connection" id="markdown-toc-연결connection">연결(Connection)</a>        <ul>
-          <li><a href="#모니터링을-위한-status" id="markdown-toc-모니터링을-위한-status">모니터링을 위한 status</a></li>
-          <li><a href="#튜닝을-위한-system-variables" id="markdown-toc-튜닝을-위한-system-variables">튜닝을 위한 system variables</a></li>
+  <li><a href="#optimization-overview" id="markdown-toc-optimization-overview">Optimization Overview</a></li>
+  <li><a href="#things-to-consider-for-optimization" id="markdown-toc-things-to-consider-for-optimization">Things to Consider for Optimization</a>    <ul>
+      <li><a href="#테이블" id="markdown-toc-테이블">테이블</a></li>
+      <li><a href="#스토리지-엔진-선택" id="markdown-toc-스토리지-엔진-선택">스토리지 엔진 선택</a></li>
+      <li><a href="#db서버-설정" id="markdown-toc-db서버-설정">DB서버 설정</a></li>
+    </ul>
+  </li>
+  <li><a href="#optimizer" id="markdown-toc-optimizer">Optimizer</a>    <ul>
+      <li><a href="#쿼리-실행-절차" id="markdown-toc-쿼리-실행-절차">쿼리 실행 절차</a></li>
+    </ul>
+  </li>
+  <li><a href="#query-optimization" id="markdown-toc-query-optimization">Query Optimization</a>    <ul>
+      <li><a href="#select" id="markdown-toc-select">SELECT</a></li>
+      <li><a href="#where" id="markdown-toc-where">WHERE</a>        <ul>
+          <li><a href="#in-vs-exists" id="markdown-toc-in-vs-exists">IN vs EXISTS</a></li>
         </ul>
       </li>
-      <li><a href="#스토리지-엔진" id="markdown-toc-스토리지-엔진">스토리지 엔진</a>        <ul>
-          <li><a href="#myisam과-innodb-비교" id="markdown-toc-myisam과-innodb-비교">MyISAM과 InnoDB 비교</a></li>
-          <li><a href="#innodb-관련-설정" id="markdown-toc-innodb-관련-설정">InnoDB 관련 설정</a></li>
+      <li><a href="#group-by" id="markdown-toc-group-by">GROUP BY</a></li>
+      <li><a href="#join" id="markdown-toc-join">JOIN</a></li>
+      <li><a href="#order-by" id="markdown-toc-order-by">ORDER BY</a>        <ul>
+          <li><a href="#정렬-처리-방법" id="markdown-toc-정렬-처리-방법">정렬 처리 방법</a></li>
         </ul>
       </li>
-      <li><a href="#mysql-서버" id="markdown-toc-mysql-서버">MySQL 서버</a></li>
+      <li><a href="#distinct-처리" id="markdown-toc-distinct-처리">DISTINCT 처리</a></li>
+      <li><a href="#subquery" id="markdown-toc-subquery">Subquery</a></li>
+      <li><a href="#temporary-table" id="markdown-toc-temporary-table">Temporary Table</a></li>
+    </ul>
+  </li>
+  <li><a href="#where-group-by-order-by의-인덱스-사용" id="markdown-toc-where-group-by-order-by의-인덱스-사용">WHERE, GROUP BY, ORDER BY의 인덱스 사용</a>    <ul>
+      <li><a href="#where-절의-인덱스-사용" id="markdown-toc-where-절의-인덱스-사용">WHERE 절의 인덱스 사용</a></li>
+      <li><a href="#group-by-절의-인덱스-사용" id="markdown-toc-group-by-절의-인덱스-사용">GROUP BY 절의 인덱스 사용</a></li>
+      <li><a href="#order-by-절의-인덱스-사용" id="markdown-toc-order-by-절의-인덱스-사용">ORDER BY 절의 인덱스 사용</a></li>
+      <li><a href="#where--group-by--order-by-의-인덱스-사용" id="markdown-toc-where--group-by--order-by-의-인덱스-사용">WHERE + (GROUP BY | ORDER BY) 의 인덱스 사용</a></li>
+      <li><a href="#group-by--order-by-의-인덱스-사용" id="markdown-toc-group-by--order-by-의-인덱스-사용">GROUP BY + ORDER BY 의 인덱스 사용</a></li>
+      <li><a href="#where--group-by--order-by-의-인덱스-사용-1" id="markdown-toc-where--group-by--order-by-의-인덱스-사용-1">WHERE + GROUP BY + ORDER BY 의 인덱스 사용</a></li>
+    </ul>
+  </li>
+  <li><a href="#insert-update-delete문" id="markdown-toc-insert-update-delete문">INSERT, UPDATE, DELETE문</a></li>
+  <li><a href="#실행-계획" id="markdown-toc-실행-계획">실행 계획</a>    <ul>
+      <li><a href="#통계정보" id="markdown-toc-통계정보">통계정보</a></li>
+      <li><a href="#실행-계획-분석" id="markdown-toc-실행-계획-분석">실행 계획 분석</a>        <ul>
+          <li><a href="#id" id="markdown-toc-id">id</a></li>
+          <li><a href="#select_type" id="markdown-toc-select_type">select_type</a></li>
+          <li><a href="#table" id="markdown-toc-table">table</a></li>
+          <li><a href="#type" id="markdown-toc-type">type</a></li>
+          <li><a href="#possible_keys" id="markdown-toc-possible_keys">possible_keys</a></li>
+          <li><a href="#key" id="markdown-toc-key">key</a></li>
+          <li><a href="#key_len" id="markdown-toc-key_len">key_len</a></li>
+          <li><a href="#ref" id="markdown-toc-ref">ref</a></li>
+          <li><a href="#rows" id="markdown-toc-rows">rows</a></li>
+          <li><a href="#extra" id="markdown-toc-extra">extra</a></li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -480,144 +524,724 @@ Table of Contents
 
 <hr />
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 점검 대상이 되는 것
-
-- 연결(Connection)
-- 쿼리
-- 인덱스
-- 스토리지 엔진
-- 메모리
-- MySQL 서버
-
-</code></pre></div></div>
-
-<h1 id="쿼리-분석">쿼리 분석</h1>
+<h1 id="optimization-overview">Optimization Overview</h1>
 
 <ul>
-  <li>내가 실행한 쿼리에 대한 분석</li>
-  <li>쿼리, 인덱스 튜닝에 대한 힌트를 제공</li>
-  <li>(쿼리 튜닝 방법은 이전 포스트 참고)</li>
+  <li>데이터베이스의 성능은 테이블, 쿼리, 서버 설정과 같은 몇 가지 요소에 따라 달라짐</li>
+  <li>데이터베이스를 잘 설계함으로써 CPU, I/O 작업과 같은 하드웨어적인 요소들을 최적화 할 수 있음</li>
 </ul>
+
+<h1 id="things-to-consider-for-optimization">Things to Consider for Optimization</h1>
+
+<h2 id="테이블">테이블</h2>
+
+<ul>
+  <li>컬럼의 타입</li>
+  <li>컬럼 개수</li>
+  <li>제약조건</li>
+  <li>인덱스</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns
+</code></pre></div></div>
+
+<p>## 인덱스 설계</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Are the right indexes in place to make queries efficient?
+</code></pre></div></div>
+
+<h2 id="스토리지-엔진-선택">스토리지 엔진 선택</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability
+</code></pre></div></div>
+
+<h2 id="db서버-설정">DB서버 설정</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code
+
+Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache
+</code></pre></div></div>
+
+<h1 id="optimizer">Optimizer</h1>
+
+<ul>
+  <li>쿼리를 최적으로 실행하기 위해 각 테이블의 데이터가 어떤 분포로 저장돼 있는지 통계 정보를 참조하여 최적의 실행 계획을 수립</li>
+</ul>
+
+<h2 id="쿼리-실행-절차">쿼리 실행 절차</h2>
+
+<ol>
+  <li>MySQL 엔진의 SQL파서에서 SQL을 트리 형태로 파싱한다</li>
+  <li>MySQL 엔진의 옵티마이저에서 파싱 정보를 확인하면서 통계 정보를 활용해 어떤 인덱스를 이용해 테이블을 읽을지 선택한다</li>
+  <li>2 단계가 완료되면 실행 계획이 만들어진다</li>
+  <li>스토리지 엔진에 실행 계획대로 레코드를 읽어오도록 요청한다</li>
+  <li>MySQL 엔진의 SQL 실행기가 스토리지 엔진으로부터 받아온 레코드를 조인하거나 정렬하는 작업을 수행한다</li>
+</ol>
+
+<h1 id="query-optimization">Query Optimization</h1>
+
+<h2 id="select">SELECT</h2>
+
+<ul>
+  <li>컬럼을 선택할 때 * 사용을 피해라</li>
+  <li>DISTINCT 사용을 피해라 -&gt; 중복 데이터 제거를 위해 테이블 풀 스캔 해야함</li>
+</ul>
+
+<h2 id="where">WHERE</h2>
+
+<ul>
+  <li>인덱스를 잘 활용해라</li>
+  <li>% 를 맨 앞에 쓰지마라</li>
+  <li>함수 사용을 피해라</li>
+  <li>BETWEEN, IN, &lt;, &gt; 사용을 피해라</li>
+</ul>
+
+<h3 id="in-vs-exists">IN vs EXISTS</h3>
+
+<ul>
+  <li><strong>IN</strong>
+    <ul>
+      <li>IN can be used as a replacement for multiple OR operators</li>
+      <li>IN works faster than the EXISTS Operator when If the sub-query result is small</li>
+      <li>In the IN-condition SQL Engine compares all the values in the IN Clause</li>
+      <li>To check against only a single column, IN operator can be used</li>
+      <li>The IN operator cannot compare anything with NULL values</li>
+      <li>A direct set of values can be given for comparison</li>
+    </ul>
+  </li>
+  <li><strong>EXISTS</strong>
+    <ul>
+      <li>To determine if any values are returned or not, we use EXISTS</li>
+      <li>If the sub-query result is larger, then EXISTS works faster than the IN Operator</li>
+      <li>Once true is evaluated in the EXISTS condition then the SQL Engine will stop the process of further matching</li>
+      <li>For checking against more than one single column, you can use the EXISTS Operator</li>
+      <li>The EXISTS clause can compare everything with NULLs</li>
+      <li>Cannot compare directly the values, sub-query needs to be given</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="group-by">GROUP BY</h2>
+<ul>
+  <li>HAVING절은 인덱스를 사용해서 처리될 수 없으므로 굳이 튜닝하려고 할 필요 없다</li>
+  <li>GROUP BY 작업은 크게 인덱스를 사용하는 경우와 사용할 수 없는 경우(임시 테이블을 사용)</li>
+  <li>인덱스를 사용할 수 없는 경우, 전체 테이블을 스캔하여 각 그룹마다 새 임시 테이블을 만든 다음 이 임시 테이블을 사용하여 그룹을 검색하고 집계 함수를 적용하는 것
+    <ul>
+      <li>이렇게 인덱스를 사용할 수 없을 때 할 수 있는 최선의 방법은 WHERE절을 이용해 GROUP BY 하기 전에 데이터량을 줄이는 것</li>
+    </ul>
+  </li>
+  <li>인덱스를 잘 설정한다면 임시 테이블을 생성하지 않고 빠르게 데이터를 가져올 수 있다
+    <ul>
+      <li>인덱스를 최대로 활용하기 위해서는 GROUP BY 컬럼과, 인덱스되어 있는 컬럼간의 순서가 중요함</li>
+      <li>SELECT절에 사용되는 집계함수의 경우 MIN(), MAX()는 인덱스의 성능을 최대로 활용할 수 있도록 함</li>
+    </ul>
+  </li>
+  <li>
+    <p>참고로 MySQL 8.0부터는 GROUP BY를 한다고 해서 암묵적으로 정렬이 이루어지지 않음 -&gt; 정렬 필요하면 명시적으로 ORDER BY 써야함</p>
+  </li>
+  <li>루스 인덱스 스캔을 사용할 수 있는 경우
+    <ul>
+      <li>루스 인덱스 스캔은 레코드를 건너뛰면서 필요한 부분만 가져오는 스캔 방식</li>
+      <li>EXPLAIN을 통해 실행 계획을 확인해보면 Extra 컬럼에 ‘Using index for group-by’ 라고 표기됨</li>
+      <li>MIN(), MAX() 이외의 함수가 SELECT 절에 사용되면 루스 인덱스 스캔을 사용할 수 없음</li>
+      <li>인덱스와 GROUP BY의 컬럼 순서가 처음부터 일치해야함
+        <ul>
+          <li>ex. 인덱스가 (col1 col2, col3) 일 때 , GROUP BY col1, col2 과 같아야 함 (GROUP BY col2, col3은 안됨)</li>
+        </ul>
+      </li>
+      <li>SELECT 절과 GROUP BY 절의 컬럼이 일치해야 함
+        <ul>
+          <li>ex. SELECT col1, col2, MAX(col3) GROUP BY col1, col2</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>타이트 인덱스 스캔을 사용하는 경우
+    <ul>
+      <li>SELECT 절과 GROUP BY 절의 컬럼이 일치하지 않지만, 조건절을 이용해 범위 스캔이 가능한 경우
+        <ul>
+          <li>ex. SELECT c1, c2, c3 FROM t1 WHERE c2 = ‘a’ GROUP BY c1, c3;</li>
+          <li>ex. SELECT c1, c2, c3 FROM t1 WHERE c1 = ‘a’ GROUP BY c2, c3;</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="join">JOIN</h2>
+
+<ul>
+  <li>OUTER JOIN보다는 INNER JOIN이 낫다</li>
+  <li>드라이빙 테이블(Driving Table)은 레코드 수가 적은 것이 낫다</li>
+  <li>드리븐 테이블은 인덱스를 가지는 것이 중요하다</li>
+  <li>JOIN의 조건절로 자주 사용하는 칼럼은 인덱스로 등록한다</li>
+  <li>INNER JOIN은 순서를 신경쓰지 않고 편하게 사용 가능하다</li>
+  <li>OUTER JOIN은 결과가 상관 없다면, 인덱스를 가지는 테이블이 드리븐 테이블로 오도록 하는 것이 중요하다</li>
+</ul>
+
+<h2 id="order-by">ORDER BY</h2>
+
+<ul>
+  <li>대부분의 SELECT 쿼리에서 정렬은 필수적</li>
+  <li>정렬을 처리하는 방법은 <strong>인덱스를 이용하는 방법</strong>과 <strong>Filesort</strong>라는 별도의 처리를 이용하는 방법</li>
+</ul>
+
+<h3 id="정렬-처리-방법">정렬 처리 방법</h3>
+
+<ul>
+  <li>인덱스를 사용한 정렬
+    <ul>
+      <li>인덱스를 이용해 정렬을 하기 위해서는 반드시 ORDER BY의 순서대로 생성된 인덱스가 있어야 함</li>
+      <li>인덱스를 이용해 정렬이 가능한 이유는 B-Tree 인덱스가 키 값으로 정렬되어 있기 때문</li>
+    </ul>
+  </li>
+  <li>Filesort를 사용한 정렬
+    <ul>
+      <li>인덱스를 사용할 수 없는 경우, WHERE 조건에 일치하는 레코드를 검색해 정렬 버퍼에 저장하면서 정렬을 처리(FIlesort)함</li>
+    </ul>
+  </li>
+</ul>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>방법</strong></td>
+      <td><strong>장점</strong></td>
+      <td><strong>단점</strong></td>
+    </tr>
+    <tr>
+      <td><strong>인덱스 이용</strong></td>
+      <td>SELECT 문을 실행할 때 이미 인덱스가 정렬돼 있어 순서대로 읽기만 하면 되므로 매우 빠르다</td>
+      <td>INSERT, UPDATE, DELETE 작업시 부가적인 인덱스 추가/삭제 작업이 필요하므로 느리다</td>
+    </tr>
+    <tr>
+      <td><strong>Filesort 이용</strong></td>
+      <td>인덱스 이용과 반대로 INSERT, UPDATE, DELETE 작업이 빠르다</td>
+      <td>정렬 작업이 쿼리 실행 시 처리되어 쿼리의 응답 속도가 느려진다</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Filesort를 사용해야 하는 경우</strong></p>
+
+<ul>
+  <li>정렬 기준이 너무 많아서 모든 인덱스를 생성하는 것이 불가능한 경우</li>
+  <li>어떤 처리의 결과를 정렬해야 하는 경우</li>
+  <li>랜덤하게 결과 레코드를 가져와야 하는 경우</li>
+</ul>
+
+<p><strong>소트 버퍼</strong></p>
+
+<ul>
+  <li>MySQL은 정렬을 수행하기 위해 별도의 메모리 공간을 할당받아서 사용하는데 이 메모리 공간을 소트 버퍼라고 한다</li>
+  <li>정렬해야 할 레코드의 건수가 소트 버퍼의 크기보다 크다면 어떻게 해야 할까?
+    <ul>
+      <li>정렬해야 할 레코드를 여러 조각으로 나눠서 처리하게 됨. 이 과정에서 임시 저장을 위해 디스크를 사용</li>
+      <li>일부를 처리하고 디스크에 저장하기를 반복 수행함</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>정렬 알고리즘</strong></p>
+
+<ul>
+  <li>정렬 대상 컬럼과 프라이머리 키만 가져와서 정렬하는 방식
+    <ul>
+      <li>정렬 대상 컬럼과 프라이머리 키 값만 소트 버퍼에 담아 정렬을 수행</li>
+      <li>그리고 다시 정렬 순서대로 프라이머리 키로 테이블을 읽어서 SELECT할 컬럼을 가져옴</li>
+      <li>가져오는 컬럼이 두 개 뿐이라 소트 버퍼에 많은 레코드를 한 번에 읽어올 수 있음</li>
+      <li>단점은 테이블을 두 번 읽어야 함</li>
+    </ul>
+  </li>
+  <li>정렬 대상 컬럼과 SELECT문으로 요청한 컬럼을 모두 가져와서 정렬하는 방식
+    <ul>
+      <li>최신 버전의 MySQL에서 일반적으로 사용하는 방식</li>
+      <li>SELECT 문에서 요청한 컬럼의 개수가 많아지면 계속 분할해서 소트 버퍼에 읽어와야함</li>
+      <li>레코드의 크기나 건수가 작은 경우 성능이 좋음</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="distinct-처리">DISTINCT 처리</h2>
+
+<ul>
+  <li>DISTINCT는 SELECT하는 레코드를 유니크하게 SELECT 하는 것이지, 특정 컬럼만 유니크하게 조회하는 것이 아님</li>
+  <li><code class="language-plaintext highlighter-rouge">SELECT DISTINCT(first_name), last_name FROM employees;</code>
+    <ul>
+      <li>DISTINCT는 함수가 아니라서 위처럼 괄호를 해놓아도 그냥 무시함</li>
+      <li>그래서 결론적으로 first_name과 last_name의 조합이 유니크한 레코드를 가져오게 됨</li>
+    </ul>
+  </li>
+  <li>집합 함수(COUNT(), MIN(), MAX()) 같은 집합 함수 내에서 DISTINCT 키워드가 사용된 경우는 함수의 인자로 전달된 컬럼값이 유니크한 것들을 가져온다</li>
+</ul>
+
+<h2 id="subquery">Subquery</h2>
+
+<ul>
+  <li>JOIN으로 해결되면 서브쿼리 대신 JOIN을 사용하자</li>
+  <li>서브쿼리 안에 where절과 group by를 통해 불러오는 데이터양을 감소시킬 수 있습니다</li>
+  <li>서브쿼리는 인덱스 또는 제약 정보를 가지지 않기 때문에 최적화되지 못한다</li>
+  <li>윈도우 함수를 고려해보자</li>
+</ul>
+
+<h2 id="temporary-table">Temporary Table</h2>
+
+<ul>
+  <li>Use a temporary table to handle bulk data</li>
+  <li>Temporary table vs Using index access</li>
+</ul>
+
+<h1 id="where-group-by-order-by의-인덱스-사용">WHERE, GROUP BY, ORDER BY의 인덱스 사용</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WHERE, GROUP BY, ORDER BY 모두 인덱스를 사용하려면 컬럼의 값을 변환하지 않고 사용해야함
+</code></pre></div></div>
+
+<h2 id="where-절의-인덱스-사용">WHERE 절의 인덱스 사용</h2>
+
+<ul>
+  <li>작업 범위를 결정하기 위해 인덱스 사용</li>
+  <li>조건절에 사용된 컬럼과, 인덱스의 컬럼 구성이 왼쪽부터 비교해 얼마나 일치하는가에 따라 달라짐</li>
+  <li>순서가 다르더라도 MySQL 서버 옵티마이저는 인덱스를 사용할 수 있는 조건들을 뽑아서 최적화를 수행</li>
+  <li>WHERE 조건절에 사용된 컬럼의 순서는 중요하지 않다 -&gt; WHERE절의 조건 순서는 편하게 나열해도 된다</li>
+  <li>인덱스의 컬럼 순서는 중요하다</li>
+  <li>WHERE 조건절에 사용된 컬럼의 <strong>구성</strong>은 중요하다</li>
+</ul>
+
+<p><img src="/images/index_where.png" alt="" /></p>
+
+<ul>
+  <li>지금까지 설명은 WHERE 조건들이 서로 AND 관계일 때를 얘기한 것이다</li>
+  <li>OR로 연결될 경우
+    <ul>
+      <li>OR에 연결된 모든 컬럼들이 인덱스를 가지는 경우: 인덱스 머지 후 스캔
+        <ul>
+          <li>(풀 테이블 스캔보단 빠르지만 인덱스 레인지 스캔보다는 느림)</li>
+        </ul>
+      </li>
+      <li>OR에 연결된 컬럼중 하나라도 인덱스가 없는 경우: 풀 테이블 스캔
+        <ul>
+          <li>(풀 테이블 스캔 + 인덱스 레인지 스캔보다는 풀 테이블 스캔 1번이 더 빠르므로)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="group-by-절의-인덱스-사용">GROUP BY 절의 인덱스 사용</h2>
+
+<ul>
+  <li>WHERE절과는 달리 인덱스의 컬럼 순서와 GROUP BY 절의 컬럼 순서, 위치가 같아야 함</li>
+  <li>인덱스의 컬럼과 GROUP BY 절의 컬럼은 왼쪽부터 일치해야함</li>
+  <li>GROUP BY 에서 인덱스에 없는 컬럼을 하나라도 사용하면 인덱스 사용 못함</li>
+</ul>
+
+<p><img src="/images/index_group_by.png" alt="" /></p>
+
+<h2 id="order-by-절의-인덱스-사용">ORDER BY 절의 인덱스 사용</h2>
+
+<ul>
+  <li>GROUP BY와 거의 유사하다</li>
+  <li>한 가지 추가되는 조건은 인덱스의 각 컬럼의 ASC/DESC 이,</li>
+  <li>ORDER BY의 각 컬럼의 ASC/DESC 과 모두 같거나 모두 반대인 경우에만 인덱스를 사용할 수 있다</li>
+</ul>
+
+<p><img src="/images/index_order_by.png" alt="" /></p>
+
+<h2 id="where--group-by--order-by-의-인덱스-사용">WHERE + (GROUP BY | ORDER BY) 의 인덱스 사용</h2>
+
+<ul>
+  <li>WHERE 절의 컬럼과 GROUP(ORDER) BY 절의 컬럼을 순서대로 나열했을 때 연속하면 둘 다 인덱스 사용 가능</li>
+  <li>중간에 빠지는 컬럼이 있으면 WHERE 절만 인덱스 사용 (가장 오른쪽 그림 참고)</li>
+</ul>
+
+<p><img src="/images/index_where_group.png" alt="" /></p>
+
+<h2 id="group-by--order-by-의-인덱스-사용">GROUP BY + ORDER BY 의 인덱스 사용</h2>
+
+<ul>
+  <li>두 절 모두 컬럼의 구성과 순서가 서로 같아야함</li>
+  <li>둘중 하나라도 인덱스를 사용할 수 없으면 둘 다 인덱스 사용 못함</li>
+</ul>
+
+<h2 id="where--group-by--order-by-의-인덱스-사용-1">WHERE + GROUP BY + ORDER BY 의 인덱스 사용</h2>
+
+<p><img src="/images/index_all.png" alt="" /></p>
+
+<h1 id="insert-update-delete문">INSERT, UPDATE, DELETE문</h1>
+
+<ul>
+  <li>INSERT, UPDATE, DELETE 문은 크게 성능에 대해 고려할 부분이 많지 않음</li>
+  <li><strong>테이블의 구조가 더 큰 영향을 미침</strong></li>
+  <li><strong>인덱스를 잘 설계하는 것이 중요</strong>
+    <ul>
+      <li><strong>단조 증가하는 컬럼</strong>을 프라이머리 키로 선택하는 것이 좋음</li>
+      <li>(SELECT문은 쿼리의 조건을 기준으로 프라이머리 키를 선택하는 것이 좋음)</li>
+      <li>보통 INSERT를 위한 프라이머리 키와 SELECT를 위한 프라이머리 키는 성능적인 측면에서 둘 중 하나를 선택해야함</li>
+      <li>INSERT를 위해서는 <strong>보조인덱스가 적을수록 좋음</strong></li>
+      <li>(SELECT를 위해서는 쿼리에 이용되는 인덱스면 있는게 좋음)</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="실행-계획">실행 계획</h1>
+
+<ul>
+  <li>실행 계획을 통해 쿼리의 불합리한 부분을 찾아내고, 더 최적화된 방법을 모색해보자</li>
+  <li>옵티마이저가 마법처럼 가장 최적의 방법을 찾아내진 못한다 -&gt; 개발자의 역량이 중요</li>
+  <li>EXPLAIN 명령을 통해 실행 계획 확인</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- 실행 계획 출력</span>
+<span class="k">EXPLAIN</span>
+<span class="k">SELECT</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- 쿼리의 실행 계획과 단계별 소요된 시간 정보 출력</span>
+<span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span>
+<span class="p">...</span>
+</code></pre></div></div>
+
+<h2 id="통계정보">통계정보</h2>
+
+<ul>
+  <li>옵티마이저는 실행 계획을 세울 때 통계 정보를 가장 많이 활용</li>
+  <li>통계 정보는 다음과 같은 것들을 의미
+    <ul>
+      <li>테이블의 전체 레코드 수</li>
+      <li>인덱스된 컬럼이 가지는 유니크한 값의 개수</li>
+      <li>각 컬럼의 데이터 분포도(히스토그램)</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="실행-계획-분석">실행 계획 분석</h2>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span>
-<span class="k">SELECT</span>
-<span class="p">...</span>
+<span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">employees</span> <span class="k">AS</span> <span class="n">e</span>
+<span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">salaries</span> <span class="k">AS</span> <span class="n">s</span>
+<span class="k">ON</span> <span class="n">s</span><span class="p">.</span><span class="n">emp_no</span><span class="o">=</span><span class="n">e</span><span class="p">.</span><span class="n">emp_no</span>
+<span class="k">WHERE</span> <span class="n">first_name</span><span class="o">=</span><span class="s1">'ABC'</span><span class="p">;</span> 
 </code></pre></div></div>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
-<span class="k">SELECT</span>
-<span class="p">...</span>
-</code></pre></div></div>
+<table>
+  <tbody>
+    <tr>
+      <td>id</td>
+      <td>select_type</td>
+      <td>table</td>
+      <td>partitions</td>
+      <td>type</td>
+      <td>possible_keys</td>
+      <td>key</td>
+      <td>key_len</td>
+      <td>ref</td>
+      <td>rows</td>
+      <td>filtered</td>
+      <td>Extra</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>SIMPLE</td>
+      <td>e</td>
+      <td>NULL</td>
+      <td>ref</td>
+      <td>PRIMARY,ix_firstname</td>
+      <td>ix_firstname</td>
+      <td>58</td>
+      <td>const</td>
+      <td>1</td>
+      <td>100.00</td>
+      <td>NULL</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>SIMPLE</td>
+      <td>s</td>
+      <td>NULL</td>
+      <td>ref</td>
+      <td>PRIMARY</td>
+      <td>PRIMARY</td>
+      <td>4</td>
+      <td>employees.e.emp_no</td>
+      <td>10</td>
+      <td>100.00</td>
+      <td>NULL</td>
+    </tr>
+  </tbody>
+</table>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="err">슬로우</span> <span class="err">로그</span> <span class="err">조회하기</span>
-<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">mysql</span><span class="p">.</span><span class="n">slow_log</span><span class="p">;</span>
-<span class="o">#</span> <span class="err">또는</span>
-<span class="k">SELECT</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">user_host</span><span class="p">,</span> <span class="n">query_time</span><span class="p">,</span> <span class="n">lock_time</span><span class="p">,</span> <span class="n">rows_sent</span><span class="p">,</span> <span class="n">rows_examined</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="k">CONVERT</span><span class="p">(</span><span class="n">sql_text</span> <span class="k">USING</span> <span class="n">utf8</span> <span class="p">)</span> <span class="n">sql_text</span>
-<span class="k">FROM</span> <span class="n">mysql</span><span class="p">.</span><span class="n">slow_log</span><span class="p">;</span>
-</code></pre></div></div>
+<p>표의 각 라인은 쿼리 문장에서 사용된 테이블의 개수만큼 출력된다. 실행 순서는 위에서 아래로 순서대로 표시된다</p>
 
-<h1 id="시스템-분석">시스템 분석</h1>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>구분</strong></td>
+      <td><strong>설명</strong></td>
+    </tr>
+    <tr>
+      <td><strong>id</strong></td>
+      <td>select 아이디로 SELECT를 구분하는 번호</td>
+    </tr>
+    <tr>
+      <td><strong>select_type</strong></td>
+      <td>select에 대한 타입</td>
+    </tr>
+    <tr>
+      <td><strong>table</strong></td>
+      <td>참조하는 테이블</td>
+    </tr>
+    <tr>
+      <td><strong>type</strong></td>
+      <td>조인 혹은 조회 타입</td>
+    </tr>
+    <tr>
+      <td><strong>possible_keys</strong></td>
+      <td>데이터를 조회할 때 DB에서 사용할 수 있는 인덱스 리스트</td>
+    </tr>
+    <tr>
+      <td><strong>key</strong></td>
+      <td>실제로 사용할 인덱스</td>
+    </tr>
+    <tr>
+      <td><strong>key_len</strong></td>
+      <td>실제로 사용할 인덱스의 길이</td>
+    </tr>
+    <tr>
+      <td><strong>ref</strong></td>
+      <td>Key 안의 인덱스와 비교하는 컬럼(상수)</td>
+    </tr>
+    <tr>
+      <td><strong>rows</strong></td>
+      <td>쿼리 실행 시 조사하는 행 수립</td>
+    </tr>
+    <tr>
+      <td><strong>extra</strong></td>
+      <td>추가 정보</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="id">id</h3>
 
 <ul>
-  <li>시스템/서버 설정에 대한 분석</li>
-  <li>그라파나와 같은 모니터링 툴을 이용해 상황에 맞게 설정해야함</li>
+  <li>행이 어떤 SELECT 구문을 나타내는 지를 알려주는 것으로 구문에 서브 쿼리나 UNION이 없다면 SELECT는 하나밖에 없기 때문에 모든 행에 대해 1이란 값이 부여되지만 이외의 경우에는 원 구문에서 순서에 따라 각 SELECT 구문들에 순차적으로 번호가 부여된다.</li>
+  <li>(SELECT 문장은 하나인데, 여러 개의 테이블이 조인되는 경우에는 id값이 증가하지 않고 같은 id 값이 부여된다).</li>
+  <li>테이블 접근 순서와는 무관하다</li>
 </ul>
 
-<h2 id="연결connection">연결(Connection)</h2>
+<h3 id="select_type">select_type</h3>
 
 <ul>
-  <li>MySQL은 오픈 소스임에도 높은 성능을 제공해준다는 점에서 웹 서비스의 DB로 많이 사용됨</li>
-  <li>웹 서비스에서 사용되는 OLTP는 대용량 데이터 처리보다는 많은 사용자의 동시 접속을 제어하는 것이 중요한 요소임</li>
+  <li>select에 대한 타입</li>
 </ul>
 
-<h3 id="모니터링을-위한-status">모니터링을 위한 status</h3>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>구분</strong></td>
+      <td><strong>설명</strong></td>
+    </tr>
+    <tr>
+      <td><strong>SIMPLE</strong></td>
+      <td>단순 SELECT (Union 이나 Sub Query 가 없는 SELECT 문)</td>
+    </tr>
+    <tr>
+      <td><strong>PRIMARY</strong></td>
+      <td>Sub Query를 사용할 경우 Sub Query의 외부에 있는 쿼리(첫번째 쿼리) UNION 을 사용할 경우 UNION의 첫 번째 SELECT 쿼리</td>
+    </tr>
+    <tr>
+      <td><strong>UNION</strong></td>
+      <td>UNION 쿼리에서 Primary를 제외한 나머지 SELECT</td>
+    </tr>
+    <tr>
+      <td><strong>DEPENDENT_UNION</strong></td>
+      <td>UNION 과 동일하나, 외부쿼리에 의존적임 (값을 공급 받음)</td>
+    </tr>
+    <tr>
+      <td><strong>UNION_RESULT</strong></td>
+      <td>UNION 쿼리의 결과물</td>
+    </tr>
+    <tr>
+      <td><strong>SUBQUERY</strong></td>
+      <td>Sub Query 또는 Sub Query를 구성하는 여러 쿼리 중 첫 번째 SELECT문</td>
+    </tr>
+    <tr>
+      <td><strong>DEPENDENT_SUBQUERY</strong></td>
+      <td>Sub Query 와 동일하나, 외곽쿼리에 의존적임 (값을 공급 받음)</td>
+    </tr>
+    <tr>
+      <td><strong>DERIVED</strong></td>
+      <td>SELECT로 추출된 테이블 (FROM 절 에서의 서브쿼리 또는 Inline View)</td>
+    </tr>
+    <tr>
+      <td><strong>UNCACHEABLE SUBQUERY</strong></td>
+      <td>Sub Query와 동일하지만 공급되는 모든 값에 대해 Sub Query를 재처리. 외부쿼리에서 공급되는 값이 동이라더라도 Cache된 결과를 사용할 수 없음</td>
+    </tr>
+    <tr>
+      <td><strong>UNCACHEABLE UNION</strong></td>
+      <td>UNION 과 동일하지만 공급되는 모든 값에 대하여 UNION 쿼리를 재처리</td>
+    </tr>
+  </tbody>
+</table>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">STATUS</span> <span class="k">LIKE</span> <span class="s1">'%connect%'</span><span class="p">;</span>
-<span class="k">SHOW</span> <span class="n">STATUS</span> <span class="k">LIKE</span> <span class="s1">'%client%'</span><span class="p">;</span>
-</code></pre></div></div>
+<h3 id="table">table</h3>
 
 <ul>
-  <li><strong>Aborted_clients</strong>: 클라이언트 프로그램이 비 정상적으로 종료된 수</li>
-  <li><strong>Aborted_connects</strong>: MySQL 서버에 접속이 실패된 수</li>
-  <li><strong>Connections</strong>: MySQL 서버에 대한 연결 시도 횟수</li>
-  <li><strong>Max_used_connections</strong>: 최대로 동시에 접속한 수</li>
-  <li><strong>Threads_cached</strong>: Thread Cache의 Thread 수</li>
-  <li><strong>Threads_connected</strong>: 현재 연결된 Thread 수</li>
-  <li><strong>Threads_created</strong>: 접속을 위해 생성된 Thread 수</li>
-  <li><strong>Threads_running</strong>: Sleeping 되어 있지 않은 Thread 수</li>
-  <li><strong>Aborted_connects / Connections</strong> -&gt; 접속 실패율</li>
+  <li>행이 어떤 테이블에 접근하는 지를 보여주는 것으로 대부분의 경우 테이블 이름이나 SQL에서 지정된 별명 같은 값을 나타낸다.</li>
 </ul>
 
-<h3 id="튜닝을-위한-system-variables">튜닝을 위한 system variables</h3>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">VARIABLES</span> <span class="k">LIKE</span> <span class="s1">'%connection%'</span>
-</code></pre></div></div>
+<h3 id="type">type</h3>
 
 <ul>
-  <li><strong>wait_timeout</strong>: 종료전까지 요청이 없이 기다리는 시간 ( TCP/IP 연결, Shell 상의 접속이 아닌 경우 )</li>
-  <li><strong>thread_cache_size</strong>: thread 재 사용을 위한 Thread Cache 수로써, Cache 에 있는 Thread 수보다 접속이 많으면 새롭게 Thread를 생성한다.</li>
-  <li><strong>max_connections</strong>: 최대 동시 접속 가능 수. 늘어나면 날수록 메모리가 고갈되고 스케줄링 오버헤드도 증가</li>
+  <li>쿼리 실행 계획에서 type 이후의 컬럼은 MySQL서버가 각 테이블의 레코드를 어떤 방식으로 읽었는지를 나타냄</li>
+  <li>(type, possible_keys, key, ..)</li>
+  <li>여기서 말하는 방식은 인덱스 레인지 스캔, 인덱스 풀 스캔, 테이블 풀 스캔 등을 의미</li>
+  <li>보통 <code class="language-plaintext highlighter-rouge">WHERE</code>, <code class="language-plaintext highlighter-rouge">ON</code>과 같은 조건절에 어떤 컬럼, 어떤 연산자를 사용했는지에 따라 달라짐</li>
+  <li>만약 type의 결과가 <code class="language-plaintext highlighter-rouge">system</code>, <code class="language-plaintext highlighter-rouge">const</code>, <code class="language-plaintext highlighter-rouge">eq_ref</code>, <code class="language-plaintext highlighter-rouge">ref</code>인 경우에는 쿼리문을 튜닝하지 않아도 됨</li>
+  <li>아래의 접근 방식은 성능이 빠른 순서대로 나열된 것</li>
 </ul>
 
-<h2 id="스토리지-엔진">스토리지 엔진</h2>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>구분</strong></td>
+      <td><strong>설명</strong></td>
+    </tr>
+    <tr>
+      <td><strong>system</strong></td>
+      <td>1개 이하의 레코드를 가지는 테이블을 참조하는 경우</td>
+    </tr>
+    <tr>
+      <td><strong>const</strong></td>
+      <td>쿼리의 WHERE 조건절에 프라이머리 키 또는 유니크 키 컬럼을 이용해 1건의 레코드를 반환하는 경우</td>
+    </tr>
+    <tr>
+      <td><strong>eq_ref</strong></td>
+      <td>조인이 포함된 쿼리에서 조인할 때 이용한 컬럼이 프라이머리 키인 경우 -&gt; 1건의 레코드만 존재 -&gt; const만큼 빠름</td>
+    </tr>
+    <tr>
+      <td><strong>ref</strong></td>
+      <td>조인을 할 때 프라이머리 키 또는 유니크 키가 아닌 키로 매칭하는 경우</td>
+    </tr>
+    <tr>
+      <td><strong>fulltext</strong></td>
+      <td>전문 검색 인덱스를 사용해 레코드를 읽는 접근 방법</td>
+    </tr>
+    <tr>
+      <td><strong>ref_or_null</strong></td>
+      <td>ref 와 같지만 null 이 추가되어 검색되는 경우</td>
+    </tr>
+    <tr>
+      <td><strong>unique_subquery</strong></td>
+      <td>WHERE col1 IN (subquery) 에서 subquery의 결과가 col1에 대해 유니크한 경우</td>
+    </tr>
+    <tr>
+      <td><strong>index_subquery</strong></td>
+      <td>WHERE col1 IN (subquery) 에서 subquery의 결과가 col1에 대해 유니크하지 않은 경우</td>
+    </tr>
+    <tr>
+      <td><strong>range</strong></td>
+      <td>인덱스 레인지 스캔. 인덱스를 &lt;, &gt;, IS NULL, BETWEEN, IN, LIKE와 같은 연산자를 이용해 검색할 때</td>
+    </tr>
+    <tr>
+      <td><strong>index_merge</strong></td>
+      <td>두 개의 인덱스가 병합되어 검색이 이루어지는 경우</td>
+    </tr>
+    <tr>
+      <td><strong>index</strong></td>
+      <td>인덱스 풀 스캔. 주어진 조건절로 인덱스 레인지 스캔을 할 수 없는 경우. 인덱스 컬럼만으로 결과를 반환할 수 있는 경우. 테이블 풀 스캔보다는 빠름</td>
+    </tr>
+    <tr>
+      <td><strong>ALL</strong></td>
+      <td>테이블 풀 스캔. 위에서 하나도 해당되는 경우가 없을 때, 테이블 크기가 그렇게 크지 않을 때 사용</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="possible_keys">possible_keys</h3>
 
 <ul>
-  <li><strong>default_storage_engine</strong>: 기본 스토리지 엔진</li>
+  <li>쿼리에서 접근하는 컬럼들과 사용된 비교 연산자들을 바탕으로 <strong>어떤 인덱스를 사용할 수 있는지를 표시</strong>해준다.</li>
 </ul>
 
-<h3 id="myisam과-innodb-비교">MyISAM과 InnoDB 비교</h3>
-<ul>
-  <li>InnoDB 의 경우 INSERT 속도가 MyISAM에 비해 느리다</li>
-</ul>
-
-<h3 id="innodb-관련-설정">InnoDB 관련 설정</h3>
+<h3 id="key">key</h3>
 
 <ul>
-  <li><strong>innodb_log_group_home_dir</strong>: 리두 로그 파일의 위치</li>
-  <li><strong>innodb_log_files_in_group</strong>: 리두 로그 파일의 수</li>
-  <li><strong>innodb_log_file_size</strong>: 리두 로그 파일의 크기
-    <ul>
-      <li>지나치게 크면 복구 시간이 길어지면서 비효율적이 될 수 있음</li>
-      <li>innodb_buffer_pool_size의 25% 정도 할당</li>
-    </ul>
-  </li>
-  <li><strong>innodb_buffer_pool_size</strong>: 버퍼 풀의 크기
-    <ul>
-      <li>버퍼 풀의 크기가 클수록 성능에 유리 (다다익선)</li>
-    </ul>
-  </li>
-  <li><strong>innodb_buffer_pool_instances</strong>: 버퍼 풀 인스턴스 수
-    <ul>
-      <li>인스턴스 수를 늘리면 트랜잭션 간의 Lock 경합을 줄일 수 있다</li>
-      <li>CPU 코어 수가 많은 시스템일수록 인스턴스 수를 늘릴 수 있다고 보면 된다</li>
-    </ul>
-  </li>
-  <li><strong>innodb_flush_log_at_trx_commit</strong>: 트랜잭션을 얼마나 엄격하게 지킬 것인지
-    <ul>
-      <li>default 1: 트랜잭션의 ACID 특성을 완전히 준수 -&gt; 트랜잭션이 커밋될 때마다 로그 버퍼상의 로그를 디스크의 로그 파일로 바로 플러시</li>
-      <li>0: 1초마다 로그 버퍼에 로그가 쓰여지고 플러시 된다. 트랜잭션을 수행했지만 그 사이에 충돌이 나서 로그를 쓰지 못하게 될 경우 데이터 손실이 발생할 수 있다</li>
-      <li>2: 로그 버퍼에 로그를 쓰는 시점은 각 트랜잭션이 커밋된 후다. 버퍼에 쓰인 로그가 플러시 되는 주기는 0과 같이 1초다.</li>
-      <li>어떤 모드를 선택하는가에 따라 안전한 트랜잭션 처리 vs 성능 간의 트레이드 오프가 있다</li>
-    </ul>
-  </li>
-  <li><strong>innodb_flush_method</strong>: 데이터 플러쉬 방식</li>
-  <li><strong>innodb_io_capacity</strong>: 백그라운드에서 가능한 IOPS(I/O operations per second)의 수
-    <ul>
-      <li>현재 사용하고 있는 디스크의 IOPS 와 유사한 값으로 설정</li>
-    </ul>
-  </li>
-  <li><strong>innodb_flush_log_at_timeout</strong>: 메모리 상의 로그 버퍼를 디스크에 있는 로그 파일로 플러시하는 주기</li>
+  <li>테이블에 접근하는 방법을 최적화 하기 위해 <strong>어떤 인덱스를 사용하기로 결정했는지를 나타낸다.</strong></li>
+  <li>표시된 값이 PRIMARY인 경우에는 프라이머리 키를 사용한다는 의미. 나머지는 인덱스에 부여한 이름</li>
 </ul>
 
-<h2 id="mysql-서버">MySQL 서버</h2>
+<h3 id="key_len">key_len</h3>
+
+<ul>
+  <li>MySQL이 인덱스에 얼마나 많은 바이트를 사용하고 있는 지를 보여준다. MySQL에서 인덱스에 있는 컬럼들 중 일부만 사용한다면 이 값을 통해 어떤 컬럼들이 사용되는지를 계산할 수 있다.</li>
+</ul>
+
+<h3 id="ref">ref</h3>
+
+<ul>
+  <li>동등 비교 조건으로 어떤 값을 참조했는지를 나타낸다</li>
+  <li>상수값이면 const, 다른 테이블의 컬럼을 참조한 경우 컬럼명으로 표시된다</li>
+</ul>
+
+<h3 id="rows">rows</h3>
+
+<ul>
+  <li>원하는 행을 찾기 위해 얼마나 많은 행을 읽어야 할 지에 대한 예측값을 의미한다.</li>
+</ul>
+
+<h3 id="extra">extra</h3>
+
+<ul>
+  <li>추가 정보</li>
+</ul>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>구분</strong></td>
+      <td><strong>설명</strong></td>
+    </tr>
+    <tr>
+      <td><strong>using index</strong></td>
+      <td>커버링 인덱스라고 하며 인덱스 자료 구조를 이용해서 데이터를 추출</td>
+    </tr>
+    <tr>
+      <td><strong>using where</strong></td>
+      <td>where 조건으로 데이터를 추출. type이 ALL 혹은 Indx 타입과 함께 표현되면 성능이 좋지 않다는 의미</td>
+    </tr>
+    <tr>
+      <td><strong>using filesort</strong></td>
+      <td>데이터 정렬이 필요한 경우로 메모리 혹은 디스크상에서의 정렬을 모두 포함. 결과 데이터가 많은 경우 성능에 직접적인 영향을 줌</td>
+    </tr>
+    <tr>
+      <td><strong>using temporary</strong></td>
+      <td>쿼리 처리 시 내부적으로 temporary table이 사용되는 경우를 의미함</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>MySQL Explain 상 일반적으로 데이터가 많은 경우 Using Filesort 와 Using Temporary 상태는 좋지 않으며 쿼리 튜닝 후 모니터링이 필요하다.</p>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://happist.com/577204/db-%ED%8A%9C%EB%8B%9D%EC%9C%BC%EB%A1%9C-mysql-%EC%B5%9C%EC%A0%81%ED%99%94" target="_blank">happist, MySql 최적화로 빨라질 사이트 DB 튜닝 방법</a></li>
-  <li><a href="https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&amp;blogId=ksf1990&amp;logNo=221569426999" target="_blank">OGG, MySQL Tuning point</a></li>
-  <li><a href="https://m.blog.naver.com/islove8587/221977641268">islove8587, [MySQL]시스템 관련 튜닝</a></li>
-  <li><a href="https://rockplace.co.kr/edm/201412/download/Session%203.%20MySQL%20Performance%20and%20Tuning_full_notes.pdf" target="_blank">MySQL Performance Tuning pdf</a></li>
+  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/select-optimization.html" target="_blank">MySQL 공식문서: Optimizing SELECT Statements</a></li>
+  <li><a href="https://phoenixnap.com/kb/improve-mysql-performance-tuning-optimization" target="_blank">MySQL Performance Tuning and Optimization Tips</a></li>
+  <li><a href="https://nomadlee.com/mysql-explain-sql/" target="_blank">nomadlee, MySQL Explain 실행계획 사용법 및 분석</a></li>
+  <li><a href="https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html" target="_blank">ETL 성능 향상을 위한 몇 가지 팁들</a></li>
+  <li><a href="https://til.songyunseop.com/mysql/group-by-optimization.html" target="_blank">전지적 송윤섭시점 TIL, GROUP BY 최적화</a></li>
+  <li><a href="https://otsteam.tistory.com/136" target="_blank">SQL 성능을 위한 25가지 규칙</a></li>
+  <li><a href="https://jojoldu.tistory.com/173?category=761883" target="_blank">패스트캠퍼스 SQL튜닝캠프 4일차 - 조인의 기본 원리와 활용</a></li>
+  <li><a href="https://brightestbulb.tistory.com/147" target="_blank">취미는 공부 특기는 기록, Nested Loop Join, Driving Table</a></li>
+  <li><a href="https://stackoverflow.com/questions/9614922/does-the-join-order-matter-in-sql" target="_blank">stackoverflow, Does the join order matter in SQL?</a></li>
+  <li><a href="https://coding-factory.tistory.com/756" target="_blank">코딩팩토리, [DB] 데이터베이스 NESTED LOOPS JOIN (중첩 루프 조인)에 대하여</a></li>
+  <li><a href="https://schatz37.tistory.com/2" target="_blank">고동의 데이터 분석, [SQL] “성능 관점”에서 보는 결합(Join)</a></li>
+  <li><a href="https://schatz37.tistory.com/3?category=878798" target="_blank">고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)</a></li>
+  <li><a href="https://www.geeksforgeeks.org/in-vs-exists-in-sql/" target="_blank">GeeksforGeeks, IN vs EXISTS in SQL</a></li>
 </ul>
 
     </div>
@@ -849,7 +1473,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part16]%20MySQL%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0&url=http://localhost:4000/mysql-series16"
+          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part16]%20MySQL%20%EC%BF%BC%EB%A6%AC%20%ED%8A%9C%EB%8B%9D/%EC%B5%9C%EC%A0%81%ED%99%94%ED%95%98%EA%B8%B0&url=http://localhost:4000/mysql-series16"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -859,12 +1483,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series16&amp;media=http://localhost:4000/images/mysql_opt_logo.jpeg&amp;description=MySQL%20Series%20[Part16]%20MySQL%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series16&amp;media=http://localhost:4000/images/mysql_opt_logo.jpeg&amp;description=MySQL%20Series%20[Part16]%20MySQL%20%EC%BF%BC%EB%A6%AC%20%ED%8A%9C%EB%8B%9D/%EC%B5%9C%EC%A0%81%ED%99%94%ED%95%98%EA%B8%B0"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series16&title=MySQL%20Series%20[Part16]%20MySQL%20%EC%84%B1%EB%8A%A5%20%EC%A0%90%EA%B2%80/%ED%8A%9C%EB%8B%9D%ED%95%98%EA%B8%B0&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series16&title=MySQL%20Series%20[Part16]%20MySQL%20%EC%BF%BC%EB%A6%AC%20%ED%8A%9C%EB%8B%9D/%EC%B5%9C%EC%A0%81%ED%99%94%ED%95%98%EA%B8%B0&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -873,6 +1497,8 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
 
   
 
@@ -892,10 +1518,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part15] MySQL 쿼리 튜닝/최적화하기</a>
+      <a href="/mysql-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part15] MySQL 파티션</a>
     
     
-      <a href="/mysql-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part17] 그라파나를 이용해 MySQL 서버 모니터링 하기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part17] MySQL 성능 점검/튜닝하기<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

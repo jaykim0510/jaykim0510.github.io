@@ -42,6 +42,8 @@ tags: Java
 
 ![](/images/java_compiler_1.png)
 
+![](/images/java_compiler_2.png)
+
 # Package, Class
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Zt4Ze4jNDUE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -54,6 +56,11 @@ JVM을 사용해서 마음껏 개발할 수 있는 환경을 JRE (Java Runtime E
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/VvVruEDCSSY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+
+# Compile, Build
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zeDh2mMd_fc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
 # Maven, Gradle
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/3Jp9kGDb01g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -61,11 +68,3 @@ JVM을 사용해서 마음껏 개발할 수 있는 환경을 JRE (Java Runtime E
 <iframe width="560" height="315" src="https://www.youtube.com/embed/L19wXSpv5cs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ntOH2bWLWQs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-# Compile, Build
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/6SvUZqbU37E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/zeDh2mMd_fc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/JgRCaVwkPE8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

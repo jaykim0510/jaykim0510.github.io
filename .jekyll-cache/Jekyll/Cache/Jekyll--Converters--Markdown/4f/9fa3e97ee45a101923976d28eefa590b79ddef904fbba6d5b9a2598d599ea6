@@ -1,4 +1,4 @@
-I"#<hr />
+I"�!<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#view" id="markdown-toc-view">View</a>    <ul>
@@ -24,13 +24,10 @@
 
 <h1 id="view">View</h1>
 <ul>
-  <li>뷰(view)는 데이터베이스에 존재하는 일종의 가상 테이블</li>
-  <li>실제로 데이터를 저장하고 있지는 않음</li>
+  <li>뷰(view)는 데이터베이스에 존재하는 일종의 가상 테이블로, 실제로 데이터를 저장하고 있지는 않음</li>
   <li>테이블은 실제 데이터를 저장, 뷰는 그저 SELECT문이 실행되고 난 후의 이미지 같은 느낌</li>
-  <li>때에 따라 서브쿼리가 이중 중첩, 삼중 중첩되는 경우</li>
-  <li>이 때 생기는 SELECT문의 복잡성을 줄이고자 뷰를 사용</li>
-  <li>특정 역할을 하는 SELECT문들을 뷰로 저장</li>
-  <li>코드 스니펫처럼 필요할 때마다 가져와서 사용 가능</li>
+  <li>때에 따라 서브쿼리가 이중 중첩, 삼중 중첩되는 경우, 이 때 생기는 SELECT문의 복잡성을 줄이고자 뷰를 사용</li>
+  <li>특정 역할을 하는 SELECT문들을 뷰로 저장해서, 코드 스니펫처럼 필요할 때마다 가져와서 사용</li>
   <li>뷰는 백엔드 개발자들의 자산</li>
 </ul>
 
@@ -84,9 +81,19 @@
 
 <ul>
   <li>메모리에 임시 결과로 올려놓고 재사용</li>
-  <li>쿼리가 실행중인 동안만큼은 데이터가 메모리에 올라와 있음</li>
+  <li>쿼리가 실행중인 동안에만 데이터가 메모리에 올라와 있음</li>
   <li>순차적으로 쿼리 작성 가능</li>
 </ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CTE 한 개 생성</span>
+<span class="k">WITH</span> <span class="o">&lt;</span><span class="n">CTE</span> <span class="err">테이블명</span><span class="o">&gt;</span> <span class="k">AS</span> 
+<span class="p">(</span><span class="k">SELECT</span> <span class="p">...)</span> 
+
+<span class="c1">-- CTE 여러 개 생성</span>
+<span class="k">WITH</span> 
+<span class="o">&lt;</span><span class="n">CTE</span> <span class="err">테이블명</span><span class="mi">1</span><span class="o">&gt;</span> <span class="k">AS</span> <span class="p">(</span><span class="k">SELECT</span> <span class="p">...),</span>
+<span class="o">&lt;</span><span class="n">CTE</span> <span class="err">테이블명</span><span class="mi">2</span><span class="o">&gt;</span> <span class="k">AS</span> <span class="p">(</span><span class="k">SELECT</span> <span class="p">...),</span>
+</code></pre></div></div>
 
 <h2 id="recursive-cte">RECURSIVE CTE</h2>
 
@@ -97,43 +104,35 @@
 
 <p><img src="/images/mysql_40.png" alt="" /></p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-</code></pre></div></div>
-
 <h2 id="table-vs-view">Table vs View</h2>
 
 <ul>
-  <li>
-    <p>Table: Table is a preliminary storage for storing data and information in RDBMS. A table is a collection of related data entries and it consists of columns and rows.</p>
-  </li>
-  <li>
-    <p>View: A view is a virtual table whose contents are defined by a query. Unless indexed, a view does not exist as a stored set of data values in a database. Advantages over table are</p>
-  </li>
+  <li>테이블은 데이터와 RDBMS에 관한 정보를 영구적으로 저장하는 저장소</li>
+  <li>뷰는 어떤 쿼리에 의해 생성된 가상의 테이블. 인덱싱 해놓지 않으면 데이터베이스에 별도로 저장되지 않음</li>
 </ul>
-
-<p>We can combine columns/rows from multiple table or another view and have a consolidated view.
-Views can be used as security mechanisms by letting users access data through the view, without granting the users permissions to directly access the underlying base tables of the view
-It acts as abstract layer to downstream systems, so any change in schema is not exposed and hence the downstream systems doesn’t get affected.</p>
 
 <h2 id="view-vs-cte">View vs CTE</h2>
 
 <ul>
-  <li>A view is an object in the database</li>
-  <li>Views can be indexed</li>
-  <li>A CTE only exists for the duration of a single query</li>
-  <li>
-    <p>CTE can’t be indexed</p>
+  <li>뷰는 데이터베이스에 존재하는 일종의 오브젝트(Object)
+    <ul>
+      <li>다른 곳에서도 쓰일 일이 있는 쿼리라면 뷰</li>
+      <li>다른 사용자들에게 데이터의 일부만 제공하고자 하는 경우 뷰</li>
+    </ul>
   </li>
-  <li><strong>Ad-hoc queries</strong>: For queries that are referenced occasionally (or just once), it’s usually better to use a CTE. If you need the query again, you can just copy the CTE and modify it if necessary.</li>
-  <li><strong>Frequently used queries</strong>: If you tend to reference the same query often, creating a corresponding view is a good idea. However, you’ll need create view permission in your database to create a view.</li>
-  <li><strong>Access management</strong>: A view might be used to restrict particular users’ database access while still allowing them to get the information they need. You can give users access to specific views that query the data they’re allowed to see without exposing the whole database. In such a case, a view provides an additional access layer.</li>
+  <li>CTE는 쿼리가 실행되는 동안에만 존재하는 임시 테이블
+    <ul>
+      <li>Ad-hoc하게 사용하려는 경우 CTE</li>
+    </ul>
+  </li>
 </ul>
 
 <h2 id="cte-vs-subquery">CTE vs Subquery</h2>
 
-<p>CTE is just syntax so in theory it is just a subquery. you may not get any performance difference while using CTE and Subquery.</p>
-
-<p>I think the biggest benefit for using CTEs is readability. It makes it much easier to see what queries are being used as subqueries, and then it’s easy to join them into a query, much like a view.</p>
+<ul>
+  <li>CTE와 서브쿼리는 성능이나 결과적인 측면에서 다른 점이 없다</li>
+  <li>차이점은 CTE가 가독성이 더 좋다는 것, CTE는 재귀적으로 호출해 완전히 새로운 테이블을 만들 수 있다</li>
+</ul>
 
 <h1 id="참고">참고</h1>
 

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part19] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들</title>
+  <title>MySQL Series [Part19] SQL 문제</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/mysql-series19">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part19] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들 – Code Museum">
+  <meta name="twitter:title" content="MySQL Series [Part19] SQL 문제 – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/coding_test_problem.jpg">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part19] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들 – Code Museum">
+  <meta property="og:title" content="MySQL Series [Part19] SQL 문제 – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -294,6 +294,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -379,7 +381,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part19] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part19] SQL 문제">
         </div>
       </div>
       
@@ -400,7 +402,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part19] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들</h1>
+          <h1 class="post__title">MySQL Series [Part19] SQL 문제</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -409,7 +411,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-07-12T21:01:35+09:00">12 Jul 2022</time>
+              <time class="post__date" datetime="2022-07-11T21:01:35+09:00">11 Jul 2022</time>
             </div>
           </div>
   
@@ -431,6 +433,8 @@ Table of Contents
 
 
   
+
+  
   	
   	
   	
@@ -442,10 +446,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series18" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part18] SQL 문제</a>
+      <a href="/mysql-series18" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part18] 그라파나를 이용해 MySQL 서버 모니터링 하기</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/mysql-series20" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part20] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -454,314 +458,101 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까" id="markdown-toc-join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까">JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까</a></li>
-  <li><a href="#left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우" id="markdown-toc-left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우">LEFT OUTER JOIN을 사용할 때 조건을 만족하는 행이 2개인 경우</a></li>
-  <li><a href="#from에서-콤마가-사용된-경우" id="markdown-toc-from에서-콤마가-사용된-경우">FROM에서 콤마(,)가 사용된 경우</a></li>
-  <li><a href="#날짜-관련-함수" id="markdown-toc-날짜-관련-함수">날짜 관련 함수</a></li>
-  <li><a href="#row_number" id="markdown-toc-row_number">ROW_NUMBER()</a></li>
-  <li><a href="#윈도우-함수" id="markdown-toc-윈도우-함수">윈도우 함수</a></li>
-  <li><a href="#over" id="markdown-toc-over">OVER()</a></li>
-  <li><a href="#ctecommon-table-expression" id="markdown-toc-ctecommon-table-expression">CTE(Common Table Expression)</a></li>
-  <li><a href="#lead-lag-함수" id="markdown-toc-lead-lag-함수">LEAD, LAG 함수</a></li>
-  <li><a href="#3-not-in-null-1-2" id="markdown-toc-3-not-in-null-1-2">3 NOT IN (null, 1, 2)</a></li>
-  <li><a href="#where-조건절에-레코드튜플-사용할-수도-있음" id="markdown-toc-where-조건절에-레코드튜플-사용할-수도-있음">WHERE 조건절에 레코드(튜플) 사용할 수도 있음</a></li>
-  <li><a href="#join-쿼리에서-on절과-where절에-표기하는-것의-차이" id="markdown-toc-join-쿼리에서-on절과-where절에-표기하는-것의-차이">JOIN 쿼리에서 ON절과 WHERE절에 표기하는 것의 차이</a></li>
-  <li><a href="#subset" id="markdown-toc-subset">Subset</a></li>
-  <li><a href="#comparing-sets" id="markdown-toc-comparing-sets">Comparing Sets</a></li>
-  <li><a href="#inner-join은-on이-없어도-된다" id="markdown-toc-inner-join은-on이-없어도-된다">INNER JOIN은 ON이 없어도 된다?</a></li>
-  <li><a href="#row_number-rank-dense_rank" id="markdown-toc-row_number-rank-dense_rank">ROW_NUMBER(), RANK(), DENSE_RANK()</a></li>
-  <li><a href="#서브쿼리에서는-메인쿼리의-컬럼을-사용할-수-있다" id="markdown-toc-서브쿼리에서는-메인쿼리의-컬럼을-사용할-수-있다">서브쿼리에서는 메인쿼리의 컬럼을 사용할 수 있다</a></li>
-  <li><a href="#컬럼명이-sql-문법에-포함되는-경우-쌍따옴표로-묶어주면-된다" id="markdown-toc-컬럼명이-sql-문법에-포함되는-경우-쌍따옴표로-묶어주면-된다">컬럼명이 SQL 문법에 포함되는 경우 쌍따옴표로 묶어주면 된다</a></li>
-  <li><a href="#union-말고-union-all도-있다" id="markdown-toc-union-말고-union-all도-있다">UNION 말고 UNION ALL도 있다</a></li>
-  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+  <li><a href="#sql" id="markdown-toc-sql">SQL</a></li>
 </ul>
 
 <hr />
 
-<h1 id="join과-subquery-둘-다-사용할-수-있다면-어떤-것을-쓰는게-좋을까">JOIN과 SUBQUERY 둘 다 사용할 수 있다면 어떤 것을 쓰는게 좋을까</h1>
+<h1 id="sql">SQL</h1>
 
-<ol>
-  <li>Sub-query solution</li>
-</ol>
+<p><a href="https://leetcode.com/tag/database/" target="_blank">Leetcode: Database </a></p>
 
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">Name</span> <span class="k">as</span> <span class="n">Employee</span> <span class="k">FROM</span> <span class="n">Employee</span> <span class="n">e</span>
-<span class="k">WHERE</span> <span class="n">Salary</span> <span class="o">&gt;</span> <span class="p">(</span>
-    <span class="k">Select</span> <span class="n">Salary</span> <span class="k">FROM</span> <span class="n">Employee</span> <span class="n">m</span> <span class="k">WHERE</span> <span class="n">m</span><span class="p">.</span><span class="n">Id</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">ManagerId</span>
-<span class="p">)</span>
+<p>💟 ✅ ❎</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>문제 리스트
+--------------------------------------------- EASY
+- Rearrange Products Table 💟 ❎
+- Customer Who Visited but Did Not Make Any Transactions 💟 ✅ 
+- Bank Account Summary II 💟 ✅
+- Group Sold Products By The Date 💟 ✅
+- Immediate Food Delivery I 💟 ✅
+- Reformat Department Table 💟 ✅
+- Product Sales Analysis I ✅
+- Product Sales Analysis II ✅
+- The Latest Login in 2020 ✅
+- Employees With Missing Information 💟 ✅
+- Swap Salary ✅
+- Game Play Analysis I ✅
+- Primary Department for Each Employee ✅
+- Find Customer Referee ✅
+- Big Countries ✅
+- Customer Placing the Largest Number of Orders ✅
+- Customer Order Frequency 💟 ✅
+- Combine Two Tables ✅
+- Duplicate Emails ✅
+- Consecutive Available Seats 💟 ✅
+- Employees Earning More Than Their Managers ✅
+- Reported Posts 💟 ✅
+- Customers Who Never Order ✅
+- Fix Product Name Format 💟 ✅
+- Delete Duplicate Emails ✅
+- User Activity for the Past 30 Days I 💟 ✅
+- Sales Analysis II 💟 ✅
+- The Number of Employees Which Report to Each Employee 💟 ✅
+- Classes More Than 5 Students ✅
+- Rising Temperature 💟 ✅
+- Friend Requests I: Overall Acceptance Rate 💟 ✅
+--------------------------------------------- MEDIUM
+- Find the Start and End Number of Continuous Ranges 💟 ❎ 
+- Running Total for Different Genders 💟 ❎ 
+- All People Report to the Given Manager ✅
+- Number of Calls Between Two Persons 💟 ✅
+- Game Play Analysis III 💟 ✅
+- Customers Who Bought Products A and B but Not C 💟 ✅
+- Biggest Window Between Visits 💟 ❎ 
+- Evaluate Boolean Expression 💟 ✅
+- Tree Node ✅
+- Highest Grade For Each Student 💟 ✅
+- Number of Accounts That Did Not Stream ✅
+- Restaurant Growth 💟 ❎ 
+- Exchange Seats 💟 ✅
+- Product Price at a Given Date 💟 ❎ 
+- Customers Who Bought All Products ❎
+- Managers with at Least 5 Direct Reports ✅
+- Market Analysis I 💟 ✅
+- Find Interview Candidates 💟 ❎ 
+- Immediate Food Delivery II 💟 ❎ 
+- Shortest Distance in a Plane ✅
+- Rank Scores 💟 ✅
+- Movie Rating 💟 ✅
+- Countries You Can Safely Invest In 💟 ✅
+- League Statistics 💟 ✅
+- The Number of Passengers in Each Bus I
+- Department Highest Salary
+- Consecutive Numbers
+- Game Play Analysis IV
+- Active Users
+- Nth Highest Salary
+- Second Degree Follower
+- Second Highest Salary
+- Reported Posts II
+
+--------------------------------------------- HARD
+- Sales by Day of the Week
+- Median Employee Salary
+- Total Sales Amount by Year
+- Average Salary: Departments VS Company
+- Longest Winning Streak
+- Dynamic Pivoting of a Table
+- First and Last Call On the Same Day
+- Tournament Winners
+- The Number of Passengers in Each Bus II
+- Human Traffic of Stadium
+- Department Top Three Salaries
+- Find Median Given Frequency of Numbers
+- The Number of Seniors and Juniors to Join the Company
+- Trips and Users
 </code></pre></div></div>
-
-<p><strong>Advantages Of Subquery</strong></p>
-
-<ul>
-  <li>Complex query can be broken down into a series of logical steps.</li>
-  <li>Subquery is easy to read, understand and maintain.</li>
-  <li>It allow to use the results of another query in the outer query.</li>
-</ul>
-
-<p><strong>Disadvantages of Subquery</strong></p>
-
-<ul>
-  <li>Execution is slower than JOIN.</li>
-  <li>We cannot modify a table and select from the same table within a subquery in the same SQL statement.</li>
-</ul>
-
-<ol>
-  <li>JOIN solution</li>
-</ol>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
-     <span class="n">a</span><span class="p">.</span><span class="n">NAME</span> <span class="k">AS</span> <span class="n">Employee</span>
-<span class="k">FROM</span> <span class="n">Employee</span> <span class="k">AS</span> <span class="n">a</span> <span class="k">JOIN</span> <span class="n">Employee</span> <span class="k">AS</span> <span class="n">b</span>
-     <span class="k">ON</span> <span class="n">a</span><span class="p">.</span><span class="n">ManagerId</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">Id</span>
-     <span class="k">AND</span> <span class="n">a</span><span class="p">.</span><span class="n">Salary</span> <span class="o">&gt;</span> <span class="n">b</span><span class="p">.</span><span class="n">Salary</span>
-</code></pre></div></div>
-
-<p><strong>Advantage of a JOIN</strong></p>
-
-<ul>
-  <li>Execution and retrieval time faster than subqueries.</li>
-</ul>
-
-<p><strong>Disadvantages Of JOIN</strong></p>
-
-<ul>
-  <li>Database server has to do more work when it comes to a lot of joins in a query =&gt; more time consuming to retrieve data</li>
-  <li>Developer can be confused to choose the appropriate type among many types of joins.</li>
-</ul>
-
-<ol>
-  <li>Conclusion</li>
-</ol>
-
-<ul>
-  <li>Most developers prioritize speed optimizing while others prioritize logic. It ups to you in your specific case.</li>
-</ul>
-
-<h1 id="left-outer-join을-사용할-때-조건을-만족하는-행이-2개인-경우">LEFT OUTER JOIN을 사용할 때 조건을 만족하는 행이 2개인 경우</h1>
-
-<p>문제 <a href="https://leetcode.com/problems/consecutive-available-seats/" target="_blank">Consecutive Available Seats</a></p>
-
-<p>여기서 나는 LEFT OUTER JOIN을 2번 썼다. [현재 좌석, 이전 좌석, 이후 좌석] 이런식으로.</p>
-
-<p>정답은 맞았지만 이렇게 조인을 2번이나 써야하나 라는 생각에 다른 사람들의 풀이를 구경해봤다.</p>
-
-<p>풀이 중에</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="k">distinct</span> <span class="n">a</span><span class="p">.</span><span class="n">seat_id</span>
-<span class="k">from</span> <span class="n">cinema</span> <span class="n">a</span>
-<span class="k">join</span> <span class="n">cinema</span> <span class="n">b</span>
-<span class="k">on</span> <span class="k">abs</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">seat_id</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">seat_id</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="k">and</span> <span class="n">a</span><span class="p">.</span><span class="k">free</span><span class="o">=</span><span class="k">true</span> <span class="k">and</span> <span class="n">b</span><span class="p">.</span><span class="k">free</span><span class="o">=</span><span class="k">true</span>
-<span class="k">order</span> <span class="k">by</span> <span class="n">a</span><span class="p">.</span><span class="n">seat_id</span><span class="p">;</span>
-</code></pre></div></div>
-<p>을 봤다. 조인을 1번만 쓰고 있다. 근데 이 방법은 ON절에 사용된 조건이 driving table 행에 조인되는 derived table의 행이 2개가 조인되는 결과를 가져오게 될 것 같았다. 그래서 이러한 경우에는 결과 테이블이 어떻게 될지 궁금해 검색해봤다.</p>
-
-<p><a href="https://velog.io/@haerong22/LEFT-OUTER-JOIN-%EC%9D%98-%ED%95%A8%EC%A0%95">haerong22, LEFT OUTER JOIN 의 함정</a></p>
-
-<p>위 블로그 내용을 보니</p>
-
-<p><img src="/images/sql_30.png" alt="" /></p>
-
-<p>이렇게 id 값이 중복되는 데이터 뻥튀기(?) 현상이 일어났다.</p>
-
-<p>이 때는</p>
-
-<ul>
-  <li>테이블간 제약 조건을 명확히 한다.</li>
-  <li>조인 조건을 추가</li>
-  <li>distinct 사용</li>
-  <li>group by 사용</li>
-  <li>top 1, limit 사용</li>
-</ul>
-
-<p>와 같은 방법을 이용해 해결할 수 있다. 위의 풀이에서는 distinct를 추가했다.</p>
-
-<h1 id="from에서-콤마가-사용된-경우">FROM에서 콤마(,)가 사용된 경우</h1>
-
-<p>FROM 절에서 여러 테이블을 함께 사용할 때 사람들마다 쿼리 작성법이 조금씩 달랐다. 표기법의 차이일 뿐 다음은 같은 역할을 한다.</p>
-
-<ul>
-  <li>INNER JOIN = JOIN = ,</li>
-  <li>LEFT OUTER JOIN = LEFT JOIN</li>
-  <li>RIGHT OUTER JOIN = RIGHT JOIN</li>
-</ul>
-
-<h1 id="날짜-관련-함수">날짜 관련 함수</h1>
-
-<ul>
-  <li>DATE_SUB()
-    <ul>
-      <li>INTERVAL</li>
-    </ul>
-  </li>
-  <li>DATE_FORMAT()</li>
-</ul>
-
-<h1 id="row_number">ROW_NUMBER()</h1>
-
-<ul>
-  <li>Assigns a sequential integer to every row within its partition</li>
-  <li>We will show you how to add a sequential integer to each row or group of rows in the result set.</li>
-  <li>ROW_NUMBER() is a <a href="https://www.mysqltutorial.org/mysql-window-functions/" target="_blank"><strong>window function</strong></a> that returns a sequential number for each row, starting from 1 for the first row.</li>
-</ul>
-
-<h1 id="윈도우-함수">윈도우 함수</h1>
-<ul>
-  <li>특정 범위마다 함수를 적용하는 것을 윈도우 함수라고 함</li>
-  <li>MySQL에서 제공하는 윈도우 함수라고 따로 정의해둔 윈도우 함수 묶음이 있음
-<img src="/images/mysql_45.png" alt="" /></li>
-  <li>집계 함수도 OVER절을 이용해 범위를 정의하면 윈도우 함수로 사용할 수 있음(Most aggregate functions also can be used as window functions, <a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html" target="_blank">MySQL 공식문서</a>)</li>
-  <li>사용 방법: [윈도우 함수] + [OVER 절] or [집계 함수] + [OVER 절]</li>
-  <li>범위마다 함수를 적용한다는 점에서 GROUP BY와 비슷하게 느껴지지만, GROUP BY는 집계된 결과를 테이블로 보여주는 반면, 윈도우 함수는 집계된 결과를 기존 테이블에 하나의 열로 추가하여 결과를 볼 수 있음
-<img src="/images/mysql_46.png" alt="" /></li>
-</ul>
-
-<h1 id="over">OVER()</h1>
-<ul>
-  <li>If you want to learn window functions in MySQL, you need to understand the OVER clause</li>
-  <li>In 2018, MySQL introduced a new feature: window functions, which are accessed via the OVER clause. Window functions are a super powerful resource available in almost all SQL databases. They perform a specific calculation (e.g. sum, count, average, etc.) on a set of rows; this set of rows is called a “window” and is defined by the MySQL OVER clause.</li>
-  <li>OVER clause which has three possible elements: partition definition, order definition, and frame definition.
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[window_function(expression)][aggregation_function(expression)] OVER ( 
- [partition_defintion]
- [order_definition]
- [frame_definition]
-)
-</code></pre></div>    </div>
-  </li>
-  <li>PARTITION BY: 윈도우 범위 결정</li>
-  <li>ORDER BY: 정렬하여 계산</li>
-</ul>
-
-<h1 id="ctecommon-table-expression">CTE(Common Table Expression)</h1>
-
-<ul>
-  <li>문제: All People Report to the Given Manager</li>
-  <li>In MySQL every query generates a temporary result or relation. In order to give a name to those temporary result set, CTE is used.</li>
-  <li>A CTE is defined using WITH clause</li>
-  <li>A recursive CTE is a subquery which refer to itself using its own name
-    <ul>
-      <li>The recursive CTEs are defined using WITH RECURSIVE clause</li>
-      <li>There should be a terminating condition to recursive CTE.</li>
-      <li>The recursive CTEs are used for series generation and traversal of hierarchical or tree-structured data</li>
-    </ul>
-  </li>
-</ul>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WITH</span> <span class="k">RECURSIVE</span> <span class="n">CTE</span> <span class="k">AS</span> <span class="p">(</span>
-    <span class="k">SELECT</span> <span class="n">employee_id</span>
-    <span class="k">FROM</span> <span class="n">Employees</span>
-    <span class="k">WHERE</span> <span class="n">manager_id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">AND</span> <span class="n">employee_id</span> <span class="o">!=</span> <span class="mi">1</span>
-    <span class="k">UNION</span> <span class="k">ALL</span>
-    <span class="k">SELECT</span> <span class="n">e</span><span class="p">.</span><span class="n">employee_id</span>
-    <span class="k">FROM</span> <span class="n">CTE</span> <span class="k">c</span> <span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">Employees</span> <span class="n">e</span> <span class="k">ON</span> <span class="k">c</span><span class="p">.</span><span class="n">employee_id</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">manager_id</span>
-<span class="p">)</span>
-<span class="k">SELECT</span> <span class="n">employee_id</span>
-<span class="k">FROM</span> <span class="n">CTE</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">employee_id</span>
-</code></pre></div></div>
-
-<h1 id="lead-lag-함수">LEAD, LAG 함수</h1>
-<ul>
-  <li>Non Aggregation Window Function 중 하나</li>
-  <li>lead -&gt; 이끌다 -&gt; 현재 행 다음</li>
-  <li>lag -&gt; 질질 끌다 -&gt; 현재 행 이전</li>
-  <li>LEAD(expr, N, default) OVER(PARTITION BY ~ ORDER BY ~)</li>
-</ul>
-
-<h1 id="3-not-in-null-1-2">3 NOT IN (null, 1, 2)</h1>
-
-<ul>
-  <li>Tree Node 문제</li>
-  <li>True로 여겨질 줄 알았으나 False였다</li>
-</ul>
-
-<h1 id="where-조건절에-레코드튜플-사용할-수도-있음">WHERE 조건절에 레코드(튜플) 사용할 수도 있음</h1>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">student_id</span><span class="p">,</span> <span class="k">MIN</span><span class="p">(</span><span class="n">course_id</span><span class="p">)</span> <span class="k">AS</span> <span class="n">course_id</span><span class="p">,</span> <span class="n">grade</span>
-<span class="k">FROM</span> <span class="n">Enrollments</span>
-<span class="k">WHERE</span> <span class="p">(</span><span class="n">student_id</span><span class="p">,</span> <span class="n">grade</span><span class="p">)</span> <span class="k">IN</span>
-                            <span class="p">(</span><span class="k">SELECT</span> <span class="n">student_id</span><span class="p">,</span> <span class="k">MAX</span><span class="p">(</span><span class="n">grade</span><span class="p">)</span>
-                            <span class="k">FROM</span> <span class="n">Enrollments</span>
-                            <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">student_id</span><span class="p">)</span>
-<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">student_id</span><span class="p">,</span> <span class="n">grade</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">student_id</span>
-</code></pre></div></div>
-
-<h1 id="join-쿼리에서-on절과-where절에-표기하는-것의-차이">JOIN 쿼리에서 ON절과 WHERE절에 표기하는 것의 차이</h1>
-
-<h1 id="subset">Subset</h1>
-
-<p><img src="/images/sql_40.png" alt="" /></p>
-
-<h1 id="comparing-sets">Comparing Sets</h1>
-
-<p><img src="/images/sql_41.png" alt="" /></p>
-
-<h1 id="inner-join은-on이-없어도-된다">INNER JOIN은 ON이 없어도 된다?</h1>
-
-<ul>
-  <li>INNER JOIN, JOIN 또는 그냥 콤마(,)를 이용해 두 테이블을 조인할 때는 ON이 없어도 된다</li>
-  <li>(OUTER JOIN은 없으면 에러남)</li>
-  <li>ON없이 사용하는 경우를 Cartesian Product(곱집합) 이라고 함</li>
-  <li>A: {1, 2, 3}, B: {x, y} -&gt; FROM A, B를 하면 -&gt; {[1, x], [1, y], [2, x], [2, y], [3, x], [3, y]}</li>
-  <li>이 개념을 활용하면 LeetCode의 Shortest Distance in a Plane 문제를 풀 수 있다</li>
-</ul>
-
-<h1 id="row_number-rank-dense_rank">ROW_NUMBER(), RANK(), DENSE_RANK()</h1>
-
-<table>
-  <tbody>
-    <tr>
-      <td>ROW_NUMBER()</td>
-      <td>공동 순위를 무시함 (ex: 1,2,3,4 …)</td>
-    </tr>
-    <tr>
-      <td>RANK()</td>
-      <td>공동 순위만큼 건너뜀 (ex: 1,2,2,4 …)</td>
-    </tr>
-    <tr>
-      <td>DENSE_RANK()</td>
-      <td>공동 순위를 뛰어넘지 않음 (ex: 1,2,2,3 …)</td>
-    </tr>
-  </tbody>
-</table>
-
-<h1 id="서브쿼리에서는-메인쿼리의-컬럼을-사용할-수-있다">서브쿼리에서는 메인쿼리의 컬럼을 사용할 수 있다</h1>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">S1</span><span class="p">.</span><span class="n">Score</span><span class="p">,</span> <span class="p">(</span>
-    <span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">DISTINCT</span> <span class="n">Score</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">Scores</span> <span class="k">WHERE</span> <span class="n">Score</span> <span class="o">&gt;=</span> <span class="n">S1</span><span class="p">.</span><span class="n">Score</span><span class="p">)</span> <span class="k">AS</span> <span class="nv">"rank"</span>
-<span class="k">FROM</span> <span class="n">Scores</span> <span class="n">S1</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">S1</span><span class="p">.</span><span class="n">Score</span> <span class="k">DESC</span>
-</code></pre></div></div>
-
-<h1 id="컬럼명이-sql-문법에-포함되는-경우-쌍따옴표로-묶어주면-된다">컬럼명이 SQL 문법에 포함되는 경우 쌍따옴표로 묶어주면 된다</h1>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
-  <span class="n">score</span><span class="p">,</span>
-  <span class="n">RANK</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">score</span><span class="p">)</span> <span class="k">AS</span> <span class="nv">"rank"</span>
-<span class="k">FROM</span> <span class="n">Scores</span>
-</code></pre></div></div>
-
-<h1 id="union-말고-union-all도-있다">UNION 말고 UNION ALL도 있다</h1>
-
-<p><strong>{[1,  ‘kim’]}과 {[1,  ‘kim’]}을 합칠 때</strong></p>
-
-<ul>
-  <li>UNION -&gt; {[1,  ‘kim’]}</li>
-  <li>UNION ALL -&gt; {[1,  ‘kim’], [1,  ‘kim’]}</li>
-</ul>
-
-<h1 id="참고">참고</h1>
-
-<ul>
-  <li><a href="https://www.mysqltutorial.org/mysql-row_number/" target="_blank">MySQL tutorial: MySQL ROW_NUMBER, This is How You Emulate It</a></li>
-  <li><a href="https://velog.io/@wltn716/SQL-Over-%EC%A0%88" target="_blank">SQL OVER 절</a></li>
-  <li><a href="https://mizykk.tistory.com/121" target="_blank">[MySQL] 윈도우함수(Window Function)</a></li>
-  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html" target="_blank">MySQL 공식문서: 12.21.1 Window Function Descriptions</a></li>
-  <li><a href="https://learnsql.com/blog/over-clause-mysql/" target="_blank">LearnSQL: What Is the MySQL OVER Clause?</a></li>
-  <li><a href="https://www.geeksforgeeks.org/mysql-recursive-cte-common-table-expressions/" target="_blank">GeeksforGeeks: MySQL Recursive CTE (Common Table Expressions)</a></li>
-  <li><a href="https://horang98.tistory.com/10" target="_blank">horang, [MySQL] 계층 쿼리 - WITH, WITH RECURSIVE 사용법</a></li>
-</ul>
 
     </div>
     <div class="post__tags_list">
@@ -992,7 +783,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part19]%20SQL%EC%9D%84%20%EC%9D%B4%EC%9A%A9%ED%95%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B6%84%EC%84%9D%EC%97%90%EC%84%9C%20%EA%B2%AA%EC%97%88%EB%8D%98%20%EB%8B%A4%EC%96%91%ED%95%9C%20%EA%B2%BD%ED%97%98%EB%93%A4&url=http://localhost:4000/mysql-series19"
+          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part19]%20SQL%20%EB%AC%B8%EC%A0%9C&url=http://localhost:4000/mysql-series19"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -1002,12 +793,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series19&amp;media=http://localhost:4000/images/coding_test_problem.jpg&amp;description=MySQL%20Series%20[Part19]%20SQL%EC%9D%84%20%EC%9D%B4%EC%9A%A9%ED%95%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B6%84%EC%84%9D%EC%97%90%EC%84%9C%20%EA%B2%AA%EC%97%88%EB%8D%98%20%EB%8B%A4%EC%96%91%ED%95%9C%20%EA%B2%BD%ED%97%98%EB%93%A4"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series19&amp;media=http://localhost:4000/images/coding_test_problem.jpg&amp;description=MySQL%20Series%20[Part19]%20SQL%20%EB%AC%B8%EC%A0%9C"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series19&title=MySQL%20Series%20[Part19]%20SQL%EC%9D%84%20%EC%9D%B4%EC%9A%A9%ED%95%9C%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B6%84%EC%84%9D%EC%97%90%EC%84%9C%20%EA%B2%AA%EC%97%88%EB%8D%98%20%EB%8B%A4%EC%96%91%ED%95%9C%20%EA%B2%BD%ED%97%98%EB%93%A4&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series19&title=MySQL%20Series%20[Part19]%20SQL%20%EB%AC%B8%EC%A0%9C&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -1016,6 +807,8 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
 
   
   	
@@ -1029,10 +822,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series18" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part18] SQL 문제</a>
+      <a href="/mysql-series18" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part18] 그라파나를 이용해 MySQL 서버 모니터링 하기</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/mysql-series20" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part20] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
