@@ -25,7 +25,7 @@ TCP와 UDP는 두 대의 컴퓨터를 서로 연결(connection)하는 역할을 
 - Transmission Control Protocol
 - 연결 지향 TCP 3 way handshake (논리적 연결)
 - 데이터 전달 보증
-- 순서 보장
+- 가상 회선 패킷 교환 방식 -> 경로가 이미 정해져 있음 -> 순서 보장
 
 ## 3 way handshake
 
