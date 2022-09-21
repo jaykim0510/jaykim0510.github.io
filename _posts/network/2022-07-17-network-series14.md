@@ -3,7 +3,7 @@ layout: post
 title:  'Network Series [Part14]: 네트워크 용어(4): DNS'
 description: 
 date:   2022-07-17 15:01:35 +0300
-image:  '/images/rpc_2.png'
+image:  '/images/dns_logo.webp'
 logo_image: '/images/cs_logo.jpeg'
 categories: CS
 tags: Network

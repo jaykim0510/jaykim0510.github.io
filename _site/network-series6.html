@@ -457,6 +457,8 @@ IP(Internet Protocol)
   
 
   
+
+  
   	
   	
   	
@@ -484,15 +486,6 @@ IP(Internet Protocol)
       <li><a href="#ip-주소" id="markdown-toc-ip-주소">IP 주소</a></li>
       <li><a href="#서브넷-마스크subnet-mask" id="markdown-toc-서브넷-마스크subnet-mask">서브넷 마스크(Subnet Mask)</a></li>
       <li><a href="#ip-주소-예시" id="markdown-toc-ip-주소-예시">IP 주소 예시</a></li>
-    </ul>
-  </li>
-  <li><a href="#dnsdomain-name-system-서버" id="markdown-toc-dnsdomain-name-system-서버">DNS(Domain Name System) 서버</a>    <ul>
-      <li><a href="#etchosts" id="markdown-toc-etchosts">/etc/hosts</a></li>
-      <li><a href="#etchostconf" id="markdown-toc-etchostconf">/etc/host.conf</a></li>
-      <li><a href="#etcresolvconf" id="markdown-toc-etcresolvconf">/etc/resolv.conf</a></li>
-      <li><a href="#리눅스-dns-질의-과정과-우선순위" id="markdown-toc-리눅스-dns-질의-과정과-우선순위">리눅스 DNS 질의 과정과 우선순위</a></li>
-      <li><a href="#nameserver" id="markdown-toc-nameserver">nameserver</a></li>
-      <li><a href="#dns" id="markdown-toc-dns">DNS</a></li>
     </ul>
   </li>
   <li><a href="#라우팅" id="markdown-toc-라우팅">라우팅</a>    <ul>
@@ -644,157 +637,6 @@ IP(Internet Protocol)
   </li>
 </ul>
 
-<h1 id="dnsdomain-name-system-서버">DNS(Domain Name System) 서버</h1>
-<p>DNS 서버는 도메인 네임을 IP주소로 매핑하여 보관하고 있는 서버입니다. 하지만 모든 도메인 정보를 저장할 수는 없고 저장한다고 해도 IP주소를 가지고 오는데 많은 시간이 소요됩니다. 이를 해결하기 위해 DNS 서버를 계층적으로 구성해 IP 주소를 가져오도록 했으며 한 번 가져온 정보는 캐시에 저장해둡니다. 하지만 캐시에 저장된 후 정보가 변경될 수 있기 때문에 캐시에 저장된 정보는 유효기간이 지나면 캐시에서 삭제됩니다.</p>
-
-<p><img src="../../images/network_4.png" alt="" /></p>
-
-<h2 id="etchosts">/etc/hosts</h2>
-
-<p>DNS가 없던 아주 옛날에는 모든 서버의 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일에는 아래와 같은 형식으로 domain과 IP주소의 짝을 직접 등록하여 도메인에 대한 IP주소를 찾아가도록 하였다. DNS서버를 운영할때 기본값으로 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일을 먼저 읽어 들인다. 요청받은 도메인이 이 곳에 등록되어 있다면 DNS요청을 네임서버에 보내지않고 이 곳에 등록되어 있는 주소로 연결이 된다. 그리하여 일종의 트릭으로 원하는 IP와 도메인명을 등록하고 사용할 수도 있다.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;IP주소&gt;    &lt;hostname&gt;
-127.0.0.1  localhost
-</code></pre></div></div>
-
-<h2 id="etchostconf">/etc/host.conf</h2>
-
-<p>이 파일은 어떤 특정 도메인에 대해 IP주소값을 찾을 때, 주소 값을 어디에서 찾을 것인가를 결정하는 파일이다.</p>
-
-<p><img src="/images/ip_2.png" alt="" /></p>
-
-<p>hosts : <code class="language-plaintext highlighter-rouge">/etc/hosts</code>파일을 말한다.bind : DNS를 말한다. 즉, <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code>에 정의된 nameserver를 의미한다.nis : NIS에 의한 도메인 쿼리를 말한다. 위의 내용으로 예를 들면 어떤 PC로 부터 자신(DNS서버)에게 도메인 주소를 IP로 알려달라는 질의 요청이 왔다. 맨 처음은 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일에서 찾아본 후, 없으면 <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code>파일에 정의된 nameserver에게 쿼리하는 순서이다. 즉, 도메인 네임 서비스를 어디서 받을 것인가를 정의해 놓은 파일이라는 것이다.</p>
-
-<h2 id="etcresolvconf">/etc/resolv.conf</h2>
-<p>이 파일은 사용하고자 하는 네임서버를 지정하는 파일이다.</p>
-
-<p>구성을 보도록 하자.</p>
-
-<p><img src="/images/ip_3.png" alt="" /></p>
-
-<p>search는 호스트+도메인으로 사용할 도메인 명을 지정해둔 것이다. 거의 모두 호스트명과 도메인 명을 함께 사용한다. 하지만 특별하게 호스트명만 사용되었을 때 사용하게될 기본 도메인명을 의미하는 것이다.예를 들어 search abc.com 이라고 가정하자. 그럼 “telnet 호스트명”과 같이 “telnet www”라고 하였을 경우에 자동으로 “telnet www.abc.com”으로 인식하는 것이다. nameserver는 말 그대로 이 서버에서 사용할 네임서버를 지정해둔 것이다.</p>
-
-<h2 id="리눅스-dns-질의-과정과-우선순위">리눅스 DNS 질의 과정과 우선순위</h2>
-
-<ol>
-  <li>nscd ( Name Service Cache Daemon ) - nscd 데몬이 설치되었을 경우에만 활성화. 윈도우의 dns cache와 같다.</li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/host.conf</code> 파일의 설정에 따라서 순서가 바뀔 수 있다. 기본 설정으로는 /etc/hosts 파일을 참조한다. 두번째로 bind 패키지를 따른다. bind 패키지로 리눅스 DNS 서버를 구축할 수 있다. 이는 패키지가 설치되어 있을 경우에만 활성화된다. bind 내부 설정에 따른 순위 변화는 생략.</li>
-  <li>리눅스에 따라 GUI 환경의 네트워크 설정 어플리케이션으로 DNS 설정(리눅스마다 약간씩 차이가 있을 수 있음. 보통은 GUI 환경에서 설정하는 것이 우선적으로 작용한다.)</li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/resolvconf/resolv.conf.d</code> 디렉토리 내부 설정. 이 디렉토리는 base, head 파일과 <code class="language-plaintext highlighter-rouge">/etc/network/interfaces</code> 파일을 이용하여 <code class="language-plaintext highlighter-rouge">resolv.conf</code> 파일을 수정함.(리눅스마다 약간씩 차이가 있을 수 있음. 우분투에서 확인)</li>
-  <li><code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> 파일 : 윈도우의 네트워크 인터페이스 설정과 같음.</li>
-  <li>내부 네트워크 DNS 질의 - 5번 과정에서 내부 네트워크 DNS로 맵핑했을 경우. ex) Kerberos Linux DNS server, Active Directory DNS, VMWare의 Gateway 등.</li>
-  <li>외부 네트워크 DNS 질의</li>
-</ol>
-
-<p>위의 과정을 크게 나누어 보면 아래와 같다.</p>
-
-<ol>
-  <li>Local 환경 쿼리 (자기 자신)</li>
-  <li>내부 네트워크 쿼리</li>
-  <li>외부 공인 DNS 쿼리</li>
-</ol>
-
-<p>리눅스에서 DNS 질의 과정 추적 명령어 dig를 사용할 수 있다. 윈도우는 따로 설치해야 한다.</p>
-
-<p>추가 : 공유기에서 할당하는 DNS 설정은 보통 KT, SKT 등의 통신사 DNS 서버인데, 공유기에서 설정하는 값 보다 시스템에서 설정하는 값이 먼저이다. 하지만 별도의 설정이 없다면 OS 부팅 시 DHCP를 공유기 정보에서 받아 설정하도록 되어있다.</p>
-
-<h2 id="nameserver">nameserver</h2>
-
-<p><a href="https://kinsta.com/knowledgebase/what-is-a-nameserver/" target="_blank">kinsta, What Is a Nameserver? Why Are Nameservers Important?</a></p>
-
-<p>If you’re trying to point your domain name to your web hosting, you’ve probably come across the term nameserver. So, what is a nameserver?</p>
-
-<p>Nameservers help connect URLs with the IP address of web servers. Nameservers are an important part of the Domain Name System (DNS), which many people call the “phone book of the Internet”.</p>
-
-<p><strong>What Is a Nameserver? Explained in More Detail</strong></p>
-
-<p>When a user enters a URL in their browser, like “kinsta.com, there needs to be some way to connect that URL with the underlying web server that powers the website at that domain name.</p>
-
-<p>Think how difficult it would be if you had to enter the actual IP address of a web server every time you wanted to visit a website. You wouldn’t be able to remember whether it was 159.89.229.118 or 159.89.229.119 — it would be a mess!</p>
-
-<p>Nameservers play an important role in connecting a URL with a server IP address in a much more human-friendly way.</p>
-
-<p>Nameservers look like any other domain name. When you look at a website’s nameservers, you’ll typically see a minimum of two nameservers (though you can use more). Here’s an example of what they look like:</p>
-
-<ul>
-  <li>ns-380.awsdns-47.com</li>
-  <li>Ns-1076.awsdns-06.org</li>
-</ul>
-
-<p>Only instead of serving up a website, those nameservers help direct traffic.</p>
-
-<p>To illustrate the role that nameservers play in directing traffic on the Internet, let’s look at a real example.</p>
-
-<p>Let’s say you want to visit the Kinsta homepage. On the surface, this action is simple: you type “kinsta.com” into your browser’s address bar and you see the Kinsta homepage. Easy, right?</p>
-
-<p>But behind-the-scenes, the high-level process actually goes something like this:</p>
-
-<ul>
-  <li>You type “kinsta.com” into the address bar and hit enter</li>
-  <li>Your browser sends a request to that domain’s nameservers</li>
-  <li>The nameservers respond back with the IP address of the website’s server</li>
-  <li>Your browser requests the website content from that IP address</li>
-  <li>Your browser retrieves the content and renders it in your browser</li>
-</ul>
-
-<p>In order to visit a website you must first access a Domain Name Server. If there’s an issue with In the the decentralized naming systems responsible for turning hostnames into IP addresses, you might experience a message such as “DNS server not responding”.</p>
-
-<p>Nameservers vs DNS Records<br />
-In the example above, we left out one point for simplicity:</p>
-
-<p>DNS records are what contain the actual information that other browsers or services need to interact with, like your server’s IP address.</p>
-
-<p>Nameservers, on the other hand, help store and organize those individual DNS records.</p>
-
-<p>Earlier, we referred to DNS as the phone book of the Internet. But a more specific analogy would be that:</p>
-
-<ul>
-  <li>Nameservers are the physical phone book itself.</li>
-  <li>DNS records are the individual entries in the phone book.</li>
-</ul>
-
-<p>If you wanted to find someone’s phone number (back when phone books existed!), you’d first grab the phone book itself. Then, you’d open the phone book and go through the entries to find the specific information that you need.</p>
-
-<p>Armed with that knowledge, let’s look at a fuller sequence of what happens when you visit a website:</p>
-
-<ul>
-  <li>You type “kinsta.com” into the address bar and hit enter</li>
-  <li>Your browser uses DNS to retrieve the domain’s nameservers</li>
-  <li>Your browser asks for the A record that contains the IP address of the web server (a specific DNS record)</li>
-  <li>The nameservers provide the IP address from the A record</li>
-  <li>Your browser requests the website content from that IP address</li>
-  <li>Your browser retrieves the content and renders it in your browser</li>
-</ul>
-
-<p><strong>How to Use Nameservers in the Real World</strong><br />
-In the real world, you’ll use nameservers and DNS records primarily to point your domain name towards your hosting.</p>
-
-<p>You also might use the DNS records supplied by your nameservers in other ways, like setting up your email account with MX records or verifying your domain name with Google Search Console.</p>
-
-<p>Where Are Your Domain’s Nameservers Located?</p>
-
-<p>The answer to this question is that “it depends”.</p>
-
-<p>When you register your domain name through a domain registrar, your domain is usually pointed towards your domain registrar’s nameservers at first. Your domain registrar is also where you can edit your domain’s nameservers.</p>
-
-<p>If you wanted to, you could leave your nameservers at your domain registrar and just edit the DNS records to point your domain name towards your web hosting.</p>
-
-<p>However, many web hosts recommend that you change your domain’s nameservers to nameservers provided by the host. For example, here at Kinsta, we provide premium nameservers powered by Amazon Route 53 that you can use (though you don’t have to):</p>
-
-<p>To change your nameservers, you’ll need to use the interface at the domain registrar where you purchased your domain name.</p>
-
-<p>For example, here’s what it looks like to change the nameservers at a domain registered through Google Domains.</p>
-
-<p>You can see that the domain is originally configured to use the Google Domains nameservers:</p>
-
-<h2 id="dns">DNS</h2>
-
-<p><a href="https://kinsta.com/knowledgebase/what-is-dns/" target="_blank">kinsta, What Is DNS? Domain Name System Explained</a></p>
-
-<p>DNS, short for Domain Name System, is one of the most common yet misunderstood components of the web landscape. To put it simply, DNS helps direct traffic on the Internet by connecting domain names with actual web servers. Essentially, it takes a human-friendly request – a domain name like kinsta.com – and translates it into a computer-friendly server IP address – like 216.3.128.12.</p>
-
-<p>Because DNS is all about looking up addresses and connecting devices, many people call DNS the “phonebook of the Internet”. Without DNS, you’d have to memorize every site’s IP address to access it which… well, that just wouldn’t work!</p>
-
 <h1 id="라우팅">라우팅</h1>
 
 <p>목적지 IP 주소를 찾아가는 과정</p>
@@ -886,12 +728,6 @@ source: 192.168.1.10 / destination : 8.8.8.8</p>
 <ul>
   <li><a href="https://docs.microsoft.com/en-us/troubleshoot/windows-client/networking/tcpip-addressing-and-subnetting" target="_blank">Microsoft, Understand TCP/IP addressing and subnetting basics</a></li>
   <li><a href="https://velog.io/@dnstlr2933/%EC%84%9C%EB%B8%8C%EB%84%B7%EA%B3%BC-Broadcast-%EC%A3%BC%EC%86%8C" target="_blank">groom, 서브넷과 Broadcast 주소</a></li>
-  <li><a href="https://itdexter.tistory.com/261" target="_blank">IT_Dexter:티스토리</a></li>
-  <li><a href="https://whackur.tistory.com/45" target="_blank">Whackur’s Blog:티스토리</a></li>
-  <li><a href="https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/" target="_blank">How To Set Permanent DNS Nameservers in Ubuntu and Debian</a></li>
-  <li><a href="https://kinsta.com/knowledgebase/what-is-dns/" target="_blank">kinsta, What Is DNS? Domain Name System Explained</a></li>
-  <li><a href="https://kinsta.com/knowledgebase/what-is-a-nameserver/" target="_blank">kinsta, What Is a Nameserver? Why Are Nameservers Important?</a></li>
-  <li><a href="https://www.cloudflare.com/ko-kr/learning/dns/what-is-dns/" target="_blank">CLOUDFLARE, What is DNS?</a></li>
   <li><a href="https://www.netmanias.com/ko/?m=view&amp;id=blog&amp;no=5501" target="_blank">스위칭과 라우팅… 참 쉽죠잉~ (1편: Ethernet 스위칭)</a></li>
   <li><a href="https://www.netmanias.com/ko/?m=view&amp;id=blog&amp;no=5502" target="_blank">스위칭과 라우팅… 참 쉽죠잉~ (2편: IP 라우팅)</a></li>
 </ul>
@@ -1149,6 +985,8 @@ source: 192.168.1.10 / destination : 8.8.8.8</p>
 <!--첫 번째 문단-->
 
 
+
+  
 
   
 
