@@ -19,5 +19,6 @@ tags: MySQL
 
 # 참고
 
+- [44bits, 그라파나(Grafana)란?](https://www.44bits.io/ko/keyword/grafana){:target="_blank"}
 - [How-To Geek, How to Monitor MySQL Server Activity With a Grafana Dashboard](https://www.howtogeek.com/devops/how-to-monitor-mysql-server-activity-with-a-grafana-dashboard/){:target="_blank"}
 - [Grafana 공식문서, Grafana documentation](https://grafana.com/docs/grafana/latest/){:target="_blank"}
