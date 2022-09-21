@@ -16,8 +16,9 @@ tags: Network
 {:toc}
 ---
 
-
 # DNS(Domain Name System)
+
+![](/images/dns_logo.webp)
 
 - 도메인명을 이용해 웹 서버에 접근할 수 있도록 도와주는 서비스
 - 도메인명을 IP주소로 변환해준다
