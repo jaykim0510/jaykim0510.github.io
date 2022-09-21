@@ -1,0 +1,255 @@
+I"�L<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#dnsdomain-name-system" id="markdown-toc-dnsdomain-name-system">DNS(Domain Name System)</a></li>
+  <li><a href="#main-components" id="markdown-toc-main-components">Main components:</a>    <ul>
+      <li><a href="#domain-registrar" id="markdown-toc-domain-registrar">Domain Registrar</a></li>
+      <li><a href="#nameserver" id="markdown-toc-nameserver">Nameserver</a></li>
+      <li><a href="#dns-records" id="markdown-toc-dns-records">DNS Records</a></li>
+      <li><a href="#how-does-dns-work" id="markdown-toc-how-does-dns-work">How Does DNS Work?</a></li>
+      <li><a href="#there-are-4-dns-servers-involved-in-loading-a-webpage" id="markdown-toc-there-are-4-dns-servers-involved-in-loading-a-webpage">There are 4 DNS servers involved in loading a webpage:</a></li>
+      <li><a href="#what-is-a-dns-resolver" id="markdown-toc-what-is-a-dns-resolver">What is a DNS resolver?</a></li>
+      <li><a href="#what-are-the-types-of-dns-queries" id="markdown-toc-what-are-the-types-of-dns-queries">What are the types of DNS queries?</a></li>
+      <li><a href="#what-is-dns-caching-where-does-dns-caching-occur" id="markdown-toc-what-is-dns-caching-where-does-dns-caching-occur">What is DNS caching? Where does DNS caching occur?</a>        <ul>
+          <li><a href="#browser-dns-caching" id="markdown-toc-browser-dns-caching">Browser DNS caching</a></li>
+          <li><a href="#operating-system-os-level-dns-caching" id="markdown-toc-operating-system-os-level-dns-caching">Operating system (OS) level DNS caching</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#dns-질의-과정과-우선순위" id="markdown-toc-dns-질의-과정과-우선순위">DNS 질의 과정과 우선순위</a>    <ul>
+      <li><a href="#etchosts" id="markdown-toc-etchosts">/etc/hosts</a></li>
+      <li><a href="#etchostconf" id="markdown-toc-etchostconf">/etc/host.conf</a></li>
+      <li><a href="#etcresolvconf" id="markdown-toc-etcresolvconf">/etc/resolv.conf</a></li>
+      <li><a href="#dns-우선순위" id="markdown-toc-dns-우선순위">DNS 우선순위</a></li>
+    </ul>
+  </li>
+  <li><a href="#domain-name-hierarchy" id="markdown-toc-domain-name-hierarchy">Domain Name Hierarchy</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+<hr />
+
+<h1 id="dnsdomain-name-system">DNS(Domain Name System)</h1>
+
+<p><img src="/images/dns_logo.webp" alt="" /></p>
+
+<ul>
+  <li>도메인명을 이용해 웹 서버에 접근할 수 있도록 도와주는 서비스</li>
+  <li>도메인명을 IP주소로 변환해준다</li>
+  <li>인터넷계의 전화번호부</li>
+</ul>
+
+<h1 id="main-components">Main components:</h1>
+
+<ul>
+  <li>Domain Registrar (도메인 등록 대행 업체)</li>
+  <li>Nameservers (네임 서버)</li>
+  <li>DNS Records (DNS 레코드)</li>
+</ul>
+
+<p>Let’s talk about these components and how they work together.</p>
+
+<h2 id="domain-registrar">Domain Registrar</h2>
+
+<p><img src="/images/domain_registrar.png" alt="" /></p>
+
+<ul>
+  <li>도메인명은 도메인 등록 대행 업체로부터 구매한다</li>
+  <li>도메인 등록 대행 업체는 기본적으로 네임서버를 제공해준다</li>
+  <li>DNS 레코드는 이러한 등록 대행 업체에 의해 관리된다</li>
+  <li>다음은 도메인명을 판매하는 도메인 등록 대행 업체의 목록이다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- AWS Route53
+- Google Domains
+- Cloudflare
+- Namecheap
+- GoDaddy
+- Hover
+</code></pre></div></div>
+
+<p><img src="/images/domain_registrar_2.png" alt="" /></p>
+
+<p><img src="/images/domain_registrar_3.png" alt="" /></p>
+
+<h2 id="nameserver">Nameserver</h2>
+
+<ul>
+  <li>DNS 레코드를 저장하고 있는 서버</li>
+  <li>네임서버는 등록 대행 업체(ex. GoDaddy) 또는 다른 외부 서비스(ex. Cloudflare)가 제공</li>
+</ul>
+
+<h2 id="dns-records">DNS Records</h2>
+
+<ul>
+  <li>네임서버에 저장되어 있는 데이터</li>
+  <li>zone files라고도 불림</li>
+  <li>변환 요청을 처리하기 위해 필요한 정보를 가지고 있음</li>
+  <li>DNS 서버는 DNS 레코드를 보고 요청을 처리함</li>
+  <li>보통 DNS 레코드는 1~4시간마다 업데이트가 일어남 이 값을 TTL이라고 함</li>
+</ul>
+
+<p>여러 종류의 DNS 레코드가 있지만 아래의 4 가지 정도가 가장 많이 사용된다</p>
+
+<ul>
+  <li><strong>A record</strong>s: Used to point a domain or a subdomain at an IPv4 address. This is the rule used to point a domain like example.com to the web server where the example.com website lives. (Note: If a web server uses and IPv6 address rather than an IPv4 address, then an AAAA record is used rather than an A record).</li>
+  <li><strong>CNAME records</strong>: Used to associate a subdomain to the primary or canonical domain. This type of rule is commonly used to associate a www subdomain with the primary domain, such as www.example.com with example.com.</li>
+  <li><strong>MX records</strong>: Used to associate a domain with an email service. This is the type of rule used if you want mail for example.com to be delivered to a specific email service such as Gmail.</li>
+  <li><strong>TXT records</strong>: Used to associate any arbitrary text to a domain. Most commonly, TXT records are used to associate SPF records with a domain to improve email deliverability and protect against spammers misusing the domain name when sending out spam. Check out our in-depth blog post on email authentication and why it’s important.</li>
+</ul>
+
+<h2 id="how-does-dns-work">How Does DNS Work?</h2>
+
+<h1> </h1>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/vrxwXXytEuI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+
+<h1> </h1>
+
+<p><img src="/images/dns_mechanism.png" alt="" /></p>
+
+<ul>
+  <li>DNS는 요청받은 도메인 명을 IP주소로 변환시켜주는데 이를 DNS resolution이라고 함</li>
+  <li>DNS resolution은 IP주소를 알아내기 위해 아래의 4가지 종류의 DNS 서버를 필요로함</li>
+</ul>
+
+<h2 id="there-are-4-dns-servers-involved-in-loading-a-webpage">There are 4 DNS servers involved in loading a webpage:</h2>
+
+<ul>
+  <li><strong>DNS recursor (DNS resolver)</strong>: DNS 리졸버는 클라이언트로부터 요청을 받고 받은 요청을 적절한 네임서버로 전달한다</li>
+  <li><strong>Root nameserver</strong>: 루트 네임서버는 resolving을 위한 첫 단계로, 어떤 TLD 네임 서버로 가야 하는지 알려준다</li>
+  <li><strong>TLD nameserver</strong>: Top-level 도메인 서버는 다음으로 특정 호스트명을 가지는 네임서버를 안내한다</li>
+  <li><strong>Authoritative nameserver</strong>: 요청의 마지막 종착지로, 도메인명에 해당하는 정보가 있으면 IP 주소를 돌려준다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Note: Often DNS lookup information will be cached either locally inside the querying computer or remotely in the DNS infrastructure. There are typically 8 steps in a DNS lookup. When DNS information is cached, steps are skipped from the DNS lookup process which makes it quicker. The example below outlines all 8 steps when nothing is cached.  
+</code></pre></div></div>
+
+<p>The 8 steps in a DNS lookup:</p>
+
+<ul>
+  <li>A user types ‘example.com’ into a web browser and the query travels into the Internet and is received by a DNS recursive resolver.</li>
+  <li>The resolver then queries a DNS root nameserver (.).</li>
+  <li>The root server then responds to the resolver with the address of a Top Level Domain (TLD) DNS server (such as .com or .net), which stores the information for its domains. When searching for example.com, our request is pointed toward the .com TLD.</li>
+  <li>The resolver then makes a request to the .com TLD.</li>
+  <li>The TLD server then responds with the IP address of the domain’s nameserver, example.com.</li>
+  <li>Lastly, the recursive resolver sends a query to the domain’s nameserver.</li>
+  <li>The IP address for example.com is then returned to the resolver from the nameserver.</li>
+  <li>The DNS resolver then responds to the web browser with the IP address of the domain requested initially.</li>
+</ul>
+
+<p>Once the 8 steps of the DNS lookup have returned the IP address for example.com, the browser is able to make the request for the web page:</p>
+
+<ul>
+  <li>The browser makes a HTTP request to the IP address.</li>
+  <li>The server at that IP returns the webpage to be rendered in the browser (step 10).</li>
+</ul>
+
+<p><img src="/images/dns_query_1.png" alt="" /></p>
+
+<h2 id="what-is-a-dns-resolver">What is a DNS resolver?</h2>
+<p>The DNS resolver is the first stop in the DNS lookup, and it is responsible for dealing with the client that made the initial request. The resolver starts the sequence of queries that ultimately leads to a URL being translated into the necessary IP address.</p>
+
+<p>Note: A typical uncached DNS lookup will involve both recursive and iterative queries.</p>
+
+<p>It’s important to differentiate between a recursive DNS query and a recursive DNS resolver. The query refers to the request made to a DNS resolver requiring the resolution of the query. A DNS recursive resolver is the computer that accepts a recursive query and processes the response by making the necessary requests.</p>
+
+<p><img src="/images/dns_query_2.png" alt="" /></p>
+
+<h2 id="what-are-the-types-of-dns-queries">What are the types of DNS queries?</h2>
+
+<p>In a typical DNS lookup three types of queries occur. By using a combination of these queries, an optimized process for DNS resolution can result in a reduction of distance traveled. In an ideal situation cached record data will be available, allowing a DNS name server to return a non-recursive query.</p>
+
+<p>3 types of DNS queries:</p>
+
+<ul>
+  <li>Recursive query - In a recursive query, a DNS client requires that a DNS server (typically a DNS recursive resolver) will respond to the client with either the requested resource record or an error message if the resolver can’t find the record.</li>
+  <li>Iterative query - in this situation the DNS client will allow a DNS server to return the best answer it can. If the queried DNS server does not have a match for the query name, it will return a referral to a DNS server authoritative for a lower level of the domain namespace. The DNS client will then make a query to the referral address. This process continues with additional DNS servers down the query chain until either an error or timeout occurs.</li>
+  <li>Non-recursive query - typically this will occur when a DNS resolver client queries a DNS server for a record that it has access to either because it’s authoritative for the record or the record exists inside of its cache. Typically, a DNS server will cache DNS records to prevent additional bandwidth consumption and load on upstream servers.</li>
+</ul>
+
+<h2 id="what-is-dns-caching-where-does-dns-caching-occur">What is DNS caching? Where does DNS caching occur?</h2>
+
+<p>The purpose of caching is to temporarily stored data in a location that results in improvements in performance and reliability for data requests. DNS caching involves storing data closer to the requesting client so that the DNS query can be resolved earlier and additional queries further down the DNS lookup chain can be avoided, thereby improving load times and reducing bandwidth/CPU consumption. DNS data can be cached in a variety of locations, each of which will store DNS records for a set amount of time determined by a time-to-live (TTL).</p>
+
+<h3 id="browser-dns-caching">Browser DNS caching</h3>
+<p>Modern web browsers are designed by default to cache DNS records for a set amount of time. The purpose here is obvious; the closer the DNS caching occurs to the web browser, the fewer processing steps must be taken in order to check the cache and make the correct requests to an IP address. When a request is made for a DNS record, the browser cache is the first location checked for the requested record.</p>
+
+<p>In Chrome, you can see the status of your DNS cache by going to chrome://net-internals/#dns.</p>
+
+<h3 id="operating-system-os-level-dns-caching">Operating system (OS) level DNS caching</h3>
+<p>The operating system level DNS resolver is the second and last local stop before a DNS query leaves your machine. The process inside your operating system that is designed to handle this query is commonly called a “stub resolver” or DNS client. When a stub resolver gets a request from an application, it first checks its own cache to see if it has the record. If it does not, it then sends a DNS query (with a recursive flag set), outside the local network to a DNS recursive resolver inside the Internet service provider (ISP).</p>
+
+<p>When the recursive resolver inside the ISP receives a DNS query, like all previous steps, it will also check to see if the requested host-to-IP-address translation is already stored inside its local persistence layer.</p>
+
+<p>The recursive resolver also has additional functionality depending on the types of records it has in its cache:</p>
+
+<ul>
+  <li>If the resolver does not have the A records, but does have the NS records for the authoritative nameservers, it will query those name servers directly, bypassing several steps in the DNS query. This shortcut prevents lookups from the root and .com nameservers (in our search for example.com) and helps the resolution of the DNS query occur more quickly.</li>
+  <li>If the resolver does not have the NS records, it will send a query to the TLD servers (.com in our case), skipping the root server.</li>
+  <li>In the unlikely event that the resolver does not have records pointing to the TLD servers, it will then query the root servers. This event typically occurs after a DNS cache has been purged.
+Learn about what differentiates Cloudflare DNS from other DNS providers.</li>
+</ul>
+
+<h1 id="dns-질의-과정과-우선순위">DNS 질의 과정과 우선순위</h1>
+
+<h2 id="etchosts">/etc/hosts</h2>
+
+<p>DNS가 없던 아주 옛날에는 모든 서버의 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일에는 아래와 같은 형식으로 domain과 IP주소의 짝을 직접 등록하여 도메인에 대한 IP주소를 찾아가도록 하였다. DNS서버를 운영할때 기본값으로 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일을 먼저 읽어 들인다. 요청받은 도메인이 이 곳에 등록되어 있다면 DNS요청을 네임서버에 보내지않고 이 곳에 등록되어 있는 주소로 연결이 된다. 그리하여 일종의 트릭으로 원하는 IP와 도메인명을 등록하고 사용할 수도 있다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;IP주소&gt;    &lt;hostname&gt;
+127.0.0.1  localhost
+</code></pre></div></div>
+
+<h2 id="etchostconf">/etc/host.conf</h2>
+
+<p>이 파일은 어떤 특정 도메인에 대해 IP주소값을 찾을 때, 주소 값을 어디에서 찾을 것인가를 결정하는 파일이다.</p>
+
+<p><img src="/images/ip_2.png" alt="" /></p>
+
+<p>hosts : <code class="language-plaintext highlighter-rouge">/etc/hosts</code>파일을 말한다.bind : DNS를 말한다. 즉, <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code>에 정의된 nameserver를 의미한다.nis : NIS에 의한 도메인 쿼리를 말한다. 위의 내용으로 예를 들면 어떤 PC로 부터 자신(DNS서버)에게 도메인 주소를 IP로 알려달라는 질의 요청이 왔다. 맨 처음은 <code class="language-plaintext highlighter-rouge">/etc/hosts</code> 파일에서 찾아본 후, 없으면 <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code>파일에 정의된 nameserver에게 쿼리하는 순서이다. 즉, 도메인 네임 서비스를 어디서 받을 것인가를 정의해 놓은 파일이라는 것이다.</p>
+
+<h2 id="etcresolvconf">/etc/resolv.conf</h2>
+<p>이 파일은 사용하고자 하는 네임서버를 지정하는 파일이다.</p>
+
+<p>구성을 보도록 하자.</p>
+
+<p><img src="/images/ip_3.png" alt="" /></p>
+
+<p>search는 호스트+도메인으로 사용할 도메인 명을 지정해둔 것이다. 거의 모두 호스트명과 도메인 명을 함께 사용한다. 하지만 특별하게 호스트명만 사용되었을 때 사용하게될 기본 도메인명을 의미하는 것이다.예를 들어 search abc.com 이라고 가정하자. 그럼 “telnet 호스트명”과 같이 “telnet www”라고 하였을 경우에 자동으로 “telnet www.abc.com”으로 인식하는 것이다. nameserver는 말 그대로 이 서버에서 사용할 네임서버를 지정해둔 것이다.</p>
+
+<h2 id="dns-우선순위">DNS 우선순위</h2>
+
+<ol>
+  <li>Local 환경 쿼리 (자기 자신)</li>
+  <li>내부 네트워크 쿼리</li>
+  <li>외부 공인 DNS 쿼리</li>
+</ol>
+
+<p>리눅스에서 DNS 질의 과정 추적 명령어 dig를 사용할 수 있다. 윈도우는 따로 설치해야 한다.</p>
+
+<p>추가 : 공유기에서 할당하는 DNS 설정은 보통 KT, SKT 등의 통신사 DNS 서버인데, 공유기에서 설정하는 값 보다 시스템에서 설정하는 값이 먼저이다. 하지만 별도의 설정이 없다면 OS 부팅 시 DHCP를 공유기 정보에서 받아 설정하도록 되어있다.</p>
+
+<h1 id="domain-name-hierarchy">Domain Name Hierarchy</h1>
+
+<p><img src="/images/fqdn.png" alt="" /></p>
+
+<p>Alternatively referred to as a namespace, a domain namespace is a name service provided by the Internet for Transmission Control Protocol networks/Internet Protocol (TCP/IP). DNS is broken up into domains, a logical organization of computers that exist in a larger network. Below is an example of the hierarchy of domain naming on the Internet.</p>
+
+<p><img src="/images/domain_name_hierarchy.png" alt="" /></p>
+
+<p>In the example above, all websites are broken into regional sections based on the TLD (top-level domain). With http://support.computerhope.com, it has a “.com” TLD, “computerhope” as its second level domain (local to the .com TLD), and “support” as its subdomain, which is determined by its server.</p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://www.tecmint.com/set-permanent-dns-nameservers-in-ubuntu-debian/" target="_blank">How To Set Permanent DNS Nameservers in Ubuntu and Debian</a></li>
+  <li><a href="https://kinsta.com/knowledgebase/what-is-dns/" target="_blank">kinsta, What Is DNS? Domain Name System Explained</a></li>
+  <li><a href="https://kinsta.com/knowledgebase/what-is-a-nameserver/" target="_blank">kinsta, What Is a Nameserver? Why Are Nameservers Important?</a></li>
+  <li><a href="https://www.cloudflare.com/ko-kr/learning/dns/what-is-dns/" target="_blank">CLOUDFLARE, What is DNS?</a></li>
+  <li><a href="https://itdexter.tistory.com/261" target="_blank">IT_Dexter:티스토리</a></li>
+  <li><a href="https://whackur.tistory.com/45" target="_blank">Whackur’s Blog:티스토리</a></li>
+  <li><a href="https://velog.io/@hozero/SAA-%EC%84%B9%EC%85%98-10-Route-53" target="_blank">hozero.log, [SAA] 섹션 10: Route 53</a></li>
+  <li><a href="https://dev.to/blake/dns-explained-hierarchy-and-architecture-18pj" target="_blank">Blake Khan, DNS Explained. Hierarchy and Architecture</a></li>
+</ul>
+:ET

@@ -1,8 +1,8 @@
-I"y<hr />
+I"<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#dnsdomain-name-system" id="markdown-toc-dnsdomain-name-system">DNS(Domain Name System)</a>    <ul>
-      <li><a href="#main-components" id="markdown-toc-main-components">Main components:</a></li>
+  <li><a href="#dnsdomain-name-system" id="markdown-toc-dnsdomain-name-system">DNS(Domain Name System)</a></li>
+  <li><a href="#main-components" id="markdown-toc-main-components">Main components:</a>    <ul>
       <li><a href="#domain-registrar" id="markdown-toc-domain-registrar">Domain Registrar</a></li>
       <li><a href="#nameserver" id="markdown-toc-nameserver">Nameserver</a></li>
       <li><a href="#dns-records" id="markdown-toc-dns-records">DNS Records</a></li>
@@ -25,11 +25,14 @@
       <li><a href="#nameserver-1" id="markdown-toc-nameserver-1">Nameserver</a></li>
     </ul>
   </li>
+  <li><a href="#domain-name-hierarchy" id="markdown-toc-domain-name-hierarchy">Domain Name Hierarchy</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 <hr />
 
 <h1 id="dnsdomain-name-system">DNS(Domain Name System)</h1>
+
+<p><img src="/images/dns_logo.webp" alt="" /></p>
 
 <ul>
   <li>도메인명을 이용해 웹 서버에 접근할 수 있도록 도와주는 서비스</li>
@@ -37,12 +40,12 @@
   <li>인터넷계의 전화번호부</li>
 </ul>
 
-<h2 id="main-components">Main components:</h2>
+<h1 id="main-components">Main components:</h1>
 
 <ul>
-  <li>Domain Registrar</li>
-  <li>Nameservers</li>
-  <li>DNS Records</li>
+  <li>Domain Registrar (도메인 등록 대행 업체)</li>
+  <li>Nameservers (네임 서버)</li>
+  <li>DNS Records (DNS 레코드)</li>
   <li>Web-based services (such as website hosting and email)</li>
 </ul>
 
@@ -50,19 +53,26 @@
 
 <h2 id="domain-registrar">Domain Registrar</h2>
 
-<p>A domain registrar is the service provider where domain names are purchased and where domain registration is maintained (such as GoDaddy or Namecheap). Here is list of the best domain registrars.</p>
+<p><img src="/images/domain_registrar.png" alt="" /></p>
 
 <ul>
-  <li>Google Domains</li>
-  <li>Cloudflare</li>
-  <li>Namecheap</li>
-  <li>GoDaddy</li>
-  <li>Hover</li>
+  <li>도메인명은 도메인 등록 대행 업체로부터 구매한다</li>
+  <li>도메인 등록 대행 업체는 기본적으로 네임서버를 제공해준다</li>
+  <li>DNS 레코드는 이러한 등록 대행 업체에 의해 관리된다</li>
+  <li>다음은 도메인명을 판매하는 도메인 등록 대행 업체의 목록이다</li>
 </ul>
 
-<p><strong>The registrar is where the domain nameservers are specified.</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- AWS Route53
+- Google Domains
+- Cloudflare
+- Namecheap
+- GoDaddy
+- Hover
+</code></pre></div></div>
 
-<p>Most registrars include basic DNS service with the cost of domain registration. As a result, unless you add custom nameservers to the domain, the domain will use the registrar’s standard nameservers. This means that in the vast majority of cases, by default, DNS records are managed by the registrar.</p>
+<p><img src="/images/domain_registrar_2.png" alt="" /></p>
+
+<p><img src="/images/domain_registrar_3.png" alt="" /></p>
 
 <h2 id="nameserver">Nameserver</h2>
 
@@ -106,12 +116,16 @@
 
 <h2 id="how-does-dns-work">How Does DNS Work?</h2>
 
+<p><img src="/images/dns_mechanism.png" alt="" /></p>
+
 <ul>
   <li>DNS는 요청받은 도메인 명을 IP주소로 변환시켜주는데 이를 DNS resolution이라고 함</li>
   <li>DNS resolution은 IP주소를 알아내기 위해 아래의 4가지 종류의 DNS 서버를 필요로함</li>
 </ul>
 
 <p>When a user enters a URL in their web browser, DNS gets to work to connect that URL to the IP address of the actual server. This is called DNS name resolution and involves a DNS recursor querying various nameservers to figure out the actual IP address of a server.</p>
+
+<p>cf. resolver(리졸버)는 DNS의 클라이언트이며 호스트의 정보를 구하는 프로그램의 요청을 네임 서버에 대한 질의 형태로 번역하고, 그 질의에 대한 응답을 프로그램에 적절한 형태로 변한다.</p>
 
 <h2 id="there-are-4-dns-servers-involved-in-loading-a-webpage">There are 4 DNS servers involved in loading a webpage:</h2>
 
@@ -344,6 +358,16 @@ In the real world, you’ll use nameservers and DNS records primarily to point y
 
 <p>You can see that the domain is originally configured to use the Google Domains nameservers:</p>
 
+<h1 id="domain-name-hierarchy">Domain Name Hierarchy</h1>
+
+<p><img src="/images/fqdn.png" alt="" /></p>
+
+<p>Alternatively referred to as a namespace, a domain namespace is a name service provided by the Internet for Transmission Control Protocol networks/Internet Protocol (TCP/IP). DNS is broken up into domains, a logical organization of computers that exist in a larger network. Below is an example of the hierarchy of domain naming on the Internet.</p>
+
+<p><img src="/images/domain_name_hierarchy.png" alt="" /></p>
+
+<p>In the example above, all websites are broken into regional sections based on the TLD (top-level domain). With http://support.computerhope.com, it has a “.com” TLD, “computerhope” as its second level domain (local to the .com TLD), and “support” as its subdomain, which is determined by its server.</p>
+
 <h1 id="참고">참고</h1>
 
 <ul>
@@ -353,5 +377,6 @@ In the real world, you’ll use nameservers and DNS records primarily to point y
   <li><a href="https://www.cloudflare.com/ko-kr/learning/dns/what-is-dns/" target="_blank">CLOUDFLARE, What is DNS?</a></li>
   <li><a href="https://itdexter.tistory.com/261" target="_blank">IT_Dexter:티스토리</a></li>
   <li><a href="https://whackur.tistory.com/45" target="_blank">Whackur’s Blog:티스토리</a></li>
+  <li><a href="https://velog.io/@hozero/SAA-%EC%84%B9%EC%85%98-10-Route-53" target="_blank">hozero.log, [SAA] 섹션 10: Route 53</a></li>
 </ul>
 :ET
