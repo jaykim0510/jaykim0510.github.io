@@ -85,6 +85,33 @@ tags: Network
 * 네트워크의 높은 수준의 기능의 논리 데이터 구조를 기초로 하는 필수 계층이다.
 * 전송 단위는 Bit이다.
 
+# Protocol Data Unit (PDU)
+
+![](/images/pdu_1.png)
+- Encapsulation:
+  - 데이터를 출발지에서 도착지로 가는 동안 필요한 정보를 덧붙여서 전송한다
+  - 도착지에서 캡슐화된 헤더를 하나씩 확인하며 제거한다
+- Segment:
+  - 전송 계층에서 TCP를 사용한 경우 전송 단위를 세그먼트라고 한다
+- Packet:
+  - 패킷이라는 용어의 의미는 한 번에 전송할 수 없는 크기의 데이터를 여러 개로 쪼갠 각각의 조각을 의미
+  - 보통 전송 계층에서 TCP를 사용했을 때, 네트워크 계층에서의 전송 단위를 패킷이라고 한다
+  - 다른 용어에 비해 비교적 혼용되어 사용되는 것 같다
+- Datagram:
+  - 전송 계층에서 UDP를 사용한 경우, 전송 단위를 데이터그램이라고 한다
+  - 전송 계층에서 전송 단위가 데이터그램인 경우, 
+    - 네트워크 계층에서 쪼개진 각각의 조각을 패킷이라고 표현하는 곳도 있고, 데이터그램이라고 표현하는 곳도 있다
+
+![](/images/pdu_2.png)
+
+```
+내 생각에는 ①번이나 ②번 정도가 맞는 것 같다
+전송 계층에서는 확실히 TCP를 사용했는지 UDP를 사용했는지에 따라 세그먼트/데이터그램으로 분류되고,
+네트워크 계층에서는 TCP, UDP에 따라 패킷/데이터그램으로 분류하기도 하고, 그냥 모두 패킷으로 표현하는 것 같다
+```
+
 # 참고
 
-- [The Secret Security Wiki](https://doubleoctopus.com/security-wiki/protocol/secure-socket-shell/)
+- [Quora, What is the exact difference between packets and datagrams](https://www.quora.com/What-is-the-exact-difference-between-packets-and-datagrams-that-are-used-in-communication-networks){:target="_blank"} 
+- [badldung, Definition of Network Units: Packet, Fragment, Frame, Datagram, and Segment](https://www.baeldung.com/cs/networking-packet-fragment-frame-datagram-segment){:target="_blank"} 
+- [coengoedegebure, The OSI Model](https://www.coengoedegebure.com/osi-model/){:target="_blank"} 
