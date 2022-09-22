@@ -17,6 +17,13 @@ tags: MySQL
 
 ---
 
+# 유저 목록
+
+```sql
+USE mysql;
+SELECT user, localhost FROM user;
+```
+
 # 유저 생성하기
 
 ```sql
@@ -43,7 +50,7 @@ FLUSH PRIVILEGES
 # 권한 확인
 
 ```sql
-SHOW GRANT FOR <유저명>>@<호스트>
+SHOW GRANTS FOR <유저명>>@<호스트>
 ```
 
 # 권한 삭제
