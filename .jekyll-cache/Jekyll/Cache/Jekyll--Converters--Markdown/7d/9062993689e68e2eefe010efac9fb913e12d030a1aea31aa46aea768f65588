@@ -1,0 +1,141 @@
+I"2#<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#모니터링-적용-과정" id="markdown-toc-모니터링-적용-과정">모니터링 적용 과정</a>    <ul>
+      <li><a href="#도커-컴포즈-파일에-prometheus-grafana-exporter-컨테이너를-추가한다" id="markdown-toc-도커-컴포즈-파일에-prometheus-grafana-exporter-컨테이너를-추가한다">도커 컴포즈 파일에 prometheus, grafana, exporter 컨테이너를 추가한다</a></li>
+      <li><a href="#prometheusyml-파일을-작성한다" id="markdown-toc-prometheusyml-파일을-작성한다">prometheus.yml 파일을 작성한다</a></li>
+      <li><a href="#localhost3000-을-통해-그라파나-웹-ui에-접속한다" id="markdown-toc-localhost3000-을-통해-그라파나-웹-ui에-접속한다">localhost:3000 을 통해 그라파나 웹 UI에 접속한다</a></li>
+      <li><a href="#프로메테우스를-데이터-소스로-등록한다" id="markdown-toc-프로메테우스를-데이터-소스로-등록한다">프로메테우스를 데이터 소스로 등록한다</a></li>
+      <li><a href="#대시보드-템플릿을-다운받는다" id="markdown-toc-대시보드-템플릿을-다운받는다">대시보드 템플릿을 다운받는다</a></li>
+      <li><a href="#대시보드를-등록한다" id="markdown-toc-대시보드를-등록한다">대시보드를 등록한다</a></li>
+      <li><a href="#결과" id="markdown-toc-결과">결과</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="모니터링-적용-과정">모니터링 적용 과정</h1>
+
+<p><img src="/images/mysql_grafana_2.png" alt="" /></p>
+
+<h2 id="도커-컴포즈-파일에-prometheus-grafana-exporter-컨테이너를-추가한다">도커 컴포즈 파일에 prometheus, grafana, exporter 컨테이너를 추가한다</h2>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">mysql</span><span class="pi">:</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">mysql</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">ziontkim0510/mysql-server:1.2</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">3306:3306</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MYSQL_USER</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MYSQL_ROOT_HOST</span><span class="pi">:</span> <span class="s2">"</span><span class="s">%%"</span>
+      <span class="na">MYSQL_DATABASE</span><span class="pi">:</span> <span class="s">test</span>
+      <span class="na">MYSQL_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">passwd</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">mysqld</span>
+      <span class="s">--server-id=1234</span>
+      <span class="s">--max-binlog-size=4096</span>
+      <span class="s">--binlog-format=ROW</span>
+      <span class="s">--log-bin=bin-log</span>
+      <span class="s">--sync-binlog=1</span>
+      <span class="s">--binlog-rows-query-log-events=ON</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./dataset:/var/lib/mysql-files</span>
+
+  <span class="na">mysqld-exporter</span><span class="pi">:</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">mysqld-exporter</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/mysqld-exporter</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">9104:9104</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">DATA_SOURCE_NAME</span><span class="pi">:</span> <span class="s">root:passwd@(mysql:3306)/</span>
+
+  <span class="na">prometheus</span><span class="pi">:</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">prometheus</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/prometheus</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">9090:9090</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml</span>
+
+  <span class="na">grafana</span><span class="pi">:</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">grafana</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">grafana/grafana</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">3000:3000</span>
+</code></pre></div></div>
+
+<h2 id="prometheusyml-파일을-작성한다">prometheus.yml 파일을 작성한다</h2>
+
+<ul>
+  <li>프로메테우스가 메트릭을 읽어오도록 잡을 생성한다</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">global</span><span class="pi">:</span>
+  <span class="na">scrape_interval</span><span class="pi">:</span> <span class="s">15s</span>
+  <span class="na">scrape_timeout</span><span class="pi">:</span> <span class="s">10s</span>
+  <span class="na">evaluation_interval</span><span class="pi">:</span> <span class="s">15s</span>
+
+<span class="na">scrape_configs</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">prometheus</span>
+  <span class="na">metrics_path</span><span class="pi">:</span> <span class="s">/metrics</span>
+  <span class="na">static_configs</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">localhost:9090</span>
+
+<span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">mysql</span>
+  <span class="na">metrics_path</span><span class="pi">:</span> <span class="s">/metrics</span>
+  <span class="na">static_configs</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">mysqld-exporter:9104</span>
+</code></pre></div></div>
+
+<h2 id="localhost3000-을-통해-그라파나-웹-ui에-접속한다">localhost:3000 을 통해 그라파나 웹 UI에 접속한다</h2>
+
+<p><img src="/images/mysql_grafana_3.png" alt="" /></p>
+
+<h2 id="프로메테우스를-데이터-소스로-등록한다">프로메테우스를 데이터 소스로 등록한다</h2>
+
+<p><img src="/images/mysql_grafana_4.png" alt="" /></p>
+
+<p><img src="/images/mysql_grafana_5.png" alt="" /></p>
+
+<h2 id="대시보드-템플릿을-다운받는다">대시보드 템플릿을 다운받는다</h2>
+
+<ul>
+  <li><a href="https://grafana.com/grafana/dashboards/?search=mysql" target="_blank"><strong>대시보드 템플릿 제공 사이트</strong></a></li>
+</ul>
+
+<p><img src="/images/mysql_grafana_6.png" alt="" /></p>
+
+<p><img src="/images/mysql_grafana_7.png" alt="" /></p>
+
+<h2 id="대시보드를-등록한다">대시보드를 등록한다</h2>
+
+<p><img src="/images/mysql_grafana_8.png" alt="" /></p>
+
+<p><img src="/images/mysql_grafana_9.png" alt="" /></p>
+
+<p><img src="/images/mysql_grafana_10.png" alt="" /></p>
+
+<p><img src="/images/mysql_grafana_11.png" alt="" /></p>
+
+<h2 id="결과">결과</h2>
+
+<p><img src="/images/mysql_grafana_1.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://www.44bits.io/ko/keyword/grafana" target="_blank">44bits, 그라파나(Grafana)란?</a></li>
+  <li><a href="https://www.howtogeek.com/devops/how-to-monitor-mysql-server-activity-with-a-grafana-dashboard/" target="_blank">How-To Geek, How to Monitor MySQL Server Activity With a Grafana Dashboard</a></li>
+  <li><a href="https://grafana.com/docs/grafana/latest/" target="_blank">Grafana 공식문서, Grafana documentation</a></li>
+  <li><a href="https://jssvs.tistory.com/m/41" target="_blank">jssvs, 프로메테우스(prometheus) 구성 및 기본 사용법</a></li>
+  <li><a href="https://blog.naver.com/alice_k106/221535163599" target="_blank">alice_k106, 169. [Prometheus] 1편 : Prometheus (프로메테우스) 사용 방법, 기본 개념, 데이터 구조</a></li>
+  <li><a href="https://exporterhub.io/exporter/mysql-exporter/" target="_blank">ExporterHub, MySQL Server Exporter</a></li>
+  <li><a href="https://omty.tistory.com/54" target="_blank">고양이 중독, 프로메테우스 Aurora MySQL 성능 지표 모니터링 구성</a></li>
+</ul>
+:ET

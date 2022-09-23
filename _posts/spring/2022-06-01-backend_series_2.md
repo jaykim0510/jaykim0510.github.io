@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Backend Series [Part1]: 객체지향을 활용한 디자인 패턴'
+title:  'Backend Series [Part2]: 객체지향을 활용한 디자인 패턴'
 description: 
 date:   2022-06-01 15:01:35 +0300
 image:  '/images/spring_logo.png'
