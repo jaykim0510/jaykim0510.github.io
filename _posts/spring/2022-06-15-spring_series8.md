@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Spring Boot Series [Part1]: JPA'
+title:  'Spring Boot Series [Part2]: API'
 description: 
 date:   2022-06-15 15:01:35 +0300
 image:  '/images/spring_boot_logo.png'
@@ -16,9 +16,3 @@ tags: Spring
 {:toc}
 
 ---
-
-# JPA
-
-# 스프링 데이터 JPA
-
-# Querydsl
