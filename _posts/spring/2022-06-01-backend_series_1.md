@@ -3,8 +3,8 @@ layout: post
 title:  'Backend Series [Part1]: 백엔드 개요'
 description: 
 date:   2022-06-01 15:01:35 +0300
-image:  '/images/spring_logo.png'
-logo_image:  '/images/spring_logo.png'
+image:  '/images/backend_logo.png'
+logo_image:  '/images/backend_logo.png'
 categories:   web_development
 tags: Spring
 ---
