@@ -1,10 +1,10 @@
 ---
 layout: post
-title:  'Spring Database Series [Part3]: Mybatis'
+title:  'Spring Database Series [Part3]: JPA'
 description: 
 date:   2022-06-15 15:01:35 +0300
-image:  '/images/mybatis_logo.png'
-logo_image:  '/images/mybatis_logo.png'
+image:  '/images/jpa_logo.png'
+logo_image:  '/images/jpa_logo.png'
 categories:   web_development
 tags: Spring
 ---
@@ -16,9 +16,3 @@ tags: Spring
 {:toc}
 
 ---
-
-# JPA
-
-# 스프링 데이터 JPA
-
-# Querydsl
