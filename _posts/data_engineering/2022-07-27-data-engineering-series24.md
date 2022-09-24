@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part24]: 시스템 디자인(4) Database'
+title:  'Data Engineering Series [Part24]: 시스템 디자인(5) Database'
 description: 
 date:   2022-07-26 15:01:35 +0300
 image:  '/images/system_design_logo.png'
