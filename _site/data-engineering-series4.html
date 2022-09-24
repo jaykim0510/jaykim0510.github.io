@@ -465,16 +465,6 @@
   
 
   
-
-  
-
-  
-
-  
-
-  
-
-  
   	
   	
   	
@@ -509,18 +499,12 @@
       </li>
       <li><a href="#쿼리-지원" id="markdown-toc-쿼리-지원">쿼리 지원</a></li>
       <li><a href="#in-memory-지원" id="markdown-toc-in-memory-지원">In-memory 지원</a></li>
-      <li><a href="#검색엔진-지원" id="markdown-toc-검색엔진-지원">검색엔진 지원</a></li>
+      <li><a href="#전문검색-지원" id="markdown-toc-전문검색-지원">전문검색 지원</a></li>
       <li><a href="#scale-up-scale-out" id="markdown-toc-scale-up-scale-out">Scale-Up, Scale-Out</a></li>
       <li><a href="#row-based-vs-columnar" id="markdown-toc-row-based-vs-columnar">Row Based vs Columnar</a></li>
     </ul>
   </li>
-  <li><a href="#주요-데이터베이스간-비교" id="markdown-toc-주요-데이터베이스간-비교">주요 데이터베이스간 비교</a>    <ul>
-      <li><a href="#mysql-vs-hive-vs-redshift" id="markdown-toc-mysql-vs-hive-vs-redshift">MySQL vs Hive vs Redshift</a></li>
-      <li><a href="#mongodb-vs-cassandra-vs-elasticsearch" id="markdown-toc-mongodb-vs-cassandra-vs-elasticsearch">MongoDB vs Cassandra vs ElasticSearch</a></li>
-      <li><a href="#dynamodb-vs-hbase-vs-redis" id="markdown-toc-dynamodb-vs-hbase-vs-redis">DynamoDB vs HBase vs Redis</a></li>
-    </ul>
-  </li>
-  <li><a href="#youtube" id="markdown-toc-youtube">Youtube</a></li>
+  <li><a href="#주요-데이터베이스-분류" id="markdown-toc-주요-데이터베이스-분류">주요 데이터베이스 분류</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -533,36 +517,31 @@
 <h3 id="rdbms">RDBMS</h3>
 
 <ul>
-  <li>MySql</li>
-  <li>PostreSQL</li>
-  <li>Apache Hive</li>
-  <li>AWS Redshift</li>
+  <li>엄격한 기준(데이터 타입, 스키마, 업데이트/삭제 정책 등)의 데이터베이스 설계 요구</li>
+  <li>잘 설계된 RDBMS에 저장된 데이터는 높은 품질의 데이터 제공</li>
+  <li>데이터 분석, 머신러닝 활용 등 데이터 웨어하우스에서 많이 이용</li>
+  <li>ex. MySQL, PostgreSQL, Apache Hive, AWS Redshift</li>
 </ul>
 
 <h3 id="document-store">Document Store</h3>
 
 <ul>
-  <li>Schema free한 DBMS와 비슷한 느낌 (NoSQL 중에서 가장 RDBMS와 비슷한 데이터베이스)</li>
+  <li>Schema free한 DBMS와 비슷한 느낌 (NoSQL 중에서 가장 RDBMS와 비슷)</li>
   <li>데이터가 완전히 Structured 되어 있지 않지만, 최대한 DBMS와 비슷하게 사용하고 싶은 경우</li>
   <li>데이터 하나는 JSON과 같은 객체</li>
-  <li>SQL과 같은 언어로 데이터를 필터링하는 느낌으로 데이터를 읽음 =&gt; 읽어오는게 key-value만큼 빠르지는 않음</li>
+  <li>SQL과 같은 언어로 데이터를 필터링하는 느낌으로 데이터를 읽음</li>
   <li>쿼리의 성능을 조금 포기하는 대신 범용적인 데이터 수집을 가능하게 함</li>
   <li>ex. MongoDB, Elasticsearch 등</li>
 </ul>
 
 <h3 id="wide-column-store">Wide Column Store</h3>
+
 <ul>
-  <li>Wide column databases store data in large column-based tables instead of rows. Queries can be run quickly on large amounts of data, making these databases common for retail and IoT data.</li>
-  <li>A wide-column database is a NoSQL database that organizes data storage into flexible columns that can be spread across multiple servers or database nodes, using multi-dimensional mapping to reference data by column, row, and timestamp.</li>
-  <li>A wide-column database is a type of NoSQL database in which the names and format of the columns can vary across rows, even within the same table. Wide-column databases are also known as column family databases. Because data is stored in columns, queries for a particular value in a column are very fast, as the entire column can be loaded and searched quickly. Related columns can be modeled as part of the same column family.</li>
-  <li>Benefits of a wide-column NoSQL database include speed of querying, scalability, and a flexible data model.</li>
-  <li>
-    <p>A relational database management system (RDBMS) stores data in a table with rows that all span a number of columns. If one row needs an additional column, that column must be added to the entire table, with null or default values provided for all the other rows. If you need to query that RDBMS table for a value that isn’t indexed, the table scan to locate those values will be very slow.</p>
-  </li>
-  <li>Wide-column NoSQL databases still have the concept of rows, but reading or writing a row of data consists of reading or writing the individual columns. A column is only written if there’s a data element for it. Each data element can be referenced by the row key, but querying for a value is optimized like querying an index in a RDBMS, rather than a slow table scan.</li>
-  <li>A Columnar data store will store each column separately on disk. A Wide-column database is a type of columnar database that supports a column family stored together on disk, not just a single column.</li>
-  <li>Key-value와 비슷한데 차이점은 Key-value는 key로 무조건 Value 전체를 읽어야 함</li>
-  <li>Wide-column은 key로 읽은 결과에서 Column을 통해 더 specific한 value를 얻을 수 있음</li>
+  <li>데이터를 key-value 형태로 저장하지만, key가 nested하게 확장될 수 있음 -&gt; 저장은 쉽지만, 활용은 비교적 까다로운 편</li>
+  <li>컬럼(key)별로 서버에 분산 저장 가능 -&gt; Scale-Out</li>
+  <li>key-value 형태로 데이터를 읽어오기 때문에 쿼리가 빠름</li>
+  <li>컬럼간의 관계는 컬럼 패밀리로 정의</li>
+  <li>Wide-column Store의 장점은 확장성, 빠른 쿼리, 데이터 유연성</li>
   <li>ex. Apache Cassandra, Apache HBase
 <img src="/images/wide_column_1.png" alt="" /></li>
 </ul>
@@ -576,7 +555,7 @@
   <li>Value는 어떤것이든 될 수 있다(숫자, 텍스트, JSON, URI, 이미지 등)</li>
   <li>Value의 일부만 읽는 것은 불가능 (이 점이 wide-column과의 차이)</li>
   <li>Value를 SQL과 같은 언어가 아니라 key값으로 가져옴 -&gt; 굉장히 빠르다</li>
-  <li>Key에 해당하는 value 한개</li>
+  <li>Wide-column store와 비교해 데이터의 유연성은 낮지만, 쿼리 속도는 더 빠름</li>
   <li>Key-value store + In-memory =&gt; Redis =&gt; Redis가 캐싱 DB 서버로 많이 사용되는 이유</li>
   <li>ex. Redis, AWS DynamoDB, Apache HBase</li>
 </ul>
@@ -590,18 +569,16 @@
 
 <h2 id="in-memory-지원">In-memory 지원</h2>
 
-<p>In-memory databases are purpose-built databases that rely <strong>primarily on memory</strong> for data storage, in contrast to databases that store data on disk or SSDs. In-memory data stores are designed to enable minimal response times by eliminating the need to access disks. Because all data is stored and managed exclusively in main memory, in-memory databases risk losing data upon a process or server failure. In-memory databases can persist data on disks by storing each operation in a log or by taking snapshots.</p>
-
-<p>In-memory databases are ideal for applications that require microsecond response times or have large spikes in traffic such as gaming leaderboards, session stores, and real-time analytics.</p>
-
 <ul>
-  <li>Redis</li>
-  <li>AWS ElastiCache</li>
-  <li>Microsoft SQL Server</li>
+  <li>인메모리 데이터베이스는 데이터를 메모리에 우선적으로 저장함</li>
+  <li>디스크 기반 데이터베이스에서 안전성을 조금 포기하고, 더 빠른 처리 속도를 얻음</li>
+  <li>디스크 기반 데이터베이스가 속도를 위해 메모리를 함께 사용하듯, 인메모리 기반 데이터베이스도 안전성을 위해 디스크 사용</li>
+  <li>빠른 응답속도를 필요로 하는 게임, 실시간 분석에 많이 사용</li>
+  <li>ex. Redis, AWS ElastiCache, Microsoft SQL Server</li>
   <li>(MySQL, MongoDB와 같은 DB도 메모리 캐시를 지원하지만 주요 저장장치는 디스크이기 때문에 In-memory가 아님)</li>
 </ul>
 
-<h2 id="검색엔진-지원">검색엔진 지원</h2>
+<h2 id="전문검색-지원">전문검색 지원</h2>
 
 <ul>
   <li>Elasticsearch</li>
@@ -611,38 +588,39 @@
 
 <ul>
   <li>RDBMS가 Scale-Out이 가능한지에 관한 답은 CAP 이론을 공부해야함</li>
-  <li>Relational databases are designed to run on a single server in order to maintain the integrity of the table mappings and avoid the problems of distributed computing.</li>
-  <li>RDBMS가 Scale-out이 힘들다면 Redshift는 뭐지?</li>
-  <li>Redshift는 Columnar database라서 scale-out이 쉽게 가능</li>
+  <li>관계형 데이터베이스는 테이블간의 조인, 외래키와 같은 특성 때문에 단일 서버에서 동작하도록 설계됨</li>
+  <li>(참고로 Redshift는 Columnar database라서 scale-out이 쉽게 가능)</li>
   <li>(Columnar databases are like NoSQL databases, in the fact that they are designed to scale “out” using distributed clusters of low-cost hardware to increase throughput)</li>
+  <li>오늘날에는 관계형 데이터베이스도 Scale-Out이 가능하도록 많이 진화함</li>
+  <li>하지만 Scale-Out을 위해 관계형 데이터베이스를 구축하면, 성능이 전에 비해 떨어지게 되고, Scale-down은 거의 불가능</li>
+  <li>반면 NoSQL은 대부분 Scale-Out이 가능하도록 설계되었으며, 성능이 크게 다르지 않음</li>
+  <li>NoSQL은 Scale-Out을 통해 단일 지점 장애 문제 해결과, 비용 효율적으로 대용량 데이터를 저장할 수 있음</li>
 </ul>
-
-<p>Today, the evolution of relational databases allows them to use more complex architectures, relying on a “master-slave” model in which the “slaves” are additional servers that can handle parallel processing and replicated data, or data that is “sharded” (divided and distributed among multiple servers, or hosts) to ease the workload on the master server.</p>
-
-<p>Other enhancements to relational databases such as using shared storage, in-memory processing, better use of replicas, distributed caching, and other new and ‘innovative’ architectures have certainly made relational databases more scalable. Under the covers, however, it is not hard to find a single system and a single point-of-failure (For example, Oracle RAC is a “clustered” relational database that uses a cluster-aware file system, but there is still a shared disk subsystem underneath). Often, the high costs of these systems is prohibitive as well, as setting up a single data warehouse can easily go over a million dollars.</p>
-
-<p>The enhancements to relational databases also come with other big trade-offs as well. For example, when data is distributed across a relational database it is typically based on pre-defined queries in order to maintain performance. In other words, flexibility is sacrificed for performance.</p>
-
-<p>Additionally, relational databases are not designed to scale back down—they are highly inelastic. Once data has been distributed and additional space allocated, it is almost impossible to “undistribute” that data.</p>
-
-<p>NoSQL databases are designed for massive scale on distributed systems (usually hundreds of Terabytes rather than tens of Gigabytes). They can scale-out “horizontally,” meaning that they run on multiple servers that work together, each sharing part of the load.</p>
-
-<p>Using this approach, a NoSQL database can operate across hundreds of servers, petabytes of data, and billions of documents—and still manage to process tens of thousands of transactions per second. And it can do all of this on inexpensive commodity (i.e. cheaper) hardware operating in any environment (i.e. cloud optimized!). Another benefit is that if one node fails, the others can pick up the workload, thus eliminating a single point of failure.</p>
-
-<p>Massive scale is impressive, but what is perhaps even more important is elasticity. Not all NoSQL databases are elastic. MarkLogic has a unique architecture that make it possible to quickly and easily add or remove nodes in a cluster so that the database stays in line with performance needs. There is not any complex sharding of data or architectural workarounds—data is automatically rebalanced across a cluster when nodes are added or removed. This also makes administration much easier, making it possible for one DBA to manage for data and with fewer headaches.</p>
 
 <h2 id="row-based-vs-columnar">Row Based vs Columnar</h2>
 
 <ul>
-  <li>Row Based DB는 OLTP에 적합
+  <li>Row Based DB
     <ul>
+      <li>OLTP에 적합</li>
+      <li>이 방식은 여러 필드의 값을 고유 식별 키로 구분할 수 있는 레코드 형식에 적합하다</li>
+      <li>일반적으로 특정 사용자의 필드는 여러 개가 함꼐 요청되는 경우가 많다</li>
+      <li>로우형 DBMS는 한 개의 로우씩 접근하는 경우 적합하다</li>
+      <li>한 블록에 모든 컬럼의 값이 들어가게 된다</li>
+      <li>특정 사용자의 모든 정보를 읽어올 때는 효율적, 모든 사용자의 특정 필드를 읽어올 때는 비효율적이다</li>
       <li>record단위로 데이터가 발생할 때 이를 하나의 메모리 블럭에 저장 -&gt; 빠른 쓰기 작업</li>
       <li>단점은 특정 컬럼값이 모두 필요한 경우 모든 메모리 블럭에 접근해야함 -&gt; 느린 분석</li>
       <li>ex. MySQL, PostgreSQL, Oracle 등</li>
     </ul>
   </li>
-  <li>Columnar DB는 OLAP에 적합
+  <li>Columnar DB
     <ul>
+      <li>OLAP에 적합</li>
+      <li>컬럼끼리 디스크에 연속해 저장하는 방식이다</li>
+      <li>컬럼형 DBMS는 데이터의 추세와 평균 등을 계산하는 집계 분석 작업에 적합하다</li>
+      <li>다시 레코드 형태로 재구성하기 위해 컬럼 사이의 관계를 정의하는 메타데이터가 필요하다 (각 값마다 키값을 중복저장해야 한다)</li>
+      <li>최근 몇 년 동안 대용량 데이터에 대한 복잡한 분석 쿼리 사용이 늘어나고 있다</li>
+      <li>결과적으로 파케이(Parquet), ORC와 같은 컬럼 기반 파일 포맷과 쿠두(Kude)와 같은 컬럼형 DBMS가 각광받고 있다</li>
       <li>분석은 특정 컬럼에 있는 모든 값을 이용하는 경우 많음</li>
       <li>같은 컬럼에 있는 값을 하나의 메모리 블럭에 저장하면 Random I/O을 줄일 수 있음</li>
       <li>또 하나의 메모리 블럭에 같은 타입의 값만 저장하면 DB는 그 타입에 맞는 특별한 압축 방식을 제공해 줄 수 있음</li>
@@ -652,23 +630,13 @@
   </li>
   <li>웹 서비스에 붙어있는 DB로는 OLTP를 위한 Row based DB가 적합하고, 이 데이터를 분석팀에게 제공할 때는 Columnar DB에 저장해서 전달해 주는 것이 좋다.</li>
   <li>Columnar는 Scale-Out을 쉽게 만들어준다.</li>
+  <li>대부분의 데이터베이스는 열과 행으로 구성된 테이블에 레코드를 저장한다. 데이터를 디스크에 저장하는 방식에 따라 데이터베이스를 분류할 수 있다. 컬럼 저장 방식은 테이블을 수직 분할하고, 로우 저장 방식은 수평 분할한다.</li>
+  <li>MySQL, PostreSQL 등 대부분의 전통적인 관계형 데이터베이스는 로우형 DBMS이다. MonetDB, C-Store는 컬럼형 오픈소스 데이터베이스이다.</li>
+  <li>같은 컬럼의 여러 값을 한 번에 읽으면 캐시 활용도와 처리 효율성이 높아진다. 같은 자료형끼리 저장하게 되면 압축률도 증가한다. 컬럼형과 로우형 DBMS 중 어떤 것을 사용할지 선택하려면 액세스 패턴을 파악해야 한다. 데이터를 레코드 단위로 접근하고 일반 쿼리와 범위 스캔 요청이 많다면 로우형 DBMS, 여러 로우를 스캔하거나 일부 컬럼에 대한 집계 작업이 많다면 컬럼형 DBMS가 더 적합할 수 있다.</li>
+  <li>HBase와 같은 와이드 컬럼 스토어는 같은 자료형을 가지는 컬럼을 단위로 로우 형식으로 저장한다. 이 방식은 키 단위 액세스 패턴에 적합하다.</li>
 </ul>
 
-<h1 id="주요-데이터베이스간-비교">주요 데이터베이스간 비교</h1>
-
-<h2 id="mysql-vs-hive-vs-redshift">MySQL vs Hive vs Redshift</h2>
-
-<h2 id="mongodb-vs-cassandra-vs-elasticsearch">MongoDB vs Cassandra vs ElasticSearch</h2>
-
-<h2 id="dynamodb-vs-hbase-vs-redis">DynamoDB vs HBase vs Redis</h2>
-
-<ul>
-  <li><a href="https://docs.aws.amazon.com/whitepapers/latest/comparing-dynamodb-and-hbase-for-nosql/amazon-dynamodb-overview.html" target="_blank">AWS whitepapaer: Comparing the Use of Amazon DynamoDB and Apache HBase for NoSQL</a></li>
-</ul>
-
-<h1 id="youtube">Youtube</h1>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/FX5iWHFn1v0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+<h1 id="주요-데이터베이스-분류">주요 데이터베이스 분류</h1>
 
 <p><img src="/images/data_engineering_5.png" alt="" /></p>
 
@@ -994,16 +962,6 @@
   
 
   
-
-  
-
-  
-
-  
-
-  
-
-  
   	
   	
   	
@@ -1196,18 +1154,39 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-08-02T21:01:35+09:00">02 Aug 2022</time>
+      <time class="article__date" datetime="2022-07-26T21:01:35+09:00">26 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series27">
-        <img class="lazy" data-src="/images/redis_logo.png" alt="Data Engineering Series [Part27]: Redis">
+      <a class="article__image" href="/data-engineering-series24">
+        <img class="lazy" data-src="/images/system_design_logo.png" alt="Data Engineering Series [Part24]: 시스템 디자인(5) Database">
       </a>
       
 
@@ -1216,7 +1195,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series27">Data Engineering Series [Part27]: Redis</a>
+        <a href="/data-engineering-series24">Data Engineering Series [Part24]: 시스템 디자인(5) Database</a>
       </h2>
 
       
@@ -1240,13 +1219,13 @@
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-08-01T21:01:35+09:00">01 Aug 2022</time>
+      <time class="article__date" datetime="2022-07-26T21:01:35+09:00">26 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series26">
-        <img class="lazy" data-src="/images/i_heart_log.png" alt="Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration">
+      <a class="article__image" href="/data-engineering-series23">
+        <img class="lazy" data-src="/images/system_design_logo.png" alt="Data Engineering Series [Part23]: 시스템 디자인(4) Caching">
       </a>
       
 
@@ -1255,7 +1234,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series26">Data Engineering Series [Part26]: I 🤍 Logs(2) Data Integration</a>
+        <a href="/data-engineering-series23">Data Engineering Series [Part23]: 시스템 디자인(4) Caching</a>
       </h2>
 
       

@@ -119,41 +119,43 @@ fields: name, doc, type, default
 ![](/images/serial_encode.png)
 
 ## Serialization
-Serialization generally refers to taking a data structure which exists in memory, and converting it to a string (either binary or text) so that it can be saved to a file, or sent across a network.  
 
-Serialization is an actual in-memory object that is transformed into an unusable state but the new state can be easily stored or transferred across a network. When it is needed to be used again, it can be deserialized and loaded back into memory in the same state that it was when it was serialized.  
-
-Serializing is about moving structured data over a storage/transmission medium in a way that the structure can be maintained.
+- 메모리에 존재하는 데이터 자료구조를 문자열(바이너리 또는 텍스트)로 변환하는 것
+- 문자열로 변환함으로써 네트워크를 통해 전송하고, 파일로 저장하는 것이 가능해짐
+- Serialization은 데이터를 전송/저장 가능한 매개체로 변환하는 것
 
 ## Encoding
 
-Encoding is a more general term. Encoding means converting to a different format expected by some consumer. So you might encode something to URL format, or JSON, or a binary format, or whatever. You're right that serialization is a specific instance of encoding.  
-
-Encoding is more broad, like about how said data is converted to different forms, etc. Perhaps you could think about serializing being a subset of encoding in this example.  
-
-With regard to a web service, you will probably be considering serializing/deserializing certain data for making/receiving requests/responses - effectively transporting "messages". Encoding is at a lower level, like how your messaging/web service type/serialization mechanism works under the hood.  
+- 인코딩은 더욱 범용적인 용어
+- 다른 포맷으로 바꾸는 모든 과정을 인코딩이라고 함
+- URL 포맷, JSON 포맷, 바이너리 포맷 등 어떤 포맷으로 변환하는 과정을 모두 인코딩이라고 함
+- Serialization은 인코딩의 특수한 경우
 
 # File format
 
-All files can be categorized into one of two file formats — binary or text. The two file types may look the same on the surface, but they encode data differently. While both binary and text files contain data stored as a series of bits (binary values of 1s and 0s), the bits in text files represent characters, while the bits in binary files represent custom data.  
+- 파일: 데이터를 전송/저장 가능하도록 만든 것
+- 모든 파일은 바이너리 또는 텍스트 둘중 하나로 분류됨
+- 바이너리와 텍스트 모두 비트 형태의 데이터를 저장하고 있음
+- 텍스트에서 비트는 문자를 나타냄
+- 바이너리에서 비트는 커스텀 데이터를 나타냄
 
-While text files contain only textual data, binary files may contain both textual and custom binary data.  
 
 ## Binary Files
-Binary files typically contain a sequence of bytes, or ordered groupings of eight bits. When creating a custom file format for a program, a developer arranges these bytes into a format that stores the necessary information for the application. Binary file formats may include multiple types of data in the same file, such as image, video, and audio data. This data can be interpreted by supporting programs, but will show up as garbled text in a text editor. Below is an example of a .PNG image file opened in an image viewer and a text editor.  
 
-![](/images/kafka_86.png)
+- 바이너리 파일은 보통 바이트열을 데이터로 가짐
+- 바이너리 파일은 안에 이미지, 비디오, 음성 등 여러 종류의 데이터를 동시에 가질 수 있음
+- 바이너리 파일은 대개의 경우 헤더 정보를 가짐 -> 헤더 정보에 따라 프로그램이 파일을 열 수 있는지 여부가 결정됨
+- 바이너리 파일을 텍스트 에디터로 열면 아래의 오른쪽과 같이 이상한 결과가 나오게 됨
+  ![](/images/kafka_86.png)
+- ex. `.jpeg`, `.zip`, `.mp4` 등
 
-As you can see, the image viewer recognizes the binary data and displays the picture. When the image is opened in a text editor, the binary data is converted to unrecognizable text. However, you may notice that some of the text is readable. This is because the PNG format includes small sections for storing textual data. The text editor, while not designed to read this file format, still displays this text when the file is opened. Many other binary file types include sections of readable text as well. Therefore, it may be possible to find out some information about an unknown binary file type by opening it in a text editor.  
 
-Binary files often contain headers, which are bytes of data at the beginning of a file that identifies the file's contents. Headers often include the file type and other descriptive information. For example, in the image above, the "PNG" text indicates the file is a PNG image. If a file has invalid header information, software programs may not open the file or they may report that the file is corrupted.  
 
 ## Text Files
-Text files are more restrictive than binary files since they can only contain textual data. However, unlike binary files, they are less likely to become corrupted. While a small error in a binary file may make it unreadable, a small error in a text file may simply show up once the file has been opened. This is one of reasons Microsoft switched to a compressed text-based XML format for the Office 2007 file types.  
 
-Text files may be saved in either a plain text (.TXT) format and rich text (.RTF) format. A typical plain text file contains several lines of text that are each followed by an End-of-Line (EOL) character. An End-of-File (EOF) marker is placed after the final character, which signals the end of the file. Rich text files use a similar file structure, but may also include text styles, such as bold and italics, as well as page formatting information. Both plain text and rich text files include a (character encoding, characterencoding) scheme that determines how the characters are interpreted and what characters can be displayed.  
-
-Since text files use a simple, standard format, many programs are capable of reading and editing text files. Common text editors include Microsoft Notepad and WordPad, which are bundled with Windows, and Apple TextEdit, which is included with Mac OS X.  
+- 텍스트 파일은 텍스트 데이터를 저장하기 위함
+- 각 텍스트는 End-ofLine (EOL) 문자로 연결되어 있음. 가장 끝에는 End-of-File (EOF)가 놓임
+- ex. `.csv`, `.txt`, `.py` 등
 
 # 참고
 
