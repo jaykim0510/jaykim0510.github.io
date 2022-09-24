@@ -23,31 +23,27 @@ tags: Data_Engineering
 
 ### RDBMS
 
-- MySql
-- PostreSQL
-- Apache Hive
-- AWS Redshift
+- 엄격한 기준(데이터 타입, 스키마, 업데이트/삭제 정책 등)의 데이터베이스 설계 요구
+- 잘 설계된 RDBMS에 저장된 데이터는 높은 품질의 데이터 제공
+- 데이터 분석, 머신러닝 활용 등 데이터 웨어하우스에서 많이 이용
+- ex. MySQL, PostgreSQL, Apache Hive, AWS Redshift
 
 ### Document Store
 
-- Schema free한 DBMS와 비슷한 느낌 (NoSQL 중에서 가장 RDBMS와 비슷한 데이터베이스)
+- Schema free한 DBMS와 비슷한 느낌 (NoSQL 중에서 가장 RDBMS와 비슷)
 - 데이터가 완전히 Structured 되어 있지 않지만, 최대한 DBMS와 비슷하게 사용하고 싶은 경우
 - 데이터 하나는 JSON과 같은 객체
-- SQL과 같은 언어로 데이터를 필터링하는 느낌으로 데이터를 읽음 => 읽어오는게 key-value만큼 빠르지는 않음
+- SQL과 같은 언어로 데이터를 필터링하는 느낌으로 데이터를 읽음
 - 쿼리의 성능을 조금 포기하는 대신 범용적인 데이터 수집을 가능하게 함
 - ex. MongoDB, Elasticsearch 등
 
 ### Wide Column Store
-- Wide column databases store data in large column-based tables instead of rows. Queries can be run quickly on large amounts of data, making these databases common for retail and IoT data.
-- A wide-column database is a NoSQL database that organizes data storage into flexible columns that can be spread across multiple servers or database nodes, using multi-dimensional mapping to reference data by column, row, and timestamp.
-- A wide-column database is a type of NoSQL database in which the names and format of the columns can vary across rows, even within the same table. Wide-column databases are also known as column family databases. Because data is stored in columns, queries for a particular value in a column are very fast, as the entire column can be loaded and searched quickly. Related columns can be modeled as part of the same column family.
-- Benefits of a wide-column NoSQL database include speed of querying, scalability, and a flexible data model.
-- A relational database management system (RDBMS) stores data in a table with rows that all span a number of columns. If one row needs an additional column, that column must be added to the entire table, with null or default values provided for all the other rows. If you need to query that RDBMS table for a value that isn’t indexed, the table scan to locate those values will be very slow.
 
-- Wide-column NoSQL databases still have the concept of rows, but reading or writing a row of data consists of reading or writing the individual columns. A column is only written if there’s a data element for it. Each data element can be referenced by the row key, but querying for a value is optimized like querying an index in a RDBMS, rather than a slow table scan.
-- A Columnar data store will store each column separately on disk. A Wide-column database is a type of columnar database that supports a column family stored together on disk, not just a single column.
-- Key-value와 비슷한데 차이점은 Key-value는 key로 무조건 Value 전체를 읽어야 함
-- Wide-column은 key로 읽은 결과에서 Column을 통해 더 specific한 value를 얻을 수 있음
+- 데이터를 key-value 형태로 저장하지만, key가 nested하게 확장될 수 있음 -> 저장은 쉽지만, 활용은 비교적 까다로운 편
+- 컬럼(key)별로 서버에 분산 저장 가능 -> Scale-Out
+- key-value 형태로 데이터를 읽어오기 때문에 쿼리가 빠름
+- 컬럼간의 관계는 컬럼 패밀리로 정의
+- Wide-column Store의 장점은 확장성, 빠른 쿼리, 데이터 유연성
 - ex. Apache Cassandra, Apache HBase
 ![](/images/wide_column_1.png)
 
@@ -60,7 +56,7 @@ tags: Data_Engineering
 - Value는 어떤것이든 될 수 있다(숫자, 텍스트, JSON, URI, 이미지 등)
 - Value의 일부만 읽는 것은 불가능 (이 점이 wide-column과의 차이)
 - Value를 SQL과 같은 언어가 아니라 key값으로 가져옴 -> 굉장히 빠르다
-- Key에 해당하는 value 한개
+- Wide-column store와 비교해 데이터의 유연성은 낮지만, 쿼리 속도는 더 빠름
 - Key-value store + In-memory => Redis => Redis가 캐싱 DB 서버로 많이 사용되는 이유
 - ex. Redis, AWS DynamoDB, Apache HBase
 
@@ -72,40 +68,27 @@ tags: Data_Engineering
 
 ## In-memory 지원
 
-In-memory databases are purpose-built databases that rely **primarily on memory** for data storage, in contrast to databases that store data on disk or SSDs. In-memory data stores are designed to enable minimal response times by eliminating the need to access disks. Because all data is stored and managed exclusively in main memory, in-memory databases risk losing data upon a process or server failure. In-memory databases can persist data on disks by storing each operation in a log or by taking snapshots.  
-
-In-memory databases are ideal for applications that require microsecond response times or have large spikes in traffic such as gaming leaderboards, session stores, and real-time analytics.  
-
-- Redis
-- AWS ElastiCache
-- Microsoft SQL Server
+- 인메모리 데이터베이스는 데이터를 메모리에 우선적으로 저장함
+- 디스크 기반 데이터베이스에서 안전성을 조금 포기하고, 더 빠른 처리 속도를 얻음
+- 디스크 기반 데이터베이스가 속도를 위해 메모리를 함께 사용하듯, 인메모리 기반 데이터베이스도 안전성을 위해 디스크 사용
+- 빠른 응답속도를 필요로 하는 게임, 실시간 분석에 많이 사용
+- ex. Redis, AWS ElastiCache, Microsoft SQL Server
 - (MySQL, MongoDB와 같은 DB도 메모리 캐시를 지원하지만 주요 저장장치는 디스크이기 때문에 In-memory가 아님)
 
-## 검색엔진 지원
+## 전문검색 지원
 
 - Elasticsearch
 
 ## Scale-Up, Scale-Out
 
 - RDBMS가 Scale-Out이 가능한지에 관한 답은 CAP 이론을 공부해야함
-- Relational databases are designed to run on a single server in order to maintain the integrity of the table mappings and avoid the problems of distributed computing.
-- RDBMS가 Scale-out이 힘들다면 Redshift는 뭐지?
-- Redshift는 Columnar database라서 scale-out이 쉽게 가능
+- 관계형 데이터베이스는 테이블간의 조인, 외래키와 같은 특성 때문에 단일 서버에서 동작하도록 설계됨
+- (참고로 Redshift는 Columnar database라서 scale-out이 쉽게 가능)
 - (Columnar databases are like NoSQL databases, in the fact that they are designed to scale “out” using distributed clusters of low-cost hardware to increase throughput)
-
-Today, the evolution of relational databases allows them to use more complex architectures, relying on a “master-slave” model in which the “slaves” are additional servers that can handle parallel processing and replicated data, or data that is “sharded” (divided and distributed among multiple servers, or hosts) to ease the workload on the master server.  
-
-Other enhancements to relational databases such as using shared storage, in-memory processing, better use of replicas, distributed caching, and other new and ‘innovative’ architectures have certainly made relational databases more scalable. Under the covers, however, it is not hard to find a single system and a single point-of-failure (For example, Oracle RAC is a “clustered” relational database that uses a cluster-aware file system, but there is still a shared disk subsystem underneath). Often, the high costs of these systems is prohibitive as well, as setting up a single data warehouse can easily go over a million dollars.  
-
-The enhancements to relational databases also come with other big trade-offs as well. For example, when data is distributed across a relational database it is typically based on pre-defined queries in order to maintain performance. In other words, flexibility is sacrificed for performance.  
-
-Additionally, relational databases are not designed to scale back down—they are highly inelastic. Once data has been distributed and additional space allocated, it is almost impossible to “undistribute” that data.   
-
-NoSQL databases are designed for massive scale on distributed systems (usually hundreds of Terabytes rather than tens of Gigabytes). They can scale-out “horizontally,” meaning that they run on multiple servers that work together, each sharing part of the load.  
-
-Using this approach, a NoSQL database can operate across hundreds of servers, petabytes of data, and billions of documents—and still manage to process tens of thousands of transactions per second. And it can do all of this on inexpensive commodity (i.e. cheaper) hardware operating in any environment (i.e. cloud optimized!). Another benefit is that if one node fails, the others can pick up the workload, thus eliminating a single point of failure.  
-
-Massive scale is impressive, but what is perhaps even more important is elasticity. Not all NoSQL databases are elastic. MarkLogic has a unique architecture that make it possible to quickly and easily add or remove nodes in a cluster so that the database stays in line with performance needs. There is not any complex sharding of data or architectural workarounds—data is automatically rebalanced across a cluster when nodes are added or removed. This also makes administration much easier, making it possible for one DBA to manage for data and with fewer headaches.  
+- 오늘날에는 관계형 데이터베이스도 Scale-Out이 가능하도록 많이 진화함
+- 하지만 Scale-Out을 위해 관계형 데이터베이스를 구축하면, 성능이 전에 비해 떨어지게 되고, Scale-down은 거의 불가능
+- 반면 NoSQL은 대부분 Scale-Out이 가능하도록 설계되었으며, 성능이 크게 다르지 않음
+- NoSQL은 Scale-Out을 통해 단일 지점 장애 문제 해결과, 비용 효율적으로 대용량 데이터를 저장할 수 있음
 
 
 ## Row Based vs Columnar
@@ -124,19 +107,7 @@ Massive scale is impressive, but what is perhaps even more important is elastici
 - 웹 서비스에 붙어있는 DB로는 OLTP를 위한 Row based DB가 적합하고, 이 데이터를 분석팀에게 제공할 때는 Columnar DB에 저장해서 전달해 주는 것이 좋다.
 - Columnar는 Scale-Out을 쉽게 만들어준다.
 
-# 주요 데이터베이스간 비교
-
-## MySQL vs Hive vs Redshift
-
-## MongoDB vs Cassandra vs ElasticSearch
-
-## DynamoDB vs HBase vs Redis
-
-- [AWS whitepapaer: Comparing the Use of Amazon DynamoDB and Apache HBase for NoSQL](https://docs.aws.amazon.com/whitepapers/latest/comparing-dynamodb-and-hbase-for-nosql/amazon-dynamodb-overview.html){:target="_blank"}
-
-# Youtube
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/FX5iWHFn1v0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
+# 주요 데이터베이스 분류
 
 ![](/images/data_engineering_5.png)
 

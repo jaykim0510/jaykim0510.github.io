@@ -22,14 +22,10 @@ tags: Data_Engineering
 - RDBMS는 Relational DataBase Management System의 약자
 - Relational Data Model을 담고있는 데이터베이스를 CRUD할 수 있는 소프트웨어
 - 그 밖에도 데이터의 ACID 특성, 보안과 같은 필요한 기능들을 제공
-
-A database back end for your application is vital. It’s likely your database is a relational database. This is because relational databases have dominated the software industry for decades, even as other technologies have radically changed around them.  
-
-In a relational database management system (RDBMS), data needs to be actively managed and maintained. An RDBMS categorizes data in the form of tables, and the database manager must create a blueprint — otherwise known as a schema — of the relationships between those tables before any data gets stored. The fields in these tables must also have well-defined data types for which values can be stored.   
-
-When considering implementing a relational database for your data storage needs, it’s important to completely understand what you’re getting into. While RDBMSs are known for being robust, they’re also known for being slow and inflexible.   
-
-Be sure to consider the query language used to interface with the database you’re interested in. You should also perform a cost-benefit analysis of what it will take to create indices that can speed data operations, as well as the administrative tooling to operate the database.   
+- RDBMS는 데이터를 저장하기 전에 미리 데이터 타입, 스키마, 업데이트/삭제 정책을 잘 정의해야함
+- 이러한 이유로 NoSQL에 비해 유연성이 떨어지고, 데이터 저장을 위한 데이터베이스 설계 과정이 오래걸림
+- 하지만 잘 정의된 RDBMS는 좋은 Data Warehouse가 되고 결과적으로 분석, 활용에 정확성을 제공
+- 빠른 분석을 위해 RDBMS에서 사용되는 SQL 언어의 특징을 잘 이해해야함
 
 ## Relational Data Model
 
@@ -57,13 +53,11 @@ Be sure to consider the query language used to interface with the database you�
 - NoSQL은 데이터를 표현하는 방법도 다양해서 그 안에서도 Document store, Key-value store, Wide column store 등과 같이 더 세분화됨
 
 ## The benefits of NoSQL 
-"Not only SQL" (NoSQL)  databases were designed to fill the gaps left by relational databases. Consider the core characteristics of a NoSQL database:  
 
-- Schema-less with no complex relationships 
-- Distributed by replicating data to avoid a single point of failure 
-- Flexible storage of both unstructured and semi-structured data 
-- Highly scalable no matter how much data is entered  
-
+- RDBMS에 저장하기에는 비교적 데이터의 변동성이 큰 데이터를 저장할 수 있음
+- 비교적 빠르게 데이터베이스를 설계할 수 있음
+- 스키마, 업데이트/삭제 정책과 같은 제약사항이 비교적 덜한 편
+- Scale-Out 방식의 데이터베이스 확장이 가능
 
 # RDBMS vs NoSQL
 
