@@ -63,7 +63,7 @@ tags: Data_Engineering
 
 ![](/images/dis_sys_4.png)
 
-보통 원본 데이터를 가지는 노드를 리더(Leader), 복제된 데이터를 가지는 노드들을 팔로워(Follower)라고 부른다. 팔로워 노드는 데이터 복제만 담당할 뿐, 사용자 입장에서는 리더 노드에만 읽고 쓴다. 데이터의 일관서을 유지하기 위해서는 리더가 팔로워에게 데이터를 잘 업데이트 해줘야 한다.  
+보통 원본 데이터를 가지는 노드를 리더(Leader), 복제된 데이터를 가지는 노드들을 팔로워(Follower)라고 부른다. 읽기 작업은 모든 노드에서 가능하지만 쓰기 작업은 리더 노드만  담당한다. 데이터의 일관성을 유지하기 위해서는 리더가 팔로워에게 데이터를 잘 업데이트 해줘야 한다.  
 
 리더는 업데이트를 어떻게 팔로워들에게 전파할까  
 
@@ -90,15 +90,14 @@ tags: Data_Engineering
 프라이머리-백업 복제 방식의 장단점은 다음과 같다.  
 
 - 장점  
-  - It is simple to understand and implement
-  - Concurrent operations serialized in the leader node, remove the need for more complicated, distributed concurrency protocols. In general, this property also makes it easier to support transactional operations
-  - It is scalable for read-heavy workloads, because the capacity for reading requests can be increased by adding more read replicas
+  - 동작 방식이 간단하다
+  - 트랜잭션 처리를 간단하게 만들어준다
+  - 무거운 읽기 작업에서 확장성이 높다 (팔로워 노드도 읽기 작업을 처리할 수 있으므로)
 
 - 단점  
-  - It is not very scalable for write-heavy workloads, because a single node (the leader)’s capacity determines the capacity for writes
-  - It imposes an obvious trade-off between performance, durability, and consistency
-  - Scaling the read capacity by adding more follower nodes can create a bottleneck in the network bandwidth of the leader node, if there’s a large number of followers listening for updates
-  - The process of failing over to a follower node when the leader node crashes, is not instant. This may create some downtime and also introduce the risk of errors
+  - 무거운 쓰기 작업에서 확장성이 낮다 (리더가 쓰기 관련 처리를 모두 담당하므로)
+  - 작업 방식에 따라 성능과 일관성간의 트레이드 오프가 있다
+  - 읽기 성능을 높이기 위해 팔로워 수를 증가시키면, 업데이트할 때 네트워크 병목 현상이 생길 수 있다
 
 또한 primary-backup replication은 항상 리더가 존재해야 한다. 따라서 리더가 잘 살아있는지 체크하고, 리더가 죽었다면 리더를 새로 선출하는 Leader election 문제도 고려해야 한다.  
 
