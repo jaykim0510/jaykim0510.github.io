@@ -35,7 +35,7 @@ tags: Data_Engineering
 
 ## Scalability
 
-분산 시스템은 서비스 규모, 트래픽량, 작업량에 따라 시스템의 크기를 조절해 이를 핸들링할 능력이 있다. 물론 단일 시스템에서도 Vertical-scaling이 가능하다. 하지만 Horizontal-scaling이 가격적인 측면과 확장이 용이하다는 점에서 이점이 있다.  
+분산 시스템은 서비스 규모, 트래픽량, 작업량에 따라 시스템의 크기를 조절해 이를 핸들링할 능력이 있다. 물론 단일 시스템에서도 Vertical-scaling이 가능하다. 하지만 Horizontal-scaling이 가격적인 측면과 확장/감축이 용이하다는 점에서 이점이 있다.  
 
 ## Availability
 
@@ -47,64 +47,58 @@ tags: Data_Engineering
 
 ## Partitioning
 
-파티셔닝은 분산 시스템의 장점 중에서도 Scalability, Performance를 얻기 위해 필요한 핵심이다. 파티셔닝은 처리(또는 저장)해야 할 데이터를 작게 나누어서 이를 처리(또는 저장)해야 할 노드에게 할당해주는 작업이다.  
+파티셔닝은 분산 시스템의 장점 중에서도 Scalability, Performance를 얻기 위해 필요한 핵심 동작 원리다. 파티셔닝은 처리(또는 저장)해야 할 데이터를 작게 나누어서 이를 처리(또는 저장)해야 할 노드에게 할당해 분산 처리(또는 저장)하도록 해준다.  
 
 하지만 오히려 하나의 작업을 위해 네트워크를 거쳐 여러 노드에 접근해야 한다는 점에서 단점이 되는 경우도 있다. 그래서 데이터를 처리할 때는 최대한 네트워크 비용을 줄이는 것이 관건이다.  
 
-파티셔닝은 크게 range partitioning, hash partitioning, consistent hashing가 있다. Apache HBase는 range partitioning을 쓰고, Apache Cassandra는 consistent hasing을 쓴다.  
+파티셔닝은 크게 range partitioning, hash partitioning, consistent hashing 방식이 있다. Apache HBase는 range partitioning을 쓰고, Apache Cassandra는 consistent hasing을 쓴다.  
 
 ## Replication
 
 복제(Replication)는 Availability를 위해 필요한 핵심이다. 복제는 같은 데이터를 여러 노드에 복수 저장함으로써, 노드 중 일부에 장애가 발생하더라도 계속 역할을 유지할 수 있게 한다.  
 
-복제하는 것이 단순한 일은 아니다. 우선 복제 수 만큼 더 많은 저장용량이 필요하다. 또한 복사된 후에도 원본 데이터가 업데이트 될 때마다 동기화해야 한다.  
+복제하는 것이 단순한 일은 아니다. 우선 복제 수 만큼 더 많은 저장용량이 필요하다. 또한 복제된 후에도 원본 데이터가 업데이트 될 때마다 복제된 데이터도 함께 동기화해야 한다.  
 
-복제 방법 중 하나인 primary-backup replication에 대해 알아보자.  
-
-We commonly refer to the remaining replicas as followers or secondaries. These can only handle read requests. Every time the leader receives an update, it executes it locally and also propagates the update to the other nodes. This ensures that all the replicas maintain a consistent view of the data.  
+복제 방법 중 하나인 primary-backup replication에 대해 알아보자.   
 
 ![](/images/dis_sys_4.png)
 
+보통 원본 데이터를 가지는 노드를 리더(Leader), 복제된 데이터를 가지는 노드들을 팔로워(Follower)라고 부른다. 팔로워 노드는 데이터 복제만 담당할 뿐, 사용자 입장에서는 리더 노드에만 읽고 쓴다. 데이터의 일관서을 유지하기 위해서는 리더가 팔로워에게 데이터를 잘 업데이트 해줘야 한다.  
+
 리더는 업데이트를 어떻게 팔로워들에게 전파할까  
 
-There are two ways to propagate the updates: synchronously and asynchronously.  
+데이터 업데이트 방식에는 크게 동기적인 방법과 비동기 적인 방법이 있다.  
 
-Synchronous replication  
+### Synchronous replication  
 
-In synchronous replication, the node replies to the client to indicate the update is complete—only after receiving acknowledgments from the other replicas that they’ve also performed the update on their local storage. This guarantees that the client is able to view the update in a subsequent read after acknowledging it, no matter which replica the client reads from.  
-
-Furthermore, synchronous replication provides increased durability. This is because the update is not lost even if the leader crashes right after it acknowledges the update.  
-
-However, this technique can make writing requests slower. This is because the leader has to wait until it receives responses from all the replicas.  
+- 동기적 복제 방식은 클라이언트가 데이터 수정을 요청했을 때, 리더는 모든 팔로워로부터 업데이트를 완료했다는 ack를 받고나서  자신의 데이터를 업데이트 한 후, 업데이트 된 데이터가 잘 복제되었음을 클라이언트에 알려준다.
+- 장점은 복제가 완료된 경우에만 업데이트된 데이터 읽기를 허용하므로, 도중 장애가 발생하더라도, 일관적 읽기가 가능해진다
+- 단점은 쓰기 요청이 다소 느리다 
 
 ![](/images/dis_sys_3.png)
 
-Asynchronous replication  
+### Asynchronous replication  
 
-In asynchronous replication, the node replies to the client as soon as it performs the update in its local storage, without waiting for responses from the other replicas.  
-
-This technique increases performance significantly for write requests. This is because the client no longer pays the penalty of the network requests to the other replicas.  
-
-However, this comes at the cost of reduced consistency and decreased durability. After a client receives a response for an update request, the client might read older (stale) values in a subsequent read. This is only possible if the operation happens in one of the replicas that have not yet performed the update. Moreover, if the leader node crashes right after it acknowledges an update, and the propagation requests to the other replicas are lost, any acknowledged update is eventually lost.  
+- 비동기 복제 방식은 팔로워들의 ack를 기다리지 않고, 자신의 데이터를 우선 업데이트 한다
+- 장점은 쓰기 요청이 굉장히 빠르다
+- 단점은 다른 사용자가 업데이트 된 데이터를 읽던 도중 장애가 발생하면, 일관적 읽기가 보장되지 않는다
 
 ![](/images/dis_sys_5.png)
 
-Most widely used databases, such as PostgreSQL or MySQL, use a primary-backup replication technique that supports both asynchronous and synchronous replication.  
+대부분의 널리 사용되는 데이터베이스(PostgreSQL, MySQL 등)은 프라이머리-백업 복제 방식을 사용하며, 동기적 복제 방식, 비동기적 복제 방식을 모두 지원한다.  
 
-primary-backup replication에는 장점과 단점이 있습니다.  
+프라이머리-백업 복제 방식의 장단점은 다음과 같다.  
 
-장점  
+- 장점  
+  - It is simple to understand and implement
+  - Concurrent operations serialized in the leader node, remove the need for more complicated, distributed concurrency protocols. In general, this property also makes it easier to support transactional operations
+  - It is scalable for read-heavy workloads, because the capacity for reading requests can be increased by adding more read replicas
 
-- It is simple to understand and implement
-- Concurrent operations serialized in the leader node, remove the need for more complicated, distributed concurrency protocols. In general, this property also makes it easier to support transactional operations
-- It is scalable for read-heavy workloads, because the capacity for reading requests can be increased by adding more read replicas
-
-단점  
-
-- It is not very scalable for write-heavy workloads, because a single node (the leader)’s capacity determines the capacity for writes
-- It imposes an obvious trade-off between performance, durability, and consistency
-- Scaling the read capacity by adding more follower nodes can create a bottleneck in the network bandwidth of the leader node, if there’s a large number of followers listening for updates
-- The process of failing over to a follower node when the leader node crashes, is not instant. This may create some downtime and also introduce the risk of errors
+- 단점  
+  - It is not very scalable for write-heavy workloads, because a single node (the leader)’s capacity determines the capacity for writes
+  - It imposes an obvious trade-off between performance, durability, and consistency
+  - Scaling the read capacity by adding more follower nodes can create a bottleneck in the network bandwidth of the leader node, if there’s a large number of followers listening for updates
+  - The process of failing over to a follower node when the leader node crashes, is not instant. This may create some downtime and also introduce the risk of errors
 
 또한 primary-backup replication은 항상 리더가 존재해야 한다. 따라서 리더가 잘 살아있는지 체크하고, 리더가 죽었다면 리더를 새로 선출하는 Leader election 문제도 고려해야 한다.  
 
