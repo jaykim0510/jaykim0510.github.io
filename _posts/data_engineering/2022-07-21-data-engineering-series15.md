@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part15]: Distributed System(1) Comprehensive Guide'
+title:  'Data Engineering Series [Part15]: 분산 시스템(1) Comprehensive Guide'
 description: 
 date:   2022-07-21 15:01:35 +0300
 image:  '/images/distributed_logo.png'

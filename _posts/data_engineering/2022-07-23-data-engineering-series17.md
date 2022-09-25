@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part17]: Distributed Systems(3) 네트워크와 운영체제'
+title:  'Data Engineering Series [Part17]: 분산 시스템(3) 네트워크와 운영체제'
 description: 
 date:   2022-07-23 15:01:35 +0300
 image:  '/images/distributed_logo.png'

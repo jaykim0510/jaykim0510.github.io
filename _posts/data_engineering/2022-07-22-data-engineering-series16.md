@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part16]: Distributed System(2) CAP Theorem'
+title:  'Data Engineering Series [Part16]: 분산 시스템(2) CAP Theorem'
 description: 
 date:   2022-07-22 15:01:35 +0300
 image:  '/images/distributed_logo.png'
