@@ -19,52 +19,55 @@ tags: Data_Engineering
 
 # CAP Theorem
 
-The CAP Theorem is one of the most fundamental theorems in the field of distributed systems. It outlines an inherent trade-off in the design of distributed systems.  
+> The CAP Theorem is one of the most fundamental theorems in the field of distributed systems. It outlines an inherent trade-off in the design of distributed systems.  
 
-CAP theorem – or Brewer’s theorem – was introduced by the computer scientist Eric Brewer at Symposium on Principles of Distributed computing in 2000. The CAP stands for Consistency, Availability and Partition tolerance.  
+- CAP는 각각 Consistency, Availability, Partition tolerance 를 뜻한다
+- 분산 시스템은 다음과 같은 3가지 특징을 가질 수 있지만, 실제 환경에서는 이중 2개만을 얻을 수 있다
 
-The CAP Theorem (as put forth in a presentation by Eric Brewer in 2000) stated that distributed shared-data systems had three properties but systems could only choose to adhere to two of those properties:  
+- **Consistency**: 만약 성공적으로 데이터를 읽어왔다면, 반드시 가장 최근에 쓴 데이터를 읽어와야 한다. CAP 이론에서 말하는 Consistency와 ACID에서 말하는 Consistency는 다르다
+- **Availability**: 모든 읽기/쓰기 요청은 반드시 응답을 받아야 한다
+- **Partition tolerance**: 노드간의 네트워크에서 데이터가 지연되거나 유실되더라도 데이터베이스는 계속 동작해야 한다
 
-- **Consistency**: Consistency means that every successful read request receives the result of the most recent write request. Be aware that the definition of consistency for CAP means something different than to ACID (relational consistency).
-- **Availability**: The database is not allowed to be unavailable because it is busy with requests. Every request received by a non-failing node in the system must result in a response. Whether you want to read or write you will get some response back. If the server has not crashed, it is not allowed to ignore the client’s requests.
-- **Partition tolerance**: Databases which store big data will use a cluster of nodes that distribute the connections evenly over the whole cluster. If this system has partition tolerance, it will continue to operate despite a number of messages being delayed or even lost by the network between the cluster nodes.
+분산 시스템에서 네트워크 장애는 가장 발생하기 쉬운 장애중 하나다. 이를 완벽하게 해결할 방법은 없기 때문에, 클러스터의 노드중 일부가 네트워크 장애를 겪게되는 상황을 반드시 고려해 분산 시스템을 디자인 해야한다.  
 
-Distributed systems designed for fault tolerance are not much use if they cannot operate in a partitioned state (a state where one or more nodes are unreachable). Thus, partition-tolerance is always a requirement, so the two basic modes that most systems use are either Availability-Partition-tolerant (“AP”) or Consistency-Partition-tolerant (“CP”).  
+그래서 대부분의 분산 시스템은 "P"는 반드시 포함하도록 설계되고, 남은 "C"와 "A"중에서 시스템 목적에 맞게 하나를 선택한다. 그래서 대개 CP 또는 AP중 하나가 된다.  
 
-In a distributed system, there is always the risk of a network partition. If this happens, the system needs to decide either to continue operating and compromise data consistency, or stop operating and compromise availability.  
+데이터베이스의 경우 RDBMS는 대부분 트랜잭션의 ACID 특성을 지키기 위해 CP 방식으로 설계하고, NoSQL은 AP 방식으로 데이터베이스를 설계한다.  
 
-According to the final statement of the CAP theorem, a distributed system can be either consistent or available in the presence of a network partition.  
+참고로 
 
-Database systems designed to fulfill traditional ACID guarantees like relational database (management) systems (RDBMS) choose consistency over availability, whereas NoSQL databases are mostly systems designed referring to the BASE philosophy which prefer availability over consistency.  
-
-AP 시스템은 네트워크 파티션이 생겼을 때 AP를 보장해준다. C는 파티션이 없을 때 해결된다.  
-
-CA 시스템은 현실적으로 둘 다 완벽하게 지켜낼 수 없다. C를 무조건 보장하면서 A를 최대한 제공해주는 방식이다. 
+- AP 시스템은 네트워크 파티션이 생겼을 때 AP를 보장해준다. 네트워크 장애가 없는 상황에서는 C도 해결된다.  
+- CP 시스템은 네트워크 파티션이 생겼을 때 CP를 보장해준다. 네트워크 장애가 없는 상황에서는 A도 해결된다
+- CA 시스템은 현실적으로 둘 다 완벽하게 지켜낼 수 없다. C를 무조건 보장하면서 A를 최대한 제공해주는 방식이다. 
 
 ## AP – Availability + Partition Tolerance
-If we have achieved Availability (our databases will always respond to our requests) as well as Partition Tolerance (all nodes of the database will work even if they cannot communicate), it will immediately mean that we cannot provide Consistency as all nodes will go out of sync as soon as we write new information to one of the nodes. The nodes will continue to accept the database transactions each separately, but they cannot transfer the transaction between each other keeping them in synchronization. We therefore cannot fully guarantee the system consistency. When the partition is resolved, the AP databases typically resync the nodes to repair all inconsistencies in the system.  
 
-A well-known real world example of an AP system is the Domain Name System (DNS). This central network component is responsible for resolving domain names into IP addresses and focuses on the two properties of availability and failure tolerance. Thanks to the large number of servers, the system is available almost without exception. If a single DNS server fails,another one takes over. According to the CAP theorem, DNS is not consistent: If a DNS entry is changed, e.g. when a new domain has been registered or deleted, it can take a few days before this change is passed on to the entire system hierarchy and can be seen by all clients.  
+- 어떤 데이터의 변경사항에 대해 모든 노드에 동기화 하기 전에 데이터 사용을 허용한다
+- 노드 일부에 장애가 발생해 동기화되지 않아도 데이터 사용이 가능하다 -> Availability
+- 만약 네트워크 파티션 문제가 해결된다면 분산 시스템은 resync를 하고 Consistency 또한 얻을 수 있다
+- ex. DNS: 노드 일부에 장애가 발생해도 서비스를 지속 제공하지만, DNS에 도메인 등록/삭제가 모든 시스템에 전해지고 클라이언트에게 보이기까지 보통 며칠이 걸린다
 
 ## CA – Consistency + Availability
-Guarantee of full Consistency and Availability is practically impossible to achieve in a system which distributes data over several nodes. We can have databases over more than one node online and available, and we keep the data consistent between these nodes, but the nature of computer networks (LAN, WAN) is that the connection can get interrupted, meaning we cannot guarantee the Partition Tolerance and therefor not the reliability of having the whole database service online at all times.  
 
-Database management systems based on the relational database models (RDBMS) are a good example of CA systems. These database systems are primarily characterized by a high level of consistency and strive for the highest possible availability. In case of doubt, however, availability can decrease in favor of consistency. Reliability by distributing data over partitions in order to make data reachable in any case – even if computer or network failure – meanwhile plays a subordinate role.  
+- 현실적으로 분산 시스템에서 Consistency와 Availability를 둘 다 동시에 얻는 것은 불가능하다
+- 그래서 보통 단일서버가 CA 특성을 가진다 -> 전통적인 RDBMS
+- 둘 다 높일 수는 없고, 하나를 높이면 다른 하나는 낮아진다
 
 ## CP – Consistency + Partition Tolerance
-If the Consistency of data is given – which means that the data between two or more nodes always contain the up-to-date information – and Partition Tolerance is given as well – which means that we are avoiding any desynchronization of our data between all nodes, then we will lose Availability as soon as only one a partition occurs between any two nodes In most distributed systems, high availability is one of the most important properties, which is why CP systems tend to be a rarity in practice. These systems prove their worth particularly in the financial sector: banking applications that must reliably debit and transfer amounts of money on the account side are dependent on consistency and reliability by consistent redundancies to always be able to rule out incorrect postings – even in the event of disruptions in the data traffic. If consistency and reliability is not guaranteed, the system might be unavailable for the users.  
+
+- Consistency를 지키기 위해서는 항상 분산 시스템의 모든 노드들이 in-sync 여야 한다
+- 이러한 이유로 만약 일부 네트워크에 파티션 문제가 발생하면, in-sync 한 상황이 깨지기 때문에 시스템 작동을 아예 중지한다
+- 이러한 특성은 보통 대부분의 서비스에서 사용하지 않는 방식이다.
+- 하지만 금융 분야에서는 잠깐 서비스가 중단되더라도, 데이터의 Consistency를 맞추는 것이 훨씬 중요하기 때문에 사용된다
 
 ![](/images/cap.png)
 
 ![](/images/dis_sys_6.png)
 
 # Importance of the CAP theorem
-The CAP theorem is really important because it helped establish the basic limitations of all distributed systems.  
 
-The CAP theorem forces designers of distributed systems to make explicit trade-offs between availability and consistency. Once the engineers become aware of these properties, they choose the appropriate system.  
+- CAP 이론을 알아야 분산 시스템을 디자인할 때 어떤 것을 얻기 위해 어떤 것을 포기해야 하는지 알 수 있다
 
-# Conclusion
-The CAP Theorem is still an important topic to understand for data engineers and data scientists, but many modern databases enable us to switch between the possibilities within the CAP Theorem. For example, the Cosmos DB von Microsoft Azure offers many granular options to switch between the consistency, availability and partition tolerance . A common misunderstanding of the CAP theorem that it´s none-absoluteness: “All three properties are more continuous than binary. Availability is continuous from 0 to 100 percent, there are many levels of consistency, and even partitions have nuances. Exploring these nuances requires pushing the traditional way of dealing with partitions, which is the fundamental challenge. Because partitions are rare, CAP should allow perfect C and A most of the time, but when partitions are present or perceived, a strategy is in order.”
 
 # 참고
 
