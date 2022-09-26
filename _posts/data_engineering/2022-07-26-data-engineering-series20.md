@@ -18,76 +18,47 @@ tags: Data_Engineering
 ---
 # Intro
 
-## What will be covered?
-- Introduction to System Design: Start with an introduction of the course, explanations on high level and low level design, interviewer's expectations, and how to approach these kind in an interview.
-- System Design Basics: Build a strong foundation of System Design fundamentals that are useful in understanding the dynamics of highly scalable systems.
-- System Design Case Studies: Cover the 11 most frequently asked interview questions with a detailed walkthrough.
-- Problem Solving: Apply your understanding of the preceding chapters with the help of some practice problems and quizzes.
-
 ## High Level System Design
 
-- **Overall architecture**: How the system can be built such that it takes care of scalability, latency, and other performance requirements
-
-- **Components and services**: Any system is a collection of various services and other components interacting with each other. In this part of high level design, we need to decide how the system will be broken down, what will the microservices be, and their scope.
-
-- **Interaction between the systems**: How will the systems interact with each other? What protocols will you use? Will it be synchronous or asynchronous? You need to make these decisions based on the requirements.
-
-- **Databases**: What databases will you need? What kind of data do you need to store? SQL or NoSQL, what will be the database schema? Depending on how much detail the interviewer wants you to go into, you may have to make these decisions as well.
+- **Overall architecture**: 확장성, 지연률 등 여러 성능에 관한 요구사항을 고려하며 시스템을 설계해야 한다
+- **Components and services**: 어떤 시스템도 결국은 서비스들의 집합이고, 이러한 서비스들은 서로 상호 작용하게 된다. 이러한 시스템을 서비스들의 집합 관점 (ex. 마이크로서비스)에서 살펴보자
+- **Interaction between the systems**: 서비스들간의 통신을 설계할 때 어떤 프로토콜을 사용할 것인지, 동기, 비동기중 어떤 방식으로 통신할 것인지 등을 시스템 요구사항에 맞게 설계해야 한다
+- **Databases**: 서비스 요구사항에 맞는 데이터베이스를 선택해야 한다
 
 ## Low Level System Design (Code Quality)
 
-- **API**: If you’re trying to build a web server, define your APIs clearly. For example, if you decide to make REST APIs, ensure they follow REST standards. Similarly, if you are building a library, define the APIs in a very clean manner as publicly accessible functions such that the client can easily integrate them
-- **Test Code**: This means we should have a working code with some basic test cases that are passing for the logic we have written.
-- **Modular**: how easy it is to add new features without interfering with existing code.
+- **API**: API를 잘 설계하자
+- **Test Code**: 동작 코드 말고도, 테스트 코드를 작성해 점검하자
+- **Modular**: 잘 모듈화하여 확장성을 높이자
 
 # Application Architecture
 
 ## Monolithic Architecture
 
-Back when the internet was just starting to gain popularity, websites used to serve mostly static content. There wasn’t a lot of user interaction like we see now. The applications were much less complex, and so was their architecture. A single application used to take care of the entire user journey, everything from UI rendering to backend business logic to fetching the data from DBs or File Systems. This was the world of Web 1.0.  
-
-Then came Web 2.0 with social networks, e-commerce, and online gaming and things became a lot more interactive. By this time everything was still maintained in a single huge codebase. If you consider an e-commerce system, back then everything from UI to business logic for payments, carts, orders, etc. was maintained in a single codebase. This is known as Monolithic Architecture.  
+- 인터넷이 막 도입되었을 때에는 대부분의 서비스가 정적 컨텐츠를 제공하는 것이었다
+- 유저를 위해 서비스의 흐름을 제어하는 방법이 복잡하지 않았기 때문에 보통 하나의 애플리케이션이 모든 역할을 담당했다
+- 이 후 SNS, E-커머스, 온라인 게임 등의 등장으로 하나의 웹 서비스는 이전과 비교해 규모가 훨씬 크고 복잡해졌다
+- 모든 기능을 제공하는 코드를 하나의 애플리케이션에 작성하는 것은 매우 복잡하고 기능을 확장하기가 힘들었다
 
 ![](/images/system_design_1.png)  
-
-The problem with this approach was that the code was very complex, difficult to maintain, and hard to iterate and improve. On top of that, multiple people were working on the same codebase; it was a recipe for disaster.  
-
-**Disadvantage of Monolithic Architecture**  
-
-- One of the most common problems with monoliths is that you are **bound to a single technology stack**. Suppose you have a monolith built on Java with Spring framework. Now you need to add some Machine Learning logic, and you want to use Python for it. That is nearly impossible in monolithic architecture. You either need to figure out a way to do this with Java, or you need a standalone application that handles your machine learning logic, which defeats the purpose of a monolithic app.
-- Another problem would be that it is very **easy to break** things in such an architecture. That is because, when you have such a huge codebase, it is nearly impossible for everyone to know everything about how the entire system works. If you change some logic in the shared code, you might end up breaking someone else’s feature. Sure you can have test cases, but even those are not enough sometimes.
-- Another major issue is scalability. It is very **tricky to scale a monolithic application**. Let us look at the example of an e-commerce application. In case of a Black Friday sale, you might need to scale your payments and cart modules, but Warehouse and Notification modules can continue to work at the same pace. This cannot be done in a monolithic app. Since it is the same codebase, you will need to deploy the entire system again and again. This means the capacity meant for the Warehouse module might be sitting idle or that the Payment and Cart modules may choke the rest of the system.
-- Deployments are also a very tedious process here. Since the code is huge, it takes **much longer to build**, package, and deploy the code. That said, if you update the code for Warehousing, even the Payments module must be redeployed since everything is packaged together.
-
 
 ## Microservice Architecture
 
 ![](/images/system_design_2.png)
 
-The idea is to break down the application into logical components such that these components become services of their own. Normally this is also how the teams would be structured, so each team would work on the services that handle their features. These services will now be communicating with each other via a set of API calls like REST APIs or Remote Procedure Calls.  
+- 그래서 마이크로서비스 아키텍처는 하나의 서비스를 제공하기 위해 필요한 여러 가지 기능들을 세분화해서 설계하는 것이 목적이다
+- 그리고 이렇게 세분화된 기능들은 서로 REST APIs 또는 RPC 통신을 통해 서로 상호 작용한다
 
 **Benefits of Microservice Architecture**  
 
-- We are not bound to a single technology stack anymore. Different services can use different languages or databases as needed.
-- Each system does one thing and does it well, without worrying about breaking another set of features.
-- Engineers will be working on and maintaining a smaller codebase.
-- Iterating, deploying, and testing becomes a lot easier.
-- Unlike in monolith, we can now independently scale up Cart and Payments Services, and the rest of the services can continue working as they are. This ensures optimized use of resources and makes auto-scaling a lot easier.
+- 각각의 기능들은 서로 다른 언어로 개발할 수도 있고, 다른 데이터베이스를 사용할 수도 있다
+- 각각의 역할에 해당하는 코드에만 집중하여 개발할 수 있다
+- 배포, 테스트가 간편해진다
+- 새로운 기능을 추가하는 것이 간단해진다
+- 기능들을 서로 독립적으로 Scale-Up 할 수 있다 -> 다른 기능들의 동작에 영향을 주지 않으며, 자원 최적화도 된다
 
 **Disadvantage of Microservice Architecture**  
 
-- Latency
-    - One of the key reasons is latency. Function calls are faster than API calls, so it makes sense that monoliths will have lower latency. Usually, this latency is not high enough to be noticed by the user, but if you are working on something that needs a response in a few microseconds then you should definitely think about using monolithic architecture.
-    - With network calls comes the possibility of network failures and slightly increases the complexity of error handling and retries.
-- Backward Compatibility
-    - If a service needs a new mandatory parameter and the other services have not made the change accordingly, certain flows will break.
-    - In monolith it will be caught in the development phase since the compiler will throw an error. To solve this we need some good automated test cases.
-- Logging
-    - If you need to trace logs for a user in monoliths, it is easy to do so as they are all in the same place. But in microservices, for each request from the user there will be multiple service calls.
-    - In the below example, consider a single request from the user to the order service. The order service is talking to Inventory, Payment, Warehouse, and Notification Services, and thus there will be logs in each of these services. So tracing exactly what happened becomes very difficult as we need to check logs in each system.
-    - A better approach would be to store all the logs in a central place where they can be queried. This is a cost since you either need to build a Log Aggregation System or buy a third-party system’s license.
-
-# Conclusion
-In conclusion, if you are a small business working with a small team and have a limited set of features, monolith might be a better approach for you. However, if you are working on a huge product with hundreds of microservices, the maintenance cost of microservices will be worthwhile.  
-
-Also, usually, when you think about HLD(High Level Design) interviews, chances are you will be developing an overall architecture for a complex system that might be difficult to design in a monolithic manner. So thinking in terms of microservices will be a good idea.  
+- 보통 함수 호출이 API 호출보다 빠르다. 그래서 모놀리틱 구조가 더 빠를 수 밖에 없다. 하지만 대부분의 서비스에서는 이 차이를 유저가 느끼기 어렵다. ms 단위의 응답을 요구하는 서비스(ex. 게임, 실시간 분석)에서는 모놀리틱 구조가 좋을 수도 있다. 그리고 API 호출에는 네트워크적인 요소가 추가되기 때문에, 네트워크 장애도 고려해야 하고, 에러 핸들링이 조금 더 복잡하다
+- 하나의 서비스에서 새로운 파라미터를 추가했고, 다른 서비스에서는 이에 맞게 변화되지 않았다면 에러가 발생하게 되는데, 문제는 이 에러가 컴파일 단계가 아니라 런타임 단계에서 발생한다는 것이다. 그래서 테스트 코드를 작성하는 것이 중요한 것이다
+- 로그가 여러 서비스에서 분산 저장되면, 로그를 분석하기가 어렵다. 그래서 보통 로그를 하나의 통합된 장소에 저장하는게 낫다

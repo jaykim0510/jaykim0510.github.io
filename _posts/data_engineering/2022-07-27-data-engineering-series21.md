@@ -18,30 +18,24 @@ tags: Data_Engineering
 ---
 # Inter-Service Communication
 
-In this article, we will be looking at how services interact with each other. Why is this important? Well, when you have a huge system with a lot of microservices interacting with each other, their communication needs to be efficient to provide the best user experience and also to avoid any cascading effects across the system.  
+- 서비스간 통신 방식을 이해함으로써 어떻게 최고의 사용자 경험을 효율적으로 제공할지, 시스템간에 연쇄적으로 발생하는 문제를 어떻게 사전에 방지할지 알 수 있다
 
 # Modes of communication
-There are primarily two modes of communication between services:  
 
-- **Synchronous**: When a service **waits** for a downstream system to respond before responding back to the client with a success or failure response.
-
-- **Asynchronous**: This is a more of a fire and forget approach. A service will fire a call to the downstream system and won’t track it further.
+- **동기화**: 자기 자신의 응답을 리턴하기 전에 먼저 다운스트림 서비스의 응답을 기다린다
+- **비동기화**: 다운스트림 서비스를 호출만 할 뿐 응답을 기다리지 않는다
 
 # Synchronous Approach
-Let’s say you are building Amazon. You have a user U1 trying to place an order. U1 will reach out to the Order Service. Order Service will now talk to the Inventory Service to find out if a sufficient quantity of the product is available. If that is the case, Inventory Service will send a success response. Otherwise, it will respond with an error, and Order Service will respond to the user saying the order could not be placed.  
-
-Now if the inventory response was a success, the Order Service will talk to the Payment Service to process the payment. Once the payment is successful, the Order Service will now talk to the Warehouse Service asking it to start packing and prepare for shipping the product to the user. Once Warehouse Service responds with a success, the Order Service will talk to a Notification Service to send an email to the user saying their order has been placed, with so and so payment details and sharing an ETA for the delivery of the product.   
 
 ![](/images/system_design_3.png)
 
-Now, this is a happy scenario. What happens when one of the calls fails? Well, it depends on which call fails. If the call to Notification Service fails, does it make sense to cancel the order? No. We shouldn't cancel an order just because the Notification Service failed. However, what if payment fails? Now we definitely need to cancel the order. But now we need to update the Inventory again to undo the change to the product quantity. What if the call to Inventory Service fails?  
-
-So as you can see, there are some loopholes in a purely synchronous approach.  
-
-- It has very high latency as the user does not get notified until all the calls have come back with a success or failure response.
-- The system is tightly coupled, and any failure will have cascading effects across the board.
-- The code becomes very complex since we need to handle all the cascading error scenarios.
-- Due to complexity, it requires extremely high maintenance.
+- 아마존(Amazon) 시스템을 설계한다고 해보자. U1이 주문을 하려고 한다. U1은 먼저 Order 서비스에 접근할 것이다. Order 서비스는 Inventory 서비스를 통해 재고가 있는지 확인한다. 재고가 있다면 이제 Payment 서비스를 호출한다. 결제가 완료되면 Warehouse 서비스에 배송을 요청하고, Notification 서비스가 U1에게 이메일을 전송할 것이다.
+- 만약 Notification 서비스에 문제가 생겼다면 어떻게 해야할까? 알림이 가지 않았다고 주문을 취소한다면 좋은 서비스라고 할 수 없다
+- Payment 서비스에 문제가 생겼다면? 이 때는 Inventory 서비스, Order 서비스에 모두 Fail 응답을 반드시 보내야 한다
+- 만약 모든 서비스를 동기화하는 방식으로 시스템을 디자인하면,
+  - 굉장히 지연률이 높아진다
+  - 일부의 장애가 연쇄적으로 다른 서비스에 영향을 미친다
+  - 코드 복잡성이 높아져서 유지 관리가 어려워진다
 
 # Asynchronous Approach
 Let us see what happens in a purely asynchronous approach.   
