@@ -37,29 +37,23 @@ tags: Data_Engineering
   - 일부의 장애가 연쇄적으로 다른 서비스에 영향을 미친다
   - 코드 복잡성이 높아져서 유지 관리가 어려워진다
 
-# Asynchronous Approach
-Let us see what happens in a purely asynchronous approach.   
+# Asynchronous Approach 
 
 ![](/images/system_design_4.png)
 
-U1 sends a call to the Order Service which makes asynchronous calls to all the downstream systems. In such a case, even if Inventory Service responds with an error code, or even if the payment fails, the order would get placed. Which is an even bigger mess! So how do we go about this?  
-
-Well, as we can see, some parts of this process must be mandatory, and some can be done on a best-effort basis. If the Inventory Service or Payment Service responds with an error, we cannot place the order. But if the notification does not go through or the Warehouse Service is temporarily down, we don’t need to cancel our order. So we can follow a hybrid approach here; **use a synchronous approach for the mandatory steps and an asynchronous approach for the rest.**    
+- 비동기적인 방식을 생각해 보면 U1의 Order 서비스가 Inventory 서비스를 호출하더라도, 재고가 있든 없든 상관없이 주문을 진행하게 된다. 만약 이렇게 시스템을 디자인하면 문제가 더 커지게 될 것이다
+- 결론은 다운스트림 서비스의 결과에 따라 자기 자신의 응답이 달라져야 한다면 동기적으로, 다운스트림 서비스의 결과에 상관 없다면 비동기적으로 설계하면 된다
 
 ## Best of Both Worlds
-The Hybrid approach suggests that the mandatory tasks need to be performed in a synchronous manner and everything else can be done asynchronously.  
-
-So Order Service will send out a synchronous call to Inventory Service, and wait for a response. In case of success, it will call the Payment Service. If the Payment Service gives a successful response, Order Service will make parallel asynchronous calls to the Warehouse Service and Notification Service and, at the same time, respond to the user saying the order has been placed. If the Payment Service call had failed, Order Service would send an asynchronous call to the Inventory Service reverting the quantity change.  
-
-So this looks like a much better solution. There are still some misses here though. What if the asynchronous call to Warehouse Service failed? It would lose the details for that order. This is where we would use **Message Queues**.  
+- 하이브리드 방식으로 설계하면, Order 서비스는 Inventory 서비스를 동기 호출, 성공시 Order 서비스는 Payment 서비스를 다시 동기 호출, 성공시 Order 서비스는 Warehouse 서비스, Notification 서비스를 비동기 호출할 것이다
+- 꽤 괜찮은 솔루션이지만 약간의 문제가 있다. 만약 Warehouse 서비스에 일시적으로 장애가 발생하면, 배송이 출발하지 않는 오류가 발생할 것이다. 이런 문제를 해결해주는 것이 바로 **Message Queue**다
 
 ## Message Queues
-Message Queues(Kafka, RabbitMQ, ActiveMQ 등) are highly fault-tolerant and persist messages for some time. How a message Queue works is, it has some Publishers adding messages to it, and some Subscribers listening to it and picking up the events meant for them at their own pace. Since these queues store messages for some time, if a subscriber is temporarily down, the messages will remain in the queue and will be picked up when the subscriber is running again.  
+
+- Order 서비스가 Warehouse 서비스에 보낼 메세지를 메세지 큐에 잘 보내기만 한다면, Warehouse 서비스는 다시 동작할 때 메세지 큐의 메세지를 읽고, 배송을 문제없이 처리할 것이다
+- 이를 위해서는 메세지 큐에 메세지가 잘 도착하도록 하는 것이 중요하며, 메세지 큐 관련 시스템을 잘 설계해야 한다
 
 ![](/images/system_design_5.png)  
-
-So now, when Order Service wants to make asynchronous calls to Warehouse and Notification services, it will instead put an event in the Message Queue. Warehouse Service and Notification Service, which will be listening to the queue, will pick up the events meant for them. If one of the systems is down, the messages will remain in the queue until the service is back up and ready to receive messages again. This way, none of the data gets lost.  
-
 
 # Protocols for communication
 
@@ -75,66 +69,26 @@ In a real-world scenario, rather than talking to a specific server, the client�
 - It is a stateless system i.e. irrespective of which server is responding, the response remains the same.
 
 
-## HTTP
-
-These requirements make this a perfect use case for HTTP(s) protocol. Although these days, most architectures on HTTP have moved to HTTPS, which is a more secure version of HTTP as it prevents man-in-the-middle attacks.  
-
-Now, when we are using HTTP, REST is usually the best API standard to follow as it is very widely used and very user friendly.  
-
-Let us look at an example for a REST request and response:  
-
-```
-Request:
-Method: GET
-URL: https://www.twitter.com/user/{id}
-
-Response:
-Status: 200 OK
-Headers: <...>
-Body: {
-    “userId”: 1,
-    “Email”: “someone@example.com”
-}
-```
-
-The client makes a request to twitter.com over HTTPS to get information about a user with an id. In response, the server sends a success status code along with the user’s user id and email. As you can see, REST API standard is pretty much self-documenting, which adds to its user friendliness.  
-
-Now let us look at an example of a chat application.  
+## HTTP와 WebSocket
 
 ![](/images/system_design_6.png)
 
-We know that HTTP is a client-driven protocol, so the server cannot initiate any contact with the client. It can only respond to the client upon receiving a request. So when U1 sends a message to U2 via chat server, U2 doesn’t receive the message until it asks the server to share any pending messages. This leads to a delay when receiving messages.  
+- HTTP
+  - HTTP는 클라이언트 기반 프로토콜. 클라이언트-서버 연결은 클라이언트에 의해서만 초기화되고, 서버는 오직 응답만
 
-A solution to this would be that U2 sends frequent requests to the chat server in the hopes of receiving a message. But this puts a huge load on the chat server as it will receive a huge number of requests from all its clients.  
+  - U1이 메세지를 서버에 보내도 U2는 request로 물어봐야만 서버가 메세지를 U2에 보내준다
+  - U2가 최대한 빨리 메세지를 받고 싶다면, 서버에 메시지가 왔는지 안왔는지도 모른채 계속 request를 보내야한다
+  - U2가 이런식으로 계속 요청 메세지를 보내게 되면 채팅 서버에는 과부하가 걸리게 된다
+  - The best approach would be **if the server could send a notification to the user every time there is a message**. For this, we use a protocol called **WebSocket**.  
+  - 서버가 U2에게 보낼 메시지를 가지고 있음에도 불구하고, 능동적으로 U2에게 보내지 않는다. U2로부터 request를 받을때까지 기다린다.
+  - U2는 언제 자신이 받아야할 메시지가 서버에 도착했는지 모르므로, 계속 서버에 request를 보내야 한다.
+- WebSocket
+  - A WebSocket connection is a **persistent connection**. It is also a **bidirectional
+  - It is **optimized for high-frequency communication**
+  - WebSocket을 사용하면 서버는 U2와 connection되어 있으면 request를 받지 않아도 알아서 U2에 메시지를 보낸다 
+  - connection되어 있지 않으면, 가만히 있다가, connection되고 U2가 request보내면 메시지 보낸다
+  - 장점: high-frequency communication에서 낮은 지연율, CPU와 Bandwidth와 같은 리소스를 아낄 수 있음
+  - 하지만 수십만명의 유저와 persistent connection 유지하는데 비용이 많이 들어감
 
-The best approach would be **if the server could send a notification to the user every time there is a message**. For this, we use a protocol called **WebSocket**.  
-
-(서버가 U2에게 보낼 메시지를 가지고 있음에도 불구하고, 능동적으로 U2에게 보내지 않는다. U2로부터 request를 받을때까지 기다린다.)  
-(U2는 언제 자신이 받아야할 메시지가 서버에 도착했는지 모르므로, 계속 서버에 request를 보내야 한다.)  
-(WebSocket을 사용하면 서버는 U2와 connection되어 있으면 request를 받지 않아도 알아서 U2에 메시지를 보낸다)  
-(connection되어 있지 않으면, 가만히 있다가, connection되고 U2가 request보내면 메시지 보낸다)  
-(WebSocket에도 단점은 있다. cost of maintaining a persistent connection with millions of users.)
-
-## WebSocket
-A WebSocket connection is a persistent connection. It is also a bidirectional protocol, where communication can be initiated by the client or the server as long as there is an open connection. It is **optimized for high-frequency communication**.  
-
-Let's look at how our chat application would work in the case of WebSocket protocol.  
-
-![](/images/system_design_7.png)  
-
-First, U1 and U2 will establish HTTP connections with the chat server, which are then upgraded to a WebSocket connection. When U1 sends a message for U2 via the chat server, it will store the message along with its status, RECEIVED, let's say.  
-
-The chat server, if it has an open connection with U2, will then send the message to U2 and update the status to SENT. If U2 was not online and there was no open connection between U2 and the server, the messages will be saved until U2 comes online and requests the server to send all pending messages. The server will send all messages with the status RECEIVED and update the status to SENT.  
-
-As you can see, with this approach we have:  
-
-- Reduced the latency, since the server can simply send the messages over an open connection
-- Saved on CPU and bandwidth, as the client doesn’t need to unnecessarily send requests to the server and the server is not under unnecessary load
-- Provided better user experience
-
-
-Even with the benefits, there is a high cost to using WebSockets; that is the cost of maintaining a persistent connection with millions of users.  
-
-So how do we decide whether to use HTTP or WebSocket? Do we always go for Websocket then? Well, not really, as WebSocket is much more expensive than HTTP. We can safely say, if the communication between client and server is at a **lower throughput on the client-side**, HTTP is the way to go. **If the communication is always client-driven**, WebSocket is not needed. Also, if you are on a **tight budget**, HTTP may be the better choice.  
-
-On the other hand, if the communication from the **client is at a higher throughput**, WebSocket may be a better option. If the **communication can be driven by both client and server**, WebSocket is the way to go. Although here comes the tradeoff between cost and performance. We must decide if the optimization is really worth the huge cost of maintaining persistent connections with so many users.  
+- 낮은 지연율 필요하거나, 양방향 통신이 필요하면 -> WebSocket
+- 통신이 자주 발생하지 않고, 단방향 통신으로 괜찮다면 -> HTTP
