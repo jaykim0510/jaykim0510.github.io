@@ -21,7 +21,7 @@ tags: Network
 - 소켓은 응용 계층에서 두 프로세스(클라이언트-서버)간의 통신을 위한 엔드포인트를 제공하는 소프트웨어다 -> 서로 다른 서버의 프로세스간의 통신
 - 유닉스 계열의 운영체제에서 IPC를 위한 엔드포인트 -> 같은 서버안에 있는 프로세스간의 통신
 - 소켓은 결국 어떤 종류의 통신이든 필요로 하는 가상의 네트워크 장비이다
-- SSH, FTP, HTTP, 웹소켓 통신과 같은 모든 응용 계층에서의 통신은 결국 소켓을 필요로 한다
+- SSH, FTP, HTTP, 웹소켓 통신과 같은 **모든 응용 계층에서의 통신은 결국 소켓을 사용**한다
 - 소켓 프로그래밍을 통해 HTTP와 같은 단방향 통신이 아닌 양방향 통신을 가능하게 하는 프로토콜을 직접 만들어 쓸 수도 있다(ex. 웹소켓)
 - 소켓은 응용 계층에 사용되는 프로토콜을 실제로 코드로 구현해 놓은 소프트웨어라고 할 수 있다
 - 각 소켓은 IP주소와 Port번호로 이루어진 특정 주소를 가지고 있다
@@ -58,7 +58,7 @@ Socket APIs allow applications to interact with the transport or networking laye
 ## 소켓의 종류
 
 - 소켓의 종류에 따라 L4(Transport Layer)의 프로토콜이 달라진다
-- 또는 원하는 L4의 프로토콜에 따라 소켓의 종류를 사용해야 한다
+- 또는 원하는 L4의 프로토콜에 따라 소켓의 종류를 다르게 사용해야 한다
 
 - **Datagram Socket**
   - 데이터그램 소켓의 연결은 단방향이고 신뢰할 수 없다. 
@@ -73,7 +73,11 @@ Socket APIs allow applications to interact with the transport or networking laye
   - TCP는 패킷이 오류 없이 순서대로 도착하도록 설계되었다. 
   - 웹서버, 메일서버, 각 클라이언트 애플리케이션 모두는 TCP와 스트림 소켓을 사용한다.
 
-# 웹소켓
+# Web Socket
+
+- 웹 소켓은 양방향 통신을 위한 응용 계층 표준 프로토콜
+- 이 때 전송계층은 TCP
+- Web Socket is designed to work over HTTP ports 443 and 80 to support HTTP proxies and interfaces.
 
 ```
 There are two significant API types when it comes to web communication. 
@@ -84,59 +88,30 @@ The choice would depend on which technology best fits actual client requirements
 - 웹소켓은 HTTP통신과 자주 비교된다
 - 왜냐하면 HTTP통신의 단방향, 실시간 통신에 약하다는 단점을 웹소켓이 해결해주기 때문이다
 
-## What is Web Socket?
-Web Socket is a standard protocol for two-way data transfer between client and server. 
-The Web Socket protocol is built over TCP. Web sockets are mainly used to push messages to a client in real time updates. 
-Web Socket is designed to work over HTTP ports 443 and 80 to support HTTP proxies and interfaces. 
-Web socket protocol enables interaction between web browser and web server with lower overhead than HTTP polling and facilitates real time data transfer to / from the server. 
-Most browsers support the protocol such as Google chrome, Firefox, Microsoft Edge, Internet Explorer, Safari and Opera. Web socket enables streams of messages over TCP.
-
-### History of Web Socket
-Web Socket protocol was first referred to as TCP connection in the HTML5 specification, in June 2008 several discussions led by Michael Carter established the first version of Web socket protocol. In December 2009 Google Chrome was the first browser launched with web socket enabled by default.
-
-
-### How Does Web Socket Work?
-
-It is a stateful protocol which means connection between client and server will keep alive until it terminates by either side party (Client or server). When a connection is initiated between client and server, the client-server makes the handshake and decides to create a new connection and connection is kept alive till terminated by either of them. When connection is established and alive the communication happens over the same connection channel till it gets terminated.  
-
-The new connection is known as Web Socket once the communication link is established and the connection is opened, message exchange takes place in bidirectional mode until connection is alive. If anyone decides to close the connection the connection is closed by both the parties.  
-
 ### Web Socket Pros and Cons
 
 - **장점**
-  - Faster and uses less resources
-  - Streaming of requests and responses
-  - Higher amount of efficiency
-  - Eliminate latency problems
-  - Supports duplex connection
-  - Cross platform compatibility
-  - Replaces long polling
+  - 빠르고, 리소스 소모가 적다
+  - 실시간에 가까운 요청/응답
+  - 양방향 통신
 
 - **단점**
-  - Web browser must be fully HTML5 compliant
+  - 웹 브라우저는 완전히 HTML5 규칙을 따라야함
   - Intermediary / Edge caching not possible
-  - Not suitable if lot of dynamic interaction not required (bit complex)
+  - 단방향에 비해 통신 방식이 조금 더 복잡
  
 
 ### Applications of Web Socket
-- Ideal for real time web applications such as trading site or bitcoin trading , gaming applications and chat applications
+
+- 비트코인 거래소, 게임, 채팅 어플리케이션에 이상적
 
 
 ## What is HTTP?
-HTTP is a communication protocol of the World Wide Web. Http works as a request-response protocol in the client-server computing model.  
-It is the most common version of HTTP used in modern web browsers and servers.  
-HTTP/1.1 version could implement crucial performance optimization and features such as persistent and pipelined connections, chunked transfers, new header fields in request / response body etc.
-
-Two important headers in HTTP are:  
-
-Keep-Alive – header to establish policies for long lived communications between hosts (Per connection timeout period and maximum request count)
-Upgrade – header to switch enhanced protocol connection mode such as HTTP 2.0 or web sockets  
- 
-
-HTTP is a uni-directional protocol where the client sends the request and the server sends the response. 
-Each request is associated with a corresponding response , after the response is sent and connection gets closed each HTTP or HTTPS request establishes a new connection to the server every time and post getting response connection gets terminated itself.  
-
-HTTP is a stateless protocol that runs on TCP which is a connection-oriented protocol and delivery of data packet transfer is guaranteed using the three-way handshake methods and re-transmission of lost packets.  
+- HTTP is a communication protocol of the World Wide Web. 
+- Http works as a request-response protocol in the client-server computing model.  
+- HTTP is a uni-directional protocol where the client sends the request and the server sends the response. 
+- Each request is associated with a corresponding response , after the response is sent and connection gets closed each HTTP or HTTPS request establishes a new connection to the server every time and post getting response connection gets terminated itself.  
+- HTTP is a stateless protocol that runs on TCP which is a connection-oriented protocol 
 
 ### How HTTP works?
 
