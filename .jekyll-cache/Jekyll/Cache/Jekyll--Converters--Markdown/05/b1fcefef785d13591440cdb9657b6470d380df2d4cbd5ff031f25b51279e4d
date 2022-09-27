@@ -1,4 +1,4 @@
-I")<hr />
+I"�2<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -113,15 +113,27 @@
 <h2 id="row-based-vs-columnar">Row Based vs Columnar</h2>
 
 <ul>
-  <li>Row Based DB는 OLTP에 적합
+  <li>Row Based DB
     <ul>
+      <li>OLTP에 적합</li>
+      <li>이 방식은 여러 필드의 값을 고유 식별 키로 구분할 수 있는 레코드 형식에 적합하다</li>
+      <li>일반적으로 특정 사용자의 필드는 여러 개가 함꼐 요청되는 경우가 많다</li>
+      <li>로우형 DBMS는 한 개의 로우씩 접근하는 경우 적합하다</li>
+      <li>한 블록에 모든 컬럼의 값이 들어가게 된다</li>
+      <li>특정 사용자의 모든 정보를 읽어올 때는 효율적, 모든 사용자의 특정 필드를 읽어올 때는 비효율적이다</li>
       <li>record단위로 데이터가 발생할 때 이를 하나의 메모리 블럭에 저장 -&gt; 빠른 쓰기 작업</li>
       <li>단점은 특정 컬럼값이 모두 필요한 경우 모든 메모리 블럭에 접근해야함 -&gt; 느린 분석</li>
       <li>ex. MySQL, PostgreSQL, Oracle 등</li>
     </ul>
   </li>
-  <li>Columnar DB는 OLAP에 적합
+  <li>Columnar DB
     <ul>
+      <li>OLAP에 적합</li>
+      <li>컬럼끼리 디스크에 연속해 저장하는 방식이다</li>
+      <li>컬럼형 DBMS는 데이터의 추세와 평균 등을 계산하는 집계 분석 작업에 적합하다</li>
+      <li>다시 레코드 형태로 재구성하기 위해 컬럼 사이의 관계를 정의하는 메타데이터가 필요하다 (각 값마다 키값을 중복저장해야 한다)</li>
+      <li>최근 몇 년 동안 대용량 데이터에 대한 복잡한 분석 쿼리 사용이 늘어나고 있다</li>
+      <li>결과적으로 파케이(Parquet), ORC와 같은 컬럼 기반 파일 포맷과 쿠두(Kude)와 같은 컬럼형 DBMS가 각광받고 있다</li>
       <li>분석은 특정 컬럼에 있는 모든 값을 이용하는 경우 많음</li>
       <li>같은 컬럼에 있는 값을 하나의 메모리 블럭에 저장하면 Random I/O을 줄일 수 있음</li>
       <li>또 하나의 메모리 블럭에 같은 타입의 값만 저장하면 DB는 그 타입에 맞는 특별한 압축 방식을 제공해 줄 수 있음</li>
@@ -131,6 +143,10 @@
   </li>
   <li>웹 서비스에 붙어있는 DB로는 OLTP를 위한 Row based DB가 적합하고, 이 데이터를 분석팀에게 제공할 때는 Columnar DB에 저장해서 전달해 주는 것이 좋다.</li>
   <li>Columnar는 Scale-Out을 쉽게 만들어준다.</li>
+  <li>대부분의 데이터베이스는 열과 행으로 구성된 테이블에 레코드를 저장한다. 데이터를 디스크에 저장하는 방식에 따라 데이터베이스를 분류할 수 있다. 컬럼 저장 방식은 테이블을 수직 분할하고, 로우 저장 방식은 수평 분할한다.</li>
+  <li>MySQL, PostreSQL 등 대부분의 전통적인 관계형 데이터베이스는 로우형 DBMS이다. MonetDB, C-Store는 컬럼형 오픈소스 데이터베이스이다.</li>
+  <li>같은 컬럼의 여러 값을 한 번에 읽으면 캐시 활용도와 처리 효율성이 높아진다. 같은 자료형끼리 저장하게 되면 압축률도 증가한다. 컬럼형과 로우형 DBMS 중 어떤 것을 사용할지 선택하려면 액세스 패턴을 파악해야 한다. 데이터를 레코드 단위로 접근하고 일반 쿼리와 범위 스캔 요청이 많다면 로우형 DBMS, 여러 로우를 스캔하거나 일부 컬럼에 대한 집계 작업이 많다면 컬럼형 DBMS가 더 적합할 수 있다.</li>
+  <li>HBase와 같은 와이드 컬럼 스토어는 같은 자료형을 가지는 컬럼을 단위로 로우 형식으로 저장한다. 이 방식은 키 단위 액세스 패턴에 적합하다.</li>
 </ul>
 
 <h1 id="주요-데이터베이스-분류">주요 데이터베이스 분류</h1>
@@ -160,8 +176,7 @@
       <tbody>
         <tr>
           <td>[Youtube: Tech Dummies Narendra L, Learn System design : Distributed datastores</td>
-          <td>RDBMS scaling problems</td>
-          <td>CAP theorem](https://www.youtube.com/watch?v=l9JSK9OBzA4){:target=”_blank”}</td>
+          <td>RDBMS scaling problems, CAP theorem](https://www.youtube.com/watch?v=l9JSK9OBzA4){:target=”_blank”}</td>
         </tr>
       </tbody>
     </table>

@@ -27,11 +27,10 @@ tags: Network
 ## Use Cases
 There are several good reasons and common use cases for IPC:
 
-- **Sharing information/data** – Share data between processes to synchronize different applications
-- **Computational Speedups** – Sending data off site for processing
-- **Modularity** – Google Chrome separates each tab into a separate process to help avoid crashes, as well as security.
-- **Development** – Often it is easier to have two teams build separate programs. By building them with IPC in mind you can essentially “plugin” to any programs which need similar functionality without any recompiling
-- **Security** – It is often useful to separate processes to ensure system security. Each process has it’s own memory and if they communicate as opposed to sharing memory the process will be modularized and possibly more secure.
+- **Sharing information/data**: 프로세스간 데이터 동기화
+- **Computational Speedups**: 데이터 처리를 다른 쪽에 넘김
+- **Modularity**: 같은 응용 프로그램을 여러 프로세스로 띄울 때 프로세스간 데이터 공유 (ex. 크롬 브라우저의 탭)
+- **Development**: 하나의 서비스안에 있는 여러 어플리케이션을 독립적으로 개발하고, 필요한 데이터를 IPC 통신을 통해 공유
 
 ## 공유 메모리
 
