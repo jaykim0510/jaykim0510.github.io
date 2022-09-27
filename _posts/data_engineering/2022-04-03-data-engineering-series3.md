@@ -18,12 +18,14 @@ tags: Data_Engineering
 ---
 # ELK Stack
 
+
+
 ![](/images/elastic_1.png)
 
-- **Elasticsearch**: a distributed search engine with highly refined analytics capabilities
-- **Logstash**: a data-processing pipeline that collects data and delivers it to Elasticsearch
-- **Kibana**: a visualization platform built expressly for Elasticsearch
-- **Beats**: a collection of open source log shippers that act as agents installed on the different servers in your environment for collecting logs or metrics
+- **Elasticsearch**: Lucene 기반의 전문 검색을 지원하는 분산 검색 엔진
+- **Logstash**: 데이터를 추출하고 전처리한 후 엘라스틱서치로 전달하는 파이프라인
+- **Kibana**: 엘라스틱서치에 저장된 데이터를 시각화 하는 도구
+- **Beats**: 단일 목적의 데이터 수집기 무료 오픈 소스 플랫폼. 수백 수천 개의 장비와 시스템으로부터 Logstash나 Elasticsearch에 데이터를 전송
 
 Together, these components form a comprehensive, tightly integrated, easily scalable search solution for businesses of all sizes.  
 
@@ -42,52 +44,36 @@ Together, these components form a comprehensive, tightly integrated, easily scal
 - 최근 마이크로서비스 형태의 패턴으로 서비스가 개발됨에 따라 중앙화된 로깅 시스템이 필요해짐
 - ELK는 다양한 소스, 다양한 포맷, 검색엔진, 분석 그리고 시각화까지 중앙화된 로깅 시스템에 필요한 많은 기능을 갖추고 있음
 
-**Why Log Analysis?**  
-
-- In cloud-based environment infrastructures, performance, and isolation is very important. The performance of virtual machines in the cloud may vary based on the specific loads, environments, and number of active users in the system. Therefore, reliability and node failure can become a significant issue
-- Log management platform can monitor all above-given issues as well as process operating system logs, NGINX, IIS server log for web traffic analysis, application logs, and logs on AWS (Amazon web services)
-- Log management helps DevOps engineers, system admin to make better business decisions. Hence, log analysis via Elastic Stack or similar tools is important
+- 클라우드 기반 서비스에서는 각 노드에서의 작업량, 환경, 사용자 수에 따라 성능이 상이함
+- 어플리케이션마다 발생할 수 있는 장애가 다름
 
 ## Why ELK
 
-The Elastic Stack meets the needs of growing businesses with an efficient, integrated toolset designed to deliver actionable real-time insights from large sets of search data. Its highly active community and years of successful implementations offer an unmatched combination of maturity and future-proof development.  
-
-There are scores of reasons to consider the Elastic Stack. Here are four of the most important.  
-
-- Enterprise Search
-    - Empower users to search for everything from anywhere. Elastic can unify your content platforms into a highly personalized and relevant search experience. By unifying content platforms at the search level, the Elastic Stack empowers users to search across enterprise systems and data silos, giving them a comprehensive yet highly personalized search experience.
-- Observability
-    - The Elastic stack brings real-time metrics, logs, and APM traces into a single easily consulted view. Companies can spot opportunities as they arise and challenges as they begin to develop, allowing for a quick and profitable response.
-- Scalability
-    - Elastic deploys at scale, regardless of a company’s technical infrastructure. Public and private cloud implementations, bare-metal or containerized, even as a SaaS solution, Elastic is built to work with any company’s systems and to adapt as companies grow.
-- Security
-    - On top of the platform’s internal security (index encryption, field-level security on documents) the SIEM app collects security information across the enterprise and provides richly detailed dashboards that allow close scrutiny of security operations.
+- ELK는 비즈니스가 성장하는 규모에 맞춰 효율적으로 통합된 실시간 분석 시스템을 구축하도록 하는 도구 모음
+- 오랜시간 커뮤니티에서 활발하게 사용되어 왔고, 많은 성공 사례를 가짐
 
 # Elasticsearch
 
-Elasticsearch is a NoSQL database. It is based on Lucene search engine, and it is built with RESTful APIS. It offers simple deployment, maximum reliability, and easy management. It also offers advanced queries to perform detail analysis and stores all the data centrally. It is helpful for executing a quick search of the documents.
-
-Elasticsearch also allows you to store, search and analyze big volume of data. It is mostly used as the underlying engine to powers applications that completed search requirements. It has been adopted in search engine platforms for modern web and mobile applications. Apart from a quick search, the tool also offers complex analytics and many advanced features.
+- NoSQL 데이터베이스
+- 루씬(Lucene) 기반의 검색 엔진 -> 역색인을 지원하는 검색 엔진
+- RESTful API를 통해 쿼리 가능
+- 간단하게 검색 서비스 배포 가능
+- 샤딩 기반의 분산 저장 -> Scale-Out
 
 ## Features of Elastic search:
 
-- Open source search server is written using Java
-- Used to index any kind of heterogeneous data
-- Has REST API web-interface with JSON output
-- Full-Text Search
-- Near Real Time (NRT) search
-- Sharded, replicated searchable, JSON document store
-- Schema-free, REST & JSON based distributed document store
-- Multi-language & Geolocation support
+- Java 언어로 개발
+- REST API를 통해 접근, 쿼리 가능
+- JSON 형태의 아웃풋 제공
+- 전문 검색 엔진 서비스
+- 실시간에 가까운 검색 속도 제공
 
 ## Advantages of Elasticsearch
 
-- Store schema-less data and also creates a schema for your data
-- Manipulate your data record by record with the help of Multi-document APIs
-- Perform filtering and querying your data for insights
-- Based on Apache Lucene and provides RESTful API
+- 스키마 제약 없이 데이터를 저장할 수도 있고, 필요한 경우 스키마를 설계한 후 그에 맞게 저장할 수도 있음
+- 데이터에서 인사이트를 얻기 위해 필터링, 쿼리 기능을 제공
+- RESTful API 제공
 - Provides horizontal scalability, reliability, and multitenant capability for real time use of indexing to make it faster search
-- Helps you to scale vertically and horizontally
 
 # Logstash
 
