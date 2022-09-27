@@ -18,6 +18,8 @@ tags: Data_Engineering
 ---
 # ELK Stack
 
+![](/images/elastic_1.png)
+
 - **Elasticsearch**: a distributed search engine with highly refined analytics capabilities
 - **Logstash**: a data-processing pipeline that collects data and delivers it to Elasticsearch
 - **Kibana**: a visualization platform built expressly for Elasticsearch
