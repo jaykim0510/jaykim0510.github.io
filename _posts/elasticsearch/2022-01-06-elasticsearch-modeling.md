@@ -3,7 +3,8 @@ layout: post
 title:  'ElasticSearch Series [Part3]: ElasticSearch Modeling'
 description: 엘라스틱서치에서 문서(데이터)를 어떤 형태로 색인할 것인지 설정하는 것을 모델링이라고 합니다. 엘라스틱서치에서 모델링할 때에 중요한 요소는 다음과 같습니다.
 date:   2022-01-06 15:01:35 +0300
-image:  '/images/elastic_logo.png'
+image:  '/images/es_logo.png'
+logo_image:  '/images/elastic_logo.png'
 categories: DE
 tags: Elasticsearch
 ---
