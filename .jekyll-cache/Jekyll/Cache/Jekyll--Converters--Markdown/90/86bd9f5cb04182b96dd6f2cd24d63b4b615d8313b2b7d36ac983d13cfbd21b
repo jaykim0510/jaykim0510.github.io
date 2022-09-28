@@ -1,0 +1,263 @@
+I"�S<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#spring-web-프로젝트-시작하기" id="markdown-toc-spring-web-프로젝트-시작하기">Spring Web 프로젝트 시작하기</a></li>
+  <li><a href="#rest-api" id="markdown-toc-rest-api">REST API</a>    <ul>
+      <li><a href="#restcontroller" id="markdown-toc-restcontroller">@RestController</a></li>
+      <li><a href="#getmapping" id="markdown-toc-getmapping">@GetMapping</a></li>
+      <li><a href="#requestmapping" id="markdown-toc-requestmapping">@RequestMapping</a></li>
+      <li><a href="#pathvariable" id="markdown-toc-pathvariable">@PathVariable</a></li>
+      <li><a href="#requestparam" id="markdown-toc-requestparam">@RequestParam</a></li>
+      <li><a href="#get-dto" id="markdown-toc-get-dto">GET dto</a></li>
+      <li><a href="#requestbody" id="markdown-toc-requestbody">@RequestBody</a></li>
+      <li><a href="#post-dto" id="markdown-toc-post-dto">POST dto</a></li>
+      <li><a href="#jsonproperty" id="markdown-toc-jsonproperty">@JsonProperty</a></li>
+    </ul>
+  </li>
+  <li><a href="#응답-메세지-만들기" id="markdown-toc-응답-메세지-만들기">응답 메세지 만들기</a>    <ul>
+      <li><a href="#responseentity" id="markdown-toc-responseentity">ResponseEntity</a></li>
+      <li><a href="#jsoninclude" id="markdown-toc-jsoninclude">@JsonInclude</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="spring-web-프로젝트-시작하기">Spring Web 프로젝트 시작하기</h1>
+
+<p><img src="/images/spring_api_1.png" alt="" />
+<img src="/images/spring_api_2.png" alt="" />
+<img src="/images/spring_api_3.png" alt="" />
+<img src="/images/spring_api_4.png" alt="" />
+<img src="/images/spring_api_5.png" alt="" />
+<img src="/images/spring_api_6.png" alt="" />
+<img src="/images/spring_api_7.png" alt="" /></p>
+
+<h1 id="rest-api">REST API</h1>
+
+<p><img src="/images/spring_api.png" alt="" /></p>
+
+<h2 id="restcontroller">@RestController</h2>
+
+<ul>
+  <li>REST API 처리하는 컨트롤러로 등록</li>
+</ul>
+
+<p><img src="/images/spring_api_8.png" alt="" /></p>
+
+<h2 id="getmapping">@GetMapping</h2>
+
+<p><img src="/images/spring_api_9.png" alt="" /></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">"/api"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyGetController</span> <span class="o">{</span>
+
+    <span class="nd">@GetMapping</span><span class="o">(</span><span class="n">path</span><span class="o">=</span><span class="s">"/num1"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get1</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"Hello this is num1 GET API"</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/images/spring_api_10.png" alt="" /></p>
+
+<h2 id="requestmapping">@RequestMapping</h2>
+
+<ul>
+  <li>URI 를 지정해주는 어노테이션</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num2"</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="nc">RequestMethod</span><span class="o">.</span><span class="na">GET</span><span class="o">)</span> <span class="c1">// method 미지정시 get, post, delete 모두 매핑</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get2</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"Hello this is num2 GET API"</span><span class="o">;</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="pathvariable">@PathVariable</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">@GetMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num3/{id}"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span>  <span class="nf">get3</span><span class="o">(</span><span class="nd">@PathVariable</span> <span class="nc">Integer</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">"My id is"</span> <span class="o">+</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/images/spring_api_11.png" alt="" /></p>
+
+<h2 id="requestparam">@RequestParam</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">@GetMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num4"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get4</span><span class="o">(</span><span class="nd">@RequestParam</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">queryParam</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="nc">StringBuilder</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+
+        <span class="n">queryParam</span><span class="o">.</span><span class="na">entrySet</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span><span class="n">entry</span> <span class="o">-&gt;</span> <span class="o">{</span>
+
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">entry</span><span class="o">.</span><span class="na">getKey</span><span class="o">()</span> <span class="o">+</span> <span class="s">" = "</span> <span class="o">+</span> <span class="n">entry</span><span class="o">.</span><span class="na">getValue</span><span class="o">()</span> <span class="o">+</span> <span class="s">"\n"</span><span class="o">);</span>
+        <span class="o">});</span>
+
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/images/spring_api_12.png" alt="" /></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">@GetMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num5"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get5</span><span class="o">(</span>
+            <span class="nd">@RequestParam</span> <span class="nc">String</span> <span class="n">name</span><span class="o">,</span>
+            <span class="nd">@RequestParam</span> <span class="nc">String</span> <span class="n">address</span><span class="o">,</span>
+            <span class="nd">@RequestParam</span> <span class="nc">Integer</span> <span class="n">age</span>
+    <span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="o">+</span> <span class="s">" "</span> <span class="o">+</span> <span class="n">address</span> <span class="o">+</span> <span class="s">" "</span> <span class="o">+</span> <span class="nc">Integer</span><span class="o">.</span><span class="na">toString</span><span class="o">(</span><span class="n">age</span><span class="o">);</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/images/spring_api_13.png" alt="" /></p>
+
+<h2 id="get-dto">GET dto</h2>
+
+<ul>
+  <li>실무에서 가장 권장하는 방법</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">package</span> <span class="nn">train.myApi.dto</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">lombok.Getter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.Setter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.ToString</span><span class="o">;</span>
+
+<span class="nd">@Getter</span>
+<span class="nd">@Setter</span>
+<span class="nd">@ToString</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserInfo</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">address</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Integer</span> <span class="n">age</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">@GetMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num6"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">get6</span><span class="o">(</span><span class="nc">UserInfo</span> <span class="n">userInfo</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">userInfo</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">" "</span> <span class="o">+</span> <span class="n">userInfo</span><span class="o">.</span><span class="na">getAddress</span><span class="o">()</span> <span class="o">+</span> <span class="s">" "</span> <span class="o">+</span> <span class="n">userInfo</span><span class="o">.</span><span class="na">getAge</span><span class="o">().</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="requestbody">@RequestBody</h2>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/api/post"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyPostController</span> <span class="o">{</span>
+
+    <span class="nd">@PostMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num1"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">num1</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">requestData</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">requestData</span><span class="o">.</span><span class="na">entrySet</span><span class="o">().</span><span class="na">forEach</span><span class="o">(</span><span class="n">stringObjectEntry</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"stringObjectEntry.getKey() = "</span> <span class="o">+</span> <span class="n">stringObjectEntry</span><span class="o">.</span><span class="na">getKey</span><span class="o">());</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"stringObjectEntry.getValue() = "</span> <span class="o">+</span> <span class="n">stringObjectEntry</span><span class="o">.</span><span class="na">getValue</span><span class="o">());</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="post-dto">POST dto</h2>
+
+<ul>
+  <li>POST에서 <code class="language-plaintext highlighter-rouge">@RequestBody</code> 는 dto 쓰더라도 붙여줘야 한다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">@PostMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num1"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">num1</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">UserInfo</span> <span class="n">requestData</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">requestData</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">requestData</span><span class="o">.</span><span class="na">getAddress</span><span class="o">());</span>
+        <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">requestData</span><span class="o">.</span><span class="na">getAge</span><span class="o">().</span><span class="na">toString</span><span class="o">());</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="jsonproperty">@JsonProperty</h2>
+
+<ul>
+  <li>dto 에서 정의한 변수가 스네이크 케이스(ex. phone_number)가 아닌 다른 방식으로 작성되었을 때 <code class="language-plaintext highlighter-rouge">JsonProperty를</code> 붙여준다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.fasterxml.jackson.annotation.JsonProperty</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.Getter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.Setter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.ToString</span><span class="o">;</span>
+
+<span class="nd">@Getter</span>
+<span class="nd">@Setter</span>
+<span class="nd">@ToString</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserInfo</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">address</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Integer</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"phone_number"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">phoneNumber</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h1 id="응답-메세지-만들기">응답 메세지 만들기</h1>
+
+<h2 id="responseentity">ResponseEntity</h2>
+
+<p><img src="/images/spring_api_14.png" alt="" /></p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/api/post"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyPostController</span> <span class="o">{</span>
+
+    <span class="nd">@PostMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num2"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">UserInfo</span><span class="o">&gt;</span> <span class="nf">num2</span><span class="o">(</span><span class="nd">@RequestBody</span> <span class="nc">UserInfo</span> <span class="n">requestData</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">status</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">CREATED</span><span class="o">).</span><span class="na">body</span><span class="o">(</span><span class="n">requestData</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/images/spring_api_15.png" alt="" /></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">body()</code>에 JSON 안넣어도 자동으로 만들어줌</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">@GetMapping</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/num7"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">ResponseEntity</span><span class="o">&lt;</span><span class="nc">UserInfo</span><span class="o">&gt;</span> <span class="nf">num7</span><span class="o">(</span><span class="nc">UserInfo</span> <span class="n">userInfo</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nc">ResponseEntity</span><span class="o">.</span><span class="na">status</span><span class="o">(</span><span class="nc">HttpStatus</span><span class="o">.</span><span class="na">OK</span><span class="o">).</span><span class="na">body</span><span class="o">(</span><span class="n">userInfo</span><span class="o">);</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/images/spring_api_16.png" alt="" /></p>
+
+<h2 id="jsoninclude">@JsonInclude</h2>
+
+<ul>
+  <li>null값은 제외하고 응답 메세지에 내려줄 수 있다</li>
+</ul>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">com.fasterxml.jackson.annotation.JsonInclude</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.fasterxml.jackson.annotation.JsonProperty</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.Getter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.Setter</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.ToString</span><span class="o">;</span>
+
+<span class="nd">@Getter</span>
+<span class="nd">@Setter</span>
+<span class="nd">@ToString</span>
+<span class="nd">@JsonInclude</span><span class="o">(</span><span class="nc">JsonInclude</span><span class="o">.</span><span class="na">Include</span><span class="o">.</span><span class="na">NON_NULL</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserInfo</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">address</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Integer</span> <span class="n">age</span><span class="o">;</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"phone_number"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="n">phoneNumber</span><span class="o">;</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"OTP"</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="nc">String</span> <span class="no">OTP</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/images/spring_api_17.png" alt="" /></p>
+
+<p><img src="/images/spring_api_18.png" alt="" /></p>
+:ET

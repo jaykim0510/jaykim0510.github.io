@@ -101,6 +101,8 @@ MyView view = controller.process(request, response); view.render(request, respon
 
 # Spring MVC
 
+![](/images/spring_mvc.png)
+
 - 스프링 MVC도 프론트 컨트롤러 패턴으로 구현되어 있다.
 - 스프링 MVC의 프론트 컨트롤러가 바로 디스패처 서블릿(`DispatcherServlet`)이다. 
 - 그리고 이 디스패처 서블릿이 바로 스프링 MVC의 핵심이다. 
@@ -132,6 +134,3 @@ MyView view = controller.process(request, response); view.render(request, respon
 - 핸들러 어댑터: org.springframework.web.servlet.HandlerAdapter 
 - 뷰 리졸버: org.springframework.web.servlet.ViewResolver
 - 뷰: org.springframework.web.servlet.View 
-
-
-![](/images/spring_mvc.png)
