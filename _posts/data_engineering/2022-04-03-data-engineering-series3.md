@@ -133,6 +133,10 @@ In Kibana there are different methods for performing searches on your data.
 - Allows sharing of snapshots of the logs searched through
 - Permits saving the dashboard and managing multiple dashboards
 
+# Beats
+
+![](/images/beats_1.png)
+
 # Advantages and Disadvantages of ELK stack
 
 ## Advantages

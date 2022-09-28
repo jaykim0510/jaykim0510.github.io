@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part28]: 데이터 파이프라인과 장애'
 description: 
 date:   2022-09-06 15:01:35 +0300
-image:  '/images/data_engineering_logo.png'
+image:  '/images/all_for_data_engineer.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering
@@ -16,6 +16,10 @@ tags: Data_Engineering
 {:toc}
 
 ---
+
+# 데이터 파이프라인 구축을 위한 개략도
+
+![](/images/all_for_data_engineer.png)
 
 # 데이터 파이프라인의 안정성을 높이려면
 
