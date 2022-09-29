@@ -3,7 +3,7 @@ layout: post
 title:  'Docker란 무엇인가?'
 description: Docker는 컨테이너 기술을 이용해 개개인의 인프라 환경에 상관없이 모든 애플리케이션을 독립적으로 배포, 실행 가능하도록 해줍니다.
 date:   2022-01-22 15:01:35 +0300
-image:  '/images/docker_3.svg'
+image:  '/images/docker_desktop.png'
 logo_image:  '/images/docker_logo.png'
 categories: devops
 tags: Docker
@@ -17,6 +17,8 @@ tags: Docker
 
 ---
 # 도커 소개  
+
+![](/images/docker_desktop.png)
 
 **Docker는 컨테이너 기술을 이용해 개개인의 인프라 환경에 상관없이 모든 애플리케이션을 독립적으로 배포, 실행** 가능하도록 해줍니다. 컨테이너 기술은 가상화를 위한 방법 중 하나인데 이에 관한 더 자세한 내용은 추후에 다루어 보도록 하겠습니다.  
 
