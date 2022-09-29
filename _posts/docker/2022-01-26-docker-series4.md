@@ -223,7 +223,46 @@ services:
   db:
     image: postgres
 ```
-- **command**
+
+- **deploy**  
+
+  - 배포, 실행과 관련된 설정을 명시합니다.  
+  - `resources` 옵션을 제외하고는 docker-compose up 과 같은 명령어에서는 실행 안됨
+  - (swarm으로 실행할 때만 동작함)
+
+```yaml
+version: "3.9"
+services:
+  redis:
+    image: redis:alpine
+    deploy:
+      replicas: 6
+      placement:
+        max_replicas_per_node: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+```
+
+```yml
+version: "3.9"
+services:
+  redis:
+    image: redis:alpine
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+        reservations:
+          cpus: '0.25'
+          memory: 20M
+```
+
+- **command**  
+
 기본 커맨드 명령어를 오버라이딩합니다.  
 
 ```yaml
