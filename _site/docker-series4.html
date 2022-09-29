@@ -708,10 +708,53 @@ IP 주소를 표기하여 해당 IP 주소의 트래픽만 허용할 수도 있�
   <span class="na">db</span><span class="pi">:</span>
     <span class="na">image</span><span class="pi">:</span> <span class="s">postgres</span>
 </code></pre></div></div>
+
 <ul>
-  <li><strong>command</strong>
-기본 커맨드 명령어를 오버라이딩합니다.</li>
+  <li>
+    <p><strong>deploy</strong></p>
+
+    <ul>
+      <li>배포, 실행과 관련된 설정을 명시합니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">resources</code> 옵션을 제외하고는 docker-compose up 과 같은 명령어에서는 실행 안됨</li>
+      <li>(swarm으로 실행할 때만 동작함)</li>
+    </ul>
+  </li>
 </ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.9"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redis:alpine</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">replicas</span><span class="pi">:</span> <span class="m">6</span>
+      <span class="na">placement</span><span class="pi">:</span>
+        <span class="na">max_replicas_per_node</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">update_config</span><span class="pi">:</span>
+        <span class="na">parallelism</span><span class="pi">:</span> <span class="m">2</span>
+        <span class="na">delay</span><span class="pi">:</span> <span class="s">10s</span>
+      <span class="na">restart_policy</span><span class="pi">:</span>
+        <span class="na">condition</span><span class="pi">:</span> <span class="s">on-failure</span>
+</code></pre></div></div>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.9"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redis:alpine</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">limits</span><span class="pi">:</span>
+          <span class="na">cpus</span><span class="pi">:</span> <span class="s1">'</span><span class="s">0.50'</span>
+          <span class="na">memory</span><span class="pi">:</span> <span class="s">50M</span>
+        <span class="na">reservations</span><span class="pi">:</span>
+          <span class="na">cpus</span><span class="pi">:</span> <span class="s1">'</span><span class="s">0.25'</span>
+          <span class="na">memory</span><span class="pi">:</span> <span class="s">20M</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>command</strong></li>
+</ul>
+
+<p>기본 커맨드 명령어를 오버라이딩합니다.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">command</span><span class="pi">:</span> <span class="s">bundle exec thin -p </span><span class="m">3000</span>
 
