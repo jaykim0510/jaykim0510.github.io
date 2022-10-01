@@ -16,6 +16,8 @@ tags: Python
 
 ---
 
+![](/images/pytest_logo.png)
+
 이번 글에서는 pytest를 알아보고자 합니다.  
 
 pytest란 무엇인가? 정말 이름 그대로 py(thon)을 test 하는 프레임워크를 의미합니다.  
