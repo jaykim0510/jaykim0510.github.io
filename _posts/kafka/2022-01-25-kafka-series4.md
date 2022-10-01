@@ -310,20 +310,27 @@ A Leader and a Follower of a single partition are never in a single broker. It s
 
 Apache Kafka is a commit-log system. The records are appended at the end of each Partition, and each Partition is also split into segments. Segments help delete older records through Compaction, improve performance, and much more.  
 
+(아파치 카프카는 커밋-로그 시스템이다. 레코드는 파티션의 끝에 append되고, 파티션의 세그먼트 파일로 분리되어 저장된다. 세그먼트 파일을 통해 카프카는 오래된 레코드를 관리할 수 있다.)  
+
 Kafka allows us to optimize the log-related configurations, we can control the rolling of segments, log retention, etc. **These configurations determine how long the record will be stored** and we’ll see how it impacts the broker's performance, especially when the cleanup policy is set to Delete.  
+
+(카프카에는 로그 저장/삭제와 관련된 설정을 통해 로그를 얼마나 오랫동안 저장하고 있을지 설정할 수 있다)  
 
 For better performance and maintainability, multiple segments get created, and rather than reading from one huge Partition, Consumers can now read faster from a smaller segment file. A directory with the partition name gets created and maintains all the segments for that partition as various files.  
 
 ![](/images/kafka_81.png)
 
-The active segment is the only file available for reading and writing while consumers can use other log segments (non-active) to read data. When the active segment becomes full (configured by `log.segment.bytes`, default 1 GB) or the configured time (`log.roll.hours` or `log.roll.ms`, default 7 days) passes, the segment gets rolled. This means that the **active segment gets closed and re-opens with read-only mode and a new segment file** (active segment) will be created in read-write mode.
+The active segment is the only file available for reading and writing while consumers can use other log segments (non-active) to read data. When the active segment becomes full (configured by `log.segment.bytes`, default 1 GB) or the configured time (`log.roll.hours` or `log.roll.ms`, default 7 days) passes, the segment gets rolled. This means that the **active segment gets closed and re-opens with read-only mode and a new segment file** (active segment) will be created in read-write mode.  
+
+(세그먼트 파일은 보통 읽기만 가능하고, active인 세그먼트 파일에만 쓰는 것도 가능하다. active 세그먼트 파일은 log.segment.bytes 의 크기를 초과하거나, log.roll.hours 시간을 초과하는 경우 활성화가 종료되고, 새로운 active 세그먼트 파일을 생성한다.)  
 
 ## Role of Indexing within the Partition
 Indexing helps consumers to read data starting from any specific offset or using any time range. As mentioned previously, the `.index` file contains an index that maps the logical offset to the byte offset of the record within the `.log` file. **You might expect that this mapping is available for each record, but it doesn’t work this way.**  
 
 **How these entries are added inside the index file is defined by the `log.index.interval.bytes` parameter, which is 4096 bytes by default.** This means that after every 4096 bytes added to the `.log` file, an entry gets added to the `.index` file. Suppose the producer is sending records of 100 bytes each to a Kafka topic. In this case, a new index entry will be added to the `.index` file after every 41 records (41*100 = 4100 bytes) appended to the log file.  
 
-(모든 레코드가 인덱싱되기는 하는데, 레코드 한 개 넣을때마다 인덱싱되는 것은 아니고 `.log` 파일 하나가 다 차고나면 해당 `.log` 파일의 레코드를 인덱싱해서 `.index` 파일을 만든다)  
+(`log.index.interval.bytes` 크기만큼의 레코드가 보내진 후 다음 레코드의 메모리 주소가 인덱싱 된다)  
+(컨슈머는 먼저 `.index` 파일의 인덱싱 정보를 통해 읽어들일 메모리의 처음 위치를 선택한다)  
 
 ![](/images/kafka_82.png)
 
