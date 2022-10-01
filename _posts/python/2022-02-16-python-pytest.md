@@ -138,7 +138,7 @@ def test_multiply(calculator):
     assert calculator.multiply(5, 6) == 30
 ```
 
-보시다시피, 먼저 @pytest.fixture를 통해 fixture를 선언합니다. 그리고 fixture function을 정의할 수 있습니다.
+보시다시피, 먼저 `@pytest.fixture`를 통해 fixture를 선언합니다. 그리고 fixture function을 정의할 수 있습니다.
 이렇게 정의된 fixture function를 parameter로 사용하여 테스트를 위한 클래스를 가져올 수 있는 것입니다. 이렇게 되면 중복코드는 물론이고, 계속해서 필요한 모듈, 클래스가 있을 때마다 선언을 하기보다 간단히 parameter를 통해 가져올 수 있습니다.  
 
 이렇게 보니, 앞서 정의된 test fixture에 대한 정의가 와닿지 않나요?  
@@ -167,6 +167,9 @@ tests/
 ```py
 # conftest.py
 import pytest
+
+import sys
+sys.path.append('/Users/peter/algo_folder') # src 폴더가 tests 밖에 있기 때문에, 그냥 이름으로 import 안됨
 from src.calculator import Calculator
 
 @pytest.fixture
@@ -195,6 +198,8 @@ def test_multiply(calculator):
     assert calculator.multiply(5, 6) == 30
     assert calculator.multiply(9, 3) == 27
 ```
+
+![](/images/pytest_3.png)
 
 # 참고 
 - [KimDoubleB, [pytest] python 코드를 테스트 해봅시다](https://binux.tistory.com/47){:target="_blank"}
