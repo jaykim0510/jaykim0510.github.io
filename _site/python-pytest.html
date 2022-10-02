@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kubernetes Series [Part5]: Kubernetes networking for developers [번역]</title>
-  <meta name='description' content='컨테이너 기반의 배포환경에서 개발자들이 알아두면 좋은 네트워크 지식에 대해 알아보도록 하겠습니다.'>
+  <title>Python Advanced Series [Part3]: 파이썬을 위한 테스트 도구(feat. pytest)</title>
+  <meta name='description' content='메모리를 효율적으로 사용하는 프로그램/어플리케이션을 만들기 위해서는 메모리 할당에 대해 이해해야합니다.'>
 
-  <link rel="canonical" href="http://localhost:4000/kubernetes-series5">
+  <link rel="canonical" href="http://localhost:4000/python-pytest">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kubernetes Series [Part5]: Kubernetes networking for developers [번역] – Code Museum">
-  <meta name="twitter:description" content="컨테이너 기반의 배포환경에서 개발자들이 알아두면 좋은 네트워크 지식에 대해 알아보도록 하겠습니다.">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/kube_35.png">
+  <meta name="twitter:title" content="Python Advanced Series [Part3]: 파이썬을 위한 테스트 도구(feat. pytest) – Code Museum">
+  <meta name="twitter:description" content="메모리를 효율적으로 사용하는 프로그램/어플리케이션을 만들기 위해서는 메모리 할당에 대해 이해해야합니다.">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/python_advanced_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kubernetes Series [Part5]: Kubernetes networking for developers [번역] – Code Museum">
-  <meta property="og:description" content="컨테이너 기반의 배포환경에서 개발자들이 알아두면 좋은 네트워크 지식에 대해 알아보도록 하겠습니다.">
-  <meta property="og:image" content="http://localhost:4000/images/kube_35.png">
+  <meta property="og:title" content="Python Advanced Series [Part3]: 파이썬을 위한 테스트 도구(feat. pytest) – Code Museum">
+  <meta property="og:description" content="메모리를 효율적으로 사용하는 프로그램/어플리케이션을 만들기 위해서는 메모리 할당에 대해 이해해야합니다.">
+  <meta property="og:image" content="http://localhost:4000/images/python_advanced_logo.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -377,7 +377,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part5]: Kubernetes networking for developers [번역]">
+          <img class="lazy" data-src="/images/python_advanced_logo.png" alt="Python Advanced Series [Part3]: 파이썬을 위한 테스트 도구(feat. pytest)">
         </div>
       </div>
       
@@ -390,15 +390,15 @@
             
               <div class="post__tags">
                 
-                  <a href="/Kubernetes" class="post__tag">#Kubernetes</a>
+                  <a href="/Python" class="post__tag">#Python</a>
                 
                 
-                  <a href="/devops" class="post__tag">#devops</a>
+                  <a href="/programming_language" class="post__tag">#programming_language</a>
                 
               </div>
             
  
-          <h1 class="post__title">Kubernetes Series [Part5]: Kubernetes networking for developers [번역]</h1>
+          <h1 class="post__title">Python Advanced Series [Part3]: 파이썬을 위한 테스트 도구(feat. pytest)</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -407,7 +407,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-01-23T21:01:35+09:00">23 Jan 2022</time>
+              <time class="post__date" datetime="2022-02-16T21:01:35+09:00">16 Feb 2022</time>
             </div>
           </div>
   
@@ -429,10 +429,6 @@
 
 
   
-
-  
-
-  
   	
   	
   	
@@ -444,10 +440,10 @@
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기</a>
+      <a href="/python-memory_allocation" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Python Advanced Series [Part2]: 파이썬의 메모리 관리(Feat.Garbage Collection)</a>
     
     
-      <a href="/kubernetes-series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part6]: ConfigMap과 Secret<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 
@@ -456,80 +452,202 @@
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#kubernetes-basics" id="markdown-toc-kubernetes-basics">Kubernetes Basics</a></li>
-  <li><a href="#localhost-ip-address-127001" id="markdown-toc-localhost-ip-address-127001">Localhost (IP address 127.0.0.1)</a></li>
-  <li><a href="#pod-network" id="markdown-toc-pod-network">Pod network</a></li>
-  <li><a href="#service-network" id="markdown-toc-service-network">Service network</a></li>
+  <li><a href="#tdd" id="markdown-toc-tdd">TDD</a></li>
+  <li><a href="#pytest" id="markdown-toc-pytest">pytest</a>    <ul>
+      <li><a href="#pytest-맛보기" id="markdown-toc-pytest-맛보기">pytest 맛보기</a></li>
+      <li><a href="#pytest-디렉토리-구조" id="markdown-toc-pytest-디렉토리-구조">pytest 디렉토리 구조</a></li>
+      <li><a href="#pytest-fixtures" id="markdown-toc-pytest-fixtures">pytest fixtures</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<p><a href="https://developer.ibm.com/articles/kubernetes-networking-what-you-need-to-know/" target="_blank">원문: Kubernetes networking for developers - IBM developers</a></p>
+<p><img src="/images/pytest_logo.png" alt="" /></p>
 
-<p>불과 몇 년 전까지만 하더라도 개발자들이 네트워크에 대해 알아야 할 지식은 그렇게 많지 않았습니다. 그들은 그들의 코드를 작성하고 로컬에서 동작하는지 확인한 후 테스트나 서비스를 위한 서버에 배포할 수 있었으면 됐었습니다.</p>
+<p>이번 글에서는 pytest를 알아보고자 합니다.</p>
 
-<p>그러나 시간이 지나면서 컨테이너 기술이 점점 발전되어가며 이런 추세가 약간 변하기 시작했습니다. 이번 글을 통해 컨테이너 기반의 배포환경에서 개발자들이 알아두면 좋은 네트워크 지식에 대해 알아보도록 하겠습니다.</p>
+<p>pytest란 무엇인가? 정말 이름 그대로 py(thon)을 test 하는 프레임워크를 의미합니다.</p>
 
-<h1 id="kubernetes-basics">Kubernetes Basics</h1>
+<blockquote>
+  <p>pytest is a mature full-featured Python testing tool that helps you write better programs.</p>
+</blockquote>
 
-<p>컨테이너는 한 개의 어플리케이션 또는 프로세스로 이들을 실행시키기 위해 필요한 모든 것들이 포함되어 있습니다. 어플리케이션 관점에서 컨테이너는 마치 서버위에 동작중인 하나의 운영체제처럼 보입니다. 컨테이너는 컨테이너만의 네트워크 인터페이스, 파일 시스템 등 필요한 모든 것들을 갖추고 있습니다.</p>
+<p>Python testing tool로써 좋은 프로그램을 작성하도록 도와준다라, 이걸 이해하기 위해서는 왜 테스트가 존재해야 하는가에 대해 생각할 필요가 있습니다</p>
 
-<p>쿠버네티스는 이러한 컨테이너의 집합으로 컨테이너는 쿠버네티스의 워커 노드 안에서 돌아갑니다. 만약 항상 함께 설치되어야 하는 두 개의 어플리케이션이 있다면 이 두 개의 어플리케이션을 가진 컨테이너 두 개를 하나의 <strong>파드(Pod)</strong>로 정의할 수 있습니다. (파드는 확장가능한 단위로 보통 특정 노드에 장애가 발생할 경우 파드에 문제가 생기는 경우를 대비해, 여러 워커 노드에 파드를 분산 배포합니다.)</p>
+<h1 id="tdd">TDD</h1>
+<p>최근 많이 주목받고 있는 TDD (Test Driven Development)를 아시나요? 짧게 설명드리면 본격적인 개발에 들어가기 전에 테스트 계획 및 코드를 작성하는 것을 의미합니다. 테스트가 개발을 이끌어 나가는 것이 되는 것이죠.</p>
 
-<p><img src="../../images/kube_31.png" alt="" /></p>
+<p>그럼, 왜 TDD 같은 테스트가 우선시 되는 개발이 나오게 되었고, 주목받고 있는 것일까요?</p>
 
-<h1 id="localhost-ip-address-127001">Localhost (IP address 127.0.0.1)</h1>
-<p>같은 파드내에 있는 컨테이너들은 같은 노드 안에서 실행됩니다. 쿠버네티스는 이러한 구조의 장점을 이용해 파드에 <strong>공유되는 네트워크 네임스페이스</strong>를 각각 제공합니다. 네트워크 네임스페이스는 리눅스 커널의 특징 중 하나로 네트워크 자원들을 그룹으로 만들 수 있습니다.</p>
+<p>자, 개발 중 에러 및 오류가 발생했다고 합시다.</p>
 
-<p>이러한 그룹내에서 실행되는 프로세스들은 그룹 안에 정의된 네트워크 리소스만 볼 수 있습니다. 예를 들어, 파드 A는 네트워크 네임스페이스가 A인 네트워크 리소스만 볼 수 있습니다. 이것이 바로 쿠버네티스가 파드들을 각각 독립시킬 수 있는 방법입니다. 예를 들어, 파드 A가 포트 80번으로 리스닝하는 것과 파드 B가 포트 80번으로 리스닝하는 것은 서로 독립되어 있습니다.</p>
+<p>이 상황이 정말 작은 소규모 개발 중에 일어난 것이라면 사실 큰 문제가 되지 않습니다. 개발한 모듈간에 연결성도 적을 뿐 아니라, 코드 양이 방대하지 않을 것이기 때문에 바로 찾아 문제를 해결할 수 있을 것입니다.</p>
 
-<p><img src="../../images/kube_32.png" alt="" /></p>
+<p>하지만 아주 대규모의 개발 상황이라고 가정해봅시다. 수 많은 모듈, 함수간 종속성과 매우 많은 코드 양이 있기 때문에 오류 및 에러를 잡는데 많은 시간과 인력을 투입하게 될 것입니다. 이러한 상황은 비즈니스적으로도 효율적이지 못하겠죠? 당연히 안정적인 프로그램을 개발해 나가는데도 많은 걸림돌이 될 것입니다.</p>
 
-<p>파드 안의 컨테이너들은 같은 네트워크 네임스페이스를 공유하기 때문에 localhost를 통해 서로 통신할 수 있습니다. 그러므로 컨테이너들이 같은 포트 번호로 리스닝하면 트래픽이 컨테이너들에 모두 전송됩니다. 따라서 같은 트래픽을 받기를 원치 않는 다른 역할의 컨테이너들이라면 포트 번호를 서로 다르게 지정해야 합니다.</p>
+<h1 id="pytest">pytest</h1>
 
-<h1 id="pod-network">Pod network</h1>
-<p>파드안의 컨테이너들은 파드 IP를 통해 묶여지고 포트를 통해 구분됩니다. 이러한 점에서 파드는 마치 하나의 가상 서버와 같다고 볼 수 있습니다.</p>
+<p>이러한 문제를 해결하기 위해 TDD. 즉, 테스트 주도 개발이 나오게 된 것입니다. 그리고 Python에서 TDD를 하기 위해 나온 프레임워크가 pytest입니다.</p>
 
-<p>사용되는 IP 주소는 <strong>파드 네트워크</strong>라고 알려진 주소 블록에서 가져온 것입니다. 파드가 새로 기동될 때 마다 쿠버네티스는 파드 네트워크에서 사용 가능한 IP 주소를 가져와 파드에 할당한 후 실행합니다. 파드는 모두 동일한 네트워크에 있으며 이 네트워크를 통해 서로 통신할 수 있습니다. 파드가 통신할 수 있는 대상을 제한할 수 있는 네트워크 정책이 있지만 기본적으로 서로 자유롭게 통신할 수 있습니다.</p>
+<h2 id="pytest-맛보기">pytest 맛보기</h2>
 
-<p><img src="../../images/kube_35.png" alt="" /></p>
-
-<p>파드는 새로 기동될 때마다 파드 네트워크에서 IP주소를 새로 할당받습니다. 반면에 파드안의 컨테이너는 컨테이너가 파드 안에서 다시 기동되더라도 같은 IP주소를 갖게 됩니다.</p>
-
-<p>만약 특정 노드에 장애가 발생해 노드 안에 있던 파드들이 다른 노드 안에서 다시 기동되었다면 파드는 모두 새로운 IP주소를 받게 될겁니다. 만약 우리가 개발하는 상황이 IP 주소에 의존적이라면 이러한 쿠버네티스의 특징은 큰 단점이 될 수 있습니다.</p>
-
-<h1 id="service-network">Service network</h1>
-<p>쿠버네티스에서는 이러한 단점을 해결해주는 리소스를 제공합니다. 쿠버네티스의 <strong>Service 리소스는 파드의 IP주소에 상관 없이 도메인 네임을 통해</strong> 트래픽을 전송하도록 해줍니다.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">web</span>
-  <span class="na">namespace</span><span class="pi">:</span> <span class="s">my-app</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">web-server</span>
-  <span class="na">ports</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">web</span>
-    <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
-    <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
-    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">80</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">.</span>
+├── py_test_1.py
+└── py_test_2.py
 </code></pre></div></div>
 
-<p>위의 서비스 리소스는 서비스 네트워크의 IP 주소로 확인되는 web.my-app.svc.cluster.local DNS 항목을 생성합니다. 할당된 서비스 IP는 서비스 spec.selector와 일치하는 모든 파드에 대한 트래픽 로드 밸런싱을 수행합니다. 위의 리소스 서비스는 metadata.labels.app가 web-server인 모든 파드가 포트 80으로 트래픽을 전송받도록 해줍니다.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># py_test_1.py
+# 테스트를 해보고 싶은 함수
+</span><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
 
-<p><img src="../../images/kube_33.png" alt="" /></p>
+<span class="c1"># 테스트 함수
+</span><span class="k">def</span> <span class="nf">test_answer</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">func</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+</code></pre></div></div>
 
-<p>Service 리소스의 기본 타입은 ClusterIP이며 다음과 같은 종류의 타입들을 제공합니다.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># py_test_2.py
+</span><span class="k">class</span> <span class="nc">TestClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">test_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="s">"Hello, hi"</span>
+        <span class="k">assert</span> <span class="s">"h"</span> <span class="ow">in</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">test_two</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="s">"what"</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">"who"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python <span class="nt">-m</span> pytest py_test_1.py <span class="c"># 특정 파일을 테스트할 때</span>
+</code></pre></div></div>
+
+<p><img src="/images/pytest_1.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python <span class="nt">-m</span> pytest <span class="k">*</span>.py <span class="c"># 테스트 폴더 안의 모든 파일을 테스트할 때</span>
+</code></pre></div></div>
+
+<p><img src="/images/pytest_2.png" alt="" /></p>
+
+<h2 id="pytest-디렉토리-구조">pytest 디렉토리 구조</h2>
+
+<p>지금까지는 Command line에서 pytest 명령어를 통해 테스트를 실행했고, 또한 한 파일에 일반 함수와 테스트 코드들이 공존했습니다.</p>
+
+<p>하지만 실제로 프로젝트에서 활용되는 데 있어서는 테스트 코드를 따로 관리하고, 이에 맞게 끔 구조를 구성해놓는 것이 효율적입니다.</p>
+
+<p>그래서 테스트 코드는 프로젝트 코드들과 다르게 tests 라는 디렉토리를 통해서 관리를 합니다.</p>
+
+<p>전체적으로 디렉토리 트리를 보면 다음과 같습니다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>project/
+    core_code/
+        __init__.py
+        sample_code1.py
+        sample_code2.py
+        sample_code3.py
+    tests/
+        test_sample1.py
+        test_sample2.py
+        test_sample3.py
+</code></pre></div></div>
+
+<h2 id="pytest-fixtures">pytest fixtures</h2>
+
+<p>pytest의 특징중 하나인 fixture는 다음과 같은 의미를 가집니다.</p>
 
 <ul>
-  <li>ClusterIP</li>
-  <li>NodePort</li>
-  <li>LoadBalancer</li>
-  <li>ExternalName</li>
+  <li>시스템의 필수조건을 만족하는 테스팅 프로세스를 설정하는 것 (A software test fixture sets up a system for the software testing process by initializing it, thereby satisfying any preconditions the system may have.)</li>
+  <li>같은 설정의 테스트를 쉽게 반복적으로 수행할 수 있도록 도와주는 것 (The advantage of a test fixture is that it allows for tests to be repeatable since each test is always starting with the same setup. Test fixtures also ease test code design by allowing the developer to separate methods into different functions and reuse each function for other tests.)</li>
 </ul>
 
-<p><img src="../../images/kube_34.png" alt="" /></p>
+<p>간략하게 말하면 수행될 테스팅에 있어 필요한 부분들을 가지고 있는 코드 또는 리소스라고 말할 수 있습니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">src.calculator</span> <span class="kn">import</span> <span class="n">Calculator</span>
+
+<span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">calculator</span><span class="p">():</span>
+    <span class="n">calculator</span> <span class="o">=</span> <span class="n">Calculator</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">calculator</span>
+
+<span class="k">def</span> <span class="nf">test_add</span><span class="p">(</span><span class="n">calculator</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+
+<span class="k">def</span> <span class="nf">test_subtract</span><span class="p">(</span><span class="n">calculator</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">test_multiply</span><span class="p">(</span><span class="n">calculator</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">30</span>
+</code></pre></div></div>
+
+<p>보시다시피, 먼저 <code class="language-plaintext highlighter-rouge">@pytest.fixture</code>를 통해 fixture를 선언합니다. 그리고 fixture function을 정의할 수 있습니다.
+이렇게 정의된 fixture function를 parameter로 사용하여 테스트를 위한 클래스를 가져올 수 있는 것입니다. 이렇게 되면 중복코드는 물론이고, 계속해서 필요한 모듈, 클래스가 있을 때마다 선언을 하기보다 간단히 parameter를 통해 가져올 수 있습니다.</p>
+
+<p>이렇게 보니, 앞서 정의된 test fixture에 대한 정의가 와닿지 않나요?</p>
+
+<p>사실 fixture에 대한 것은 이게 끝이 아닙니다.</p>
+
+<p>‘대규모의 프로젝트인 경우엔 테스트마다 필요한 모듈, 클래스 등 리소스 및 코드들이 달라 필요한 fixture의 양이 매우 많아질 것입니다.</p>
+
+<p>또한, 테스트 코드(py)마다 중복되는 fixture도 있을 겁니다. 예를 들어, A 테스트 코드에서도 계산기 클래스가 필요한데, B 테스트 코드에서도 계산기 클래스가 필요한 경우 말이죠. 지금까지의 경우로 보자면 두 테스트 코드 파일 위에 fixture를 따로 선언한 후 사용했어야 했습니다.</p>
+
+<p>이러한 문제를 해결하기 위해 conftest.py를 사용합니다.
+fixture 코드들은 conftest.py에 선언해두면, 모든 테스트 코드에서는 해당 fixture들을 공유하여 사용할 수 있습니다. 알아서 pytest에서 공유해주는 마법!</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Directory tree</span>
+src/
+  __init__.py
+  calculator.py
+tests/
+  conftest.py
+  test_code1.py
+  test_code2.py
+  test_code3.py
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># conftest.py
+</span><span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">'/Users/peter/algo_folder'</span><span class="p">)</span> <span class="c1"># src 폴더가 tests 밖에 있기 때문에, 그냥 이름으로 import 안됨
+</span><span class="kn">from</span> <span class="nn">src.calculator</span> <span class="kn">import</span> <span class="n">Calculator</span>
+
+<span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">calculator</span><span class="p">():</span>
+    <span class="n">calculator</span> <span class="o">=</span> <span class="n">Calculator</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">calculator</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_code.py
+</span><span class="k">def</span> <span class="nf">test_add</span><span class="p">(</span><span class="n">calculator</span><span class="p">):</span>
+    <span class="s">"""Test functionality of add."""</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span>
+
+<span class="k">def</span> <span class="nf">test_subtract</span><span class="p">(</span><span class="n">calculator</span><span class="p">):</span>
+    <span class="s">"""Test functionality of subtract."""</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span>
+
+<span class="k">def</span> <span class="nf">test_multiply</span><span class="p">(</span><span class="n">calculator</span><span class="p">):</span>
+    <span class="s">"""Test functionality of multiply."""</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="mi">30</span>
+    <span class="k">assert</span> <span class="n">calculator</span><span class="p">.</span><span class="n">multiply</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">27</span>
+</code></pre></div></div>
+
+<p><img src="/images/pytest_3.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://binux.tistory.com/47" target="_blank">KimDoubleB, [pytest] python 코드를 테스트 해봅시다</a></li>
+  <li><a href="https://realpython.com/pytest-python-testing/" target="_blank">Real Python, Effective Python Testing With Pytest</a></li>
+</ul>
 
     </div>
     <div class="post__tags_list">
@@ -760,22 +878,22 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part5]:%20Kubernetes%20networking%20for%20developers%20[%EB%B2%88%EC%97%AD]&url=http://localhost:4000/kubernetes-series5"
+          href="https://twitter.com/intent/tweet?text=Python%20Advanced%20Series%20[Part3]:%20%ED%8C%8C%EC%9D%B4%EC%8D%AC%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EB%8F%84%EA%B5%AC(feat.%20pytest)&url=http://localhost:4000/python-pytest"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/kubernetes-series5"
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/python-pytest"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series5&amp;media=http://localhost:4000/images/kube_35.png&amp;description=Kubernetes%20Series%20[Part5]:%20Kubernetes%20networking%20for%20developers%20[%EB%B2%88%EC%97%AD]"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/python-pytest&amp;media=http://localhost:4000/images/python_advanced_logo.png&amp;description=Python%20Advanced%20Series%20[Part3]:%20%ED%8C%8C%EC%9D%B4%EC%8D%AC%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EB%8F%84%EA%B5%AC(feat.%20pytest)"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series5&title=Kubernetes%20Series%20[Part5]:%20Kubernetes%20networking%20for%20developers%20[%EB%B2%88%EC%97%AD]&summary=%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%20%EA%B8%B0%EB%B0%98%EC%9D%98%20%EB%B0%B0%ED%8F%AC%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%20%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%93%A4%EC%9D%B4%20%EC%95%8C%EC%95%84%EB%91%90%EB%A9%B4%20%EC%A2%8B%EC%9D%80%20%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%EC%A7%80%EC%8B%9D%EC%97%90%20%EB%8C%80%ED%95%B4%20%EC%95%8C%EC%95%84%EB%B3%B4%EB%8F%84%EB%A1%9D%20%ED%95%98%EA%B2%A0%EC%8A%B5%EB%8B%88%EB%8B%A4.&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/python-pytest&title=Python%20Advanced%20Series%20[Part3]:%20%ED%8C%8C%EC%9D%B4%EC%8D%AC%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EB%8F%84%EA%B5%AC(feat.%20pytest)&summary=%EB%A9%94%EB%AA%A8%EB%A6%AC%EB%A5%BC%20%ED%9A%A8%EC%9C%A8%EC%A0%81%EC%9C%BC%EB%A1%9C%20%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8/%EC%96%B4%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%9D%84%20%EB%A7%8C%EB%93%A4%EA%B8%B0%20%EC%9C%84%ED%95%B4%EC%84%9C%EB%8A%94%20%EB%A9%94%EB%AA%A8%EB%A6%AC%20%ED%95%A0%EB%8B%B9%EC%97%90%20%EB%8C%80%ED%95%B4%20%EC%9D%B4%ED%95%B4%ED%95%B4%EC%95%BC%ED%95%A9%EB%8B%88%EB%8B%A4.&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -784,10 +902,6 @@
 <!--첫 번째 문단-->
 
 
-
-  
-
-  
 
   
   	
@@ -801,10 +915,10 @@
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기</a>
+      <a href="/python-memory_allocation" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Python Advanced Series [Part2]: 파이썬의 메모리 관리(Feat.Garbage Collection)</a>
     
     
-      <a href="/kubernetes-series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part6]: ConfigMap과 Secret<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 
@@ -836,7 +950,7 @@
                 
                 
                   
-                    <a href="/devops" class="section__link related-tag">See all<span> devops</span></a>
+                    <a href="/programming_language" class="section__link related-tag">See all<span> programming_language</span></a>
                   
                 
               
@@ -1167,18 +1281,347 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-08T21:01:35+09:00">08 Jul 2022</time>
+      <time class="article__date" datetime="2022-05-18T21:01:35+09:00">18 May 2022</time>
 
       
 
       
-      <a class="article__image" href="/git_series5">
-        <img class="lazy" data-src="/images/git_logo.png" alt="Git Series [Part3]: Git 중급">
+      <a class="article__image" href="/java-series10">
+        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part10]: 자바의 객체지향 프로그래밍(2)">
       </a>
       
 
@@ -1187,7 +1630,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/git_series5">Git Series [Part3]: Git 중급</a>
+        <a href="/java-series10">Java Series [Part10]: 자바의 객체지향 프로그래밍(2)</a>
       </h2>
 
       
@@ -1206,18 +1649,25 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-08T21:01:35+09:00">08 Jul 2022</time>
+      <time class="article__date" datetime="2022-05-17T21:01:35+09:00">17 May 2022</time>
 
       
 
       
-      <a class="article__image" href="/git_series4">
-        <img class="lazy" data-src="/images/git_logo.png" alt="Git Series [Part3]: Github">
+      <a class="article__image" href="/java-series9">
+        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part9]: 자바의 객체지향 프로그래밍(1)">
       </a>
       
 
@@ -1226,7 +1676,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/git_series4">Git Series [Part3]: Github</a>
+        <a href="/java-series9">Java Series [Part9]: 자바의 객체지향 프로그래밍(1)</a>
       </h2>
 
       
@@ -1252,18 +1702,25 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-07T21:01:35+09:00">07 Jul 2022</time>
+      <time class="article__date" datetime="2022-05-16T21:01:35+09:00">16 May 2022</time>
 
       
 
       
-      <a class="article__image" href="/git_series3">
-        <img class="lazy" data-src="/images/git_logo.png" alt="Git Series [Part3]: Git 브랜치">
+      <a class="article__image" href="/java-series8">
+        <img class="lazy" data-src="/images/java_logo.png" alt="Java Series [Part8]: 자바의 애너테이션">
       </a>
       
 
@@ -1272,7 +1729,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/git_series3">Git Series [Part3]: Git 브랜치</a>
+        <a href="/java-series8">Java Series [Part8]: 자바의 애너테이션</a>
       </h2>
 
       

@@ -443,6 +443,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -479,12 +481,18 @@ Table of Contents
       <li><a href="#세그먼테이션-기법" id="markdown-toc-세그먼테이션-기법">세그먼테이션 기법</a></li>
       <li><a href="#세그먼테이션-페이징-혼용-기법" id="markdown-toc-세그먼테이션-페이징-혼용-기법">세그먼테이션-페이징 혼용 기법</a></li>
       <li><a href="#페이지-교체-알고리즘" id="markdown-toc-페이지-교체-알고리즘">페이지 교체 알고리즘</a>        <ul>
-          <li><a href="#fifo" id="markdown-toc-fifo">FIFO</a></li>
-          <li><a href="#lru" id="markdown-toc-lru">LRU</a></li>
-          <li><a href="#lfu" id="markdown-toc-lfu">LFU</a></li>
-          <li><a href="#nur" id="markdown-toc-nur">NUR</a></li>
+          <li><a href="#fifo-페이지-교체" id="markdown-toc-fifo-페이지-교체">FIFO 페이지 교체</a></li>
+          <li><a href="#최적-페이지-교체optimal-page-replacement" id="markdown-toc-최적-페이지-교체optimal-page-replacement">최적 페이지 교체(Optimal Page Replacement)</a></li>
+          <li><a href="#lru-페이지-교체lru-page-replacement" id="markdown-toc-lru-페이지-교체lru-page-replacement">LRU 페이지 교체(LRU Page Replacement)</a></li>
+          <li><a href="#lfu-페이지-교체lfu-page-replacement" id="markdown-toc-lfu-페이지-교체lfu-page-replacement">LFU 페이지 교체(LFU Page Replacement)</a></li>
+          <li><a href="#mfu-페이지-교체mfu-page-replacement" id="markdown-toc-mfu-페이지-교체mfu-page-replacement">MFU 페이지 교체(MFU Page Replacement)</a></li>
         </ul>
       </li>
+    </ul>
+  </li>
+  <li><a href="#캐시의-지역성" id="markdown-toc-캐시의-지역성">캐시의 지역성</a>    <ul>
+      <li><a href="#캐시의-지역성-원리" id="markdown-toc-캐시의-지역성-원리">캐시의 지역성 원리</a></li>
+      <li><a href="#caching-line" id="markdown-toc-caching-line">Caching line</a></li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -587,6 +595,9 @@ Table of Contents
 <p>데이터를 전송하는 각종 버스의 크기(대역폭)도 32bit -&gt; 한 번에 옮겨지는 데이터의 크기는 32bit</p>
 
 <p>CPU의 비트는 메모리 주소 공간의 크기와도 연관이 있다. 32bit CPU의 경우 메모리 주소를 지정하는 레지스터(MAR)의 크기가 32bit이므로 표현할 수 있는 메모리 주소의 범위가 0 ~ 2의 32승 - 1이다. 메모리 공간 하나의 크기가 1Byte이므로 총 크기는 4GB이다. 즉 32bit CPU 컴퓨터는 최대 4GB의 메모리를 가질 수 있다. (64bit CPU는 16,777,216TB)</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>32비트 MAR은 1Byte 크기의 메모리 단위를 2의 32승개 구분할 수 있다 -&gt; 2의 32승 * 1Byte -&gt; 4 * 2의 30승 * 1Byte -&gt; 4 * 1GB -&gt; 4GB
+</code></pre></div></div>
 
 <h2 id="메모리-오버레이">메모리 오버레이</h2>
 
@@ -704,13 +715,116 @@ Table of Contents
 
 <h2 id="페이지-교체-알고리즘">페이지 교체 알고리즘</h2>
 
-<h3 id="fifo">FIFO</h3>
+<h3 id="fifo-페이지-교체">FIFO 페이지 교체</h3>
 
-<h3 id="lru">LRU</h3>
+<p>가장 간단한 페이지 교체 알고리즘으로 FIFO(first-in first-out)의 흐름을 가진다. 즉, 먼저 물리 메모리에 들어온 페이지 순서대로 페이지 교체 시점에 먼저 나가게 된다는 것이다.</p>
 
-<h3 id="lfu">LFU</h3>
+<ul>
+  <li>
+    <p>장점</p>
 
-<h3 id="nur">NUR</h3>
+    <ul>
+      <li>이해하기도 쉽고, 프로그램하기도 쉽다.</li>
+    </ul>
+  </li>
+  <li>
+    <p>단점</p>
+    <ul>
+      <li>오래된 페이지가 항상 불필요하지 않은 정보를 포함하지 않을 수 있다(초기 변수 등)</li>
+      <li>처음부터 활발하게 사용되는 페이지를 교체해서 페이지 부재율을 높이는 부작용을 초래할 수 있다.</li>
+      <li><code class="language-plaintext highlighter-rouge">Belady의 모순</code>: 페이지를 저장할 수 있는 페이지 프레임의 갯수를 늘려도 되려 페이지 부재가 더 많이 발생하는 모순이 존재한다.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="최적-페이지-교체optimal-page-replacement">최적 페이지 교체(Optimal Page Replacement)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Belady의 모순</code>을 확인한 이후 최적 교체 알고리즘에 대한 탐구가 진행되었고, 모든 알고리즘보다 낮은 페이지 부재율을 보이며 <code class="language-plaintext highlighter-rouge">Belady의 모순</code>이 발생하지 않는다. 이 알고리즘의 핵심은 <code class="language-plaintext highlighter-rouge">앞으로 가장 오랫동안 사용되지 않을 페이지를 찾아 교체</code>하는 것이다.
+주로 비교 연구 목적을 위해 사용한다.</p>
+
+<ul>
+  <li>
+    <p>장점</p>
+
+    <ul>
+      <li>알고리즘 중 가장 낮은 페이지 부재율을 보장한다.</li>
+    </ul>
+  </li>
+  <li>
+    <p>단점</p>
+    <ul>
+      <li>구현의 어려움이 있다. 모든 프로세스의 메모리 참조의 계획을 미리 파악할 방법이 없기 때문이다.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="lru-페이지-교체lru-page-replacement">LRU 페이지 교체(LRU Page Replacement)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">LRU: Least-Recently-Used</code><br />
+최적 알고리즘의 근사 알고리즘으로, 가장 오랫동안 사용되지 않은 페이지를 선택하여 교체한다.</p>
+
+<ul>
+  <li>특징
+    <ul>
+      <li>대체적으로 <code class="language-plaintext highlighter-rouge">FIFO 알고리즘</code>보다 우수하고, <code class="language-plaintext highlighter-rouge">OPT알고리즘</code>보다는 그렇지 못한 모습을 보인다.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="lfu-페이지-교체lfu-page-replacement">LFU 페이지 교체(LFU Page Replacement)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">LFU: Least Frequently Used</code><br />
+참조 횟수가 가장 적은 페이지를 교체하는 방법이다. 활발하게 사용되는 페이지는 참조 횟수가 많아질 거라는 가정에서 만들어진 알고리즘이다.</p>
+
+<ul>
+  <li>특징
+    <ul>
+      <li>어떤 프로세스가 특정 페이지를 집중적으로 사용하다, 다른 기능을 사용하게되면 더 이상 사용하지 않아도 계속 메모리에 머물게 되어 초기 가정에 어긋나는 시점이 발생할 수 있다</li>
+      <li>최적(OPT) 페이지 교체를 제대로 근사하지 못하기 때문에, 잘 쓰이지 않는다.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mfu-페이지-교체mfu-page-replacement">MFU 페이지 교체(MFU Page Replacement)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">MFU: Most Frequently Used</code><br />
+참조 회수가 가장 작은 페이지가 최근에 메모리에 올라왔고, 앞으로 계속 사용될 것이라는 가정에 기반한다.</p>
+
+<ul>
+  <li>특징
+    <ul>
+      <li>최적(OPT) 페이지 교체를 제대로 근사하지 못하기 때문에, 잘 쓰이지 않는다.</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="캐시의-지역성">캐시의 지역성</h1>
+
+<h2 id="캐시의-지역성-원리">캐시의 지역성 원리</h2>
+
+<p>캐시 메모리는 속도가 빠른 장치와 느린 장치간의 속도차에 따른 병목 현상을 줄이기 위한 범용 메모리이다. 이러한 역할을 수행하기 위해서는 CPU 가 어떤 데이터를 원할 것인가를 어느 정도 예측할 수 있어야 한다. 캐시의 성능은 작은 용량의 캐시 메모리에 CPU 가 이후에 참조할, 쓸모 있는 정보가 어느 정도 들어있느냐에 따라 좌우되기 때문이다.</p>
+
+<p>이 때 <code class="language-plaintext highlighter-rouge">적중율(Hit rate)</code>을 극대화 시키기 위해 데이터 <code class="language-plaintext highlighter-rouge">지역성(Locality)의 원리</code>를 사용한다. 지역성의 전제조건으로 프로그램은 모든 코드나 데이터를 균등하게 Access 하지 않는다는 특성을 기본으로 한다. 즉, <code class="language-plaintext highlighter-rouge">Locality</code>란 기억 장치 내의 정보를 균일하게 Access 하는 것이 아닌 어느 한 순간에 특정 부분을 집중적으로 참조하는 특성인 것이다.</p>
+
+<p>이 데이터 지역성은 대표적으로 시간 지역성(Temporal Locality)과 공간 지역성(Spatial Locality)으로 나뉜다.</p>
+
+<ul>
+  <li>시간 지역성 : 최근에 참조된 주소의 내용은 곧 다음에 다시 참조되는 특성.</li>
+  <li>공간 지역성 : 대부분의 실제 프로그램이 참조된 주소와 인접한 주소의 내용이 다시 참조되는 특성</li>
+</ul>
+
+<h2 id="caching-line">Caching line</h2>
+
+<p>언급했듯이 캐시(cache)는 프로세서 가까이에 위치하면서 빈번하게 사용되는 데이터를 놔두는 장소이다. 하지만 캐시가 아무리 가까이 있더라도 찾고자 하는 데이터가 어느 곳에 저장되어 있는지 몰라 모든 데이터를 순회해야 한다면 시간이 오래 걸리게 된다. 즉, 캐시에 목적 데이터가 저장되어 있다면 바로 접근하여 출력할 수 있어야 캐시가 의미 있어진다는 것이다.</p>
+
+<p>그렇기 때문에 캐시에 데이터를 저장할 때 특정 자료구조를 사용하여 <code class="language-plaintext highlighter-rouge">묶음</code>으로 저장하게 되는데 이를 <strong>캐싱 라인</strong> 이라고 한다. 프로세스는 다양한 주소에 있는 데이터를 사용하므로 빈번하게 사용하는 데이터의 주소 또한 흩어져 있다. 따라서 캐시에 저장하는 데이터에는 데이터의 메모리 주소 등을 기록해 둔 태그를 달아놓을 필요가 있다. 이러한 태그들의 묶음을 캐싱 라인이라고 하고 메모리로부터 가져올 때도 캐싱 라인을 기준으로 가져온다.
+종류로는 대표적으로 세 가지 방식이 존재한다.</p>
+
+<ol>
+  <li>Full Associative</li>
+  <li>Set Associative</li>
+  <li>Direct Map</li>
+</ol>
 
 <h1 id="참고">참고</h1>
 
@@ -976,6 +1090,8 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
 
   
 
