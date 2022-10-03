@@ -6,22 +6,26 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kubernetes Series [Part1]: Kubernetes Intro</title>
-  <meta name='description' content='쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리를 자동화해주는 오픈소스 플랫폼입니다.'>
+  <title>Kubernetes Series [Part1]: Kubernetes란 무엇인가</title>
+  <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/kubernetes-series1">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kubernetes Series [Part1]: Kubernetes Intro – Code Museum">
-  <meta name="twitter:description" content="쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리를 자동화해주는 오픈소스 플랫폼입니다.">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/kube_23.svg">
+  <meta name="twitter:title" content="Kubernetes Series [Part1]: Kubernetes란 무엇인가 – Code Museum">
+  <meta name="twitter:description" content="
+Table of Contents
+">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/kube_0.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kubernetes Series [Part1]: Kubernetes Intro – Code Museum">
-  <meta property="og:description" content="쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리를 자동화해주는 오픈소스 플랫폼입니다.">
-  <meta property="og:image" content="http://localhost:4000/images/kube_23.svg">
+  <meta property="og:title" content="Kubernetes Series [Part1]: Kubernetes란 무엇인가 – Code Museum">
+  <meta property="og:description" content="
+Table of Contents
+">
+  <meta property="og:image" content="http://localhost:4000/images/kube_0.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -381,7 +385,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part1]: Kubernetes Intro">
+          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part1]: Kubernetes란 무엇인가">
         </div>
       </div>
       
@@ -402,7 +406,7 @@
               </div>
             
  
-          <h1 class="post__title">Kubernetes Series [Part1]: Kubernetes Intro</h1>
+          <h1 class="post__title">Kubernetes Series [Part1]: Kubernetes란 무엇인가</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -411,7 +415,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-01-08T21:01:35+09:00">08 Jan 2022</time>
+              <time class="post__date" datetime="2022-01-01T21:01:35+09:00">01 Jan 2022</time>
             </div>
           </div>
   
@@ -431,6 +435,10 @@
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
 
   
 
@@ -466,101 +474,109 @@
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#들어가기-전에" id="markdown-toc-들어가기-전에">들어가기 전에</a>    <ul>
-      <li><a href="#도커의-등장" id="markdown-toc-도커의-등장">도커의 등장</a></li>
+  <li><a href="#쿠버네티스란-무엇인가" id="markdown-toc-쿠버네티스란-무엇인가">쿠버네티스란 무엇인가</a></li>
+  <li><a href="#왜-쿠버네티스가-필요할까" id="markdown-toc-왜-쿠버네티스가-필요할까">왜 쿠버네티스가 필요할까</a></li>
+  <li><a href="#쿠버네티스-아키텍처" id="markdown-toc-쿠버네티스-아키텍처">쿠버네티스 아키텍처</a>    <ul>
+      <li><a href="#마스터-노드" id="markdown-toc-마스터-노드">마스터 노드</a></li>
+      <li><a href="#워커-노드" id="markdown-toc-워커-노드">워커 노드</a></li>
     </ul>
   </li>
-  <li><a href="#kubernetes" id="markdown-toc-kubernetes">Kubernetes</a>    <ul>
-      <li><a href="#쿠버네티스-소개" id="markdown-toc-쿠버네티스-소개">쿠버네티스 소개</a></li>
-      <li><a href="#쿠버네티스-아키텍쳐" id="markdown-toc-쿠버네티스-아키텍쳐">쿠버네티스 아키텍쳐</a></li>
-      <li><a href="#desired-state" id="markdown-toc-desired-state">Desired State</a></li>
-    </ul>
-  </li>
-  <li><a href="#마치며" id="markdown-toc-마치며">마치며</a></li>
+  <li><a href="#desired-state" id="markdown-toc-desired-state">Desired State</a></li>
+  <li><a href="#쿠버네티스가-명령을-수행하는-과정" id="markdown-toc-쿠버네티스가-명령을-수행하는-과정">쿠버네티스가 명령을 수행하는 과정</a></li>
+  <li><a href="#쿠버네티스가-통신하는-과정" id="markdown-toc-쿠버네티스가-통신하는-과정">쿠버네티스가 통신하는 과정</a></li>
   <li><a href="#참고자료" id="markdown-toc-참고자료">참고자료</a></li>
 </ul>
 
 <hr />
 
-<h1 id="들어가기-전에">들어가기 전에</h1>
+<h1 id="쿠버네티스란-무엇인가">쿠버네티스란 무엇인가</h1>
 
-<h2 id="도커의-등장">도커의 등장</h2>
-<p>2013년 도커가 등장하기 전까지 서버 관리는 굉장히 어렵고 컨트롤하기 어려운 것으로 여겨졌습니다. 하나의 서비스를 제공하기 위해서는 보통 수십에서 수백개의 애플리케이션이 서로 연결되어 동작하는데, 이 때 오류가 나게 되면 어디서 문제가 생긴건지 파악하기가 쉽지 않았습니다.</p>
+<blockquote>
+  <p>여러 개의 컨테이너화된 애플리케이션을 여러 서버(쿠버네티스 클러스터)에 자동으로 배포, 스케일링 및 관리해주는 오픈소스 플랫폼</p>
+</blockquote>
 
-<p>이러한 문제를 해결하기 위해 사람들은 <strong>가상화 기술</strong>을 이용해 서버를 애플리케이션별로 격리시키고자 하였습니다. 이 때 크게 두가지 방법으로 접근할 수 있는데, 하나는 <strong>가상머신</strong>을 이용해 컴퓨팅 리소스를 따로 분리하여 사용하도록 하는 것이었습니다. 하지만 이 방법은 컴퓨팅 성능을 떨어트립니다.<br />
-두 번째 방법은 LXC(LinuX Containers)라는 <strong>리눅스 커널 기술</strong>로 기존의 하드웨어 레벨에서 하던 방식을 운영체제 레벨에서 해결하도록 했습니다. 이렇게 하면 컴퓨팅 성능도 떨어트리지 않으면서, 파일시스템, 리소스(CPU, 메모리, 네트워크)를 분리할 수 있습니다. 하지만 이 방법은 사용하기에는 운영체제에 대한 깊은 이해를 필요로 해서 많은 개발자들이 쉽게 쓰기는 힘들었습니다.</p>
-
-<p>이 때 등장한 것이 바로 도커입니다. 도커가 등장하게 되면서 <strong>컨테이너 기술</strong>에 대한 접근성이 훨씬 좋아지게 되자, 개발자들은 이제 모든 애플리케이션을 컨테이너화하여 사용하기 시작했습니다. 이렇게 도커는 인프라 세계를 컨테이너 세상으로 바꿔버렸습니다. 수많은 애플리케이션이 컨테이너로 배포되고 도커파일을 만들어 이미지를 빌드하고 컨테이너를 배포하는 게 흔한 개발 프로세스가 되었습니다.</p>
-
-<p>(도커에 관한 더 자세한 내용은 <a href="">여기</a>를 참고하시기 바랍니다)</p>
-
-<p>이제 모든 것들을 컨테이너화하기 시작하면서 우리의 서비스는 다음과 같은 모습을 가지게 되었습니다.</p>
-
-<p><img src="/images/kube_1.png" alt="" /></p>
-
-<p>이렇게 서비스 하나를 배포하기 위해 수많은 컨테이너를 띄우고, 연결하고, 버전업을 해야하는 상황이 생긴겁니다. 그래서 개발자들은 이제 컨테이너들을 동시에 띄우고 관리까지 해주는 <strong>컨테이너 오케스트레이션</strong>기술이 필요해지게 되었습니다.</p>
-
-<p><img src="/images/kube_2.png" alt="" /></p>
-
-<h1 id="kubernetes">Kubernetes</h1>
-
-<h2 id="쿠버네티스-소개">쿠버네티스 소개</h2>
-
-<p><strong>쿠버네티스는 컨테이너를 쉽고 빠르게 배포/확장하고 관리를 자동화해주는 오픈소스 플랫폼입니다.</strong></p>
-
-<p>쿠버네티스는 단순한 컨테이너 플랫폼을 넘어 마이크로서비스, 클라우드 플랫폼을 지향하고 컨테이너로 이루어진 것들을 손쉽게 담고 관리할 수 있는 그릇 역할을 합니다. 또한 CI/CD, 머신러닝 등 다양한 기능이 쿠버네티스 플랫폼 위에서 동작합니다.</p>
-
-<p>쿠버네티스는 컨테이너 규모, 컨테이너의 상태, 네트워크, 스토리지, 버전과 같은 것들을 관리하며 이를 자동화합니다.</p>
-
-<h2 id="쿠버네티스-아키텍쳐">쿠버네티스 아키텍쳐</h2>
-
-<p><img src="/images/kube_23.svg" alt="" /></p>
-
-<p><img src="/images/kube_5.png" alt="" /></p>
+<p><img src="/images/kube_0.png" alt="" /></p>
 
 <ul>
-  <li>마스터: 전체 클러스터를 관리하는 서버</li>
-  <li>노드: 컨테이너가 배포되는 서버</li>
+  <li>쿠버네티스(Kubernetes)는 컨테이너로 향상된 리소스 활용의 이점을 누리면서도 복잡한 분산 시스템을 쉽게 배포하고 관리할 수 있도록 만들어준다.</li>
+  <li>쿠버네티스는 단순한 컨테이너 플랫폼을 넘어 마이크로서비스, 클라우드 플랫폼을 지향하고 컨테이너로 이루어진 것들을 손쉽게 담고 관리할 수 있는 그릇 역할을 한다. 또한 CI/CD, 머신러닝 등 다양한 기능이 쿠버네티스 플랫폼 위에서 동작한다.</li>
+  <li>쿠버네티스는 컨테이너 규모, 컨테이너의 상태, 네트워크, 스토리지, 버전과 같은 것들을 관리하며 이를 자동화한다.</li>
+</ul>
+
+<h1 id="왜-쿠버네티스가-필요할까">왜 쿠버네티스가 필요할까</h1>
+
+<ul>
+  <li><strong>도커의 등장과 함께 컨테이너 기술</strong>이 개발자들에게 널리 이용되었다</li>
+  <li>동시에 서비스의 규모가 점차 커지게 되면서, 모놀리틱 아키텍처가 아닌 <strong>마이크로 서비스 아키텍처</strong>가 각광을 받았다</li>
+  <li><strong>클라우드 컴퓨팅, 분산 시스템의 등장</strong>으로 여러 서버를 클러스터로 구성하여 서비스를 운영하게 되었다</li>
+  <li>여러 컨테이너를 여러 서버에 배포하는데 이 때 <strong>컨테이너 크기와 서버의 리소스를 고려해 배포</strong>해주어야 한다</li>
+  <li>이 때 서비스에 요구되는 <strong>스케일 확장, 장애 대응, 버전 롤백</strong>과 같은 것들을 쉽게 해줄 도구가 필요했다</li>
+  <li>이를 해결해주기 위해 등장한 것이 <strong>쿠버네티스</strong>이다</li>
+</ul>
+
+<h1 id="쿠버네티스-아키텍처">쿠버네티스 아키텍처</h1>
+
+<p><img src="/images/kube_arch.png" alt="" /></p>
+
+<h2 id="마스터-노드">마스터 노드</h2>
+
+<ul>
+  <li>Control Plane (클러스터 기능을 제어하고 전체 클러스터가 동작하게 만드는 역할)</li>
+  <li>전체 클러스터를 관리하는 서버</li>
 </ul>
 
 <p>쿠버네티스에서 모든 명령은 마스터의 API 서버를 호출하고 노드는 마스터와 통신하면서 필요한 작업을 수행합니다. 특정 노드의 컨테이너에 명령하거나 로그를 조회할 때도 노드에 직접 명령하는 게 아니라 마스터에 명령을 내리고 마스터가 노드에 접속하여 대신 결과를 응답합니다.</p>
 
-<p><img src="/images/kube_4.png" alt="" /></p>
+<p><img src="/images/kube_5.png" alt="" /></p>
 
 <p>마스터의 API 서버는 할일이 굉장히 많기 때문에, 함께 도와줄 일꾼들이 필요합니다. 이들을 스케줄러와 컨트롤러라고 합니다. 보통 하나의 스케줄러와 역할별로 다양한 컨트롤러가 존재합니다.</p>
 
+<p><img src="/images/kube_4.png" alt="" /></p>
+
 <ul>
-  <li>컨트롤러: 자신이 맡은 오브젝트의 상태를 계속 체크하고 Desired 상태를 유지, API서버 요청 처리</li>
-  <li>스케줄러: 새로 생성되는 Pod(컨테이너와 비슷)가 있는지 계속 체크, 생성되면 가장 적절한 노드 선택</li>
+  <li><strong>API 서버</strong>: 클러스터 상태 조회, 변경을 위한 API 인터페이스 제공. 모든 명령은 마스터의 API 서버를 호출하고 노드는 마스터와 통신하면서 필요한 작업을 수행</li>
+  <li><strong>컨트롤러</strong>: 자신이 맡은 오브젝트의 상태를 계속 체크하고 Desired 상태를 유지, API서버 요청 처리</li>
+  <li><strong>스케줄러</strong>: 배포할 Pod(컨테이너와 비슷)가 있는지 계속 체크, 필요한 경우 가장 최적의 노드를 선택</li>
+  <li><strong>etcd</strong>: 클러스터에 배포된 애플리케이션 실행 정보를 저장. 고가용성을 제공하는 키-밸류(key-value) 저장소</li>
 </ul>
 
-<p>컨트롤러는 자신이 맡고 있는 오브젝트의 상태를 계속 체크하고 상태를 유지합니다. 또한 API 서버에서 어떤 새로운 상태를 요구할 경우, 맞춰서 또 상태를 바꿔서 유지하고 이 때 새롭게 Pod가 생성되거나 삭제되면 스케줄러가 그에 맞춰서 노드에서 삭제, 할당합니다.</p>
+<h2 id="워커-노드">워커 노드</h2>
 
-<h2 id="desired-state">Desired State</h2>
+<ul>
+  <li>
+    <p>컨테이너가 배포되고 실제로 실행되는 서버</p>
+  </li>
+  <li><strong>kubelet</strong>: 클러스터내의 모든 노드에서 실행되는 에이전트. 파드내의 컨테이너들이 실행되는걸 직접적으로 관리하는 역할</li>
+  <li><strong>kube-proxy</strong>: 쿠버네티스는 클러스터 내부에 별도의 가상 네트워크를 설정하고 관리. kube-proxy는 이런 가상 네트워크가 동작할 수 있게 하는 실질적인 역할을 하는 프로세스. 호스트의 네트워크 규칙을 관리하거나 커넥션 포워딩을 하기도함.</li>
+  <li><strong>container runtime</strong>: 컨테이너 런타임은 실제로 컨테이너를 실행시키는 역할. 가장 많이 알려진 런타임으로는 도커(Docner)가 있고, 그외 rkt, runc같은 런타임도 지원. 그외에도 컨테이너에 관한 표준을 제정하는 역할을 하는 OCI의 런타임 규격을 구현하고 있는 컨테이너 런타임이라면 쿠버네티스에서 사용가능</li>
+</ul>
+
+<h1 id="desired-state">Desired State</h1>
 
 <p><img src="/images/kube_6.png" alt="" /></p>
 
-<p>쿠버네티스에서 가장 중요한 것은 <strong>desired state(원하는 상태)</strong>라는 개념입니다. 원하는 상태라 함은 관리자가 바라는 환경을 의미하고 좀 더 구체적으로는 얼마나 많은 웹서버가 떠 있으면 좋은지, 몇 번 포트로 서비스하기를 원하는지 등을 말합니다.<br />
-쿠버네티스는 복잡하고 다양한 작업을 하지만 자세히 들여다보면 현재 상태current state를 모니터링하면서 관리자가 설정한 원하는 상태를 유지하려고 내부적으로 이런저런 작업을 하는 로직을 가지고 있습니다.</p>
+<p>쿠버네티스에서 가장 중요한 것은 <strong>desired state(원하는 상태)</strong>라는 개념이다. 원하는 상태라 함은 관리자가 바라는 환경을 의미하고 좀 더 구체적으로는 얼마나 많은 웹서버가 떠 있으면 좋은지, 몇 번 포트로 서비스하기를 원하는지 등을 말한다.<br />
+쿠버네티스는 복잡하고 다양한 작업을 하지만 자세히 들여다보면 현재 상태current state를 모니터링하면서 관리자가 설정한 원하는 상태를 유지하려고 내부적으로 이런저런 작업을 하는 로직을 가지고 있다.</p>
 
 <p><img src="/images/kube_7.png" alt="" /></p>
 
-<p>이렇게 상태가 바뀌게 되면 API서버는 차이점을 발견하고 컨트롤러에게 보내 desired state로 유지할 것을 요청합니다. 그리고 컨트롤러가 변경한 후 결과를 다시 API서버에 보내고 API서버는 다시 이 결과를 etcd(상태를 저장하고 있는 곳)에 저장하게 됩니다.</p>
+<p>이렇게 상태가 바뀌게 되면 API서버는 차이점을 발견하고 컨트롤러에게 보내 desired state로 유지할 것을 요청한다. 그리고 컨트롤러가 변경한 후 결과를 다시 API서버에 보내고 API서버는 다시 이 결과를 etcd(상태를 저장하고 있는 곳)에 저장하게 된다.</p>
 
 <p><img src="/images/kube_8.png" alt="" /></p>
 
-<h1 id="마치며">마치며</h1>
+<h1 id="쿠버네티스가-명령을-수행하는-과정">쿠버네티스가 명령을 수행하는 과정</h1>
 
-<p>쿠버네티스는 여러 컨테이너를 자동으로 배포해주고 관리해준다는 점에서 정말 좋은 기술입니다. 그리고 마이크로서비스, 클라우드 환경과도 정말 잘 어울리기 때문에 배워두면 정말 쓸모가 많을 것 같습니다. 하지만 쿠버네티스는 많은 영역을 커버하다보니 배워야할 것들이 굉장히 많습니다. 그리고 컨테이너들을 띄우는 서버를 관리하기 위한 서버를 더 사용하게 되는 것이기 때문에, 컴퓨팅 자원이 충분하지 않다면 사용하는 것이 적절하지 않을 수도 있습니다. (쿠버네티스를 운영환경에 설치하기 위해선 최소 3대의 마스터 서버와 컨테이너 배포를 위한 n개의 노드 서버가 필요)</p>
+<p><img src="/images/kube_api_server.png" alt="" /></p>
 
-<p><img src="/images/kube_9.png" alt="" /></p>
+<h1 id="쿠버네티스가-통신하는-과정">쿠버네티스가 통신하는 과정</h1>
 
-<p>다음 포스트에서는 서버가 넉넉하지 않은 상황에서 사용할 수 있는 <strong>minikube</strong>를 설치, 그리고 쿠버네티스에 명령어를 전달할 때 사용하는 <strong>kubectl</strong> 설치해보겠습니다.<br />
-그리고 도커에서는 컨테이너를 띄우지만 쿠버네티스에서는 컨테이너를 관리할 수 있도록 조금 더 패키징한 다양한 오브젝트를 띄우게 되는데 이 때 어떠한 오브젝트들이 있는지도 배워보도록 하겠습니다.</p>
+<p><img src="kube_network.png" alt="" /></p>
 
 <h1 id="참고자료">참고자료</h1>
 <ul>
   <li><a href="https://subicura.com/2019/05/19/kubernetes-basic-1.html" target="_blank">subicura님의 kubenetes안내서</a></li>
+  <li><a href="https://www.oss.kr/info_techtip/show/a084eeb7-c3fe-457d-a50d-6e17fe9b8dbc" target="_blank">OSS, 쿠버네티스(kubernetes) 구성요소</a></li>
+  <li><a href="https://fastcampus.co.kr/" target="_blank">패스트캠퍼스, Kubernetes와 Docker로 한 번에 끝내는 컨테이너 기반 MSA</a></li>
 </ul>
 
     </div>
@@ -797,7 +813,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part1]:%20Kubernetes%20Intro&url=http://localhost:4000/kubernetes-series1"
+          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part1]:%20Kubernetes%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80&url=http://localhost:4000/kubernetes-series1"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -807,12 +823,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series1&amp;media=http://localhost:4000/images/kube_23.svg&amp;description=Kubernetes%20Series%20[Part1]:%20Kubernetes%20Intro"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series1&amp;media=http://localhost:4000/images/kube_0.png&amp;description=Kubernetes%20Series%20[Part1]:%20Kubernetes%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series1&title=Kubernetes%20Series%20[Part1]:%20Kubernetes%20Intro&summary=%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4%EB%8A%94%20%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88%EB%A5%BC%20%EC%89%BD%EA%B3%A0%20%EB%B9%A0%EB%A5%B4%EA%B2%8C%20%EB%B0%B0%ED%8F%AC/%ED%99%95%EC%9E%A5%ED%95%98%EA%B3%A0%20%EA%B4%80%EB%A6%AC%EB%A5%BC%20%EC%9E%90%EB%8F%99%ED%99%94%ED%95%B4%EC%A3%BC%EB%8A%94%20%EC%98%A4%ED%94%88%EC%86%8C%EC%8A%A4%20%ED%94%8C%EB%9E%AB%ED%8F%BC%EC%9E%85%EB%8B%88%EB%8B%A4.&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series1&title=Kubernetes%20Series%20[Part1]:%20Kubernetes%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -821,6 +837,10 @@
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
 
   
 
