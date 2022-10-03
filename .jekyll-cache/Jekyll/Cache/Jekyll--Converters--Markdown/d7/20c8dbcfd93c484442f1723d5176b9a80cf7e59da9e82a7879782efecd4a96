@@ -1,0 +1,412 @@
+I"V�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#pytest가-좋은-이유" id="markdown-toc-pytest가-좋은-이유">pytest가 좋은 이유</a>    <ul>
+      <li><a href="#less-boilerplate" id="markdown-toc-less-boilerplate">Less Boilerplate</a></li>
+      <li><a href="#nicer-output" id="markdown-toc-nicer-output">Nicer Output</a></li>
+      <li><a href="#easier-to-manage-state-and-dependencies" id="markdown-toc-easier-to-manage-state-and-dependencies">Easier to Manage State and Dependencies</a></li>
+      <li><a href="#easy-to-filter-tests" id="markdown-toc-easy-to-filter-tests">Easy to Filter Tests</a></li>
+      <li><a href="#allows-test-parametrization" id="markdown-toc-allows-test-parametrization">Allows Test Parametrization</a></li>
+      <li><a href="#has-a-plugin-based-architecture" id="markdown-toc-has-a-plugin-based-architecture">Has a Plugin-Based Architecture</a></li>
+    </ul>
+  </li>
+  <li><a href="#fixtures-managing-state-and-dependencies" id="markdown-toc-fixtures-managing-state-and-dependencies">Fixtures: Managing State and Dependencies</a>    <ul>
+      <li><a href="#when-to-create-fixtures" id="markdown-toc-when-to-create-fixtures">When to Create Fixtures</a></li>
+      <li><a href="#when-to-avoid-fixtures" id="markdown-toc-when-to-avoid-fixtures">When to Avoid Fixtures</a></li>
+      <li><a href="#how-to-use-fixtures-at-scale" id="markdown-toc-how-to-use-fixtures-at-scale">How to Use Fixtures at Scale</a></li>
+    </ul>
+  </li>
+  <li><a href="#marks-categorizing-tests" id="markdown-toc-marks-categorizing-tests">Marks: Categorizing Tests</a></li>
+  <li><a href="#parametrization-combining-tests" id="markdown-toc-parametrization-combining-tests">Parametrization: Combining Tests</a></li>
+</ul>
+
+<hr />
+
+<p>Testing your code brings a wide variety of benefits. It increases your confidence that the code behaves as you expect and ensures that changes to your code won’t cause regressions. Writing and maintaining tests is hard work, so you should leverage all the tools at your disposal to make it as painless as possible. <code class="language-plaintext highlighter-rouge">pytest</code> is one of the best tools that you can use to boost your testing productivity.</p>
+
+<p>If you’ve written unit tests for your Python code before, then you may have used Python’s built-in <code class="language-plaintext highlighter-rouge">unittest</code> module. <code class="language-plaintext highlighter-rouge">unittest</code> provides a solid base on which to build your test suite, but it has a few shortcomings.</p>
+
+<p>A number of third-party testing frameworks attempt to address some of the issues with <code class="language-plaintext highlighter-rouge">unittest</code>, and <code class="language-plaintext highlighter-rouge">pytest</code> has proven to be one of the most popular. <code class="language-plaintext highlighter-rouge">pytest</code> is a feature-rich, plugin-based ecosystem for testing your Python code.</p>
+
+<h1 id="pytest가-좋은-이유">pytest가 좋은 이유</h1>
+
+<h2 id="less-boilerplate">Less Boilerplate</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">unittest</code>는 상속받고, unittest에서 제공하는 assert문을 사용해야함
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_with_unittest.py
+</span>
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+
+<span class="k">class</span> <span class="nc">TryTesting</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_always_passes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_always_fails</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">pytest</code>는 보통 함수를 작성하듯 작성하고, 파이썬에서 제공하는 assert문 사용하면 됨
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_with_pytest.py
+</span>
+<span class="k">def</span> <span class="nf">test_always_passes</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="bp">True</span>
+
+<span class="k">def</span> <span class="nf">test_always_fails</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="bp">False</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>Most functional tests follow the Arrange-Act-Assert model:</p>
+
+<ul>
+  <li><strong>Arrange</strong>, or set up, the conditions for the test</li>
+  <li><strong>Act</strong> by calling some function or method</li>
+  <li><strong>Assert</strong> that some end condition is true</li>
+</ul>
+
+<h2 id="nicer-output">Nicer Output</h2>
+
+<ul>
+  <li>먼저 시스템 상태, 파이썬 버전, 루트 디렉토리, 발견된 테스트의 수와 같은 정보를 제공</li>
+  <li>테스트 결과의 아웃풋은 다음과 같음
+    <ul>
+      <li>A dot (.) means that the test passed.</li>
+      <li>An F means that the test has failed.</li>
+      <li>An E means that the test raised an unexpected exception.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>test_with_pytest.py .F                                                   [ 50%]
+test_with_unittest.py F.                                                 [100%]
+</code></pre></div></div>
+
+<p>위의 결과를 해석해보면, test_with_pytest.py 파일 안에는 두 개의 테스트 코드가 있고, 하나는 성공, 하나는 실패했음을 나타낸다. test_with_unittest.py 파일 안에서는 하나는 실패, 하나는 성공했을음 나타낸다. pytest로 실행하면 위와같이 unittest로 작성한 테스트 코드도 인식할 수 있다.</p>
+
+<h2 id="easier-to-manage-state-and-dependencies">Easier to Manage State and Dependencies</h2>
+
+<ul>
+  <li>테스트에 사용되는 데이터 타입이 dict, json과 같이 다르다</li>
+  <li>pytest takes a different approach. It leads you toward explicit dependency declarations that are still reusable thanks to the availability of fixtures. pytest fixtures are functions that can create data, test doubles, or initialize system state for the test suite. Any test that wants to use a fixture must explicitly use this fixture function as an argument to the test function, so dependencies are always stated up front:</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># fixture_demo.py
+</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">example_fixture</span><span class="p">():</span>
+    <span class="k">return</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">test_with_fixture</span><span class="p">(</span><span class="n">example_fixture</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">example_fixture</span> <span class="o">==</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<p>Looking at the test function, you can immediately tell that it depends on a fixture, without needing to check the whole file for fixture definitions.</p>
+
+<h2 id="easy-to-filter-tests">Easy to Filter Tests</h2>
+
+<ul>
+  <li>프로젝트 규모가 커지고, 테스트 코드 규모도 함께 커지면 나중에는 원하는 몇 개의 테스트만 필터링하고 싶을 때가 있음</li>
+  <li>pytest 에서는 테스트를 필터링 하는 몇가지 방법을 제공
+    <ul>
+      <li><strong>Name-based filtering</strong>: You can limit pytest to running only those tests whose fully qualified names match a particular expression. You can do this with the -k parameter.</li>
+      <li><strong>Directory scoping</strong>: By default, pytest will run only those tests that are in or under the current directory.</li>
+      <li><strong>Test categorization</strong>: pytest can include or exclude tests from particular categories that you define. You can do this with the -m parameter.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Test categorization in particular is a subtly powerful tool. pytest enables you to create marks, or custom labels, for any test you like. A test may have multiple labels, and you can use them for granular control over which tests to run. Later in this tutorial, you’ll see an example of how pytest marks work and learn how to make use of them in a large test suite.</p>
+
+<h2 id="allows-test-parametrization">Allows Test Parametrization</h2>
+
+<ul>
+  <li>어떤 하나의 테스트 코드에 대해서 다양한 인풋을 넣어서 실험하는 경우가 있음</li>
+  <li>unittest는 이 때의 결과를 하나로 출력 -&gt; 인풋중 하나라도 실패하면 그냥 그 테스트 전체가 실패한 것으로 간주</li>
+  <li>pytest는 각각의 인풋에 대해서 어떤 인풋이 실패하는지를 알려줌</li>
+</ul>
+
+<h2 id="has-a-plugin-based-architecture">Has a Plugin-Based Architecture</h2>
+
+<ul>
+  <li>pytest는 모듈화되어 확장성이 뛰어나도록 설계됨</li>
+  <li>많은 개발자들이 커스터마이징해서 사용중</li>
+</ul>
+
+<h1 id="fixtures-managing-state-and-dependencies">Fixtures: Managing State and Dependencies</h1>
+
+<p>pytest fixtures are a way of providing data, test doubles, or state setup to your tests. Fixtures are functions that can return a wide range of values. Each test that depends on a fixture must explicitly accept that fixture as an argument.</p>
+
+<ul>
+  <li>어떤 테스트를 위해 필요한 초기 조건을 세팅하여 객체(fixture)로 리턴하는 함수</li>
+  <li>테스트를 쉽게 반복적으로 수행할 수 있도록 도와주는 것</li>
+  <li>이 객체(fixture)는 반드시 테스트 코드의 인자로 명시되어야함</li>
+  <li>(쉽게 말해, 테스트의 대상이 되는 객체를 리턴하는 함수를 <code class="language-plaintext highlighter-rouge">@pytest.fixture</code>로 데코레이팅)</li>
+  <li>(그러면 테스트 코드에서 이 객체를 따로 반복 생성하지 않아도 사용할 수 있음)</li>
+</ul>
+
+<h2 id="when-to-create-fixtures">When to Create Fixtures</h2>
+<p>In this section, you’ll simulate a typical test-driven development (TDD) workflow.</p>
+
+<p>Imagine you’re writing a function, format_data_for_display(), to process the data returned by an API endpoint. The data represents a list of people, each with a given name, family name, and job title. The function should output a list of strings that include each person’s full name (their given_name followed by their family_name), a colon, and their title:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># format_data.py
+</span>
+<span class="k">def</span> <span class="nf">format_data_for_display</span><span class="p">(</span><span class="n">people</span><span class="p">):</span>
+    <span class="p">...</span>  <span class="c1"># Implement this!
+</span></code></pre></div></div>
+
+<p>In good TDD fashion, you’ll want to first write a test for it. You might write the following code for that:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_format_data.py
+</span>
+<span class="k">def</span> <span class="nf">test_format_data_for_display</span><span class="p">():</span>
+    <span class="n">people</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">"given_name"</span><span class="p">:</span> <span class="s">"Alfonsa"</span><span class="p">,</span>
+            <span class="s">"family_name"</span><span class="p">:</span> <span class="s">"Ruiz"</span><span class="p">,</span>
+            <span class="s">"title"</span><span class="p">:</span> <span class="s">"Senior Software Engineer"</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">"given_name"</span><span class="p">:</span> <span class="s">"Sayid"</span><span class="p">,</span>
+            <span class="s">"family_name"</span><span class="p">:</span> <span class="s">"Khan"</span><span class="p">,</span>
+            <span class="s">"title"</span><span class="p">:</span> <span class="s">"Project Manager"</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">format_data_for_display</span><span class="p">(</span><span class="n">people</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span>
+        <span class="s">"Alfonsa Ruiz: Senior Software Engineer"</span><span class="p">,</span>
+        <span class="s">"Sayid Khan: Project Manager"</span><span class="p">,</span>
+    <span class="p">]</span>
+</code></pre></div></div>
+
+<p>While writing this test, it occurs to you that you may need to write another function to transform the data into comma-separated values for use in Excel:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># format_data.py
+</span>
+<span class="k">def</span> <span class="nf">format_data_for_display</span><span class="p">(</span><span class="n">people</span><span class="p">):</span>
+    <span class="p">...</span>  <span class="c1"># Implement this!
+</span>
+<span class="k">def</span> <span class="nf">format_data_for_excel</span><span class="p">(</span><span class="n">people</span><span class="p">):</span>
+    <span class="p">...</span> <span class="c1"># Implement this!
+</span></code></pre></div></div>
+
+<p>Your to-do list grows! That’s good! One of the advantages of TDD is that it helps you plan out the work ahead. The test for the format_data_for_excel() function would look awfully similar to the format_data_for_display() function:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_format_data.py
+</span>
+<span class="k">def</span> <span class="nf">test_format_data_for_display</span><span class="p">():</span>
+    <span class="c1"># ...
+</span>
+<span class="k">def</span> <span class="nf">test_format_data_for_excel</span><span class="p">():</span>
+    <span class="n">people</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">"given_name"</span><span class="p">:</span> <span class="s">"Alfonsa"</span><span class="p">,</span>
+            <span class="s">"family_name"</span><span class="p">:</span> <span class="s">"Ruiz"</span><span class="p">,</span>
+            <span class="s">"title"</span><span class="p">:</span> <span class="s">"Senior Software Engineer"</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">"given_name"</span><span class="p">:</span> <span class="s">"Sayid"</span><span class="p">,</span>
+            <span class="s">"family_name"</span><span class="p">:</span> <span class="s">"Khan"</span><span class="p">,</span>
+            <span class="s">"title"</span><span class="p">:</span> <span class="s">"Project Manager"</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+
+    <span class="k">assert</span> <span class="n">format_data_for_excel</span><span class="p">(</span><span class="n">people</span><span class="p">)</span> <span class="o">==</span> <span class="s">"""given,family,title
+Alfonsa,Ruiz,Senior Software Engineer
+Sayid,Khan,Project Manager
+"""</span>
+</code></pre></div></div>
+
+<p>Notably, both the tests have to repeat the definition of the people variable, which is quite a few lines of code.</p>
+
+<p>If you find yourself writing several tests that all make use of the same underlying test data, then a fixture may be in your future. You can pull the repeated data into a single function decorated with @pytest.fixture to indicate that the function is a pytest fixture:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_format_data.py
+</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">example_people_data</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s">"given_name"</span><span class="p">:</span> <span class="s">"Alfonsa"</span><span class="p">,</span>
+            <span class="s">"family_name"</span><span class="p">:</span> <span class="s">"Ruiz"</span><span class="p">,</span>
+            <span class="s">"title"</span><span class="p">:</span> <span class="s">"Senior Software Engineer"</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">"given_name"</span><span class="p">:</span> <span class="s">"Sayid"</span><span class="p">,</span>
+            <span class="s">"family_name"</span><span class="p">:</span> <span class="s">"Khan"</span><span class="p">,</span>
+            <span class="s">"title"</span><span class="p">:</span> <span class="s">"Project Manager"</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">]</span>
+
+<span class="c1"># ...
+</span></code></pre></div></div>
+
+<p>You can use the fixture by adding the function reference as an argument to your tests. Note that you don’t call the fixture function. pytest takes care of that. You’ll be able to use the return value of the fixture function as the name of the fixture function:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># test_format_data.py
+</span>
+<span class="c1"># ...
+</span>
+<span class="k">def</span> <span class="nf">test_format_data_for_display</span><span class="p">(</span><span class="n">example_people_data</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">format_data_for_display</span><span class="p">(</span><span class="n">example_people_data</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span>
+        <span class="s">"Alfonsa Ruiz: Senior Software Engineer"</span><span class="p">,</span>
+        <span class="s">"Sayid Khan: Project Manager"</span><span class="p">,</span>
+    <span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">test_format_data_for_excel</span><span class="p">(</span><span class="n">example_people_data</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">format_data_for_excel</span><span class="p">(</span><span class="n">example_people_data</span><span class="p">)</span> <span class="o">==</span> <span class="s">"""given,family,title
+Alfonsa,Ruiz,Senior Software Engineer
+Sayid,Khan,Project Manager
+"""</span>
+</code></pre></div></div>
+
+<p>Each test is now notably shorter but still has a clear path back to the data it depends on. Be sure to name your fixture something specific. That way, you can quickly determine if you want to use it when writing new tests in the future!</p>
+
+<p>When you first discover the power of fixtures, it can be tempting to use them all the time, but as with all things, there’s a balance to be maintained.</p>
+
+<h2 id="when-to-avoid-fixtures">When to Avoid Fixtures</h2>
+<p>Fixtures are great for extracting data or objects that you use across multiple tests. However, they aren’t always as good for tests that require slight variations in the data. Littering your test suite with fixtures is no better than littering it with plain data or objects. It might even be worse because of the added layer of indirection.</p>
+
+<p>As with most abstractions, it takes some practice and thought to find the right level of fixture use.</p>
+
+<p>Nevertheless, fixtures will likely be an integral part of your test suite. As your project grows in scope, the challenge of scale starts to come into the picture. One of the challenges facing any kind of tool is how it handles being used at scale, and luckily, pytest has a bunch of useful features that can help you manage the complexity that comes with growth.</p>
+
+<h2 id="how-to-use-fixtures-at-scale">How to Use Fixtures at Scale</h2>
+<p>As you extract more fixtures from your tests, you might see that some fixtures could benefit from further abstraction. In pytest, fixtures are modular. Being modular means that fixtures can be imported, can import other modules, and they can depend on and import other fixtures. All this allows you to compose a suitable fixture abstraction for your use case.</p>
+
+<p>For example, you may find that fixtures in two separate files, or modules, share a common dependency. In this case, you can move fixtures from test modules into more general fixture-related modules. That way, you can import them back into any test modules that need them. This is a good approach when you find yourself using a fixture repeatedly throughout your project.</p>
+
+<p>If you want to make a fixture available for your whole project without having to import it, a special configuration module called conftest.py will allow you to do that.</p>
+
+<p>pytest looks for a conftest.py module in each directory. If you add your general-purpose fixtures to the conftest.py module, then you’ll be able to use that fixture throughout the module’s parent directory and in any subdirectories without having to import it. This is a great place to put your most widely used fixtures.</p>
+
+<p>Another interesting use case for fixtures and conftest.py is in guarding access to resources. Imagine that you’ve written a test suite for code that deals with API calls. You want to ensure that the test suite doesn’t make any real network calls even if someone accidentally writes a test that does so.</p>
+
+<p>pytest provides a monkeypatch fixture to replace values and behaviors, which you can use to great effect:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># conftest.py
+</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">autouse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">disable_network_calls</span><span class="p">(</span><span class="n">monkeypatch</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">stunted_get</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="nb">RuntimeError</span><span class="p">(</span><span class="s">"Network access not allowed during testing!"</span><span class="p">)</span>
+    <span class="n">monkeypatch</span><span class="p">.</span><span class="nb">setattr</span><span class="p">(</span><span class="n">requests</span><span class="p">,</span> <span class="s">"get"</span><span class="p">,</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">stunted_get</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>By placing disable_network_calls() in conftest.py and adding the autouse=True option, you ensure that network calls will be disabled in every test across the suite. Any test that executes code calling requests.get() will raise a RuntimeError indicating that an unexpected network call would have occurred.</p>
+
+<p>Your test suite is growing in numbers, which gives you a great feeling of confidence to make changes and not break things unexpectedly. That said, as your test suite grows, it might start taking a long time. Even if it doesn’t take that long, perhaps you’re focusing on some core behavior that trickles down and breaks most tests. In these cases, you might want to limit the test runner to only a certain category of tests.</p>
+
+<h1 id="marks-categorizing-tests">Marks: Categorizing Tests</h1>
+
+<p>In any large test suite, it would be nice to avoid running all the tests when you’re trying to iterate quickly on a new feature. Apart from the default behavior of pytest to run all tests in the current working directory, or the filtering functionality, you can take advantage of markers.</p>
+
+<p>pytest enables you to define categories for your tests and provides options for including or excluding categories when you run your suite. You can mark a test with any number of categories.</p>
+
+<p>Marking tests is useful for categorizing tests by subsystem or dependencies. If some of your tests require access to a database, for example, then you could create a @pytest.mark.database_access mark for them.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Pro tip: Because you can give your marks any name you want, it can be easy to mistype or misremember the name of a mark. pytest will warn you about marks that it doesn’t recognize in the test output.
+
+You can use the --strict-markers flag to the pytest command to ensure that all marks in your tests are registered in your pytest configuration file, pytest.ini. It’ll prevent you from running your tests until you register any unknown marks.
+
+For more information on registering marks, check out the pytest documentation.
+</code></pre></div></div>
+
+<p>When the time comes to run your tests, you can still run them all by default with the pytest command. If you’d like to run only those tests that require database access, then you can use pytest -m database_access. To run all tests except those that require database access, you can use pytest -m “not database_access”. You can even use an autouse fixture to limit database access to those tests marked with database_access.</p>
+
+<p>Some plugins expand on the functionality of marks by adding their own guards. The pytest-django plugin, for instance, provides a django_db mark. Any tests without this mark that try to access the database will fail. The first test that tries to access the database will trigger the creation of Django’s test database.</p>
+
+<p>The requirement that you add the django_db mark nudges you toward stating your dependencies explicitly. That’s the pytest philosophy, after all! It also means that you can much more quickly run tests that don’t rely on the database, because pytest -m “not django_db” will prevent the test from triggering database creation. The time savings really add up, especially if you’re diligent about running your tests frequently.</p>
+
+<p>pytest provides a few marks out of the box:</p>
+
+<ul>
+  <li><strong>skip</strong> skips a test unconditionally.</li>
+  <li><strong>skipif</strong> skips a test if the expression passed to it evaluates to True.</li>
+  <li><strong>xfail</strong> indicates that a test is expected to fail, so if the test does fail, the overall suite can still result in a passing status.</li>
+  <li><strong>parametrize</strong> creates multiple variants of a test with different values as arguments. You’ll learn more about this mark shortly.
+You can see a list of all the marks that pytest knows about by running pytest –markers.</li>
+</ul>
+
+<p>On the topic of parametrization, that’s coming up next.</p>
+
+<h1 id="parametrization-combining-tests">Parametrization: Combining Tests</h1>
+
+<p>You saw earlier in this tutorial how pytest fixtures can be used to reduce code duplication by extracting common dependencies. Fixtures aren’t quite as useful when you have several tests with slightly different inputs and expected outputs. In these cases, you can parametrize a single test definition, and pytest will create variants of the test for you with the parameters you specify.</p>
+
+<p>Imagine you’ve written a function to tell if a string is a palindrome. An initial set of tests could look like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">test_is_palindrome_empty_string</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">""</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_is_palindrome_single_character</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">"a"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_is_palindrome_mixed_casing</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">"Bob"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_is_palindrome_with_spaces</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">"Never odd or even"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_is_palindrome_with_punctuation</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">"Do geese see God?"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_is_palindrome_not_palindrome</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">"abc"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_is_palindrome_not_quite</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">"abab"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>All of these tests except the last two have the same shape:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">test_is_palindrome_</span><span class="o">&lt;</span><span class="ow">in</span> <span class="n">some</span> <span class="n">situation</span><span class="o">&gt;</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="s">"&lt;some string&gt;"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This is starting to smell a lot like boilerplate. pytest so far has helped you get rid of boilerplate, and it’s not about to let you down now. You can use @pytest.mark.parametrize() to fill in this shape with different values, reducing your test code significantly:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s">"palindrome"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s">""</span><span class="p">,</span>
+    <span class="s">"a"</span><span class="p">,</span>
+    <span class="s">"Bob"</span><span class="p">,</span>
+    <span class="s">"Never odd or even"</span><span class="p">,</span>
+    <span class="s">"Do geese see God?"</span><span class="p">,</span>
+<span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_is_palindrome</span><span class="p">(</span><span class="n">palindrome</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="n">palindrome</span><span class="p">)</span>
+
+<span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s">"non_palindrome"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s">"abc"</span><span class="p">,</span>
+    <span class="s">"abab"</span><span class="p">,</span>
+<span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_is_palindrome_not_palindrome</span><span class="p">(</span><span class="n">non_palindrome</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="n">non_palindrome</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The first argument to parametrize() is a comma-delimited string of parameter names. You don’t have to provide more than one name, as you can see in this example. The second argument is a list of either tuples or single values that represent the parameter value(s). You could take your parametrization a step further to combine all your tests into one:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s">"maybe_palindrome, expected_result"</span><span class="p">,</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">"a"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">"Bob"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">"Never odd or even"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">"Do geese see God?"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">"abc"</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">"abab"</span><span class="p">,</span> <span class="bp">False</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_is_palindrome</span><span class="p">(</span><span class="n">maybe_palindrome</span><span class="p">,</span> <span class="n">expected_result</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">is_palindrome</span><span class="p">(</span><span class="n">maybe_palindrome</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected_result</span>
+</code></pre></div></div>
+
+<p>Even though this shortened your code, it’s important to note that in this case you actually lost some of the more descriptive nature of the original functions. Make sure you’re not parametrizing your test suite into incomprehensibility. You can use parametrization to separate the test data from the test behavior so that it’s clear what the test is testing, and also to make the different test cases easier to read and maintain.</p>
+:ET

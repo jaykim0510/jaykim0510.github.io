@@ -5,9 +5,707 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 03 Oct 2022 13:29:11 +0900</pubDate>
-        <lastBuildDate>Mon, 03 Oct 2022 13:29:11 +0900</lastBuildDate>
+        <pubDate>Mon, 03 Oct 2022 21:56:19 +0900</pubDate>
+        <lastBuildDate>Mon, 03 Oct 2022 21:56:19 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>TDD Series [Part5]: pytest</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#pytest가-좋은-이유&quot; id=&quot;markdown-toc-pytest가-좋은-이유&quot;&gt;pytest가 좋은 이유&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#less-boilerplate&quot; id=&quot;markdown-toc-less-boilerplate&quot;&gt;Less Boilerplate&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nicer-output&quot; id=&quot;markdown-toc-nicer-output&quot;&gt;Nicer Output&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#easier-to-manage-state-and-dependencies&quot; id=&quot;markdown-toc-easier-to-manage-state-and-dependencies&quot;&gt;Easier to Manage State and Dependencies&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#easy-to-filter-tests&quot; id=&quot;markdown-toc-easy-to-filter-tests&quot;&gt;Easy to Filter Tests&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#allows-test-parametrization&quot; id=&quot;markdown-toc-allows-test-parametrization&quot;&gt;Allows Test Parametrization&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#has-a-plugin-based-architecture&quot; id=&quot;markdown-toc-has-a-plugin-based-architecture&quot;&gt;Has a Plugin-Based Architecture&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#fixtures-managing-state-and-dependencies&quot; id=&quot;markdown-toc-fixtures-managing-state-and-dependencies&quot;&gt;Fixtures: Managing State and Dependencies&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#when-to-create-fixtures&quot; id=&quot;markdown-toc-when-to-create-fixtures&quot;&gt;When to Create Fixtures&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#when-to-avoid-fixtures&quot; id=&quot;markdown-toc-when-to-avoid-fixtures&quot;&gt;When to Avoid Fixtures&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#how-to-use-fixtures-at-scale&quot; id=&quot;markdown-toc-how-to-use-fixtures-at-scale&quot;&gt;How to Use Fixtures at Scale&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#marks-categorizing-tests&quot; id=&quot;markdown-toc-marks-categorizing-tests&quot;&gt;Marks: Categorizing Tests&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#parametrization-combining-tests&quot; id=&quot;markdown-toc-parametrization-combining-tests&quot;&gt;Parametrization: Combining Tests&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Testing your code brings a wide variety of benefits. It increases your confidence that the code behaves as you expect and ensures that changes to your code won’t cause regressions. Writing and maintaining tests is hard work, so you should leverage all the tools at your disposal to make it as painless as possible. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pytest&lt;/code&gt; is one of the best tools that you can use to boost your testing productivity.&lt;/p&gt;
+
+&lt;p&gt;If you’ve written unit tests for your Python code before, then you may have used Python’s built-in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unittest&lt;/code&gt; module. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unittest&lt;/code&gt; provides a solid base on which to build your test suite, but it has a few shortcomings.&lt;/p&gt;
+
+&lt;p&gt;A number of third-party testing frameworks attempt to address some of the issues with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unittest&lt;/code&gt;, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pytest&lt;/code&gt; has proven to be one of the most popular. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pytest&lt;/code&gt; is a feature-rich, plugin-based ecosystem for testing your Python code.&lt;/p&gt;
+
+&lt;h1 id=&quot;pytest가-좋은-이유&quot;&gt;pytest가 좋은 이유&lt;/h1&gt;
+
+&lt;h2 id=&quot;less-boilerplate&quot;&gt;Less Boilerplate&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unittest&lt;/code&gt;는 상속받고, unittest에서 제공하는 assert문을 사용해야함
+    &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# test_with_unittest.py
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;unittest&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TestCase&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;TryTesting&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TestCase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_always_passes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;assertTrue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_always_fails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;assertTrue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pytest&lt;/code&gt;는 보통 함수를 작성하듯 작성하고, 파이썬에서 제공하는 assert문 사용하면 됨
+    &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# test_with_pytest.py
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_always_passes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_always_fails&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Most functional tests follow the Arrange-Act-Assert model:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Arrange&lt;/strong&gt;, or set up, the conditions for the test&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Act&lt;/strong&gt; by calling some function or method&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Assert&lt;/strong&gt; that some end condition is true&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;nicer-output&quot;&gt;Nicer Output&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;먼저 시스템 상태, 파이썬 버전, 루트 디렉토리, 발견된 테스트의 수와 같은 정보를 제공&lt;/li&gt;
+  &lt;li&gt;테스트 결과의 아웃풋은 다음과 같음
+    &lt;ul&gt;
+      &lt;li&gt;A dot (.) means that the test passed.&lt;/li&gt;
+      &lt;li&gt;An F means that the test has failed.&lt;/li&gt;
+      &lt;li&gt;An E means that the test raised an unexpected exception.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;test_with_pytest.py .F                                                   [ 50%]
+test_with_unittest.py F.                                                 [100%]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위의 결과를 해석해보면, test_with_pytest.py 파일 안에는 두 개의 테스트 코드가 있고, 하나는 성공, 하나는 실패했음을 나타낸다. test_with_unittest.py 파일 안에서는 하나는 실패, 하나는 성공했을음 나타낸다. pytest로 실행하면 위와같이 unittest로 작성한 테스트 코드도 인식할 수 있다.&lt;/p&gt;
+
+&lt;h2 id=&quot;easier-to-manage-state-and-dependencies&quot;&gt;Easier to Manage State and Dependencies&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;테스트에 사용되는 데이터 타입이 dict, json과 같이 다르다&lt;/li&gt;
+  &lt;li&gt;pytest takes a different approach. It leads you toward explicit dependency declarations that are still reusable thanks to the availability of fixtures. pytest fixtures are functions that can create data, test doubles, or initialize system state for the test suite. Any test that wants to use a fixture must explicitly use this fixture function as an argument to the test function, so dependencies are always stated up front:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# fixture_demo.py
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pytest&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fixture&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;example_fixture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_with_fixture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;example_fixture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;example_fixture&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Looking at the test function, you can immediately tell that it depends on a fixture, without needing to check the whole file for fixture definitions.&lt;/p&gt;
+
+&lt;h2 id=&quot;easy-to-filter-tests&quot;&gt;Easy to Filter Tests&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;프로젝트 규모가 커지고, 테스트 코드 규모도 함께 커지면 나중에는 원하는 몇 개의 테스트만 필터링하고 싶을 때가 있음&lt;/li&gt;
+  &lt;li&gt;pytest 에서는 테스트를 필터링 하는 몇가지 방법을 제공
+    &lt;ul&gt;
+      &lt;li&gt;&lt;strong&gt;Name-based filtering&lt;/strong&gt;: You can limit pytest to running only those tests whose fully qualified names match a particular expression. You can do this with the -k parameter.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Directory scoping&lt;/strong&gt;: By default, pytest will run only those tests that are in or under the current directory.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Test categorization&lt;/strong&gt;: pytest can include or exclude tests from particular categories that you define. You can do this with the -m parameter.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Test categorization in particular is a subtly powerful tool. pytest enables you to create marks, or custom labels, for any test you like. A test may have multiple labels, and you can use them for granular control over which tests to run. Later in this tutorial, you’ll see an example of how pytest marks work and learn how to make use of them in a large test suite.&lt;/p&gt;
+
+&lt;h2 id=&quot;allows-test-parametrization&quot;&gt;Allows Test Parametrization&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;어떤 하나의 테스트 코드에 대해서 다양한 인풋을 넣어서 실험하는 경우가 있음&lt;/li&gt;
+  &lt;li&gt;unittest는 이 때의 결과를 하나로 출력 -&amp;gt; 인풋중 하나라도 실패하면 그냥 그 테스트 전체가 실패한 것으로 간주&lt;/li&gt;
+  &lt;li&gt;pytest는 각각의 인풋에 대해서 어떤 인풋이 실패하는지를 알려줌&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;has-a-plugin-based-architecture&quot;&gt;Has a Plugin-Based Architecture&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;pytest는 모듈화되어 확장성이 뛰어나도록 설계됨&lt;/li&gt;
+  &lt;li&gt;많은 개발자들이 커스터마이징해서 사용중&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;fixtures-managing-state-and-dependencies&quot;&gt;Fixtures: Managing State and Dependencies&lt;/h1&gt;
+
+&lt;p&gt;pytest fixtures are a way of providing data, test doubles, or state setup to your tests. Fixtures are functions that can return a wide range of values. Each test that depends on a fixture must explicitly accept that fixture as an argument.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;어떤 테스트를 위해 필요한 초기 조건을 세팅하여 객체(fixture)로 리턴하는 함수&lt;/li&gt;
+  &lt;li&gt;테스트를 쉽게 반복적으로 수행할 수 있도록 도와주는 것&lt;/li&gt;
+  &lt;li&gt;이 객체(fixture)는 반드시 테스트 코드의 인자로 명시되어야함&lt;/li&gt;
+  &lt;li&gt;(쉽게 말해, 테스트의 대상이 되는 객체를 리턴하는 함수를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@pytest.fixture&lt;/code&gt;로 데코레이팅)&lt;/li&gt;
+  &lt;li&gt;(그러면 테스트 코드에서 이 객체를 따로 반복 생성하지 않아도 사용할 수 있음)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;when-to-create-fixtures&quot;&gt;When to Create Fixtures&lt;/h2&gt;
+&lt;p&gt;In this section, you’ll simulate a typical test-driven development (TDD) workflow.&lt;/p&gt;
+
+&lt;p&gt;Imagine you’re writing a function, format_data_for_display(), to process the data returned by an API endpoint. The data represents a list of people, each with a given name, family name, and job title. The function should output a list of strings that include each person’s full name (their given_name followed by their family_name), a colon, and their title:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# format_data.py
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;format_data_for_display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;people&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Implement this!
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In good TDD fashion, you’ll want to first write a test for it. You might write the following code for that:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# test_format_data.py
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_format_data_for_display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;people&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;given_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Alfonsa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;family_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Ruiz&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;title&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Senior Software Engineer&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;given_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Sayid&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;family_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Khan&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;title&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Project Manager&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;format_data_for_display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;people&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Alfonsa Ruiz: Senior Software Engineer&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Sayid Khan: Project Manager&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;While writing this test, it occurs to you that you may need to write another function to transform the data into comma-separated values for use in Excel:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# format_data.py
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;format_data_for_display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;people&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;# Implement this!
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;format_data_for_excel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;people&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# Implement this!
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Your to-do list grows! That’s good! One of the advantages of TDD is that it helps you plan out the work ahead. The test for the format_data_for_excel() function would look awfully similar to the format_data_for_display() function:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# test_format_data.py
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_format_data_for_display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# ...
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_format_data_for_excel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;people&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;given_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Alfonsa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;family_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Ruiz&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;title&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Senior Software Engineer&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;given_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Sayid&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;family_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Khan&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;title&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Project Manager&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;format_data_for_excel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;people&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;given,family,title
+Alfonsa,Ruiz,Senior Software Engineer
+Sayid,Khan,Project Manager
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can pull the repeated data into a single function decorated with @pytest.fixture to indicate that the function is a pytest fixture:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# test_format_data.py
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pytest&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fixture&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;example_people_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;given_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Alfonsa&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;family_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Ruiz&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;title&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Senior Software Engineer&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;given_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Sayid&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;family_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Khan&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;title&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Project Manager&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# ...
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;You can use the fixture by adding the function reference as an argument to your tests. Note that you don’t call the fixture function. pytest takes care of that. You’ll be able to use the return value of the fixture function as the name of the fixture function:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# test_format_data.py
+&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;# ...
+&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_format_data_for_display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;example_people_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;format_data_for_display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;example_people_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Alfonsa Ruiz: Senior Software Engineer&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Sayid Khan: Project Manager&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_format_data_for_excel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;example_people_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;format_data_for_excel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;example_people_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;given,family,title
+Alfonsa,Ruiz,Senior Software Engineer
+Sayid,Khan,Project Manager
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;when-to-avoid-fixtures&quot;&gt;When to Avoid Fixtures&lt;/h2&gt;
+&lt;p&gt;Fixtures are great for extracting data or objects that you use across multiple tests. However, &lt;strong&gt;they aren’t always as good for tests that require slight variations in the data&lt;/strong&gt;. Littering your test suite with fixtures is no better than littering it with plain data or objects. It might even be worse because of the added layer of indirection.&lt;/p&gt;
+
+&lt;p&gt;As with most abstractions, it takes some practice and thought to find the right level of fixture use.&lt;/p&gt;
+
+&lt;p&gt;Nevertheless, fixtures will likely be an integral part of your test suite. As your project grows in scope, the challenge of scale starts to come into the picture. One of the challenges facing any kind of tool is how it handles being used at scale, and luckily, &lt;strong&gt;pytest has a bunch of useful features that can help you manage the complexity that comes with growth.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;how-to-use-fixtures-at-scale&quot;&gt;How to Use Fixtures at Scale&lt;/h2&gt;
+&lt;p&gt;As you extract more fixtures from your tests, you might see that some fixtures could benefit from further abstraction. In pytest, fixtures are modular. Being modular means that fixtures can be imported, can import other modules, and they can depend on and import other fixtures. All this allows you to compose a suitable fixture abstraction for your use case.&lt;/p&gt;
+
+&lt;p&gt;For example, you may find that fixtures in two separate files, or modules, share a common dependency. In this case, you can move fixtures from test modules into more general fixture-related modules. That way, you can import them back into any test modules that need them. This is a good approach when you find yourself using a fixture repeatedly throughout your project.&lt;/p&gt;
+
+&lt;p&gt;If you want to &lt;strong&gt;make a fixture available for your whole project&lt;/strong&gt; without having to import it, a special configuration module called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;conftest.py&lt;/code&gt; will allow you to do that.&lt;/p&gt;
+
+&lt;p&gt;pytest looks for a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;conftest.py&lt;/code&gt; module in each directory. If you add your general-purpose fixtures to the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;conftest.py&lt;/code&gt; module, then you’ll be able to use that fixture throughout the module’s parent directory and in any subdirectories without having to import it. This is a great place to put your most widely used fixtures.&lt;/p&gt;
+
+&lt;p&gt;Another interesting use case for fixtures and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;conftest.py&lt;/code&gt; is in guarding access to resources. Imagine that you’ve written a test suite for code that deals with API calls. You want to ensure that the test suite doesn’t make any real network calls even if someone accidentally writes a test that does so.&lt;/p&gt;
+
+&lt;p&gt;pytest provides a monkeypatch fixture to replace values and behaviors, which you can use to great effect:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# conftest.py
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pytest&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;requests&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fixture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;autouse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;disable_network_calls&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monkeypatch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;stunted_get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;RuntimeError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Network access not allowed during testing!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;monkeypatch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;setattr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requests&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;get&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lambda&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;**&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kwargs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stunted_get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;By placing &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;disable_network_calls()&lt;/code&gt; in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;conftest.py&lt;/code&gt; and adding the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;autouse=True&lt;/code&gt; option, you ensure that network calls will be disabled in every test across the suite. Any test that executes code calling &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;requests.get()&lt;/code&gt; will raise a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RuntimeError&lt;/code&gt; indicating that an unexpected network call would have occurred.&lt;/p&gt;
+
+&lt;p&gt;Your test suite is growing in numbers, which gives you a great feeling of confidence to make changes and not break things unexpectedly. That said, as your test suite grows, it might start taking a long time. Even if it doesn’t take that long, perhaps you’re focusing on some core behavior that trickles down and breaks most tests. In these cases, you might want to limit the test runner to only a certain category of tests.&lt;/p&gt;
+
+&lt;h1 id=&quot;marks-categorizing-tests&quot;&gt;Marks: Categorizing Tests&lt;/h1&gt;
+
+&lt;p&gt;In any large test suite, it would be nice to avoid running all the tests when you’re trying to iterate quickly on a new feature. Apart from the default behavior of pytest to run all tests in the current working directory, or the filtering functionality, you can take advantage of markers.&lt;/p&gt;
+
+&lt;p&gt;pytest enables you to define categories for your tests and provides options for including or excluding categories when you run your suite. You can mark a test with any number of categories.&lt;/p&gt;
+
+&lt;p&gt;Marking tests is useful for categorizing tests by subsystem or dependencies. If some of your tests require access to a database, for example, then you could create a @pytest.mark.database_access mark for them.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Pro tip: Because you can give your marks any name you want, it can be easy to mistype or misremember the name of a mark. pytest will warn you about marks that it doesn’t recognize in the test output.
+
+You can use the --strict-markers flag to the pytest command to ensure that all marks in your tests are registered in your pytest configuration file, pytest.ini. It’ll prevent you from running your tests until you register any unknown marks.
+
+For more information on registering marks, check out the pytest documentation.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;When the time comes to run your tests, you can still run them all by default with the pytest command. If you’d like to run only those tests that require database access, then you can use pytest -m database_access. To run all tests except those that require database access, you can use pytest -m “not database_access”. You can even use an autouse fixture to limit database access to those tests marked with database_access.&lt;/p&gt;
+
+&lt;p&gt;Some plugins expand on the functionality of marks by adding their own guards. The pytest-django plugin, for instance, provides a django_db mark. Any tests without this mark that try to access the database will fail. The first test that tries to access the database will trigger the creation of Django’s test database.&lt;/p&gt;
+
+&lt;p&gt;The requirement that you add the django_db mark nudges you toward stating your dependencies explicitly. That’s the pytest philosophy, after all! It also means that you can much more quickly run tests that don’t rely on the database, because pytest -m “not django_db” will prevent the test from triggering database creation. The time savings really add up, especially if you’re diligent about running your tests frequently.&lt;/p&gt;
+
+&lt;p&gt;pytest provides a few marks out of the box:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;skip&lt;/strong&gt; skips a test unconditionally.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;skipif&lt;/strong&gt; skips a test if the expression passed to it evaluates to True.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;xfail&lt;/strong&gt; indicates that a test is expected to fail, so if the test does fail, the overall suite can still result in a passing status.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;parametrize&lt;/strong&gt; creates multiple variants of a test with different values as arguments. You’ll learn more about this mark shortly.
+You can see a list of all the marks that pytest knows about by running pytest –markers.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;On the topic of parametrization, that’s coming up next.&lt;/p&gt;
+
+&lt;h1 id=&quot;parametrization-combining-tests&quot;&gt;Parametrization: Combining Tests&lt;/h1&gt;
+
+&lt;p&gt;You saw earlier in this tutorial how pytest fixtures can be used to reduce code duplication by extracting common dependencies. Fixtures aren’t quite as useful when you have several tests with slightly different inputs and expected outputs. In these cases, you can parametrize a single test definition, and pytest will create variants of the test for you with the parameters you specify.&lt;/p&gt;
+
+&lt;p&gt;Imagine you’ve written a function to tell if a string is a palindrome. An initial set of tests could look like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_empty_string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_single_character&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;a&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_mixed_casing&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Bob&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_with_spaces&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Never odd or even&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_with_punctuation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Do geese see God?&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_not_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;abc&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_not_quite&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;abab&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;All of these tests except the last two have the same shape:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;some&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;situation&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;some string&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is starting to smell a lot like boilerplate. pytest so far has helped you get rid of boilerplate, and it’s not about to let you down now. You can use @pytest.mark.parametrize() to fill in this shape with different values, reducing your test code significantly:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parametrize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;palindrome&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;a&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;Bob&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;Never odd or even&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;Do geese see God?&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parametrize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;non_palindrome&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;abc&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;abab&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome_not_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;non_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;non_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The first argument to parametrize() is a comma-delimited string of parameter names. You don’t have to provide more than one name, as you can see in this example. The second argument is a list of either tuples or single values that represent the parameter value(s). You could take your parametrization a step further to combine all your tests into one:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mark&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parametrize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;maybe_palindrome, expected_result&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;a&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Bob&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Never odd or even&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Do geese see God?&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;abc&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;abab&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maybe_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expected_result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;is_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maybe_palindrome&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expected_result&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Even though this shortened your code, it’s important to note that in this case you actually lost some of the more descriptive nature of the original functions. Make sure you’re not parametrizing your test suite into incomprehensibility. You can use parametrization to separate the test data from the test behavior so that it’s clear what the test is testing, and also to make the different test cases easier to read and maintain.&lt;/p&gt;
+</description>
+                <pubDate>Sat, 01 Oct 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/tdd_series5</link>
+                <guid isPermaLink="true">http://localhost:4000/tdd_series5</guid>
+                
+                <category>TDD</category>
+                
+                
+                <category>Development_knowledge</category>
+                
+            </item>
+        
+            <item>
+                <title>TDD Series [Part4]: 파이썬으로 테스트 주도 개발</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sat, 01 Oct 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/tdd_series4</link>
+                <guid isPermaLink="true">http://localhost:4000/tdd_series4</guid>
+                
+                <category>TDD</category>
+                
+                
+                <category>Development_knowledge</category>
+                
+            </item>
+        
+            <item>
+                <title>TDD Series [Part3]: 파이썬으로 테스트 코드 작성</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sat, 01 Oct 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/tdd_series3</link>
+                <guid isPermaLink="true">http://localhost:4000/tdd_series3</guid>
+                
+                <category>TDD</category>
+                
+                
+                <category>Development_knowledge</category>
+                
+            </item>
+        
+            <item>
+                <title>TDD Series [Part2]: 파이썬을 위한 테스트 도구(feat. pytest)</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#tdd&quot; id=&quot;markdown-toc-tdd&quot;&gt;TDD&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#pytest&quot; id=&quot;markdown-toc-pytest&quot;&gt;pytest&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#pytest-맛보기&quot; id=&quot;markdown-toc-pytest-맛보기&quot;&gt;pytest 맛보기&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#pytest-디렉토리-구조&quot; id=&quot;markdown-toc-pytest-디렉토리-구조&quot;&gt;pytest 디렉토리 구조&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#pytest-fixtures&quot; id=&quot;markdown-toc-pytest-fixtures&quot;&gt;pytest fixtures&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/pytest_logo.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이번 글에서는 pytest를 알아보고자 합니다.&lt;/p&gt;
+
+&lt;p&gt;pytest란 무엇인가? 정말 이름 그대로 py(thon)을 test 하는 프레임워크를 의미합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;pytest is a mature full-featured Python testing tool that helps you write better programs.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Python testing tool로써 좋은 프로그램을 작성하도록 도와준다라, 이걸 이해하기 위해서는 왜 테스트가 존재해야 하는가에 대해 생각할 필요가 있습니다&lt;/p&gt;
+
+&lt;h1 id=&quot;tdd&quot;&gt;TDD&lt;/h1&gt;
+&lt;p&gt;최근 많이 주목받고 있는 TDD (Test Driven Development)를 아시나요? 짧게 설명드리면 본격적인 개발에 들어가기 전에 테스트 계획 및 코드를 작성하는 것을 의미합니다. 테스트가 개발을 이끌어 나가는 것이 되는 것이죠.&lt;/p&gt;
+
+&lt;p&gt;그럼, 왜 TDD 같은 테스트가 우선시 되는 개발이 나오게 되었고, 주목받고 있는 것일까요?&lt;/p&gt;
+
+&lt;p&gt;자, 개발 중 에러 및 오류가 발생했다고 합시다.&lt;/p&gt;
+
+&lt;p&gt;이 상황이 정말 작은 소규모 개발 중에 일어난 것이라면 사실 큰 문제가 되지 않습니다. 개발한 모듈간에 연결성도 적을 뿐 아니라, 코드 양이 방대하지 않을 것이기 때문에 바로 찾아 문제를 해결할 수 있을 것입니다.&lt;/p&gt;
+
+&lt;p&gt;하지만 아주 대규모의 개발 상황이라고 가정해봅시다. 수 많은 모듈, 함수간 종속성과 매우 많은 코드 양이 있기 때문에 오류 및 에러를 잡는데 많은 시간과 인력을 투입하게 될 것입니다. 이러한 상황은 비즈니스적으로도 효율적이지 못하겠죠? 당연히 안정적인 프로그램을 개발해 나가는데도 많은 걸림돌이 될 것입니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;pytest&quot;&gt;pytest&lt;/h1&gt;
+
+&lt;p&gt;이러한 문제를 해결하기 위해 TDD. 즉, 테스트 주도 개발이 나오게 된 것입니다. 그리고 Python에서 TDD를 하기 위해 나온 프레임워크가 pytest입니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;pytest-맛보기&quot;&gt;pytest 맛보기&lt;/h2&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+├── py_test_1.py
+└── py_test_2.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# py_test_1.py
+# 테스트를 해보고 싶은 함수
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 테스트 함수
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_answer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# py_test_2.py
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;TestClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_one&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Hello, hi&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;h&quot;&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_two&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;what&quot;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;hasattr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;who&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; pytest py_test_1.py &lt;span class=&quot;c&quot;&gt;# 특정 파일을 테스트할 때&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/pytest_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; pytest &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.py &lt;span class=&quot;c&quot;&gt;# 테스트 폴더 안의 모든 파일을 테스트할 때&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/pytest_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;pytest-디렉토리-구조&quot;&gt;pytest 디렉토리 구조&lt;/h2&gt;
+
+&lt;p&gt;지금까지는 Command line에서 pytest 명령어를 통해 테스트를 실행했고, 또한 한 파일에 일반 함수와 테스트 코드들이 공존했습니다.&lt;/p&gt;
+
+&lt;p&gt;하지만 실제로 프로젝트에서 활용되는 데 있어서는 테스트 코드를 따로 관리하고, 이에 맞게 끔 구조를 구성해놓는 것이 효율적입니다.&lt;/p&gt;
+
+&lt;p&gt;그래서 테스트 코드는 프로젝트 코드들과 다르게 tests 라는 디렉토리를 통해서 관리를 합니다.&lt;/p&gt;
+
+&lt;p&gt;전체적으로 디렉토리 트리를 보면 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;project/
+    core_code/
+        __init__.py
+        sample_code1.py
+        sample_code2.py
+        sample_code3.py
+    tests/
+        test_sample1.py
+        test_sample2.py
+        test_sample3.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;pytest-fixtures&quot;&gt;pytest fixtures&lt;/h2&gt;
+
+&lt;p&gt;pytest의 특징중 하나인 fixture는 다음과 같은 의미를 가집니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;시스템의 필수조건을 만족하는 테스팅 프로세스를 설정하는 것 (A software test fixture sets up a system for the software testing process by initializing it, thereby satisfying any preconditions the system may have.)&lt;/li&gt;
+  &lt;li&gt;같은 설정의 테스트를 쉽게 반복적으로 수행할 수 있도록 도와주는 것 (The advantage of a test fixture is that it allows for tests to be repeatable since each test is always starting with the same setup. Test fixtures also ease test code design by allowing the developer to separate methods into different functions and reuse each function for other tests.)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;간략하게 말하면 수행될 테스팅에 있어 필요한 부분들을 가지고 있는 코드 또는 리소스라고 말할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pytest&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;src.calculator&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Calculator&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fixture&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_subtract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subtract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subtract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;보시다시피, 먼저 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@pytest.fixture&lt;/code&gt;를 통해 fixture를 선언합니다. 그리고 fixture function을 정의할 수 있습니다.
+이렇게 정의된 fixture function를 parameter로 사용하여 테스트를 위한 클래스를 가져올 수 있는 것입니다. 이렇게 되면 중복코드는 물론이고, 계속해서 필요한 모듈, 클래스가 있을 때마다 선언을 하기보다 간단히 parameter를 통해 가져올 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;이렇게 보니, 앞서 정의된 test fixture에 대한 정의가 와닿지 않나요?&lt;/p&gt;
+
+&lt;p&gt;사실 fixture에 대한 것은 이게 끝이 아닙니다.&lt;/p&gt;
+
+&lt;p&gt;‘대규모의 프로젝트인 경우엔 테스트마다 필요한 모듈, 클래스 등 리소스 및 코드들이 달라 필요한 fixture의 양이 매우 많아질 것입니다.&lt;/p&gt;
+
+&lt;p&gt;또한, 테스트 코드(py)마다 중복되는 fixture도 있을 겁니다. 예를 들어, A 테스트 코드에서도 계산기 클래스가 필요한데, B 테스트 코드에서도 계산기 클래스가 필요한 경우 말이죠. 지금까지의 경우로 보자면 두 테스트 코드 파일 위에 fixture를 따로 선언한 후 사용했어야 했습니다.&lt;/p&gt;
+
+&lt;p&gt;이러한 문제를 해결하기 위해 conftest.py를 사용합니다.
+fixture 코드들은 conftest.py에 선언해두면, 모든 테스트 코드에서는 해당 fixture들을 공유하여 사용할 수 있습니다. 알아서 pytest에서 공유해주는 마법!&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Directory tree&lt;/span&gt;
+src/
+  __init__.py
+  calculator.py
+tests/
+  conftest.py
+  test_code1.py
+  test_code2.py
+  test_code3.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# conftest.py
+&lt;/span&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pytest&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sys&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'/Users/peter/algo_folder'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# src 폴더가 tests 밖에 있기 때문에, 그냥 이름으로 import 안됨
+&lt;/span&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;src.calculator&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Calculator&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pytest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fixture&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# test_code.py
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Test functionality of add.&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_subtract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Test functionality of subtract.&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subtract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subtract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;subtract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;test_multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Test functionality of multiply.&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;assert&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;calculator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;27&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/pytest_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://binux.tistory.com/47&quot; target=&quot;_blank&quot;&gt;KimDoubleB, [pytest] python 코드를 테스트 해봅시다&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://realpython.com/pytest-python-testing/&quot; target=&quot;_blank&quot;&gt;Real Python, Effective Python Testing With Pytest&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Sat, 01 Oct 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/tdd_series2</link>
+                <guid isPermaLink="true">http://localhost:4000/tdd_series2</guid>
+                
+                <category>TDD</category>
+                
+                
+                <category>Development_knowledge</category>
+                
+            </item>
+        
+            <item>
+                <title>TDD Series [Part1]: What is TDD?</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wooaoe.tistory.com/33&quot; target=&quot;_blank&quot;&gt;wooaoe, TDD(Test-Driven-Development) 방법론에 대해서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://libertegrace.tistory.com/tag/%E2%9C%94%EF%B8%8FTDD&quot; target=&quot;_blank&quot;&gt;Grace’s Tech Blog, TDD&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/182&quot; target=&quot;_blank&quot;&gt;망나니 개발자, [TDD] 단위 테스트와 TDD(테스트 주도 개발) 프로그래밍 방법 소개&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Sat, 01 Oct 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/tdd_series1</link>
+                <guid isPermaLink="true">http://localhost:4000/tdd_series1</guid>
+                
+                <category>TDD</category>
+                
+                
+                <category>Development_knowledge</category>
+                
+            </item>
         
             <item>
                 <title>Data Engineering Series [Part28]: 데이터 파이프라인과 장애</title>
@@ -337,441 +1035,6 @@
                 <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/tech_interview_series6</link>
                 <guid isPermaLink="true">http://localhost:4000/tech_interview_series6</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part5]: Database</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#데이터베이스&quot; id=&quot;markdown-toc-데이터베이스&quot;&gt;데이터베이스&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#데이터베이스를-사용하는-이유&quot; id=&quot;markdown-toc-데이터베이스를-사용하는-이유&quot;&gt;데이터베이스를 사용하는 이유&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#데이터베이스-성능&quot; id=&quot;markdown-toc-데이터베이스-성능&quot;&gt;데이터베이스 성능&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#복제&quot; id=&quot;markdown-toc-복제&quot;&gt;복제&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#파티셔닝&quot; id=&quot;markdown-toc-파티셔닝&quot;&gt;파티셔닝&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#샤딩&quot; id=&quot;markdown-toc-샤딩&quot;&gt;샤딩&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#orm&quot; id=&quot;markdown-toc-orm&quot;&gt;ORM&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#index&quot; id=&quot;markdown-toc-index&quot;&gt;Index&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#index-란-무엇인가&quot; id=&quot;markdown-toc-index-란-무엇인가&quot;&gt;Index 란 무엇인가&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#index-의-자료구조&quot; id=&quot;markdown-toc-index-의-자료구조&quot;&gt;Index 의 자료구조&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#primary-index-vs-secondary-index&quot; id=&quot;markdown-toc-primary-index-vs-secondary-index&quot;&gt;Primary index vs Secondary index&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#composite-index&quot; id=&quot;markdown-toc-composite-index&quot;&gt;Composite index&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#index-의-성능과-고려해야할-사항&quot; id=&quot;markdown-toc-index-의-성능과-고려해야할-사항&quot;&gt;Index 의 성능과 고려해야할 사항&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#정규화에-대해서&quot; id=&quot;markdown-toc-정규화에-대해서&quot;&gt;정규화에 대해서&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#정규화-탄생-배경&quot; id=&quot;markdown-toc-정규화-탄생-배경&quot;&gt;정규화 탄생 배경&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#정규화란-무엇인가&quot; id=&quot;markdown-toc-정규화란-무엇인가&quot;&gt;정규화란 무엇인가&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#정규화의-종류&quot; id=&quot;markdown-toc-정규화의-종류&quot;&gt;정규화의 종류&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#정규화의-장단점&quot; id=&quot;markdown-toc-정규화의-장단점&quot;&gt;정규화의 장단점&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#transaction&quot; id=&quot;markdown-toc-transaction&quot;&gt;Transaction&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#트랜잭션transaction이란-무엇인가&quot; id=&quot;markdown-toc-트랜잭션transaction이란-무엇인가&quot;&gt;트랜잭션(Transaction)이란 무엇인가?&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#트랜잭션과-lock&quot; id=&quot;markdown-toc-트랜잭션과-lock&quot;&gt;트랜잭션과 Lock&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#트랜잭션의-특성&quot; id=&quot;markdown-toc-트랜잭션의-특성&quot;&gt;트랜잭션의 특성&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#트랜잭션을-사용할-때-주의할-점&quot; id=&quot;markdown-toc-트랜잭션을-사용할-때-주의할-점&quot;&gt;트랜잭션을 사용할 때 주의할 점&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#트랜잭션-격리-수준&quot; id=&quot;markdown-toc-트랜잭션-격리-수준&quot;&gt;트랜잭션 격리 수준&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#교착상태&quot; id=&quot;markdown-toc-교착상태&quot;&gt;교착상태&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#교착상태란-무엇인가&quot; id=&quot;markdown-toc-교착상태란-무엇인가&quot;&gt;교착상태란 무엇인가&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#교착상태의-예mysql&quot; id=&quot;markdown-toc-교착상태의-예mysql&quot;&gt;교착상태의 예(MySQL)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#교착-상태의-빈도를-낮추는-방법&quot; id=&quot;markdown-toc-교착-상태의-빈도를-낮추는-방법&quot;&gt;교착 상태의 빈도를 낮추는 방법&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#sql&quot; id=&quot;markdown-toc-sql&quot;&gt;SQL&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#join&quot; id=&quot;markdown-toc-join&quot;&gt;JOIN&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#sargable&quot; id=&quot;markdown-toc-sargable&quot;&gt;Sargable&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#optimizer&quot; id=&quot;markdown-toc-optimizer&quot;&gt;Optimizer&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#statement-vs-preparedstatement&quot; id=&quot;markdown-toc-statement-vs-preparedstatement&quot;&gt;Statement vs PreparedStatement&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#sql-injection&quot; id=&quot;markdown-toc-sql-injection&quot;&gt;SQL Injection&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#nosql&quot; id=&quot;markdown-toc-nosql&quot;&gt;NoSQL&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#정의&quot; id=&quot;markdown-toc-정의&quot;&gt;정의&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#cap-이론&quot; id=&quot;markdown-toc-cap-이론&quot;&gt;CAP 이론&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#일관성&quot; id=&quot;markdown-toc-일관성&quot;&gt;일관성&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#가용성&quot; id=&quot;markdown-toc-가용성&quot;&gt;가용성&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#네트워크-분할-허용성&quot; id=&quot;markdown-toc-네트워크-분할-허용성&quot;&gt;네트워크 분할 허용성&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#저장방식에-따른-분류&quot; id=&quot;markdown-toc-저장방식에-따른-분류&quot;&gt;저장방식에 따른 분류&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#key-value-model&quot; id=&quot;markdown-toc-key-value-model&quot;&gt;Key-Value Model&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#document-model&quot; id=&quot;markdown-toc-document-model&quot;&gt;Document Model&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#column-model&quot; id=&quot;markdown-toc-column-model&quot;&gt;Column Model&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;데이터베이스&quot;&gt;데이터베이스&lt;/h1&gt;
-&lt;h2 id=&quot;데이터베이스를-사용하는-이유&quot;&gt;데이터베이스를 사용하는 이유&lt;/h2&gt;
-&lt;h2 id=&quot;데이터베이스-성능&quot;&gt;데이터베이스 성능&lt;/h2&gt;
-&lt;h2 id=&quot;복제&quot;&gt;복제&lt;/h2&gt;
-&lt;h2 id=&quot;파티셔닝&quot;&gt;파티셔닝&lt;/h2&gt;
-&lt;h2 id=&quot;샤딩&quot;&gt;샤딩&lt;/h2&gt;
-&lt;h2 id=&quot;orm&quot;&gt;ORM&lt;/h2&gt;
-&lt;h1 id=&quot;index&quot;&gt;Index&lt;/h1&gt;
-&lt;h2 id=&quot;index-란-무엇인가&quot;&gt;Index 란 무엇인가&lt;/h2&gt;
-&lt;h2 id=&quot;index-의-자료구조&quot;&gt;Index 의 자료구조&lt;/h2&gt;
-&lt;h2 id=&quot;primary-index-vs-secondary-index&quot;&gt;Primary index vs Secondary index&lt;/h2&gt;
-&lt;h2 id=&quot;composite-index&quot;&gt;Composite index&lt;/h2&gt;
-&lt;h2 id=&quot;index-의-성능과-고려해야할-사항&quot;&gt;Index 의 성능과 고려해야할 사항&lt;/h2&gt;
-&lt;h1 id=&quot;정규화에-대해서&quot;&gt;정규화에 대해서&lt;/h1&gt;
-&lt;h2 id=&quot;정규화-탄생-배경&quot;&gt;정규화 탄생 배경&lt;/h2&gt;
-&lt;h2 id=&quot;정규화란-무엇인가&quot;&gt;정규화란 무엇인가&lt;/h2&gt;
-&lt;h2 id=&quot;정규화의-종류&quot;&gt;정규화의 종류&lt;/h2&gt;
-&lt;h2 id=&quot;정규화의-장단점&quot;&gt;정규화의 장단점&lt;/h2&gt;
-&lt;h1 id=&quot;transaction&quot;&gt;Transaction&lt;/h1&gt;
-&lt;h2 id=&quot;트랜잭션transaction이란-무엇인가&quot;&gt;트랜잭션(Transaction)이란 무엇인가?&lt;/h2&gt;
-&lt;h2 id=&quot;트랜잭션과-lock&quot;&gt;트랜잭션과 Lock&lt;/h2&gt;
-&lt;h2 id=&quot;트랜잭션의-특성&quot;&gt;트랜잭션의 특성&lt;/h2&gt;
-&lt;h2 id=&quot;트랜잭션을-사용할-때-주의할-점&quot;&gt;트랜잭션을 사용할 때 주의할 점&lt;/h2&gt;
-&lt;h2 id=&quot;트랜잭션-격리-수준&quot;&gt;트랜잭션 격리 수준&lt;/h2&gt;
-&lt;h1 id=&quot;교착상태&quot;&gt;교착상태&lt;/h1&gt;
-&lt;h2 id=&quot;교착상태란-무엇인가&quot;&gt;교착상태란 무엇인가&lt;/h2&gt;
-&lt;h2 id=&quot;교착상태의-예mysql&quot;&gt;교착상태의 예(MySQL)&lt;/h2&gt;
-&lt;h2 id=&quot;교착-상태의-빈도를-낮추는-방법&quot;&gt;교착 상태의 빈도를 낮추는 방법&lt;/h2&gt;
-&lt;h1 id=&quot;sql&quot;&gt;SQL&lt;/h1&gt;
-&lt;h2 id=&quot;join&quot;&gt;JOIN&lt;/h2&gt;
-&lt;h2 id=&quot;sargable&quot;&gt;Sargable&lt;/h2&gt;
-&lt;h2 id=&quot;optimizer&quot;&gt;Optimizer&lt;/h2&gt;
-&lt;h2 id=&quot;statement-vs-preparedstatement&quot;&gt;Statement vs PreparedStatement&lt;/h2&gt;
-&lt;h2 id=&quot;sql-injection&quot;&gt;SQL Injection&lt;/h2&gt;
-&lt;h1 id=&quot;nosql&quot;&gt;NoSQL&lt;/h1&gt;
-&lt;h2 id=&quot;정의&quot;&gt;정의&lt;/h2&gt;
-&lt;h2 id=&quot;cap-이론&quot;&gt;CAP 이론&lt;/h2&gt;
-&lt;h3 id=&quot;일관성&quot;&gt;일관성&lt;/h3&gt;
-&lt;h3 id=&quot;가용성&quot;&gt;가용성&lt;/h3&gt;
-&lt;h3 id=&quot;네트워크-분할-허용성&quot;&gt;네트워크 분할 허용성&lt;/h3&gt;
-&lt;h2 id=&quot;저장방식에-따른-분류&quot;&gt;저장방식에 따른 분류&lt;/h2&gt;
-&lt;h3 id=&quot;key-value-model&quot;&gt;Key-Value Model&lt;/h3&gt;
-&lt;h3 id=&quot;document-model&quot;&gt;Document Model&lt;/h3&gt;
-&lt;h3 id=&quot;column-model&quot;&gt;Column Model&lt;/h3&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/WeareSoft/tech-interview&quot; target=&quot;_blank&quot;&gt;WeareSoft/tech-interview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gyoogle.dev/blog/guide/%EB%A9%B4%EC%A0%91%20%EC%A4%80%EB%B9%84.html&quot; target=&quot;_blank&quot;&gt;gyoogle, Tech Interview 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blex.me/@baealex/%EC%B7%A8%EC%A4%80%EC%83%9D%EC%9D%B4-%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EA%B8%B0%EC%88%A0%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84&quot; target=&quot;_blank&quot;&gt;배진오, 신입 개발자 기술면접 준비하기&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://syujisu.tistory.com/entry/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A7%81%EB%AC%B4-%EB%A9%B4%EC%A0%91-%EC%A7%88%EB%AC%B8?category=871132&quot; target=&quot;_blank&quot;&gt;exp_blog, 데이터베이스 직무 면접 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/88&quot; target=&quot;_blank&quot;&gt;망나니 개발자 CS 준비&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series5</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series5</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part4]: Network</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#기초편&quot; id=&quot;markdown-toc-기초편&quot;&gt;기초편&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#osi-7계층&quot; id=&quot;markdown-toc-osi-7계층&quot;&gt;OSI 7계층&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#http&quot; id=&quot;markdown-toc-http&quot;&gt;HTTP&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#tcp--udp&quot; id=&quot;markdown-toc-tcp--udp&quot;&gt;TCP &amp;amp; UDP&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#tcpip&quot; id=&quot;markdown-toc-tcpip&quot;&gt;TCP/IP&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#네트워크-장비&quot; id=&quot;markdown-toc-네트워크-장비&quot;&gt;네트워크 장비&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#응용편&quot; id=&quot;markdown-toc-응용편&quot;&gt;응용편&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#쿠키와-세션&quot; id=&quot;markdown-toc-쿠키와-세션&quot;&gt;쿠키와 세션&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#dns&quot; id=&quot;markdown-toc-dns&quot;&gt;DNS&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#rest&quot; id=&quot;markdown-toc-rest&quot;&gt;REST&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#소켓&quot; id=&quot;markdown-toc-소켓&quot;&gt;소켓&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#로드-밸런싱&quot; id=&quot;markdown-toc-로드-밸런싱&quot;&gt;로드 밸런싱&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#용어&quot; id=&quot;markdown-toc-용어&quot;&gt;용어&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#nat&quot; id=&quot;markdown-toc-nat&quot;&gt;NAT&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#라우터&quot; id=&quot;markdown-toc-라우터&quot;&gt;라우터&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#게이트웨이&quot; id=&quot;markdown-toc-게이트웨이&quot;&gt;게이트웨이&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#dhcp&quot; id=&quot;markdown-toc-dhcp&quot;&gt;DHCP&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;기초편&quot;&gt;기초편&lt;/h1&gt;
-
-&lt;h2 id=&quot;osi-7계층&quot;&gt;OSI 7계층&lt;/h2&gt;
-&lt;h2 id=&quot;http&quot;&gt;HTTP&lt;/h2&gt;
-&lt;h2 id=&quot;tcp--udp&quot;&gt;TCP &amp;amp; UDP&lt;/h2&gt;
-&lt;h2 id=&quot;tcpip&quot;&gt;TCP/IP&lt;/h2&gt;
-&lt;h2 id=&quot;네트워크-장비&quot;&gt;네트워크 장비&lt;/h2&gt;
-
-&lt;h1 id=&quot;응용편&quot;&gt;응용편&lt;/h1&gt;
-
-&lt;h2 id=&quot;쿠키와-세션&quot;&gt;쿠키와 세션&lt;/h2&gt;
-&lt;h2 id=&quot;dns&quot;&gt;DNS&lt;/h2&gt;
-&lt;h2 id=&quot;rest&quot;&gt;REST&lt;/h2&gt;
-&lt;h2 id=&quot;소켓&quot;&gt;소켓&lt;/h2&gt;
-&lt;h2 id=&quot;로드-밸런싱&quot;&gt;로드 밸런싱&lt;/h2&gt;
-
-&lt;h1 id=&quot;용어&quot;&gt;용어&lt;/h1&gt;
-
-&lt;h2 id=&quot;nat&quot;&gt;NAT&lt;/h2&gt;
-&lt;h2 id=&quot;라우터&quot;&gt;라우터&lt;/h2&gt;
-&lt;h2 id=&quot;게이트웨이&quot;&gt;게이트웨이&lt;/h2&gt;
-&lt;h2 id=&quot;dhcp&quot;&gt;DHCP&lt;/h2&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/WeareSoft/tech-interview&quot; target=&quot;_blank&quot;&gt;WeareSoft/tech-interview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gyoogle.dev/blog/guide/%EB%A9%B4%EC%A0%91%20%EC%A4%80%EB%B9%84.html&quot; target=&quot;_blank&quot;&gt;gyoogle, Tech Interview 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blex.me/@baealex/%EC%B7%A8%EC%A4%80%EC%83%9D%EC%9D%B4-%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EA%B8%B0%EC%88%A0%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84&quot; target=&quot;_blank&quot;&gt;배진오, 신입 개발자 기술면접 준비하기&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://syujisu.tistory.com/entry/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A7%81%EB%AC%B4-%EB%A9%B4%EC%A0%91-%EC%A7%88%EB%AC%B8?category=871132&quot; target=&quot;_blank&quot;&gt;exp_blog, 데이터베이스 직무 면접 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/88&quot; target=&quot;_blank&quot;&gt;망나니 개발자 CS 준비&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series4</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series4</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part3]: OS</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#프로세스&quot; id=&quot;markdown-toc-프로세스&quot;&gt;프로세스&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#운영체제란&quot; id=&quot;markdown-toc-운영체제란&quot;&gt;운영체제란?&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#프로세스와-스레드&quot; id=&quot;markdown-toc-프로세스와-스레드&quot;&gt;프로세스와 스레드&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#멀티-프로세스-vs-멀티-스레드&quot; id=&quot;markdown-toc-멀티-프로세스-vs-멀티-스레드&quot;&gt;멀티 프로세스 vs 멀티 스레드&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#스케줄러&quot; id=&quot;markdown-toc-스케줄러&quot;&gt;스케줄러&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#동기와-비동기&quot; id=&quot;markdown-toc-동기와-비동기&quot;&gt;동기와 비동기&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#프로세스-동기화&quot; id=&quot;markdown-toc-프로세스-동기화&quot;&gt;프로세스 동기화&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#프로세스-주소-공간&quot; id=&quot;markdown-toc-프로세스-주소-공간&quot;&gt;프로세스 주소 공간&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#인터럽트interrupt&quot; id=&quot;markdown-toc-인터럽트interrupt&quot;&gt;인터럽트(Interrupt)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#시스템-콜system-call&quot; id=&quot;markdown-toc-시스템-콜system-call&quot;&gt;시스템 콜(System Call)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#pcb와-context-switching&quot; id=&quot;markdown-toc-pcb와-context-switching&quot;&gt;PCB와 Context Switching&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#ipcinter-process-communication&quot; id=&quot;markdown-toc-ipcinter-process-communication&quot;&gt;IPC(Inter Process Communication)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#임계-구역critical-section&quot; id=&quot;markdown-toc-임계-구역critical-section&quot;&gt;임계 구역(Critical Section)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#데드락deadlock&quot; id=&quot;markdown-toc-데드락deadlock&quot;&gt;데드락(DeadLock)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#경쟁-상태race-condition&quot; id=&quot;markdown-toc-경쟁-상태race-condition&quot;&gt;경쟁 상태(Race Condition)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#세마포어와-뮤텍스&quot; id=&quot;markdown-toc-세마포어와-뮤텍스&quot;&gt;세마포어와 뮤텍스&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#스레드-세이프thread-safe&quot; id=&quot;markdown-toc-스레드-세이프thread-safe&quot;&gt;스레드 세이프(Thread-safe)&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#메모리&quot; id=&quot;markdown-toc-메모리&quot;&gt;메모리&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#메모리-관리-전략&quot; id=&quot;markdown-toc-메모리-관리-전략&quot;&gt;메모리 관리 전략&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#가상-메모리&quot; id=&quot;markdown-toc-가상-메모리&quot;&gt;가상 메모리&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#캐시의-지역성&quot; id=&quot;markdown-toc-캐시의-지역성&quot;&gt;캐시의 지역성&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#페이징과-세그먼테이션&quot; id=&quot;markdown-toc-페이징과-세그먼테이션&quot;&gt;페이징과 세그먼테이션&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#페이지-교체-알고리즘&quot; id=&quot;markdown-toc-페이지-교체-알고리즘&quot;&gt;페이지 교체 알고리즘&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;프로세스&quot;&gt;프로세스&lt;/h1&gt;
-&lt;h2 id=&quot;운영체제란&quot;&gt;운영체제란?&lt;/h2&gt;
-&lt;h2 id=&quot;프로세스와-스레드&quot;&gt;프로세스와 스레드&lt;/h2&gt;
-&lt;h2 id=&quot;멀티-프로세스-vs-멀티-스레드&quot;&gt;멀티 프로세스 vs 멀티 스레드&lt;/h2&gt;
-&lt;h2 id=&quot;스케줄러&quot;&gt;스케줄러&lt;/h2&gt;
-&lt;h2 id=&quot;동기와-비동기&quot;&gt;동기와 비동기&lt;/h2&gt;
-&lt;h2 id=&quot;프로세스-동기화&quot;&gt;프로세스 동기화&lt;/h2&gt;
-&lt;h2 id=&quot;프로세스-주소-공간&quot;&gt;프로세스 주소 공간&lt;/h2&gt;
-&lt;h2 id=&quot;인터럽트interrupt&quot;&gt;인터럽트(Interrupt)&lt;/h2&gt;
-&lt;h2 id=&quot;시스템-콜system-call&quot;&gt;시스템 콜(System Call)&lt;/h2&gt;
-&lt;h2 id=&quot;pcb와-context-switching&quot;&gt;PCB와 Context Switching&lt;/h2&gt;
-&lt;h2 id=&quot;ipcinter-process-communication&quot;&gt;IPC(Inter Process Communication)&lt;/h2&gt;
-&lt;h2 id=&quot;임계-구역critical-section&quot;&gt;임계 구역(Critical Section)&lt;/h2&gt;
-&lt;h2 id=&quot;데드락deadlock&quot;&gt;데드락(DeadLock)&lt;/h2&gt;
-&lt;h2 id=&quot;경쟁-상태race-condition&quot;&gt;경쟁 상태(Race Condition)&lt;/h2&gt;
-&lt;h2 id=&quot;세마포어와-뮤텍스&quot;&gt;세마포어와 뮤텍스&lt;/h2&gt;
-&lt;h2 id=&quot;스레드-세이프thread-safe&quot;&gt;스레드 세이프(Thread-safe)&lt;/h2&gt;
-
-&lt;h1 id=&quot;메모리&quot;&gt;메모리&lt;/h1&gt;
-&lt;h2 id=&quot;메모리-관리-전략&quot;&gt;메모리 관리 전략&lt;/h2&gt;
-&lt;h2 id=&quot;가상-메모리&quot;&gt;가상 메모리&lt;/h2&gt;
-&lt;h2 id=&quot;캐시의-지역성&quot;&gt;캐시의 지역성&lt;/h2&gt;
-&lt;h2 id=&quot;페이징과-세그먼테이션&quot;&gt;페이징과 세그먼테이션&lt;/h2&gt;
-&lt;h2 id=&quot;페이지-교체-알고리즘&quot;&gt;페이지 교체 알고리즘&lt;/h2&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/WeareSoft/tech-interview&quot; target=&quot;_blank&quot;&gt;WeareSoft/tech-interview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gyoogle.dev/blog/guide/%EB%A9%B4%EC%A0%91%20%EC%A4%80%EB%B9%84.html&quot; target=&quot;_blank&quot;&gt;gyoogle, Tech Interview 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blex.me/@baealex/%EC%B7%A8%EC%A4%80%EC%83%9D%EC%9D%B4-%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EA%B8%B0%EC%88%A0%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84&quot; target=&quot;_blank&quot;&gt;배진오, 신입 개발자 기술면접 준비하기&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://syujisu.tistory.com/entry/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A7%81%EB%AC%B4-%EB%A9%B4%EC%A0%91-%EC%A7%88%EB%AC%B8?category=871132&quot; target=&quot;_blank&quot;&gt;exp_blog, 데이터베이스 직무 면접 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/88&quot; target=&quot;_blank&quot;&gt;망나니 개발자 CS 준비&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series3</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series3</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part2]: Algorithm</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#탐색-알고리즘&quot; id=&quot;markdown-toc-탐색-알고리즘&quot;&gt;탐색 알고리즘&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#binary-search&quot; id=&quot;markdown-toc-binary-search&quot;&gt;Binary Search&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#탐욕-알고리즘greedy-algorithm&quot; id=&quot;markdown-toc-탐욕-알고리즘greedy-algorithm&quot;&gt;탐욕 알고리즘(Greedy Algorithm)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#동적-프로그래밍dynamic-programming&quot; id=&quot;markdown-toc-동적-프로그래밍dynamic-programming&quot;&gt;동적 프로그래밍(Dynamic Programming)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#분할-정복divide-and-conquer&quot; id=&quot;markdown-toc-분할-정복divide-and-conquer&quot;&gt;분할 정복(Divide and Conquer)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#binary-search-tree&quot; id=&quot;markdown-toc-binary-search-tree&quot;&gt;Binary Search Tree&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#dfs&quot; id=&quot;markdown-toc-dfs&quot;&gt;DFS&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#bfs&quot; id=&quot;markdown-toc-bfs&quot;&gt;BFS&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#dijkstra&quot; id=&quot;markdown-toc-dijkstra&quot;&gt;Dijkstra&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#kruskal&quot; id=&quot;markdown-toc-kruskal&quot;&gt;Kruskal&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#최장-증가-수열lis&quot; id=&quot;markdown-toc-최장-증가-수열lis&quot;&gt;최장 증가 수열(LIS)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#최장-공통-문자열lcs&quot; id=&quot;markdown-toc-최장-공통-문자열lcs&quot;&gt;최장 공통 문자열(LCS)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#최장-공통-부분-수열lcs&quot; id=&quot;markdown-toc-최장-공통-부분-수열lcs&quot;&gt;최장 공통 부분 수열(LCS)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#최소-공통-조상lca&quot; id=&quot;markdown-toc-최소-공통-조상lca&quot;&gt;최소 공통 조상(LCA)&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;탐색-알고리즘&quot;&gt;탐색 알고리즘&lt;/h1&gt;
-
-&lt;h2 id=&quot;binary-search&quot;&gt;Binary Search&lt;/h2&gt;
-&lt;h2 id=&quot;탐욕-알고리즘greedy-algorithm&quot;&gt;탐욕 알고리즘(Greedy Algorithm)&lt;/h2&gt;
-&lt;h2 id=&quot;동적-프로그래밍dynamic-programming&quot;&gt;동적 프로그래밍(Dynamic Programming)&lt;/h2&gt;
-&lt;h2 id=&quot;분할-정복divide-and-conquer&quot;&gt;분할 정복(Divide and Conquer)&lt;/h2&gt;
-&lt;h2 id=&quot;binary-search-tree&quot;&gt;Binary Search Tree&lt;/h2&gt;
-&lt;h2 id=&quot;dfs&quot;&gt;DFS&lt;/h2&gt;
-&lt;h2 id=&quot;bfs&quot;&gt;BFS&lt;/h2&gt;
-&lt;h2 id=&quot;dijkstra&quot;&gt;Dijkstra&lt;/h2&gt;
-&lt;h2 id=&quot;kruskal&quot;&gt;Kruskal&lt;/h2&gt;
-&lt;h2 id=&quot;최장-증가-수열lis&quot;&gt;최장 증가 수열(LIS)&lt;/h2&gt;
-&lt;h2 id=&quot;최장-공통-문자열lcs&quot;&gt;최장 공통 문자열(LCS)&lt;/h2&gt;
-&lt;h2 id=&quot;최장-공통-부분-수열lcs&quot;&gt;최장 공통 부분 수열(LCS)&lt;/h2&gt;
-&lt;h2 id=&quot;최소-공통-조상lca&quot;&gt;최소 공통 조상(LCA)&lt;/h2&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/WeareSoft/tech-interview&quot; target=&quot;_blank&quot;&gt;WeareSoft/tech-interview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gyoogle.dev/blog/guide/%EB%A9%B4%EC%A0%91%20%EC%A4%80%EB%B9%84.html&quot; target=&quot;_blank&quot;&gt;gyoogle, Tech Interview 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blex.me/@baealex/%EC%B7%A8%EC%A4%80%EC%83%9D%EC%9D%B4-%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EA%B8%B0%EC%88%A0%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84&quot; target=&quot;_blank&quot;&gt;배진오, 신입 개발자 기술면접 준비하기&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://syujisu.tistory.com/entry/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A7%81%EB%AC%B4-%EB%A9%B4%EC%A0%91-%EC%A7%88%EB%AC%B8?category=871132&quot; target=&quot;_blank&quot;&gt;exp_blog, 데이터베이스 직무 면접 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/88&quot; target=&quot;_blank&quot;&gt;망나니 개발자 CS 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://velog.io/@emplam27/%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-%EA%B7%B8%EB%A6%BC%EC%9C%BC%EB%A1%9C-%EC%95%8C%EC%95%84%EB%B3%B4%EB%8A%94-LCS-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-Longest-Common-Substring%EC%99%80-Longest-Common-Subsequence&quot; target=&quot;_blank&quot;&gt;[알고리즘] 그림으로 알아보는 LCS 알고리즘 - Longest Common Substring와 Longest Common Subsequence&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series2</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series2</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part1]: Data Structure</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#배열array&quot; id=&quot;markdown-toc-배열array&quot;&gt;배열(Array)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#링크드-리스트linkedlist&quot; id=&quot;markdown-toc-링크드-리스트linkedlist&quot;&gt;링크드 리스트(LinkedList)&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#array--arraylist--linkedlist&quot; id=&quot;markdown-toc-array--arraylist--linkedlist&quot;&gt;Array &amp;amp; ArrayList &amp;amp; LinkedList&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#해시테이블hashtable&quot; id=&quot;markdown-toc-해시테이블hashtable&quot;&gt;해시테이블(HashTable)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#스택과-큐stack--queue&quot; id=&quot;markdown-toc-스택과-큐stack--queue&quot;&gt;스택과 큐(Stack &amp;amp; Queue)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#트리tree&quot; id=&quot;markdown-toc-트리tree&quot;&gt;트리(Tree)&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#이진-트리binary-tree&quot; id=&quot;markdown-toc-이진-트리binary-tree&quot;&gt;이진 트리(Binary Tree)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#이진-탐색-트리binary-search-tree&quot; id=&quot;markdown-toc-이진-탐색-트리binary-search-tree&quot;&gt;이진 탐색 트리(Binary Search Tree)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#red-black-tree&quot; id=&quot;markdown-toc-red-black-tree&quot;&gt;Red-Black Tree&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#힙heap&quot; id=&quot;markdown-toc-힙heap&quot;&gt;힙(Heap)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#트라이trie&quot; id=&quot;markdown-toc-트라이trie&quot;&gt;트라이(Trie)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#밸런스-트리b-tree&quot; id=&quot;markdown-toc-밸런스-트리b-tree&quot;&gt;밸런스 트리(B-Tree)&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#그래프graph&quot; id=&quot;markdown-toc-그래프graph&quot;&gt;그래프(Graph)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#tree와-graph의-차이점&quot; id=&quot;markdown-toc-tree와-graph의-차이점&quot;&gt;Tree와 Graph의 차이점&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-&lt;h1 id=&quot;배열array&quot;&gt;배열(Array)&lt;/h1&gt;
-&lt;h1 id=&quot;링크드-리스트linkedlist&quot;&gt;링크드 리스트(LinkedList)&lt;/h1&gt;
-&lt;h2 id=&quot;array--arraylist--linkedlist&quot;&gt;Array &amp;amp; ArrayList &amp;amp; LinkedList&lt;/h2&gt;
-&lt;h1 id=&quot;해시테이블hashtable&quot;&gt;해시테이블(HashTable)&lt;/h1&gt;
-&lt;h1 id=&quot;스택과-큐stack--queue&quot;&gt;스택과 큐(Stack &amp;amp; Queue)&lt;/h1&gt;
-&lt;h1 id=&quot;트리tree&quot;&gt;트리(Tree)&lt;/h1&gt;
-&lt;h2 id=&quot;이진-트리binary-tree&quot;&gt;이진 트리(Binary Tree)&lt;/h2&gt;
-&lt;h2 id=&quot;이진-탐색-트리binary-search-tree&quot;&gt;이진 탐색 트리(Binary Search Tree)&lt;/h2&gt;
-&lt;h2 id=&quot;red-black-tree&quot;&gt;Red-Black Tree&lt;/h2&gt;
-&lt;h2 id=&quot;힙heap&quot;&gt;힙(Heap)&lt;/h2&gt;
-&lt;h2 id=&quot;트라이trie&quot;&gt;트라이(Trie)&lt;/h2&gt;
-&lt;h2 id=&quot;밸런스-트리b-tree&quot;&gt;밸런스 트리(B-Tree)&lt;/h2&gt;
-&lt;h1 id=&quot;그래프graph&quot;&gt;그래프(Graph)&lt;/h1&gt;
-&lt;h1 id=&quot;tree와-graph의-차이점&quot;&gt;Tree와 Graph의 차이점&lt;/h1&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/WeareSoft/tech-interview&quot; target=&quot;_blank&quot;&gt;WeareSoft/tech-interview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gyoogle.dev/blog/guide/%EB%A9%B4%EC%A0%91%20%EC%A4%80%EB%B9%84.html&quot; target=&quot;_blank&quot;&gt;gyoogle, Tech Interview 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blex.me/@baealex/%EC%B7%A8%EC%A4%80%EC%83%9D%EC%9D%B4-%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EA%B8%B0%EC%88%A0%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84&quot; target=&quot;_blank&quot;&gt;배진오, 신입 개발자 기술면접 준비하기&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://syujisu.tistory.com/entry/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A7%81%EB%AC%B4-%EB%A9%B4%EC%A0%91-%EC%A7%88%EB%AC%B8?category=871132&quot; target=&quot;_blank&quot;&gt;exp_blog, 데이터베이스 직무 면접 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/88&quot; target=&quot;_blank&quot;&gt;망나니 개발자 CS 준비&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series1</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series1</guid>
                 
                 <category>tech_interview</category>
                 
