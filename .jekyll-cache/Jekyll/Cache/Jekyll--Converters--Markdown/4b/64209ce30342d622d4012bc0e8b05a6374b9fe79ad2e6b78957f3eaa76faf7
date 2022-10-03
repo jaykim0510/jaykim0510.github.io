@@ -1,7 +1,13 @@
-I"�N<hr />
+I"Ng<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#변수" id="markdown-toc-변수">변수</a></li>
+  <li><a href="#변수" id="markdown-toc-변수">변수</a>    <ul>
+      <li><a href="#local-variable" id="markdown-toc-local-variable">Local variable</a></li>
+      <li><a href="#environment-variable" id="markdown-toc-environment-variable">Environment variable</a></li>
+      <li><a href="#positional-variable" id="markdown-toc-positional-variable">Positional variable</a></li>
+      <li><a href="#special-variable" id="markdown-toc-special-variable">Special variable</a></li>
+    </ul>
+  </li>
   <li><a href="#조건문" id="markdown-toc-조건문">조건문</a>    <ul>
       <li><a href="#조건문에-들어가는-대상이-숫자인-경우" id="markdown-toc-조건문에-들어가는-대상이-숫자인-경우">조건문에 들어가는 대상이 숫자인 경우</a></li>
       <li><a href="#조건문에-들어가는-대상이-문자열인-경우" id="markdown-toc-조건문에-들어가는-대상이-문자열인-경우">조건문에 들어가는 대상이 문자열인 경우</a></li>
@@ -48,6 +54,123 @@ Hello var_1
 1
 </code></pre></div></div>
 
+<h2 id="local-variable">Local variable</h2>
+
+<ul>
+  <li>함수내에서만 사용하고 싶은 변수는 앞에 <code class="language-plaintext highlighter-rouge">local</code> 붙여준다</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/zsh</span>
+
+<span class="k">function </span>test1<span class="o">()</span>
+<span class="o">{</span>
+	<span class="nv">x</span><span class="o">=</span>123
+	<span class="nb">echo</span> <span class="s2">"x is </span><span class="nv">$x</span><span class="s2">"</span>
+<span class="o">}</span>
+
+
+<span class="k">function </span>test2<span class="o">()</span>
+<span class="o">{</span>
+	<span class="nb">local </span><span class="nv">y</span><span class="o">=</span>345
+	<span class="nb">echo</span> <span class="s2">"y is </span><span class="nv">$y</span><span class="s2">"</span>
+<span class="o">}</span>
+
+test1
+test2
+
+
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="nv">$x</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+	</span><span class="nb">echo</span> <span class="s2">"x(=</span><span class="nv">$x</span><span class="s2">) is not local variable"</span>
+<span class="k">else
+	</span><span class="nb">echo</span> <span class="s2">"x is local variable"</span>
+<span class="k">fi
+
+if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="nv">$y</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+	</span><span class="nb">echo</span> <span class="s2">"y(=</span><span class="nv">$y</span><span class="s2">) is not local variable"</span>
+<span class="k">else
+	</span><span class="nb">echo</span> <span class="s2">"y is local variable"</span>
+<span class="k">fi</span>
+<span class="nt">-------------------</span>
+x is 123
+y is 345
+x<span class="o">(=</span>123<span class="o">)</span> is not <span class="nb">local </span>variable
+y is <span class="nb">local </span>variable
+</code></pre></div></div>
+
+<h2 id="environment-variable">Environment variable</h2>
+
+<ul>
+  <li>쉘 프로그램 전체에서 인식하는 변수</li>
+  <li>환경 변수 선언 방법: <code class="language-plaintext highlighter-rouge">export ENV_A=123</code></li>
+  <li>쉘 프로그램을 실행할 때마다 환경 변수로 적용하고 싶다면,
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">~/.zshrc</code> 또는 <code class="language-plaintext highlighter-rouge">~/.bashrc</code> 스크립트에 export 구문 추가</li>
+      <li>(<code class="language-plaintext highlighter-rouge">~/.zshrc</code> 또는 <code class="language-plaintext highlighter-rouge">~/.bashrc</code> 스크립트는 쉘 프로그램 시작할 때 자동으로 실행되는 스크립트)</li>
+      <li>(쉘 프로그램 시작하면 내부적으로 자동으로 <code class="language-plaintext highlighter-rouge">source ~/.zshrc</code> 를 실행)</li>
+    </ul>
+  </li>
+  <li>환경 변수에서 삭제하고 싶으면 <code class="language-plaintext highlighter-rouge">unset ENV_A</code></li>
+  <li>env 명령어 입력하면 쉘 프로그램에 정의된 모든 환경 변수를 볼 수 있음</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># env_variable_set.sh</span>
+<span class="c">#!/bin/zsh</span>
+
+<span class="nb">export </span><span class="nv">ENV_A</span><span class="o">=</span>123
+<span class="nb">export </span><span class="nv">ENV_B</span><span class="o">=</span>234
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># env_variable.sh </span>
+<span class="c">#!/bin/zsh</span>
+
+<span class="k">function </span>test1<span class="o">()</span>
+<span class="o">{</span>
+	<span class="nb">echo</span> <span class="s2">"environment variable ENV_A is </span><span class="nv">$ENV_A</span><span class="s2">"</span>
+<span class="o">}</span>
+
+<span class="nb">source</span> ~/shell_script_test_folder/env_variable_set.sh
+test1
+
+<span class="nb">unset </span>ENV_A
+test1
+<span class="nt">------------------------------------------------------</span>
+environment variable ENV_A is 123
+environment variable ENV_A is 
+</code></pre></div></div>
+
+<h2 id="positional-variable">Positional variable</h2>
+
+<ul>
+  <li>함수에 아규먼트 전달한 것처럼, 스크립트도 실행할 때 아규먼트 전달 가능</li>
+</ul>
+
+<h2 id="special-variable">Special variable</h2>
+
+<ul>
+  <li>$0: 호출된 스크립트 이름</li>
+  <li>$#: 파라미터의 개수</li>
+  <li>$*: 파라미터 전체를 하나의 word로 취급</li>
+  <li>$@: 파라미터 전체를 각각의 word로 취급</li>
+  <li>$?: exit status</li>
+  <li>$$: shell의 PID</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/zsh</span>
+
+<span class="nb">echo</span> <span class="s2">"The file name is </span><span class="nv">$0</span><span class="s2">"</span>
+<span class="nb">echo</span> <span class="s2">"The number of parameters is $#"</span>
+<span class="nb">echo</span> <span class="s2">"The parameters are </span><span class="nv">$*</span><span class="s2">"</span>
+<span class="nb">echo</span> <span class="s2">"The PID is </span><span class="nv">$$</span><span class="s2">"</span>
+
+<span class="k">for </span>arg <span class="k">in</span> <span class="nv">$@</span>
+<span class="k">do
+	</span><span class="nb">echo</span> <span class="s2">"arg is </span><span class="nv">$arg</span><span class="s2">"</span>
+<span class="k">done</span>
+</code></pre></div></div>
+
 <h1 id="조건문">조건문</h1>
 
 <ul>
@@ -90,11 +213,7 @@ a is 123
 
 <ul>
   <li>==, !=, &gt;, &lt;, -z, -n</li>
-  <li>
-    <blockquote>
-      <p>, &lt; 쓸 때는 이중괄호 써야함 (괄호 하나만 써도 되긴 하는데 그러려면 &gt; 이런식으로 써야함)</p>
-    </blockquote>
-  </li>
+  <li>&gt;, &lt; 쓸 때는 이중괄호 써야함 (괄호 하나만 써도 되긴 하는데 그러려면 \&gt; 이런식으로 써야함)</li>
   <li>-z: is null</li>
   <li>-n: is not null</li>
   <li>ex. [[ “$var” &gt; “ABC” ]]</li>
