@@ -89,6 +89,12 @@ tags: Kubernetes
 
 ![](/images/kube_network.png)
 
+# 마치며
+
+![](/images/kube_41.png)
+
+지금까지는 쿠버네티스가 어떻게 명령을 수행하는지 알아봤다. 다음 포스트에서는 클라이언트가 무엇을 이용해 어떤식으로 쿠버네티스에 명령을 내리는지 알아보자.  
+
 # 참고자료  
 - [subicura님의 kubenetes안내서](https://subicura.com/2019/05/19/kubernetes-basic-1.html){:target="_blank"}
 - [OSS, 쿠버네티스(kubernetes) 구성요소](https://www.oss.kr/info_techtip/show/a084eeb7-c3fe-457d-a50d-6e17fe9b8dbc){:target="_blank"}

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part2]: Kubernetes Resource'
+title:  'Kubernetes Series [Part2]: Kubernetes Object'
 description: Pod는 쿠버네티스에서 배포할 수 있는 가장 작은 단위의 오브젝트로 한 개 이상의 컨테이너와 스토리지, 네트워크 속성을 가집니다.  
 date:   2022-01-09 15:01:35 +0300
 image:  '/images/kube_22.png'
@@ -17,9 +17,42 @@ tags: Kubernetes
 
 ---
 
-# 쿠버네티스의 리소스
+# 쿠버네티스의 오브젝트
 
-## Workload Resources
+- 애플리케이션을 쿠버네티스 클러스터에 배포할 때 사용할 수 있는 리소스 단위
+- 어떤 애플리케이션을 얼마나 어디에 어떤 방식으로 배포할지에 관한 것들을 Manifest 파일로 정의할 수 있음
+- 사용자의 의도를 YAML 형식으로 정의
+- REST API로 마스터 노드에 전달
+- 오브젝트에는 크게 Workload 관련 오브젝트와 Network 관련 오브젝트가 있음
+
+![](/images/kube_42.png)
+
+**Manifest 파일**  
+
+```yaml
+# 간단한 예시
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: echo
+  labels:
+    app: echo
+spec:
+  containers:
+    - name: app
+      image: ghcr.io/subicura/echo:v1
+```
+
+- 쿠버네티스 오브젝트를 명시적으로 관리하도록 해주는 YAML 파일
+- 오브젝트의 목적에 따라 kind를 달리해줌
+  - kind에는 크게 Pod, Replicaset, Deployment, Service, Ingress
+- 우리가 원하는 애플리케이션의 상태를 spec에 정의함
+  - 쿠버네티스 컨트롤러는 YAML 파일에 정의된 spec과 자신의 오브젝트 status를 비교
+  - 차이점이 발견되면 status를 spec(desired state)에 맞도록 업데이트 후 etcd에 저장
+
+
+## Workload Object
 > Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.  
 
 [(Rancher문서 참고)](https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/){:target="_blank"}

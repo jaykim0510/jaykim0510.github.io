@@ -1,8 +1,8 @@
-I"/�<hr />
+I"�<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#쿠버네티스의-리소스" id="markdown-toc-쿠버네티스의-리소스">쿠버네티스의 리소스</a>    <ul>
-      <li><a href="#workload-resources" id="markdown-toc-workload-resources">Workload Resources</a>        <ul>
+  <li><a href="#쿠버네티스의-오브젝트" id="markdown-toc-쿠버네티스의-오브젝트">쿠버네티스의 오브젝트</a>    <ul>
+      <li><a href="#workload-object" id="markdown-toc-workload-object">Workload Object</a>        <ul>
           <li><a href="#pod" id="markdown-toc-pod">Pod</a></li>
           <li><a href="#replicaset" id="markdown-toc-replicaset">ReplicaSet</a></li>
           <li><a href="#deployment" id="markdown-toc-deployment">Deployment</a></li>
@@ -25,9 +25,36 @@
 
 <hr />
 
-<h1 id="쿠버네티스의-리소스">쿠버네티스의 리소스</h1>
+<h1 id="쿠버네티스의-오브젝트">쿠버네티스의 오브젝트</h1>
 
-<h2 id="workload-resources">Workload Resources</h2>
+<ul>
+  <li>애플리케이션을 쿠버네티스 클러스터에 배포할 때 사용할 수 있는 리소스 단위</li>
+  <li>어떤 애플리케이션을 얼마나 어디에 어떤 방식으로 배포할지에 관한 것들을 Manifest 파일로 정의할 수 있음</li>
+  <li>사용자의 의도를 YAML 형식으로 정의</li>
+  <li>REST API로 마스터 노드에 전달</li>
+  <li>오브젝트에는 크게 Workload 관련 오브젝트와 Network 관련 오브젝트가 있음</li>
+</ul>
+
+<p><img src="/images/kube_42.png" alt="" /></p>
+
+<p><strong>Manifest 파일</strong></p>
+
+<ul>
+  <li>쿠버네티스 오브젝트를 명시적으로 관리하도록 해주는 YAML 파일</li>
+  <li>오브젝트의 목적에 따라 kind를 달리해줌
+    <ul>
+      <li>kind에는 크게 Pod, Replicaset, Deployment, Service, Ingress</li>
+    </ul>
+  </li>
+  <li>우리가 원하는 애플리케이션의 상태를 spec에 정의함
+    <ul>
+      <li>쿠버네티스 컨트롤러는 YAML 파일에 정의된 spec과 자신의 오브젝트 status를 비교</li>
+      <li>차이점이 발견되면 status를 spec(desired state)에 맞도록 업데이트 후 etcd에 저장</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="workload-object">Workload Object</h2>
 <blockquote>
   <p>Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.</p>
 </blockquote>
