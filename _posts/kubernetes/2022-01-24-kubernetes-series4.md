@@ -2,7 +2,7 @@
 layout: post
 title:  'Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기'
 description: 쿠버네티스는 여러 플랫폼 환경에서 클러스터를 구성하여 사용할 수 있습니다. 
-date:   2022-01-23 15:01:35 +0300
+date:   2022-01-24 15:01:35 +0300
 image:  '/images/kube_24.png'
 logo_image:  '/images/kubernetes_logo.png'
 categories: devops

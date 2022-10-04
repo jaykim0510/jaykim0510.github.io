@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kubernetes Series [Part7]: StatefulSet과 Headless의 조합</title>
+  <title>Kubernetes Series [Part7]: Replicaset</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/kubernetes-series7">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kubernetes Series [Part7]: StatefulSet과 Headless의 조합 – Code Museum">
+  <meta name="twitter:title" content="Kubernetes Series [Part7]: Replicaset – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/kubernetes_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kubernetes Series [Part7]: StatefulSet과 Headless의 조합 – Code Museum">
+  <meta property="og:title" content="Kubernetes Series [Part7]: Replicaset – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -385,7 +385,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part7]: StatefulSet과 Headless의 조합">
+          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part7]: Replicaset">
         </div>
       </div>
       
@@ -406,7 +406,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Kubernetes Series [Part7]: StatefulSet과 Headless의 조합</h1>
+          <h1 class="post__title">Kubernetes Series [Part7]: Replicaset</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -439,6 +439,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -450,10 +452,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part10]:</a>
+      <a href="/kubernetes-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part6]: Pod</a>
     
     
-      <a href="/kubernetes-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part9]:<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part8]: Deployment<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -461,8 +463,106 @@ Table of Contents
 
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#오브젝트-정보-확인" id="markdown-toc-오브젝트-정보-확인">오브젝트 정보 확인</a></li>
+  <li><a href="#쿠버네티스-명령-수행-순서-확인하기" id="markdown-toc-쿠버네티스-명령-수행-순서-확인하기">쿠버네티스 명령 수행 순서 확인하기</a></li>
+  <li><a href="#replicaset-오브젝트-삭제하기" id="markdown-toc-replicaset-오브젝트-삭제하기">Replicaset 오브젝트 삭제하기</a></li>
+  <li><a href="#scale-updown" id="markdown-toc-scale-updown">Scale up/down</a></li>
+  <li><a href="#replicaset-템플릿-변경후-다시-적용하면" id="markdown-toc-replicaset-템플릿-변경후-다시-적용하면">Replicaset 템플릿 변경후 다시 적용하면</a></li>
+</ul>
 
 <hr />
+
+<ul>
+  <li>spec에 <code class="language-plaintext highlighter-rouge">selector</code>와 <code class="language-plaintext highlighter-rouge">replicas</code>가 추가
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">selector</code>: Replicaset 오브젝트가 담당할 파드 매칭</li>
+      <li><code class="language-plaintext highlighter-rouge">replicas</code>: 복제할 파드의 개수</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">ReplicaSet</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">blue-replicaset</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">blue-app</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">blue-app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">blue-app</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/blue-app:1.0</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+        <span class="na">env</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">NODE_NAME</span>
+          <span class="na">valueFrom</span><span class="pi">:</span>
+            <span class="na">fieldRef</span><span class="pi">:</span>
+              <span class="na">fieldPath</span><span class="pi">:</span> <span class="s">spec.nodeName</span>
+        <span class="na">resources</span><span class="pi">:</span>
+          <span class="na">limits</span><span class="pi">:</span>
+            <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">64Mi"</span>
+            <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">50m"</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get rs blue-replicaset -o wide
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_19.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f ./blue-app/replicaset.yaml 
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_18.png" alt="" /></p>
+
+<h1 id="오브젝트-정보-확인">오브젝트 정보 확인</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl describe rs blue-replicaset
+</code></pre></div></div>
+
+<p><img src="/images/kube_repli_1.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get rs blue-replicaset -o json
+</code></pre></div></div>
+
+<p><img src="/images/kube_repli_2.png" alt="" /></p>
+
+<h1 id="쿠버네티스-명령-수행-순서-확인하기">쿠버네티스 명령 수행 순서 확인하기</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get events --sort-by=.metadata.creationTimestamp
+</code></pre></div></div>
+
+<p><img src="/images/kube_repli_3.png" alt="" /></p>
+
+<h1 id="replicaset-오브젝트-삭제하기">Replicaset 오브젝트 삭제하기</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete rs blue-replicaset
+</code></pre></div></div>
+
+<p>(파드부터 삭제하면 Replicaset 오브젝트가 계속 새로 생성함 -&gt; 삭제할 때는 Replicaset 오브젝트)</p>
+
+<h1 id="scale-updown">Scale up/down</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl scale rs blue-replicaset --replicas=1
+</code></pre></div></div>
+
+<p><img src="/images/kube_repli_5.png" alt="" /></p>
+
+<h1 id="replicaset-템플릿-변경후-다시-적용하면">Replicaset 템플릿 변경후 다시 적용하면</h1>
+
+<ul>
+  <li>Replicaset 생성 후, 템플릿 변경 후 다시 apply 적용하면?</li>
+  <li>이미 배포된 파드에는 변경이 적용 안됨 (이미 replicas 수만큼 배포돼 있으므로)</li>
+  <li>만약 의도적으로 파드 한 개를 삭제하면, 그 다음부터 새로 띄어지는 파드는 템플릿 변경 후의 파드</li>
+  <li>이를 자동으로 버전 롤업/롤백해주는 오브젝트가 Deployment</li>
+</ul>
 
     </div>
     <div class="post__tags_list">
@@ -698,7 +798,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part7]:%20StatefulSet%EA%B3%BC%20Headless%EC%9D%98%20%EC%A1%B0%ED%95%A9&url=http://localhost:4000/kubernetes-series7"
+          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part7]:%20Replicaset&url=http://localhost:4000/kubernetes-series7"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -708,12 +808,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series7&amp;media=http://localhost:4000/images/kubernetes_logo.png&amp;description=Kubernetes%20Series%20[Part7]:%20StatefulSet%EA%B3%BC%20Headless%EC%9D%98%20%EC%A1%B0%ED%95%A9"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series7&amp;media=http://localhost:4000/images/kubernetes_logo.png&amp;description=Kubernetes%20Series%20[Part7]:%20Replicaset"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series7&title=Kubernetes%20Series%20[Part7]:%20StatefulSet%EA%B3%BC%20Headless%EC%9D%98%20%EC%A1%B0%ED%95%A9&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series7&title=Kubernetes%20Series%20[Part7]:%20Replicaset&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -722,6 +822,8 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
 
   
 
@@ -737,10 +839,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part10]:</a>
+      <a href="/kubernetes-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part6]: Pod</a>
     
     
-      <a href="/kubernetes-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part9]:<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part8]: Deployment<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

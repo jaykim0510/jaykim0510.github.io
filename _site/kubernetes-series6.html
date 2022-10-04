@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kubernetes Series [Part6]: ConfigMap과 Secret</title>
+  <title>Kubernetes Series [Part6]: Pod</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/kubernetes-series6">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kubernetes Series [Part6]: ConfigMap과 Secret – Code Museum">
+  <meta name="twitter:title" content="Kubernetes Series [Part6]: Pod – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/kubernetes_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kubernetes Series [Part6]: ConfigMap과 Secret – Code Museum">
+  <meta property="og:title" content="Kubernetes Series [Part6]: Pod – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -385,7 +385,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part6]: ConfigMap과 Secret">
+          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part6]: Pod">
         </div>
       </div>
       
@@ -406,7 +406,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Kubernetes Series [Part6]: ConfigMap과 Secret</h1>
+          <h1 class="post__title">Kubernetes Series [Part6]: Pod</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -415,7 +415,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-01-28T21:01:35+09:00">28 Jan 2022</time>
+              <time class="post__date" datetime="2022-01-29T21:01:35+09:00">29 Jan 2022</time>
             </div>
           </div>
   
@@ -454,10 +454,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기</a>
+      <a href="/kubernetes-series5" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part5]: ConfigMap과 Secret</a>
     
     
-      <a href="/kubernetes-series10" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part10]:<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series7" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part7]: Replicaset<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -465,8 +465,282 @@ Table of Contents
 
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#환경변수" id="markdown-toc-환경변수">환경변수</a></li>
+  <li><a href="#네트워크" id="markdown-toc-네트워크">네트워크</a>    <ul>
+      <li><a href="#파드내에-컨테이너끼리-통신" id="markdown-toc-파드내에-컨테이너끼리-통신">파드내에 컨테이너끼리 통신</a></li>
+      <li><a href="#서로-다른-파드의-컨테이너간-통신" id="markdown-toc-서로-다른-파드의-컨테이너간-통신">서로 다른 파드의 컨테이너간 통신</a></li>
+    </ul>
+  </li>
+  <li><a href="#라벨링" id="markdown-toc-라벨링">라벨링</a></li>
+  <li><a href="#배포할-노드-지정" id="markdown-toc-배포할-노드-지정">배포할 노드 지정</a></li>
+  <li><a href="#파드-삭제하기" id="markdown-toc-파드-삭제하기">파드 삭제하기</a></li>
+</ul>
 
 <hr />
+
+<h1 id="환경변수">환경변수</h1>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">hello-app</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">hello-app-con</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/hello-app:1.0</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">limits</span><span class="pi">:</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">128Mi"</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> ./hello-app/pod.yaml
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">-o</span> wide
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_1.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl <span class="nb">exec</span> <span class="nt">-it</span> hello-app <span class="nt">--</span> /bin/sh
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>env
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_2.png" alt="" /></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">hello-app</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">hello-app-con</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/hello-app:1.0</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MY_NAME</span>
+        <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Jay"</span>
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">limits</span><span class="pi">:</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">128Mi"</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>env
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_3.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pod hello-app -o json
+</code></pre></div></div>
+
+<ul>
+  <li>크게 metadata, spec, status 항목이 있음</li>
+</ul>
+
+<p><img src="/images/kube_pod_4.png" alt="" /></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">hello-app</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">hello-app-con</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/hello-app:1.0</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">env</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MY_NAME</span>
+        <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">Jay"</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">POD_IP</span>
+        <span class="na">valueFrom</span><span class="pi">:</span>
+          <span class="na">fieldRef</span><span class="pi">:</span>
+            <span class="na">fieldPath</span><span class="pi">:</span> <span class="s">status.podIP</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">NODE_IP</span>
+        <span class="na">valueFrom</span><span class="pi">:</span>
+          <span class="na">fieldRef</span><span class="pi">:</span>
+            <span class="na">fieldPath</span><span class="pi">:</span> <span class="s">status.hostIP</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">NODE_NAME</span>
+        <span class="na">valueFrom</span><span class="pi">:</span>
+          <span class="na">fieldRef</span><span class="pi">:</span>
+            <span class="na">fieldPath</span><span class="pi">:</span> <span class="s">spec.nodeName</span>
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">limits</span><span class="pi">:</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">128Mi"</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>env
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_5.png" alt="" /></p>
+
+<h1 id="네트워크">네트워크</h1>
+
+<h2 id="파드내에-컨테이너끼리-통신">파드내에 컨테이너끼리 통신</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">blue-green-app</span> <span class="c1"># Pod의 호스트명</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">blue-app</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/blue-app:1.0</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">limits</span><span class="pi">:</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">64Mi"</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f blue-green-app/pod.yaml
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl logs blue-green-app -c blue-app
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_6.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl exec -it blue-green-app -c blue-app -- /bin/sh
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 블루 앱에서 그린 앱에 localhost로 통신
+curl -vs localhost:8081/tree
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_7.png" alt="" /></p>
+
+<h2 id="서로-다른-파드의-컨테이너간-통신">서로 다른 파드의 컨테이너간 통신</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f red-app/pod.yaml
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods -o wide
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_8.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>export RED_POD_IP=$(kubectl get pod red-app -o jsonpath="{.status.podIP}")
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo $RED_POD_IP
+----------------------
+10.100.1.3
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl exec blue-green-app -c blue-app -- curl -vs $RED_POD_IP:8080/rose
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_9.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl port-forward blue-green-app 8080:8080
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>URL: localhost:8080/sky
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_10.png" alt="" /></p>
+
+<h1 id="라벨링">라벨링</h1>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">red-app</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">category</span><span class="pi">:</span> <span class="s">nature</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">rose</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">red-app</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/red-app:1.0</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">limits</span><span class="pi">:</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">64Mi"</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">--show-labels</span>
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_11.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># (라벨간에 띄어쓰기 허용 x)</span>
+kubectl get pod <span class="nt">-L</span> app,category
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_12.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># --selector 대신 -l 써도됨</span>
+kubectl get pod <span class="nt">--selector</span> <span class="nv">app</span><span class="o">=</span>rose <span class="nt">-L</span> app
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_13.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pod <span class="nt">-l</span> <span class="s1">'app in (rose,sky-and-tree)'</span> <span class="nt">-L</span> app
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_14.png" alt="" /></p>
+
+<h1 id="배포할-노드-지정">배포할 노드 지정</h1>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 노드 목록과 레이블 확인</span>
+kubectl get nodes
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 노드에 Label 추가</span>
+<span class="c"># -- 첫번째, 세번째 노드에 soil=moist</span>
+<span class="c"># -- 두번째 노드에 soil=dry</span>
+kubectl label node &lt;1번째 노드&gt; &lt;3번째 노드&gt; <span class="nv">soil</span><span class="o">=</span>moist
+kubectl label node &lt;2번째 노드&gt; <span class="nv">soil</span><span class="o">=</span>dry
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_15.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># soil 노드 레이블 확인</span>
+kubectl get node <span class="nt">-L</span> soil
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_16.png" alt="" /></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">red-app</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">nodeSelector</span><span class="pi">:</span>
+    <span class="na">soil</span><span class="pi">:</span> <span class="s">moist</span>
+  <span class="na">containers</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">red-app</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/red-app:1.0</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">limits</span><span class="pi">:</span>
+        <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">64Mi"</span>
+        <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100m"</span>
+</code></pre></div></div>
+
+<p><img src="/images/kube_pod_17.png" alt="" /></p>
+
+<h1 id="파드-삭제하기">파드 삭제하기</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete pod --all
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete pod -l app=rose
+</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">
@@ -702,7 +976,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part6]:%20ConfigMap%EA%B3%BC%20Secret&url=http://localhost:4000/kubernetes-series6"
+          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part6]:%20Pod&url=http://localhost:4000/kubernetes-series6"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -712,12 +986,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series6&amp;media=http://localhost:4000/images/kubernetes_logo.png&amp;description=Kubernetes%20Series%20[Part6]:%20ConfigMap%EA%B3%BC%20Secret"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series6&amp;media=http://localhost:4000/images/kubernetes_logo.png&amp;description=Kubernetes%20Series%20[Part6]:%20Pod"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series6&title=Kubernetes%20Series%20[Part6]:%20ConfigMap%EA%B3%BC%20Secret&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series6&title=Kubernetes%20Series%20[Part6]:%20Pod&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -745,10 +1019,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기</a>
+      <a href="/kubernetes-series5" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part5]: ConfigMap과 Secret</a>
     
     
-      <a href="/kubernetes-series10" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part10]:<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series7" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part7]: Replicaset<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

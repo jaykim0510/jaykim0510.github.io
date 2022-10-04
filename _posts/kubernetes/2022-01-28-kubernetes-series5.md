@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part6]: ConfigMap과 Secret'
+title:  'Kubernetes Series [Part5]: ConfigMap과 Secret'
 description: 
 date:   2022-01-28 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
