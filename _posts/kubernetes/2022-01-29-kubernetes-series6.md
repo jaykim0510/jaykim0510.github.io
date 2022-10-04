@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part6]: Pod'
+title:  'Kubernetes Series [Part6]: Pod로 배우는 kubectl 명령어'
 description: 
 date:   2022-01-29 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'

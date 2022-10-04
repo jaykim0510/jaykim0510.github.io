@@ -1,0 +1,131 @@
+I"3$<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+
+<hr />
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">order</span> <span class="c1"># &lt;서비스명&gt;</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">snackbar</span> 
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">service</span><span class="pi">:</span> <span class="s">order</span>
+    <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+  <span class="na">selector</span><span class="pi">:</span> <span class="c1"># &lt;Deployment 오브젝트 매핑&gt;</span>
+    <span class="na">service</span><span class="pi">:</span> <span class="s">order</span>
+    <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span> <span class="c1"># &lt;서비스 오브젝트의 포트&gt;</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">8080</span> <span class="c1"># &lt;Deployment 오브젝트에서 원하는 컨테이너의 포트&gt;</span>
+
+<span class="nn">---</span>
+
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">payment</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">snackbar</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">service</span><span class="pi">:</span> <span class="s">payment</span>
+    <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">service</span><span class="pi">:</span> <span class="s">payment</span>
+    <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">8080</span>
+
+<span class="nn">---</span>
+
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">order</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">snackbar</span>
+  <span class="na">labels</span><span class="pi">:</span> <span class="c1"># &lt;서비스가 매핑하기 위해 찾는 부분&gt;</span>
+    <span class="na">service</span><span class="pi">:</span> <span class="s">order</span>
+    <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
+  <span class="na">selector</span><span class="pi">:</span> <span class="c1"># &lt;복제할 파드 매핑&gt;</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">service</span><span class="pi">:</span> <span class="s">order</span>
+      <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">service</span><span class="pi">:</span> <span class="s">order</span>
+        <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">order</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/order:1.0</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span> <span class="c1"># &lt;서비스 오브젝트의 targetPort와 일치시키는 부분&gt;</span>
+        <span class="na">resources</span><span class="pi">:</span>
+          <span class="na">limits</span><span class="pi">:</span>
+            <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">64Mi"</span>
+            <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">50m"</span>
+
+<span class="nn">---</span> 
+
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">payment</span>
+  <span class="na">namespace</span><span class="pi">:</span> <span class="s">snackbar</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">service</span><span class="pi">:</span> <span class="s">payment</span>
+    <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">service</span><span class="pi">:</span> <span class="s">payment</span>
+      <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">service</span><span class="pi">:</span> <span class="s">payment</span>
+        <span class="na">project</span><span class="pi">:</span> <span class="s">snackbar</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">payment</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">yoonjeong/payment:1.0</span>
+        <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
+        <span class="na">resources</span><span class="pi">:</span>
+          <span class="na">limits</span><span class="pi">:</span>
+            <span class="na">memory</span><span class="pi">:</span> <span class="s2">"</span><span class="s">64Mi"</span>
+            <span class="na">cpu</span><span class="pi">:</span> <span class="s2">"</span><span class="s">50m"</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create namespace snackbar
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f ./snackbar/service-deployment.yaml
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get all -n snackbar
+</code></pre></div></div>
+
+<p><img src="/images/kube_c_1.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get svc -o wide -n snackbar
+</code></pre></div></div>
+
+<p><img src="/images/kube_c_2.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get endpoints -n snackbar
+</code></pre></div></div>
+
+<ul>
+  <li>서비스 오브젝트를 만들면 컨테이너에 엔드포인트 오브젝트 자동 생성</li>
+</ul>
+
+<p><img src="/images/kube_c_3.png" alt="" /></p>
+:ET
