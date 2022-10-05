@@ -33,8 +33,8 @@ tags: MySQL
 
 ```
 비즈니스 모델링: 비즈니스 룰을 정의한다 (ex. 유저는 하나의 주문에 하나의 리뷰만 달 수 있다)
-논리적 모델링: 어떤 것을 테이블 하고, 컬럼으로 하고 테이블끼리 어떻게 관계를 지을지 정의한다
-물리적 모델링: 테이블명, 컬럼명, 데이터 타입, 제약조건을 정의한다
+논리적 모델링: 어떤 것을 테이블로 하고, 어떤 것을 컬럼으로 하고 테이블끼리의 관계를 어떻게 정의할지 정의한다
+물리적 모델링: 테이블명, 컬럼명, 데이터 타입, 제약조건을 정의한다 (Schema, Table, Index 정의)
 ```
 
 # ERM: Entity Relationship Model
@@ -70,9 +70,43 @@ ERM은 기존 관계형 모델의 로우(Row)를 엔티티(Entity), 컬럼을 �
 
 ## 비즈니스 룰
 
+**당근마켓**  
+
+- 유저는 자신의 지역을 등록해야 한다
+- 유저는 자신의 지역 근처에서 물건을 사거나 팔 수 있다
+- 물건에 좋아요 표시를 할 수 있다
+- 물건을 살 때는 채팅창을 열어야 한다
+- 판매자는 물건에 대해 여러 채팅창을 가질 수 있다
+- 구매자는 물건에 대해 한 개의 채팅만 가질 수 있다
+- 물건은 [판매중, 예약중, 거래완료] 중 하나의 상태를 갖는다
+- 구매자와 판매자는 거래를 한 경우 서로에 대해 평가를 할 수 있다
+
 ## Entity, Attribute, Relationship 후보 파악
 
+- User: id, name, gender, age, phone_numer, creation_date
+- Product: id, title, category, seller_id, price, status
+- Region: id, user_id, region_name
+- Chatting: id, buyer_id, seller_id, product_id, content
+- Like: id, buyer_id, product_id
+- Transactional Information: id, buyer_id, seller_id, product_id, creation_date
+- Review: id, buyer_id, seller_id, star, content
+
 ## Entity간 관계 파악
+
+- User와 Product
+  - 판매자(User)는 여러 개의 물건(Product)을 가질 수 있지만, 물건은 여러 판매자를 가질 수 없다 -> 1:N
+  - 판매자는 반드시 물건을 등록할 필요는 없지만, 등록된 물건은 반드시 판매자가 있어야 한다
+- User와 Region
+  - 사용자(User)는 여러 지역을 가질 수 있고, 지역(Region)도 여러 사용자를 포함할 수 있다 -> N:M
+  - 사용자는 반드시 지역 정보를 가져야 하고, 지역은 사용자가 없어도 된다
+- User와 Chatting
+  - 판매자와 채팅
+    - 판매자(User)는 여러 개의 채팅(Chatting)을 가질 수 있지만, 채팅은 한 명의 판매자만 가질 수 있다 -> 1:N
+    - 판매자는 채팅이 없어도 되지만, 채팅은 반드시 판매자가 있어야 한다
+  - 구매자와 채팅
+    - 구매자(User)는 여러 개의 채팅(Chatting)을 가질 수 있지만, 채팅은 한 명의 구매자만 가질 수 있다 -> 1:N
+    - 구매자는 채팅이 없어도 되지만, 채팅은 반드시 구매자가 있어야 한다
+- ...
 
 ## 정규화
 
@@ -88,10 +122,12 @@ ERM은 기존 관계형 모델의 로우(Row)를 엔티티(Entity), 컬럼을 �
 ```
 
 - 1NF
+  - 모든 컬럼 값은 나눌 수 없는 단일값이 되어야 한다
   - 어떤 채용 공고글에서 요구하는 스킬이 리스트 형태([MySQL, Python, Pytorch]로 되어 있으면 skiils를 새로운 테이블로 만들자
   ![](/images/sql_43.png)
   ![](/images/sql_42.png)
 - 2NF
+  - 모든 non-prime attribute는 candidate key 전체에 함수 종속성이 있어야 한다
   - 함수 종족성: x, y 속성이 있을 때, y = f(x)라는 관계가 성립하는 경우
   - Candidate Key: 하나의 로우를 특정 지을 수 있는 속성(attribute)들의 최소 집합
   - Prime Attribute: Candidate Key에 포함되는 모든 속성
@@ -105,4 +141,5 @@ ERM은 기존 관계형 모델의 로우(Row)를 엔티티(Entity), 컬럼을 �
 
 ## ERM으로 표현
 
+![](/images/mysql_erm.png)
 

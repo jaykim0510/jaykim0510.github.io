@@ -500,6 +500,11 @@ Table of Contents
   <li><a href="#inner-join" id="markdown-toc-inner-join">INNER JOIN</a></li>
   <li><a href="#outer-join" id="markdown-toc-outer-join">OUTER JOIN</a></li>
   <li><a href="#join-최적화" id="markdown-toc-join-최적화">JOIN 최적화</a></li>
+  <li><a href="#join-동작-원리" id="markdown-toc-join-동작-원리">JOIN 동작 원리</a>    <ul>
+      <li><a href="#중첩-루프-조인" id="markdown-toc-중첩-루프-조인">중첩 루프 조인</a></li>
+      <li><a href="#해시-조인" id="markdown-toc-해시-조인">해시 조인</a></li>
+    </ul>
+  </li>
   <li><a href="#union" id="markdown-toc-union">UNION</a></li>
   <li><a href="#subquery" id="markdown-toc-subquery">Subquery</a>    <ul>
       <li><a href="#서브쿼리를-사용할-수-있는-위치" id="markdown-toc-서브쿼리를-사용할-수-있는-위치">서브쿼리를 사용할 수 있는 위치</a></li>
@@ -636,6 +641,29 @@ Table of Contents
   <li>INNER JOIN과 OUTER JOIN이 결합되는 경우
     <ul>
       <li>가능하다면 INNER JOIN이 앞에 오도록 하는 것이 좋다</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="join-동작-원리">JOIN 동작 원리</h1>
+
+<h2 id="중첩-루프-조인">중첩 루프 조인</h2>
+<ul>
+  <li>Nested Loop Join</li>
+  <li>중첩 for문과 비슷한 원리</li>
+  <li>조인의 시간복잡도가 O(n^2) 이어서 대용량 테이블에서는 사용하지 않음</li>
+</ul>
+
+<h2 id="해시-조인">해시 조인</h2>
+<ul>
+  <li>Hash Join</li>
+  <li>동등 조건에서만 사용 가능</li>
+  <li>시간복잡도가 (n)</li>
+  <li>해시 조인은 크게 빌드 단계와 프로브 단계로 나뉨
+    <ul>
+      <li>빌드 단계: 바이트 크기가 더 작은 테이블을 해시 테이블로 만들어 메모리에 올림 -&gt; O(n)</li>
+      <li>(빌드 단계에서 사용하는 메모리의 크기는 <code class="language-plaintext highlighter-rouge">join_buffer_size</code>에 의해 조절)</li>
+      <li>프로브 단계: 다른 테이블의 레코드를 하나씩 돌며 해시 테이블에서 값을 가져옴 -&gt; O(n)</li>
     </ul>
   </li>
 </ul>

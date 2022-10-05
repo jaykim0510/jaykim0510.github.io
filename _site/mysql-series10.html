@@ -509,8 +509,8 @@ Table of Contents
 <p>데이터베이스 모델링은 크게 세 가지 단계로 구분할 수 있습니다.</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>비즈니스 모델링: 비즈니스 룰을 정의한다 (ex. 유저는 하나의 주문에 하나의 리뷰만 달 수 있다)
-논리적 모델링: 어떤 것을 테이블 하고, 컬럼으로 하고 테이블끼리 어떻게 관계를 지을지 정의한다
-물리적 모델링: 테이블명, 컬럼명, 데이터 타입, 제약조건을 정의한다
+논리적 모델링: 어떤 것을 테이블로 하고, 어떤 것을 컬럼으로 하고 테이블끼리의 관계를 어떻게 정의할지 정의한다
+물리적 모델링: 테이블명, 컬럼명, 데이터 타입, 제약조건을 정의한다 (Schema, Table, Index 정의)
 </code></pre></div></div>
 
 <h1 id="erm-entity-relationship-model">ERM: Entity Relationship Model</h1>
@@ -545,9 +545,64 @@ Table of Contents
 
 <h2 id="비즈니스-룰">비즈니스 룰</h2>
 
+<p><strong>당근마켓</strong></p>
+
+<ul>
+  <li>유저는 자신의 지역을 등록해야 한다</li>
+  <li>유저는 자신의 지역 근처에서 물건을 사거나 팔 수 있다</li>
+  <li>물건에 좋아요 표시를 할 수 있다</li>
+  <li>물건을 살 때는 채팅창을 열어야 한다</li>
+  <li>판매자는 물건에 대해 여러 채팅창을 가질 수 있다</li>
+  <li>구매자는 물건에 대해 한 개의 채팅만 가질 수 있다</li>
+  <li>물건은 [판매중, 예약중, 거래완료] 중 하나의 상태를 갖는다</li>
+  <li>구매자와 판매자는 거래를 한 경우 서로에 대해 평가를 할 수 있다</li>
+</ul>
+
 <h2 id="entity-attribute-relationship-후보-파악">Entity, Attribute, Relationship 후보 파악</h2>
 
+<ul>
+  <li>User: id, name, gender, age, phone_numer, creation_date</li>
+  <li>Product: id, title, category, seller_id, price, status</li>
+  <li>Region: id, user_id, region_name</li>
+  <li>Chatting: id, buyer_id, seller_id, product_id, content</li>
+  <li>Like: id, buyer_id, product_id</li>
+  <li>Transactional Information: id, buyer_id, seller_id, product_id, creation_date</li>
+  <li>Review: id, buyer_id, seller_id, star, content</li>
+</ul>
+
 <h2 id="entity간-관계-파악">Entity간 관계 파악</h2>
+
+<ul>
+  <li>User와 Product
+    <ul>
+      <li>판매자(User)는 여러 개의 물건(Product)을 가질 수 있지만, 물건은 여러 판매자를 가질 수 없다 -&gt; 1:N</li>
+      <li>판매자는 반드시 물건을 등록할 필요는 없지만, 등록된 물건은 반드시 판매자가 있어야 한다</li>
+    </ul>
+  </li>
+  <li>User와 Region
+    <ul>
+      <li>사용자(User)는 여러 지역을 가질 수 있고, 지역(Region)도 여러 사용자를 포함할 수 있다 -&gt; N:M</li>
+      <li>사용자는 반드시 지역 정보를 가져야 하고, 지역은 사용자가 없어도 된다</li>
+    </ul>
+  </li>
+  <li>User와 Chatting
+    <ul>
+      <li>판매자와 채팅
+        <ul>
+          <li>판매자(User)는 여러 개의 채팅(Chatting)을 가질 수 있지만, 채팅은 한 명의 판매자만 가질 수 있다 -&gt; 1:N</li>
+          <li>판매자는 채팅이 없어도 되지만, 채팅은 반드시 판매자가 있어야 한다</li>
+        </ul>
+      </li>
+      <li>구매자와 채팅
+        <ul>
+          <li>구매자(User)는 여러 개의 채팅(Chatting)을 가질 수 있지만, 채팅은 한 명의 구매자만 가질 수 있다 -&gt; 1:N</li>
+          <li>구매자는 채팅이 없어도 되지만, 채팅은 반드시 구매자가 있어야 한다</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>…</li>
+</ul>
 
 <h2 id="정규화">정규화</h2>
 
@@ -564,6 +619,7 @@ Table of Contents
 <ul>
   <li>1NF
     <ul>
+      <li>모든 컬럼 값은 나눌 수 없는 단일값이 되어야 한다</li>
       <li>어떤 채용 공고글에서 요구하는 스킬이 리스트 형태([MySQL, Python, Pytorch]로 되어 있으면 skiils를 새로운 테이블로 만들자
 <img src="/images/sql_43.png" alt="" />
 <img src="/images/sql_42.png" alt="" /></li>
@@ -571,6 +627,7 @@ Table of Contents
   </li>
   <li>2NF
     <ul>
+      <li>모든 non-prime attribute는 candidate key 전체에 함수 종속성이 있어야 한다</li>
       <li>함수 종족성: x, y 속성이 있을 때, y = f(x)라는 관계가 성립하는 경우</li>
       <li>Candidate Key: 하나의 로우를 특정 지을 수 있는 속성(attribute)들의 최소 집합</li>
       <li>Prime Attribute: Candidate Key에 포함되는 모든 속성
@@ -588,6 +645,8 @@ Table of Contents
 <h2 id="물리적-모델링네이밍-데이터-타입-제약조건">물리적 모델링(네이밍, 데이터 타입, 제약조건)</h2>
 
 <h2 id="erm으로-표현">ERM으로 표현</h2>
+
+<p><img src="/images/mysql_erm.png" alt="" /></p>
 
 
     </div>
