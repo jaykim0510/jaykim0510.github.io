@@ -294,6 +294,19 @@ HTTP 메세지의 구조는 다음과 같습니다.
 
 # HTTP 상태코드
 
+|상태코드|설명|
+|200 OK|요청이 올바르게 수행되었음(GET, PUT)|
+|201 Created|서버가 새로운 리소스를 생성했음(POST)|
+|204 No Content|응답할 데이터가 없음(HTTP Body가 없음) (DELETE, PUT)|
+|400 Bad Request|요청이 잘못되었음|
+|401 Unauthorized|인증(로그인)이 필요함|
+|403 Forbidden|로그인 되었으나 해당 자원에 대한 권한이 없음|
+|404 Not Found|존재하지 않는 자원에 대해 요청했음 (URI가 잘못된 경우?)|
+|405 Method Not Allowed|자원이 지원하지 않는 메소드임 (Method가 잘못된 경우?)|
+|409 Confilct|비지니스 로직상 요청을 처리하지 못한 경우|
+|429 Too Many Requests|요청을 너무 많이한 경우|
+
+
 # 쿠키, 캐시, 프록시, 세션
 
 ## 쿠키
