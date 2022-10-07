@@ -69,7 +69,7 @@ MySQL에서 서버 프로그램의 이름은 `mysqld`, 클라이언트 프로그
 
 - Data Definition Language
 - 테이블과 같은 데이터 구조를 정의하는데 사용되는 명령어
-- CREATE, ALTER, RENAME, DROP, TRUNCATE
+- `CREATE`, `ALTER`, `RENAME`, `DROP`, `TRUNCATE`
 
 ## DML
 

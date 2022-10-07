@@ -243,15 +243,15 @@ InnoDB는 Undo log의 작업(operation)을 Redo log의 로그로 기록한다. �
 **트랜잭션 처리시 일어나는 Undo log와 Redo log의 작업**  
 
 ```
-1A. Transaction start. 
-2B. Record A=1 to undo log. 
-3C. Modify A=3. 
-4D. Record 2, 3 to redo log. 
-5E. Record B=2 to undo log. 
-6F. Modify B=4. 
-7G. Record 5, 6 to redo log. 
-8H. Write redo log to disk. 
-9I. Transaction commit
+1. Transaction start. 
+2. Record A=1 to undo log. 
+3. Modify A=3. 
+4. Record 2, 3 to redo log. 
+5. Record B=2 to undo log. 
+6. Modify B=4. 
+7. Record 5, 6 to redo log. 
+8. Write redo log to disk. 
+9. Transaction commit
 ```
 
 한 가지 알아야 할 점은 Redo log가 있다고 하더라도, 트랜잭션 한 번마다 Redo log가 flush되는게 아니라면 데이터 손실은 피할 수 없다. 그렇기 때문에 은행과 같이 데이터 손실이 하나라도 발생해서는 안되는 곳에서는 트랜잭션 하나를 완료하기 전에 무조건 디스크로 Redo log를 flush하고 커밋을 하게 된다. (트랜잭션 한 개 마다 Redo log flush)  

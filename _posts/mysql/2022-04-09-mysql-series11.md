@@ -51,13 +51,6 @@ There is a metadata file (ibdata1, which holds, by default, data pages, index pa
 - 페이지 크기의 조각으로 쪼개어 디스크로부터 읽어온 페이지를 저장
 - 메모리 공간을 관리하기 위해 LRU리스트, 플러시 리스트, 프리 리스트라는 자료구조를 관리
 
-- The buffer pool is an area in main memory where InnoDB caches table and index data as it is accessed. 
-- The buffer pool permits frequently used data to be accessed directly from memory, which speeds up processing. 
-- On dedicated servers, up to 80% of physical memory is often assigned to the buffer pool.
-- For efficiency of **high-volume read** operations, the buffer pool is divided into pages that can potentially hold multiple rows. 
-- For efficiency of cache management, **the buffer pool is implemented as a linked list of pages**; data that is rarely used is aged out of the cache using a variation of the least recently used (LRU) algorithm.
-
-
 ### LRU 알고리즘
 
 ![](/images/buffer_pool_1.png)
@@ -151,7 +144,7 @@ A type of I/O request that prefetches a group of pages (an entire extent) into t
 ```
 # 리두 로그와 관련된 몇 가지 옵션
 
-- innodb_redo_log_capacity: 리두 로그 사이즈. 리두 로그는 로그 데이터의 플러시 주기를 늦출 수 있다. 디스크 I/O을 줄일 수 있다
+- innodb_redo_log_capacity: 리두 로그가 차지하는 디스크의 용량
 - innodb_log_file_size: 디스크에 있는 로그 파일의 크기
 - innodb_log_files_in_group: 디스크에 있는 로그 파일의 개수
 ```
