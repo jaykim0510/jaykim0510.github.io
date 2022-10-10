@@ -31,29 +31,27 @@ tags: MySQL
 - 제약조건
 - 인덱스
 
-```
-applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns
-```
 
- ## 인덱스 설계
+- applications that perform frequent updates often have many tables with few columns,  
+- while applications that analyze large amounts of data often have few tables with many columns  
 
-```
-Are the right indexes in place to make queries efficient?
-```
+
+## 인덱스 설계
+
+- Are the right indexes in place to make queries efficient?
+
 
 ## 스토리지 엔진 선택
 
-```
-In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability
-```
+- In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability
 
 ## DB서버 설정
 
-```
-Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code
+- Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. 
+- The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code
 
-Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache
-```
+- Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache
+
 
 
 # Optimizer

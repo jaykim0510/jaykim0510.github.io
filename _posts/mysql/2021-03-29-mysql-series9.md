@@ -4,7 +4,7 @@ title:  'MySQL Series [Part9] 인덱스 명령어'
 description: 
 date:   2021-03-29 15:01:35 +0300
 image:  '/images/index_logo.png'
-logo_image: '/images/mysql_command.png'
+logo_image: '/images/mysql_logo.webp'
 categories: DE
 tags: MySQL
 ---
@@ -52,7 +52,7 @@ SHOW TABLE STATUS LIKE <테이블>
 CREATE TABLE books (
   -- 같이 지정
   id varchar(5) primary key, -- 기본키 지정 (클러스터 인덱스)
-  name varchar(20) unique, -- 인덱스 생성 (보조 인덱스) (중복 비허용)
+  name varchar(20) unique, -- 인덱스 생성 (유니크 보조 인덱스)
   writer varchar(20) NOT NULL,
   
   INDEX idx_test (writer asc) -- 인덱스 생성 (보조 인덱스)
@@ -66,7 +66,7 @@ CREATE TABLE books (
 ```sql
 CREATE INDEX 인덱스명 ON 테이블명 (컬럼명); -- 보조 인덱스 생성 (중복 허용)
  
-CREATE UNIQUE INDEX 인덱스명 ON 테이블명 (컬럼명); -- 보조 인덱스 생성 (중복 비허용)
+CREATE UNIQUE INDEX 인덱스명 ON 테이블명 (컬럼명); -- 유니크 보조 인덱스 생성 (중복 비허용)
  
 CREATE FULLTEXT INDEX 인덱스명 ON 테이블명 (컬럼명); -- 클러스터 인덱스 생성
  
@@ -142,8 +142,8 @@ EXPLAIN SELECT ...
 
 # Sargable Query
 
-인덱스를 효율적으로 사용할 수 없는 경우: 인덱스 풀 스캔하는 경우
-인덱스를 효율적으로 사용하는 경우: 인덱스 레인지 스캔, 루스 인덱스 스캔을 사용 -> 사거블(Sargable) 하다고 함
+- 인덱스를 효율적으로 사용할 수 없는 경우: 인덱스 풀 스캔하는 경우  
+- **인덱스를 효율적으로 사용하는 경우**: 인덱스 레인지 스캔, 루스 인덱스 스캔을 사용 -> **사거블(Sargable)** 하다고 함  
 
 - where, order by, group by 등에는 가능한 index가 걸린 컬럼 사용.
 - where 절에 함수, 연산, Like(시작 부분 %)문은 사거블하지 않다!
