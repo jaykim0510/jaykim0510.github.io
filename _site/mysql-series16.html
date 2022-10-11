@@ -471,6 +471,7 @@ Table of Contents
   <li><a href="#optimization-overview" id="markdown-toc-optimization-overview">Optimization Overview</a></li>
   <li><a href="#things-to-consider-for-optimization" id="markdown-toc-things-to-consider-for-optimization">Things to Consider for Optimization</a>    <ul>
       <li><a href="#테이블" id="markdown-toc-테이블">테이블</a></li>
+      <li><a href="#인덱스-설계" id="markdown-toc-인덱스-설계">인덱스 설계</a></li>
       <li><a href="#스토리지-엔진-선택" id="markdown-toc-스토리지-엔진-선택">스토리지 엔진 선택</a></li>
       <li><a href="#db서버-설정" id="markdown-toc-db서버-설정">DB서버 설정</a></li>
     </ul>
@@ -543,28 +544,34 @@ Table of Contents
   <li>컬럼의 타입</li>
   <li>컬럼 개수</li>
   <li>제약조건</li>
-  <li>인덱스</li>
+  <li>
+    <p>인덱스</p>
+  </li>
+  <li>applications that perform frequent updates often have many tables with few columns,</li>
+  <li>while applications that analyze large amounts of data often have few tables with many columns</li>
 </ul>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>applications that perform frequent updates often have many tables with few columns, while applications that analyze large amounts of data often have few tables with many columns
-</code></pre></div></div>
+<h2 id="인덱스-설계">인덱스 설계</h2>
 
-<p>## 인덱스 설계</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Are the right indexes in place to make queries efficient?
-</code></pre></div></div>
+<ul>
+  <li>Are the right indexes in place to make queries efficient?</li>
+</ul>
 
 <h2 id="스토리지-엔진-선택">스토리지 엔진 선택</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability
-</code></pre></div></div>
+<ul>
+  <li>In particular, the choice of a transactional storage engine such as InnoDB or a nontransactional one such as MyISAM can be very important for performance and scalability</li>
+</ul>
 
 <h2 id="db서버-설정">DB서버 설정</h2>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant. The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code
-
-Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache
-</code></pre></div></div>
+<ul>
+  <li>Does the application use an appropriate locking strategy? For example, by allowing shared access when possible so that database operations can run concurrently, and requesting exclusive access when appropriate so that critical operations get top priority. Again, the choice of storage engine is significant.</li>
+  <li>
+    <p>The InnoDB storage engine handles most locking issues without involvement from you, allowing for better concurrency in the database and reducing the amount of experimentation and tuning for your code</p>
+  </li>
+  <li>Are all memory areas used for caching sized correctly? That is, large enough to hold frequently accessed data, but not so large that they overload physical memory and cause paging. The main memory areas to configure are the InnoDB buffer pool and the MyISAM key cache</li>
+</ul>
 
 <h1 id="optimizer">Optimizer</h1>
 
@@ -605,22 +612,23 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
 <ul>
   <li><strong>IN</strong>
     <ul>
-      <li>IN can be used as a replacement for multiple OR operators</li>
-      <li>IN works faster than the EXISTS Operator when If the sub-query result is small</li>
-      <li>In the IN-condition SQL Engine compares all the values in the IN Clause</li>
-      <li>To check against only a single column, IN operator can be used</li>
+      <li>IN은 다수의 OR 조건을 사용한 것과 같다</li>
+      <li>IN 안에 포함된 값들을 모두 비교한다</li>
       <li>The IN operator cannot compare anything with NULL values</li>
-      <li>A direct set of values can be given for comparison</li>
+      <li>IN 뒤에 서브 쿼리가 사용되면 서브 쿼리의 SELECT 절 결과를 조건에 사용한다</li>
+      <li>서브쿼리 결과의 크기가 작으면 <code class="language-plaintext highlighter-rouge">IN</code>이 <code class="language-plaintext highlighter-rouge">EXISTS</code>보다 더 빠르다</li>
     </ul>
   </li>
   <li><strong>EXISTS</strong>
     <ul>
-      <li>To determine if any values are returned or not, we use EXISTS</li>
-      <li>If the sub-query result is larger, then EXISTS works faster than the IN Operator</li>
-      <li>Once true is evaluated in the EXISTS condition then the SQL Engine will stop the process of further matching</li>
+      <li>서브 쿼리가 반환하는 행이 있는지를 확인한다</li>
+      <li>EXISTS 조건절에 하나라도 True로 평가되는 경우에는 더 이상 매칭 여부를 확인하지 않는다 (지연 평가)</li>
+      <li>EXISTS 다음에 직접적으로 값을 명시할 수 없다. 서브쿼리가 주어져야 한다</li>
+      <li>(내 생각: EXISTS를 의미있게 사용하려면 서브 쿼리에서 메인 쿼리 테이블의 컬럼을 외래키로 사용하고 있어야할 것 같다)</li>
+      <li>(그렇지 않으면 EXISTS를 쓰는게 아무 의미가 없어 보인다)</li>
+      <li>서브쿼리 결과의 크기가 크면 <code class="language-plaintext highlighter-rouge">EXISTS</code>가 더 빠르다</li>
       <li>For checking against more than one single column, you can use the EXISTS Operator</li>
       <li>The EXISTS clause can compare everything with NULLs</li>
-      <li>Cannot compare directly the values, sub-query needs to be given</li>
     </ul>
   </li>
 </ul>
@@ -1019,7 +1027,11 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
     </tr>
     <tr>
       <td><strong>rows</strong></td>
-      <td>쿼리 실행 시 조사하는 행 수립</td>
+      <td>쿼리 실행 시 조회하는 행 (통계에 기반한 추정)</td>
+    </tr>
+    <tr>
+      <td><strong>filtered</strong></td>
+      <td>조회되지 않은 행 (통계에 기반한 추정)</td>
     </tr>
     <tr>
       <td><strong>extra</strong></td>
@@ -1054,7 +1066,7 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
     </tr>
     <tr>
       <td><strong>PRIMARY</strong></td>
-      <td>Sub Query를 사용할 경우 Sub Query의 외부에 있는 쿼리(첫번째 쿼리) UNION 을 사용할 경우 UNION의 첫 번째 SELECT 쿼리</td>
+      <td>메인 쿼리 (첫 번째 쿼리)</td>
     </tr>
     <tr>
       <td><strong>UNION</strong></td>
@@ -1246,6 +1258,7 @@ Are all memory areas used for caching sized correctly? That is, large enough to 
   <li><a href="https://schatz37.tistory.com/2" target="_blank">고동의 데이터 분석, [SQL] “성능 관점”에서 보는 결합(Join)</a></li>
   <li><a href="https://schatz37.tistory.com/3?category=878798" target="_blank">고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)</a></li>
   <li><a href="https://www.geeksforgeeks.org/in-vs-exists-in-sql/" target="_blank">GeeksforGeeks, IN vs EXISTS in SQL</a></li>
+  <li><a href="https://inpa.tistory.com/entry/MYSQL-%F0%9F%93%9A-%EC%84%9C%EB%B8%8C%EC%BF%BC%EB%A6%AC-%EC%97%B0%EC%82%B0%EC%9E%90-EXISTS-%EC%B4%9D%EC%A0%95%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90" target="_blank">인파, [MYSQL] 📚 서브쿼리 연산자 EXISTS 총정리 (성능 비교)</a></li>
 </ul>
 
     </div>

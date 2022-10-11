@@ -1,4 +1,4 @@
-I"�k<hr />
+I"nh<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#mysql의-전체-구조" id="markdown-toc-mysql의-전체-구조">MySQL의 전체 구조</a></li>
@@ -70,14 +70,7 @@
   <li><strong>데이터 캐시</strong>: 디스크의 데이터 파일이나 인덱스 정보를 메모리에 캐시해 두는 공간</li>
   <li><strong>쓰기 버퍼링</strong>: 쓰기 작업을 지연시켜 일괄 작업으로 처리할 수 있게 해주는 버퍼 역할</li>
   <li>페이지 크기의 조각으로 쪼개어 디스크로부터 읽어온 페이지를 저장</li>
-  <li>
-    <p>메모리 공간을 관리하기 위해 LRU리스트, 플러시 리스트, 프리 리스트라는 자료구조를 관리</p>
-  </li>
-  <li>The buffer pool is an area in main memory where InnoDB caches table and index data as it is accessed.</li>
-  <li>The buffer pool permits frequently used data to be accessed directly from memory, which speeds up processing.</li>
-  <li>On dedicated servers, up to 80% of physical memory is often assigned to the buffer pool.</li>
-  <li>For efficiency of <strong>high-volume read</strong> operations, the buffer pool is divided into pages that can potentially hold multiple rows.</li>
-  <li>For efficiency of cache management, <strong>the buffer pool is implemented as a linked list of pages</strong>; data that is rarely used is aged out of the cache using a variation of the least recently used (LRU) algorithm.</li>
+  <li>메모리 공간을 관리하기 위해 LRU리스트, 플러시 리스트, 프리 리스트라는 자료구조를 관리</li>
 </ul>
 
 <h3 id="lru-알고리즘">LRU 알고리즘</h3>
@@ -189,7 +182,7 @@ A type of I/O request that prefetches a group of pages (an entire extent) into t
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 리두 로그와 관련된 몇 가지 옵션
 
-- innodb_redo_log_capacity: 리두 로그 사이즈. 리두 로그는 로그 데이터의 플러시 주기를 늦출 수 있다. 디스크 I/O을 줄일 수 있다
+- innodb_redo_log_capacity: 리두 로그가 차지하는 디스크의 용량
 - innodb_log_file_size: 디스크에 있는 로그 파일의 크기
 - innodb_log_files_in_group: 디스크에 있는 로그 파일의 개수
 </code></pre></div></div>

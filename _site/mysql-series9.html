@@ -385,7 +385,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_command.png" alt="MySQL Series [Part9] 인덱스 명령어">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part9] 인덱스 명령어">
         </div>
       </div>
       
@@ -536,7 +536,7 @@ Table of Contents
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="p">(</span>
   <span class="c1">-- 같이 지정</span>
   <span class="n">id</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span> <span class="c1">-- 기본키 지정 (클러스터 인덱스)</span>
-  <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">unique</span><span class="p">,</span> <span class="c1">-- 인덱스 생성 (보조 인덱스) (중복 비허용)</span>
+  <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">unique</span><span class="p">,</span> <span class="c1">-- 인덱스 생성 (유니크 보조 인덱스)</span>
   <span class="n">writer</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
   
   <span class="k">INDEX</span> <span class="n">idx_test</span> <span class="p">(</span><span class="n">writer</span> <span class="k">asc</span><span class="p">)</span> <span class="c1">-- 인덱스 생성 (보조 인덱스)</span>
@@ -549,7 +549,7 @@ Table of Contents
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="p">);</span> <span class="c1">-- 보조 인덱스 생성 (중복 허용)</span>
  
-<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="p">);</span> <span class="c1">-- 보조 인덱스 생성 (중복 비허용)</span>
+<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="p">);</span> <span class="c1">-- 유니크 보조 인덱스 생성 (중복 비허용)</span>
  
 <span class="k">CREATE</span> <span class="n">FULLTEXT</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="p">);</span> <span class="c1">-- 클러스터 인덱스 생성</span>
  
@@ -608,25 +608,66 @@ Table of Contents
 
 <p><img src="/images/mysql_51.png" alt="" /></p>
 
-<ul>
-  <li><strong>id</strong>: select id</li>
-  <li><strong>select_type</strong>: SIMPLE, UNION, SUBQUERY, etc</li>
-  <li><strong>type</strong>: data scan type (const, ALL, ref, range, index, fulltext, etc)</li>
-  <li><strong>possible_keys</strong>: 인덱스로 사용가능한 키들</li>
-  <li><strong>key</strong>: Selected key by Optimizer</li>
-  <li><strong>key_len</strong>: index size</li>
-  <li><strong>ref</strong>: const, columns</li>
-  <li><strong>rows</strong>: access row count (statistical estimation)</li>
-  <li><strong>filtered</strong>: left rows (statistical estimation)</li>
-  <li><strong>Extra</strong>: Using where, Using Index, Using filesort, etc</li>
-</ul>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>구분</strong></td>
+      <td><strong>설명</strong></td>
+    </tr>
+    <tr>
+      <td><strong>id</strong></td>
+      <td>select 아이디로 SELECT를 구분하는 번호</td>
+    </tr>
+    <tr>
+      <td><strong>select_type</strong></td>
+      <td>select에 대한 타입</td>
+    </tr>
+    <tr>
+      <td><strong>table</strong></td>
+      <td>참조하는 테이블</td>
+    </tr>
+    <tr>
+      <td><strong>type</strong></td>
+      <td>조인 혹은 조회 타입</td>
+    </tr>
+    <tr>
+      <td><strong>possible_keys</strong></td>
+      <td>데이터를 조회할 때 DB에서 사용할 수 있는 인덱스 리스트</td>
+    </tr>
+    <tr>
+      <td><strong>key</strong></td>
+      <td>실제로 사용할 인덱스</td>
+    </tr>
+    <tr>
+      <td><strong>key_len</strong></td>
+      <td>실제로 사용할 인덱스의 길이</td>
+    </tr>
+    <tr>
+      <td><strong>ref</strong></td>
+      <td>Key 안의 인덱스와 비교하는 컬럼(상수)</td>
+    </tr>
+    <tr>
+      <td><strong>rows</strong></td>
+      <td>쿼리 실행 시 조회하는 행 (통계에 기반한 추정)</td>
+    </tr>
+    <tr>
+      <td><strong>filtered</strong></td>
+      <td>조회되지 않은 행 (통계에 기반한 추정)</td>
+    </tr>
+    <tr>
+      <td><strong>extra</strong></td>
+      <td>추가 정보</td>
+    </tr>
+  </tbody>
+</table>
 
 <h1 id="sargable-query">Sargable Query</h1>
 
-<p>인덱스를 효율적으로 사용할 수 없는 경우: 인덱스 풀 스캔하는 경우
-인덱스를 효율적으로 사용하는 경우: 인덱스 레인지 스캔, 루스 인덱스 스캔을 사용 -&gt; 사거블(Sargable) 하다고 함</p>
-
 <ul>
+  <li>인덱스를 효율적으로 사용할 수 없는 경우: 인덱스 풀 스캔하는 경우</li>
+  <li>
+    <p><strong>인덱스를 효율적으로 사용하는 경우</strong>: 인덱스 레인지 스캔, 루스 인덱스 스캔을 사용 -&gt; <strong>사거블(Sargable)</strong> 하다고 함</p>
+  </li>
   <li>where, order by, group by 등에는 가능한 index가 걸린 컬럼 사용.</li>
   <li>where 절에 함수, 연산, Like(시작 부분 %)문은 사거블하지 않다!</li>
   <li>between, like, 대소비교(&gt;, &lt; 등)는 범위가 크면 사거블하지 않다.</li>

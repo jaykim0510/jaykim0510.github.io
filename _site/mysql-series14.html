@@ -636,9 +636,10 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
   <li>InnoDB 엔진에서는 인덱스를 통해 레코드를 읽을 때 파일을 바로 찾아가지 못함</li>
   <li>인덱스에 저장돼 있는 프라이머리 키 값을 이용해 프라이머리 키 인덱스를 한 번 더 검색한 후,</li>
   <li>프라이머리 키 인덱스의 리프 페이지에 저장돼 있는 레코드를 읽음</li>
-  <li>즉 InnoDB 엔진에서는 모든 세컨더리 인덱스 검색에서 데이터 레코드를 일기 위해서는,</li>
+  <li>즉 InnoDB 엔진에서는 모든 세컨더리 인덱스 검색에서 데이터 레코드를 읽기 위해서는,</li>
   <li>반드시 프라이머리 키를 저장하고 있는 B-Tree를 다시 한번 검색해야 함</li>
   <li>InnoDB 엔진에서 데이터 파일은 프라이머리 키 인덱스 자체</li>
+  <li>세컨더리 인덱스의 리프 노드에 레코드 주소가 아닌 프라이머리 키를 저장하고 있으면, 데이터 삽입으로 페이지 분할이 일어나도, 세컨더리 인덱스의 리프 노드는 메모리 주소가 아니라 프라이머리 키를 가지고 있기 때문에, 세컨더리 인덱스에 값을 변경하지 않아도 된다</li>
 </ul>
 
 <p>참고로 MyISAM 스토리지 엔진의 인덱스와 데이터 파일간의 관계는 다음과 같습니다.</p>
@@ -832,15 +833,11 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
 <ul>
   <li>클러스터링: 여러 개를 하나로 묶는다는 의미</li>
   <li>InnoDB의 프라이머리 키가 클러스터링 키로 사용되며, 이 값에 의해 레코드의 위치가 결정됨</li>
-  <li>MySQL 서버에서 클러스터링은 테이블의 레코드를 프라이머리 키를 기준으로 비슷한 것들끼리 묶어서 저장하는 형태로 구현</li>
   <li>비슷한 값들을 동시에 조회하는 경우가 많다는 점에 착안한 것</li>
-  <li>클러스터링 인덱스는 테이블의 프라이머리 키에 대해서만 적용되는 내용</li>
   <li>즉 프라이머리 키 값이 비슷한 레코드끼리 묶어서 저장하는 것을 클러스터링 인덱스라고 표현</li>
   <li>중요한 것은 프라이머리 키 값에 의해 레코드의 저장 위치가 결정된다는 것</li>
   <li>프라이머리 키 값이 변경된다면 그 레코드의 물리적인 저장 위치가 바뀌어야 한다는 것을 의미하기도 함</li>
-  <li>클러스터링 인덱스는 프라이머리 키 값에 의해 레코드의 저장 위치가 결정되므로 사실 인덱스 알고리즘이라기 보다 테이블 레코드의 저장 방식. 그래서 클러스터링 인덱스와 클러스터링 테이블은 동의어로 사용되기도 함</li>
   <li>클러스터링 인덱스로 저장되는 테이블은 프라이머리 키 기반의 검색이 매우 빠름. 대신 저장은 상대적으로 느림</li>
-  <li>클러스터링 인덱스의 리프 노드에는 레코드의 모든 컬럼이 같이 저장돼 있음 -&gt; 클러스터링 테이블은 그 자체가 하나의 거대한 인덱스 구조로 관리되는 것</li>
 </ul>
 
 <p><img src="/images/mysql_21.png" alt="" /></p>
@@ -892,7 +889,8 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
 <ul>
   <li>세컨더리 인덱스, 논-클러스터링 인덱스라고도 불림</li>
   <li>여러 개의 인덱스를 가질 수 있음</li>
-  <li>리프 노드에 실제 데이터가 있는 주소를 가지고 있음</li>
+  <li>리프 노드에는 레코드가 저장되어 있는 주소를 가지고 있음</li>
+  <li>추가적인 디스크 공간을 요구함</li>
 </ul>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="p">[</span><span class="err">인덱스</span> <span class="err">명</span><span class="p">]</span>
@@ -906,6 +904,7 @@ DBMS의 인덱스: 컬럼 값 - 값을 가지는 레코드(Row)의 주소 매핑
 <ul>
   <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791158392703&amp;orderClick=LAG&amp;Kc=" target="_blank">Real MySQL 8.0 (1권) 책</a></li>
   <li><a href="https://velog.io/@emplam27/%EC%9E%90%EB%A3%8C%EA%B5%AC%EC%A1%B0-%EA%B7%B8%EB%A6%BC%EC%9C%BC%EB%A1%9C-%EC%95%8C%EC%95%84%EB%B3%B4%EB%8A%94-B-Plus-Tree" target="_blank">[자료구조] 그림으로 알아보는 B+Tree</a></li>
+  <li><a href="https://www.guru99.com/clustered-vs-non-clustered-index.html" target="_blank">Guru99, Difference between Clustered and Non-clustered index</a></li>
   <li><a href="https://www.youtube.com/watch?v=edpYzFgHbqs&amp;list=PLghTMrY7fIM7mV3XRBQHleJhi37CUucGi&amp;index=15" target="_blank">우아한 Tech Youtube, [10분 테코톡] 라라, 제로의 데이터베이스 인덱스</a></li>
 </ul>
 
