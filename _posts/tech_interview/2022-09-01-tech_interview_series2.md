@@ -19,19 +19,19 @@ tags: tech_interview
 
 # 탐색 알고리즘
 
-## Binary Search
-## 탐욕 알고리즘(Greedy Algorithm)
-## 동적 프로그래밍(Dynamic Programming)
-## 분할 정복(Divide and Conquer)
-## Binary Search Tree
-## DFS
-## BFS
-## Dijkstra
-## Kruskal
-## 최장 증가 수열(LIS)
-## 최장 공통 문자열(LCS)
-## 최장 공통 부분 수열(LCS)
-## 최소 공통 조상(LCA)
+- Binary Search
+- 탐욕 알고리즘(Greedy Algorithm)
+- 동적 프로그래밍(Dynamic Programming)
+- 분할 정복(Divide and Conquer)
+- Binary Search Tree
+- DFS
+- BFS
+- Dijkstra
+- Kruskal
+- 최장 증가 수열(LIS)
+- 최장 공통 문자열(LCS)
+- 최장 공통 부분 수열(LCS)
+- 최소 공통 조상(LCA)
 
 # 참고
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner){:target="_blank"}

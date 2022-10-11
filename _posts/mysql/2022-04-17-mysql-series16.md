@@ -86,20 +86,21 @@ tags: MySQL
 ### IN vs EXISTS
 
 - **IN**
-  - IN can be used as a replacement for multiple OR operators
-  - IN works faster than the EXISTS Operator when If the sub-query result is small
-  - In the IN-condition SQL Engine compares all the values in the IN Clause
-  - To check against only a single column, IN operator can be used
+  - IN은 다수의 OR 조건을 사용한 것과 같다
+  - IN 안에 포함된 값들을 모두 비교한다
   - The IN operator cannot compare anything with NULL values
-  - A direct set of values can be given for comparison
+  - IN 뒤에 서브 쿼리가 사용되면 서브 쿼리의 SELECT 절 결과를 조건에 사용한다
+  - 서브쿼리 결과의 크기가 작으면 `IN`이 `EXISTS`보다 더 빠르다
 
 - **EXISTS**
-  - To determine if any values are returned or not, we use EXISTS
-  - If the sub-query result is larger, then EXISTS works faster than the IN Operator
-  - Once true is evaluated in the EXISTS condition then the SQL Engine will stop the process of further matching
+  - 서브 쿼리가 반환하는 행이 있는지를 확인한다
+  - EXISTS 조건절에 하나라도 True로 평가되는 경우에는 더 이상 매칭 여부를 확인하지 않는다 (지연 평가)
+  - EXISTS 다음에 직접적으로 값을 명시할 수 없다. 서브쿼리가 주어져야 한다
+  - (내 생각: EXISTS를 의미있게 사용하려면 서브 쿼리에서 메인 쿼리 테이블의 컬럼을 외래키로 사용하고 있어야할 것 같다)
+  - (그렇지 않으면 EXISTS를 쓰는게 아무 의미가 없어 보인다)
+  - 서브쿼리 결과의 크기가 크면 `EXISTS`가 더 빠르다
   - For checking against more than one single column, you can use the EXISTS Operator
   - The EXISTS clause can compare everything with NULLs
-  - Cannot compare directly the values, sub-query needs to be given
 
 ## GROUP BY
 - HAVING절은 인덱스를 사용해서 처리될 수 없으므로 굳이 튜닝하려고 할 필요 없다
@@ -323,7 +324,8 @@ WHERE first_name='ABC';
 |**key**|실제로 사용할 인덱스|
 |**key_len**|실제로 사용할 인덱스의 길이|
 |**ref**|Key 안의 인덱스와 비교하는 컬럼(상수)|
-|**rows**|쿼리 실행 시 조사하는 행 수립|
+|**rows**|쿼리 실행 시 조회하는 행 (통계에 기반한 추정)|
+|**filtered**|조회되지 않은 행 (통계에 기반한 추정)|
 |**extra**|추가 정보|
 
 ### id  
@@ -339,7 +341,7 @@ WHERE first_name='ABC';
 
 |**구분**|**설명**|
 |**SIMPLE**|단순 SELECT (Union 이나 Sub Query 가 없는 SELECT 문)|
-|**PRIMARY**|Sub Query를 사용할 경우 Sub Query의 외부에 있는 쿼리(첫번째 쿼리) UNION 을 사용할 경우 UNION의 첫 번째 SELECT 쿼리|
+|**PRIMARY**|메인 쿼리 (첫 번째 쿼리)|
 |**UNION**|UNION 쿼리에서 Primary를 제외한 나머지 SELECT|
 |**DEPENDENT_UNION**|UNION 과 동일하나, 외부쿼리에 의존적임 (값을 공급 받음)|
 |**UNION_RESULT**|UNION 쿼리의 결과물|
@@ -428,3 +430,4 @@ MySQL Explain 상 일반적으로 데이터가 많은 경우 Using Filesort 와 
 - [고동의 데이터 분석, [SQL] "성능 관점"에서 보는 결합(Join)](https://schatz37.tistory.com/2){:target="_blank"} 
 - [고동의 데이터 분석, [SQL] 성능 관점에서의 서브쿼리(Subquery)](https://schatz37.tistory.com/3?category=878798){:target="_blank"} 
 - [GeeksforGeeks, IN vs EXISTS in SQL](https://www.geeksforgeeks.org/in-vs-exists-in-sql/){:target="_blank"} 
+- [인파, [MYSQL] 📚 서브쿼리 연산자 EXISTS 총정리 (성능 비교)](https://inpa.tistory.com/entry/MYSQL-%F0%9F%93%9A-%EC%84%9C%EB%B8%8C%EC%BF%BC%EB%A6%AC-%EC%97%B0%EC%82%B0%EC%9E%90-EXISTS-%EC%B4%9D%EC%A0%95%EB%A6%AC-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90){:target="_blank"} 

@@ -129,16 +129,18 @@ EXPLAIN SELECT ...
 
 ![](/images/mysql_51.png)
 
-- **id**: select id
-- **select_type**: SIMPLE, UNION, SUBQUERY, etc
-- **type**: data scan type (const, ALL, ref, range, index, fulltext, etc)
-- **possible_keys**: 인덱스로 사용가능한 키들
-- **key**: Selected key by Optimizer
-- **key_len**: index size
-- **ref**: const, columns
-- **rows**: access row count (statistical estimation)
-- **filtered**: left rows (statistical estimation)
-- **Extra**: Using where, Using Index, Using filesort, etc
+|**구분**|**설명**|
+|**id**|select 아이디로 SELECT를 구분하는 번호|
+|**select_type**|select에 대한 타입|
+|**table**|참조하는 테이블|
+|**type**|조인 혹은 조회 타입|
+|**possible_keys**|데이터를 조회할 때 DB에서 사용할 수 있는 인덱스 리스트|
+|**key**|실제로 사용할 인덱스|
+|**key_len**|실제로 사용할 인덱스의 길이|
+|**ref**|Key 안의 인덱스와 비교하는 컬럼(상수)|
+|**rows**|쿼리 실행 시 조회하는 행 (통계에 기반한 추정)|
+|**filtered**|조회되지 않은 행 (통계에 기반한 추정)|
+|**extra**|추가 정보|
 
 # Sargable Query
 

@@ -18,16 +18,16 @@ tags: tech_interview
 ---
 # 배열(Array)
 # 링크드 리스트(LinkedList)
-## Array & ArrayList & LinkedList
+- Array & ArrayList & LinkedList
 # 해시테이블(HashTable)
 # 스택과 큐(Stack & Queue)
 # 트리(Tree)
-## 이진 트리(Binary Tree)
-## 이진 탐색 트리(Binary Search Tree)
-## Red-Black Tree
-## 힙(Heap)
-## 트라이(Trie)
-## 밸런스 트리(B-Tree)
+- 이진 트리(Binary Tree)
+- 이진 탐색 트리(Binary Search Tree)
+- Red-Black Tree
+- 힙(Heap)
+- 트라이(Trie)
+- 밸런스 트리(B-Tree)
 # 그래프(Graph)
 # Tree와 Graph의 차이점
 

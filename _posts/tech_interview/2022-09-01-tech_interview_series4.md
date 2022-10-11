@@ -17,28 +17,30 @@ tags: tech_interview
 
 ---
 
-# 기초편
+# 네트워크 일문일답
 
-## OSI 7계층
-## HTTP
-## TCP & UDP
-## TCP/IP
-## 네트워크 장비
+## 기초편
 
-# 응용편
+- OSI 7계층
+- HTTP
+- TCP & UDP
+- TCP/IP
+- 네트워크 장비
 
-## 쿠키와 세션
-## DNS
-## REST
-## 소켓
-## 로드 밸런싱
+## 응용편
 
-# 용어
+- 쿠키와 세션
+- DNS
+- REST
+- 소켓
+- 로드 밸런싱
 
-## NAT
-## 라우터
-## 게이트웨이
-## DHCP
+## 용어
+
+- NAT
+- 라우터
+- 게이트웨이
+- DHCP
 
 # 참고
 - [JaeYeopHan/Interview_Question_for_Beginner](https://github.com/JaeYeopHan/Interview_Question_for_Beginner){:target="_blank"}
