@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Docker Compose를 이용해 데이터 파이프라인 구축하기</title>
-  <meta name='description' content='Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...'>
+  <title>Docker Compose 속성 알아보기</title>
+  <meta name='description' content='도커 컴포즈는 파일 하나만 실행하면 프로젝트 배포에 필요한 모든 서비스를 실행하고 연결 시켜줍니다.'>
 
   <link rel="canonical" href="http://localhost:4000/docker-series5">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Docker Compose를 이용해 데이터 파이프라인 구축하기 – Code Museum">
-  <meta name="twitter:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/datapipeline_logo.png">
+  <meta name="twitter:title" content="Docker Compose 속성 알아보기 – Code Museum">
+  <meta name="twitter:description" content="도커 컴포즈는 파일 하나만 실행하면 프로젝트 배포에 필요한 모든 서비스를 실행하고 연결 시켜줍니다.">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/docker_8.jpeg">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Docker Compose를 이용해 데이터 파이프라인 구축하기 – Code Museum">
-  <meta property="og:description" content="Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...">
-  <meta property="og:image" content="http://localhost:4000/images/datapipeline_logo.png">
+  <meta property="og:title" content="Docker Compose 속성 알아보기 – Code Museum">
+  <meta property="og:description" content="도커 컴포즈는 파일 하나만 실행하면 프로젝트 배포에 필요한 모든 서비스를 실행하고 연결 시켜줍니다.">
+  <meta property="og:image" content="http://localhost:4000/images/docker_8.jpeg">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -381,7 +381,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Compose를 이용해 데이터 파이프라인 구축하기">
+          <img class="lazy" data-src="/images/docker_logo.png" alt="Docker Compose 속성 알아보기">
         </div>
       </div>
       
@@ -399,12 +399,10 @@
                 
                   <a href="/devops" class="post__tag">#devops</a>
                 
-                  <a href="/DE" class="post__tag">#DE</a>
-                
               </div>
             
  
-          <h1 class="post__title">Docker Compose를 이용해 데이터 파이프라인 구축하기</h1>
+          <h1 class="post__title">Docker Compose 속성 알아보기</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -413,7 +411,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-01-27T00:01:35+09:00">27 Jan 2022</time>
+              <time class="post__date" datetime="2022-01-27T21:01:35+09:00">27 Jan 2022</time>
             </div>
           </div>
   
@@ -460,7 +458,7 @@
 
   <div class="post_pagination">
     
-      <a href="/docker-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Docker Compose 속성 알아보기</a>
+      <a href="/docker-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Dockerfile을 이용한 이미지 빌드(4): Docker 이미지 빌드 잘해보기</a>
     
     
       <a href="/docker-series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Docker 컨테이너에 저장된 데이터는 어떻게 될까?<i class="ion ion-ios-arrow-forward"></i></a>
@@ -473,82 +471,303 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#도커-컴포즈docker-compose" id="markdown-toc-도커-컴포즈docker-compose">도커 컴포즈(Docker Compose)</a></li>
+  <li><a href="#top-level-keys" id="markdown-toc-top-level-keys">Top-level keys</a></li>
+  <li><a href="#services" id="markdown-toc-services">services</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
+<h1 id="도커-컴포즈docker-compose">도커 컴포즈(Docker Compose)</h1>
+<p>보통 하나의 프로젝트에는 여러 가지 서비스를 포함하고 있습니다. 예를 들어 웹 서버 기반의 프로젝트를 진행한다고 할 때 프로젝트의 기본적인 아키텍처는 다음과 같습니다.</p>
 
-<p>Elasticsearch 6.x는 arm 아키텍처 지원 X (도커 기준)</p>
+<p><img src="/images/docker_2.png" alt="" /><br />
+<a href="https://medium.com/storyblocks-engineering/web-architecture-101-a3224e126947" target="_blank">(Netflix Tech Blog 참고)</a></p>
 
-<p>나는 m1이라서 Elasticsearch 7.x 이상 써야됨</p>
+<p>위의 그림을 보면 웹 서버뿐만 아니라 데이터 웨어하우스, 데이터베이스, 검색 서비스 등과 같은 것들이 서로 유기적으로 연결되어 있습니다. 이런 경우 프로젝트를 상용화 하기 위해서는 어떻게 해야 할까요? 각각의 서비스를 도커를 이용해 컨테이너로 띄우고 서로를 연결시켜주어야 합니다. 이는 앞에서 배웠던 도커 이미지를 만들기 위한 Dockerfile 단계에서는 할 수 없고 도커 컨테이너를 실행(<code class="language-plaintext highlighter-rouge">docker run</code>)하는 단계에서 컨테이너를 띄우는 순서, 데이터 공유, 환경변수 등을 설정해서 실행해야 합니다.</p>
 
-<p>Elasticsearch-Hadoop은 어떤 버전에서든 7.x 정식 지원 안함.</p>
+<p>우리가 도커를 배우는 이유는 서비스를 컨테이너화하고 간결한 코드로 관리하여 어디서든 배포가능 하도록 하기 위한 것인데 컨테이너 실행 단계에서 이렇게 복잡한 과정이 필요하다면 생각보다 힘이 빠질 것 같습니다.</p>
 
-<p>MongoDB로 생각해보자……………</p>
+<p>이러한 문제를 해결하기 위해 도커에서는 <strong>도커 컴포즈</strong>라는 도구를 제공하였습니다. 도커 컴포즈는 기존의 여러 서비스를 연결하기 위해 컨테이너 실행 단계에서 복잡한 옵션을 주는 상황에서 벗어나 처음부터 <strong>YAML 파일 형태로 관리하여</strong> <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> <strong>파일 하나만 실행하면 프로젝트 배포에 필요한 모든 서비스를 실행하고 연결 시켜주는 것</strong>입니다. 다음은 웹 서버와 데이터베이스를 연결해 하나의 프로젝트로 배포하도록 해주는 도커 컴포즈 파일의 예시입니다.</p>
 
-<p>ES와 Spark 컨테이너 실행</p>
-
-<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3'</span>
 
 <span class="na">services</span><span class="pi">:</span>
-  <span class="na">elasticsearch</span><span class="pi">:</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">elasticsearch:7.16.2</span>
-    <span class="na">hostname</span><span class="pi">:</span> <span class="s">elasticsearch</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">9200:9200"</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">9300:9300"</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">postgres</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./docker/data:/var/lib/postgresql/data</span>
     <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">ES_JAVA_OPTS</span><span class="pi">:</span> <span class="s2">"</span><span class="s">-Xmx256m</span><span class="nv"> </span><span class="s">-Xms256m"</span>
-      <span class="na">ELASTIC_PASSWORD</span><span class="pi">:</span> <span class="s">changeme</span>
-      <span class="na">ELASTIC_USERNAME</span><span class="pi">:</span> <span class="s">elastic</span>
-      <span class="na">discovery.type</span><span class="pi">:</span> <span class="s">single-node</span>
-  
-  <span class="na">spark</span><span class="pi">:</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">kimziont:spark</span>
-    <span class="na">hostname</span><span class="pi">:</span> <span class="s">spark</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_DB=sampledb</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_USER=sampleuser</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_PASSWORD=samplesecret</span>
+      <span class="pi">-</span> <span class="s">POSTGRES_INITDB_ARGS=--encoding=UTF-8</span>
+
+  <span class="na">django</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">.</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">./compose/django/Dockerfile-dev</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DEBUG=True</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_HOST=db</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_PORT=5432</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_NAME=sampledb</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_USERNAME=sampleuser</span>
+      <span class="pi">-</span> <span class="s">DJANGO_DB_PASSWORD=samplesecret</span>
+      <span class="pi">-</span> <span class="s">DJANGO_SECRET_KEY=dev_secret_key</span>
     <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s2">"</span><span class="s">4040:4040"</span>
-    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>
+    <span class="na">command</span><span class="pi">:</span> 
+      <span class="pi">-</span> <span class="s">python manage.py runserver 0:8000</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./:/app/</span>
+</code></pre></div></div>
+<p><a href="https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움" target="_blank">(44bits 블로그 참고)</a></p>
+
+<p>지금부터 도커 컴포즈 파일의 구성요소를 한 번 살펴보도록 하겠습니다.</p>
+
+<h1 id="top-level-keys">Top-level keys</h1>
+<p>도커 컴포즈 파일의 최상위 키값에는 version, services, networks, volumes과 같은 항목이 있습니다.</p>
+<ul>
+  <li><strong>version</strong>: 도커 컴포즈 파일 포맷의 버전을 지정 <a href="https://docs.docker.com/compose/compose-file/compose-versioning/" target="_blank">(도커 엔진과의 호환성 체크 문서)</a></li>
+  <li><strong>services</strong>: 컨테이너 각각에 대한 세부사항 설정으로 도커 컴포즈에서 가장 많은 비중 차지</li>
+  <li><strong>networks</strong>: 컴포즈가 제공하는 디폴트 네트워크가 아닌 커스텀 네트워크 생성을 원할 때 지정 <a href="https://docs.docker.com/compose/networking/" target="_blank">(참고)</a></li>
+  <li><strong>volumes</strong>: 볼륨에 이름을 지정할 수 있으며, 여러 컨테이너에서 공유하는 볼륨을 제공</li>
+</ul>
+
+<h1 id="services">services</h1>
+<ul>
+  <li><strong>image</strong><br />
+원하는 컨테이너의 이미지를 이미지 저장소에서 불러와 설정합니다. 불러오는 방법은 다음과 같은 방법이 있습니다.</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 이미지 이름</span>
+<span class="na">image</span><span class="pi">:</span> <span class="s">redis</span>
+
+<span class="c1"># 이미지 이름:태그</span>
+<span class="na">image</span><span class="pi">:</span> <span class="s">ubuntu:18.04</span>
+
+<span class="c1"># 이미지 작성자/이름</span>
+<span class="na">image</span><span class="pi">:</span> <span class="s">tutum/influxdb</span>
+
+<span class="c1"># 이미지 url</span>
+<span class="na">image</span><span class="pi">:</span> <span class="s">example-registry.com:4000/postgresql</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>build</strong><br />
+<code class="language-plaintext highlighter-rouge">build</code>를 사용하면 이미지를 불러오지 않고, Dockerfile을 이용해 빌드할 수 있습니다.
+    <ul>
+      <li><strong>context</strong>: Dockerfile이 위치한 디렉토리 또는 깃 레포지토리의 url</li>
+      <li><strong>dockerfile</strong>: context에 Dockerfile이 없을 경우 사용할 대체 Dockerfile (단독으로 못쓰고 context필요)</li>
+      <li><strong>args</strong>: 이미지 빌드 단계에서만 사용되는 환경변수의 값 (Dockerfile ARG 명령어에 미리 명시되어야함)</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ARG</span><span class="s"> buildno</span>
+
+<span class="k">RUN </span><span class="nb">echo</span> <span class="s2">"Build number: </span><span class="nv">$buildno</span><span class="s2">"</span>
 </code></pre></div></div>
 
-<p>Spark에서 ElasticSearch를 쓰려면 커넥터가 필요한 것 같다. Elastic에서 이를 위해 elasticsearch-hadoop를 제공하는데 우선 다운을 받아야 한다.</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://artifacts.elastic.co/downloads/elasticsearch-hadoop/elasticsearch-hadoop-6.4.1.zip
-unzip elasticsearch-hadoop-6.4.1.zip
-<span class="nb">mkdir</span> <span class="nt">-p</span> /app/spark/jars/ext/elasticsearch-hadoop
-<span class="nb">mv </span>elasticsearch-hadoop-6.4.1 /app/spark/jars/ext/elasticsearch-hadoop/6.4.1
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">webapp</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span>
+      <span class="na">context</span><span class="pi">:</span> <span class="s">./dir</span>
+      <span class="na">dockerfile</span><span class="pi">:</span> <span class="s">Dockerfile-alternate</span>
+      <span class="na">args</span><span class="pi">:</span>
+        <span class="na">buildno</span><span class="pi">:</span> <span class="m">1</span>
 </code></pre></div></div>
 
-<p>설치가 완료되었으면 스파크를 실행할 때 설치한 경로를 실행 인자로 주면되는 것 같다.</p>
+<p><code class="language-plaintext highlighter-rouge">build</code><strong>와</strong> <code class="language-plaintext highlighter-rouge">image가</code> <strong>함께 표기된 경우</strong> <code class="language-plaintext highlighter-rouge">build</code>로 이미지를 만들고 이미지의 이름에 <code class="language-plaintext highlighter-rouge">image</code> 값을 사용합니다.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">build</span><span class="pi">:</span> <span class="s">./dir</span>
+<span class="na">image</span><span class="pi">:</span> <span class="s">webapp:tag</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>environment</strong><br />
+컨테이너에 환경변수를 추가해줍니다. 아래의 <code class="language-plaintext highlighter-rouge">SESSION_SECRET</code>와 같이 value를 표기하지 않으면 컴포즈가 실행중인 머신 안에서 정의된 value로 해석가능 합니다. 이것은 value를 secret하게 할 수 있으며 또한 host-specific value로 사용할 수 있습니다.</li>
+</ul>
 
-<p>pyspark에서 사용할 때는 아래와 같다.</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">environment</span><span class="pi">:</span>
+  <span class="na">RACK_ENV</span><span class="pi">:</span> <span class="s">development</span>
+  <span class="na">SHOW</span><span class="pi">:</span> <span class="s1">'</span><span class="s">true'</span>
+  <span class="na">SESSION_SECRET</span><span class="pi">:</span>
+</code></pre></div></div>
+<ul>
+  <li><strong>ports</strong><br />
+포트를 노출해줍니다. 간단한 short syntax와 추가적으로 필드를 추가할 수 있는 long syntax가 있습니다.
+    <ul>
+      <li><strong>Short Syntax 표기법</strong><br />
+보통 <code class="language-plaintext highlighter-rouge">HOST PORT: CONTAINER PORT</code> 방법으로 표기합니다<br />
+번호 하나만 작성되면 CONTAINER PORT를 의미합니다
+IP 주소를 표기하여 해당 IP 주소의 트래픽만 허용할 수도 있습니다 (default: <code class="language-plaintext highlighter-rouge">0.0.0.0</code>)<br />
+쌍따옴표를 안쓰면 시간으로 인식되기 때문에 반드시 쌍따옴표로 감싸줍니다
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">3000"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">3000-3005"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">8000:8000"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">9090-9091:8080-8081"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">49100:22"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">127.0.0.1:8001:8001"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">127.0.0.1:5000-5010:5000-5010"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">127.0.0.1::5000"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">6060:6060/udp"</span>
+    <span class="pi">-</span> <span class="s2">"</span><span class="s">12400-12500:1240"</span>
+</code></pre></div>        </div>
+      </li>
+      <li><strong>Long Syntax 표기법</strong>
+        <ul>
+          <li><strong>target</strong>: the port inside the container</li>
+          <li><strong>published</strong>: the publicly exposed port</li>
+          <li><strong>protocol</strong>: the port protocol (tcp or udp)</li>
+          <li><strong>mode</strong>: host for publishing a host port on each node, or ingress for a swarm mode port to be load balanced.</li>
+        </ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># pyspark 실행 커맨드</span>
-pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/spark/jars/ext/elasticsearch-hadoop/6.4.1/dist/elasticsearch-hadoop-6.4.1.jar
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">target</span><span class="pi">:</span> <span class="m">80</span>
+      <span class="na">published</span><span class="pi">:</span> <span class="m">8080</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">tcp</span>
+      <span class="na">mode</span><span class="pi">:</span> <span class="s">host</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li><strong>volumes</strong><br />
+호스트 경로의 디렉토리 또는 네임드 볼륨을 컨테이너에 마운트합니다. 하나의 서비스를 위한 볼륨으로는 호스트 경로를 사용해도 괜찮지만, 여러 서비스가 공유하는 볼륨이 필요하다면 top-level <code class="language-plaintext highlighter-rouge">volumes</code>에 네임드 볼륨을 정의해야 합니다.
+    <ul>
+      <li><strong>Short Syntax 표기법</strong>
+        <ul>
+          <li>
+            <p>일반적인 표기방법: <code class="language-plaintext highlighter-rouge">[SOURCE:]TARGET[:MODE]</code></p>
+
+            <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">volumes</span><span class="pi">:</span>
+      <span class="c1"># Just specify a path and let the Engine create a volume</span>
+      <span class="pi">-</span> <span class="s">/var/lib/mysql</span>
+
+      <span class="c1"># Specify an absolute path mapping</span>
+      <span class="pi">-</span> <span class="s">/opt/data:/var/lib/mysql</span>
+
+      <span class="c1"># Path on the host, relative to the Compose file</span>
+      <span class="pi">-</span> <span class="s">./cache:/tmp/cache</span>
+
+      <span class="c1"># Named volume</span>
+      <span class="pi">-</span> <span class="s">datavolume:/var/lib/mysql</span>
+</code></pre></div>            </div>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Long Syntax 표기법</strong>
+        <ul>
+          <li><strong>type</strong>: 마운트 타입. <code class="language-plaintext highlighter-rouge">volume</code>, <code class="language-plaintext highlighter-rouge">bind</code>, <code class="language-plaintext highlighter-rouge">tmpfs</code>, <code class="language-plaintext highlighter-rouge">npipe</code> <a href="https://docs.docker.com/storage/bind-mounts/" target="_blank">(참고)</a>
+            <ul>
+              <li><code class="language-plaintext highlighter-rouge">volume</code>: 도커에 의해 관리되는 볼륨을 마운트하는 경우</li>
+              <li><code class="language-plaintext highlighter-rouge">bind</code>: 호스트 머신의 파일 또는 디렉토리를 컨테이너에 마운트하는 경우</li>
+            </ul>
+          </li>
+          <li><strong>source</strong>: 마운트 하고자 하는 호스트 경로의 디렉토리 또는 네임드 볼륨</li>
+          <li>
+            <p><strong>target</strong>: 볼륨이 마운트 될 컨테이너에서의 경로</p>
+
+            <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.9"</span>
+  <span class="na">services</span><span class="pi">:</span>
+    <span class="na">web</span><span class="pi">:</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:alpine</span>
+      <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s2">"</span><span class="s">80:80"</span>
+      <span class="na">volumes</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">volume</span>
+          <span class="na">source</span><span class="pi">:</span> <span class="s">mydata</span>
+          <span class="na">target</span><span class="pi">:</span> <span class="s">/data</span>
+          <span class="na">volume</span><span class="pi">:</span>
+            <span class="na">nocopy</span><span class="pi">:</span> <span class="no">true</span>
+        <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s">bind</span>
+          <span class="na">source</span><span class="pi">:</span> <span class="s">./static</span>
+          <span class="na">target</span><span class="pi">:</span> <span class="s">/opt/app/static</span>
+
+  <span class="na">networks</span><span class="pi">:</span>
+    <span class="na">webnet</span><span class="pi">:</span>
+
+  <span class="na">volumes</span><span class="pi">:</span>
+    <span class="na">mydata</span><span class="pi">:</span>
+</code></pre></div>            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>depends_on</strong><br />
+서비스간의 실행순서를 통해 디펜던시를 지키도록 해줍니다. 이 설정은 종속되는 다른 서비스가 실행되기만을 기다릴 뿐 준비(ready)가 되었는지 까지는 고려하지 않습니다. 준비 상태가 필요하다면 추가적인 설정이 필요합니다. <a href="https://docs.docker.com/compose/startup-order/" target="_blank">(참고)</a>아래 예시는 <code class="language-plaintext highlighter-rouge">web</code> 서비스 컨테이너가 실행되기 전에 <code class="language-plaintext highlighter-rouge">db</code>와 <code class="language-plaintext highlighter-rouge">redis</code>의 실행을 기다립니다. 보통 데이터베이스, 주키퍼와 같은 선행되어야 하는 서비스가 있는 경우 많이 사용합니다.</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.9"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">web</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span> <span class="s">.</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db</span>
+      <span class="pi">-</span> <span class="s">redis</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redis</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">postgres</span>
 </code></pre></div></div>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">read</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"org.elasticsearch.spark.sql"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.read.field.as.array.include"</span><span class="p">,</span> <span class="s">"NerArray"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.nodes"</span><span class="p">,</span><span class="s">"localhost:9200"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"es.nodes.discovery"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">).</span><span class="n">load</span><span class="p">(</span><span class="s">"index명"</span><span class="p">)</span> 
+<ul>
+  <li>
+    <p><strong>deploy</strong></p>
 
-<span class="n">df</span><span class="p">.</span><span class="n">registerTempTable</span><span class="p">(</span><span class="s">"ner"</span><span class="p">)</span> <span class="n">spark</span><span class="p">.</span><span class="n">sql</span><span class="p">(</span><span class="s">"show tables"</span><span class="p">).</span><span class="n">show</span><span class="p">()</span> 
+    <ul>
+      <li>배포, 실행과 관련된 설정을 명시합니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">resources</code> 옵션을 제외하고는 docker-compose up 과 같은 명령어에서는 실행 안됨</li>
+      <li>(swarm으로 실행할 때만 동작함)</li>
+    </ul>
+  </li>
+</ul>
 
-<span class="n">spark</span><span class="p">.</span><span class="n">sql</span><span class="p">(</span><span class="s">"select * from ner"</span><span class="p">).</span><span class="n">show</span><span class="p">()</span>
-
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.9"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redis:alpine</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">replicas</span><span class="pi">:</span> <span class="m">6</span>
+      <span class="na">placement</span><span class="pi">:</span>
+        <span class="na">max_replicas_per_node</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">update_config</span><span class="pi">:</span>
+        <span class="na">parallelism</span><span class="pi">:</span> <span class="m">2</span>
+        <span class="na">delay</span><span class="pi">:</span> <span class="s">10s</span>
+      <span class="na">restart_policy</span><span class="pi">:</span>
+        <span class="na">condition</span><span class="pi">:</span> <span class="s">on-failure</span>
 </code></pre></div></div>
 
-<p>spark-shell을 사용할 때는 아래와 같다.</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.9"</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">redis</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">redis:alpine</span>
+    <span class="na">deploy</span><span class="pi">:</span>
+      <span class="na">resources</span><span class="pi">:</span>
+        <span class="na">limits</span><span class="pi">:</span>
+          <span class="na">cpus</span><span class="pi">:</span> <span class="s1">'</span><span class="s">0.50'</span>
+          <span class="na">memory</span><span class="pi">:</span> <span class="s">50M</span>
+        <span class="na">reservations</span><span class="pi">:</span>
+          <span class="na">cpus</span><span class="pi">:</span> <span class="s1">'</span><span class="s">0.25'</span>
+          <span class="na">memory</span><span class="pi">:</span> <span class="s">20M</span>
+</code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>spark-shell --jars /app/spark/jars/ext/elasticsearch-hadoop/6.4.1/dist/elasticsearch-hadoop-6.4.1.jar
+<ul>
+  <li><strong>command</strong></li>
+</ul>
+
+<p>기본 커맨드 명령어를 오버라이딩합니다.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">command</span><span class="pi">:</span> <span class="s">bundle exec thin -p </span><span class="m">3000</span>
+
+<span class="na">command</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">bundle"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">exec"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">thin"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">-p"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">3000"</span><span class="pi">]</span>
 </code></pre></div></div>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li>
-    <p><a href="https://docs.docker.com/engine/reference/builder/#cmd" target="_blank">Docker 공식문서</a></p>
-  </li>
-  <li><a href="https://oboki.net/workspace/python/pyspark-elasticsearch-index-에서-dataframe-생성하기/" target="_blank">Spark와 ElasticSearch 연동하기</a></li>
-  <li><a href="https://github.com/elastic/elasticsearch-hadoop" target="_blank">elasticsearch-hadoop</a></li>
-  <li><a href="http://jason-heo.github.io/programming/2021/01/16/es-hadoop-spark30.html">Jason Heo’s Blog: Spark 3.0에서 elasticsearch hadoop 사용하기</a></li>
+  <li><a href="https://docs.docker.com/compose/compose-file/compose-file-v3/" target="_blank">Docker Compose 공식문서</a></li>
+  <li><a href="https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose#개발-환경-구성이라는-어려움" target="_blank">44bits님 블로그</a></li>
 </ul>
 
     </div>
@@ -785,7 +1004,7 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Docker%20Compose%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8%20%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0&url=http://localhost:4000/docker-series5"
+          href="https://twitter.com/intent/tweet?text=Docker%20Compose%20%EC%86%8D%EC%84%B1%20%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0&url=http://localhost:4000/docker-series5"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -795,12 +1014,12 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/docker-series5&amp;media=http://localhost:4000/images/datapipeline_logo.png&amp;description=Docker%20Compose%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8%20%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/docker-series5&amp;media=http://localhost:4000/images/docker_8.jpeg&amp;description=Docker%20Compose%20%EC%86%8D%EC%84%B1%20%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/docker-series5&title=Docker%20Compose%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20%EB%8D%B0%EC%9D%B4%ED%84%B0%20%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8%20%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0&summary=Leverage%20agile%20frameworks%20to%20provide%20a%20robust%20synopsis%20for%20high%20level%20overviews.%20Iterative%20a...&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/docker-series5&title=Docker%20Compose%20%EC%86%8D%EC%84%B1%20%EC%95%8C%EC%95%84%EB%B3%B4%EA%B8%B0&summary=%EB%8F%84%EC%BB%A4%20%EC%BB%B4%ED%8F%AC%EC%A6%88%EB%8A%94%20%ED%8C%8C%EC%9D%BC%20%ED%95%98%EB%82%98%EB%A7%8C%20%EC%8B%A4%ED%96%89%ED%95%98%EB%A9%B4%20%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EB%B0%B0%ED%8F%AC%EC%97%90%20%ED%95%84%EC%9A%94%ED%95%9C%20%EB%AA%A8%EB%93%A0%20%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A5%BC%20%EC%8B%A4%ED%96%89%ED%95%98%EA%B3%A0%20%EC%97%B0%EA%B2%B0%20%EC%8B%9C%EC%BC%9C%EC%A4%8D%EB%8B%88%EB%8B%A4.&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -836,7 +1055,7 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
 
   <div class="post_pagination">
     
-      <a href="/docker-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Docker Compose 속성 알아보기</a>
+      <a href="/docker-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Dockerfile을 이용한 이미지 빌드(4): Docker 이미지 빌드 잘해보기</a>
     
     
       <a href="/docker-series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Docker 컨테이너에 저장된 데이터는 어떻게 될까?<i class="ion ion-ios-arrow-forward"></i></a>
@@ -874,8 +1093,6 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
                     <a href="/devops" class="section__link related-tag">See all<span> devops</span></a>
                   
                 
-                  
-                
               
               </a>
             </div>
@@ -889,18 +1106,333 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
             
       
             
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
+      <time class="article__date" datetime="2022-07-08T21:01:35+09:00">08 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series28">
-        <img class="lazy" data-src="/images/all_for_data_engineer.png" alt="Data Engineering Series [Part28]: 데이터 파이프라인과 장애">
+      <a class="article__image" href="/git_series5">
+        <img class="lazy" data-src="/images/git_logo.png" alt="Git Series [Part3]: Git 중급">
       </a>
       
 
@@ -909,7 +1441,46 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series28">Data Engineering Series [Part28]: 데이터 파이프라인과 장애</a>
+        <a href="/git_series5">Git Series [Part3]: Git 중급</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-07-08T21:01:35+09:00">08 Jul 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/git_series4">
+        <img class="lazy" data-src="/images/git_logo.png" alt="Git Series [Part3]: Github">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/git_series4">Git Series [Part3]: Github</a>
       </h2>
 
       
@@ -935,123 +1506,18 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
             
       
             
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-26T21:01:35+09:00">26 Jul 2022</time>
+      <time class="article__date" datetime="2022-07-07T21:01:35+09:00">07 Jul 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series24">
-        <img class="lazy" data-src="/images/system_design_logo.png" alt="Data Engineering Series [Part24]: 시스템 디자인(5) Database">
+      <a class="article__image" href="/git_series3">
+        <img class="lazy" data-src="/images/git_logo.png" alt="Git Series [Part3]: Git 브랜치">
       </a>
       
 
@@ -1060,46 +1526,7 @@ pyspark <span class="nt">--driver-class-path</span><span class="o">=</span>/app/
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series24">Data Engineering Series [Part24]: 시스템 디자인(5) Database</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-07-26T21:01:35+09:00">26 Jul 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/data-engineering-series23">
-        <img class="lazy" data-src="/images/system_design_logo.png" alt="Data Engineering Series [Part23]: 시스템 디자인(4) Caching">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/data-engineering-series23">Data Engineering Series [Part23]: 시스템 디자인(4) Caching</a>
+        <a href="/git_series3">Git Series [Part3]: Git 브랜치</a>
       </h2>
 
       

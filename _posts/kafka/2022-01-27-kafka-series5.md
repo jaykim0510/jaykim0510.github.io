@@ -25,8 +25,15 @@ tags: Kafka
 
 ## 토픽 삭제
 
+## 프로듀서
 
-# 처리량을 높이고 싶은 경우
+## 컨슈머
+
+# 레코드 파티셔닝 전략
+
+# 컨슈머 파티션 리밸런싱
+
+# 처리량을 높이고 싶은 경우 (배치전송)
 
 # 지연율을 낮추고 싶은 경우
 
@@ -35,3 +42,5 @@ tags: Kafka
 # 토픽 내 데이터를 주기적으로 삭제
 
 # 참고
+
+- [intrepidgeeks, 카프카 기본 개념과 구조/프로듀서 옵션/컨슈머 옵션](https://intrepidgeeks.com/tutorial/kafka-basic-concept-and-structureproducer-optionsconsumer-options#7){:target="_blank"}

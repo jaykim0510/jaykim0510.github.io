@@ -451,8 +451,9 @@
   <li><a href="#mongodb의-특징" id="markdown-toc-mongodb의-특징">MongoDB의 특징</a>    <ul>
       <li><a href="#데이터-구조" id="markdown-toc-데이터-구조">데이터 구조</a></li>
       <li><a href="#bson" id="markdown-toc-bson">BSON</a></li>
-      <li><a href="#replica-set" id="markdown-toc-replica-set">Replica-set</a></li>
-      <li><a href="#sharding" id="markdown-toc-sharding">Sharding</a></li>
+      <li><a href="#replica-set" id="markdown-toc-replica-set">Replica Set</a></li>
+      <li><a href="#sharded-cluster" id="markdown-toc-sharded-cluster">Sharded Cluster</a></li>
+      <li><a href="#wiredtiger-storage-engine" id="markdown-toc-wiredtiger-storage-engine">WiredTiger Storage Engine</a></li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -493,10 +494,10 @@
   <li>오픈소스</li>
   <li>유연한 스키마</li>
   <li>유연한 확장성: Scale-out, 샤딩, 자체 로드 밸런싱(mongos)</li>
-  <li>높은 가용성: Replica-set</li>
+  <li>높은 가용성: Replica Set</li>
   <li>프라이머리 키 인덱스, 세컨더리 인덱스 지원</li>
   <li>복잡하고 다양한 쿼리 가능: Ad-hoc 쿼리, 전문 검색</li>
-  <li>BSON 형태로 데이터 저장: 4~6배의 압축률, 다양한 데이터 타입 지원, 빠른 쿼리</li>
+  <li>BSON 형태로 데이터 저장: 데이터 크기가 가벼워짐, 다양한 데이터 타입 지원, 빠른 쿼리</li>
 </ul>
 
 <h1 id="mongodb의-특징">MongoDB의 특징</h1>
@@ -558,9 +559,55 @@
 
 <p><img src="/images/json_bson_2.png" alt="" /></p>
 
-<h2 id="replica-set">Replica-set</h2>
+<h2 id="replica-set">Replica Set</h2>
 
-<h2 id="sharding">Sharding</h2>
+<p><img src="/images/replica_set_1.png" alt="" /></p>
+
+<ul>
+  <li>높은 가용성(HA)를 위한 솔루션</li>
+  <li>크게 Primary와 Secondary로 구성</li>
+  <li>Primary
+    <ul>
+      <li>Leader Server</li>
+      <li>Read/Write 모두 처리 가능</li>
+      <li>Replica Set당 한 개만 존재</li>
+    </ul>
+  </li>
+  <li>Secondary
+    <ul>
+      <li>Follower Server</li>
+      <li>Read에 대한 요청만 처리 가능 -&gt; Secondary 수를 늘림으로써 Read 분산 처리 가능</li>
+      <li>복제를 통해 Primary와 동일한 데이터 셋을 유지</li>
+    </ul>
+  </li>
+  <li>지속적으로 하트비트(Heartbeat)를 주고 받으며 서버 살아 있는지 확인
+<img src="/images/replica_set_2.png" alt="" /></li>
+  <li>Primary 서버가 Replica Set에서 이탈하면 Secondary중에서 새로운 리더를 선출해야함 (Leader Election)</li>
+  <li><code class="language-plaintext highlighter-rouge">local</code> db의 <code class="language-plaintext highlighter-rouge">Oplog</code> 컬렉션을 통해 복제를 수행</li>
+</ul>
+
+<h2 id="sharded-cluster">Sharded Cluster</h2>
+
+<p><img src="/images/sharded_cluster.png" alt="" /></p>
+
+<ul>
+  <li>분산 처리(Write 작업)를 위한 솔루션</li>
+  <li>모든 Shard는 Replica Set으로 구성 (높은 가용성과, 분산 Read 작업도 함께 지원)</li>
+  <li>단점은 관리가 비교적 복잡하다</li>
+  <li>Read 작업이 느려진다 -&gt; 쿼리가 느려진다</li>
+  <li>반드시 Router를 통해 접근한다</li>
+  <li>샤딩을 위해서는 Shard Key를 선정해야 하고, 해당 필드에 인덱스가 만들어져 있어야 한다</li>
+  <li>Ranged Sharding: 값의 범위에 따라 분산</li>
+  <li>Hashed Sharding: 값의 해시 결과에 따라 분산 (가능하면 이 방법을 통해 분산한다)</li>
+</ul>
+
+<h2 id="wiredtiger-storage-engine">WiredTiger Storage Engine</h2>
+
+<ul>
+  <li>MongoDB 3.2부터 기본 스토리지 엔진으로 WiredTiger를 사용</li>
+  <li>데이터 압축 지원: 4~6배 정도의 압축</li>
+  <li>도큐먼트 레벨의 잠금 지원</li>
+</ul>
 
 <h1 id="참고">참고</h1>
 
@@ -568,6 +615,7 @@
   <li><a href="https://meetup.toast.com/posts/274" target="_blank">NHN 클라우드, mongoDB Story 1: mongoDB 정의와 NoSQL</a></li>
   <li><a href="https://bytescout.com/blog/2019/09/mongodb-history-and-advantages.html" target="_blank">BYTESCOUT, MONGODB HISTORY AND ADVANTAGES</a></li>
   <li><a href="https://www.guru99.com/what-is-mongodb.html" target="_blank">Guru99, What is MongoDB? Introduction, Architecture, Features &amp; Example</a></li>
+  <li><a href="https://www.mongodb.com/docs/manual/replication/" target="_blank">MongoDB 공식문서, Replication</a></li>
   <li><a href="https://freekim.tistory.com/13" target="_blank">프리킴: [MongoDB] 몽고DB 기본 명령어</a></li>
   <li><a href="https://www.confluent.io/hub/debezium/debezium-connector-mongodb" target="_blank">Confluent hub: Debezium MongoDB CDC Source Connector</a></li>
 </ul>
