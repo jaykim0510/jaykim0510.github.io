@@ -1,4 +1,4 @@
-I"�a<hr />
+I""u<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#ipc" id="markdown-toc-ipc">IPC</a>    <ul>
@@ -6,16 +6,22 @@
       <li><a href="#공유-메모리" id="markdown-toc-공유-메모리">공유 메모리</a></li>
       <li><a href="#파일" id="markdown-toc-파일">파일</a></li>
       <li><a href="#파이프" id="markdown-toc-파이프">파이프</a></li>
-      <li><a href="#소켓" id="markdown-toc-소켓">소켓</a></li>
       <li><a href="#메세지-큐" id="markdown-toc-메세지-큐">메세지 큐</a></li>
+      <li><a href="#소켓" id="markdown-toc-소켓">소켓</a></li>
     </ul>
   </li>
   <li><a href="#rpc" id="markdown-toc-rpc">RPC</a>    <ul>
       <li><a href="#when-the-client-calls-the-server-the-rpc-system-must-take-care-of" id="markdown-toc-when-the-client-calls-the-server-the-rpc-system-must-take-care-of">When the client calls the server, the RPC system must take care of:</a></li>
       <li><a href="#the-following-steps-take-place-during-a-rpc" id="markdown-toc-the-following-steps-take-place-during-a-rpc">The following steps take place during a RPC</a></li>
-      <li><a href="#장점" id="markdown-toc-장점">장점</a></li>
-      <li><a href="#단점" id="markdown-toc-단점">단점</a></li>
-      <li><a href="#grpc" id="markdown-toc-grpc">gRPC</a></li>
+      <li><a href="#rpc의-장점" id="markdown-toc-rpc의-장점">RPC의 장점</a></li>
+      <li><a href="#rpc의-단점" id="markdown-toc-rpc의-단점">RPC의 단점</a></li>
+      <li><a href="#rpc의-대표적인-구현체" id="markdown-toc-rpc의-대표적인-구현체">RPC의 대표적인 구현체</a></li>
+    </ul>
+  </li>
+  <li><a href="#rest-representational-state-transfer" id="markdown-toc-rest-representational-state-transfer">REST (REpresentational State Transfer)</a></li>
+  <li><a href="#grpc" id="markdown-toc-grpc">gRPC</a>    <ul>
+      <li><a href="#http-20" id="markdown-toc-http-20">HTTP 2.0</a></li>
+      <li><a href="#protocol-buffer" id="markdown-toc-protocol-buffer">Protocol Buffer</a></li>
       <li><a href="#grpc-이점" id="markdown-toc-grpc-이점">gRPC 이점</a></li>
     </ul>
   </li>
@@ -120,21 +126,6 @@
   </li>
 </ul>
 
-<h2 id="소켓">소켓</h2>
-
-<blockquote>
-  <p>sockets are similar to pipes, but capable of network connections (i.e. communication across computers). The data then travels through the network to another computer and to the desired process. You can also use sockets locally by using the “localhost” to essentially loop-back to the another process on the system.</p>
-</blockquote>
-
-<p><img src="/images/ipc_3.png" alt="" /></p>
-
-<ul>
-  <li>소켓은 두 프로세스간 통신을 위해 제공되는 엔드포인트</li>
-  <li>원격에 있는 프로세스간 통신을 제공</li>
-  <li>양방향 통신이 가능</li>
-  <li>서버/클라이언트 구조의 프로세스간 통신에 자주 사용</li>
-</ul>
-
 <h2 id="메세지-큐">메세지 큐</h2>
 
 <ul>
@@ -175,6 +166,25 @@
   <li>메시지 전달 모델의 구현 IPC : PIPE, Message Queue, Socket</li>
 </ul>
 
+<h2 id="소켓">소켓</h2>
+
+<blockquote>
+  <p>sockets are similar to pipes, but capable of network connections (i.e. communication across computers). The data then travels through the network to another computer and to the desired process. You can also use sockets locally by using the “localhost” to essentially loop-back to the another process on the system.</p>
+</blockquote>
+
+<p><img src="/images/ipc_3.png" alt="" /></p>
+
+<ul>
+  <li>소켓은 두 프로세스간 통신을 위해 제공되는 엔드포인트</li>
+  <li>원격에 있는 프로세스간 통신을 제공</li>
+  <li>양방향 통신이 가능</li>
+  <li>서버/클라이언트 구조의 프로세스간 통신에 자주 사용</li>
+</ul>
+
+<p>소켓은 대부분의 언어에서 API 형태로 제공하는 편리함 때문에 지금도 많이 사용되고 있지만, 일련의 통신 과정을 직접 구현하므로 통신 관련 장애를 처리하는 것은 고스란히 개발자의 몫이 됩니다. 서비스가 고도화될 수록 수백 수천가지 데이터가 돌아다니게 될텐데, 이에 따라 data formatting 을 하는 것도 점점 어려워지게 되죠</p>
+
+<p>이런 소켓의 한계에서 RPC(Remote Procedure Call)라는 기술이 등장</p>
+
 <h1 id="rpc">RPC</h1>
 
 <blockquote>
@@ -183,14 +193,43 @@
 
 <ul>
   <li>IPC의 한 종류</li>
-  <li>분산 네트워크에서 많이 사용하는 방식</li>
-  <li>클라이언트는 마치 로컬에 있는 프로시저를 실행하듯 사용 -&gt; 실제로는 원격의 주소 공간에 있는 프로세스에게 요청 -&gt; 원격에서 실행한 뒤 결과를 리턴</li>
+  <li>분산 시스템에서 많이 사용하는 방식</li>
+  <li>원격에 있는 프로세스와의 통신을 마치 로컬에 있는 프로시저를 실행하듯 사용</li>
   <li>(프로시저(procedure)는 서브루틴(subroutine)이 될 수도 있고, 서비스가 될 수도 있고, 함수가 될 수도 있다)</li>
   <li>MSA(Micro Service Architecture)패턴으로 서비스를 개발하는 환경에서 유용하게 활용됨</li>
   <li>RPC는 Java, Python, Go와 같은 다양한 언어로 구현할 수 있음</li>
   <li>RPC는 프로세스간 통신 과정을 추상화</li>
   <li>네트워크 장비, 프로토콜, 운영체제에 무관하게 개발 가능</li>
 </ul>
+
+<p>RPC: 네트워크로 연결된 서버 상의 프로시저(함수, 메서드 등)를 원격으로 호출할 수 있는 기능</p>
+
+<p>네트워크 통신을 위한 작업 하나하나 챙기기 귀찮으니. 통신이나 call 방식에 신경쓰지 않고 원격지의 자원을 내 것처럼 사용할 수 있죠. IDL(Interface Definication Language) 기반으로 다양한 언어를 가진 환경에서도 쉽게 확장이 가능하며, 인터페이스 협업에도 용이하다는 장점이 있습니다.</p>
+
+<p>RPC의 핵심 개념은 ‘Stub(스텁)’이라는 것인데요. 서버와 클라이언트는 서로 다른 주소 공간을 사용 하므로, 함수 호출에 사용된 매개 변수를 꼭 변환해줘야 합니다. 안그러면 메모리 매개 변수에 대한 포인터가 다른 데이터를 가리키게 될 테니까요. 이 변환을 담당하는게 스텁입니다.</p>
+
+<p>client stub은 함수 호출에 사용된 파라미터의 변환(Marshalling, 마샬링) 및 함수 실행 후 서버에서 전달 된 결과의 변환을, server stub은 클라이언트가 전달한 매개 변수의 역변환(Unmarshalling, 언마샬링) 및 함수 실행 결과 변환을 담당하게 됩니다. 이런 Stub을 이용한 기본적인 RPC 통신 과정을 살펴보겠습니다.</p>
+
+<p><img src="/images/rpc_stub.png" alt="" /></p>
+
+<ol>
+  <li>IDL(Interface Definition Language)을 사용하여 호출 규약 정의합니다.
+    <ul>
+      <li>함수명, 인자, 반환값에 대한 데이터형이 정의된 IDL 파일을 rpcgen으로 컴파일하면 stub code가 자동으로 생성됩니다.</li>
+    </ul>
+  </li>
+  <li>Stub Code에 명시된 함수는 원시코드의 형태로, 상세 기능은 server에서 구현됩니다.
+    <ul>
+      <li>만들어진 stub 코드는 클라이언트/서버에 함께 빌드합니다.</li>
+    </ul>
+  </li>
+  <li>client에서 stub 에 정의된 함수를 사용할 때,</li>
+  <li>client stub은 RPC runtime을 통해 함수 호출하고</li>
+  <li>server는 수신된 procedure 호출에 대한 처리 후 결과 값을 반환합니다.</li>
+  <li>최종적으로 Client는 Server의 결과 값을 반환받고, 함수를 Local에 있는 것 처럼 사용할 수 있습니다.</li>
+</ol>
+
+<p>구현의 어려움/지원 기능의 한계 등으로 제대로 활용되지 못했습니다. 그렇게 RPC 프로젝트도 점차 뒷길로 가게되며 데이터 통신을 우리에게 익숙한 Web을 활용해보려는 시도로 이어졌고, 이 자리를 REST가 차지하게됩니다.</p>
 
 <p><img src="/images/rpc_2.png" alt="" /></p>
 
@@ -206,19 +245,6 @@
 
 <p>The client stub then uses a routine in the RPC <strong>Run-Time System (RTS)</strong> to send the message off and wait for a reply message. When the reply arrives, the stub unmarshals the parameters that were returned in the reply message, putting their values into the variables of the calling program. The client stub then returns to the calling program just like a normal subroutine.</p>
 
-<p>The server stub is located on the remote machine. It is called by the RPC run-time system when the message arrives from the client. The server stub performs the operations complementary to those of the the client stub: unmarshalling the parameters passed to the subroutine, calling the subroutine, and marshalling the return parameters.</p>
-
-<p>All the communication details are handled by the RPC run-time system, so the stubs contain only the code which is specific to the application involved. Each stub handles a specific set of procedures known as a package.</p>
-
-<p>In order to produce stub modules, one needs to know</p>
-
-<ul>
-  <li>The names of the procedures in the package</li>
-  <li>The number of parameters which they take</li>
-  <li>The data type of each parameter</li>
-  <li>The direction in which each parameter is transferred.</li>
-</ul>
-
 <h2 id="the-following-steps-take-place-during-a-rpc">The following steps take place during a RPC</h2>
 
 <p><img src="/images/rpc_1.png" alt="" /></p>
@@ -233,46 +259,51 @@
   <li>The client stub demarshalls the return parameters and execution returns to the caller.</li>
 </ul>
 
-<h2 id="장점">장점</h2>
-
+<h2 id="rpc의-장점">RPC의 장점</h2>
 <ul>
-  <li>The technique of using procedure calls in RPC permits high-level languages to provide communication between clients and servers.</li>
-  <li>This method is like a local procedure call but with the difference that the called procedure is executed on another process and a different computer.</li>
-  <li>The thread-oriented model is also supported by RPC in addition to the process model.</li>
-  <li>The RPC mechanism is employed to conceal the core message passing method.</li>
-  <li>The amount of time and effort required to rewrite and develop the code is minimal.</li>
-  <li>The distributed and local environments can both benefit from remote procedure calls.</li>
-  <li>To increase performance, it omits several of the protocol layers.</li>
-  <li>Abstraction is provided via RPC.  To exemplify, the user is not known about the nature of message-passing in network communication.</li>
-  <li>RPC empowers the utilization of applications in a distributed environment.</li>
+  <li>비즈니스 로직에 집중할 수 있음.</li>
+  <li>다양한 언어를 가진 환경에서 쉽게 확장할 수 있음.</li>
+  <li>쉽게 인터페이스 협업이 가능함.</li>
 </ul>
 
-<h2 id="단점">단점</h2>
-
+<h2 id="rpc의-단점">RPC의 단점</h2>
 <ul>
-  <li>In Remote Procedure Calls parameters are only passed by values as pointer values are not allowed.</li>
-  <li>It involves a communication system with another machine and another process, so this mechanism is extremely prone to failure.</li>
-  <li>The RPC concept can be implemented in a variety of ways, hence there is no standard.</li>
-  <li>Due to the interaction-based nature, there is no flexibility for hardware architecture in RPC.</li>
-  <li>Due to a remote procedure call, the process’s cost has increased.</li>
+  <li>새로운 학습 비용이 듬.</li>
+  <li>사람의 눈으로 읽기 힘듬.</li>
 </ul>
 
-<h2 id="grpc">gRPC</h2>
+<h2 id="rpc의-대표적인-구현체">RPC의 대표적인 구현체</h2>
+<ul>
+  <li>Google의 ProtocolBuffer</li>
+  <li>Facebook의 Thrift</li>
+  <li>Twitter의 Finalge</li>
+</ul>
 
-<blockquote>
-  <p>gRPC는 Google 에서 만든 RPC(Remote Procedure Call) 프로토콜이다. 네트워크 요청을 소프트웨어 내부에 있는 함수를 호출하듯이 사용하게 도와주는 프로토콜이다.</p>
-</blockquote>
+<h1 id="rest-representational-state-transfer">REST (REpresentational State Transfer)</h1>
+
+<p>REST는 HTTP/1.1 기반으로 URI를 통해 모든 자원(Resource)을 명시하고 HTTP Method를 통해 처리하는 아키텍쳐 입니다. 자원 그 자체를 표현하기에 직관적이고, HTTP를 그대로 계승하였기에 별도 작업 없이도 쉽게 사용할 수 있다는 장점으로 현대에 매우 보편화되어있죠. 하지만 REST에도 한계는 존재합니다. REST는 일종의 스타일이지 표준이 아니기 때문에 parameter와 응답 값이 명시적이지 않아요. 또한 HTTP 메소드의 형태가 제한적이기 때문에 세부 기능 구현에는 제약이 있습니다.</p>
+
+<p>덧붙여, 웹 데이터 전달 format으로 xml, json을 많이 사용하는데요.</p>
+
+<p>XML은 html과 같이 tag 기반이지만 미리 정의된 태그가 없어(no pre-defined tags) 높은 확장성을 인정 받아 이기종간 데이터 전송의 표준이었으나, 다소 복잡하고 비효율적인 데이터 구조탓에 속도가 느리다는 단점이 있었습니다. 이런 효율 문제를 JSON이 간결한 Key-Value 구조 기반으로 해결하는 듯 하였으나, 제공되는 자료형의 한계로 파싱 후 추가 형변환이 필요한 경우가 많아졌습니다. 또한 두 타입 모두 string 기반이라 사람이 읽기 편하다는 장점은 있으나, 바꿔 말하면 데이터 전송 및 처리를 위해선 별도의 Serialization이 필요하다는 것을 의미합니다.</p>
+
+<h1 id="grpc">gRPC</h1>
+
+<p>gRPC는 google 사에서 개발한 오픈소스 RPC(Remote Procedure Call) 프레임워크입니다. 이전까지는 RPC 기능은 지원하지 않고, 메세지(JSON 등)을 Serialize할 수 있는 프레임워크인 PB(Protocol Buffer, 프로토콜 버퍼)만을 제공해왔는데, PB 기반 Serizlaizer에 HTTP/2를 결합하여 RPC 프레임워크를 탄생시킨 것이죠.</p>
+
+<p>REST와 비교했을 때 기반 기술이 다르기에 특징도 많이 다르지만, 가장 두드러진 차이점은 HTTP/2를 사용한다는 것과 프로토콜 버퍼로 데이터를 전달한다는 점입니다. 그렇기에 Proto File만 배포하면 환경과 프로그램 언어에 구애받지 않고 서로 간의 데이터 통신이 가능합니다.</p>
 
 <p><img src="/images/grpc_1.png" alt="" /></p>
 
 <p>Monolithic 구조에서는 하나의 프로그램으로 동작하기 때문에 그 안에서 구조적인 2개의 서비스간의 데이터는 공유 메모리를 통해서 주고받을 수 있습니다. 따라서 이 경우 서비스간 메시지 전송 성능은 큰 이슈가 되지 않습니다. 반면 MSA에서는 여러 모듈로 분리되어있고 동일 머신에 존재하지 않을 수 있습니다. 따라서 일반적으로는 보편화된 방식인 REST 통신을 통해 메시지를 주고 받습니다. 문제는 Frontend 요청에 대한 응답을 만들어내기 위해 여러 마이크로 서비스간의 협력이 필요하다면, 구간별 REST 통신에 따른 비효율로 인해 응답속도가 저하된다는 점입니다.</p>
 
-<ul>
-  <li>3 way handshake</li>
-  <li>HTTP 헤더</li>
-</ul>
+<h2 id="http-20">HTTP 2.0</h2>
 
-<p>gRPC는 HTTP 2.0 기반위에서 동작하기 때문에 지금까지 HTTP 2.0의 특징에 대해서 살펴봤습니다. 짧게 정리하자면, Header 압축, Multiplexed Stream 처리 지원 등으로 인해 네트워크 비용을 많이 감소시켰습니다. 그렇다면 HTTP 2.0 특징을 제외한 gRPC만의 특징은 무엇이 있을까요? 먼저 REST API 통신의 문제점에 대해서 먼저 살펴본 다음 gRPC의 특징에 대해서 살펴보도록 하겠습니다. REST 구조에서는 JSON 형태로 데이터를 주고 받습니다. JSON은 데이터 구조를 쉽게 표현할 수 있으며, 사람이 읽기 좋은 표현 방식입니다. 하지만 사람이 읽기 좋은 방식이라는 의미는 머신 입장에서는 자신이 읽을 수 있는 형태로 변환이 필요하다는 것을 의미합니다. 따라서 Client와 Server간의 데이터 송수신간에 JSON 형태로 Serialization 그리고 Deserialization 과정이 수반되어야합니다. JSON 변환은 컴퓨터 CPU 및 메모리 리소스를 소모하므로 수많은 데이터를 빠르게 처리하는 과정에서는 효율이 떨어질 수 밖에 없습니다.</p>
+<p>http/1.1은 기본적으로 클라이언트의 요청이 올때만 서버가 응답을 하는 구조로 매 요청마다 connection을 생성해야만 합니다. cookie 등 많은 메타 정보들을 저장하는 무거운 header가 요청마다 중복 전달되어 비효율적이고 느린 속도를 보여주었습니다. 이에 http/2에서는 한 connection으로 동시에 여러 개 메시지를 주고 받으며, header를 압축하여 중복 제거 후 전달하기에 version1에 비해 훨씬 효율적입니다. 또한, 필요 시 클라이언트 요청 없이도 서버가 리소스를 전달할 수도 있기 때문에 클라이언트 요청을 최소화 할 수 있습니다.</p>
+
+<p>gRPC는 HTTP 2.0 기반위에서 동작하기 때문에 지금까지 HTTP 2.0의 특징에 대해서 살펴봤습니다. 짧게 정리하자면, Header 압축, Multiplexed Stream 처리 지원 등으로 인해 네트워크 비용을 많이 감소시켰습니다. 그렇다면 HTTP 2.0 특징을 제외한 gRPC만의 특징은 무엇이 있을까요?</p>
+
+<p>먼저 REST API 통신의 문제점에 대해서 먼저 살펴본 다음 gRPC의 특징에 대해서 살펴보도록 하겠습니다. REST 구조에서는 JSON 형태로 데이터를 주고 받습니다. JSON은 데이터 구조를 쉽게 표현할 수 있으며, 사람이 읽기 좋은 표현 방식입니다. 하지만 사람이 읽기 좋은 방식이라는 의미는 머신 입장에서는 자신이 읽을 수 있는 형태로 변환이 필요하다는 것을 의미합니다. 따라서 Client와 Server간의 데이터 송수신간에 JSON 형태로 Serialization 그리고 Deserialization 과정이 수반되어야합니다. JSON 변환은 컴퓨터 CPU 및 메모리 리소스를 소모하므로 수많은 데이터를 빠르게 처리하는 과정에서는 효율이 떨어질 수 밖에 없습니다.</p>
 
 <p>두 번째 이슈는 JSON 구조는 값은 String으로 표현됩니다. 따라서 사전에 타입 제약 조건에 대한 명확한 합의가 없거나 문서를 보고 개발자가 인지하지 못한다면, Server에 전달전에 이를 검증할 수 없습니다. 가령 위 예시와 같이 Server에서 zipCode는 숫자 타입으로 처리되어야하지만 Client에서는 이에 대한 제약 없이 문자열을 포함시켜 전달할 수 있음을 의미합니다.</p>
 
@@ -285,6 +316,14 @@
 <p>gRPC에서는 위 그림과 같이 이와 유사한 형태인 Stub 클래스를 Client에게 제공하여 Client는 Stub을 통해서만 gRPC 서버와 통신을 수행하도록 강제화 했습니다.</p>
 
 <p>그렇다면 Stub 클래스는 무엇이고 위 그림에서 보이는 Proto는 무엇일까요?</p>
+
+<h2 id="protocol-buffer">Protocol Buffer</h2>
+
+<p>Protocol Buffer는 google 사에서 개발한 구조화된 데이터를 직렬화(Serialization)하는 기법입니다.</p>
+
+<p>직렬화란, 데이터 표현을 바이트 단위로 변환하는 작업을 의미합니다. 아래 예제처럼 같은 정보를 저장해도 text 기반인 json인 경우 82 byte가 소요되는데 반해, 직렬화 된 protocol buffer는 필드 번호, 필드 유형 등을 1byte로 받아서 식별하고, 주어진 length 만큼만 읽도록 하여 단지 33 byte만 필요하게 됩니다.</p>
+
+<p><img src="/images/protobuf.png" alt="" /></p>
 
 <p>Protocol Buffer는 Google이 공개한 데이터 구조로써, 특정 언어 혹은 특정 플랫폼에 종속적이지 않은 데이터 표현 방식입니다. 하지만 Protocol Buffer는 특정 언어에 속하지 않으므로 Java나 Kotlin, Golang 언어에서 직접적으로 사용할 수 없습니다.</p>
 

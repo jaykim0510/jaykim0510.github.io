@@ -49,6 +49,8 @@ tags: Data_Engineering
 ## BSON 단점
 - 아직 JSON만큼 프로그래밍의 다양한 진영에서 지원되지는 않는다
 
+![](/images/json_bson.png)
+
 # Avro
 
 ## Avro 특징
