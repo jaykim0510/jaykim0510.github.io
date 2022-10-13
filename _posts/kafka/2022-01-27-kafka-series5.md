@@ -121,6 +121,9 @@ ${KAFKA_HOME}/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --
     - 0: 브로커가 받았는지 전혀 신경쓰지 않는다 -> 가장 빠름, 불안전 -> GPS 데이터
     - -1(all): 리더와 팔로워 파티션을 가지는 모든 브로커에게 저장되었는지 확인 -> 가장 느림, 안전
 - linger.ms: 배치를 전송하기 전까지 기다리는 최소 시간. 기본값은 0 -> 기본적으로 배치 전송 안함
+- batch.size: 배치 크기
+- compression.type: 압축 타입
+- buffer.memory: 브로커로 보내기 전에 버퍼링할 수 있는 메모리의 크기
 - retries: 브로커로부터 에러를 받고 난 뒤 재전송을 시도하는 횟수. 기본값은 2147483647
 - max.in.flight.requests.per.connection: 한 번에 요청하는 최대 커넥션 개수 기본값은 5 -> sender의 스레드 개수
 - partitioner.class: 파티셔너 종류. 기본값은 org.apache.kafka.clients.producer.internals.DefaultPartitioner
