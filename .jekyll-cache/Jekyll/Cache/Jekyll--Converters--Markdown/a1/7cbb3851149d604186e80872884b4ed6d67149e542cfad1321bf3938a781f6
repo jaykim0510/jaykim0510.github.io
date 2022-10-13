@@ -1,0 +1,109 @@
+I"c#<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#카프카-cli" id="markdown-toc-카프카-cli">카프카 CLI</a>    <ul>
+      <li><a href="#토픽" id="markdown-toc-토픽">토픽</a></li>
+      <li><a href="#프로듀서" id="markdown-toc-프로듀서">프로듀서</a></li>
+      <li><a href="#컨슈머" id="markdown-toc-컨슈머">컨슈머</a></li>
+    </ul>
+  </li>
+  <li><a href="#레코드-파티셔닝-전략" id="markdown-toc-레코드-파티셔닝-전략">레코드 파티셔닝 전략</a></li>
+  <li><a href="#컨슈머-파티션-리밸런싱" id="markdown-toc-컨슈머-파티션-리밸런싱">컨슈머 파티션 리밸런싱</a></li>
+  <li><a href="#처리량을-높이고-싶은-경우-배치전송" id="markdown-toc-처리량을-높이고-싶은-경우-배치전송">처리량을 높이고 싶은 경우 (배치전송)</a></li>
+  <li><a href="#지연율을-낮추고-싶은-경우" id="markdown-toc-지연율을-낮추고-싶은-경우">지연율을 낮추고 싶은 경우</a></li>
+  <li><a href="#순서-보장-정확히-한-번-전송" id="markdown-toc-순서-보장-정확히-한-번-전송">순서 보장, 정확히 한 번 전송</a></li>
+  <li><a href="#토픽-내-데이터를-주기적으로-삭제" id="markdown-toc-토픽-내-데이터를-주기적으로-삭제">토픽 내 데이터를 주기적으로 삭제</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="카프카-cli">카프카 CLI</h1>
+
+<h2 id="토픽">토픽</h2>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 토픽 리스트 확인</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-topics.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--list</span>
+
+<span class="c"># 주키퍼 --zookeeper zookeeper:2181 명시해줘도 되지만 DEPRECATED 예정, --bootstrap-server 옵션 권장</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 토픽 생성</span>
+<span class="c"># bootstrap-server로 설정하면 --partition, --replication-factor 설정 안해도</span>
+<span class="c"># server.properties의 num.partitions=1, offsets.topic.replication.factor=1 디폴트값 가진다</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-topics.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--create</span>
+
+<span class="c"># 주키퍼로 나타내면 --partition, --replication-factor 반드시 명시해야함</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-topics.sh <span class="nt">--zookeeper</span> zookeeper:2181 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--create</span> <span class="se">\</span>
+<span class="nt">--partitions</span> 1 <span class="nt">--replication-factor</span> 1
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 토픽 정보</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-topics.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic1 <span class="nt">--describe</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 토픽 삭제</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-topics.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--delete</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 토픽 파티션 변경</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-topics.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--alter</span> <span class="nt">--partitions</span> 3
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 토픽별로 설정 변경</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-configs.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--alter</span> <span class="nt">--add-config</span> min.insync.replicas<span class="o">=</span>2
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 설정값은 가장 넓은 범위로 브로커에 기본값을 설정할 수 있고, </span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-server-start.sh <span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/config/server.properties
+
+
+<span class="c"># 각 토픽마다 오버라이딩하여 독립적으로 설정할 수 있다 (토픽 레벨의 설정값만)</span>
+<span class="c"># https://kafka.apache.org/081/documentation.html#topic-config</span>
+
+<span class="c"># 토픽 생성할 때,</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-topics.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--create</span> <span class="se">\</span>
+<span class="nt">--config</span> min.insync.replicas<span class="o">=</span>2 <span class="nt">--config</span> min.cleanable.dirty.ratio<span class="o">=</span>0.5
+
+<span class="c"># 토픽 생성 후,</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-configs.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--alter</span> <span class="nt">--add-config</span> min.insync.replicas<span class="o">=</span>2
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 브로커에 설정된 각종 기본값 조회</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-configs.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--broker</span> 1 <span class="nt">--all</span> <span class="nt">--describe</span>
+</code></pre></div></div>
+
+<h2 id="프로듀서">프로듀서</h2>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># key없이 value만 전송</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-console-producer.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic
+
+<span class="c"># key와 value를 콤마(,)로 구분</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-console-producer.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="se">\</span>
+<span class="nt">--property</span> <span class="s2">"key.separator=,"</span>
+
+<span class="c"># key값을 이용해 파티셔닝 하겠지만 consumer에게는 value만 전달한다</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-console-producer.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="se">\</span>
+<span class="nt">--property</span> <span class="s2">"key.separator=,"</span> <span class="nt">--property</span> <span class="s2">"parse.key=true"</span>
+</code></pre></div></div>
+
+<h2 id="컨슈머">컨슈머</h2>
+
+<h1 id="레코드-파티셔닝-전략">레코드 파티셔닝 전략</h1>
+
+<h1 id="컨슈머-파티션-리밸런싱">컨슈머 파티션 리밸런싱</h1>
+
+<h1 id="처리량을-높이고-싶은-경우-배치전송">처리량을 높이고 싶은 경우 (배치전송)</h1>
+
+<h1 id="지연율을-낮추고-싶은-경우">지연율을 낮추고 싶은 경우</h1>
+
+<h1 id="순서-보장-정확히-한-번-전송">순서 보장, 정확히 한 번 전송</h1>
+
+<h1 id="토픽-내-데이터를-주기적으로-삭제">토픽 내 데이터를 주기적으로 삭제</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://intrepidgeeks.com/tutorial/kafka-basic-concept-and-structureproducer-optionsconsumer-options#7" target="_blank">intrepidgeeks, 카프카 기본 개념과 구조/프로듀서 옵션/컨슈머 옵션</a></li>
+</ul>
+:ET
