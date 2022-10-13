@@ -449,8 +449,6 @@ Table of Contents
   
 
   
-
-  
   	
   	
   	
@@ -480,8 +478,8 @@ Table of Contents
       <li><a href="#컨슈머" id="markdown-toc-컨슈머">컨슈머</a></li>
     </ul>
   </li>
-  <li><a href="#레코드-파티셔닝-전략" id="markdown-toc-레코드-파티셔닝-전략">레코드 파티셔닝 전략</a></li>
-  <li><a href="#컨슈머-파티션-리밸런싱" id="markdown-toc-컨슈머-파티션-리밸런싱">컨슈머 파티션 리밸런싱</a></li>
+  <li><a href="#프로듀서-주요-옵션" id="markdown-toc-프로듀서-주요-옵션">프로듀서 주요 옵션</a></li>
+  <li><a href="#컨슈머-주요-옵션" id="markdown-toc-컨슈머-주요-옵션">컨슈머 주요 옵션</a></li>
   <li><a href="#처리량을-높이고-싶은-경우-배치전송" id="markdown-toc-처리량을-높이고-싶은-경우-배치전송">처리량을 높이고 싶은 경우 (배치전송)</a></li>
   <li><a href="#지연율을-낮추고-싶은-경우" id="markdown-toc-지연율을-낮추고-싶은-경우">지연율을 낮추고 싶은 경우</a></li>
   <li><a href="#순서-보장-정확히-한-번-전송" id="markdown-toc-순서-보장-정확히-한-번-전송">순서 보장, 정확히 한 번 전송</a></li>
@@ -571,17 +569,69 @@ Table of Contents
 <span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-console-consumer.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--from-beginning</span> <span class="nt">--partition</span> 1
 </code></pre></div></div>
 
-<h1 id="레코드-파티셔닝-전략">레코드 파티셔닝 전략</h1>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 컨슈머에게 그룹을 할당해줄 수 있다</span>
+<span class="c"># 컨슈머 그룹간에는 같은 파티션을 할당받을 수 없다</span>
+<span class="k">${</span><span class="nv">KAFKA_HOME</span><span class="k">}</span>/bin/kafka-console-consumer.sh <span class="nt">--bootstrap-server</span> localhost:9092 <span class="nt">--topic</span> myKafkaTopic <span class="nt">--group</span> groupA
+</code></pre></div></div>
 
-<h1 id="컨슈머-파티션-리밸런싱">컨슈머 파티션 리밸런싱</h1>
+<h1 id="프로듀서-주요-옵션">프로듀서 주요 옵션</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- acks: 프로듀서가 전송한 데이터가 브로커들에 정상적으로 저장되었는지 전송 성공 여부를 확인
+    - 1(default): 리더 파티션을 가지는 브로커만 확인
+    - 0: 브로커가 받았는지 전혀 신경쓰지 않는다 -&gt; 가장 빠름, 불안전 -&gt; GPS 데이터
+    - -1(all): 리더와 팔로워 파티션을 가지는 모든 브로커에게 저장되었는지 확인 -&gt; 가장 느림, 안전
+- linger.ms: 배치를 전송하기 전까지 기다리는 최소 시간. 기본값은 0 -&gt; 기본적으로 배치 전송 안함
+- batch.size: 배치 크기
+- buffer.memory: 브로커로 보내기 전에 버퍼링할 수 있는 메모리의 크기
+- compression.type: 압축 타입
+- retries: 브로커로부터 에러를 받고 난 뒤 재전송을 시도하는 횟수. 기본값은 2147483647
+- max.in.flight.requests.per.connection: 한 번에 요청하는 최대 커넥션 개수 기본값은 5 -&gt; sender의 스레드 개수
+- partitioner.class: 파티셔너 종류. 기본값은 org.apache.kafka.clients.producer.internals.DefaultPartitioner
+- transactional.id: 트랜잭션 단위로 전송할지 여부. 기본값은 null
+- min.insync.replicas: ISR 그룹에 복제되어야 하는 최소 파티션 개수
+- enable.idempotence: 중복 저장 여부. 카프카 3.0.0 부터 기본값은 true
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>acks=-1, min.insync.replicas=2 조합이 성능도 얻으면서, 신뢰성도 얻는 가장 좋은 옵션
+</code></pre></div></div>
+
+<h1 id="컨슈머-주요-옵션">컨슈머 주요 옵션</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- group.id: 컨슈머 그룹 아이디를 지정한다
+- auto.offset.reset: 컨슈머 오프셋이 없을 때, 어느 오프셋부터 읽을지 선택하는 옵션. 기본값은 latest
+- enable.auto.commit: 오토 커밋 여부. 기본값은 true
+- auto.commit.interval.ms: 오토 커밋할 때 커밋의 시간 사이즈. 기본값은 5000(5초)
+- heartbeat.interval.ms: 하트비트를 전송하는 간격. 기본값은 3000(3초)
+- session.timeout.ms: 하트비트가 안와서 컨슈머가 죽었다 판단하기 까지 기다리는 시간. 기본값은 10000(10초)
+</code></pre></div></div>
 
 <h1 id="처리량을-높이고-싶은-경우-배치전송">처리량을 높이고 싶은 경우 (배치전송)</h1>
 
+<ul>
+  <li>linger.ms</li>
+  <li>batch.size</li>
+  <li>buffer.memory</li>
+</ul>
+
 <h1 id="지연율을-낮추고-싶은-경우">지연율을 낮추고 싶은 경우</h1>
+
+<ul>
+  <li>linger.ms=0</li>
+</ul>
 
 <h1 id="순서-보장-정확히-한-번-전송">순서 보장, 정확히 한 번 전송</h1>
 
+<ul>
+  <li>순서를 보장하기 위해서는 partition 개수를 1개로 해야함 (파티션 1개 내에서는 순서보장 되지만 2개 이상에서는 순서 보장 안됨)</li>
+  <li>정확히 한 번 전송 (한 번 저장)을 위해서는 enable.idempotence=true</li>
+</ul>
+
 <h1 id="토픽-내-데이터를-주기적으로-삭제">토픽 내 데이터를 주기적으로 삭제</h1>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">log.roll.ms</code>, <code class="language-plaintext highlighter-rouge">log.roll.hours</code></li>
+  <li><code class="language-plaintext highlighter-rouge">log.retention.ms</code>, <code class="language-plaintext highlighter-rouge">log.retention.minutes</code>, or <code class="language-plaintext highlighter-rouge">log.retention.hours</code></li>
+</ul>
 
 <h1 id="참고">참고</h1>
 
@@ -847,8 +897,6 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
-
-  
 
   
 
