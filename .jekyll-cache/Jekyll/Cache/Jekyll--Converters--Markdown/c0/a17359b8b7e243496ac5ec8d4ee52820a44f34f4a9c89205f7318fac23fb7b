@@ -1,4 +1,4 @@
-I"NC<hr />
+I".E<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -207,12 +207,16 @@
 
 <p>Raft decomposes consensus into three sub-problems:</p>
 
+<p>Each server exists in one of the three states: leader, follower, or candidate.</p>
+
 <p><img src="/images/dis_sys_9.png" alt="" /></p>
 
 <ul>
   <li>Leader Election: A new leader needs to be elected in case of the failure of an existing one.</li>
   <li>Log replication: The leader needs to keep the logs of all servers in sync with its own through replication</li>
 </ul>
+
+<p>In normal operation there is exactly one leader and all of the other servers are followers. Followers are passive: they issue no requests on their own but simply respond to requests from leaders and candidates. The leader handles all client requests (if a client contacts a follower, the follower redirects it to the leader). The third state, candidate, is used to elect a new leader.</p>
 
 <h2 id="failure-detector-timeout">Failure Detector (Timeout)</h2>
 

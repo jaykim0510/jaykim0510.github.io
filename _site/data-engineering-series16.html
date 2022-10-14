@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Data Engineering Series [Part16]: 분산 시스템(2) CAP Theorem</title>
+  <title>Data Engineering Series [Part16]: 분산 시스템(2) Consensus Algorithm</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/data-engineering-series16">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Data Engineering Series [Part16]: 분산 시스템(2) CAP Theorem – Code Museum">
+  <meta name="twitter:title" content="Data Engineering Series [Part16]: 분산 시스템(2) Consensus Algorithm – Code Museum">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/distributed_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Data Engineering Series [Part16]: 분산 시스템(2) CAP Theorem – Code Museum">
+  <meta property="og:title" content="Data Engineering Series [Part16]: 분산 시스템(2) Consensus Algorithm – Code Museum">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/distributed_logo.png">
@@ -298,6 +298,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -383,7 +385,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part16]: 분산 시스템(2) CAP Theorem">
+          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part16]: 분산 시스템(2) Consensus Algorithm">
         </div>
       </div>
       
@@ -404,16 +406,16 @@
               </div>
             
  
-          <h1 class="post__title">Data Engineering Series [Part16]: 분산 시스템(2) CAP Theorem</h1>
+          <h1 class="post__title">Data Engineering Series [Part16]: 분산 시스템(2) Consensus Algorithm</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
-              <img class="lazy" data-src="/images/me_2.jpeg" alt="Jay Kim">
+              <img class="lazy" data-src="/images/zepeto_me.jpeg" alt="Jay Kim">
             </a>
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-07-22T21:01:35+09:00">22 Jul 2022</time>
+              <time class="post__date" datetime="2022-07-21T21:01:35+09:00">21 Jul 2022</time>
             </div>
           </div>
   
@@ -447,6 +449,12 @@
   
 
   
+
+  
+
+  
+
+  
   	
   	
   	
@@ -461,7 +469,7 @@
       <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: 분산 시스템(1) Comprehensive Guide</a>
     
     
-      <a href="/data-engineering-series20" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part20]: 시스템 디자인(1) Intro + Architecture<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: 분산 시스템(3) CAP Theorem<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -471,88 +479,120 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#cap-theorem" id="markdown-toc-cap-theorem">CAP Theorem</a>    <ul>
-      <li><a href="#ap--availability--partition-tolerance" id="markdown-toc-ap--availability--partition-tolerance">AP – Availability + Partition Tolerance</a></li>
-      <li><a href="#ca--consistency--availability" id="markdown-toc-ca--consistency--availability">CA – Consistency + Availability</a></li>
-      <li><a href="#cp--consistency--partition-tolerance" id="markdown-toc-cp--consistency--partition-tolerance">CP – Consistency + Partition Tolerance</a></li>
+  <li><a href="#consensus-algorithm" id="markdown-toc-consensus-algorithm">Consensus Algorithm</a></li>
+  <li><a href="#raft" id="markdown-toc-raft">RAFT</a>    <ul>
+      <li><a href="#leader-election" id="markdown-toc-leader-election">Leader Election</a></li>
+      <li><a href="#log-replication" id="markdown-toc-log-replication">Log Replication</a></li>
+      <li><a href="#safety" id="markdown-toc-safety">Safety</a></li>
     </ul>
   </li>
-  <li><a href="#importance-of-the-cap-theorem" id="markdown-toc-importance-of-the-cap-theorem">Importance of the CAP theorem</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="cap-theorem">CAP Theorem</h1>
+<h1 id="consensus-algorithm">Consensus Algorithm</h1>
 
-<blockquote>
-  <p>The CAP Theorem is one of the most fundamental theorems in the field of distributed systems. It outlines an inherent trade-off in the design of distributed systems.</p>
-</blockquote>
+<p>합의 알고리즘은 데이터 동기화 문제, 부분 장애 문제를 해결해준다.</p>
+
+<p><img src="/images/dis_sys_8.png" alt="" /></p>
 
 <ul>
-  <li>CAP는 각각 Consistency, Availability, Partition tolerance 를 뜻한다</li>
-  <li>
-    <p>분산 시스템은 다음과 같은 3가지 특징을 가질 수 있지만, 실제 환경에서는 이중 2개만을 얻을 수 있다</p>
+  <li>whether a transaction has been committed or not</li>
+  <li>whether a message has been delivered or not</li>
+</ul>
+
+<h1 id="raft">RAFT</h1>
+
+<ul>
+  <li>Raft는 분산 시스템에서 합의 알고리즘을 구현한 프로토콜</li>
+  <li>Raft는 합의 알고리즘을 크게 3개의 부분 문제로 분해한다
+    <ul>
+      <li>Leader Election: A new leader needs to be elected in case of the failure of an existing one.</li>
+      <li>Log replication: The leader needs to keep the logs of all servers in sync with its own through replication.</li>
+      <li>Safety: If one of the servers has committed a log entry at a particular index, no other server can apply a different log entry for that index.</li>
+    </ul>
   </li>
-  <li><strong>Consistency</strong>: 만약 성공적으로 데이터를 읽어왔다면, 반드시 가장 최근에 쓴 데이터를 읽어와야 한다. CAP 이론에서 말하는 Consistency와 ACID에서 말하는 Consistency는 다르다</li>
-  <li><strong>Availability</strong>: 모든 읽기/쓰기 요청은 반드시 응답을 받아야 한다</li>
-  <li><strong>Partition tolerance</strong>: 노드간의 네트워크에서 데이터가 지연되거나 유실되더라도 데이터베이스는 계속 동작해야 한다</li>
+  <li>모든 서버는 leader, follower, or candidate 중 하나의 상태를 가진다</li>
 </ul>
 
-<p>분산 시스템에서 네트워크 장애는 가장 발생하기 쉬운 장애중 하나다. 이를 완벽하게 해결할 방법은 없기 때문에, 클러스터의 노드중 일부가 네트워크 장애를 겪게되는 상황을 반드시 고려해 분산 시스템을 디자인 해야한다.</p>
-
-<p>그래서 대부분의 분산 시스템은 “P”는 반드시 포함하도록 설계되고, 남은 “C”와 “A”중에서 시스템 목적에 맞게 하나를 선택한다. 그래서 대개 CP 또는 AP중 하나가 된다.</p>
-
-<p>데이터베이스의 경우 RDBMS는 대부분 트랜잭션의 ACID 특성을 지키기 위해 CP 방식으로 설계하고, NoSQL은 AP 방식으로 데이터베이스를 설계한다.</p>
-
-<p>참고로</p>
+<p><img src="/images/dis_sys_9.png" alt="" /></p>
 
 <ul>
-  <li>AP 시스템은 네트워크 파티션이 생겼을 때 AP를 보장해준다. 네트워크 장애가 없는 상황에서는 C도 해결된다.</li>
-  <li>CP 시스템은 네트워크 파티션이 생겼을 때 CP를 보장해준다. 네트워크 장애가 없는 상황에서는 A도 해결된다</li>
-  <li>CA 시스템은 현실적으로 둘 다 완벽하게 지켜낼 수 없다. C를 무조건 보장하면서 A를 최대한 제공해주는 방식이다.</li>
+  <li>분산 시스템이 유지하고자 하는 상황은 하나의 서버는 리더, 나머지는 모두 팔로워인 상태이다</li>
+  <li>
+    <p>팔로워들은 요청을 보내지 않는다. 리더나 후보자의 요청에 응답만 한다</p>
+  </li>
+  <li>Raft 에게 시간 단위는 term이다. term의 길이는 임의의 값이다</li>
+  <li>term 시간내에 리더가 정해질 수도 있고, 표가 흩어지면 리더가 없는 상태로 term이 끝날 수도 있다</li>
+  <li>term은 단조증가하는 숫자를 갖는다. 각각의 서버는 모두 자신의 term 숫자를 저장하고 서로 교환한다</li>
+  <li>만약 자신의 term 값보다 더 큰 term 값을 만나면 자신의 term 값을 update 한다</li>
+  <li>만약 리더 또는 후보자들이 자신의 term 값보다 더 큰 term 값을 만나면 팔로워 상태로 내려온다</li>
+  <li>
+    <p>자신보다 작은 term 값은 무시한다</p>
+  </li>
+  <li>Raft는 Leader Election, Log Replication을 위해 서버끼리 RPC 통신을 한다</li>
 </ul>
 
-<h2 id="ap--availability--partition-tolerance">AP – Availability + Partition Tolerance</h2>
+<h2 id="leader-election">Leader Election</h2>
 
 <ul>
-  <li>어떤 데이터의 변경사항에 대해 모든 노드에 동기화 하기 전에 데이터 사용을 허용한다</li>
-  <li>노드 일부에 장애가 발생해 동기화되지 않아도 데이터 사용이 가능하다 -&gt; Availability</li>
-  <li>만약 네트워크 파티션 문제가 해결된다면 분산 시스템은 resync를 하고 Consistency 또한 얻을 수 있다</li>
-  <li>ex. DNS: 노드 일부에 장애가 발생해도 서비스를 지속 제공하지만, DNS에 도메인 등록/삭제가 모든 시스템에 전해지고 클라이언트에게 보이기까지 보통 며칠이 걸린다</li>
+  <li>리더는 주기적으로 자신의 입지를 유지하기 위해 하트비트를 팔로워들에게 보낸다</li>
+  <li>리더로부터 하트비트를 기다리던 팔로워가 시간내에 하트비트를 받지 못하면 리더 선출을 일으킨다</li>
+  <li>리더 선출을 일으킨 팔로워가 후보자 상태가 되고 자신의 term 숫자를 증가시킨다</li>
+  <li>투표를 진행하게 되면, 다음과 같은 3가지 결과가 나올 수 있다
+    <ul>
+      <li>후보자가 대다수의 표를 받고 리더가 된다. 이후에는 자신이 팔로워들에게 하트비트를 보낸다</li>
+      <li>만약 후보자가 자기 뿐만이 아니였고, 심지어 자기보다 높은 term 숫자를 가지고 있다면, 후보자에서 팔로워로 내려온다</li>
+      <li>만약 후보자끼리 투표에서 리더를 결정짓지 못했다면, 가장 처음으로 타임 아웃을 외친 후보자가 다시 투표를 진행한다</li>
+    </ul>
+  </li>
+  <li>서버마다 term 길이를 다르게 가져가는 이유는 가장 먼저 타임 아웃된 후보자가 단독 투표 진행을 하기 위해서다</li>
+  <li>그래야 최대한 투표가 split되서 리더가 선출되지 못하는 문제를 방지할 수 있다</li>
 </ul>
 
-<h2 id="ca--consistency--availability">CA – Consistency + Availability</h2>
+<h2 id="log-replication">Log Replication</h2>
 
 <ul>
-  <li>현실적으로 분산 시스템에서 Consistency와 Availability를 둘 다 동시에 얻는 것은 불가능하다</li>
-  <li>그래서 보통 단일서버가 CA 특성을 가진다 -&gt; 전통적인 RDBMS</li>
-  <li>둘 다 높일 수는 없고, 하나를 높이면 다른 하나는 낮아진다</li>
+  <li>일단 지금은 클라이언트의 요청을 Write-Only 라고 가정하겠다</li>
+  <li>리더가 클라이언트로부터 요청을 받으면 하나의 로그로 추가한다</li>
+  <li>로그는 클라이언트가 요청한 명령어, 로그 파일에서의 index (로그의 위치), term (로그의 시간) 정보를 포함한다</li>
+  <li>이 로그는 모든 노드에 복제되어야 한다. 리더는 모든 노드에 복제될 때 까지 AppendEntries RPC 를 계속 보낸다</li>
+  <li>이 로그가 대다수의 서버에 복제되고 나면 커밋된 것으로 간주한다</li>
+  <li>리더는 마침내 로그에 포함된 명령어를 실행하고, 그 결과를 클라이언트에게 돌려준다 (여기서는 Write니까 성공 여부)</li>
+  <li>그리고 팔로워들은 리더가 저장한 값을 전달받고 마찬가지로 저장한다</li>
 </ul>
 
-<h2 id="cp--consistency--partition-tolerance">CP – Consistency + Partition Tolerance</h2>
+<p>When sending an AppendEntries RPC, the leader includes the term number and index of the entry that immediately precedes the new entry. If the follower cannot find a match for this entry in its own log, it rejects the request to append the new entry.</p>
 
-<ul>
-  <li>Consistency를 지키기 위해서는 항상 분산 시스템의 모든 노드들이 in-sync 여야 한다</li>
-  <li>이러한 이유로 만약 일부 네트워크에 파티션 문제가 발생하면, in-sync 한 상황이 깨지기 때문에 시스템 작동을 아예 중지한다</li>
-  <li>이러한 특성은 보통 대부분의 서비스에서 사용하지 않는 방식이다.</li>
-  <li>하지만 금융 분야에서는 잠깐 서비스가 중단되더라도, 데이터의 Consistency를 맞추는 것이 훨씬 중요하기 때문에 사용된다</li>
-</ul>
+<p>This consistency check lets the leader conclude that whenever AppendEntries returns successfully from a follower, they have identical logs until the index included in the RPC.</p>
 
-<p><img src="/images/cap.png" alt="" /></p>
+<p>But the logs of leaders and followers may become inconsistent in the face of leader crashes.</p>
 
-<p><img src="/images/dis_sys_6.png" alt="" /></p>
+<p>In Raft, the leader handles inconsistencies by forcing the followers’ logs to duplicate its own. This means that conflicting entries in follower logs will be overwritten with entries from the leader’s log.</p>
 
-<h1 id="importance-of-the-cap-theorem">Importance of the CAP theorem</h1>
+<p>The leader tries to find the last index where its log matches that of the follower, deletes extra entries if any, and adds the new ones.</p>
 
-<ul>
-  <li>CAP 이론을 알아야 분산 시스템을 디자인할 때 어떤 것을 얻기 위해 어떤 것을 포기해야 하는지 알 수 있다</li>
-</ul>
+<p>The leader maintains a nextIndex for each follower, which is the index of the next log entry the leader will send to that follower. When a leader first comes to power, it initializes all nextIndex values to the index just after the last one in its log.</p>
+
+<p>Whenever AppendRPC returns with a failure for a follower, the leader decrements the nextIndex and issues another AppendEntries RPC. Eventually, nextIndex will reach a value where the logs converge. AppendEntries will succeed when this happens and it can remove extraneous entries (if any) and add new ones from the leaders log (if any). Hence, a successful AppendEntries from a follower guarantees that the leader’s log is consistent with it.</p>
+
+<p>With this mechanism, a leader does not need to take any special actions to restore log consistency when it comes to power. It just begins normal operation, and the logs automatically converge in response to failures of the Append-Entries consistency check. A leader never overwrites or deletes entries in its own log.</p>
+
+<h2 id="safety">Safety</h2>
+
+<p>Raft makes sure that the leader for a term has committed entries from all previous terms in its log. This is needed to ensure that all logs are consistent and the state machines execute the same set of commands.</p>
+
+<p>During a leader election, the RequestVote RPC includes information about the candidate’s log. If the voter finds that its log it more up-to-date that the candidate, it doesn’t vote for it.</p>
+
+<p>Raft determines which of two logs is more up-to-date by comparing the index and term of the last entries in the logs. If the logs have last entries with different terms, then the log with the later term is more up-to-date. If the logs end with the same term, then whichever log is longer is more up-to-date.</p>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://data-science-blog.com/blog/2021/10/14/cap-theorem/" target="_blank">Understanding NoSQL Databases by the CAP Theorem</a></li>
+  <li><a href="http://thesecretlivesofdata.com/raft/" target="_blank">Video Demo,  Raft: Understandable Distributed Consensus</a></li>
+  <li><a href="https://www.freecodecamp.org/news/in-search-of-an-understandable-consensus-algorithm-a-summary-4bc294c97e0d/" target="_blank">Understanding the Raft consensus algorithm: an academic article summary</a></li>
+  <li><a href="https://bravenewgeek.com/building-a-distributed-log-from-scratch-part-2-data-replication/" target="_blank">Building a Distributed Log from Scratch, Part 2: Data Replication</a></li>
 </ul>
 
     </div>
@@ -789,7 +829,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(2)%20CAP%20Theorem&url=http://localhost:4000/data-engineering-series16"
+          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(2)%20Consensus%20Algorithm&url=http://localhost:4000/data-engineering-series16"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -799,12 +839,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series16&amp;media=http://localhost:4000/images/distributed_logo.png&amp;description=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(2)%20CAP%20Theorem"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series16&amp;media=http://localhost:4000/images/distributed_logo.png&amp;description=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(2)%20Consensus%20Algorithm"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series16&title=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(2)%20CAP%20Theorem&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series16&title=Data%20Engineering%20Series%20[Part16]:%20%EB%B6%84%EC%82%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C(2)%20Consensus%20Algorithm&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -813,6 +853,12 @@
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
 
   
 
@@ -841,7 +887,7 @@
       <a href="/data-engineering-series15" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part15]: 분산 시스템(1) Comprehensive Guide</a>
     
     
-      <a href="/data-engineering-series20" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part20]: 시스템 디자인(1) Intro + Architecture<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/data-engineering-series17" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part17]: 분산 시스템(3) CAP Theorem<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -928,130 +974,18 @@
             
       
             
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article col col-4 col-d-6 col-t-12">
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-26T21:01:35+09:00">26 Jul 2022</time>
+      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series24">
-        <img class="lazy" data-src="/images/system_design_logo.png" alt="Data Engineering Series [Part24]: 시스템 디자인(5) Database">
+      <a class="article__image" href="/data-engineering-series26">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part26]: Google Bigquery">
       </a>
       
 
@@ -1060,7 +994,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series24">Data Engineering Series [Part24]: 시스템 디자인(5) Database</a>
+        <a href="/data-engineering-series26">Data Engineering Series [Part26]: Google Bigquery</a>
       </h2>
 
       
@@ -1084,13 +1018,13 @@
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-07-26T21:01:35+09:00">26 Jul 2022</time>
+      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
 
       
 
       
-      <a class="article__image" href="/data-engineering-series23">
-        <img class="lazy" data-src="/images/system_design_logo.png" alt="Data Engineering Series [Part23]: 시스템 디자인(4) Caching">
+      <a class="article__image" href="/data-engineering-series25">
+        <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part25]: dbt">
       </a>
       
 
@@ -1099,7 +1033,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/data-engineering-series23">Data Engineering Series [Part23]: 시스템 디자인(4) Caching</a>
+        <a href="/data-engineering-series25">Data Engineering Series [Part25]: dbt</a>
       </h2>
 
       
@@ -1175,7 +1109,7 @@
         <div class="col col-5 col-d-12">
           <div class="footer__author">
             <div class="footer__author-avatar">
-              <img class="lazy" data-src="/images/me_2.jpeg" alt="Jay Kim">
+              <img class="lazy" data-src="/images/zepeto_me.jpeg" alt="Jay Kim">
             </div>
             <h3 class="footer__author-name">Jay Kim</h3>
             <p class="footer__author-bio">Data Engineer</p>
