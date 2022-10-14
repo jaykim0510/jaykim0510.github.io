@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'MongoDB Series [Part1]: MongoDB Intro'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+description: 
 date:   2022-01-04 15:01:35 +0300
 image:  '/images/mongodb_logo.png'
 logo_image:  '/images/mongo_logo.png'
