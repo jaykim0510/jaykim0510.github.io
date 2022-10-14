@@ -43,6 +43,24 @@ tags: Data_Engineering
   - 장기 스토리지: 0.01$/1GB
   - 매월 10GB는 무료
 
+# 테이블 세트
+
+- 테이블을 저장하고 있는 폴더
+
+# 테이블
+
+- 다른 DB의 테이블과 같은 개념
+- Bigquery에 저장한 테이블 뿐만 아니라, 
+- 구글 클라우드 스토리지나 스프레드 시트와 같은 외부에 저장된 데이터도 바로 접근해서 사용 가능
+- 용도에 맞게 샤딩, 파티셔닝, 클러스터링 할 수 있음
+- (샤딩: 하나의 테이블을 물리적으로 여러 서버에 분산 저장)
+- (파티셔닝: 하나의 테이블을 논리적으로 특정 컬럼 값을 기준으로 여러 개의 파티션으로 분할해서 저장)
+- (클러스터링: 하나의 테이블을 여러 컬럼 값을 기준으로 정렬해서 여러 서버에 분산 저장)
+
+# Validator
+
+- 내가 입력한 쿼리의 유효성, 예상 비용을 알 수 있음
+
 
 
 
@@ -54,3 +72,4 @@ tags: Data_Engineering
 # 참고
 
 - [T academy 유튜브, Google Bigquery ](https://www.youtube.com/watch?v=MILy4dzSGk4&list=PLghTMrY7fIM5fupKwEHQxw9ihqQAXeo3-){:target="_blank"}
+- [minwoooo 노션, BigQuery 시작하기](https://minwoooo.notion.site/BigQuery-2a4012d6cb2a466fa71c0345da7898d4#8b6c70978dbc4b81b97affa3afe9844d){:target="_blank"}
