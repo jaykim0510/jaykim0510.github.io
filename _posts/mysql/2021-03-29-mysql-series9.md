@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part9] 인덱스 명령어'
+title:  'MySQL Command Series [Part9] 인덱스 명령어'
 description: 
 date:   2021-03-29 15:01:35 +0300
 image:  '/images/index_logo.png'
@@ -154,6 +154,8 @@ EXPLAIN SELECT ...
 - offset이 길어지면 사거블하지 않는다.
 - 범위 보다는 in 절을 사용하는 게 좋고, in 보다는 exists가 더 좋다.
 - 꼭 필요한 경우가 아니라면 서브 쿼리보다는 조인(Join)을 사용하자.
+
+# Full-Text Index
 
 # 참고
 

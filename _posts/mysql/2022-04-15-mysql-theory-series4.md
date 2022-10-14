@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part14] 인덱스'
+title:  'MySQL Theory Series [Part4] 인덱스'
 description: 
 date:   2022-04-15 15:01:35 +0300
 image:  '/images/sql_10.png'

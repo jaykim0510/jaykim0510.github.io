@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part8] 유틸리티(View, CTE)'
+title:  'MySQL Command Series [Part8] 유틸리티(View, CTE, Trigger, Function, Procedure, Cursor)'
 description: 
 date:   2021-03-28 15:01:35 +0300
 image:  '/images/view_logo.png'
@@ -110,6 +110,13 @@ WITH
 - CTE와 서브쿼리는 성능이나 결과적인 측면에서 다른 점이 없다
 - 차이점은 CTE가 가독성이 더 좋다는 것, CTE는 재귀적으로 호출해 완전히 새로운 테이블을 만들 수 있다
 
+# Trigger
+
+# Stored Function
+
+# Stored Procedure
+
+# Cursor
 
 # 참고
 

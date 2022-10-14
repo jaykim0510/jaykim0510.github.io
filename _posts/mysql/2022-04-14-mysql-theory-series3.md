@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part13] MySQL의 로그'
+title:  'MySQL ThoerySeries [Part3] MySQL의 로그'
 description: 
 date:   2022-04-14 15:01:35 +0300
 image:  '/images/mysql_log_logo.png'

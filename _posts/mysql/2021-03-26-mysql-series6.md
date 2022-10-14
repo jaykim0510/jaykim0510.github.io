@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part6] DCL: GRANT, REVOKE'
+title:  'MySQL Command Series [Part6] DCL: GRANT, REVOKE'
 description: 
 date:   2021-03-26 15:01:35 +0300
 image:  '/images/grant_logo.png'

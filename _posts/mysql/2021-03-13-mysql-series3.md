@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part3] DML(3): SELECT 중급 WINDOW'
+title:  'MySQL Command Series [Part3] DML(3): SELECT 중급 WINDOW'
 description: 
 date:   2021-03-13 15:01:35 +0300
 image:  '/images/window_logo.png'

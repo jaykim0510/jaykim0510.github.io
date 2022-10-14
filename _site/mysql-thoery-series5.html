@@ -6,26 +6,26 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Series [Part18] 그라파나를 이용해 MySQL 서버 모니터링 하기</title>
+  <title>MySQL Thoery Series [Part5] 데이터베이스 모델링</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/mysql-series18">
+  <link rel="canonical" href="http://localhost:4000/mysql-thoery-series5">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MySQL Series [Part18] 그라파나를 이용해 MySQL 서버 모니터링 하기 – Code Museum">
+  <meta name="twitter:title" content="MySQL Thoery Series [Part5] 데이터베이스 모델링 – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/grafana_mysql_logo.png">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/sql_13.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MySQL Series [Part18] 그라파나를 이용해 MySQL 서버 모니터링 하기 – Code Museum">
+  <meta property="og:title" content="MySQL Thoery Series [Part5] 데이터베이스 모델링 – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
-  <meta property="og:image" content="http://localhost:4000/images/grafana_mysql_logo.png">
+  <meta property="og:image" content="http://localhost:4000/images/sql_13.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -387,7 +387,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Series [Part18] 그라파나를 이용해 MySQL 서버 모니터링 하기">
+          <img class="lazy" data-src="/images/mysql_logo.webp" alt="MySQL Thoery Series [Part5] 데이터베이스 모델링">
         </div>
       </div>
       
@@ -408,7 +408,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MySQL Series [Part18] 그라파나를 이용해 MySQL 서버 모니터링 하기</h1>
+          <h1 class="post__title">MySQL Thoery Series [Part5] 데이터베이스 모델링</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -417,7 +417,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-07-03T21:01:35+09:00">03 Jul 2022</time>
+              <time class="post__date" datetime="2022-04-16T21:01:35+09:00">16 Apr 2022</time>
             </div>
           </div>
   
@@ -443,6 +443,14 @@ Table of Contents
   
 
   
+
+  
+
+  
+
+  
+
+  
   	
   	
   	
@@ -454,10 +462,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series17" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part17] MySQL 성능 점검/튜닝하기</a>
+      <a href="/mysql-theory-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Theory Series [Part4] 인덱스</a>
     
     
-      <a href="/mysql-series19" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part19] SQL 문제<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-thoery-series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Thoery Series [Part6] MySQL 파티션<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -466,159 +474,174 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#모니터링-적용-과정" id="markdown-toc-모니터링-적용-과정">모니터링 적용 과정</a>    <ul>
-      <li><a href="#도커-컴포즈-파일에-prometheus-grafana-exporter-컨테이너를-추가한다" id="markdown-toc-도커-컴포즈-파일에-prometheus-grafana-exporter-컨테이너를-추가한다">도커 컴포즈 파일에 prometheus, grafana, exporter 컨테이너를 추가한다</a></li>
-      <li><a href="#prometheusyml-파일을-작성한다" id="markdown-toc-prometheusyml-파일을-작성한다">prometheus.yml 파일을 작성한다</a></li>
-      <li><a href="#localhost3000-을-통해-그라파나-웹-ui에-접속한다" id="markdown-toc-localhost3000-을-통해-그라파나-웹-ui에-접속한다">localhost:3000 을 통해 그라파나 웹 UI에 접속한다</a></li>
-      <li><a href="#프로메테우스를-데이터-소스로-등록한다" id="markdown-toc-프로메테우스를-데이터-소스로-등록한다">프로메테우스를 데이터 소스로 등록한다</a></li>
-      <li><a href="#대시보드-템플릿을-다운받는다" id="markdown-toc-대시보드-템플릿을-다운받는다">대시보드 템플릿을 다운받는다</a></li>
-      <li><a href="#대시보드를-등록한다" id="markdown-toc-대시보드를-등록한다">대시보드를 등록한다</a></li>
-      <li><a href="#결과" id="markdown-toc-결과">결과</a></li>
+  <li><a href="#데이터베이스-모델링" id="markdown-toc-데이터베이스-모델링">데이터베이스 모델링</a></li>
+  <li><a href="#erm-entity-relationship-model" id="markdown-toc-erm-entity-relationship-model">ERM: Entity Relationship Model</a></li>
+  <li><a href="#데이터베이스-모델링-단계" id="markdown-toc-데이터베이스-모델링-단계">데이터베이스 모델링 단계</a>    <ul>
+      <li><a href="#비즈니스-룰" id="markdown-toc-비즈니스-룰">비즈니스 룰</a></li>
+      <li><a href="#entity-attribute-relationship-후보-파악" id="markdown-toc-entity-attribute-relationship-후보-파악">Entity, Attribute, Relationship 후보 파악</a></li>
+      <li><a href="#entity간-관계-파악" id="markdown-toc-entity간-관계-파악">Entity간 관계 파악</a></li>
+      <li><a href="#정규화" id="markdown-toc-정규화">정규화</a></li>
+      <li><a href="#물리적-모델링네이밍-데이터-타입-제약조건" id="markdown-toc-물리적-모델링네이밍-데이터-타입-제약조건">물리적 모델링(네이밍, 데이터 타입, 제약조건)</a></li>
+      <li><a href="#erm으로-표현" id="markdown-toc-erm으로-표현">ERM으로 표현</a></li>
     </ul>
   </li>
-  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="모니터링-적용-과정">모니터링 적용 과정</h1>
+<h1 id="데이터베이스-모델링">데이터베이스 모델링</h1>
 
-<p><img src="/images/mysql_grafana_2.png" alt="" /></p>
+<p>데이터베이스에 데이터를 어떤 식으로 저장할지 계획하는 것은 굉장히 중요합니다. 데이터베이스를 제대로 설계하지 않으면 데이터 삽입, 업데이트, 삭제시 이상 문제가 생길 수 있습니다.</p>
 
-<h2 id="도커-컴포즈-파일에-prometheus-grafana-exporter-컨테이너를-추가한다">도커 컴포즈 파일에 prometheus, grafana, exporter 컨테이너를 추가한다</h2>
-
-<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
-
-<span class="na">services</span><span class="pi">:</span>
-  <span class="na">mysql</span><span class="pi">:</span>
-    <span class="na">hostname</span><span class="pi">:</span> <span class="s">mysql</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">ziontkim0510/mysql-server:1.2</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">3306:3306</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">MYSQL_USER</span><span class="pi">:</span> <span class="s">root</span>
-      <span class="na">MYSQL_ROOT_HOST</span><span class="pi">:</span> <span class="s2">"</span><span class="s">%%"</span>
-      <span class="na">MYSQL_DATABASE</span><span class="pi">:</span> <span class="s">test</span>
-      <span class="na">MYSQL_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">passwd</span>
-    <span class="na">command</span><span class="pi">:</span> <span class="s">mysqld</span>
-      <span class="s">--server-id=1234</span>
-      <span class="s">--max-binlog-size=4096</span>
-      <span class="s">--binlog-format=ROW</span>
-      <span class="s">--log-bin=bin-log</span>
-      <span class="s">--sync-binlog=1</span>
-      <span class="s">--binlog-rows-query-log-events=ON</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">./dataset:/var/lib/mysql-files</span>
-
-  <span class="na">mysqld-exporter</span><span class="pi">:</span>
-    <span class="na">hostname</span><span class="pi">:</span> <span class="s">mysqld-exporter</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/mysqld-exporter</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">9104:9104</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">DATA_SOURCE_NAME</span><span class="pi">:</span> <span class="s">root:passwd@(mysql:3306)/</span>
-
-  <span class="na">prometheus</span><span class="pi">:</span>
-    <span class="na">hostname</span><span class="pi">:</span> <span class="s">prometheus</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">prom/prometheus</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">9090:9090</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml</span>
-
-  <span class="na">grafana</span><span class="pi">:</span>
-    <span class="na">hostname</span><span class="pi">:</span> <span class="s">grafana</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">grafana/grafana</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">3000:3000</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>삽입: 새로운 데이터를 자연스럽게 저장할 수 없는 문제 (ex. 유저테이블의 주소지 추가)
+업데이트: 업데이트할 때 정확성을 지키기 어려워지는 문제
+삭제: 원하는 데이터를 자연스럽게 삭제할 수 없는 문제
 </code></pre></div></div>
 
-<h2 id="prometheusyml-파일을-작성한다">prometheus.yml 파일을 작성한다</h2>
+<p>데이터베이스에 이런 이상 문제가 생기게 되면 새로운 데이터베이스로 데이터를 옮겨야 하는 상황이 발생하게 되고, 이런 문제는 비용적인 부담이 발생하는 일이기 때문에 최대한 사전에 방지하는 것이 좋습니다.</p>
 
-<ul>
-  <li>프로메테우스가 메트릭을 읽어오도록 잡을 생성한다</li>
-</ul>
+<p>데이터베이스 모델링은 크게 세 가지 단계로 구분할 수 있습니다.</p>
 
-<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">global</span><span class="pi">:</span>
-  <span class="na">scrape_interval</span><span class="pi">:</span> <span class="s">15s</span>
-  <span class="na">scrape_timeout</span><span class="pi">:</span> <span class="s">10s</span>
-  <span class="na">evaluation_interval</span><span class="pi">:</span> <span class="s">15s</span>
-
-<span class="na">scrape_configs</span><span class="pi">:</span>
-<span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">prometheus</span>
-  <span class="na">metrics_path</span><span class="pi">:</span> <span class="s">/metrics</span>
-  <span class="na">static_configs</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">localhost:9090</span>
-
-<span class="pi">-</span> <span class="na">job_name</span><span class="pi">:</span> <span class="s">mysql</span>
-  <span class="na">metrics_path</span><span class="pi">:</span> <span class="s">/metrics</span>
-  <span class="na">static_configs</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">targets</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">mysqld-exporter:9104</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>비즈니스 모델링: 비즈니스 룰을 정의한다 (ex. 유저는 하나의 주문에 하나의 리뷰만 달 수 있다)
+논리적 모델링: 어떤 것을 테이블로 하고, 어떤 것을 컬럼으로 하고 테이블끼리의 관계를 어떻게 정의할지 정의한다
+물리적 모델링: 테이블명, 컬럼명, 데이터 타입, 제약조건을 정의한다 (Schema, Table, Index 정의)
 </code></pre></div></div>
 
-<h2 id="localhost3000-을-통해-그라파나-웹-ui에-접속한다">localhost:3000 을 통해 그라파나 웹 UI에 접속한다</h2>
+<h1 id="erm-entity-relationship-model">ERM: Entity Relationship Model</h1>
 
-<p><img src="/images/mysql_grafana_13.png" alt="" /></p>
+<p>데이터베이스를 모델링할 때에는 기존의 익숙한 모델 구조인 관계형 모델(Relational Model) 보다는 개체 관계 모델(ERM)을 주로 사용합니다. ERM의 예시는 아래와 같습니다.</p>
 
-<h2 id="프로메테우스를-데이터-소스로-등록한다">프로메테우스를 데이터 소스로 등록한다</h2>
+<p><img src="/images/sql_13.png" alt="" /></p>
 
-<p><img src="/images/mysql_grafana_3.png" alt="" /></p>
+<p>ERM은 기존 관계형 모델의 로우(Row)를 엔티티(Entity), 컬럼을 어트리뷰트(Attribute)로 표현하고 테이블간의 관계를 릴레이션쉽(Relationship)으로 나타냅니다.</p>
 
-<p><img src="/images/mysql_grafana_4.png" alt="" /></p>
+<p>두 엔티티간의 관계를 정의하는 방법에는 다음과 같은 경우가 있습니다.</p>
 
-<p><img src="/images/mysql_grafana_5.png" alt="" /></p>
+<p><img src="/images/sql_14.png" alt="" /></p>
 
-<h2 id="대시보드-템플릿을-다운받는다">대시보드 템플릿을 다운받는다</h2>
+<p>예시는 다음과 같습니다.</p>
 
-<ul>
-  <li><a href="https://grafana.com/grafana/dashboards/?search=mysql" target="_blank"><strong>대시보드 템플릿 제공 사이트</strong></a></li>
-</ul>
+<p><img src="/images/sql_16.png" alt="" /></p>
 
-<p><img src="/images/mysql_grafana_6.png" alt="" /></p>
+<h1 id="데이터베이스-모델링-단계">데이터베이스 모델링 단계</h1>
 
-<p>MySQL Overview 말고도 다양한 대시보드를 템플릿으로 제공해준다. 템플릿은 JSON 파일로 작성돼 있다.</p>
+<p>데이터베이스를 모델링 하는 단계는 다음과 같습니다.</p>
 
-<p><img src="/images/mysql_grafana_7.png" alt="" /></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. 비즈니스 룰을 정한다
+2. Entity, Attribute, Relationship이 될 수 있는 후보를 정한다
+3. 비즈니스 룰을 통해 Entity간 관계를 파악한다
+4. 정규화한다
+5. 네이밍, 데이터 타입, 제약조건을 정한다
+6. ERM으로 나타낸다
+</code></pre></div></div>
 
-<p>JSON 파일을 직접 다운 받아도 되고, 그냥 번호만 알고 있어도 된다.</p>
+<p>예시를 가지고 데이터베이스를 처음부터 간단하게 모델링 해보도록 하겠습니다.</p>
 
-<h2 id="대시보드를-등록한다">대시보드를 등록한다</h2>
+<h2 id="비즈니스-룰">비즈니스 룰</h2>
 
-<p><img src="/images/mysql_grafana_8.png" alt="" /></p>
-
-<p><img src="/images/mysql_grafana_9.png" alt="" /></p>
-
-<p>나는 번호로 그냥 입력했다.</p>
-
-<p><img src="/images/mysql_grafana_10.png" alt="" /></p>
-
-<p><img src="/images/mysql_grafana_11.png" alt="" /></p>
-
-<p>아까 등록했던 프로메테우스를 데이터 소스로 사용한다.</p>
-
-<h2 id="결과">결과</h2>
-
-<p><img src="/images/mysql_grafana_1.png" alt="" /></p>
-
-<p>아래는 MySQL InnoDB Metrics 라는 템플릿을 사용했을 때의 모습이다</p>
-
-<p><img src="/images/mysql_grafana_12.png" alt="" /></p>
-
-<h1 id="참고">참고</h1>
+<p><strong>당근마켓</strong></p>
 
 <ul>
-  <li><a href="https://www.44bits.io/ko/keyword/grafana" target="_blank">44bits, 그라파나(Grafana)란?</a></li>
-  <li><a href="https://www.howtogeek.com/devops/how-to-monitor-mysql-server-activity-with-a-grafana-dashboard/" target="_blank">How-To Geek, How to Monitor MySQL Server Activity With a Grafana Dashboard</a></li>
-  <li><a href="https://grafana.com/docs/grafana/latest/" target="_blank">Grafana 공식문서, Grafana documentation</a></li>
-  <li><a href="https://jssvs.tistory.com/m/41" target="_blank">jssvs, 프로메테우스(prometheus) 구성 및 기본 사용법</a></li>
-  <li><a href="https://blog.naver.com/alice_k106/221535163599" target="_blank">alice_k106, 169. [Prometheus] 1편 : Prometheus (프로메테우스) 사용 방법, 기본 개념, 데이터 구조</a></li>
-  <li><a href="https://exporterhub.io/exporter/mysql-exporter/" target="_blank">ExporterHub, MySQL Server Exporter</a></li>
-  <li><a href="https://omty.tistory.com/54" target="_blank">고양이 중독, 프로메테우스 Aurora MySQL 성능 지표 모니터링 구성</a></li>
-  <li><a href="https://grafana.com/grafana/dashboards/?search=mysql" target="_blank">대시보드 템플릿 제공 사이트</a></li>
-  <li><a href="https://hub.docker.com/r/prom/mysqld-exporter" target="_blank">Docker Hub, prom/mysqld-exporter 컬렉터 플래그 종류 알 수 있음</a></li>
+  <li>유저는 자신의 지역을 등록해야 한다</li>
+  <li>유저는 자신의 지역 근처에서 물건을 사거나 팔 수 있다</li>
+  <li>물건에 좋아요 표시를 할 수 있다</li>
+  <li>물건을 살 때는 채팅창을 열어야 한다</li>
+  <li>판매자는 물건에 대해 여러 채팅창을 가질 수 있다</li>
+  <li>구매자는 물건에 대해 한 개의 채팅만 가질 수 있다</li>
+  <li>물건은 [판매중, 예약중, 거래완료] 중 하나의 상태를 갖는다</li>
+  <li>구매자와 판매자는 거래를 한 경우 서로에 대해 평가를 할 수 있다</li>
 </ul>
+
+<h2 id="entity-attribute-relationship-후보-파악">Entity, Attribute, Relationship 후보 파악</h2>
+
+<ul>
+  <li>User: id, name, gender, age, phone_numer, creation_date</li>
+  <li>Product: id, title, category, seller_id, price, status</li>
+  <li>Region: id, user_id, region_name</li>
+  <li>Chatting: id, buyer_id, seller_id, product_id, content</li>
+  <li>Like: id, buyer_id, product_id</li>
+  <li>Transactional Information: id, buyer_id, seller_id, product_id, creation_date</li>
+  <li>Review: id, buyer_id, seller_id, star, content</li>
+</ul>
+
+<h2 id="entity간-관계-파악">Entity간 관계 파악</h2>
+
+<ul>
+  <li>User와 Product
+    <ul>
+      <li>판매자(User)는 여러 개의 물건(Product)을 가질 수 있지만, 물건은 여러 판매자를 가질 수 없다 -&gt; 1:N</li>
+      <li>판매자는 반드시 물건을 등록할 필요는 없지만, 등록된 물건은 반드시 판매자가 있어야 한다</li>
+    </ul>
+  </li>
+  <li>User와 Region
+    <ul>
+      <li>사용자(User)는 여러 지역을 가질 수 있고, 지역(Region)도 여러 사용자를 포함할 수 있다 -&gt; N:M</li>
+      <li>사용자는 반드시 지역 정보를 가져야 하고, 지역은 사용자가 없어도 된다</li>
+    </ul>
+  </li>
+  <li>User와 Chatting
+    <ul>
+      <li>판매자와 채팅
+        <ul>
+          <li>판매자(User)는 여러 개의 채팅(Chatting)을 가질 수 있지만, 채팅은 한 명의 판매자만 가질 수 있다 -&gt; 1:N</li>
+          <li>판매자는 채팅이 없어도 되지만, 채팅은 반드시 판매자가 있어야 한다</li>
+        </ul>
+      </li>
+      <li>구매자와 채팅
+        <ul>
+          <li>구매자(User)는 여러 개의 채팅(Chatting)을 가질 수 있지만, 채팅은 한 명의 구매자만 가질 수 있다 -&gt; 1:N</li>
+          <li>구매자는 채팅이 없어도 되지만, 채팅은 반드시 구매자가 있어야 한다</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>…</li>
+</ul>
+
+<h2 id="정규화">정규화</h2>
+
+<p>데이터베이스에서 데이터를 삽입/업데이트/삭제할 때 생길 수 있는 문제를 사전에 방지하기 위해 실시하는 작업</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1NF: 모든 컬럼 값은 나눌 수 없는 단일값이 되어야 한다
+2NF: 1NF + 모든 non-prime attribute는 candidate key 전체에 함수 종속성이 있어야 한다
+    (Non-prime attrbute중 2NF를 만족하지 않는 속성은 테이블에서 분리한다)
+3NF: 2NF + 모든 attribute는 오직 primary key에 대해서만 함수 종속성을 가져야 한다
+    (모든 attribute는 직접적으로 테이블 엔티티에 대한 내용이어야 한다)
+    (이행적 함수종속성을 없애야 한다)
+</code></pre></div></div>
+
+<ul>
+  <li>1NF
+    <ul>
+      <li>모든 컬럼 값은 나눌 수 없는 단일값이 되어야 한다</li>
+      <li>어떤 채용 공고글에서 요구하는 스킬이 리스트 형태([MySQL, Python, Pytorch]로 되어 있으면 skiils를 새로운 테이블로 만들자
+<img src="/images/sql_43.png" alt="" />
+<img src="/images/sql_42.png" alt="" /></li>
+    </ul>
+  </li>
+  <li>2NF
+    <ul>
+      <li>모든 non-prime attribute는 candidate key 전체에 함수 종속성이 있어야 한다</li>
+      <li>함수 종족성: x, y 속성이 있을 때, y = f(x)라는 관계가 성립하는 경우</li>
+      <li>Candidate Key: 하나의 로우를 특정 지을 수 있는 속성(attribute)들의 최소 집합</li>
+      <li>Prime Attribute: Candidate Key에 포함되는 모든 속성
+<img src="/images/sql_44.png" alt="" />
+<img src="/images/sql_45.png" alt="" /></li>
+    </ul>
+  </li>
+  <li>3NF
+    <ul>
+      <li>모든 attribute는 직접적으로 테이블 엔티티에 대한 내용이어야 한다</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="물리적-모델링네이밍-데이터-타입-제약조건">물리적 모델링(네이밍, 데이터 타입, 제약조건)</h2>
+
+<h2 id="erm으로-표현">ERM으로 표현</h2>
+
+<p><img src="/images/mysql_erm.png" alt="" /></p>
+
 
     </div>
     <div class="post__tags_list">
@@ -854,22 +877,22 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MySQL%20Series%20[Part18]%20%EA%B7%B8%EB%9D%BC%ED%8C%8C%EB%82%98%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20MySQL%20%EC%84%9C%EB%B2%84%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%95%98%EA%B8%B0&url=http://localhost:4000/mysql-series18"
+          href="https://twitter.com/intent/tweet?text=MySQL%20Thoery%20Series%20[Part5]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%20%EB%AA%A8%EB%8D%B8%EB%A7%81&url=http://localhost:4000/mysql-thoery-series5"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/mysql-series18"
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/mysql-thoery-series5"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-series18&amp;media=http://localhost:4000/images/grafana_mysql_logo.png&amp;description=MySQL%20Series%20[Part18]%20%EA%B7%B8%EB%9D%BC%ED%8C%8C%EB%82%98%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20MySQL%20%EC%84%9C%EB%B2%84%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mysql-thoery-series5&amp;media=http://localhost:4000/images/sql_13.png&amp;description=MySQL%20Thoery%20Series%20[Part5]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%20%EB%AA%A8%EB%8D%B8%EB%A7%81"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-series18&title=MySQL%20Series%20[Part18]%20%EA%B7%B8%EB%9D%BC%ED%8C%8C%EB%82%98%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%B4%20MySQL%20%EC%84%9C%EB%B2%84%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%95%98%EA%B8%B0&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mysql-thoery-series5&title=MySQL%20Thoery%20Series%20[Part5]%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%20%EB%AA%A8%EB%8D%B8%EB%A7%81&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -878,6 +901,14 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
+
+  
 
   
 
@@ -895,10 +926,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mysql-series17" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Series [Part17] MySQL 성능 점검/튜닝하기</a>
+      <a href="/mysql-theory-series4" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MySQL Theory Series [Part4] 인덱스</a>
     
     
-      <a href="/mysql-series19" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Series [Part19] SQL 문제<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mysql-thoery-series6" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MySQL Thoery Series [Part6] MySQL 파티션<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT'
+title:  'MySQL Command Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT'
 description: 
 date:   2021-03-27 15:01:35 +0300
 image:  '/images/commit_logo.png'

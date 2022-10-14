@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part15] MySQL 파티션'
+title:  'MySQL Thoery Series [Part6] MySQL 파티션'
 description: 
 date:   2022-04-17 15:01:35 +0300
 image:  '/images/partition_logo.jpeg'

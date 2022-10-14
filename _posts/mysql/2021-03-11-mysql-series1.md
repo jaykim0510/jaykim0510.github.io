@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part1] DML(1): SELECT 기초'
+title:  'MySQL Command Series [Part1] DML(1): SELECT 기초'
 description: 
 date:   2021-03-11 15:01:35 +0300
 image:  '/images/select_logo.png'

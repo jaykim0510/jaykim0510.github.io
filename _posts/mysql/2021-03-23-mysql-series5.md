@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part5] DDL: CREATE, ALTER, RENAME, DROP, TRUNCATE'
+title:  'MySQL Command Series [Part5] DDL: CREATE, ALTER, RENAME, DROP, TRUNCATE'
 description: 
 date:   2021-03-23 15:01:35 +0300
 image:  '/images/create_logo.png'

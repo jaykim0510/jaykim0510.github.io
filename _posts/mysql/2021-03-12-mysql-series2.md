@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Series [Part2] DML(2): SELECT 중급 JOIN, SUBQUERY'
+title:  'MySQL Command Series [Part2] DML(2): SELECT 중급 JOIN, SUBQUERY'
 description: 
 date:   2021-03-12 15:01:35 +0300
 image:  '/images/join_logo.png'
