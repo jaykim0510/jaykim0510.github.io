@@ -157,6 +157,73 @@ EXPLAIN SELECT ...
 
 # Full-Text Index
 
+- contents 컬럼에서 '무궁화'라는 단어를 가지는 레코드를 찾고 싶을 때
+- `SELECT * FROM table WHERE contents LIKE '%무궁화%';` 라고 하면 인덱스 없이 풀 테이블 스캔 하게된다
+- Full-Text 인덱스를 만들면 contents 컬럼의 문자열을 파싱해서 인덱스로 저장하고, 그 인덱스를 이용해 찾아준다
+- 여러 컬럼을 이용해 인덱스를 만들 수도 있다
+- 인덱스를 이용해 SELECT 할 때는 `MATCH`와 `AGAINST`를 사용하면 된다
+
+```sql
+SHOW INDEX FROM Product;
+```
+
+![](/images/mysql_ft_1.png)
+
+풀 텍스트 인덱스를 하나 만들어보자.  
+
+```sql
+CREATE FULLTEXT INDEX <index-name>
+ON <table>(col1, col2, ..)
+
+CREATE FULLTEXT INDEX ft_idx_Product_name_category
+ON Product(name, category);
+```
+
+![](/images/mysql_ft_2.png)
+
+```sql
+SELECT * FROM Product WHERE MATCH(name, category) AGAINST('아이폰');
+```
+
+![](/images/mysql_ft_3.png)
+
+IN BOOLEAN MODE를 사용하면 조건을 더 디테일하게 걸 수 있다.  
+
+```
+*: partial search ex. 아이폰* -> 아이폰, 아이폰은, 아이폰을, .. 다 매치해준다
++: required search ex. +스페이스 -> 아이폰 13 스페이스 그레이와 같이 스페이스가 무조건 포함되는 레코드만 매치해준다
+-: excluded search ex. -스페이스 -> 아이폰 13 그린라이트와 같이 스페이스가 포함된 레코드를 제외시켜준다
+```
+
+```sql
+SELECT * FROM Product WHERE MATCH(name, category) AGAINST('아이폰 -스페이스' IN BOOLEAN MODE);
+```
+
+![](/images/mysql_ft_4.png)
+
+단어가 어떤식으로 인덱싱되어 있는지 보기 위해 테이블을 하나 만들 수도 있다.  
+
+```sql
+SET GLOBAL innodb_ft_aux_table = 'carrot/Product'; -- 스키마/테이블
+
+SET GLOBAL innodb_optimize_fulltext_only = ON;
+OPTIMIZE TABLE Product;
+SET GLOBAL innodb_optimize_fulltext_only = OFF;
+
+SELECT * FROM information_schema.innodb_ft_index_table;
+```
+
+![](/images/mysql_ft_5.png)
+
+풀텍스트 관련 서버 설정값은 다음으로 확인할 수 있다.  
+
+```sql
+SHOW VARIABLES LIKE 'innodb_ft%';
+```
+
+![](/images/mysql_ft_6.png)
+
+
 # 참고
 
 - [인파, [MYSQL] 📚 인덱스(index) 핵심 설계 & 사용 문법 💯 총정리](https://inpa.tistory.com/entry/MYSQL-%F0%9F%93%9A-%EC%9D%B8%EB%8D%B1%EC%8A%A4index-%ED%95%B5%EC%8B%AC-%EC%84%A4%EA%B3%84-%EC%82%AC%EC%9A%A9-%EB%AC%B8%EB%B2%95-%F0%9F%92%AF-%EC%B4%9D%EC%A0%95%EB%A6%AC?category=890808#%EC%9D%B8%EB%8D%B1%EC%8A%A4_%EB%AC%B8%EB%B2%95_%EC%A0%95%EB%A6%AC){:target="_blank"}
