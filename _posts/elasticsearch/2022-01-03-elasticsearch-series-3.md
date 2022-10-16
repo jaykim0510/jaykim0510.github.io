@@ -18,6 +18,8 @@ tags: Elastic
 
 ---
 
+![](/images/es_elem.png)
+
 # Document
 
 - 여러 개의 필드로 구성된 하나의 데이터
@@ -75,6 +77,8 @@ tags: Elastic
 - 분석기 종류에는 대표적으로 standard, simple, whitespace, stop 등이 있다
 - 분석기 대신 토크나이저만 적용해도 되고, 토크나이저에 각종 필터를 추가할 수도 있다
 
+![](/images/es_analyzer.png)
+
 # Query DSL
 
 - 엘라스틱서치의 가장 큰 특징은 검색 엔진
@@ -91,18 +95,12 @@ tags: Elastic
 - 정확히 둘 다 샤딩한다고 얘기하는 곳은 못봤다
 ```
 
-![](/images/es_index_1.png)
-
-![](/images/es_shard_1.png)
-
-![](/images/es_shard_2.png)
-
 # 참고
 
-- [elastic 공식문서, Data in: documents and indices](https://www.elastic.co/guide/en/elasticsearch/reference/current/documents-indices.html)
-- [elastic 공식문서, Scalability and resilience](https://www.elastic.co/guide/en/elasticsearch/reference/current/scalability.html)
-- [instaclustr, A Comprehensive Guide to OpenSearch and Elasticsearch™ Architecture](https://www.instaclustr.com/blog/opensearch-and-elasticsearch-architecture/)
-- [Shivanshu Goyal, Elasticsearch and its internals working](https://medium.com/geekculture/elasticsearch-internals-4c4c9ec077fa)
-- [stackoverflow, Understanding Segments in Elasticsearch](https://stackoverflow.com/questions/15426441/understanding-segments-in-elasticsearch)
-- [stackoverflow, Elasticsearch, when document is stored does it get split up into different shards?](https://stackoverflow.com/questions/59064364/elasticsearch-when-document-is-stored-does-it-get-split-up-into-different-shard)
-- [trackit, Accelerate your metadata search from 60 seconds to 4 seconds by adding Elasticsearch to your architecture](https://trackit.io/trackit-whitepapers/accelerate-your-metadata-search-from-60-seconds-to-4-seconds-by-adding-elasticsearch-to-your-architecture/)
+- [elastic 공식문서, Data in: documents and indices](https://www.elastic.co/guide/en/elasticsearch/reference/current/documents-indices.html){:target="_blank"}
+- [elastic 공식문서, Scalability and resilience](https://www.elastic.co/guide/en/elasticsearch/reference/current/scalability.html){:target="_blank"}
+- [instaclustr, A Comprehensive Guide to OpenSearch and Elasticsearch™ Architecture](https://www.instaclustr.com/blog/opensearch-and-elasticsearch-architecture/){:target="_blank"}
+- [Shivanshu Goyal, Elasticsearch and its internals working](https://medium.com/geekculture/elasticsearch-internals-4c4c9ec077fa){:target="_blank"}
+- [stackoverflow, Understanding Segments in Elasticsearch](https://stackoverflow.com/questions/15426441/understanding-segments-in-elasticsearch){:target="_blank"}
+- [stackoverflow, Elasticsearch, when document is stored does it get split up into different shards?](https://stackoverflow.com/questions/59064364/elasticsearch-when-document-is-stored-does-it-get-split-up-into-different-shard){:target="_blank"}
+- [trackit, Accelerate your metadata search from 60 seconds to 4 seconds by adding Elasticsearch to your architecture](https://trackit.io/trackit-whitepapers/accelerate-your-metadata-search-from-60-seconds-to-4-seconds-by-adding-elasticsearch-to-your-architecture/){:target="_blank"}

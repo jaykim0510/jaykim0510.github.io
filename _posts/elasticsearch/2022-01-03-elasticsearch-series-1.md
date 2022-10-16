@@ -18,6 +18,8 @@ tags: Elastic
 
 ---
 
+![](/images/elasticsearch_1.png)
+
 # Elasticsearch 소개
 
 - 루씬(Lucene)의 색인 기반 검색엔진 라이브러리를 바탕으로 만든 검색 엔진 서비스
@@ -51,4 +53,4 @@ tags: Elastic
 
 # 참고
 
-- [김종민, Elastic 가이드 북](https://esbook.kimjmin.net/)
+- [김종민, Elastic 가이드 북](https://esbook.kimjmin.net/){:target="_blank"}
