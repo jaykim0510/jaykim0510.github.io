@@ -95,7 +95,7 @@ en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 
 ## curl
 
-- tool for transfering data from or to a server
+- 다양한 통신 프로토콜(HTTP, FTP, LDAP 등)을 지원하여 데이터를 전송할 수 있는 도구
 - 기본적으로 터미널 화면에 출력이 디폴트
   ```
   curl <URL>
@@ -110,8 +110,9 @@ en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 
 - 뭔가 curl은 파일의 다운로드 경로를 넣어줘도 HTML 코드가 출력된다 (파일을 다운로드하고자 할 때는 wget인건가 무조건?)
 - 서버에 REST API 형태로 HTTP Request를 전송할 수도 있다
-  ```
-  curl -X POST -H <헤더> <URL> -d <데이터>
+  ```sh
+  curl -X POST -H <헤더> <URL> -d <전송할 데이터>
+  curl -X GET <URL>
   ```
 
 ## ssh

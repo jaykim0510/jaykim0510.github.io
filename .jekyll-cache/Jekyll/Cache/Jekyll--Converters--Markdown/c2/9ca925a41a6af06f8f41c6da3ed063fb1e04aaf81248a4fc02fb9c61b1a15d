@@ -1,4 +1,4 @@
-I"4<hr />
+I"1J<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#인덱스-확인" id="markdown-toc-인덱스-확인">인덱스 확인</a></li>
@@ -198,6 +198,67 @@
 </ul>
 
 <h1 id="full-text-index">Full-Text Index</h1>
+
+<ul>
+  <li>contents 컬럼에서 ‘무궁화’라는 단어를 가지는 레코드를 찾고 싶을 때</li>
+  <li><code class="language-plaintext highlighter-rouge">SELECT * FROM table WHERE contents LIKE '%무궁화%';</code> 라고 하면 인덱스 없이 풀 테이블 스캔 하게된다</li>
+  <li>Full-Text 인덱스를 만들면 contents 컬럼의 문자열을 파싱해서 인덱스로 저장하고, 그 인덱스를 이용해 찾아준다</li>
+  <li>여러 컬럼을 이용해 인덱스를 만들 수도 있다</li>
+  <li>인덱스를 이용해 SELECT 할 때는 <code class="language-plaintext highlighter-rouge">MATCH</code>와 <code class="language-plaintext highlighter-rouge">AGAINST</code>를 사용하면 된다</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="k">INDEX</span> <span class="k">FROM</span> <span class="n">Product</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_1.png" alt="" /></p>
+
+<p>풀 텍스트 인덱스를 하나 만들어보자.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="n">FULLTEXT</span> <span class="k">INDEX</span> <span class="o">&lt;</span><span class="k">index</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="k">ON</span> <span class="o">&lt;</span><span class="k">table</span><span class="o">&gt;</span><span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="p">..)</span>
+
+<span class="k">CREATE</span> <span class="n">FULLTEXT</span> <span class="k">INDEX</span> <span class="n">ft_idx_Product_name_category</span>
+<span class="k">ON</span> <span class="n">Product</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">category</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_2.png" alt="" /></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">Product</span> <span class="k">WHERE</span> <span class="k">MATCH</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">category</span><span class="p">)</span> <span class="n">AGAINST</span><span class="p">(</span><span class="s1">'아이폰'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_3.png" alt="" /></p>
+
+<p>IN BOOLEAN MODE를 사용하면 조건을 더 디테일하게 걸 수 있다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*: partial search ex. 아이폰* -&gt; 아이폰, 아이폰은, 아이폰을, .. 다 매치해준다
++: required search ex. +스페이스 -&gt; 아이폰 13 스페이스 그레이와 같이 스페이스가 무조건 포함되는 레코드만 매치해준다
+-: excluded search ex. -스페이스 -&gt; 아이폰 13 그린라이트와 같이 스페이스가 포함된 레코드를 제외시켜준다
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">Product</span> <span class="k">WHERE</span> <span class="k">MATCH</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">category</span><span class="p">)</span> <span class="n">AGAINST</span><span class="p">(</span><span class="s1">'아이폰 -스페이스'</span> <span class="k">IN</span> <span class="nb">BOOLEAN</span> <span class="k">MODE</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_4.png" alt="" /></p>
+
+<p>단어가 어떤식으로 인덱싱되어 있는지 보기 위해 테이블을 하나 만들 수도 있다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="k">GLOBAL</span> <span class="n">innodb_ft_aux_table</span> <span class="o">=</span> <span class="s1">'carrot/Product'</span><span class="p">;</span> <span class="c1">-- 스키마/테이블</span>
+
+<span class="k">SET</span> <span class="k">GLOBAL</span> <span class="n">innodb_optimize_fulltext_only</span> <span class="o">=</span> <span class="k">ON</span><span class="p">;</span>
+<span class="n">OPTIMIZE</span> <span class="k">TABLE</span> <span class="n">Product</span><span class="p">;</span>
+<span class="k">SET</span> <span class="k">GLOBAL</span> <span class="n">innodb_optimize_fulltext_only</span> <span class="o">=</span> <span class="k">OFF</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">innodb_ft_index_table</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_5.png" alt="" /></p>
+
+<p>풀텍스트 관련 서버 설정값은 다음으로 확인할 수 있다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">VARIABLES</span> <span class="k">LIKE</span> <span class="s1">'innodb_ft%'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_6.png" alt="" /></p>
 
 <h1 id="참고">참고</h1>
 
