@@ -135,16 +135,3 @@ cd /usr/share/elasticsearch
 bin/elasticsearch-plugin install analysis-nori
 service elasticsearch restart
 ```
-
-## 마치며  
-
-Elasticsearch에서는 다양한 프로그래밍 언어로 Elasticsearch Client API를 제공하고 있습니다. 
-- Java
-- Python
-- Node.js
-- C#
-- Go
-- Ruby
-- PHP
-- Perl  
-

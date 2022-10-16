@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part1]: Database, Warehouse, Lake, Lakehouse'
+title:  'Data Engineering Series [Part1]: 데이터 엔지니어 소개'
 description: 
 date:   2022-04-01 15:01:35 +0300
-image:  '/images/data_en_1.png'
+image:  '/images/all_for_data_engineer.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering
@@ -17,103 +17,26 @@ tags: Data_Engineering
 
 ---
 
-![](/images/data_en_1.png)
+![](/images/all_for_data_engineer.png)
 
-# Database
+# 데이터 파이프라인
 
-- 데이터베이스는 데이터 수집, 활용을 위한 도구
-- 데이터베이스는 전형적으로 OLTP를 위한 도구로 사용
-- 데이터베이스는 보통 데이터 접근을 돕는 DBMS를 포함
-- 정형 데이터베이스, 비정형 데이터베이스가 있음
+- 데이터 파이프라인은 데이터 분석 및 머신러닝의 성공을 위한 기반이다. 수많은 다양한 소스로부터 데이터를 가져오고 컨텍스트 제공을 위해 처리하는 것은 데이터 소유를 넘어 데이터로부터 가치를 얻는다는 점에서 차이가 난다.  
+- 실제 분석 프로젝트를 진행하다 보면 결국 지속적인 데이터 분석의 성공을 위해서는 분석 방법만큼이나 잘 구성된 데이터 파이프라인 구성이 필수라는 것을 어렵지 않게 알 수 있다.  
+- 데이터 분석이 잘 이뤄지기 위해서는 분석에 필요한 형태로 잘 정리된 데이터가 필요하고, 원하는 분석 결과를 얻기 위해서는 적합한 기간의 정확한 데이터가 필요하다. 그리고 이런 높은 품질의 좋은 데이터는 기다리고 있었다는 듯 하늘에서 뚝 떨어지지 않는다. 잘 구성된 데이터 파이프라인 안에서만 만들어질 수 있다.  
+- 데이터 파이프라인의 복잡성은 원본 데이터의 크기와 상태, 구조 및 분석 프로젝트의 요구사항에 따라서도 달라진다.  
+- 일반적으로 데이터 추출, 가공, 유효성 검사를 포함한 여러 단계로 구성된다.  
 
-## 데이터베이스의 특징
+# 데이터 엔지니어
 
-- 인가된 사용자만 접근할 수 있도록할 수 있음
-- 데이터의 ACID 특성을 보장해주는 트랜잭션 처리 기능을 지원하기도 함
-- 데이터에 접근하기 위해 SQL과 유사한 언어를 지원함
-- 쿼리의 성능을 위해 인덱싱 기능을 지원함
+- 데이터 엔지니어는 데이터를 필요로하는 모든 생태계를 뒷받침하는 데이터 파이프라인을 구축하고 유지관리하는데 전문적인 역량을 갖춰야 한다. 
+- 데이터 엔지니어는 제공하는 데이터의 유효성과 적시성을 보장하는데 자부심을 가지고 있다. 이를 위해서는 무엇인가 잘못되었을 때를 대비하여 테스트, 경고 및 비상 계획을 수립해야 한다. 그리고 어김없이 결국에는 무엇인가 잘못된다!  
+- 데이터 엔지니어는 데이터를 한 번만 제공하는 것이 아니라 파이프라인을 구축하고 이를 안정적으로 제시간에 제공하고 처리하는 인프라를 지원해줘야 한다.
 
-## 데이터베이스 예시
+## 데이터 엔지니어가 되기 위해서는
 
-- Relational databases: Oracle, MySQL, Microsoft SQL Server, and PostgreSQL
-- Document databases: MongoDB and CouchDB
-- Key-value databases: Redis and DynamoDB
-- Wide-column stores: Cassandra and HBase
-- Graph databases: Neo4j and Amazon Neptune
-
-# Data Warehouse
-
-- 데이터 웨어하우스는 다양한 소스에서 수집한 대량의 데이터를 통합하기 위한 저장소
-- 데이터 웨어하우스는 데이터에 기반한 비즈니스 분석, 결과 보고를 위한 핵심 저장소
-- 그래서 보통 데이터를 정재해서 웨어하우스에 저장
-- 데이터 웨어하우스는 여러 데이터베이스의 데이터를 정재하고 정형화해서 통합한 후 비즈니스 활용 목적으로 많이 사용됨
-
-## 데이터 웨어하우스의 특징
-
-- 데이터 웨어하우스는 보통 historical, various한 데이터를 정재, 통합하는 장소
-- 데이터 분석가들이 보통 데이터 웨어하우스의 데이터를 활용해 분석
-- 데이터 웨어하우스는 보통 미리 정의된 스키마가 있음
-- 그래서 데이터를 정형화할 수 있음
-
-
-## 데이터 웨어하우스의 장점
-
-- 데이터가 정재, 정형화 되어 있어서 OLAP를 위한 용도에 적합
-- 보통 컬럼 기반의 데이터베이스를 사용해 빠른 분석을 지원
-- 빠른 의사결정을 위해 통합된 데이터 웨어하우스
-
-## 데이터 웨어하우스 예시
-
-- Amazon Redshift.
-- Google BigQuery.
-- IBM Db2 Warehouse.
-- Microsoft Azure Synapse.
-- Oracle Autonomous Data Warehouse.
-- Snowflake.
-- Teradata Vantage.
-
-
-
-# Data Lake
-
-- 데이터레이크는 다양한 소스에서 정재되지 않은 데이터를 우선적으로 통합 저장하는 곳
-- 아직 데이터를 어떻게 정재해야 할지, 어떤 용도로 사용하지 정해지지 않았을 때 우선적으로 저장함
-- 정재되지 않은 데이터 자체를 분석해 미래에 어떤 식으로 이용할지 계획하기도 함 -> 이를 위해 Presto, AWS Athena 등 이용
-- JSON, BSON, CSV, Avro, Parquet 등 다양한 포맷의 데이터를 우선적으로 통합해 저장
-
-## 데이터레이크 예시
-
-- AWS S3
-- Azure Data Lake Storage Gen2
-- Google Cloud Storage
-
-## 데이터레이크의 분석을 돕는 도구
-
-- MongoDB Atlas Data Lake.
-- AWS Athena.
-- Presto.
-- Starburst.
-- Databricks SQL Analytics.
-
-# Summary
-
-||**Database**|**Data Warehouse**|**Data Lake**|
-|**Workloads**|Operational and transactional|Analytical|Analytical|
-|**Data Type**|Structured or semi-structured|Structured and/or semi-structured|Structured, semi-structured, and/or unstructured|
-|**Schema Flexibility**|Rigid or flexible schema depending on database type|Pre-defined and fixed schema definition for ingest (schema on write and read)|No schema definition required for ingest (schema on read)|
-|**Data Freshness**|Real time|May not be up-to-date based on frequency of ETL processes|May not be up-to-date based on frequency of ETL processes|
-|**Users**|Application developers|Business analysts and data scientists|Business analysts, application developers, and data scientists|
-|**Pros**|Fast queries for storing and updating data|The fixed schema makes working with the data easy for business analysts|Easy data storage simplifies ingesting raw data. A schema is applied afterwards to make working with the data easy for business analysts. Separate storage and compute|
-|**Cons**|May have limited analytics capabilities|Difficult to design and evolve schema. Scaling compute may require unnecessary scaling of storage, because they are tightly coupled|Requires effort to organize and prepare data for use|
-
-
-
-# 참고
-
-- [MongoDB 공식문서: Databases vs. Data Warehouses vs. Data Lakes (추천)](https://www.mongodb.com/databases/data-lake-vs-data-warehouse-vs-database){:target="_blank"}
-- [striim: Data Warehouse vs. Data Lake vs. Data Lakehouse](https://www.striim.com/blog/data-warehouse-vs-data-lake-vs-data-lakehouse-an-overview/){:target="_blank"}
-- [EDUCBA: Redis vs MongoDB](https://www.educba.com/redis-vs-mongodb/?source=leftnav){:target="_blank"}
-- [EDUCBA: Data Warehouse vs Data Lake](https://www.educba.com/data-lake-vs-data-warehouse/?source=leftnav){:target="_blank"}
-- [비투엔: Data Warehouse vs Data Lake](https://blog.b2en.com/253){:target="_blank"}
-- [화해블로그, 화해의 Data Warehouse를 소개합니다](http://blog.hwahae.co.kr/all/tech/tech-tech/9409/){:target="_blank"}
-- [luminousmen, Data Lake vs Data Warehouse](https://luminousmen.com/post/data-lake-vs-data-warehouse){:target="_blank"}
+1. Python, Java, SQL 언어에 능숙해야 하며 Go 언어도 최근 많은 관심을 받고 있다
+2. MySQL, Kafka, Spark, Airflow 등 데이터 파이프라인을 위한 도구들을 공부해야 한다
+3. 각각의 도구들을 동작시키기 위한 Docker, Kubernetes 등을 공부해야 한다
+4. Hadoop 생태계, Elastic 생태계를 알면 좋다
+5. 분산 시스템은 대용량 데이터 처리, 안정성, 가용성, 확장성 등의 이유로 잘 알아두는 것이 좋다

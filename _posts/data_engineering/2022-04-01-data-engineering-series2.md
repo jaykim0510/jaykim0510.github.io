@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part2]: RDBMS vs NoSQL'
+title:  'Data Engineering Series [Part2]: Database, Warehouse, Lake, Lakehouse'
 description: 
 date:   2022-04-01 15:01:35 +0300
-image:  '/images/rdbms_nosql.png'
+image:  '/images/data_en_1.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: DE
 tags: Data_Engineering
@@ -17,57 +17,103 @@ tags: Data_Engineering
 
 ---
 
-# RDBMS
+![](/images/data_en_1.png)
 
-- RDBMS는 Relational DataBase Management System의 약자
-- Relational Data Model을 담고있는 데이터베이스를 CRUD할 수 있는 소프트웨어
-- 그 밖에도 데이터의 ACID 특성, 보안과 같은 필요한 기능들을 제공
-- RDBMS는 데이터를 저장하기 전에 미리 데이터 타입, 스키마, 업데이트/삭제 정책을 잘 정의해야함
-- 이러한 이유로 NoSQL에 비해 유연성이 떨어지고, 데이터 저장을 위한 데이터베이스 설계 과정이 오래걸림
-- 하지만 잘 정의된 RDBMS는 좋은 Data Warehouse가 되고 결과적으로 분석, 활용에 정확성을 제공
-- 빠른 분석을 위해 RDBMS에서 사용되는 SQL 언어의 특징을 잘 이해해야함
+# Database
 
-## Relational Data Model
+- 데이터베이스는 데이터 수집, 활용을 위한 도구
+- 데이터베이스는 전형적으로 OLTP를 위한 도구로 사용
+- 데이터베이스는 보통 데이터 접근을 돕는 DBMS를 포함
+- 정형 데이터베이스, 비정형 데이터베이스가 있음
 
-- 1970년 대 E. F. Codd에 의해 처음 제안
-- 테이블과 같은 형태로 데이터를 저장할 수 있도록 모델링한 것
-- 관계형 데이터 모델은 세상을 상호 관계를 가지는 테이블들의 집합으로 묘사
+## 데이터베이스의 특징
 
-![](/images/data_model_1.png)
+- 인가된 사용자만 접근할 수 있도록할 수 있음
+- 데이터의 ACID 특성을 보장해주는 트랜잭션 처리 기능을 지원하기도 함
+- 데이터에 접근하기 위해 SQL과 유사한 언어를 지원함
+- 쿼리의 성능을 위해 인덱싱 기능을 지원함
 
-![](/images/data_model_2.png)
+## 데이터베이스 예시
 
-- Table: Record의 집합
-- Attribute: Record의 속성
-- Record: 관계형 모델로 모델링된 데이터
-- Degree: 속성(Attribute)의 수
-- Cardinality: Unique한 Record의 수 (집합의 크기)
+- Relational databases: Oracle, MySQL, Microsoft SQL Server, and PostgreSQL
+- Document databases: MongoDB and CouchDB
+- Key-value databases: Redis and DynamoDB
+- Wide-column stores: Cassandra and HBase
+- Graph databases: Neo4j and Amazon Neptune
 
-# NoSQL
+# Data Warehouse
 
-- 요즘은 세상의 모든 것들을 데이터로 뽑아낼 수 있다면 수집해서 저장하길 원함
-- 그런데 온갖 종류의 데이터가 다 관계형 데이터 모델로 정의되지 않음
-- Semi-Structured한 데이터를 저장하기 위한 용도로 NoSQL 등장
-- RDBMS와 비교해 쿼리의 성능을 조금 포기하는 대신 범용적인 데이터 수집을 가능하게 함
-- (JOIN과 같은 쿼리 고급 기능이 없거나, 성능이 떨어짐)
-- NoSQL은 데이터를 표현하는 방법도 다양해서 그 안에서도 Document store, Key-value store, Wide column store 등과 같이 더 세분화됨
+- 데이터 웨어하우스는 다양한 소스에서 수집한 대량의 데이터를 통합하기 위한 저장소
+- 데이터 웨어하우스는 데이터에 기반한 비즈니스 분석, 결과 보고를 위한 핵심 저장소
+- 그래서 보통 데이터를 정재해서 웨어하우스에 저장
+- 데이터 웨어하우스는 여러 데이터베이스의 데이터를 정재하고 정형화해서 통합한 후 비즈니스 활용 목적으로 많이 사용됨
 
-## The benefits of NoSQL 
+## 데이터 웨어하우스의 특징
 
-- RDBMS에 저장하기에는 비교적 데이터의 변동성이 큰 데이터를 저장할 수 있음
-- 비교적 빠르게 데이터베이스를 설계할 수 있음
-- 스키마, 업데이트/삭제 정책과 같은 제약사항이 비교적 덜한 편
-- Scale-Out 방식의 데이터베이스 확장이 가능
+- 데이터 웨어하우스는 보통 historical, various한 데이터를 정재, 통합하는 장소
+- 데이터 분석가들이 보통 데이터 웨어하우스의 데이터를 활용해 분석
+- 데이터 웨어하우스는 보통 미리 정의된 스키마가 있음
+- 그래서 데이터를 정형화할 수 있음
 
-# RDBMS vs NoSQL
 
-- RDBMS도 그 종류가 다양하고, NoSQL은 더 다양함 -> 묶어서 비교하는 것은 정확한 비교 방법은 아님
-- 그래도 최대한 비교 가능한 부분만 가지고 비교해보자
+## 데이터 웨어하우스의 장점
 
-![](/images/data_model_3.png)
+- 데이터가 정재, 정형화 되어 있어서 OLAP를 위한 용도에 적합
+- 보통 컬럼 기반의 데이터베이스를 사용해 빠른 분석을 지원
+- 빠른 의사결정을 위해 통합된 데이터 웨어하우스
+
+## 데이터 웨어하우스 예시
+
+- Amazon Redshift.
+- Google BigQuery.
+- IBM Db2 Warehouse.
+- Microsoft Azure Synapse.
+- Oracle Autonomous Data Warehouse.
+- Snowflake.
+- Teradata Vantage.
+
+
+
+# Data Lake
+
+- 데이터레이크는 다양한 소스에서 정재되지 않은 데이터를 우선적으로 통합 저장하는 곳
+- 아직 데이터를 어떻게 정재해야 할지, 어떤 용도로 사용하지 정해지지 않았을 때 우선적으로 저장함
+- 정재되지 않은 데이터 자체를 분석해 미래에 어떤 식으로 이용할지 계획하기도 함 -> 이를 위해 Presto, AWS Athena 등 이용
+- JSON, BSON, CSV, Avro, Parquet 등 다양한 포맷의 데이터를 우선적으로 통합해 저장
+
+## 데이터레이크 예시
+
+- AWS S3
+- Azure Data Lake Storage Gen2
+- Google Cloud Storage
+
+## 데이터레이크의 분석을 돕는 도구
+
+- MongoDB Atlas Data Lake.
+- AWS Athena.
+- Presto.
+- Starburst.
+- Databricks SQL Analytics.
+
+# Summary
+
+||**Database**|**Data Warehouse**|**Data Lake**|
+|**Workloads**|Operational and transactional|Analytical|Analytical|
+|**Data Type**|Structured or semi-structured|Structured and/or semi-structured|Structured, semi-structured, and/or unstructured|
+|**Schema Flexibility**|Rigid or flexible schema depending on database type|Pre-defined and fixed schema definition for ingest (schema on write and read)|No schema definition required for ingest (schema on read)|
+|**Data Freshness**|Real time|May not be up-to-date based on frequency of ETL processes|May not be up-to-date based on frequency of ETL processes|
+|**Users**|Application developers|Business analysts and data scientists|Business analysts, application developers, and data scientists|
+|**Pros**|Fast queries for storing and updating data|The fixed schema makes working with the data easy for business analysts|Easy data storage simplifies ingesting raw data. A schema is applied afterwards to make working with the data easy for business analysts. Separate storage and compute|
+|**Cons**|May have limited analytics capabilities|Difficult to design and evolve schema. Scaling compute may require unnecessary scaling of storage, because they are tightly coupled|Requires effort to organize and prepare data for use|
+
+
 
 # 참고
 
-- [khj93, [Database] RDBMS와 NoSQL의 차이점](https://khj93.tistory.com/entry/Database-RDBMS%EC%99%80-NOSQL-%EC%B0%A8%EC%9D%B4%EC%A0%90){:target="_blank"}
-- [BCcampus, The Relational Data Model](https://opentextbc.ca/dbdesign01/chapter/chapter-7-the-relational-data-model/){:target="_blank"}
-- [DB Enigne](https://db-engines.com/en/systems){:target="_blank"}
+- [MongoDB 공식문서: Databases vs. Data Warehouses vs. Data Lakes (추천)](https://www.mongodb.com/databases/data-lake-vs-data-warehouse-vs-database){:target="_blank"}
+- [striim: Data Warehouse vs. Data Lake vs. Data Lakehouse](https://www.striim.com/blog/data-warehouse-vs-data-lake-vs-data-lakehouse-an-overview/){:target="_blank"}
+- [EDUCBA: Redis vs MongoDB](https://www.educba.com/redis-vs-mongodb/?source=leftnav){:target="_blank"}
+- [EDUCBA: Data Warehouse vs Data Lake](https://www.educba.com/data-lake-vs-data-warehouse/?source=leftnav){:target="_blank"}
+- [비투엔: Data Warehouse vs Data Lake](https://blog.b2en.com/253){:target="_blank"}
+- [화해블로그, 화해의 Data Warehouse를 소개합니다](http://blog.hwahae.co.kr/all/tech/tech-tech/9409/){:target="_blank"}
+- [luminousmen, Data Lake vs Data Warehouse](https://luminousmen.com/post/data-lake-vs-data-warehouse){:target="_blank"}

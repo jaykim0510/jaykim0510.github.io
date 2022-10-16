@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Data Engineering Series [Part3]: Elastic 생태계 (Elasticsearch, Logstash, Kibana)</title>
+  <title>Data Engineering Series [Part3]: RDBMS vs NoSQL</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/data-engineering-series3">
@@ -14,16 +14,16 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Data Engineering Series [Part3]: Elastic 생태계 (Elasticsearch, Logstash, Kibana) – Code Museum">
+  <meta name="twitter:title" content="Data Engineering Series [Part3]: RDBMS vs NoSQL – Code Museum">
   <meta name="twitter:description" content="
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/elastic_logo.png">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/rdbms_nosql.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Data Engineering Series [Part3]: Elastic 생태계 (Elasticsearch, Logstash, Kibana) – Code Museum">
+  <meta property="og:title" content="Data Engineering Series [Part3]: RDBMS vs NoSQL – Code Museum">
   <meta property="og:description" content="
 ">
-  <meta property="og:image" content="http://localhost:4000/images/elastic_logo.png">
+  <meta property="og:image" content="http://localhost:4000/images/rdbms_nosql.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -387,7 +387,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part3]: Elastic 생태계 (Elasticsearch, Logstash, Kibana)">
+          <img class="lazy" data-src="/images/data_engineering_logo.png" alt="Data Engineering Series [Part3]: RDBMS vs NoSQL">
         </div>
       </div>
       
@@ -408,7 +408,7 @@
               </div>
             
  
-          <h1 class="post__title">Data Engineering Series [Part3]: Elastic 생태계 (Elasticsearch, Logstash, Kibana)</h1>
+          <h1 class="post__title">Data Engineering Series [Part3]: RDBMS vs NoSQL</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -417,7 +417,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-04-03T21:01:35+09:00">03 Apr 2022</time>
+              <time class="post__date" datetime="2022-04-01T21:01:35+09:00">01 Apr 2022</time>
             </div>
           </div>
   
@@ -488,7 +488,7 @@
 
   <div class="post_pagination">
     
-      <a href="/data-engineering-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part2]: RDBMS vs NoSQL</a>
+      <a href="/data-engineering-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part2]: Database, Warehouse, Lake, Lakehouse</a>
     
     
       <a href="/data-engineering-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part4]: 데이터베이스간 주요 특징 비교<i class="ion ion-ios-arrow-forward"></i></a>
@@ -501,247 +501,87 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#elk-stack" id="markdown-toc-elk-stack">ELK Stack</a>    <ul>
-      <li><a href="#elk의-어원" id="markdown-toc-elk의-어원">ELK의 어원</a></li>
-      <li><a href="#elk의-등장배경" id="markdown-toc-elk의-등장배경">ELK의 등장배경</a></li>
-      <li><a href="#why-elk" id="markdown-toc-why-elk">Why ELK</a></li>
+  <li><a href="#rdbms" id="markdown-toc-rdbms">RDBMS</a>    <ul>
+      <li><a href="#relational-data-model" id="markdown-toc-relational-data-model">Relational Data Model</a></li>
     </ul>
   </li>
-  <li><a href="#elasticsearch" id="markdown-toc-elasticsearch">Elasticsearch</a>    <ul>
-      <li><a href="#features-of-elastic-search" id="markdown-toc-features-of-elastic-search">Features of Elastic search:</a></li>
-      <li><a href="#advantages-of-elasticsearch" id="markdown-toc-advantages-of-elasticsearch">Advantages of Elasticsearch</a></li>
+  <li><a href="#nosql" id="markdown-toc-nosql">NoSQL</a>    <ul>
+      <li><a href="#the-benefits-of-nosql" id="markdown-toc-the-benefits-of-nosql">The benefits of NoSQL</a></li>
     </ul>
   </li>
-  <li><a href="#logstash" id="markdown-toc-logstash">Logstash</a>    <ul>
-      <li><a href="#features-of-logstash" id="markdown-toc-features-of-logstash">Features of Logstash</a></li>
-      <li><a href="#advantage-of-logstash" id="markdown-toc-advantage-of-logstash">Advantage of Logstash</a></li>
-    </ul>
-  </li>
-  <li><a href="#kibana" id="markdown-toc-kibana">Kibana</a>    <ul>
-      <li><a href="#features-of-kinbana" id="markdown-toc-features-of-kinbana">Features of Kinbana:</a></li>
-      <li><a href="#advantages-and-disadvantages-of-kinbana" id="markdown-toc-advantages-and-disadvantages-of-kinbana">Advantages and Disadvantages of Kinbana</a></li>
-    </ul>
-  </li>
-  <li><a href="#beats" id="markdown-toc-beats">Beats</a></li>
-  <li><a href="#advantages-and-disadvantages-of-elk-stack" id="markdown-toc-advantages-and-disadvantages-of-elk-stack">Advantages and Disadvantages of ELK stack</a>    <ul>
-      <li><a href="#advantages" id="markdown-toc-advantages">Advantages</a></li>
-      <li><a href="#disadvantages" id="markdown-toc-disadvantages">Disadvantages</a></li>
-    </ul>
-  </li>
-  <li><a href="#case-studies" id="markdown-toc-case-studies">Case Studies</a>    <ul>
-      <li><a href="#netflix" id="markdown-toc-netflix">NetFlix</a></li>
-      <li><a href="#linkedin" id="markdown-toc-linkedin">LinkedIn</a></li>
-      <li><a href="#tripwire" id="markdown-toc-tripwire">Tripwire:</a></li>
-      <li><a href="#medium" id="markdown-toc-medium">Medium:</a></li>
-    </ul>
-  </li>
-  <li><a href="#summary" id="markdown-toc-summary">Summary</a></li>
+  <li><a href="#rdbms-vs-nosql" id="markdown-toc-rdbms-vs-nosql">RDBMS vs NoSQL</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
-<h1 id="elk-stack">ELK Stack</h1>
 
-<p><img src="/images/elastic_1.png" alt="" /></p>
-
-<ul>
-  <li><strong>Elasticsearch</strong>: Lucene 기반의 전문 검색을 지원하는 분산 검색 엔진</li>
-  <li><strong>Logstash</strong>: 데이터를 추출하고 전처리한 후 엘라스틱서치로 전달하는 파이프라인</li>
-  <li><strong>Kibana</strong>: 엘라스틱서치에 저장된 데이터를 시각화 하는 도구</li>
-  <li><strong>Beats</strong>: 단일 목적의 데이터 수집기 무료 오픈 소스 플랫폼. 수백 수천 개의 장비와 시스템으로부터 Logstash나 Elasticsearch에 데이터를 전송</li>
-</ul>
-
-<p>Together, these components form a comprehensive, tightly integrated, easily scalable search solution for businesses of all sizes.</p>
-
-<h2 id="elk의-어원">ELK의 어원</h2>
+<h1 id="rdbms">RDBMS</h1>
 
 <ul>
-  <li>초기에는 Elasticsearch + Logstash + Kibana를 줄여 ELK 스택이라고 했음
-<img src="/images/elk_1.png" alt="" /></li>
-  <li>Beats의 등장 이후 Beats + Elasticsearch + Logstash + Kibana를 ELK (Elastic Stack)이라고 하게됨
-<img src="/images/elk_2.png" alt="" /></li>
-  <li>최근에는 데이터 용량이 커짐에 따라 버퍼, 안정성 등을 이유로 Kafka, RabbitMQ 와 같은 서비스 함께 사용
-<img src="/images/elk_3.png" alt="" /></li>
+  <li>RDBMS는 Relational DataBase Management System의 약자</li>
+  <li>Relational Data Model을 담고있는 데이터베이스를 CRUD할 수 있는 소프트웨어</li>
+  <li>그 밖에도 데이터의 ACID 특성, 보안과 같은 필요한 기능들을 제공</li>
+  <li>RDBMS는 데이터를 저장하기 전에 미리 데이터 타입, 스키마, 업데이트/삭제 정책을 잘 정의해야함</li>
+  <li>이러한 이유로 NoSQL에 비해 유연성이 떨어지고, 데이터 저장을 위한 데이터베이스 설계 과정이 오래걸림</li>
+  <li>하지만 잘 정의된 RDBMS는 좋은 Data Warehouse가 되고 결과적으로 분석, 활용에 정확성을 제공</li>
+  <li>빠른 분석을 위해 RDBMS에서 사용되는 SQL 언어의 특징을 잘 이해해야함</li>
 </ul>
 
-<h2 id="elk의-등장배경">ELK의 등장배경</h2>
+<h2 id="relational-data-model">Relational Data Model</h2>
 
 <ul>
-  <li>최근 마이크로서비스 형태의 패턴으로 서비스가 개발됨에 따라 중앙화된 로깅 시스템이 필요해짐</li>
-  <li>
-    <p>ELK는 다양한 소스, 다양한 포맷, 검색엔진, 분석 그리고 시각화까지 중앙화된 로깅 시스템에 필요한 많은 기능을 갖추고 있음</p>
-  </li>
-  <li>클라우드 기반 서비스에서는 각 노드에서의 작업량, 환경, 사용자 수에 따라 성능이 상이함</li>
-  <li>어플리케이션마다 발생할 수 있는 장애가 다름</li>
+  <li>1970년 대 E. F. Codd에 의해 처음 제안</li>
+  <li>테이블과 같은 형태로 데이터를 저장할 수 있도록 모델링한 것</li>
+  <li>관계형 데이터 모델은 세상을 상호 관계를 가지는 테이블들의 집합으로 묘사</li>
 </ul>
 
-<h2 id="why-elk">Why ELK</h2>
+<p><img src="/images/data_model_1.png" alt="" /></p>
+
+<p><img src="/images/data_model_2.png" alt="" /></p>
 
 <ul>
-  <li>ELK는 비즈니스가 성장하는 규모에 맞춰 효율적으로 통합된 실시간 분석 시스템을 구축하도록 하는 도구 모음</li>
-  <li>오랜시간 커뮤니티에서 활발하게 사용되어 왔고, 많은 성공 사례를 가짐</li>
+  <li>Table: Record의 집합</li>
+  <li>Attribute: Record의 속성</li>
+  <li>Record: 관계형 모델로 모델링된 데이터</li>
+  <li>Degree: 속성(Attribute)의 수</li>
+  <li>Cardinality: Unique한 Record의 수 (집합의 크기)</li>
 </ul>
 
-<h1 id="elasticsearch">Elasticsearch</h1>
+<h1 id="nosql">NoSQL</h1>
 
 <ul>
-  <li>NoSQL 데이터베이스</li>
-  <li>루씬(Lucene) 기반의 검색 엔진 -&gt; 역색인을 지원하는 검색 엔진</li>
-  <li>RESTful API를 통해 쿼리 가능</li>
-  <li>간단하게 검색 서비스 배포 가능</li>
-  <li>샤딩 기반의 분산 저장 -&gt; Scale-Out</li>
+  <li>요즘은 세상의 모든 것들을 데이터로 뽑아낼 수 있다면 수집해서 저장하길 원함</li>
+  <li>그런데 온갖 종류의 데이터가 다 관계형 데이터 모델로 정의되지 않음</li>
+  <li>Semi-Structured한 데이터를 저장하기 위한 용도로 NoSQL 등장</li>
+  <li>RDBMS와 비교해 쿼리의 성능을 조금 포기하는 대신 범용적인 데이터 수집을 가능하게 함</li>
+  <li>(JOIN과 같은 쿼리 고급 기능이 없거나, 성능이 떨어짐)</li>
+  <li>NoSQL은 데이터를 표현하는 방법도 다양해서 그 안에서도 Document store, Key-value store, Wide column store 등과 같이 더 세분화됨</li>
 </ul>
 
-<h2 id="features-of-elastic-search">Features of Elastic search:</h2>
+<h2 id="the-benefits-of-nosql">The benefits of NoSQL</h2>
 
 <ul>
-  <li>Java 언어로 개발</li>
-  <li>REST API를 통해 접근, 쿼리 가능</li>
-  <li>JSON 형태의 아웃풋 제공</li>
-  <li>전문 검색 엔진 서비스</li>
-  <li>실시간에 가까운 검색 속도 제공</li>
+  <li>RDBMS에 저장하기에는 비교적 데이터의 변동성이 큰 데이터를 저장할 수 있음</li>
+  <li>비교적 빠르게 데이터베이스를 설계할 수 있음</li>
+  <li>스키마, 업데이트/삭제 정책과 같은 제약사항이 비교적 덜한 편</li>
+  <li>Scale-Out 방식의 데이터베이스 확장이 가능</li>
 </ul>
 
-<h2 id="advantages-of-elasticsearch">Advantages of Elasticsearch</h2>
+<h1 id="rdbms-vs-nosql">RDBMS vs NoSQL</h1>
 
 <ul>
-  <li>스키마 제약 없이 데이터를 저장할 수도 있고, 필요한 경우 스키마를 설계한 후 그에 맞게 저장할 수도 있음</li>
-  <li>데이터에서 인사이트를 얻기 위해 필터링, 쿼리 기능을 제공</li>
-  <li>RESTful API 제공</li>
-  <li>Provides horizontal scalability, reliability, and multitenant capability for real time use of indexing to make it faster search</li>
+  <li>RDBMS도 그 종류가 다양하고, NoSQL은 더 다양함 -&gt; 묶어서 비교하는 것은 정확한 비교 방법은 아님</li>
+  <li>그래도 최대한 비교 가능한 부분만 가지고 비교해보자</li>
 </ul>
 
-<h1 id="logstash">Logstash</h1>
-
-<p>Logstash is the data collection pipeline tool. It collects data inputs and feeds into the Elasticsearch. It gathers all types of data from the different source and makes it available for further use.</p>
-
-<p>Logstash can unify data from disparate sources and normalize the data into your desired destinations. It allows you to cleanse and democratize all your data for analytics and visualization of use cases.</p>
-
-<p>It consists of three components:</p>
-
-<ul>
-  <li>Input: passing logs to process them into machine understandable format</li>
-  <li>Filters: It is a set of conditions to perform a particular action or event</li>
-  <li>Output: Decision maker for processed event or log</li>
-</ul>
-
-<h2 id="features-of-logstash">Features of Logstash</h2>
-
-<ul>
-  <li>Events are passed through each phase using internal queues</li>
-  <li>Allows different inputs for your logs</li>
-  <li>Filtering/parsing for your logs</li>
-</ul>
-
-<h2 id="advantage-of-logstash">Advantage of Logstash</h2>
-
-<ul>
-  <li>Offers centralize the data processing</li>
-  <li>It analyzes a large variety of structured/unstructured data and events</li>
-  <li>ELK LogStash offers plugins to connect with various types of input sources and platforms</li>
-</ul>
-
-<h1 id="kibana">Kibana</h1>
-
-<p>Kibana is a data visualization which completes the ELK stack. This tool is used for visualizing the Elasticsearch documents and helps developers to have a quick insight into it. Kibana dashboard offers various interactive diagrams, geospatial data, and graphs to visualize complex quires.</p>
-
-<p>It can be used for search, view, and interact with data stored in Elasticsearch directories. Kibana helps you to perform advanced data analysis and visualize your data in a variety of tables, charts, and maps.</p>
-
-<p>In Kibana there are different methods for performing searches on your data.</p>
-
-<ul>
-  <li>Free text searches: It is used for searching a specific string</li>
-  <li>Field-level searches: It is used for searching for a string within a specific field</li>
-  <li>Logical statements: It is used to combine searches into a logical statement.</li>
-  <li>Proximity searches: It is used for searching terms within specific character proximity.</li>
-</ul>
-
-<h2 id="features-of-kinbana">Features of Kinbana:</h2>
-
-<ul>
-  <li>Powerful front-end dashboard which is capable of visualizing indexed information from the elastic cluster</li>
-  <li>Enables real-time search of indexed information</li>
-  <li>You can search, View, and interact with data stored in Elasticsearch</li>
-  <li>Execute queries on data &amp; visualize results in charts, tables, and maps</li>
-  <li>Configurable dashboard to slice and dice logstash logs in elasticsearch</li>
-  <li>Capable of providing historical data in the form of graphs, charts, etc.</li>
-  <li>Real-time dashboards which is easily configurable</li>
-  <li>Kibana ElasticSearch enables real-time search of indexed information</li>
-</ul>
-
-<h2 id="advantages-and-disadvantages-of-kinbana">Advantages and Disadvantages of Kinbana</h2>
-
-<ul>
-  <li>Easy visualizing</li>
-  <li>Fully integrated with Elasticsearch</li>
-  <li>Visualization tool</li>
-  <li>Offers real-time analysis, charting, summarization, and debugging capabilities</li>
-  <li>Provides instinctive and user-friendly interface</li>
-  <li>Allows sharing of snapshots of the logs searched through</li>
-  <li>Permits saving the dashboard and managing multiple dashboards</li>
-</ul>
-
-<h1 id="beats">Beats</h1>
-
-<p><img src="/images/beats_1.png" alt="" /></p>
-
-<h1 id="advantages-and-disadvantages-of-elk-stack">Advantages and Disadvantages of ELK stack</h1>
-
-<h2 id="advantages">Advantages</h2>
-
-<ul>
-  <li>ELK works best when logs from various Apps of an enterprise converge into a single ELK instance</li>
-  <li>It provides amazing insights for this single instance and also eliminates the need to log into hundred different log data sources</li>
-  <li>Rapid on-premise installation</li>
-  <li>Easy to deploy Scales vertically and horizontally</li>
-  <li>Elastic offers a host of language clients which includes Ruby. Python. PHP, Perl, .NET, Java, and JavaScript, and more</li>
-  <li>Availability of libraries for different programming and scripting languages</li>
-</ul>
-
-<h2 id="disadvantages">Disadvantages</h2>
-
-<ul>
-  <li>Different components In the stack can become difficult to handle when you move on to complex setup</li>
-  <li>There’s nothing like trial and error. Thus, the more you do, the more you learn along the way</li>
-</ul>
-
-<h1 id="case-studies">Case Studies</h1>
-
-<h2 id="netflix">NetFlix</h2>
-<p>Netflix heavily relies on ELK stack. The company using ELK stack to monitor and analyze customer service operation’s security log. It allows them to index, store, and search documents from more than fifteen clusters which comprise almost 800 nodes.</p>
-
-<h2 id="linkedin">LinkedIn</h2>
-<p>The famous social media marketing site LinkedIn uses ELK stack to monitor performance and security. The IT team integrated ELK with Kafka to support their load in real time. Their ELK operation includes more than 100 clusters across six different data centers.</p>
-
-<h2 id="tripwire">Tripwire:</h2>
-<p>Tripwire is a worldwide Security Information Event Management system. The company uses ELK to support information packet log analysis.</p>
-
-<h2 id="medium">Medium:</h2>
-<p>Medium is a famous blog-publishing platform. They use ELK stack to debug their production issues. The company also uses ELK to detect DynamoDB hotpots. Moreover, using this stack, the company can support 25 million unique readers as well as thousands of published posts each week.</p>
-
-<h1 id="summary">Summary</h1>
-
-<ul>
-  <li>Centralized logging can be useful when attempting to identify problems with servers or applications</li>
-  <li>ELK server stack is useful to resolve issues related to centralized logging system</li>
-  <li>ELK stack is a collection of three open source tools Elasticsearch, Logstash Kibana</li>
-  <li>Elasticsearch is a NoSQL database</li>
-  <li>Logstash is the data collection pipeline tool</li>
-  <li>Kibana is a data visualization which completes the ELK stack</li>
-  <li>In cloud-based environment infrastructures, performance and isolation is very important</li>
-  <li>In ELK stack processing speed is strictly limited whereas Splunk offers accurate and speedy processes</li>
-  <li>Netflix, LinkedIn, Tripware, Medium all are using ELK stack for their business</li>
-  <li>ELK Syslog works best when logs from various Apps of an enterprise converge into a single ELK instance</li>
-  <li>Different components In the stack can become difficult to handle when you move on to complex setup</li>
-</ul>
+<p><img src="/images/data_model_3.png" alt="" /></p>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://www.elastic.co/kr/what-is/elk-stack" target="_blank">elastic, ELK Stack이란 무엇인가요?</a></li>
-  <li><a href="https://www.guru99.com/elk-stack-tutorial.html" target="_blank">Guru99, ELK Stack Tutorial: What is Kibana, Logstash &amp; Elasticsearch?</a></li>
-  <li><a href="https://www.mcplusa.com/the-3-reasons-why-you-should-be-using-elk/" target="_blank">MC+A, Why you should be using the Elastic (ELK) Stack</a></li>
-  <li><a href="https://logz.io/learn/complete-guide-elk-stack/" target="_blank">logz.io, THE COMPLETE GUIDE TO THE ELK STACK</a></li>
+  <li><a href="https://khj93.tistory.com/entry/Database-RDBMS%EC%99%80-NOSQL-%EC%B0%A8%EC%9D%B4%EC%A0%90" target="_blank">khj93, [Database] RDBMS와 NoSQL의 차이점</a></li>
+  <li><a href="https://opentextbc.ca/dbdesign01/chapter/chapter-7-the-relational-data-model/" target="_blank">BCcampus, The Relational Data Model</a></li>
+  <li><a href="https://db-engines.com/en/systems" target="_blank">DB Enigne</a></li>
 </ul>
 
     </div>
@@ -978,7 +818,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part3]:%20Elastic%20%EC%83%9D%ED%83%9C%EA%B3%84%20(Elasticsearch,%20Logstash,%20Kibana)&url=http://localhost:4000/data-engineering-series3"
+          href="https://twitter.com/intent/tweet?text=Data%20Engineering%20Series%20[Part3]:%20RDBMS%20vs%20NoSQL&url=http://localhost:4000/data-engineering-series3"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -988,12 +828,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series3&amp;media=http://localhost:4000/images/elastic_logo.png&amp;description=Data%20Engineering%20Series%20[Part3]:%20Elastic%20%EC%83%9D%ED%83%9C%EA%B3%84%20(Elasticsearch,%20Logstash,%20Kibana)"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/data-engineering-series3&amp;media=http://localhost:4000/images/rdbms_nosql.png&amp;description=Data%20Engineering%20Series%20[Part3]:%20RDBMS%20vs%20NoSQL"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series3&title=Data%20Engineering%20Series%20[Part3]:%20Elastic%20%EC%83%9D%ED%83%9C%EA%B3%84%20(Elasticsearch,%20Logstash,%20Kibana)&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/data-engineering-series3&title=Data%20Engineering%20Series%20[Part3]:%20RDBMS%20vs%20NoSQL&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -1053,7 +893,7 @@
 
   <div class="post_pagination">
     
-      <a href="/data-engineering-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part2]: RDBMS vs NoSQL</a>
+      <a href="/data-engineering-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Data Engineering Series [Part2]: Database, Warehouse, Lake, Lakehouse</a>
     
     
       <a href="/data-engineering-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Data Engineering Series [Part4]: 데이터베이스간 주요 특징 비교<i class="ion ion-ios-arrow-forward"></i></a>
