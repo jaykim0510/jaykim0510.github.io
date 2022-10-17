@@ -156,6 +156,27 @@ tags: Spark
 - (`set(key, value)`, `setMaster`, `setAppName` 과 같은 메서드 제공)
 - (하지만 이 방법은 비즈니스 로직과 관련이 없는 익스큐터의 메모리 설정, 코어 수와 설정이 코드에 포함된다는 한계)
 - 동적으로 제공해주는 방법 `spark-submit.sh`에 1. 옵션을 준다, 2. `spark-defaults.conf` 파일에 설정
+- 우선순위는 1. SparkConf 2. 명령행 매개변수(옵션), 3. spark-defaults.conf 순이다
+
+**애플리케이션 관련 설정**  
+
+|옵션|설명|
+|spark.app.name|애플리케이션 이름|
+|spark.driver.memory|드라이버가 사용할 메모리 크기|
+|spark.executer.memory|익스큐터 하나의 메모리 크기 (기본값: 1g)|
+|spark.local.dir|RDD 데이터를 디스크에 저장하거나 셔플시 매퍼의 결과를 저장하는 디렉터리. 콤마를 이용해 여러 위치를 지정할 수 있으며, 성능에 큰 영향을 주므로 반드시 빠른 로컬 디스크를 사용해야 한다. (기본값: /tmp)|
+|spark.master|클러스터 매니저 정보|
+|spark.submit.deployMode|디플로이 모드|
+
+**실행환경 관련 설정**  
+
+|옵션|설명|
+|spark.driver.extraClassPath|드라이버 클래스패스에 추가할 항목|
+|spark.files.spark.jars|각 익스큐터의 실행 디렉터리에 위치할 파일들 또는 jar 파일들을 저장|
+|spark.submit.pyFiles|PYTHONPATH에 추가될 .zip, .egg, .py 파일을 지정|
+|spark.jars.packages|익스큐터와 드라이버의 클래스패스에 추가될 의존성 jar 정보|
+
+이 밖에도, 셔플, 스파크 UI, 압축 및 직렬화, 메모리, 익스큐터, 네트워크, 암호화 관련 설정 등이 있다
 
 ```sh
 # --conf 옵션을 주는 방법
@@ -175,8 +196,6 @@ wordByExample.py [application-arguments]
 
 ```conf
 # spark-defaults.conf 파일에 설정
-# 일단 --files에 안넘겨줘도 spark-submit.sh 스크립트가 알아서 conf 디렉토리에서 읽어가는거는 확실한데,
-# --files로 명시해 줄 수도 있나? 그러면 애플리케이션마다 설정값 파일 따로 관리해둘 수 있을텐데
 spark.master    spark://master:7077
 spark.eventLog.enabled    true
 spark.driver.memory    5g
