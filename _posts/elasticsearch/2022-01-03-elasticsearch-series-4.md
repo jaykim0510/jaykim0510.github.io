@@ -3,7 +3,7 @@ layout: post
 title:  'ElasticSearch Series [Part4]: Elasticsearch 검색'
 description: 
 date:   2022-01-03 15:01:35 +0300
-image:  '/images/elasticsearch_logo.png'
+image:  '/images/elastic_query_logo.jpeg'
 logo_image:  '/images/elastic_logo.png'
 categories: DE
 tags: Elastic

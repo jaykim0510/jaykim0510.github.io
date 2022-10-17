@@ -3,7 +3,7 @@ layout: post
 title:  'ElasticSearch Series [Part1]: What is Elasticsearch'
 description: 
 date:   2022-01-03 15:01:35 +0300
-image:  '/images/elasticsearch_logo.png'
+image:  '/images/es_main_2.png'
 logo_image:  '/images/elastic_logo.png'
 categories: DE
 tags: Elastic
@@ -18,7 +18,7 @@ tags: Elastic
 
 ---
 
-![](/images/elasticsearch_1.png)
+![](/images/es_main.png)
 
 # Elasticsearch 소개
 
@@ -38,6 +38,8 @@ tags: Elastic
 - 자바 언어로 개발 되었고 JVM 있는 어떤 환경에서든 구동이 가능
 - Java, Python, Go, Ruby 등 다양한 고수준 언어에 클라이언트 API 제공
 
+![](/images/elasticsearch_1.png)
+
 
 # Elasticsearch의 단점
 
@@ -45,11 +47,15 @@ tags: Elastic
 - 롤백 기능을 제공하지 않는다
 - 업데이트 될 때마다 문서를 새로 생성한다
 
-# Elasticsearch 구성요소
+# Elasticsearch 용어
 
 - 인덱스(Index)
 - 도큐먼트(Document)
 - 매핑(Mapping)
+
+# Elasticsearch 동작
+
+![](/images/es_main_2.png)
 
 # 참고
 
