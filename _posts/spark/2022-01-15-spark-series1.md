@@ -54,7 +54,7 @@ RDD에서 중요한 특징은 다음과 같습니다.
 
 
 ## 파티션(Partition)
-RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서 **분산 데이터 요소를 파티션**이라고 합니다. 스파크는 작업을 수행할 때 바로 이 **파티션 단위로 나눠서 병렬로 처리**합니다. 여기서 제가 헷갈렸던 것은 파티션이 분산처리와 병렬처리 중 어떤 것을 기준으로 나뉘어진 단위인가 라는 것 이었습니다. 공식문서[(아파치 스파크 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#parallelized-collections){:target="_blank"}를 살펴본 결과 파티션은 병렬 처리가 되는 기준이었습니다. 여러 서버에 분산할 때 보통 하나의 서버 당 2~4개 정도의 파티션을 설정합니다. 이 기준은 개인의 클러스터 환경에 따라 기본 설정 값이 다르며 이 값은 원하는 값으로 바꿀 수 있습니다. 구글에서 이미지를 살펴보았을 때는 다들 task당 한개의 파티션이라고 합니다.  
+RDD는 분산 데이터 요소로 구성된 데이터 집합입니다. 여기서 **분산 데이터 요소를 파티션**이라고 합니다. 스파크는 작업을 수행할 때 바로 이 **파티션 단위로 나눠서 병렬로 처리**합니다. 파티션은 분할된 데이터를 의미하고, 이렇게 분할된 데이터를 처리하는 작업의 단위를 태스크(task)라고 합니다. 태스크는 클러스터 매니저에 의해 컴퓨팅 자원을 효율적으로 사용할 수 있는 방향으로 할당됩니다.  
 
 ![](../images/../../images/spark_2.png)  
 
@@ -70,7 +70,7 @@ RDD의 연산은 크게 __트랜스포메이션__ 과 **액션**이라는 두 �
 - 액션: RDD -> 다른 형태의 데이터를 만들어내는 연산, 대표적으로 reduce 함수  
 [(아파치 공식문서 참고)](https://spark.apache.org/docs/3.2.0/rdd-programming-guide.html#transformations){:target="_blank"}  
 
-트랜스포메이션 연산은 보통 분산된 서버 각각에서 독립적으로 수행할 수 있는 연산입니다. 그리고 액션은 분산된 서버에 있는 데이터가 서로를 참조해야 하는 연산입니다. 그래서 액션은 서버 네트워크간의 이동이 발생하게 됩니다. 이런 현상을 셔플링(Shuffling)이라고 하고, 보통 네트워크에서 읽어오는 연산은 메모리에 비해 100만배 정도 느립니다.  
+트랜스포메이션 연산은 보통 분산된 서버 각각에서 독립적으로 수행할 수 있는 연산입니다. 그리고 액션은 분산된 서버에 있는 데이터가 서로를 참조해야 하는 연산입니다. 그래서 **액션은 서버 네트워크간의 이동이 발생**하게 됩니다. 이런 현상을 셔플링(Shuffling)이라고 하고, 보통 네트워크에서 읽어오는 연산은 메모리에 비해 100만배 정도 느립니다.  
 
 ![](../images/../../images/spark_4.png)  
 
@@ -98,13 +98,13 @@ Spark는 여러 모듈로 구성되어 있습니다. 크게 두 부분으로 나
 
 - 드라이버 프로그램의 역할은 다음과 같습니다.  
   - 클러스터 매니저(마스터 노드)와의 connection을 위한 스파크 컨텍스트 객체를 생성
-  - SparkContext를 이용해 RDD 생성
-  - SparkContext를 이용해 연산 정의
+  - `SparkContext`를 이용해 RDD 생성
+  - `SparkContext`를 이용해 연산 정의
   - 정의된 연산은 DAG 스케줄러에게 전달되고 스케줄러는 연산 실행 계획 수립 후 클러스터 매니저에 전달
 - 드라이버 프로그램은 어떤 노드에도 위치할 수 있습니다.
   - 클라이언트 모드: 클라이언트 노드로 따로 빼서 실행하는 경우, 클러스터 매니저가 있는 마스터 노드에서 실행하는 경우
   - 클러스터 모드: 워커 노드에서 실행하는 경우 (--deploy-mode cluster 옵션 필요)
-- SparkContext는 스파크 어플리케이션 코드를 작성하기 위한 환경, 도구를 제공해주는 클래스입니다
+- `SparkContext`는 스파크 어플리케이션 코드를 작성하기 위한 환경, 도구를 제공해주는 클래스입니다
 
 
 ## 클러스터 매니저  
@@ -151,6 +151,7 @@ Spark는 여러 모듈로 구성되어 있습니다. 크게 두 부분으로 나
 
 # 참고
 - [빅데이터 분석을 위한 스파크2 프로그래밍 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158391034&orderClick=LEa&Kc=){:target="_blank"}
+- [Spark By Example, 스파크 배우기 좋은 블로그](https://sparkbyexamples.com/){:target="_blank"}
 - [stackoverflow: Understand Spark: Cluster Manager, Master and Driver nodes (훌륭한 질문과 훌륭한 대답)](https://stackoverflow.com/questions/34722415/understand-spark-cluster-manager-master-and-driver-nodes){:target="_blank"}
 - [How Applications are Executed on a Spark Cluster](https://www.informit.com/articles/article.aspx?p=2928186){:target="_blank"}
 - [타다 테크 블로그, Hadoop대신 Spark를 선택한 이유](https://blog-tech.tadatada.com/2015-05-18-data-analysis-with-spark){:target="_blank"}

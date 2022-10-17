@@ -44,6 +44,8 @@ tags: Spark
 
 스파크 클러스터는 이와 같이 드라이버, 클러스터 매니저, 워커 노드의 조합으로 구성됩니다. 여기서 실행 모드, 클러스터 매니저의 종류에 따라 약간의 다른 점이 있지만 큰 맥락에서는 같습니다.  
 
+# 스파크의 디플로이 모드
+
 실행 모드의 경우 두 가지가 있습니다. 클러스터 모드, 클라이언트 모드입니다.
 
 ![](../images/../../images/spark_13.png)  
@@ -67,6 +69,139 @@ tags: Spark
 
 ![](../images/../../images/spark_14.png)  
 
+# 스파크 클러스터 시스템 구성
+
+## 서버 종류
+
+- 스파크 클러스터에는 크게 4가지 종류의 서버가 있다
+- 1. 개발 서버: 코드 작성 및 간단한 테스트 목적
+- 2. 애플리케이션 실행 서버: 애플리케이션을 배포 및 (실행)하는 서버 
+  - (`spark-submit.sh` 스크립트를 실행하는 서버)
+  - (`deploy-mode`가 `client`일 때 드라이버 프로그램이 실행되는 서버)
+- 3. 마스터 서버: 클러스터 매니저가 실행되는 서버
+- 4. 워커 서버: 실제 작업이 수행되는 서버
+  - (`deploy-mode`가 `cluster`인경우 마스터 또는 워커 서버에서 드라이버 프로그램이 실행)
+- (반드시 4개의 서버가 분리되야 하는 것은 아님. 다양한 형태로 합쳐질 수 있음)
+- (실제 데이터를 처리할 때는 드라이버 프로그램과 워커 노드 사이에서 실행)
+
+## 공통 적용
+
+- 우선 모든 서버에 공통적으로 적용할 내용이 있다
+- 네트워크 설정
+  - 서버간에 서로 호스트명으로 접근할 수 있어야함
+- `JAVA_HOME` 설정
+  - 모든 서버에 자바가 설치되어 있어야하고, 설치된 경로를 `JAVA_HOME` 환경변수로 설정해야함
+- `HADOOP_HOME` 설정
+  - 필수는 아니지만, 만약 HDFS가 없다면 외부 라이브러리를 쓰려면 모든 서버에 설치해야 한다
+  - 또한 출력 데이터를 저장하려면 HDFS와 같은 파일시스템을 갖춘 저장소가 필요하다
+  - (꼭 HDFS 쓸 필요는 없고, HDFS, S3, Cassandra 등을 쓸 수도 있다)
+
+## (스탠드얼론) 클러스터 매니저
+
+- 애플리케이션간의 CPU나 메모리, 디스크와 같은 컴퓨팅 자원을 관리해주는 역할을 담당
+- 워커 노드를 등록해야 한다 -> `$SPARK_HOME/conf` 에 `slaves` 라는 파일을 생성하고 워커 노드의 호스트명을 입력한다
+- 마스터 인스턴스와 워커 인스턴스를 실행한다
+  - `$SPARK_HOME/sbin/start-all.sh` 파일을 실행한다
+  - 만약 마스터와 워커를 따로 실행한다면
+    - `$SPARK_HOME/sbin/start-master.sh` 실행
+    - `$SPARK_HOME/sbin/start-slave.sh spark://<마스터 서버>:7077` 실행
+    - `--properties-file` 옵션으로 스파크 설정 파일의 위치를 지정. 디폴트는 `spark-defaults.conf` 파일
+
+## 애플리케이션 실행 서버
+
+- `spark-submit.sh` 을 실행하는 서버
+- (`deploy-mode`를 따로 설정하지 않으면 여기서 드라이버 프로그램이 실행된다)
+- 실무에서 스파크 애플리케이션을 배포할 때 가장 많이 쓰는 방법
+- 자바나 스칼라 언어로 애플리케이션 코드를 작성했으면 메이븐과 같은 도구로 빌드하면 외부 라이브러리를 따로 클래스패스에 정의하지 않고 jar 파일을 옵션으로 입력해주면 된다
+    ```sh
+    ./bin/spark-submit \
+    --master <master-url> \
+    --deploy-mode <deploy-mode> \
+    --conf <key<=<value> \
+    --driver-memory <value>g \
+    --executor-memory <value>g \
+    --executor-cores <number of cores>  \
+    --jars  <comma separated dependencies>
+    --class <main-class> \
+    <application-jar> \
+    [application-arguments]
+    ```
+- 파이썬 언어로 작성한 경우에는 다음과 같다
+    ```sh
+    ./bin/spark-submit \
+    --master <master-url> \
+    --deploy-mode <deploy-mode> \
+    --conf <key<=<value> \
+    --driver-memory <value>g \
+    --executor-memory <value>g \
+    --executor-cores <number of cores>  \
+    --py-files file1.py,file2.py,file3.zip, file4.egg \
+    wordByExample.py [application-arguments]
+    ```
+
+# 스파크 설정
+
+- 스파크는 상황에 따라 다양한 방법으로 애플리케이션을 실행할 수 있게 다양한 설정 항목을 제공
+- 설정값은 크게 **스파크 프로퍼티를 이용한 애플리케이션 단위의 설정**과, **환경 변수를 이용한 각 서버 단위 설정**으로 구분
+
+## 스파크 프로퍼티
+
+- 개별 애플리케이션 실행과 관련된 설정값들을 정의하는 곳
+- `SparkConf` 인스턴스에 설정을 하고, 스파크 컨텐스트(`sc`)에 전달해 줄 수 있다
+    ```python
+    config = SparkConf()
+    config.set("spark.sql.shuffle.partitions","300")
+    spark = SparkSession.builder.config(config)
+    ```
+- (`set(key, value)`, `setMaster`, `setAppName` 과 같은 메서드 제공)
+- (하지만 이 방법은 비즈니스 로직과 관련이 없는 익스큐터의 메모리 설정, 코어 수와 설정이 코드에 포함된다는 한계)
+- 동적으로 제공해주는 방법 `spark-submit.sh`에 1. 옵션을 준다, 2. `spark-defaults.conf` 파일에 설정
+
+```sh
+# --conf 옵션을 주는 방법
+./bin/spark2-submit \
+--master yarn \
+--deploy-mode cluster \
+--conf "spark.sql.shuffle.partitions=20000" \
+--conf "spark.executor.memoryOverhead=5244" \
+--conf "spark.memory.fraction=0.8" \
+--conf "spark.dynamicAllocation.maxExecutors=200" \
+--conf "spark.dynamicAllocation.enabled=true" \
+--conf "spark.executor.extraJavaOptions=-XX:+PrintGCDetails -XX:+PrintGCTimeStamps" \ 
+--files /path/log4j.properties,/path/file2.conf,/path/file3.json \
+--py-files file1.py,file2.py,file3.zip, file4.egg \
+wordByExample.py [application-arguments]
+```
+
+```conf
+# spark-defaults.conf 파일에 설정
+# 일단 --files에 안넘겨줘도 spark-submit.sh 스크립트가 알아서 conf 디렉토리에서 읽어가는거는 확실한데,
+# --files로 명시해 줄 수도 있나? 그러면 애플리케이션마다 설정값 파일 따로 관리해둘 수 있을텐데
+spark.master    spark://master:7077
+spark.eventLog.enabled    true
+spark.driver.memory    5g
+```
+
+## 환경 변수
+
+- 환경변수를 지정하는 가장 쉬운 방법은 `$SPARK_HOME/conf/spark-env.sh` 파일에 `export 변수=값` 형태로 환경변수를 설정하는 것. 주의할 점은 `spark-env.sh` 는 모든 서버에 동일하게 생성해둬야 한다.
+- 환경변수는 모든 애플리케이션 실행 스크립트에 적용되는 값
+- 클러스터 매니저의 종류에 따라 설정 방법이 달라질 수 있다
+- (YARN은 클러스터 모드로 실행할 경우 `spark-env.sh`가 아닌, `spark-defaults.conf` 파일의 `spark.yarn.appMasterEnv.[환경변수명]` 을 이용해 환경변수를 설정해야 한다)
+
+```sh
+JAVA_HOME: 자바 설치 경로
+PYSPARK_PYTHON: 파이썬 경로 (드라이버와 워커 모두에 적용)
+PYSPARK_DRIVER_PYTHON: 파이썬 경로 (드라이버에만 적용)
+SPARK_LOCAL_IP: 사용할 IP
+SPARK_PUBLIC_DNS: 애플리케이션 호스트명
+SPARK_CONF_DIR: spark-defaults.conf, spark-env.sh 파일 등 설정 파일이 놓인 디렉터리 위치
+```
+
 # 참고  
 - [빅데이터 분석을 위한 스파크2 프로그래밍 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791158391034&orderClick=LEa&Kc=){:target="_blank"}
 - [What is SparkContext? Explained](https://sparkbyexamples.com/spark/spark-sparkcontext/){:target="_blank"}
+- [SparkBy, Spark Submit Command Explained with Examples](https://sparkbyexamples.com/spark/spark-submit-command/){:target="_blank"}
+- [SparkBy, How to Spark Submit Python File?](https://sparkbyexamples.com/pyspark/spark-submit-python-file/){:target="_blank"}
+- [Spark 공식문서, Spark Configuration](https://spark.apache.org/docs/latest/configuration.html){:target="_blank"}
+- [Google Cloud, BigQuery 커넥터를 Spark와 함께 사용](https://cloud.google.com/dataproc/docs/tutorials/bigquery-connector-spark-example){:target="_blank"}
