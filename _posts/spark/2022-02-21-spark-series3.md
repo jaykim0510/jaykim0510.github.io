@@ -99,13 +99,23 @@ tags: Spark
 ## (스탠드얼론) 클러스터 매니저
 
 - 애플리케이션간의 CPU나 메모리, 디스크와 같은 컴퓨팅 자원을 관리해주는 역할을 담당
-- 워커 노드를 등록해야 한다 -> `$SPARK_HOME/conf` 에 `slaves` 라는 파일을 생성하고 워커 노드의 호스트명을 입력한다
+- 워커 노드를 등록해야 한다 -> `$SPARK_HOME/conf` 에 `workers` 라는 파일을 생성하고 워커 노드의 호스트명을 입력한다
 - 마스터 인스턴스와 워커 인스턴스를 실행한다
   - `$SPARK_HOME/sbin/start-all.sh` 파일을 실행한다
   - 만약 마스터와 워커를 따로 실행한다면
     - `$SPARK_HOME/sbin/start-master.sh` 실행
-    - `$SPARK_HOME/sbin/start-slave.sh spark://<마스터 서버>:7077` 실행
+    - `$SPARK_HOME/sbin/start-workers.sh spark://<마스터 서버>:7077` 실행
     - `--properties-file` 옵션으로 스파크 설정 파일의 위치를 지정. 디폴트는 `spark-defaults.conf` 파일
+      ```sh
+      # Example:
+      spark.master                     spark://master:7077
+      spark.eventLog.enabled           true
+      spark.eventLog.dir               hdfs://namenode:8021/directory
+      spark.serializer                 org.apache.spark.serializer.KryoSerializer
+      spark.driver.memory              5g
+      spark.executor.extraJavaOptions  -XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"
+      ```
+    - ssh 설정 문제로 마스터에서 워커로 ssh 접속이 안되는 경우, 워커 서버에서 직접 `$SPARK_HOME/sbin/start-worker.sh spark://<마스터 서버>:7077`를 실행해주면 된다
 
 ## 애플리케이션 실행 서버
 

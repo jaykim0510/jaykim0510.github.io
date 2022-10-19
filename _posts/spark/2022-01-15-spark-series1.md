@@ -22,6 +22,8 @@ __스파크는 클러스터 기반의 분산 처리 기능을 제공하는 오�
 
 ![](../images/../../images/spark_6.png)  
 
+## 스파크와 하둡의 차이
+
 지금부터는 스파크와 하둡을 비교하며 스파크의 특징에 어떤 것이 있는지 알아보겠습니다.  
 
 |__차이점__|__하둡__|__스파크__|
@@ -38,6 +40,30 @@ __스파크는 클러스터 기반의 분산 처리 기능을 제공하는 오�
 ![](../images/../../images/spark_1.png)
 
 맵리듀스는 분산된 환경에서 데이터가 처리되는데 필요한 많은 함수들을 제공해주지만, 현업에서 필요한 기능들을 모두 커버하기에는 무리가 있었습니다. 그래서 이러한 단점을 보완하기 위해 2009년 UC Berkeley 대학에서 연구를 시작해 2012년 미국 NSDI 학회에서 스파크의 핵심 개념인 __RDD(Resilient Distributed Dataset)__ 에 대한 논문을 발표하였습니다.  
+
+## 스파크의 장점
+
+Apache Spark is an Open source analytical processing engine for large scale powerful distributed data processing and machine learning applications. Spark is Originally developed at the University of California, Berkeley’s, and later donated to Apache Software Foundation. In February 2014, Spark became a Top-Level Apache Project and has been contributed by thousands of engineers and made Spark one of the most active open-source projects in Apache.  
+
+## 스파크의 특징
+- In-memory computation
+- Distributed processing using parallelize
+- Can be used with many cluster managers (Spark, Yarn, Mesos e.t.c)
+- Fault-tolerant
+- Immutable
+- Lazy evaluation
+- Cache & persistence
+- Inbuild-optimization when using DataFrames
+- Supports ANSI SQL
+
+## 스파크의 장점
+- Spark is a general-purpose, in-memory, fault-tolerant, distributed processing engine that allows you to process data efficiently in a distributed fashion.
+- Applications running on Spark are 100x faster than traditional systems.
+- You will get great benefits using Spark for data ingestion pipelines.
+- Using Spark we can process data from Hadoop HDFS, AWS S3, Databricks DBFS, Azure Blob Storage, and many file systems.
+- Spark also is used to process real-time data using Streaming and Kafka.
+- Using Spark Streaming you can also stream files from the file system and also stream from the socket.
+- Spark natively has machine learning and graph libraries.
 
 # RDD
 > RDD is a fault-tolerant collection of elements that can be operated on in parallel.  
