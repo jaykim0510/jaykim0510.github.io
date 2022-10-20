@@ -91,7 +91,11 @@ rdd2 = spark.sparkContext.parallelize([],10) #This creates 10 partitions
 - RDD Action operations return the values from an RDD to a driver program. In other words, any RDD function that returns non-RDD is considered as an action. 
 - ex. `count()`, `first()`, `max()`, `reduce()`, `take()`, `collect()`, `saveAsTextFile()`
 
+# 실습 자료
+
+- [**주피터 노트북 실습 자료**](https://github.com/kimziont/pyspark_train){:target="_blank"}
+
 # 참고
 
 - [Spark By Example, 스파크 배우기 좋은 블로그](https://sparkbyexamples.com/){:target="_blank"}
-- [PySpark 공식문서, Spark Session](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/spark_session.html)
+- [PySpark 공식문서, Spark Session](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/spark_session.html){:target="_blank"}

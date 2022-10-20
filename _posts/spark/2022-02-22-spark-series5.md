@@ -63,7 +63,7 @@ Dataframe은 SparkSession을 이용해 생성합니다. 생성 방법은 **파�
 
 **외부 데이터 소스**  
 
-파일이나 데이터베이스같은 외부 저장소의 데이터를 읽어와서 Dataframe을 생성할 때는 SparkSession의 `read()`메소드를 이용하면 됩니다. `read()`메소드는 DataFrameReader 인스턴스를 생성하고 이를 이용해 다양한 유형의 데이터를 읽고 Dataframe을 생성할 수 있습니다.  
+파일이나 데이터베이스같은 외부 저장소의 데이터를 읽어와서 Dataframe을 생성할 때는 SparkSession의 `read()`메서드를 이용하면 됩니다. `read()`메서드는 DataFrameReader 인스턴스를 생성하고 이를 이용해 다양한 유형의 데이터를 읽고 Dataframe을 생성할 수 있습니다.  
 
 ```py
 from pyspark.sql import SparkSession
@@ -76,13 +76,13 @@ df = spark.read.format("json").option("allowComments", "true").load("<spark_home
 전체적인 생성 과정은 크게 다음과 같습니다.  
 
 ```
-1. Spark Session의 read() 메소드를 호출해 DataFrameReader 인스턴스 생성
-2. format() 메소드로 데이터소스의 유형을 지정
-3. option() 메소드로 데이터소스 처리에 필요한 옵션을 지정
-4. load() 메소드로 대상 파일을 읽고 데이터프레임을 생성
+1. Spark Session의 read() 메서드를 호출해 DataFrameReader 인스턴스 생성
+2. format() 메서드로 데이터소스의 유형을 지정
+3. option() 메서드로 데이터소스 처리에 필요한 옵션을 지정
+4. load() 메서드로 대상 파일을 읽고 데이터프레임을 생성
 ```
 
-다음은 DataFrameReader가 제공하는 주요 메소드입니다.  
+다음은 DataFrameReader가 제공하는 주요 메서드입니다.  
 
 ```
 - format()

@@ -185,4 +185,4 @@ spark.sparkContext.stop()
 # 참고
 
 - [Spark By Example, 스파크 배우기 좋은 블로그](https://sparkbyexamples.com/){:target="_blank"}
-- [PySpark 공식문서, Spark Session](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/spark_session.html)
+- [PySpark 공식문서, Spark Session](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/spark_session.html){:target="_blank"}
