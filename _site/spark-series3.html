@@ -300,6 +300,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -435,6 +437,16 @@
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
+
+  
+
+  
 
   
 
@@ -610,15 +622,25 @@
 
 <ul>
   <li>애플리케이션간의 CPU나 메모리, 디스크와 같은 컴퓨팅 자원을 관리해주는 역할을 담당</li>
-  <li>워커 노드를 등록해야 한다 -&gt; <code class="language-plaintext highlighter-rouge">$SPARK_HOME/conf</code> 에 <code class="language-plaintext highlighter-rouge">slaves</code> 라는 파일을 생성하고 워커 노드의 호스트명을 입력한다</li>
+  <li>워커 노드를 등록해야 한다 -&gt; <code class="language-plaintext highlighter-rouge">$SPARK_HOME/conf</code> 에 <code class="language-plaintext highlighter-rouge">workers</code> 라는 파일을 생성하고 워커 노드의 호스트명을 입력한다</li>
   <li>마스터 인스턴스와 워커 인스턴스를 실행한다
     <ul>
       <li><code class="language-plaintext highlighter-rouge">$SPARK_HOME/sbin/start-all.sh</code> 파일을 실행한다</li>
       <li>만약 마스터와 워커를 따로 실행한다면
         <ul>
           <li><code class="language-plaintext highlighter-rouge">$SPARK_HOME/sbin/start-master.sh</code> 실행</li>
-          <li><code class="language-plaintext highlighter-rouge">$SPARK_HOME/sbin/start-slave.sh spark://&lt;마스터 서버&gt;:7077</code> 실행</li>
-          <li><code class="language-plaintext highlighter-rouge">--properties-file</code> 옵션으로 스파크 설정 파일의 위치를 지정. 디폴트는 <code class="language-plaintext highlighter-rouge">spark-defaults.conf</code> 파일</li>
+          <li><code class="language-plaintext highlighter-rouge">$SPARK_HOME/sbin/start-workers.sh spark://&lt;마스터 서버&gt;:7077</code> 실행</li>
+          <li><code class="language-plaintext highlighter-rouge">--properties-file</code> 옵션으로 스파크 설정 파일의 위치를 지정. 디폴트는 <code class="language-plaintext highlighter-rouge">spark-defaults.conf</code> 파일
+            <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Example:</span>
+spark.master                     spark://master:7077
+spark.eventLog.enabled           <span class="nb">true
+</span>spark.eventLog.dir               hdfs://namenode:8021/directory
+spark.serializer                 org.apache.spark.serializer.KryoSerializer
+spark.driver.memory              5g
+spark.executor.extraJavaOptions  <span class="nt">-XX</span>:+PrintGCDetails <span class="nt">-Dkey</span><span class="o">=</span>value <span class="nt">-Dnumbers</span><span class="o">=</span><span class="s2">"one two three"</span>
+</code></pre></div>            </div>
+          </li>
+          <li>ssh 설정 문제로 마스터에서 워커로 ssh 접속이 안되는 경우, 워커 서버에서 직접 <code class="language-plaintext highlighter-rouge">$SPARK_HOME/sbin/start-worker.sh spark://&lt;마스터 서버&gt;:7077</code>를 실행해주면 된다</li>
         </ul>
       </li>
     </ul>
@@ -762,8 +784,6 @@ wordByExample.py <span class="o">[</span>application-arguments]
 </code></pre></div></div>
 
 <div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># spark-defaults.conf 파일에 설정
-# 일단 --files에 안넘겨줘도 spark-submit.sh 스크립트가 알아서 conf 디렉토리에서 읽어가는거는 확실한데,
-# --files로 명시해 줄 수도 있나? 그러면 애플리케이션마다 설정값 파일 따로 관리해둘 수 있을텐데
 </span><span class="n">spark</span>.<span class="n">master</span>    <span class="n">spark</span>://<span class="n">master</span>:<span class="m">7077</span>
 <span class="n">spark</span>.<span class="n">eventLog</span>.<span class="n">enabled</span>    <span class="n">true</span>
 <span class="n">spark</span>.<span class="n">driver</span>.<span class="n">memory</span>    <span class="m">5</span><span class="n">g</span>
@@ -1054,6 +1074,16 @@ SPARK_CONF_DIR: spark-defaults.conf, spark-env.sh 파일 등 설정 파일이 �
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
+
+  
+
+  
 
   
 

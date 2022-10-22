@@ -166,12 +166,17 @@ df = spark.createDataFrame(data)
 
 (왜 트랜스포메이션이지?)
 - [Spark 공식문서 참고](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/functions.html){:target="_blank"}
-- max(), mean(), sum()
-- count(), countDistince()
-- explode()
+
+
 - when()
 - col()
 - lit()
+- expr()
+- split()
+- concat_ws()
+- explode()
+- max(), mean(), sum()
+- count(), countDistince()
 
 
 ## 함수가 아닌 SQL문

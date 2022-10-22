@@ -1,0 +1,248 @@
+I"�l<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#elasticsearch에서-제공하는-주요-api" id="markdown-toc-elasticsearch에서-제공하는-주요-api">Elasticsearch에서 제공하는 주요 API</a>    <ul>
+      <li><a href="#인덱스-관련-api" id="markdown-toc-인덱스-관련-api">인덱스 관련 API</a></li>
+      <li><a href="#문서-관련-api" id="markdown-toc-문서-관련-api">문서 관련 API</a></li>
+      <li><a href="#검색-api" id="markdown-toc-검색-api">검색 API</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="elasticsearch에서-제공하는-주요-api">Elasticsearch에서 제공하는 주요 API</h1>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
+
+<span class="n">ES_URL</span> <span class="o">=</span> <span class="s">'localhost:9200'</span>
+<span class="n">ES_INDEX</span> <span class="o">=</span> <span class="s">'first_index'</span>
+<span class="n">DOC_TYPE</span> <span class="o">=</span> <span class="s">'_doc'</span>
+
+<span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">(</span><span class="n">ES_URL</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="인덱스-관련-api">인덱스 관련 API</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 인덱스 메타데이터, 매핑 정의
+</span><span class="n">index_settings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'settings'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'number_of_shards'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s">'number_of_replicas'</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="s">'mappings'</span><span class="p">:</span> <span class="p">{</span> 
+        <span class="s">'properties'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'name'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'age'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'long'</span><span class="p">},</span>
+            <span class="s">'gender'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'company'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'email'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'address'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+            <span class="s">'phone'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">}</span>
+        <span class="p">}</span>
+        
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># 인덱스 생성
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="o">**</span><span class="n">index_settings</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s">'shards_acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s">'index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">}</span>
+
+<span class="c1"># 인덱스 메타 데이터 확인
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">get_settings</span><span class="p">()</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'first_index'</span><span class="p">:</span> <span class="p">{</span><span class="s">'settings'</span><span class="p">:</span> <span class="p">{</span><span class="s">'index'</span><span class="p">:</span> <span class="p">{</span><span class="s">'routing'</span><span class="p">:</span> <span class="p">{</span><span class="s">'allocation'</span><span class="p">:</span> <span class="p">{</span><span class="s">'include'</span><span class="p">:</span> <span class="p">{</span><span class="s">'_tier_preference'</span><span class="p">:</span> <span class="s">'data_content'</span><span class="p">}}},</span>
+    <span class="s">'number_of_shards'</span><span class="p">:</span> <span class="s">'2'</span><span class="p">,</span>
+    <span class="s">'provided_name'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+    <span class="s">'creation_date'</span><span class="p">:</span> <span class="s">'1641728644368'</span><span class="p">,</span>
+    <span class="s">'number_of_replicas'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+    <span class="s">'uuid'</span><span class="p">:</span> <span class="s">'3QtIZXthRcGtCdV40WmUCg'</span><span class="p">,</span>
+    <span class="s">'version'</span><span class="p">:</span> <span class="p">{</span><span class="s">'created'</span><span class="p">:</span> <span class="s">'7160299'</span><span class="p">}}}}}</span>
+
+<span class="c1"># 인덱스 매핑 확인
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">get_mapping</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'first_index'</span><span class="p">:</span> <span class="p">{</span><span class="s">'mappings'</span><span class="p">:</span> <span class="p">{</span><span class="s">'properties'</span><span class="p">:</span> <span class="p">{</span><span class="s">'address'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'age'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'long'</span><span class="p">},</span>
+    <span class="s">'company'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'gender'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">},</span>
+    <span class="s">'phone'</span><span class="p">:</span> <span class="p">{</span><span class="s">'type'</span><span class="p">:</span> <span class="s">'text'</span><span class="p">}}}}}</span>
+
+<span class="c1"># 인덱스 삭제
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+
+<span class="c1"># 인덱스 존재 유무
+</span><span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="bp">True</span>
+
+<span class="c1"># 매핑 업데이트
+</span><span class="n">new_field</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">"properties"</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">"school"</span> <span class="p">:</span> <span class="p">{</span>
+      <span class="s">"type"</span><span class="p">:</span> <span class="s">"text"</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">indices</span><span class="p">.</span><span class="n">put_mapping</span><span class="p">(</span><span class="n">new_field</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'acknowledged'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="문서-관련-api">문서 관련 API</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 문서 삽입
+</span><span class="n">unit_document</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jay Kim'</span><span class="p">,</span>
+    <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+    <span class="s">'gender'</span><span class="p">:</span> <span class="s">'male'</span><span class="p">,</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="s">'abc@gmail.com'</span><span class="p">,</span>
+    <span class="s">'address'</span><span class="p">:</span> <span class="s">'부산 해운대 앞바다'</span><span class="p">,</span>
+    <span class="s">'phone'</span><span class="p">:</span> <span class="s">'010-1234-5678'</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="n">doc_type</span><span class="o">=</span><span class="n">DOC_TYPE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">document</span><span class="o">=</span><span class="n">unit_document</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'created'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="c1"># 문서 정보 확인
+</span><span class="n">es</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="n">doc_type</span><span class="o">=</span><span class="n">DOC_TYPE</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">-----------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'found'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+ <span class="s">'_source'</span><span class="p">:</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'Jay Kim'</span><span class="p">,</span>
+  <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+  <span class="s">'gender'</span><span class="p">:</span> <span class="s">'male'</span><span class="p">,</span>
+  <span class="s">'email'</span><span class="p">:</span> <span class="s">'abc@gmail.com'</span><span class="p">,</span>
+  <span class="s">'address'</span><span class="p">:</span> <span class="s">'부산 해운대 앞바다'</span><span class="p">,</span>
+  <span class="s">'phone'</span><span class="p">:</span> <span class="s">'010-1234-5678'</span><span class="p">}}</span>
+
+<span class="c1"># 문서를 가지는 인덱스 생성 (이미 있으면 삽입)
+</span><span class="n">unit_document</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jae yeong Kim'</span><span class="p">,</span>
+    <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+    <span class="s">'gender'</span><span class="p">:</span> <span class="s">'male'</span><span class="p">,</span>
+    <span class="s">'email'</span><span class="p">:</span> <span class="s">'abc@gmail.com'</span><span class="p">,</span>
+    <span class="s">'address'</span><span class="p">:</span> <span class="s">'경북 구미 형곡동'</span><span class="p">,</span>
+    <span class="s">'phone'</span><span class="p">:</span> <span class="s">'010-3321-5668'</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">unit_document</span><span class="p">)</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'2'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'created'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="c1"># 문서 삭제
+</span><span class="n">es</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'2'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'deleted'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="c1"># query로 삭제
+</span><span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'query'</span><span class="p">:{</span>
+        <span class="s">'match_all'</span><span class="p">:{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">delete_by_query</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+<span class="o">----------------------------------------------</span>
+<span class="p">{</span><span class="s">'took'</span><span class="p">:</span> <span class="mi">23</span><span class="p">,</span>
+ <span class="s">'timed_out'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+ <span class="s">'total'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'deleted'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'batches'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+ <span class="s">'version_conflicts'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'noops'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'retries'</span><span class="p">:</span> <span class="p">{</span><span class="s">'bulk'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'search'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'throttled_millis'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'requests_per_second'</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>
+ <span class="s">'throttled_until_millis'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+ <span class="s">'failures'</span><span class="p">:</span> <span class="p">[]}</span>
+
+<span class="c1"># 문서 수정
+# ""doc"" is essentially Elasticsearch's ""_source"" field
+</span>
+<span class="n">update_document</span> <span class="o">=</span> <span class="p">{</span><span class="s">'doc'</span><span class="p">:</span> <span class="p">{</span>
+         <span class="s">'address'</span><span class="p">:</span> <span class="s">'경북 구미 송정동'</span><span class="p">,</span>
+         <span class="s">'age'</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span>
+         <span class="s">'email'</span><span class="p">:</span> <span class="s">'ziont0510@gmail.com'</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">update_document</span><span class="p">)</span>
+<span class="o">------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'_index'</span><span class="p">:</span> <span class="s">'first_index'</span><span class="p">,</span>
+ <span class="s">'_type'</span><span class="p">:</span> <span class="s">'_doc'</span><span class="p">,</span>
+ <span class="s">'_id'</span><span class="p">:</span> <span class="s">'1'</span><span class="p">,</span>
+ <span class="s">'_version'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'result'</span><span class="p">:</span> <span class="s">'updated'</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'_seq_no'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+ <span class="s">'_primary_term'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="검색-api">검색 API</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 매칭되는 문서 개수
+</span><span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'query'</span><span class="p">:{</span>
+        <span class="s">'match_all'</span><span class="p">:{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">es</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">---------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'count'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'skipped'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">}}</span>
+
+<span class="c1"># 문서 검색
+</span><span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'size'</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span>
+    <span class="s">'query'</span><span class="p">:{</span>
+        <span class="s">'match_all'</span><span class="p">:{}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+    
+<span class="n">es</span><span class="p">.</span><span class="n">search</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">ES_INDEX</span><span class="p">)</span>
+<span class="o">-------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'took'</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+ <span class="s">'timed_out'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+ <span class="s">'_shards'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'successful'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">'skipped'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'failed'</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+ <span class="s">'hits'</span><span class="p">:</span> <span class="p">{</span><span class="s">'total'</span><span class="p">:</span> <span class="p">{</span><span class="s">'value'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">'relation'</span><span class="p">:</span> <span class="s">'eq'</span><span class="p">},</span>
+  <span class="s">'max_score'</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+  <span class="s">'hits'</span><span class="p">:</span> <span class="p">[]}}</span>
+</code></pre></div></div>
+
+:ET
