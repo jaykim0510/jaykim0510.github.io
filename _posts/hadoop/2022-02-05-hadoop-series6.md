@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Hadoop Series [Part5]: Hadoop ZooKeeper'
+title: 'Hadoop Series [Part3]: Hadoop MapReduce'
 description: 
 date: 2022-02-05 15:01:35 +0300
 image: '/images/hadoop_logo.png'

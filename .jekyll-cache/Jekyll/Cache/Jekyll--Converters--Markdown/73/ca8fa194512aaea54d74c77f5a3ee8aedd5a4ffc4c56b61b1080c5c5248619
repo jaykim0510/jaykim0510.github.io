@@ -1,0 +1,189 @@
+I"�0<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커-컴포즈" id="markdown-toc-도커-컴포즈">도커 컴포즈</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>java8 설치</li>
+  <li>hadoop 3.2.4 설치</li>
+  <li>JAVA_HOME, HADOOP_HOME, PATH 환경변수 설정
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">export JAVA_HOME=/opt/jdk</code></li>
+      <li><code class="language-plaintext highlighter-rouge">export HADOOP_HOME=/opt/hadoop</code></li>
+      <li><code class="language-plaintext highlighter-rouge">export PATH=${PATH}:/${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin</code></li>
+    </ul>
+  </li>
+  <li>노드 종류 상관 없이 공통 항목 설정후 ziontkim0510/hadoop3.2.4:1.0 이미지로 빌드
+    <ul>
+      <li>노드에서 저장할 데이터 디렉터리 생성
+        <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">HADOOP_HOME</span><span class="k">}</span>/data/hdfs/namenode
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">HADOOP_HOME</span><span class="k">}</span>/data/hdfs/datanode
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">HADOOP_HOME</span><span class="k">}</span>/data/hdfs/secondarynode
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">HADOOP_HOME</span><span class="k">}</span>/data/yarn/nm-local-dir
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">HADOOP_HOME</span><span class="k">}</span>/data/yarn/system/rmstore
+</code></pre></div>        </div>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">${HADOOP_HOME}/etc/hadoop/hadoop-env.sh</code> 파일
+        <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span>/opt/jdk
+
+<span class="nb">export </span><span class="nv">HDFS_NAMENODE_USER</span><span class="o">=</span><span class="s2">"root"</span>
+<span class="nb">export </span><span class="nv">HDFS_DATANODE_USER</span><span class="o">=</span><span class="s2">"root"</span>
+<span class="nb">export </span><span class="nv">HDFS_SECONDARYNAMENODE_USER</span><span class="o">=</span><span class="s2">"root"</span>
+<span class="nb">export </span><span class="nv">YARN_RESOURCEMANAGER_USER</span><span class="o">=</span><span class="s2">"root"</span>
+<span class="nb">export </span><span class="nv">YARN_NODEMANAGER_USER</span><span class="o">=</span><span class="s2">"root"</span>
+
+<span class="nb">export </span><span class="nv">HADOOP_LOG_DIR</span><span class="o">=</span>/var/log/hadoop
+</code></pre></div>        </div>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">${HADOOP_HOME}/etc/hadoop/core-site.xml</code> 파일
+        <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;</span>
+
+<span class="nt">&lt;configuration&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>fs.defaultFS<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>hdfs://hdfs-name-node:8020<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></div>        </div>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">${HADOOP_HOME}/etc/hadoop/hdfs-site.xml</code> 파일
+        <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;</span>
+        
+<span class="nt">&lt;configuration&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>dfs.namenode.name.dir<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>file:/opt/hadoop/data/hdfs/namenode<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>dfs.datanode.data.dir<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>file:/opt/hadoop/data/hdfs/datanode<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>dfs.namenode.checkpoint.dir<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>file:/opt/hadoop/data/hdfs/secondarynode<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+</code></pre></div>        </div>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">${HADOOP_HOME}/etc/hadoop/yarn-site.xml</code> 파일
+        <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+
+<span class="nt">&lt;configuration&gt;</span>
+
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>mapreduce_shuffle<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>yarn.nodemanager.local-dirs<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>/opt/hadoop/data/yarn/nm-local-dir<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.fs.state-store.uri<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>/opt/hadoop/data/yarn/system/rmstore<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.hostname<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>hdfs-name-node<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;property&gt;</span>
+    <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.address<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;value&gt;</span>hdfs-name-node:8032<span class="nt">&lt;/value&gt;</span>
+<span class="nt">&lt;/property&gt;</span>
+<span class="nt">&lt;/configuration&gt;</span>
+
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>네임노드, 세컨더리 노드 설정후 ziontkim0510/hadoop-name-3.2.4:1.0, ziontkim0510/hadoop-secondary-3.2.4:1.0 이미지로 빌드
+    <ul>
+      <li>HDFS 파일 시스템 포맷: 네임 노드에서 <code class="language-plaintext highlighter-rouge">hdfs namenode -format</code> 명령어 실행</li>
+      <li><code class="language-plaintext highlighter-rouge">${HADOOP_HOME}/etc/hadoop/workers</code> 파일에 데이터 노드 추가
+        <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># workers</span>
+hdfs-data-node-1
+hdfs-data-node-2
+</code></pre></div>        </div>
+      </li>
+      <li>ssh 키 생성 후 설정: <code class="language-plaintext highlighter-rouge">ssh-keygen -t rsa</code></li>
+    </ul>
+  </li>
+  <li>데이터 노드 설정후 ziontkim0510/hadoop-data-3.2.4:1.0 이미지로 빌드
+    <ul>
+      <li>네임노드에서 생성한 퍼블릭 키 복사 붙여넣기</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="도커-컴포즈">도커 컴포즈</h1>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.2'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">hdfs-name-node</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">ziontkim0510/hadoop-name-3.2.4:1.0</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">hdfs-name-node</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">hdfs-name-node</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">9870:9870</span>
+    <span class="na">command</span><span class="pi">:</span> 
+      <span class="pi">-</span> <span class="s">bash</span>
+      <span class="pi">-</span> <span class="s">-c</span> 
+      <span class="pi">-</span> <span class="pi">|</span>
+        <span class="s">/etc/init.d/ssh restart &amp;</span>
+        <span class="s">./${HADOOP_HOME}/sbin/start-dfs.sh &amp;</span>
+        <span class="s">./${HADOOP_HOME}/sbin/start-yarn.sh &amp;</span>
+        <span class="s">sleep infinity</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">hdfs-data-node-1</span>
+      <span class="pi">-</span> <span class="s">hdfs-data-node-2</span>
+
+  <span class="na">hdfs-secondary-node</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">ziontkim0510/hadoop-secondary-3.2.4:1.0</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">hdfs-secondary-node</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">hdfs-secondary-node</span>
+    <span class="na">tty</span><span class="pi">:</span> <span class="no">true</span>
+
+  <span class="na">hdfs-data-node-1</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">ziontkim0510/hadoop-data-3.2.4:1.0</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">hdfs-data-node-1</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">hdfs-data-node-1</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">9860:9864</span>
+    <span class="na">command</span><span class="pi">:</span> 
+      <span class="pi">-</span> <span class="s">bash</span>
+      <span class="pi">-</span> <span class="s">-c</span> 
+      <span class="pi">-</span> <span class="pi">|</span>
+        <span class="s">/etc/init.d/ssh restart &amp;</span>
+        <span class="s">sleep infinity</span>
+
+  <span class="na">hdfs-data-node-2</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">ziontkim0510/hadoop-data-3.2.4:1.0</span>
+    <span class="na">hostname</span><span class="pi">:</span> <span class="s">hdfs-data-node-2</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">hdfs-data-node-2</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">9861:9864</span>
+    <span class="na">command</span><span class="pi">:</span> 
+      <span class="pi">-</span> <span class="s">bash</span>
+      <span class="pi">-</span> <span class="s">-c</span> 
+      <span class="pi">-</span> <span class="pi">|</span>
+        <span class="s">/etc/init.d/ssh restart &amp;</span>
+        <span class="s">sleep infinity</span>
+</code></pre></div></div>
+
+<p><img src="/images/hdfs_10.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://truman.tistory.com/207#recentComments" target="_blank">Truman Show, 리눅스(Linux) - 하둡(Hadoop) 설치 및 환경 설정</a></li>
+  <li><a href="https://hoing.io/archives/22174#3" target="_blank">hoing, 하둡 프로그래밍(3) – 빅데이터 – 하둡 설치</a></li>
+  <li><a href="https://velog.io/@hanovator/Hadoop-%EC%84%A4%EC%B9%98" target="_blank">hanovator, Hadoop 설치</a></li>
+</ul>
+:ET

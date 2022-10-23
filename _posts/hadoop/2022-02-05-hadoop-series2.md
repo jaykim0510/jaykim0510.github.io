@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Hadoop Series [Part2]: Hadoop HDFS'
+title: 'Hadoop Series [Part2]: Hadoop HDFS(1) 소개'
 description: 
 date: 2022-02-05 15:01:35 +0300
 image: '/images/hadoop_logo.png'
