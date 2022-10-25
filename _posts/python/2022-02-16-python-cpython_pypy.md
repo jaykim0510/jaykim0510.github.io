@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Python Advanced Series [Part1]: 파이썬 코드 동작 원리(Feat.CPython, PyPy)'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+description: 
 date:   2022-02-16 15:01:35 +0300
 image:  '/images/python_advanced_logo.png'
 logo_image: '/images/python_advanced_logo.png'

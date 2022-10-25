@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Python Advanced Series [Part3]: 파이썬을 위한 테스트 도구(feat. pytest)'
-description: 메모리를 효율적으로 사용하는 프로그램/어플리케이션을 만들기 위해서는 메모리 할당에 대해 이해해야합니다.
+description: 
 date:   2022-02-16 15:01:35 +0300
 image:  '/images/python_advanced_logo.png'
 logo_image: '/images/python_advanced_logo.png'

@@ -1,0 +1,178 @@
+I""<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#파이썬-버전-우선순위" id="markdown-toc-파이썬-버전-우선순위">파이썬 버전 우선순위</a></li>
+  <li><a href="#파이썬-가상환경-만들기" id="markdown-toc-파이썬-가상환경-만들기">파이썬 가상환경 만들기</a>    <ul>
+      <li><a href="#프로젝트별로-만드는-경우" id="markdown-toc-프로젝트별로-만드는-경우">프로젝트별로 만드는 경우</a></li>
+      <li><a href="#용도별로-만들고-싶은-경우" id="markdown-toc-용도별로-만들고-싶은-경우">용도별로 만들고 싶은 경우</a></li>
+    </ul>
+  </li>
+  <li><a href="#명령어-모음" id="markdown-toc-명령어-모음">명령어 모음</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>pyenv 와 venv를 활용해 파이썬 가상환경 관리하기</li>
+</ul>
+
+<h1 id="파이썬-버전-우선순위">파이썬 버전 우선순위</h1>
+
+<p><img src="/images/py_vir_0.png" alt="" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- pyenv local: 디렉터리 단위로 지정되는 파이썬 버전
+- pyenv global: 디렉터리에 지정된 local 버전이 없는 경우 지정되는 파이썬 버전
+- system python: venv 도구가 관리하지 않는 로컬에 설치된 파이썬 버전
+</code></pre></div></div>
+
+<ul>
+  <li>pyenv는 ~/.pyenv 디렉터리에 버전별로 파이썬 패키지를 관리하고 있다</li>
+</ul>
+
+<p><img src="/images/py_vir_1.png" alt="" /></p>
+
+<ul>
+  <li>version 파일은 global 버전을 나타낸다</li>
+</ul>
+
+<p><img src="/images/py_vir_2.png" alt="" /></p>
+
+<ul>
+  <li>versions 디렉터리에 버전별로 파이썬 패키지가 저장돼있다</li>
+</ul>
+
+<p><img src="/images/py_vir_3.png" alt="" /></p>
+
+<h1 id="파이썬-가상환경-만들기">파이썬 가상환경 만들기</h1>
+
+<ul>
+  <li>프로젝트별로 만들고 싶은 경우
+    <ul>
+      <li>(ex. 이미지 분류 프로젝트, 음성 인식 프로젝트 등)</li>
+      <li>프로젝트 디렉토리마다 가상환경을 만든다</li>
+    </ul>
+  </li>
+  <li>용도별로 만들고 싶은 경우
+    <ul>
+      <li>(ex. 딥러닝 목적, 데이터 분석 목적, 웹개발 목적 등)</li>
+      <li>별도의 디렉터리에 가상환경들을 모아둔다
+<img src="/images/pyenv_5.png" alt="" /></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="프로젝트별로-만드는-경우">프로젝트별로 만드는 경우</h2>
+
+<ul>
+  <li>프로젝트 디렉터리를 만든다</li>
+  <li>현재 global은 3.8.13 이고 해당 디렉터리에 local은 아직 지정되지 않았다
+<img src="/images/py_vir_4.png" alt="" /></li>
+  <li>해당 프로젝트에서 파이썬 버전으로 3.9.1을 쓴다고 해보자
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pyenv <span class="nb">install </span>3.9.1
+</code></pre></div>    </div>
+  </li>
+  <li>해당 프로젝트 폴더에서 local 로 3.9.1을 지정하자
+<img src="/images/py_vir_6.png" alt="" /></li>
+  <li>이제 파이썬 3.9.1 버전을 바탕으로 가상환경을 하나 만들자</li>
+  <li>(보통 프로젝트별로 가상환경을 만들 때는 가상 환경 이름을 .venv로 만드는게 관례다)
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 -m venv &lt;원하는 가상환경 이름&gt;
+</code></pre></div>    </div>
+    <p><img src="/images/py_vir_7.png" alt="" /></p>
+  </li>
+  <li>가상환경을 사용하려면 활성화 해야 한다
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> ./.venv/bin/activate
+</code></pre></div>    </div>
+    <p><img src="/images/py_vir_8.png" alt="" /></p>
+  </li>
+  <li>가상환경으로 접속됐는지 확인해보자 (activate된 경우 해당 가상환경 폴더 출력. deactivate된 경우 출력 안함)
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="nv">$VIRTUAL_ENV</span>
+</code></pre></div>    </div>
+    <p><img src="/images/py_vir_9.png" alt="" /></p>
+  </li>
+  <li>이제 가상환경에 원하는 라이브러리를 설치해보자
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip3 <span class="nb">install </span>pandas
+</code></pre></div>    </div>
+    <p><img src="/images/py_vir_10.png" alt="" /></p>
+  </li>
+  <li>가상환경을 비활성화 시키면 가상환경에서 설치했던 pandas 라이브러리가 다시 안보인다
+<img src="/images/py_vir_11.png" alt="" /></li>
+</ul>
+
+<h2 id="용도별로-만들고-싶은-경우">용도별로 만들고 싶은 경우</h2>
+
+<ul>
+  <li>프로젝트별로 만드는 방법과 똑같다</li>
+  <li>차이는 용도별로 만들어진 가상환경은 여러 프로젝트에서 쓰일 것이므로, 조금 더 범용적인 위치에 설치해두는 것이 좋다</li>
+  <li>나는 홈 디렉터리(~)에 가상환경들을 위한 virtual_environments 디렉터리에 가상환경들을 만들어 뒀다</li>
+  <li>데이터 분석을 위한 용도로 가상환경을 한 번 만들어보자</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> ~/virtual_environments
+<span class="nb">cd</span> ~/virtual_environments
+
+<span class="nb">mkdir </span>data-analysis
+<span class="nb">cd </span>data-analysis
+
+pyenv <span class="nb">local </span>3.8.13
+python3 <span class="nt">-m</span> venv data_analysis_3.8 <span class="c"># 3.8 버전의 데이터 분석을 위한 가상 환경(data_analysis_3.8) 생성</span>
+
+<span class="nb">source</span> ~/virtual_environments/data_analysis/data_analysis_3.8/bin/activate
+
+pip3 <span class="nb">install </span>scikit-learn
+pip3 <span class="nb">install </span>matplotlib
+pip3 <span class="nb">install </span>pandas
+</code></pre></div></div>
+
+<p><img src="/images/py_vir_12.png" alt="" /></p>
+
+<h1 id="명령어-모음">명령어 모음</h1>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># pyenv를 이용해 설치한 파이썬 버전 목록</span>
+pyenv versions
+
+<span class="c"># pyenv로 설치 가능한 파이썬 버전 목록</span>
+pyenv <span class="nb">install</span> <span class="nt">--list</span>
+
+<span class="c"># 원하는 버전의 파이썬 설치/삭제</span>
+pyenv <span class="nb">install </span>3.8.13
+pyenv uninstall 3.8.13
+
+<span class="c"># global 또는 local 버전 확인</span>
+pyenv global
+pyenv <span class="nb">local</span>
+
+<span class="c"># global 또는 local 버전 설정</span>
+pyenv global 3.8.13
+pyenv <span class="nb">local </span>3.8.13
+
+<span class="c"># local 버전 해제</span>
+pyenv <span class="nb">local</span> <span class="nt">--unset</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 가상환경 생성</span>
+python3 <span class="nt">-m</span> venv &lt;원하는 가상환경 이름&gt;
+
+<span class="c"># 가상환경 활성화</span>
+<span class="nb">source</span> &lt;원하는 가상환경 디렉터리 위치&gt;/bin/activate
+
+<span class="c"># 가상환경 비활성화</span>
+deactivate
+
+<span class="c"># 가상환경 확인</span>
+<span class="nb">echo</span> <span class="nv">$PYENV_VERSION</span>
+
+<span class="c"># 가상환경 삭제</span>
+<span class="nb">rm</span> <span class="nt">-rf</span> &lt;삭제하고 싶은 가상환경 디렉터리 위치&gt;
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://ssamko.tistory.com/59" target="_blank">SSAMKO의 개발 이야기, [python] pyenv로 원하는 파이썬 버전 설치하기</a></li>
+  <li><a href="https://windybay.net/post/13/" target="_blank">WINDY BAY, 파이썬 가상환경이 필요한 이유와 사용법 (venv, virtualenv)</a></li>
+  <li><a href="https://hleecaster.com/python-venv/" target="_blank">아무튼 워라벨, 파이썬 가상환경 venv 사용하기 (패키지 쉽게 관리하기)</a></li>
+  <li><a href="https://donghh0221.tistory.com/11" target="_blank">donghh0221, [파이썬] venv 가상환경 관리법(파이썬 버젼 다운그레이드하기)</a></li>
+  <li><a href="https://wooriel.tistory.com/54" target="_blank">공순이의 블로그, pyenv를 이용한 여러 개의 Python 버전 관리하기 + 가상 환경 만들기(ubuntu)</a></li>
+</ul>
+:ET

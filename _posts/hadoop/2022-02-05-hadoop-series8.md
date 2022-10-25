@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Hadoop Series [Part4]: Hadoop Hive'
+title: 'Hadoop Series [Part4]: Hadoop Hive(1) 소개와 설치'
 description: 
 date: 2022-02-05 15:01:35 +0300
 image: '/images/hadoop_logo.png'
@@ -34,6 +34,12 @@ tags: Hadoop
 # 하이브 설치
 
 일반적으로 하이브는 사용자의 워크스테이션에서 실행되고(사용자 워크스테이션과 하둡 클러스터는 네트워크로 연결되어 있어야 함), 작성된 SQL 쿼리는 일련의 맵리듀스 잡으로 변환되어 하둡 클러스터에서 구동된다. 하이브는 HDFS에 저장된 데이터에 스키마를 입히는 방식으로 데이터를 테이블로 구조화시킨다. 테이블 스키마와 같은 메타데이터는 메타스토어라 불리는 데이터베이스에 저장된다. 
+
+```sh
+# java.lang.NoSuchMethodError: com.google.common.base.Preconditions.checkArgument 에러가 발생하는 경우
+rm /opt/shared/apache-hive-3.1.2-bin/lib/guava-19.0.jar
+cp /opt/shared/hadoop-3.2.1/share/hadoop/hdfs/lib/guava-27.0-jre.jar /opt/shared/apache-hive-3.1.2-bin/lib/
+```
 
 # 하이브 원격 하둡 클러스터와 연결
 
@@ -78,4 +84,5 @@ hive -e 'SELECT * FROM dummy'
 
 # 참고
 
-- [ETL 성능 향상을 위한 몇 가지 팁들](https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html)
+- [Truman show, 인공지능/기타하둡(hadoop) - 하이브(Hive) 설치](https://truman.tistory.com/209){:target="_blank"}
+- [Hive, java.lang.NoSuchMethodError: com.google.common.base.Preconditions.checkArgument](https://issues.apache.org/jira/browse/HIVE-22915)
