@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Elastic Series [Part0]: Elastic 생태계'
+title:  'Elastic Series [Part1]: Elastic 생태계'
 description: 
 date:   2022-01-02 15:01:35 +0300
 image:  '/images/elastic_1.png'
