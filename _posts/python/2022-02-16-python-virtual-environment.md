@@ -105,6 +105,16 @@ python3 -m venv data_analysis_3.8 # 3.8 버전의 데이터 분석을 위한 가
 
 source ~/virtual_environments/data_analysis/data_analysis_3.8/bin/activate
 
+(
+# 이렇게 3.8 버전을 만들고 pyenv local 3.8.13 이렇게 하는게 더 정확한 방법인 것 같음
+mkdir 3.8
+cd 3.8
+pyenv local 3.8.13
+python3 -m venv . # 3.8 버전의 데이터 분석을 위한 가상 환경(3.8) 생성
+
+source ~/virtual_environments/data_analysis/3.8/bin/activate
+)
+
 pip3 install scikit-learn
 pip3 install matplotlib
 pip3 install pandas

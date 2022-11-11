@@ -1,0 +1,190 @@
+I"�4<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#모델-정의" id="markdown-toc-모델-정의">모델 정의</a>    <ul>
+      <li><a href="#모델-필드" id="markdown-toc-모델-필드">모델 필드</a></li>
+      <li><a href="#필드-옵션" id="markdown-toc-필드-옵션">필드 옵션</a></li>
+    </ul>
+  </li>
+  <li><a href="#crud" id="markdown-toc-crud">CRUD</a>    <ul>
+      <li><a href="#create" id="markdown-toc-create">Create</a></li>
+      <li><a href="#read" id="markdown-toc-read">Read</a></li>
+      <li><a href="#update" id="markdown-toc-update">Update</a></li>
+      <li><a href="#delete" id="markdown-toc-delete">Delete</a></li>
+    </ul>
+  </li>
+  <li><a href="#모델-api-정리" id="markdown-toc-모델-api-정리">모델 API 정리</a>    <ul>
+      <li><a href="#queryset을-반환하는-api-여러개의-데이터" id="markdown-toc-queryset을-반환하는-api-여러개의-데이터">Queryset을 반환하는 API (여러개의 데이터)</a></li>
+      <li><a href="#하나의-데이터-객체를-반환하는-apipermalink" id="markdown-toc-하나의-데이터-객체를-반환하는-apipermalink">하나의 데이터 객체를 반환하는 APIPermalink</a></li>
+      <li><a href="#그-외-api" id="markdown-toc-그-외-api">그 외 API</a></li>
+    </ul>
+  </li>
+  <li><a href="#관리자-도구admin-사용하기" id="markdown-toc-관리자-도구admin-사용하기">관리자 도구(Admin) 사용하기</a></li>
+  <li><a href="#view에서-모델-사용하기" id="markdown-toc-view에서-모델-사용하기">View에서 모델 사용하기</a></li>
+  <li><a href="#template에서-모델-사용하기" id="markdown-toc-template에서-모델-사용하기">Template에서 모델 사용하기</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>모델의 역할은 데이터를 정의하고, 데이터베이스와 소통하는 것이다</li>
+</ul>
+
+<h1 id="모델-정의">모델 정의</h1>
+
+<ul>
+  <li>모델을 통해 데이터를 정의해보자</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># models.py
+</span>
+<span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">modified_at</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c1"># 객체를 하나의 문자열로 표현
+</span>    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">name</span>
+</code></pre></div></div>
+
+<ul>
+  <li>새로 생성된 모델, 변경된 모델은 장고에 반영해야 한다</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py makemigrations
+python manage.py migrate
+</code></pre></div></div>
+
+<p><img src="/images/django_5.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py showmigrations
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py sqlmigrate <span class="o">{</span>앱 이름<span class="o">}</span> <span class="o">{</span>번호<span class="o">}</span>
+python3 manage.py sqlmigrate posts 0001
+<span class="nt">--------------------------------------------------</span>
+BEGIN<span class="p">;</span>
+<span class="nt">--</span>
+<span class="nt">--</span> Create model Post
+<span class="nt">--</span>
+CREATE TABLE <span class="s2">"posts_post"</span> <span class="o">(</span><span class="s2">"id"</span> integer NOT NULL PRIMARY KEY AUTOINCREMENT, <span class="s2">"title"</span> varchar<span class="o">(</span>50<span class="o">)</span> NOT NULL, <span class="s2">"content"</span> varchar<span class="o">(</span>100<span class="o">)</span> NOT NULL, <span class="s2">"created_at"</span> datetime NOT NULL, <span class="s2">"modified_at"</span> datetime NOT NULL<span class="o">)</span><span class="p">;</span>
+COMMIT<span class="p">;</span>
+</code></pre></div></div>
+
+<h2 id="모델-필드">모델 필드</h2>
+
+<p><img src="/images/django_6.png" alt="" /></p>
+
+<h2 id="필드-옵션">필드 옵션</h2>
+
+<p><img src="/images/django_7.png" alt="" /></p>
+
+<h1 id="crud">CRUD</h1>
+
+<h2 id="create">Create</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 데이터 생성과 동시에 데이터베이스에 반영
+</span><span class="n">data_model</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># 데이터 생성과 데이터베이스에 반영 분리
+</span><span class="n">data_model</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">(</span><span class="n">price</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">data_model</span><span class="p">.</span><span class="n">save</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="read">Read</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">foods.models</span> <span class="kn">import</span> <span class="n">Menu</span>
+
+<span class="c1"># 모든 데이터 조회
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">all</span><span class="p">()</span>
+
+<span class="c1"># 모든 데이터의 값까지 조회
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">all</span><span class="p">().</span><span class="n">values</span><span class="p">()</span>
+
+<span class="c1"># 모든 데이터의 특정 field값 조회
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">all</span><span class="p">().</span><span class="n">values</span><span class="p">(</span><span class="s">'price'</span><span class="p">)</span>
+
+<span class="c1"># 모든 데이터를 특정 field값 기준으로 정렬해서 조회
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">'price'</span><span class="p">)</span>
+
+<span class="c1">#  내림차순
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">'-price'</span><span class="p">)</span>
+
+<span class="c1"># 특정조건을 만족하는 하나의 데이터를 조회
+# 조건을 만족하는 데이터가 2개 이상인 경우 오류 발생
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">get</span><span class="p">({</span><span class="n">필드명</span><span class="p">}</span><span class="n">__조건키워드</span><span class="o">=</span><span class="s">"조건"</span><span class="p">)</span>
+
+<span class="c1"># 오류 발생할 가능성 높다
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">name__contains</span><span class="o">=</span><span class="s">"코"</span><span class="p">)</span>
+
+<span class="c1"># 주로 이런 id값을 통해 접근할 때 많이 사용된다
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># 특정조건을 만족하는 여러 데이터를 조회
+</span><span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">filter</span><span class="p">({</span><span class="n">필드명</span><span class="p">}</span><span class="n">__조건키워드</span><span class="o">=</span><span class="s">"조건"</span><span class="p">)</span>
+
+<span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">name__contains</span><span class="o">=</span><span class="s">"코"</span><span class="p">)</span>
+<span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">price__range</span><span class="o">=</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 조건 키워드
+__contains, __icontains, __in, __gt, __gte, __lt, __lte,
+__startswith, __istatswith, __endswith, __iendswith, __range, __isnull
+</code></pre></div></div>
+
+<h2 id="update">Update</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># 데이터 수정
+</span><span class="n">data</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">'가나다'</span>
+
+<span class="c1"># 데이터 저장
+</span><span class="n">data</span><span class="p">.</span><span class="n">save</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="delete">Delete</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># 데이터 삭제
+</span><span class="n">data</span><span class="p">.</span><span class="n">delete</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h1 id="모델-api-정리">모델 API 정리</h1>
+
+<h2 id="queryset을-반환하는-api-여러개의-데이터">Queryset을 반환하는 API (여러개의 데이터)</h2>
+
+<p><img src="/images/django_8.png" alt="" /></p>
+
+<h2 id="하나의-데이터-객체를-반환하는-apipermalink">하나의 데이터 객체를 반환하는 APIPermalink</h2>
+
+<p><img src="/images/django_9.png" alt="" /></p>
+
+<h2 id="그-외-api">그 외 API</h2>
+
+<p><img src="/images/django_10.png" alt="" /></p>
+
+<h1 id="관리자-도구admin-사용하기">관리자 도구(Admin) 사용하기</h1>
+
+<ul>
+  <li>관리자 도구가 모델을 관리할 수 있도록 모델 추가Permalink</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># admin.py
+</span>
+<span class="c1"># 추가해줄 모델 가져오기
+</span><span class="kn">from</span> <span class="nn">foods.models</span> <span class="kn">import</span> <span class="n">Menu</span>
+
+<span class="c1"># 모델 등록
+</span><span class="n">admin</span><span class="p">.</span><span class="n">site</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="n">Menu</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="view에서-모델-사용하기">View에서 모델 사용하기</h1>
+
+<h1 id="template에서-모델-사용하기">Template에서 모델 사용하기</h1>
+
+:ET

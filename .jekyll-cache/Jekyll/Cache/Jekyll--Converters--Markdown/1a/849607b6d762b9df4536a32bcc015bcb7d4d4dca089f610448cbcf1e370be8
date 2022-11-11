@@ -1,0 +1,157 @@
+I"�#<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#journey-of-url" id="markdown-toc-journey-of-url">Journey of URL</a></li>
+  <li><a href="#장고의-elegant-url" id="markdown-toc-장고의-elegant-url">장고의 Elegant URL</a>    <ul>
+      <li><a href="#path-converter" id="markdown-toc-path-converter">Path Converter</a></li>
+    </ul>
+  </li>
+  <li><a href="#url-관련-함수" id="markdown-toc-url-관련-함수">URL 관련 함수</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="journey-of-url">Journey of URL</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># mydjango/setting.py
+</span>
+<span class="c1"># 서버가 URL 요청을 받으면 가장 먼저 참조하는 파일을 설정할 수 있다
+</span><span class="n">ROOT_URLCONF</span> <span class="o">=</span> <span class="s">'mydjango.urls'</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># mydjango/urls.py
+</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span><span class="p">,</span> <span class="n">include</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+
+    <span class="c1"># post/ 에 매칭되는 모든 URL 요청은 post.urls 모듈을 참고해라
+</span>    <span class="n">path</span><span class="p">(</span><span class="s">'post/'</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s">'post.urls'</span><span class="p">))</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+
+    <span class="c1"># post/index/ 에 매칭되는 모든 URL 요청은 views 모듈의 index 함수를 호출해라
+</span>    <span class="c1"># 두 번째 인자가 callable 하면 항상 request를 인자로 전달해준다
+</span>    <span class="n">path</span><span class="p">(</span><span class="s">'index/'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">index</span><span class="p">)</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># post/views.py
+</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span>
+
+<span class="c1"># 모든 View는 request를 인자로 받는다
+</span><span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="s">"&lt;h2&gt;Hello, Django !&lt;/h2&gt;"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="장고의-elegant-url">장고의 Elegant URL</h1>
+
+<ul>
+  <li>URL 을 우리가 원하는 형태로 구성</li>
+  <li>이해하기 쉬운 직관적인 구조</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 동적 URL
+</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s">'index/'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">index</span><span class="p">),</span>
+
+    <span class="c1"># post/comedy
+</span>    <span class="c1"># post/action 등에 모두 매칭된다
+</span>    <span class="n">path</span><span class="p">(</span><span class="s">'&lt;str:category&gt;/'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">category_detail</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># post/views.py
+</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span>
+
+
+<span class="k">def</span> <span class="nf">category_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s">'category'</span><span class="p">:</span> <span class="n">category</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'post/category_detail.html'</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># post/templates/post/category_detail.html
+
+<span class="nt">&lt;h2&gt;</span>Category: <span class="nt">&lt;/h2&gt;</span>
+</code></pre></div></div>
+
+<p><img src="/images/django_3.png" alt="" /></p>
+
+<h2 id="path-converter">Path Converter</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">str</code> : 경로 구분 기호(/)를 제외한 모든 문자열과 매칭</li>
+  <li><code class="language-plaintext highlighter-rouge">int</code> : 0 또는 양의 정수와 매칭</li>
+  <li><code class="language-plaintext highlighter-rouge">slug</code> : 문자, 숫자, 하이픈(-), 밑줄(_)로 구성된 문자열과 매칭</li>
+  <li><code class="language-plaintext highlighter-rouge">uuid</code> : 범용 고유 식별자(UUID)와 매칭</li>
+  <li><code class="language-plaintext highlighter-rouge">path</code> : 경로 구분 기호(/)를 포함한 모든 문자열과 매칭</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># &lt;[converter]:[넘겨줄 인자명]&gt;
+# converter와 넘겨줄 인자명 사이는 띄어쓰면 안됨
+</span><span class="n">path</span><span class="p">(</span><span class="s">'&lt;str:category&gt;/'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">category_detail</span><span class="p">),</span>
+</code></pre></div></div>
+
+<h1 id="url-관련-함수">URL 관련 함수</h1>
+
+<ul>
+  <li><strong>path(route, view, name=None)</strong>
+    <ul>
+      <li>route: URL 패턴을 가진 문자열</li>
+      <li>view
+        <ul>
+          <li>route에 매핑될 호출 가능한 객체(일반적으로 함수 또는 클래스) (include를 사용해 다른 URLconf 모듈로 연결할 수도 있음)</li>
+          <li>request를 첫 번째 인수, route 에서 캡처한 path converter를 키워드 인수로 전달 받음</li>
+        </ul>
+      </li>
+      <li>name: URL 명명</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>re_path()</strong></p>
+  </li>
+  <li><strong>include(module)</strong>
+    <ul>
+      <li>URL을 계층적으로 관리할 때 사용하는 함수</li>
+    </ul>
+  </li>
+  <li>
+    <p><strong>reverse()</strong></p>
+  </li>
+  <li><strong>render(request, template_name, context=None, content_type=None, status=None, using=None)</strong>
+    <ul>
+      <li>템플릿을 렌더링하는 함수</li>
+      <li>request: 요청에 포함된 정보</li>
+      <li>template_name: 렌더링할 html 파일 경로</li>
+      <li>context: View 에서 사용하던 데이터를 Template으로 넘겨준다</li>
+    </ul>
+  </li>
+  <li><strong>redirect(to, permanent=False)</strong>
+    <ul>
+      <li>다른 URL 경로로 이동하는 함수</li>
+      <li>to: 어느 URL로 이동할지 (절대경로, 상대경로, 명명한 URL)</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.djangoproject.com/en/4.1/topics/http/urls/" target="_blank">django 공식문서, URL dispatcher</a></li>
+  <li><a href="https://danhandev.tistory.com/entry/Django-URL-%EB%A7%A4%ED%95%91-include%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-url-%EA%B3%84%EC%B8%B5-%EA%B4%80%EB%A6%AC" target="_blank">[Django] URL 매핑 - include를 이용한 url 계층 관리</a></li>
+  <li><a href="https://velog.io/@ddusi/django-2" target="_blank">3.django urls include를 여러개 써서 효율적인 관리</a></li>
+</ul>
+:ET
