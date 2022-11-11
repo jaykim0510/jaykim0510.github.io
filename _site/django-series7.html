@@ -490,8 +490,554 @@
       <hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#폼form" id="markdown-toc-폼form">폼(Form)</a>    <ul>
+      <li><a href="#폼이-처리되는-과정" id="markdown-toc-폼이-처리되는-과정">폼이 처리되는 과정</a></li>
+      <li><a href="#폼-만들기" id="markdown-toc-폼-만들기">폼 만들기</a></li>
+    </ul>
+  </li>
+  <li><a href="#모델-폼model-form" id="markdown-toc-모델-폼model-form">모델 폼(Model Form)</a></li>
+  <li><a href="#데이터-유효성-검증" id="markdown-toc-데이터-유효성-검증">데이터 유효성 검증</a>    <ul>
+      <li><a href="#유효성-검증의-예" id="markdown-toc-유효성-검증의-예">유효성 검증의 예</a></li>
+      <li><a href="#유효성-검증할-수-있는-방법" id="markdown-toc-유효성-검증할-수-있는-방법">유효성 검증할 수 있는 방법</a>        <ul>
+          <li><a href="#1-field를-정의할-때-필요한-옵션을-인자로-주기" id="markdown-toc-1-field를-정의할-때-필요한-옵션을-인자로-주기">1. Field를 정의할 때 필요한 옵션을 인자로 주기</a></li>
+          <li><a href="#2-validator-추가하기" id="markdown-toc-2-validator-추가하기">2. Validator 추가하기</a>            <ul>
+              <li><a href="#2-1-built-in-validator" id="markdown-toc-2-1-built-in-validator">2-1 Built-in Validator</a></li>
+              <li><a href="#2-2-custom-validator" id="markdown-toc-2-2-custom-validator">2-2 Custom Validator</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#폼을-위한-템플릿-다루기" id="markdown-toc-폼을-위한-템플릿-다루기">폼을 위한 템플릿 다루기</a></li>
+  <li><a href="#폼에-css-적용하기" id="markdown-toc-폼에-css-적용하기">폼에 CSS 적용하기</a></li>
+  <li><a href="#필드를-가지는-데이터에-css-적용하기" id="markdown-toc-필드를-가지는-데이터에-css-적용하기">필드를 가지는 데이터에 CSS 적용하기</a></li>
+  <li><a href="#포스트-수정update-구현하기" id="markdown-toc-포스트-수정update-구현하기">포스트 수정(Update) 구현하기</a></li>
+  <li><a href="#포스트-삭제delete-구현하기" id="markdown-toc-포스트-삭제delete-구현하기">포스트 삭제(Delete) 구현하기</a></li>
+</ul>
 
 <hr />
+
+<h1 id="폼form">폼(Form)</h1>
+<ul>
+  <li>폼은 웹 페이지에서 사용자의 데이터를 입력받을 수 있는 입력 양식</li>
+  <li>사용자가 입력한 데이터를 서버로 전송하기 위한 방식</li>
+</ul>
+
+<p><img src="/images/d_form_1.png" alt="" width="100%" /></p>
+
+<ul>
+  <li>form을 사용할 때는 사용자로부터 데이터를 입력받아서 저장, 수정 등의 데이터베이스와 관련된 로직을 많이 수행하므로, form에서는 대부분의 경우 POST를 사용한다고 생각하면 됩니다.</li>
+</ul>
+
+<h2 id="폼이-처리되는-과정">폼이 처리되는 과정</h2>
+
+<ol>
+  <li>
+    <p>유저가 서버에게 FORM 양식 요청(GET방식)</p>
+  </li>
+  <li>
+    <p>서버가 유저에게 언 바운드폼(사용자로부터 아직 데이터를 받은 것이 아니므로) 응답</p>
+  </li>
+  <li>
+    <p>유저가 서버로부터 받은 폼의 양식에 맞춰 데이터를 전송(POST방식)</p>
+  </li>
+  <li>
+    <p>서버는 유저로부터 받은 데이터를 폼에 바인딩</p>
+  </li>
+  <li>
+    <p>바운드 폼의 데이터가 올바르지 않으면 다시 입력하도록 응답</p>
+  </li>
+  <li>
+    <p>입력된 데이터가 유효하면 서버는 로직을 수행(수정, 저장)한 후 유저에게 새로운 페이지 응답</p>
+  </li>
+</ol>
+
+<p>폼 METHOD: GET, POST</p>
+
+<p>폼 태그 안에 사용되는 TAG: INPUT, LABEL</p>
+
+<p>INPUT 태그의 TYPE: EMAIL, PW, BUTTON, RADIO, CHECKBOX, DATE, FILE, SUBMIT</p>
+
+<p><img src="/images/d_form_6.png" alt="" width="60%" /></p>
+
+<p><img src="/images/d_form_7.png" alt="" width="60%" /></p>
+
+<p><img src="/images/d_form_8.png" alt="" width="60%" /></p>
+
+<h2 id="폼-만들기">폼 만들기</h2>
+<ul>
+  <li>
+    <p>폼을 만드는 과정은 모델과 상당히 비슷합니다.</p>
+  </li>
+  <li>
+    <p>폼은 웹 페이지에서 사용자의 데이터를 입력받을 수 있는 입력 양식으로 사용자가 입력한 데이터를 서버로 전송하기 위한 방식입니다.</p>
+  </li>
+  <li>
+    <p>따라서 우리는 글을 작성하기 위한 템플릿을 폼을 이용해 만들어보려고 합니다.</p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># urls.py  
+</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+
+    <span class="n">path</span><span class="p">(</span><span class="s">'diary/write/'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">page_create</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'page-create'</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># views.py  
+</span>
+<span class="k">def</span> <span class="nf">page_create</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">'POST'</span><span class="p">:</span> <span class="c1"># 만약 요청 방식이 POST라면
+</span>        <span class="n">new_page</span> <span class="o">=</span> <span class="n">Page</span><span class="p">(</span> <span class="c1"># 입력된 데이터를 가져와서 Page 데이터 모델을 만들고
+</span>            <span class="n">title</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">[</span><span class="s">'title'</span><span class="p">],</span>  
+            <span class="n">content</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">[</span><span class="s">'content'</span><span class="p">],</span>
+            <span class="n">feeling</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">[</span><span class="s">'feeling'</span><span class="p">],</span>
+            <span class="n">score</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">[</span><span class="s">'score'</span><span class="p">],</span>
+            <span class="n">dt_created</span><span class="o">=</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">[</span><span class="s">'dt_created'</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">new_page</span><span class="p">.</span><span class="n">save</span><span class="p">()</span> <span class="c1"># 데이터베이스에 저장한 후
+</span>        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">'page-detail'</span><span class="p">,</span> <span class="n">page_id</span><span class="o">=</span><span class="n">new_page</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span> <span class="c1"># 상세 일기 보기 페이지로 안내합니다.
+</span>    
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># 만약 요청 방식이 GET이라면
+</span>        <span class="n">form</span> <span class="o">=</span> <span class="n">PageForm</span><span class="p">()</span> <span class="c1"># 새로운 form을 만들고 (빈 폼)
+</span>        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'diary/page_form.html'</span><span class="p">,</span> <span class="p">{</span><span class="s">'form'</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span> 
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># forms.py  
+</span>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+
+<span class="k">class</span> <span class="nc">PageForm</span><span class="p">(</span><span class="n">forms</span><span class="p">.</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">forms</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'제목'</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">forms</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">widget</span><span class="o">=</span><span class="n">forms</span><span class="p">.</span><span class="n">Textarea</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'내용'</span><span class="p">)</span>
+    <span class="n">feeling</span> <span class="o">=</span> <span class="n">forms</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'감정 상태'</span><span class="p">)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">forms</span><span class="p">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">'감정 점수'</span><span class="p">)</span>
+    <span class="n">dt_created</span> <span class="o">=</span> <span class="n">forms</span><span class="p">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">'작성일'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_form.html
+
+<span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">"post"</span><span class="nt">&gt;</span>{% csrf_token %}
+    {{form.as_p}}
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"작성하기"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</code></pre></div></div>
+
+<dl>
+  <dt>🔔 크로스 사이트 요청 위조(CSRF, Cross-Site Request Forgery)</dt>
+  <dd>
+    <p>웹 사이트에서 유저가 서버로 요청을 보내는 행위를 악의적으로 변경해서 요청을 전송하는 것입니다. 내가 요청하지 않은 일인데 내가 요청한 것처럼 처리되는 거죠.<br />
+Cross-Site라는 말이 붙은 이유는 악성 사이트에서 보안이 취약한 사이트로 우회 요청을 보내기 때문입니다.
+크로스 사이트 요청 위조를 방지하는 방법으로 많이 사용하는 것이 바로 CSRF 위조 방지 토큰(Cross Site Request Forgery Token)입니다. 요청 위조 방지 토큰은 서버로부터 폼을 요청할 때 발행되어 유저가 폼에 데이터를 입력하고 서버로 전송할 때 이 토큰 값을 함께 전달해서 서버에서 토큰 값을 비교한 뒤 요청을 처리하는 방식을 말합니다. 그래서 요청 검증 토큰(Request Verification Token)라고 부르기도 합니다. 이렇게 처리하면 악성 사이트가 폼을 전송할 때 이 위조 방지 토큰 값을 알 수 없기 때문에 서버에서 사용자가 직접 보낸 요청인지를 검증할 수 있게 되는 거죠.</p>
+  </dd>
+</dl>
+
+<h1 id="모델-폼model-form">모델 폼(Model Form)</h1>
+<ul>
+  <li>폼 필드를 각각 정의해 주지 않아도 모델의 필드를 보고 자동으로 장고가 유추해서 폼 필드를 만들어 준다는 것입니다.</li>
+  <li>이를 위해 Meta 클래스를 이용해 사용할 모델과 입력받을 모델 필드를 명시해 주어야 합니다.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># forms.py  
+</span>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Page</span> <span class="c1"># 사용할 모델을 가져옵니다.
+</span>
+<span class="k">class</span> <span class="nc">PageForm</span><span class="p">(</span><span class="n">forms</span><span class="p">.</span><span class="n">ModelForm</span><span class="p">):</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Page</span> <span class="c1"># 모델 폼에서 사용할 모델과 필드를 명시합니다.
+</span>        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">'title'</span><span class="p">,</span> <span class="s">'content'</span><span class="p">,</span> <span class="s">'feeling'</span><span class="p">,</span> <span class="s">'score'</span><span class="p">,</span> <span class="s">'dt_created'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># views.py
+</span>
+<span class="k">def</span> <span class="nf">page_create</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">'POST'</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PageForm</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">)</span> <span class="c1"># 입력된 데이터와 폼을 합쳐서 바인딩 폼을 만듭니다.
+</span>        <span class="n">new_page</span> <span class="o">=</span> <span class="n">form</span><span class="p">.</span><span class="n">save</span><span class="p">()</span> <span class="c1"># 데이터 저장 및 생성된 데이터 모델 반환
+</span>        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">'page-detail'</span><span class="p">,</span> <span class="n">page_id</span><span class="o">=</span><span class="n">new_page</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># 만약 요청 방식이 GET이라면
+</span>        <span class="n">form</span> <span class="o">=</span> <span class="n">PageForm</span><span class="p">()</span> <span class="c1"># 새로운 form을 만들고 (빈 폼)
+</span>        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'diary/page_form.html'</span><span class="p">,</span> <span class="p">{</span><span class="s">'form'</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span> 
+</code></pre></div></div>
+
+<h1 id="데이터-유효성-검증">데이터 유효성 검증</h1>
+
+<p><img src="/images/d_form_9.png" alt="" width="60%" /></p>
+
+<h2 id="유효성-검증의-예">유효성 검증의 예</h2>
+<ul>
+  <li>모든 항목을 빈칸 없이 채워주세요.</li>
+  <li>제목은 50자까지만 작성해 주세요.</li>
+  <li>다른 제목과 중복되지 않게 해주세요.</li>
+  <li>내용에는 #과 @를 쓸 수 없어요.</li>
+</ul>
+
+<p>🔔 blank 와 null</p>
+<ul>
+  <li>blank: 비어있는 값을 허용하면 blank=True</li>
+  <li>null: 비어있는 값이 있는 경우 그 값을 null로 저장하려면 null=True</li>
+</ul>
+
+<h2 id="유효성-검증할-수-있는-방법">유효성 검증할 수 있는 방법</h2>
+
+<h3 id="1-field를-정의할-때-필요한-옵션을-인자로-주기">1. Field를 정의할 때 필요한 옵션을 인자로 주기</h3>
+
+<ul>
+  <li>모델 폼을 이용해 폼을 정의할 것이기 때문에 우리의 <u>모델에 있는 Field</u>에 유효성 검사를 위한 옵션을 인자로 주면 됩니다.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># models.py
+</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">Page</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">feeling</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">IntegerField</span><span class="p">()</span>
+    <span class="n">dt_created</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DateField</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">title</span>
+</code></pre></div></div>
+
+<ul>
+  <li>그리고 입력으로 받은 데이터가 유효한지 안한지에 따라 유저에게 다른 방식으로 응답해주면 됩니다.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># views.py  
+</span>
+<span class="k">def</span> <span class="nf">page_create</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">'POST'</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PageForm</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">)</span> <span class="c1"># 입력된 데이터와 폼을 합쳐서 바인딩 폼을 만듭니다.
+</span>
+        <span class="k">if</span> <span class="n">post_form</span><span class="p">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">new_page</span> <span class="o">=</span> <span class="n">form</span><span class="p">.</span><span class="n">save</span><span class="p">()</span> <span class="c1"># 데이터 저장 및 생성된 데이터 모델 반환
+</span>            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">'page-detail'</span><span class="p">,</span> <span class="n">page_id</span><span class="o">=</span><span class="n">new_page</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># 만약 요청 방식이 GET이라면
+</span>        <span class="n">form</span> <span class="o">=</span> <span class="n">PageForm</span><span class="p">()</span> <span class="c1"># 새로운 form을 만들고 (빈 폼)
+</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'diary/page_form.html'</span><span class="p">,</span> <span class="p">{</span><span class="s">'form'</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span> 
+</code></pre></div></div>
+
+<h3 id="2-validator-추가하기">2. Validator 추가하기</h3>
+
+<ul>
+  <li>
+    <p>값을 받아 유효성 기준을 충족하지 않으면 ValidationError를 발생시키는 함수</p>
+  </li>
+  <li>
+    <p>장고에서 제공하는 Built-in Validator가 있으며 원하면 직접 정의할 수 도 있습니다.</p>
+  </li>
+</ul>
+
+<h4 id="2-1-built-in-validator">2-1 Built-in Validator</h4>
+
+<p><a href="https://docs.djangoproject.com/en/3.2/ref/validators/">장고 공식문서 참고</a></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># models.py
+</span>
+<span class="kn">from</span> <span class="nn">django.core.validators</span> <span class="kn">import</span> <span class="n">MinLengthValidator</span>
+
+<span class="k">class</span> <span class="nc">Page</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinLengthValidator</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">'Too short!'</span><span class="p">)])</span>
+</code></pre></div></div>
+
+<h4 id="2-2-custom-validator">2-2 Custom Validator</h4>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># validators.py 파일 생성  
+</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ValidationError</span>
+
+<span class="k">def</span> <span class="nf">validate_symbols</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s">"@"</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s">"#"</span> <span class="ow">in</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">ValidationError</span><span class="p">(</span><span class="s">'"@"와 "#"은 포함될 수 없습니다.'</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s">'symbol-err'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># models.py
+</span>
+<span class="kn">from</span> <span class="nn">django.core.validators</span> <span class="kn">import</span> <span class="n">MinLengthValidator</span>
+<span class="kn">from</span> <span class="nn">.validators</span> <span class="kn">import</span> <span class="n">validate_symbols</span>
+
+<span class="k">class</span> <span class="nc">Page</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinLengthValidator</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">'Too short!'</span><span class="p">),</span> <span class="n">validate_symbols</span><span class="p">])</span>
+</code></pre></div></div>
+
+<dl>
+  <dt>🔔 폼에서 유효성 검증하기</dt>
+  <dd>모델과 관련이 없는 데이터를 입력으로 받아야 할 때는 모델 폼이 아닌 <u>일반 폼</u>으로 작성해야 하므로 이 때의 유효성 검사는 무조건 폼에서 해야 합니다.<br />
+작성 방법은 모델에 적용할 때와 같습니다.</dd>
+</dl>
+
+<h1 id="폼을-위한-템플릿-다루기">폼을 위한 템플릿 다루기</h1>
+
+<p>앞에서는</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_form.html
+
+<span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">"post"</span><span class="nt">&gt;</span>{% csrf_token %}
+    {{form.as_p}}
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"작성하기"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</code></pre></div></div>
+
+<p>이런 식으로 작성했는데 <code class="language-plaintext highlighter-rouge">{{form.as_p}}</code> 이렇게만 나타내면 각각의 값들을 그저 &lt;p&gt; 태그로만 감싸게 될 뿐 너무 못생겼습니다. 그래서 조금 더 예쁘게 템플릿을 커스텀 해보겠습니다.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_form.html
+
+<span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">"post"</span><span class="nt">&gt;</span>{% csrf_token %}
+    <span class="nt">&lt;h3&gt;</span>제목<span class="nt">&lt;/h3&gt;</span>
+    <span class="nt">&lt;p&gt;</span>{{form.title}}<span class="nt">&lt;/p&gt;</span>
+    {% for error in form.title.errors %}
+        <span class="nt">&lt;p&gt;</span>{{error}}<span class="nt">&lt;/p&gt;</span>
+    {% endfor %}
+    <span class="nt">&lt;h3&gt;</span>내용<span class="nt">&lt;/h3&gt;</span>
+    <span class="nt">&lt;p&gt;</span>{{form.content}}<span class="nt">&lt;/p&gt;</span>
+    {% for error in form.content.errors %}
+        <span class="nt">&lt;p&gt;</span>{{error}}<span class="nt">&lt;/p&gt;</span>
+    {% endfor %}
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"작성하기"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</code></pre></div></div>
+
+<h1 id="폼에-css-적용하기">폼에 CSS 적용하기</h1>
+
+<ul>
+  <li>CSS적용하고 싶은 태그에 클래스를 정의해서 그 클래스에 적용할 CSS를 담는 <code class="language-plaintext highlighter-rouge">form.css</code> 파일을 만듭니다.</li>
+</ul>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_form.html
+
+<span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">"post"</span><span class="nt">&gt;</span>{% csrf_token %}
+    <span class="nt">&lt;h3&gt;</span>제목<span class="nt">&lt;/h3&gt;</span>
+
+    ...
+
+        <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">"error"</span><span class="nt">&gt;</span>{{error}}<span class="nt">&lt;/p&gt;</span>
+    
+    ...
+        <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">"error"</span><span class="nt">&gt;</span>{{error}}<span class="nt">&lt;/p&gt;</span>
+
+    ...
+
+    <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"작성하기"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/form&gt;</span>
+</code></pre></div></div>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">#</span> <span class="nt">form</span><span class="nc">.css</span>
+
+<span class="nc">.class</span> <span class="p">{</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="no">red</span><span class="p">;</span> 
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">base.html</code>로 부터 상속받고 그 안에 쏙쏙 집어넣습니다.</li>
+</ul>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_form.html
+
+{% extends './base.html' %}
+{% load static %}
+
+{% block css %}
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"{% raw %}{% static 'posts/css/form.css %}"</span><span class="nt">&gt;</span>
+{% endblock css %}
+
+{% block content %}
+  <span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">"post"</span><span class="nt">&gt;</span>{% raw %}{% csrf_token %}
+      <span class="nt">&lt;h3&gt;</span>제목<span class="nt">&lt;/h3&gt;</span>
+
+      ...
+
+          <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">"error"</span><span class="nt">&gt;</span>{{error}}<span class="nt">&lt;/p&gt;</span>
+      
+      ...
+          <span class="nt">&lt;p</span> <span class="na">class=</span><span class="s">"error"</span><span class="nt">&gt;</span>{{error}}<span class="nt">&lt;/p&gt;</span>
+
+      ...
+
+      <span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"작성하기"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/form&gt;</span>
+{% endblock content %}
+</code></pre></div></div>
+
+<h1 id="필드를-가지는-데이터에-css-적용하기">필드를 가지는 데이터에 CSS 적용하기</h1>
+
+<ul>
+  <li>앞에서 <code class="language-plaintext highlighter-rouge">error</code>에는 그냥 &lt;p&gt;태그에 클래스를 바로 정의하여 CSS 적용이 가능했지만, 과 같은 필드를 가지는 데이터는 위와 같이 적용이 불가능합니다.</li>
+  <li>그 이유는 필드를 가지는 데이터는 기본적인 디폴트 위젯을 가지고 있기 때문입니다. 따라서 클래스나 아이디를 정의하기 위해서는 위젯에 접근해야 합니다.</li>
+</ul>
+
+<p><img src="/images/d_form_12.png" alt="" width="60%" /></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># forms.py  
+</span>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Page</span> <span class="c1"># 사용할 모델을 가져옵니다.
+</span>
+<span class="k">class</span> <span class="nc">PageForm</span><span class="p">(</span><span class="n">forms</span><span class="p">.</span><span class="n">ModelForm</span><span class="p">):</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Page</span> <span class="c1"># 모델 폼에서 사용할 모델과 필드를 명시합니다.
+</span>        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">'title'</span><span class="p">,</span> <span class="s">'content'</span><span class="p">,</span> <span class="s">'feeling'</span><span class="p">,</span> <span class="s">'score'</span><span class="p">,</span> <span class="s">'dt_created'</span><span class="p">]</span>
+
+        <span class="n">widgets</span> <span class="o">=</span> <span class="p">{</span><span class="s">'title'</span><span class="p">:</span> <span class="n">forms</span><span class="p">.</span><span class="n">TextInput</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">'class'</span><span class="p">:</span><span class="s">'title'</span><span class="p">,</span>
+                                                    <span class="s">'placeholder'</span><span class="p">:</span><span class="s">'제목을 입력하세요'</span><span class="p">}),</span>
+                    <span class="s">'content'</span><span class="p">:</span> <span class="n">forms</span><span class="p">.</span><span class="n">Textarea</span><span class="p">(</span><span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="s">'placeholder'</span><span class="p">:</span> <span class="s">'내용을 입력하세요'</span><span class="p">})</span>
+                    <span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">{{form.title}}</code> 데이터의 클래스는 <code class="language-plaintext highlighter-rouge">'title'</code>이라고 정의했으므로 이제 CSS파일에 적당히 꾸미고자 하는 내용을 넣을 수 있다.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">#</span> <span class="nt">form</span><span class="nc">.css</span>
+
+<span class="nc">.title</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">400px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="포스트-수정update-구현하기">포스트 수정(Update) 구현하기</h1>
+
+<ul>
+  <li>
+    <p>유저가 자신이 작성했던 글에 접근해 그 글을 다시 수정하는 기능을 구현해보도록 하겠습니다.</p>
+  </li>
+  <li>
+    <p>여기서 핵심은 유저가 포스트를 수정할 때 빈 포스트가 아니라 작성했던 글에서 가져온다는 사실입니다.</p>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># urls.py
+</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">path</span><span class="p">(</span><span class="s">'diary/page/&lt;int:page_id&gt;/edit/'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">page_update</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'page-update'</span><span class="p">),</span>
+<span class="p">]</span>  
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_detail.html
+
+{% extends './base.html' %}
+
+{% block content %}
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"wrap-notetext"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notetext"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"text-box"</span><span class="nt">&gt;</span>
+           ...
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notetext-btn"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;ul&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>삭제하기<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'page-update' object.id %}"</span><span class="nt">&gt;</span>수정하기<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                <span class="nt">&lt;/ul&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+{% endblock content %}
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># views.py
+</span>
+<span class="k">def</span> <span class="nf">page_update</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">page_id</span><span class="p">):</span>
+    <span class="nb">object</span> <span class="o">=</span> <span class="n">Page</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">page_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">'POST'</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PageForm</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">form</span><span class="p">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="n">form</span><span class="p">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">'page-detail'</span><span class="p">,</span> <span class="n">page_id</span><span class="o">=</span><span class="nb">object</span><span class="p">.</span><span class="nb">id</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">PageForm</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'diary/page_form.html'</span><span class="p">,</span> <span class="p">{</span><span class="s">'form'</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span>
+</code></pre></div></div>
+
+<p>Update는 새로 Page 데이터 모델을 만들어서 저장하는 것이 아니라 기존의 데이터 모델을 수정해야 하므로 PageForm의 <code class="language-plaintext highlighter-rouge">instance 파라미터</code>로 조회한 데이터 모델을 넘겨주어야 합니다.</p>
+
+<h1 id="포스트-삭제delete-구현하기">포스트 삭제(Delete) 구현하기</h1>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># urls.py
+</span>
+<span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+   
+    <span class="n">path</span><span class="p">(</span><span class="s">'diary/page/&lt;int:page_id&gt;/delete/'</span><span class="p">,</span> <span class="n">views</span><span class="p">.</span><span class="n">page_delete</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'page-delete'</span><span class="p">),</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_detail.html
+
+<span class="c">&lt;!-- page_detail.html --&gt;</span>
+{% extends './base.html' %}
+
+{% block content %}
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"wrap-notetext"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notetext"</span><span class="nt">&gt;</span>
+        ...
+            <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"notetext-btn"</span><span class="nt">&gt;</span>
+                <span class="nt">&lt;ul&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'page-delete' object.id %}"</span><span class="nt">&gt;</span>삭제하기<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                    <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'page-update' object.id %}"</span><span class="nt">&gt;</span>수정하기<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+                <span class="nt">&lt;/ul&gt;</span>
+            <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+{% endblock content %}
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># page_delete.py
+</span>
+<span class="k">def</span> <span class="nf">page_delete</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">page_id</span><span class="p">):</span>
+    <span class="nb">object</span> <span class="o">=</span> <span class="n">Page</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">page_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="p">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">'POST'</span><span class="p">:</span>
+        <span class="nb">object</span><span class="p">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s">'page-list'</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># 만약 요청이 GET 방식이라면
+</span>                <span class="c1"># page_confirm_delete.html을 랜더해서 돌려주도록 합니다.
+</span>                <span class="c1"># 이때 삭제 확인 페이지에서 글의 제목을 보여줄 수 있도록 object를 함께 넘겨줍니다.
+</span>        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'diary/page_confirm_delete.html'</span><span class="p">,</span> <span class="p">{</span><span class="s">'object'</span><span class="p">:</span> <span class="nb">object</span><span class="p">})</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># page_confirm_delete.html
+
+{% raw %}{% extends './base.html' %}
+
+{% block content %}
+<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"wrap-delete"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"delete-box"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"note-info"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;p&gt;</span><span class="ni">&amp;#123;</span><span class="nt">&lt;/p&gt;</span>
+            <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"note-date"</span><span class="nt">&gt;</span>{{object.dt_create}}<span class="nt">&lt;/span&gt;</span>
+            <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">"note-title"</span><span class="nt">&gt;</span>{{object.title}}<span class="nt">&lt;/span&gt;</span>
+            <span class="nt">&lt;p&gt;</span><span class="ni">&amp;#125;</span><span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;p&gt;</span>이 하루를 지울까요?<span class="nt">&lt;/p&gt;</span>
+        <span class="nt">&lt;form</span> <span class="na">method=</span><span class="s">'post'</span><span class="nt">&gt;</span>{% csrf_token %}
+            <span class="nt">&lt;ul&gt;</span>
+                <span class="nt">&lt;li&gt;&lt;input</span> <span class="na">type=</span><span class="s">"submit"</span> <span class="na">value=</span><span class="s">"지우기"</span><span class="nt">&gt;&lt;/li&gt;</span>
+                <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'page-detail' object.id%}"</span><span class="nt">&gt;</span>남기기<span class="nt">&lt;/a&gt;&lt;/li&gt;</span> 
+            <span class="nt">&lt;/ul&gt;</span>
+        <span class="nt">&lt;/form&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+{% endblock content %}
+</code></pre></div></div>
 
     </div>
     <div class="post__tags_list">
