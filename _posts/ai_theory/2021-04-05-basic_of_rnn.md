@@ -17,14 +17,13 @@ tags: DL_theory
 
 ---
 
-# RNN
 
-## 시퀀스 데이터 vs 시계열 데이터
+# 시퀀스 데이터 vs 시계열 데이터
 
 - 시퀀스 데이터는 순서만 중요한 데이터 (문장, 음성)
 - 시계열 데이터는 순서뿐 아니라 데이터가 발생한 시간도 중요한 데이터 (주식, 센서 데이터)
 
-## 시퀀스 데이터  
+# 시퀀스 데이터  
 - 시퀀스 데이터는 IID가정을 대체로 위배하기 때문에, 순서를 바꾸면 데이터의 확률 분포도 바뀌게 됩니다.  
 - 이전 시퀀스의 정보를 가지고 앞으로 발생할 데이터의 확률 분포를 다루기 위해 조건부 확률을 이용할 수 있습니다.
 - 다음과 같은 문제를 해결하기 위한 모델을 만든다고 생각해 봅시다.  
@@ -40,7 +39,7 @@ tags: DL_theory
 `many to one: 주가 예측, 텍스트 분류`   
 `many to many: 번역`  
 
-## 바닐라 RNN  
+# 바닐라 RNN  
 그동안 신경망들은 은닉층에서 활성화 함수를 지난 값은 오직 출력층 방향으로만 향했습니다. 이와 같은 신경망들을 피드 포워드 신경망(Feed Forward Neural Network)이라고 합니다. 그런데 그렇지 않은 신경망들도 있습니다. RNN(Recurrent Neural Network)이 그 중 하나입니다.  
 RNN은 해당 층의 입력 데이터와 이전 층에서의 출력을 함께 입력으로 사용합니다. 
 
@@ -91,11 +90,11 @@ Loss함수 식을 보면 변수 t에 대해 theta값은 변하지 않는다 -> �
 
 이를 해결하기 위해 RNN의 advanced 버전인 LSTM과 GRU에 대해서는 다음 포스트에서 살펴보도록 하겠습니다.  
 
-### 실제 코드를 활용하는 방법은 [여기](https://kimziont.github.io/dl_practice/basic_rnn/)를 참고하시면 됩니다.  
 
-### 참조
-1. [유튜브 카이스트 딥러닝 홀로서기](https://www.youtube.com/watch?v=tlyzfIYvMWE&list=PLSAJwo7mw8jn8iaXwT4MqLbZnS-LJwnBd&index=26)  
-2. [딥러닝을 이용한 자연어 처리](https://wikidocs.net/22886)
+# 참고
+
+- [유튜브 카이스트 딥러닝 홀로서기](https://www.youtube.com/watch?v=tlyzfIYvMWE&list=PLSAJwo7mw8jn8iaXwT4MqLbZnS-LJwnBd&index=26)  
+- [딥러닝을 이용한 자연어 처리](https://wikidocs.net/22886)
 
 
 

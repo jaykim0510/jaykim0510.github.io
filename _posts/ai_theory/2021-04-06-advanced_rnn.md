@@ -18,16 +18,14 @@ tags: DL_theory
 ---
 
 
-# Advanced RNN
-
-## 바닐라 RNN의 한계점  
+# 바닐라 RNN의 한계점  
 바닐라 RNN은 출력 결과가 이전의 계산 결과에 의존한다는 것을 언급한 바 있습니다. 하지만 바닐라 RNN은 비교적 짧은 시퀀스(sequence)에 대해서만 효과를 보이는 단점이 있습니다. 바닐라 RNN의 시점(time step)이 길어질 수록 앞의 정보가 뒤로 충분히 전달되지 못하는 현상이 발생합니다. 그 이유는 다음과 같이 셀을 거듭할수록 tanh함수의 출력값이 가지는 제한(절댓값의 크기가 1보다 같거나 작습니다) 때문입니다. 이를 장기 의존성 문제(the problem of Long-Term Dependencies)라고 합니다.   
 
 ![](/images/basic_of_rnn_8.png)
 
 ![](/images/basic_of_rnn_9.png){: width="40%"}  
 
-## LSTM (Long Short Term Memory)
+# LSTM (Long Short Term Memory)
 바닐라 RNN의 한계를 극복하기 위해 다양한 RNN의 변형이 나왔습니다. LSTM과 GRU가 대표적인 예입니다.  
 긴 시퀀스를 다룰 때 LSTM이 바닐라 RNN과 비교해 어떤 점에서 더 좋은지 알기위해 우선 LSTM의 구조에 대해 먼저 살펴보겠습니다.  
 
@@ -52,7 +50,7 @@ C(t)와 h(t)를 다음 셀에 전달해줍니다.
 
 그래서 이러한 LSTM이 어떤 점에서 바닐라 RNN이 가지는 한계를 극복하게 된걸까요? 그것은 바로 C(t)가 셀에서 tanh함수를 거치지 않기 때문에 중요한 정보가 셀을 거듭하더라도 약해지지 않고  정보를 잘 전달할 수 있다는 것입니다.
  
-## GRU  (Gated Recurrent Unit)
+# GRU  (Gated Recurrent Unit)
 
 GRU(Gated Recurrent Unit)는 2014년 뉴욕대학교 조경현 교수님이 집필한 논문에서 제안되었습니다. GRU는 LSTM의 장기 의존성 문제에 대한 해결책을 유지하면서, 은닉 상태를 업데이트하는 계산을 줄였습니다. 다시 말해서, GRU는 성능은 LSTM과 유사하면서 복잡했던 LSTM의 구조를 간단화 시켰습니다.  
 
@@ -63,7 +61,8 @@ LSTM에서는 출력, 입력, 삭제 게이트라는 3개의 게이트가 존재
 ![](/images/GRU_1.png){: width="80%"}  
 
 
-### 참조
-1. [유튜브 카이스트 딥러닝 홀로서기](https://www.youtube.com/watch?v=tlyzfIYvMWE&list=PLSAJwo7mw8jn8iaXwT4MqLbZnS-LJwnBd&index=26)  
-2. [딥러닝을 이용한 자연어 처리](https://wikidocs.net/22886)
+# 참고
+
+-  [유튜브 카이스트 딥러닝 홀로서기](https://www.youtube.com/watch?v=tlyzfIYvMWE&list=PLSAJwo7mw8jn8iaXwT4MqLbZnS-LJwnBd&index=26)  
+- [딥러닝을 이용한 자연어 처리](https://wikidocs.net/22886)
 

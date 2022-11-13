@@ -18,15 +18,15 @@ tags: DL_theory
 
 ---
 
-## Advanced CNN  
+# Advanced CNN  
 
-### 1. GoogLeNet
+## 1. GoogLeNet
 
 ![](/images/googlenet_1.png){: width="100%"}   
 
 
 
-#### 1) GoogLeNet의 특징  
+### 1) GoogLeNet의 특징  
 
 - 커널의 적절한 사이즈를 찾기 위해 고민하기 보다, **여러 가지 사이즈의 커널을 병렬로 이용**함으로써 보다 **풍부한 Feature Extraction** 수행한다
 - **1 X 1 컨볼루션 필터**를 이용해 **Feature map의 dimension을 줄이고**, 결과적으로 연산해야 할 **파라미터 수를 감소**시킨다.
@@ -34,7 +34,7 @@ tags: DL_theory
 - 참고로 컨볼루션 커널의 사이즈, padding, striding이 Feature map의 사이즈를 결정한다.
 - 컨볼루션 커널의 채널의 개수가 Feature map의 개수를 결정한다.  
 
-#### 2) Inception Module
+### 2) Inception Module
 
 ![](/images/googlenet_2.png){: width="60%"}   
 
@@ -46,7 +46,7 @@ tags: DL_theory
 
 ![](/images/googlenet_4.png){: width="60%"}   
 
-#### 3) GoogLeNet Network Structure
+### 3) GoogLeNet Network Structure
 
 ![](/images/googlenet_1.png){: width="100%"}   
 
@@ -56,7 +56,7 @@ tags: DL_theory
 
 ![](/images/googlenet_6.png){: width="100%"}   
 
-### 2. ResNet  
+## 2. ResNet  
 
 - VGG 모델이 나온 이후 깊은 Network가 좋은 성능을 낸다는 인식이 생겼다.
 - 하지만 비슷한 방식으로 Network를 **더 깊게 만들었을 때 오히려 성능이 저하**되었다.
@@ -64,7 +64,7 @@ tags: DL_theory
 - 파라미터 수 증가는 앞에서와 같이 **1 X 1 컨볼루션**으로 해결하였다.
 - Gradient Vanishing 문제는 **Residual Learning**을 통해 해결하였다.  
 
-#### 1) Residual Learning
+### 1) Residual Learning
 
 - 처음 Residual Learning이 나오기 전에 시도되던 방법은 Identity mapping이다.
 - Identity mapping은 층은 더 깊게 만들되, Gradient vanishing은 생기지 않도록 하기 위해 이전 값을 그대로 다시 통과시키는 방법이다.
@@ -75,7 +75,7 @@ tags: DL_theory
 
 - H(x)가 x가 되도록 하는 것이 아니라, F(x)가 0이 되도록 학습하는 것이 쉽다.  
 
-#### 2) Residual Block
+### 2) Residual Block
 
 ![](/images/resnet_1.png){: width="60%"}  
 
@@ -85,7 +85,7 @@ tags: DL_theory
 
 - Residual Block 내에서는 Feature map 사이즈는 동일하고 Filter수만 변함  
 
-#### 3) ResNet Architecture
+### 3) ResNet Architecture
 
 ![](/images/resnet_4.png){: width="100%"}  
 
