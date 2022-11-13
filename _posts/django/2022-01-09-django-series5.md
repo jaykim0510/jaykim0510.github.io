@@ -40,18 +40,30 @@ class Post(models.Model):
 - 새로 생성된 모델, 변경된 모델은 장고에 반영해야 한다
 
 ```sh
-python manage.py makemigrations
-python manage.py migrate
+python3 manage.py makemigrations
+
+python3 manage.py makemigrations --name "{마이그레이션 파일명 (커밋 로그 같은 느낌)}"
+
+python3 manage.py makemigrations {앱 이름}
+
+python3 manage.py migrate
+
+python3 manage.py migrate {앱 이름}
 ```
 
 ![](/images/django_5.png)
 
 ```sh
-python manage.py showmigrations
+python3 manage.py showmigrations
+
+python3 manage.py showmigrations {앱 이름}
+
+python3 manage.py showmigrations {앱 이름} {번호}
 ```
 
+
 ```sh
-python manage.py sqlmigrate {앱 이름} {번호}
+python3 manage.py sqlmigrate {앱 이름} {번호}
 python3 manage.py sqlmigrate posts 0001
 --------------------------------------------------
 BEGIN;
@@ -60,6 +72,20 @@ BEGIN;
 --
 CREATE TABLE "posts_post" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "title" varchar(50) NOT NULL, "content" varchar(100) NOT NULL, "created_at" datetime NOT NULL, "modified_at" datetime NOT NULL);
 COMMIT;
+```
+
+```sh
+# json 파일로 데이터 삽입
+
+python3 manage.py loaddata {json 파일명}
+```
+
+```sh
+# 장고 셸
+python3 manage.py shell
+
+>>> from {앱 이름}.models import {모델명}
+>>> {모델명}.objects.all()
 ```
 
 ## 모델 필드
@@ -219,3 +245,14 @@ def post_delete(request, post_id):
 {% endfor %}
 
 ```
+
+# db.sqlite3
+
+## VSCode의 SQLite Viewer 익스텐션
+
+- 테이블 이름은 {앱이름}_{모델명} 이런식으로 되어있다
+
+## DB shell
+
+- `python manage.py dbshell`
+- 각 DB에 해당하는 쉘 제공

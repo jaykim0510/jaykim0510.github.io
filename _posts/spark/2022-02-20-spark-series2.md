@@ -5,7 +5,7 @@ description: 스파크를 설치하는 과정 자체는 크게 복잡하지 않�
 date:   2022-02-20 15:01:35 +0300
 image:  '/images/spark_10.png'
 logo_image:  '/images/spark_logo.png'
-categories: DE
+categories: data_engineering
 tags: Spark
 ---
 ---

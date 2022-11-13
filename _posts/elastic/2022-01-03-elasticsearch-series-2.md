@@ -5,7 +5,7 @@ description:
 date:   2022-01-03 15:01:35 +0300
 image:  '/images/es_elem.png'
 logo_image:  '/images/elastic_logo.png'
-categories: DE
+categories: data_engineering
 tags: Elastic
 ---
 

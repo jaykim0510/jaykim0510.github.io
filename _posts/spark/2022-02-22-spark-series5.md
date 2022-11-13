@@ -5,7 +5,7 @@ description:
 date:   2022-02-22 15:01:35 +0300
 image:  '/images/spark_16.jpg'
 logo_image:  '/images/spark_logo.png'
-categories: DE
+categories: data_engineering
 tags: Spark
 ---
 ---

@@ -5,8 +5,8 @@ description:
 date:   2022-04-05 15:01:35 +0300
 image:  '/images/database_logo.jpeg'
 logo_image:  '/images/data_engineering_logo.png'
-categories: DE
-tags: Data_Engineering
+categories: data_engineering
+tags: DE
 ---
 ---
 

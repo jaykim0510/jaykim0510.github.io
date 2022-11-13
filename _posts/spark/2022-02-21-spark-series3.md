@@ -5,7 +5,7 @@ description: 그래서 스파크에서는 전체 서버의 자원과 동작을 �
 date:   2022-02-21 15:01:35 +0300
 image:  '/images/spark_13.png'
 logo_image:  '/images/spark_logo.png'
-categories: DE
+categories: data_engineering
 tags: Spark
 ---
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Finance Series [Part3]: 펀더멘털 분석'
+title:  'Finance Series [Part2]: 연방 준비 시스템의 이해'
 description: 
 date:   2022-04-10 15:01:35 +0300
 image:  '/images/finance_logo.jpeg'

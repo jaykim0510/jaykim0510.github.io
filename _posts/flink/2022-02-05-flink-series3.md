@@ -5,7 +5,7 @@ description:
 date: 2022-02-05 15:01:35 +0300
 logo_image: '/images/flink_logo.png'
 image: '/images/flink_logo.png'
-categories: DE
+categories: data_engineering
 tags: Flink
 ---
 ---

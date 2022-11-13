@@ -5,7 +5,7 @@ description:
 date:   2022-01-20 15:01:35 +0300
 image:  '/images/pandas_logo.png'
 logo_image:  '/images/pandas_logo.png'
-categories: DE
+categories: data_analytics
 tags: Pandas
 ---
 ---

@@ -17,7 +17,6 @@ tags: Javascript
 
 ---
 
-![](../../images/js_1.jpeg){: width="50%"}  
 
 # 데이터 타입  
 

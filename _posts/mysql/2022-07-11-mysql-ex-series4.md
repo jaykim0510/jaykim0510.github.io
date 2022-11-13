@@ -5,7 +5,7 @@ description:
 date:   2022-07-11 15:01:35 +0300
 image:  '/images/coding_test_problem.jpg'
 logo_image: '/images/mysql_logo.webp'
-categories: DE
+categories: data_engineering
 tags: MySQL
 ---
 

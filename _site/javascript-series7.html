@@ -127,6 +127,8 @@
                 
               
                 
+              
+                
                   
                   <li class="nav__item">
                     <a href="/deviation/" class="nav__link">Deviation</a>
@@ -160,6 +162,14 @@
                     <a href="/gallery/" class="nav__link">Gallery</a>
                   </li>
                   
+                
+              
+                
+              
+                
+              
+                
+              
                 
               
                 
@@ -455,6 +465,8 @@
 
 
   
+
+  
   	
   	
   	
@@ -469,7 +481,7 @@
       <a href="/javascript-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Javascript Series [Part6]: Javascript 함수와 스코프</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/javascript-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Javascript Series [Part8]: Javascript 배열<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -478,10 +490,107 @@
       <hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#date-객체" id="markdown-toc-date-객체">Date 객체</a></li>
+</ul>
 
 <hr />
 
-<p><img src="../../images/js_1.jpeg" alt="" width="50%" /></p>
+<ul>
+  <li>자바스크립트의 모든 것이 객체다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">,</span>
+    <span class="dl">'</span><span class="s1">birth-day</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1999-09-09</span><span class="dl">'</span><span class="p">,</span>
+    <span class="dl">'</span><span class="s1">home location</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">busan</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+    <span class="na">live</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="na">previous</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="na">family</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">mother</span><span class="p">:</span> <span class="dl">'</span><span class="s1">yoon</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">father</span><span class="p">:</span> <span class="dl">'</span><span class="s1">kim</span><span class="dl">'</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">live</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">family</span><span class="p">.</span><span class="nx">father</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">[</span><span class="dl">'</span><span class="s1">birth-day</span><span class="dl">'</span><span class="p">]);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">[</span><span class="nx">y</span><span class="p">]);</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">x</span><span class="p">[</span><span class="dl">'</span><span class="s1">age</span><span class="dl">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">delete</span> <span class="nx">x</span><span class="p">.</span><span class="nx">age</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
+<span class="o">-----------------------</span>
+<span class="c1">// undefined</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">live</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">x</span><span class="p">);</span>
+<span class="o">-------------------------</span>
+<span class="c1">// true</span>
+</code></pre></div></div>
+
+<ul>
+  <li>메서드</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Hello </span><span class="p">${</span><span class="nx">na</span><span class="p">}</span><span class="s2">!!`</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">};</span>
+
+<span class="nx">x</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>for in 반복문</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
+    <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Hello </span><span class="p">${</span><span class="nx">na</span><span class="p">}</span><span class="s2">!!`</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="p">};</span>
+
+
+<span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">prop</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="o">----------------------------</span>
+<span class="c1">// name</span>
+<span class="c1">// age</span>
+<span class="c1">// sayHello</span>
+</code></pre></div></div>
+
+<h1 id="date-객체">Date 객체</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">date_1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="dl">'</span><span class="s1">2021-01-04</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">date_2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="dl">'</span><span class="s1">2022-04-05T14:25:42</span><span class="dl">'</span><span class="p">);</span>
+
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">date_1</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">date_2</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">());</span> <span class="c1">// 년</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">());</span> <span class="c1">// 월 0: 1월</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">());</span> <span class="c1">// 일</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getDay</span><span class="p">());</span> <span class="c1">// 요일 0: 일요일, 1: 월요일, ...</span>
+</code></pre></div></div>
+
 
     </div>
     <div class="post__tags_list">
@@ -511,12 +620,12 @@
           
             
               
-              <li class="tag__item"><a href="/DL_theory" class="post_tag_list">#DL_theory</a></li>
+              <li class="tag__item"><a href="/DE" class="post_tag_list">#DE</a></li>
             
           
             
               
-              <li class="tag__item"><a href="/Data_Engineering" class="post_tag_list">#Data_Engineering</a></li>
+              <li class="tag__item"><a href="/DL_theory" class="post_tag_list">#DL_theory</a></li>
             
           
             
@@ -616,6 +725,11 @@
           
             
               
+              <li class="tag__item"><a href="/Scikit_learn" class="post_tag_list">#Scikit_learn</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/Spark" class="post_tag_list">#Spark</a></li>
             
           
@@ -657,17 +771,7 @@
           
             
               
-              <li class="tag__item"><a href="/CS" class="post_category_list">#CS</a></li>
-            
-          
-            
-              
               <li class="tag__item"><a href="/Cloud" class="post_category_list">#Cloud</a></li>
-            
-          
-            
-              
-              <li class="tag__item"><a href="/DE" class="post_category_list">#DE</a></li>
             
           
             
@@ -682,7 +786,27 @@
           
             
               
+              <li class="tag__item"><a href="/computer_science" class="post_category_list">#computer_science</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/data_analytics" class="post_category_list">#data_analytics</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/data_engineering" class="post_category_list">#data_engineering</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/devops" class="post_category_list">#devops</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/machine_learning" class="post_category_list">#machine_learning</a></li>
             
           
             
@@ -748,6 +872,8 @@
 
 
   
+
+  
   	
   	
   	
@@ -762,7 +888,7 @@
       <a href="/javascript-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Javascript Series [Part6]: Javascript 함수와 스코프</a>
     
     
-      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+      <a href="/javascript-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Javascript Series [Part8]: Javascript 배열<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

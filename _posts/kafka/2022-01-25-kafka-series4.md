@@ -5,7 +5,7 @@ description:
 date:   2022-01-25 15:01:35 +0300
 image:  '/images/kafka_78.png'
 logo_image:  '/images/kafka_logo.png'
-categories:   DE
+categories: data_engineering
 tags: Kafka
 ---
 

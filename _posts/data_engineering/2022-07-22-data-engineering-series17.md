@@ -5,8 +5,8 @@ description:
 date:   2022-07-22 15:01:35 +0300
 image:  '/images/distributed_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
-categories: DE
-tags: Data_Engineering
+categories: data_engineering
+tags: DE
 ---
 ---
 

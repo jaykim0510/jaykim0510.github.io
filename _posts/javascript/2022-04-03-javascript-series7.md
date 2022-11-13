@@ -17,4 +17,100 @@ tags: Javascript
 
 ---
 
-![](../../images/js_1.jpeg){: width="50%"}  
+- 자바스크립트의 모든 것이 객체다
+
+
+```js
+
+let x = {
+    name: 'mike',
+    'birth-day': '1999-09-09',
+    'home location': 'busan',
+    age: 22,
+    live: true,
+    previous: null,
+    family: {
+        mother: 'yoon',
+        father: 'kim'
+    }
+};
+
+let y = 'live';
+
+console.log(x.family.father);
+console.log(x['birth-day']);
+console.log(x[y]);
+```
+
+```js
+x['age'] = 25;
+console.log(x.age);
+```
+
+```js
+delete x.age;
+console.log(x.age);
+-----------------------
+// undefined
+```
+
+```js
+console.log('live' in x);
+-------------------------
+// true
+```
+
+- 메서드
+
+```js
+let x = {
+    name: 'mike',
+    sayHello: function(na) {
+        console.log(`Hello ${na}!!`)
+    }
+
+};
+
+x.sayHello(x.name);
+```
+
+- for in 반복문
+
+```js
+let x = {
+    name: 'mike',
+    age: 22,
+    sayHello: function(na) {
+        console.log(`Hello ${na}!!`)
+    }
+
+};
+
+
+for (prop in x) {
+    console.log(`${prop}`);
+}
+----------------------------
+// name
+// age
+// sayHello
+```
+
+# Date 객체
+
+```js
+let now = new Date();
+let date_1 = new Date('2021-01-04');
+let date_2 = new Date('2022-04-05T14:25:42');
+
+
+console.log(now);
+console.log(date_1);
+console.log(date_2);
+
+console.log(now.getFullYear()); // 년
+console.log(now.getMonth()); // 월 0: 1월
+console.log(now.getDate()); // 일
+console.log(now.getDay()); // 요일 0: 일요일, 1: 월요일, ...
+```
+

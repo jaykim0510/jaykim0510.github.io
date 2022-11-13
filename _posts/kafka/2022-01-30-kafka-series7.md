@@ -5,7 +5,7 @@ description: 카프카 클라이언트가 카프카에 연결되기 위해서는
 date:   2022-01-30 15:01:35 +0300
 image:  '/images/kafka_36.png'
 logo_image:  '/images/kafka_logo.png'
-categories:   DE
+categories: data_engineering
 tags: Kafka
 ---
 

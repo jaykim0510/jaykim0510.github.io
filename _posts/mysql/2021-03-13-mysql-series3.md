@@ -5,7 +5,7 @@ description:
 date:   2021-03-13 15:01:35 +0300
 image:  '/images/window_logo.png'
 logo_image: '/images/mysql_logo.webp'
-categories: DE
+categories: data_engineering
 tags: MySQL
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Pytorch Series [Part1]: torch'
-description: Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative a...
+description: 
 date:   2022-01-02 15:01:35 +0300
 image:  '/images/pytorch_logo.webp'
 categories: AI

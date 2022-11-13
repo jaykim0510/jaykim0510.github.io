@@ -5,7 +5,7 @@ description: 데이터베이스를 체계적으로 작동할 수 있도록 돕�
 date:   2021-03-07 15:01:35 +0300
 image:  '/images/mysql_logo.webp'
 logo_image: '/images/mysql_logo.webp'
-categories: DE
+categories: data_engineering
 tags: MySQL
 ---
 

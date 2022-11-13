@@ -5,7 +5,7 @@ description: 이러한 이유로 카프카는 초기 설계 단계에서부터 �
 date:   2022-01-24 15:01:35 +0300
 image:  '/images/kafka_15.png'
 logo_image:  '/images/kafka_logo.png'
-categories:   DE
+categories: data_engineering
 tags: Kafka
 ---
 

@@ -129,6 +129,8 @@
                 
               
                 
+              
+                
                   
                   <li class="nav__item">
                     <a href="/deviation/" class="nav__link">Deviation</a>
@@ -162,6 +164,14 @@
                     <a href="/gallery/" class="nav__link">Gallery</a>
                   </li>
                   
+                
+              
+                
+              
+                
+              
+                
+              
                 
               
                 
@@ -516,6 +526,11 @@
   <li><a href="#관리자-도구admin-사용하기" id="markdown-toc-관리자-도구admin-사용하기">관리자 도구(Admin) 사용하기</a></li>
   <li><a href="#view에서-모델-사용하기" id="markdown-toc-view에서-모델-사용하기">View에서 모델 사용하기</a></li>
   <li><a href="#template에서-모델-사용하기" id="markdown-toc-template에서-모델-사용하기">Template에서 모델 사용하기</a></li>
+  <li><a href="#dbsqlite3" id="markdown-toc-dbsqlite3">db.sqlite3</a>    <ul>
+      <li><a href="#vscode의-sqlite-viewer-익스텐션" id="markdown-toc-vscode의-sqlite-viewer-익스텐션">VSCode의 SQLite Viewer 익스텐션</a></li>
+      <li><a href="#db-shell" id="markdown-toc-db-shell">DB shell</a></li>
+    </ul>
+  </li>
 </ul>
 
 <hr />
@@ -547,16 +562,27 @@
   <li>새로 생성된 모델, 변경된 모델은 장고에 반영해야 한다</li>
 </ul>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py makemigrations
-python manage.py migrate
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py makemigrations
+
+python3 manage.py makemigrations <span class="nt">--name</span> <span class="s2">"{마이그레이션 파일명 (커밋 로그 같은 느낌)}"</span>
+
+python3 manage.py makemigrations <span class="o">{</span>앱 이름<span class="o">}</span>
+
+python3 manage.py migrate
+
+python3 manage.py migrate <span class="o">{</span>앱 이름<span class="o">}</span>
 </code></pre></div></div>
 
 <p><img src="/images/django_5.png" alt="" /></p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py showmigrations
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py showmigrations
+
+python3 manage.py showmigrations <span class="o">{</span>앱 이름<span class="o">}</span>
+
+python3 manage.py showmigrations <span class="o">{</span>앱 이름<span class="o">}</span> <span class="o">{</span>번호<span class="o">}</span>
 </code></pre></div></div>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python manage.py sqlmigrate <span class="o">{</span>앱 이름<span class="o">}</span> <span class="o">{</span>번호<span class="o">}</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py sqlmigrate <span class="o">{</span>앱 이름<span class="o">}</span> <span class="o">{</span>번호<span class="o">}</span>
 python3 manage.py sqlmigrate posts 0001
 <span class="nt">--------------------------------------------------</span>
 BEGIN<span class="p">;</span>
@@ -565,6 +591,18 @@ BEGIN<span class="p">;</span>
 <span class="nt">--</span>
 CREATE TABLE <span class="s2">"posts_post"</span> <span class="o">(</span><span class="s2">"id"</span> integer NOT NULL PRIMARY KEY AUTOINCREMENT, <span class="s2">"title"</span> varchar<span class="o">(</span>50<span class="o">)</span> NOT NULL, <span class="s2">"content"</span> varchar<span class="o">(</span>100<span class="o">)</span> NOT NULL, <span class="s2">"created_at"</span> datetime NOT NULL, <span class="s2">"modified_at"</span> datetime NOT NULL<span class="o">)</span><span class="p">;</span>
 COMMIT<span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># json 파일로 데이터 삽입</span>
+
+python3 manage.py loaddata <span class="o">{</span>json 파일명<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 장고 셸</span>
+python3 manage.py shell
+
+<span class="o">&gt;&gt;&gt;</span> from <span class="o">{</span>앱 이름<span class="o">}</span>.models import <span class="o">{</span>모델명<span class="o">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="o">{</span>모델명<span class="o">}</span>.objects.all<span class="o">()</span>
 </code></pre></div></div>
 
 <h2 id="모델-필드">모델 필드</h2>
@@ -715,6 +753,21 @@ __startswith, __istatswith, __endswith, __iendswith, __range, __isnull
 
 </code></pre></div></div>
 
+<h1 id="dbsqlite3">db.sqlite3</h1>
+
+<h2 id="vscode의-sqlite-viewer-익스텐션">VSCode의 SQLite Viewer 익스텐션</h2>
+
+<ul>
+  <li>테이블 이름은 {앱이름}_{모델명} 이런식으로 되어있다</li>
+</ul>
+
+<h2 id="db-shell">DB shell</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">python manage.py dbshell</code></li>
+  <li>각 DB에 해당하는 쉘 제공</li>
+</ul>
+
     </div>
     <div class="post__tags_list">
       <div class="container">
@@ -743,12 +796,12 @@ __startswith, __istatswith, __endswith, __iendswith, __range, __isnull
           
             
               
-              <li class="tag__item"><a href="/DL_theory" class="post_tag_list">#DL_theory</a></li>
+              <li class="tag__item"><a href="/DE" class="post_tag_list">#DE</a></li>
             
           
             
               
-              <li class="tag__item"><a href="/Data_Engineering" class="post_tag_list">#Data_Engineering</a></li>
+              <li class="tag__item"><a href="/DL_theory" class="post_tag_list">#DL_theory</a></li>
             
           
             
@@ -848,6 +901,11 @@ __startswith, __istatswith, __endswith, __iendswith, __range, __isnull
           
             
               
+              <li class="tag__item"><a href="/Scikit_learn" class="post_tag_list">#Scikit_learn</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/Spark" class="post_tag_list">#Spark</a></li>
             
           
@@ -889,17 +947,7 @@ __startswith, __istatswith, __endswith, __iendswith, __range, __isnull
           
             
               
-              <li class="tag__item"><a href="/CS" class="post_category_list">#CS</a></li>
-            
-          
-            
-              
               <li class="tag__item"><a href="/Cloud" class="post_category_list">#Cloud</a></li>
-            
-          
-            
-              
-              <li class="tag__item"><a href="/DE" class="post_category_list">#DE</a></li>
             
           
             
@@ -914,7 +962,27 @@ __startswith, __istatswith, __endswith, __iendswith, __range, __isnull
           
             
               
+              <li class="tag__item"><a href="/computer_science" class="post_category_list">#computer_science</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/data_analytics" class="post_category_list">#data_analytics</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/data_engineering" class="post_category_list">#data_engineering</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/devops" class="post_category_list">#devops</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/machine_learning" class="post_category_list">#machine_learning</a></li>
             
           
             

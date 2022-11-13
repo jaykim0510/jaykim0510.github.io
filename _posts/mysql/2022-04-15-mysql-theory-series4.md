@@ -5,7 +5,7 @@ description:
 date:   2022-04-15 15:01:35 +0300
 image:  '/images/sql_10.png'
 logo_image: '/images/mysql_logo.webp'
-categories: DE
+categories: data_engineering
 tags: MySQL
 ---
 

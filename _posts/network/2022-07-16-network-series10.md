@@ -5,7 +5,7 @@ description:
 date:   2022-07-16 15:01:35 +0300
 image:  '/images/lb_logo.png'
 logo_image: '/images/cs_logo.jpeg'
-categories: CS
+categories: computer_science
 tags: Network
 ---
 

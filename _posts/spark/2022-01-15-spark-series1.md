@@ -5,7 +5,7 @@ description: 스파크는 클러스터 기반의 분산 처리 기능을 제공�
 date:   2022-01-15 15:01:35 +0300
 image:  '/images/spark_6.png'
 logo_image:  '/images/spark_logo.png'
-categories: DE
+categories: data_engineering
 tags: Spark
 ---
 ---

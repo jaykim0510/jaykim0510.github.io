@@ -5,7 +5,7 @@ description: 엘라스틱서치에서 문서(데이터)를 어떤 형태로 색�
 date:   2022-01-06 15:01:35 +0300
 image:  '/images/elasticsearch_logo.png'
 logo_image:  '/images/elastic_logo.png'
-categories: DE
+categories: data_engineering
 tags: Elastic
 ---
 ---

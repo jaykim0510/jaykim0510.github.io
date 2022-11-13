@@ -5,7 +5,7 @@ description:
 date:   2022-07-15 15:01:35 +0300
 image:  '/images/coding_test_problem.jpg'
 logo_image:  '/images/coding_test_problem.jpg'
-categories: CS
+categories: computer_science
 tags: Coding_Test
 ---
 ---

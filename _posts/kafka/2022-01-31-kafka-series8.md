@@ -5,7 +5,7 @@ description: 클라이언트와 카프카간의 메세지를 주고받기 위해
 date:   2022-01-31 15:01:35 +0300
 image:  '/images/kafka_54.png'
 logo_image:  '/images/kafka_logo.png'
-categories:   DE
+categories: data_engineering
 tags: Kafka
 ---
 

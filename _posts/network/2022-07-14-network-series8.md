@@ -5,7 +5,7 @@ description:
 date:   2022-07-14 15:01:35 +0300
 image:  '/images/rest_logo.png'
 logo_image: '/images/cs_logo.jpeg'
-categories: CS
+categories: computer_science
 tags: Network
 ---
 
