@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  'Deep Learning Series [Part10]: RNN의 기초'
-description: 그렇게 시작된 딥러닝 기술의 발달은 최근 추천 알고리즘, 알파고, 파파고, 자율 주행 등 많은 분야에서 엄청난 변화를 가져오고 있습니다.
+description: 
 date:   2021-04-05 15:01:35 +0300
 image:  '/images/basic_of_rnn_5.png'
 logo_image:  '/images/ai_logo.jpeg'
