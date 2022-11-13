@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Scikit-learn Series [Part1]: Intro'
+title:  'Scikit-learn Series [Part3]: 회귀(Regression)'
 description: 
 date:   2022-01-02 15:01:35 +0300
 image:  '/images/scikit_learn_logo.png'

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Scikit-learn Series [Part1]: Intro'
+title:  'Scikit-learn Series [Part4]: 성능 개선(Optimization)'
 description: 
 date:   2022-01-02 15:01:35 +0300
 image:  '/images/scikit_learn_logo.png'
