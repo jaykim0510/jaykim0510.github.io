@@ -1,0 +1,638 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#seeding" id="markdown-toc-seeding">Seeding</a></li>
+  <li><a href="#pagination" id="markdown-toc-pagination">Pagination</a></li>
+  <li><a href="#user" id="markdown-toc-user">User</a>    <ul>
+      <li><a href="#패키지" id="markdown-toc-패키지">패키지</a></li>
+      <li><a href="#유저-모델" id="markdown-toc-유저-모델">유저 모델</a></li>
+      <li><a href="#유저-접근" id="markdown-toc-유저-접근">유저 접근</a></li>
+      <li><a href="#세션-설정" id="markdown-toc-세션-설정">세션 설정</a></li>
+      <li><a href="#django-allauth-url" id="markdown-toc-django-allauth-url">django-allauth URL</a></li>
+      <li><a href="#django-allauth-유용한-설정값" id="markdown-toc-django-allauth-유용한-설정값">django-allauth 유용한 설정값</a></li>
+      <li><a href="#접근-제어" id="markdown-toc-접근-제어">접근 제어</a>        <ul>
+          <li><a href="#mixin-방식" id="markdown-toc-mixin-방식">Mixin 방식</a></li>
+          <li><a href="#decorator-방식" id="markdown-toc-decorator-방식">Decorator 방식</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#모델의-다양한-필드" id="markdown-toc-모델의-다양한-필드">모델의 다양한 필드</a></li>
+  <li><a href="#정적-파일과-미디어-파일" id="markdown-toc-정적-파일과-미디어-파일">정적 파일과 미디어 파일</a></li>
+  <li><a href="#imagefield" id="markdown-toc-imagefield">ImageField</a></li>
+</ul>
+
+<hr />
+
+<h1 id="seeding">Seeding</h1>
+
+<ul>
+  <li>사용할 데이터를 데이터베이스에 추가하는 것</li>
+  <li>테스트를 위해서, 혹은 초기에 필요한 데이터를 데이터베이스에 입력해야할 때</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py loaddata &lt;json파일&gt;
+</code></pre></div></div>
+
+<h1 id="pagination">Pagination</h1>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.core.paginator</span> <span class="kn">import</span> <span class="n">Paginator</span>
+
+<span class="n">posts</span> <span class="o">=</span> <span class="n">Post</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">all</span><span class="p">()</span>
+
+<span class="n">pages</span> <span class="o">=</span> <span class="n">Paginator</span><span class="p">(</span><span class="n">posts</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+<span class="n">page</span> <span class="o">=</span> <span class="n">pages</span><span class="p">.</span><span class="n">page</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">object_list</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">has_next</span><span class="p">()</span>
+<span class="n">page</span><span class="p">.</span><span class="n">has_previous</span><span class="p">()</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">next_page_number</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Function Based View
+</span>
+<span class="k">def</span> <span class="nf">post_list</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">Post</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">all</span><span class="p">()</span>
+
+    <span class="n">pages</span> <span class="o">=</span> <span class="n">Paginator</span><span class="p">(</span><span class="n">posts</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="n">cur_page_num</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'page'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cur_page_num</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cur_page_num</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">pages</span><span class="p">.</span><span class="n">page</span><span class="p">(</span><span class="n">cur_page_num</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'posts/post_list.html'</span><span class="p">,</span> <span class="p">{</span><span class="s">'page'</span><span class="p">:</span> <span class="n">page</span><span class="p">})</span>
+
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Class Based View
+</span>
+<span class="k">class</span> <span class="nc">PostListView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+    <span class="p">...</span>
+    <span class="n">paginate_by</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">page_kwarg</span> <span class="o">=</span> <span class="s">'page'</span>
+
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># posts/post_list.html
+
+{% if page.object_list %}
+    {% for post in page.object_list %}
+        <span class="nt">&lt;h2&gt;</span>{{post.title}}<span class="nt">&lt;/h2&gt;</span>
+        ...
+    {% endfor %}
+
+    # 페이지네이터
+
+    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">?page=1</span><span class="nt">&gt;</span>first<span class="nt">&lt;/a&gt;</span>
+    {% if page.has_previous %}
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page.previous_page_number }}"</span><span class="nt">&gt;</span>prev<span class="nt">&lt;/a&gt;</span>
+    {% endif %}
+
+    <span class="nt">&lt;span&gt;</span>
+        <span class="nt">&lt;p&gt;</span>{{ page.number }} of {{ page.paginator.page_number }}<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/span&gt;</span>
+
+    {% if page.has_next %}
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page.next_page_number }}"</span><span class="nt">&gt;</span>next<span class="nt">&lt;/a&gt;</span>
+    {% endif %}
+    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={% raw %}{{ page.paginator.page_number }}"</span><span class="nt">&gt;</span>last<span class="nt">&lt;/a&gt;</span>
+
+{% endif %}
+
+</code></pre></div></div>
+
+<h1 id="user">User</h1>
+
+<h2 id="패키지">패키지</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">django.contrib.auth</code>: 장고에 기본적으로 설치된 패키지 (<a href="https://github.com/django/django/tree/main/django/contrib/auth">소스코드 참고</a>)</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">django-allauth</code>: 별도로 설치해야 하는 패키지 (<a href="https://github.com/pennersr/django-allauth/tree/master/allauth/account">소스코드 참고</a>)</p>
+  </li>
+  <li>보통 모델만 <code class="language-plaintext highlighter-rouge">django.contrib.auth</code> 에서 가져오고,</li>
+  <li>나머지 url, view, form과 관련된 기능들은 <code class="language-plaintext highlighter-rouge">django-allauth</code>에서 가져온다</li>
+  <li><code class="language-plaintext highlighter-rouge">django-allauth</code>는 이메일 존재여부 확인, SNS 아이디를 통한 로그인과 같은 기능들을 제공해준다</li>
+  <li>또 django.contrib.auth는 view를 직접 구현해야하지만, django-allauth는 간단한 설정으로 가능하다</li>
+</ul>
+
+<p>📦 <strong>django-allauth 설치</strong></p>
+
+<ul>
+  <li><a href="https://django-allauth.readthedocs.io/en/latest/installation.html">공식문서 참고</a></li>
+  <li><code class="language-plaintext highlighter-rouge">pip install django-allauth</code></li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="n">AUTHENTICATION_BACKENDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Needed to login by username in Django admin, regardless of `allauth`
+</span>    <span class="s">'django.contrib.auth.backends.ModelBackend'</span><span class="p">,</span>
+
+    <span class="c1"># `allauth` specific authentication methods, such as login by e-mail
+</span>    <span class="s">'allauth.account.auth_backends.AuthenticationBackend'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1"># https://django-allauth.readthedocs.io/en/latest/configuration.html 참고
+</span><span class="n">ACCOUNT_SIGNUP_REDIRECT_URL</span> <span class="o">=</span> <span class="s">'&lt;회원가입 후 리다이렉트할 url&gt;'</span>
+<span class="n">LOGIN_REDIRECT_URL</span> <span class="o">=</span> <span class="s">'&lt;로그인 후 리다이렉트할 url&gt;'</span>
+<span class="n">ACCOUNT_LOGOUT_ON_GET</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># The following apps are required:
+</span>    <span class="s">'django.contrib.auth'</span><span class="p">,</span>
+    <span class="s">'django.contrib.messages'</span><span class="p">,</span>
+    <span class="s">'django.contrib.sites'</span><span class="p">,</span>
+
+    <span class="s">'allauth'</span><span class="p">,</span>
+    <span class="s">'allauth.account'</span><span class="p">,</span>
+    <span class="s">'allauth.socialaccount'</span><span class="p">,]</span>
+
+<span class="n">SITE_ID</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># urls.py
+</span>
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">...</span>
+    <span class="n">path</span><span class="p">(</span><span class="s">'accounts/'</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s">'allauth.urls'</span><span class="p">)),</span>
+    <span class="p">...</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3  manage.py migrate
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py runserver
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>localhost:8000/accounts/login
+</code></pre></div></div>
+
+<h2 id="유저-모델">유저 모델</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">django.contrib.auth</code> 에는 기본유저 모델도 제공해주고, 상속 받아서 쓸 수 있는 추상클래스 모델도 제공해준다</li>
+  <li>기본유저 모델: <code class="language-plaintext highlighter-rouge">User</code> (나중에 필드 추가하기 어려워지기 때문에 장고에서 권장하지 않음)</li>
+  <li>추상클래스 모델: <code class="language-plaintext highlighter-rouge">AbstractUser</code>, <code class="language-plaintext highlighter-rouge">AbstractBaseUser</code></li>
+  <li>(<code class="language-plaintext highlighter-rouge">AbstractUser</code>는 기본적으로 username, email 등과 같은 필드가 설정되어 있음)</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractUser</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="n">AUTH_USER_MODEL</span> <span class="o">=</span> <span class="s">'&lt;메인 앱이름: 보통프로젝트명&gt;.User'</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py makemigrations <span class="nt">--name</span> Create User model
+python3 manage.py migrate
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># admin.py
+</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.admin</span> <span class="kn">import</span> <span class="n">UserAdmin</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">User</span>
+
+<span class="c1"># 이렇게 UserAdmin을 붙여주면, 어드민 페이지에서 User를 위한 편리한 인터페이스를 제공
+</span><span class="n">admin</span><span class="p">.</span><span class="n">site</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">UserAdmin</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>필드 추가</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">AbstractUser</span>
+
+<span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">AbstractUser</span><span class="p">):</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># admin.py
+</span>
+<span class="c1"># 별도로 추가한 필드는 추가 등록해줘야 인터페이스에 보인다
+# Custom fields 라는 섹션에 nickname 필드 추가
+</span><span class="n">UserAdmin</span><span class="p">.</span><span class="n">fieldsets</span> <span class="o">+=</span> <span class="p">(</span><span class="s">"Custom fields"</span><span class="p">,</span> <span class="p">{</span><span class="s">"fields"</span><span class="p">:</span> <span class="p">(</span><span class="s">"nickname"</span><span class="p">,)})</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># forms.py
+</span>
+<span class="c1"># django-allauth 에서 기본적으로 제공하는 회원가입 폼이 있다
+# 하지만 보통 회원가입 폼은 커스텀하는 경우가 많다
+# 폼은 아래와 같이 커스터마이징 할 수 있다
+</span>
+<span class="k">class</span> <span class="nc">SignUpForm</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">User</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">'nickname'</span><span class="p">]</span> <span class="c1"># 별도로 추가한 필드만 적어주면 된다
+</span>
+    <span class="k">def</span> <span class="nf">signup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="n">user</span><span class="p">.</span><span class="n">nickname</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cleaned_date</span><span class="p">[</span><span class="s">'nickname'</span><span class="p">]</span>
+        <span class="n">user</span><span class="p">.</span><span class="n">save</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="n">ACCOUNT_SIGNUP_FORM_CLASS</span> <span class="o">=</span> <span class="s">'&lt;메인 앱: 프로젝트명&gt;.forms.SignUpForm'</span>
+</code></pre></div></div>
+
+<h2 id="유저-접근">유저 접근</h2>
+
+<ul>
+  <li>View: <code class="language-plaintext highlighter-rouge">request.user</code></li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>request.user
+request.user.email
+request.user.is_authenticated
+</code></pre></div></div>
+
+<ul>
+  <li>Template: <code class="language-plaintext highlighter-rouge">{{ user }}</code></li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{% if user.is_authenticated %}
+    &lt;a href="{% url 'account_logout' %}"&gt;로그아웃&lt;/a&gt;
+{% else %}
+    &lt;a href="{% url 'account_login' %}"&gt;로그인&lt;/a&gt;
+    &lt;a href="{% url 'account_signup' %}"&gt;회원가입&lt;/a&gt;
+{% endif %}
+
+</code></pre></div></div>
+
+<h2 id="세션-설정">세션 설정</h2>
+
+<ul>
+  <li>세션: 웹 서버에 저장된 유저의 방문 기록</li>
+  <li>보통 브라우저 탭을 닫으면 로그인 풀림 (쿠키에 저장된 session id가 삭제되기 때문)</li>
+  <li>이를 설정을 통해 제어할 수 있음</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="c1"># 탭 닫아도 쿠키가 바로 삭제 되지 않음 -&gt; 로그인 유지시킬 수 있음
+</span><span class="n">ACCOUNT_SESSION_REMEMBER</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="c1"># 쿠키 생명주기 설정 (기본값은 2주)
+</span><span class="n">SESSION_COOKIE_AGE</span> <span class="o">=</span> <span class="mi">3600</span> <span class="c1"># (1시간)
+</span></code></pre></div></div>
+
+<ul>
+  <li>웹 서버에는 세션 정보가 삭제되지 않고 계속 쌓임</li>
+  <li>이를 중간중간 삭제해줄 필요가 있음</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py clearsessions
+</code></pre></div></div>
+
+<h2 id="django-allauth-url">django-allauth URL</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>URL 경로</td>
+      <td>URL 명</td>
+      <td>설명</td>
+    </tr>
+    <tr>
+      <td>‘signup/’</td>
+      <td>‘account_signup’</td>
+      <td>회원가입 페이지</td>
+    </tr>
+    <tr>
+      <td>‘login/’</td>
+      <td>‘account_login’</td>
+      <td>로그인 페이지</td>
+    </tr>
+    <tr>
+      <td>‘logout/’</td>
+      <td>‘account_logout’</td>
+      <td>로그아웃 페이지 (ACCOUNT_LOGOUT_ON_GET = True 사용시 바로 로그아웃)</td>
+    </tr>
+    <tr>
+      <td>‘confrim-email//’</td>
+      <td>‘account_confirm_email’</td>
+      <td>이메일 인증 페이지(ACCOUNT_CONFIRM_EMAIL_ON_GET = True 사용시 바로 인증 완료 됩니다.)</td>
+    </tr>
+    <tr>
+      <td>‘password/change/’</td>
+      <td>‘account_change_password’</td>
+      <td>비밀번호 변경 페이지</td>
+    </tr>
+    <tr>
+      <td>‘password/reset/’</td>
+      <td>‘account_reset_password’</td>
+      <td>비밀번호 찾기 페이지 (비밀번호 재설정 링크를 받을 이메일을 입력하는 페이지)</td>
+    </tr>
+    <tr>
+      <td>‘password/reset/done/’</td>
+      <td>‘account_reset_password_done’</td>
+      <td>비밀번호 재설정 이메일 전송 완료 페이지</td>
+    </tr>
+    <tr>
+      <td>‘password/reset/key//</td>
+      <td>‘account_reset_password_from_key’</td>
+      <td>비밀번호 재설정 페이지 (새 비밀번호를 설정하는 페이지)</td>
+    </tr>
+    <tr>
+      <td>‘password/reset/key/done/</td>
+      <td>‘account_reset_password_from_key_done’</td>
+      <td>비밀번호 재설정 완료 페이지</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="django-allauth-유용한-설정값">django-allauth 유용한 설정값</h2>
+
+<table>
+  <tbody>
+    <tr>
+      <td>변수</td>
+      <td>가능한 값</td>
+      <td>기본값</td>
+      <td>설명</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_AUTHENTICATION_METHOD</td>
+      <td>“username” , “email” , “username_email”</td>
+      <td>“username”</td>
+      <td>로그인 방법을 설정합니다. “username”: 유저네임 사용, “email”: 이메일 사용, “username_email”: 둘 다 사용 가능</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_CONFIRM_EMAIL_ON_GET</td>
+      <td>True , False</td>
+      <td>False</td>
+      <td>True: 이메일 인증 링크를 클릭하면 바로 인증이 됩니다, False: 이메일 인증 링크를 클릭하면 인증 confirmation 페이지로 갑니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL</td>
+      <td>URL (URL 경로, URL 네임 모두 가능)</td>
+      <td>LOGIN_URL (아래 참고)</td>
+      <td>로그인이 안된 상태로 인증을 완료했을 때 리디렉트되는 URL.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL</td>
+      <td>URL (URL 경로, URL 네임 모두 가능)</td>
+      <td>LOGIN_REDICRECT_URL (아래 참고)</td>
+      <td>로그인이 된 상태로 인증을 완료했을 때 리디렉트되는 URL.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS</td>
+      <td>이메일 인증 링크 만료 기간 (단위: 일)</td>
+      <td>3</td>
+      <td>이메일 인증 링크 만료 기간</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_EMAIL_REQUIRED</td>
+      <td>True , False</td>
+      <td>False</td>
+      <td>회원가입 시 이메일을 꼭 입력해야 하는지를 결정합니다. True: 이메일을 꼭 입력해야 합니다, False: 이메일 필드는 옵셔널 필드입니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_EMAIL_VERIFICATION</td>
+      <td>“mandatory” , “optional” , “none”</td>
+      <td>“optional”</td>
+      <td>이메일 인증 필요 여부를 설정합니다. “mandatory”: 회원가입 시 인증 이메일이 발송되고, 인증을 완료해야만 로그인을 할 수 있습니다, “optional”: 회원가입 시 인증 이메일이 발송되지만, 인증이 필수는 아닙니다, “none”: 인증 이메일이 발송되지 않습니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_LOGIN_ATTEMPTS_LIMIT</td>
+      <td>최대 로그인 실패 횟수</td>
+      <td>5</td>
+      <td>최대 로그인 실패 횟수</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT</td>
+      <td>로그인이 잠기는 기간 (단위: 초)</td>
+      <td>300</td>
+      <td>로그인 시도가 ACCOUNT_LOGIN_ATTEMPTS_LIMIT을 초과하면 설정하는 시간만큼 로그인이 잠깁니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_LOGOUT_ON_GET</td>
+      <td>True , False</td>
+      <td>False</td>
+      <td>True: 로그아웃 링크를 클릭하면 바로 로그아웃이 됩니다, False: 로그아웃 링크를 클릭하면 로그아웃 confirmation 페이지로 갑니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_LOGOUT_REDIRECT_URL</td>
+      <td>URL (URL 경로, URL 네임 모두 가능)</td>
+      <td>”/”</td>
+      <td>로그아웃 시 리디렉트되는 URL</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_PASSWORD_INPUT_RENDER_VALUE</td>
+      <td>True , False</td>
+      <td>False</td>
+      <td>폼 유효성 검사를 실패할 경우, 입력했던 비밀번호가 채워진 상태로 폼이 돌아오는지를 설정합니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_SESSION_REMEMBER</td>
+      <td>None , True , False</td>
+      <td>None</td>
+      <td>브라우저를 닫으면 유저를 로그아웃 시킬지를 결정합니다. None: 유저가 체크박스를 통해 선택하게 합니다, True: 브라우저를 닫아도 로그인을 유지합니다, False: 브라우저를 닫으면 유저를 로그아웃 시킵니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_SIGNUP_EMAIL_ENTER_TWICE</td>
+      <td>True , False</td>
+      <td>False</td>
+      <td>회원가입시 이메일을 두 번 입력해야 하는지를 설정합니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_SIGNUP_FORM_CLASS</td>
+      <td>폼 클래스 (e.g. ‘myapp.forms.SignupForm’)</td>
+      <td>None</td>
+      <td>회원가입 페이지에서 추가 정보를 받아야 할 때, 사용할 폼 클래스를 지정해 줍니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE</td>
+      <td>True , False</td>
+      <td>False</td>
+      <td>회원가입 시 비밀번호를 두 번 입력해야 하는지를 설정합니다.</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_SIGNUP_REDIRECT_URL</td>
+      <td>URL (URL 경로, URL 네임 모두 가능)</td>
+      <td>LOGIN_REDIRECT_URL (아래 참고)</td>
+      <td>회원가입 성공 시 리디렉트되는 URL</td>
+    </tr>
+    <tr>
+      <td>ACCOUNT_USERNAME_REQUIRED</td>
+      <td>True , False</td>
+      <td>True</td>
+      <td>회원가입 시 유저네임을 입력해야 하는지를 결정합니다. True: 유저네임을 입력해야 합니다, False: 유저네임을 입력받지 않습니다.</td>
+    </tr>
+    <tr>
+      <td>LOGIN_REDIRECT_URL</td>
+      <td>URL (URL 경로, URL 네임 모두 가능)</td>
+      <td>‘/accounts/profile/’</td>
+      <td>성공적인 로그인 시 리디렉트되는 URL</td>
+    </tr>
+    <tr>
+      <td>LOGIN_URL</td>
+      <td>URL (URL 경로, URL 네임 모두 가능)</td>
+      <td>‘/accounts/login/’</td>
+      <td>웹사이트의 로그인 URL</td>
+    </tr>
+    <tr>
+      <td>PASSWORD_RESET_TIMEOUT</td>
+      <td>비밀번호 재설정 링크 만료 기간 (단위: 초)</td>
+      <td>259200 (3일)</td>
+      <td>비밀번호 재설정 링크 만료 기간 (Django 3.1 이후 버전에서만 지원)</td>
+    </tr>
+    <tr>
+      <td>PASSWORD_RESET_TIMEOUT_DAYS</td>
+      <td>비밀번호 재설정 링크 만료 기간 (단위: 일)</td>
+      <td>3</td>
+      <td>비밀번호 재설정 링크 만료 기간 (Django 3.0 이전 버전에서만 지원)</td>
+    </tr>
+    <tr>
+      <td>SESSION_COOKIE_AGE</td>
+      <td>세션 쿠키 만료 기간 (단위: 초)</td>
+      <td>1209600 (2주)</td>
+      <td>세션 쿠키 만료 기간 (로그인을 얼마나 오랫동안 유지할 것인지)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="접근-제어">접근 제어</h2>
+
+<ul>
+  <li>로그인을 해야 글을 작성할 수 있다</li>
+  <li>내가 작성한 글만 수정/삭제 할 수 있다</li>
+  <li>Function Based View 라면 데코레이터(Decorator)를 통해서,</li>
+  <li>Class Based View 라면 믹스인(MixIn)을 통해서 구현할 수 있다</li>
+</ul>
+
+<h3 id="mixin-방식">Mixin 방식</h3>
+
+<ul>
+  <li>Mixin을 제공해주는 패키지: <code class="language-plaintext highlighter-rouge">django.contrib.auth</code>, <code class="language-plaintext highlighter-rouge">django-braces</code>
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">django.contrib.auth</code>: 내장된 패키지이지만, 원하는 로직을 직접 구현하기 힘들다</li>
+      <li><code class="language-plaintext highlighter-rouge">django-braces</code>: 접근 제어와 관련된 <code class="language-plaintext highlighter-rouge">Access Mixin</code> 제공</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install django-braces
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">braces.views</span> <span class="kn">import</span> <span class="n">LoginRequiredMixIn</span>
+
+<span class="c1"># LoginRequiredMixIn 클래스가 먼저 나와야함
+</span><span class="k">class</span> <span class="nc">ReviewCreateView</span><span class="p">(</span><span class="n">LoginRequiredMixIn</span><span class="p">,</span> <span class="n">CreateView</span><span class="p">):</span>
+    <span class="p">...</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="c1"># 로그인 화면 URL을 명시해야 LoginRequiredMixin 클래스가 안내해준다
+</span><span class="n">LOGIN_URL</span> <span class="o">=</span> <span class="s">'account_login'</span>
+</code></pre></div></div>
+
+<ul>
+  <li>자신이 작성한 글에만 수정/삭제 버튼 보이도록 하기</li>
+</ul>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+{% if  post.author == user %}
+    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post-update' post.id %}"</span><span class="nt">&gt;</span>수정<span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post-delete' post.id %}"</span><span class="nt">&gt;</span>삭제<span class="nt">&lt;/a&gt;</span>
+
+{% endif %}
+</code></pre></div></div>
+
+<p>💊 <strong>Mixin</strong></p>
+
+<ul>
+  <li>Mixin은 파이썬의 일반적인 개념인데, 기존의 클래스에 어떤 기능을 더해줄 때 쓰인다</li>
+  <li>(여기서는 뷰 클래스에 접근 제어 기능을 더해줬다)</li>
+</ul>
+
+<h3 id="decorator-방식">Decorator 방식</h3>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># views.py
+</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="kn">import</span> <span class="n">login_required</span>
+
+<span class="o">@</span><span class="n">login_required</span>
+<span class="k">def</span> <span class="nf">my_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="p">...</span>
+</code></pre></div></div>
+
+<h1 id="모델의-다양한-필드">모델의 다양한 필드</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># models.py
+</span>
+<span class="k">class</span> <span class="nc">Review</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">titile</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">link</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">URLField</span><span class="p">()</span>
+    
+    <span class="n">RATING_CHOICES</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># (모델필드에 들어갈 값, 화면에 보일 값)
+</span>        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">]</span>
+    
+    <span class="n">rating</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">RATING_CHOICES</span><span class="p">)</span>
+    
+    <span class="n">image</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ImageField</span><span class="p">()</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">dt_created</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DataTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">dt_updated</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">title</span>
+</code></pre></div></div>
+
+<h1 id="정적-파일과-미디어-파일">정적 파일과 미디어 파일</h1>
+
+<ul>
+  <li>정적 파일
+    <ul>
+      <li>웹 개발에서 사용한 파일
+        <ul>
+          <li>ex. CSS, 웹 사이트를 꾸미기 위해 사용한 고정된 이미지</li>
+        </ul>
+      </li>
+      <li>미디어 파일
+        <ul>
+          <li>ex. 사용자가 생성/등록한 프로필 사진</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="na">href= </span><span class="s">"{% static '&lt;정적 파일 경로&gt;' %}"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="c1"># 미디어 파일 경로 설정
+</span><span class="n">MEDIA_ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s">'&lt;미디어 파일 폴더명&gt; ex.media'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="imagefield">ImageField</h1>
+
+<ul>
+  <li>이미지 필드에 미디어 파일 URL 주소를 저장하면,</li>
+  <li>폼으로 들어온 이미지를 미디어 파일 디렉터리에 저장해준다</li>
+  <li>이미지 필드를 사용하려면 pillow 패키지를 설치해야함</li>
+</ul>
+:ET
