@@ -63,6 +63,7 @@ python3 manage.py runserver
 - 하나의 앱에 모든 기능을 구현해도 된다
 - 하지만 장고의 설계 철학은 앱은 하나의 기능만을 담당함으로써 여러 프로젝트에 사용될 수 있도록 앱을 만들기를 지향한다
 - 그래서 예를 들어 유저(User), 포스트(Post), 댓글(Comment) 등과 같은 기능을 하나의 앱으로 설계하는 것이 좋다
+- 앱의 이름은 보통 복수형으로 생성한다 (ex. users, posts comments 등)
 
 ```sh
 python3 manage.py startapp <앱 이름>
@@ -77,7 +78,7 @@ mydjango
 ├── db.sqlite3
 ├── manage.py
 ├── mydjango
-└── post # post 앱
+└── posts # posts 앱
     ├── __init__.py
     ├── admin.py # 앱을 Django 관리자와 연동하기 위해 필요한 설정 파일
     ├── apps.py # 앱에 대한 설정을 넣어두는 파일
@@ -98,28 +99,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'post', # 추가
+    'posts', # 추가
 ]
 ```
 
 - 마지막으로 간단하게 post 앱으로 API 를 매핑해, HTML 파일을 렌더링 해보자
 - 가장 먼저 URL 요청을 가장 먼저 받아들이는 urls.py 파일에 경로를 추가하자
-- 아래 코드는 `post/` 를 포함한 경로는 `post/urls.py` 파일로 요청을 전달한다는 의미다
+- 아래 코드는 `posts/` 를 포함한 경로는 `posts/urls.py` 파일로 요청을 전달한다는 의미다
 
 ```py
 # mydjango/urls.py
 from django.urls import path, include
 
 urlpatterns = [
-    path('post/', include('post.urls'))
+    path('posts/', include('posts.urls'))
 ]
 ```
 
 - post 앱의 `urls.py` 에서는 이전까지의 경로 `localhost:8000/post/` 이후의 경로를 설정한다
-- 아래는 `localhost:8000/post/index/` 라는 경로로 요청이 들어오면 `post/views` 에 `index` 함수를 호출한다는 의미다
+- 아래는 `localhost:8000/posts/index/` 라는 경로로 요청이 들어오면 `posts/views.py` 에 `index` 함수를 호출한다는 의미다
 
 ```py
-# post/urls.py
+# posts/urls.py
 
 from django.urls import path
 from . import views
@@ -130,7 +131,7 @@ urlpatterns = [
 ```
 
 ```py
-# post/views.py
+# posts/views.py
 
 from django.http import HttpResponse
 

@@ -1,0 +1,94 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#seeding" id="markdown-toc-seeding">Seeding</a></li>
+  <li><a href="#pagination" id="markdown-toc-pagination">Pagination</a></li>
+  <li><a href="#user" id="markdown-toc-user">User</a></li>
+</ul>
+
+<hr />
+
+<h1 id="seeding">Seeding</h1>
+
+<ul>
+  <li>사용할 데이터를 데이터베이스에 추가하는 것</li>
+  <li>테스트를 위해서, 혹은 초기에 필요한 데이터를 데이터베이스에 입력해야할 때</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 manage.py loaddata &lt;json파일&gt;
+</code></pre></div></div>
+
+<h1 id="pagination">Pagination</h1>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">django.core.paginator</span> <span class="kn">import</span> <span class="n">Paginator</span>
+
+<span class="n">posts</span> <span class="o">=</span> <span class="n">Post</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">all</span><span class="p">()</span>
+
+<span class="n">pages</span> <span class="o">=</span> <span class="n">Paginator</span><span class="p">(</span><span class="n">posts</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+<span class="n">page</span> <span class="o">=</span> <span class="n">pages</span><span class="p">.</span><span class="n">page</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">object_list</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">has_next</span><span class="p">()</span>
+<span class="n">page</span><span class="p">.</span><span class="n">has_previous</span><span class="p">()</span>
+
+<span class="n">page</span><span class="p">.</span><span class="n">next_page_number</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Function Based View
+</span>
+<span class="k">def</span> <span class="nf">post_list</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">posts</span> <span class="o">=</span> <span class="n">Post</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nb">all</span><span class="p">()</span>
+
+    <span class="n">pages</span> <span class="o">=</span> <span class="n">Paginator</span><span class="p">(</span><span class="n">posts</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="n">cur_page_num</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">GET</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'page'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cur_page_num</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cur_page_num</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">pages</span><span class="p">.</span><span class="n">page</span><span class="p">(</span><span class="n">cur_page_num</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">'posts/post_list.html'</span><span class="p">,</span> <span class="p">{</span><span class="s">'page'</span><span class="p">:</span> <span class="n">page</span><span class="p">})</span>
+
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Class Based View
+</span>
+<span class="k">class</span> <span class="nc">PostListView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+    <span class="p">...</span>
+    <span class="n">paginate_by</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">page_kwarg</span> <span class="o">=</span> <span class="s">'page'</span>
+
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># posts/post_list.html
+
+{% if page.object_list %}
+    {% for post in page.object_list %}
+        <span class="nt">&lt;h2&gt;</span>{{post.title}}<span class="nt">&lt;/h2&gt;</span>
+        ...
+    {% endfor %}
+
+    # 페이지네이터
+
+    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">?page=1</span><span class="nt">&gt;</span>first<span class="nt">&lt;/a&gt;</span>
+    {% if page.has_previous %}
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page.previous_page_number }}"</span><span class="nt">&gt;</span>prev<span class="nt">&lt;/a&gt;</span>
+    {% endif %}
+
+    <span class="nt">&lt;span&gt;</span>
+        <span class="nt">&lt;p&gt;</span>{{ page.number }} of {{ page.paginator.page_number }}<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;/span&gt;</span>
+
+    {% if page.has_next %}
+        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page.next_page_number }}"</span><span class="nt">&gt;</span>next<span class="nt">&lt;/a&gt;</span>
+    {% endif %}
+    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={% raw %}{{ page.paginator.page_number }}"</span><span class="nt">&gt;</span>last<span class="nt">&lt;/a&gt;</span>
+
+{% endif %}
+
+</code></pre></div></div>
+
+<h1 id="user">User</h1>
+
+:ET

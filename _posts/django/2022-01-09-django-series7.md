@@ -115,17 +115,25 @@ class PageForm(forms.Form):
 </form>
 ```
 
+🔔 **Form 을 위한 자동 HTML 생성**  
 
-🔔 크로스 사이트 요청 위조(CSRF, Cross-Site Request Forgery)  
+- `{% raw %}{{form.as_p}}{% endraw %}`는 form 의 모든 태그들을 자동으로 `<p>`태그로 감싼 HTML 을 생성해준다
+- 이 밖에도 `{% raw %}{{form.as_table}}{% endraw %}`, `{% raw %}{{form.as_ul}}{% endraw %}` 등이 있다
+- 간단하게 웹 개발 할 때는 사용하면 편하지만, 커스텀하기는 힘들다는 단점이 있다
 
-: 웹 사이트에서 유저가 서버로 요청을 보내는 행위를 악의적으로 변경해서 요청을 전송하는 것입니다. 내가 요청하지 않은 일인데 내가 요청한 것처럼 처리되는 거죠.  
-Cross-Site라는 말이 붙은 이유는 악성 사이트에서 보안이 취약한 사이트로 우회 요청을 보내기 때문입니다.
-크로스 사이트 요청 위조를 방지하는 방법으로 많이 사용하는 것이 바로 CSRF 위조 방지 토큰(Cross Site Request Forgery Token)입니다. 요청 위조 방지 토큰은 서버로부터 폼을 요청할 때 발행되어 유저가 폼에 데이터를 입력하고 서버로 전송할 때 이 토큰 값을 함께 전달해서 서버에서 토큰 값을 비교한 뒤 요청을 처리하는 방식을 말합니다. 그래서 요청 검증 토큰(Request Verification Token)라고 부르기도 합니다. 이렇게 처리하면 악성 사이트가 폼을 전송할 때 이 위조 방지 토큰 값을 알 수 없기 때문에 서버에서 사용자가 직접 보낸 요청인지를 검증할 수 있게 되는 거죠.
+🔔 **크로스 사이트 요청 위조(CSRF, Cross-Site Request Forgery)**
+
+- 요청 위조: 웹 사이트에서 유저가 서버로 요청을 보내는 행위를 악의적으로 변경해서 요청을 전송하는 것입니다. 내가 요청하지 않은 일인데 내가 요청한 것처럼 처리되는 거죠.  
+- Cross-Site라는 말이 붙은 이유는 악성 사이트에서 보안이 취약한 사이트로 우회 요청을 보내기 때문입니다.
+- CSRF를 방지하는 방법으로 많이 사용하는 것이 바로 **CSRF 방지 토큰**입니다. CSRF 방지 토큰은 서버로부터 폼을 요청할 때 발행되어 유저가 폼에 데이터를 입력하고 서버로 전송할 때 이 토큰 값을 함께 전달해서 서버에서 토큰 값을 비교한 뒤 요청을 처리하는 방식을 말합니다. 그래서 요청 검증 토큰(Request Verification Token)라고 부르기도 합니다. 이렇게 처리하면 악성 사이트가 폼을 전송할 때 이 위조 방지 토큰 값을 알 수 없기 때문에 서버에서 사용자가 직접 보낸 요청인지를 검증할 수 있게 되는 거죠.
 
 
 # 모델 폼(Model Form)  
 - 폼 필드를 각각 정의해 주지 않아도 모델의 필드를 보고 자동으로 장고가 유추해서 폼 필드를 만들어 준다는 것입니다.  
-- 이를 위해 Meta 클래스를 이용해 사용할 모델과 입력받을 모델 필드를 명시해 주어야 합니다.  
+- 이를 위해 Meta 클래스를 이용해 사용할 모델과 입력받을 모델 필드를 명시해 주어야 합니다.
+- `model`, `fields`, `widgets`, `labels`, `help_texts`, `error_messages` 등이 있다
+  ![](/images/django_11.png)*Photo on [점프 투 장고](https://wikidocs.net/70855#_4)*
+
 
 ```python
 # forms.py  
@@ -200,7 +208,7 @@ def page_create(request):
     if request.method == 'POST':
         form = PageForm(request.POST) # 입력된 데이터와 폼을 합쳐서 바인딩 폼을 만듭니다.
 
-        if post_form.is_valid():
+        if form.is_valid():
             new_page = form.save() # 데이터 저장 및 생성된 데이터 모델 반환
             return redirect('page-detail', page_id=new_page.id)
 
@@ -417,7 +425,6 @@ urlpatterns = [
            ...
             <div class="notetext-btn">
                 <ul>
-                    <li><a href="#">삭제하기</a></li>
                     <li><a href="{% raw %}{% url 'page-update' object.id %}{% endraw %}">수정하기</a></li>
                 </ul>
             </div>
@@ -438,7 +445,7 @@ def page_update(request, page_id):
             form.save()
             return redirect('page-detail', page_id=object.id)
     else:
-        form = PageForm(instance=object)
+        form = PageForm(instance=object) # 빈폼이 아니라 데이터가 채워져 있다
     return render(request, 'diary/page_form.html', {'form': form})
 ```
 
@@ -520,3 +527,10 @@ def page_delete(request, page_id):
 </div>
 {% raw %}{% endblock content %}{% endraw %}
 ```
+
+
+# 참고
+
+- [초보몽키, 장고 모델 폼 (Model Form)](https://wayhome25.github.io/django/2017/05/06/django-model-form/)
+- [stackoverflow, Why "class Meta" is necessary while creating a model form?](https://stackoverflow.com/questions/39476334/why-class-meta-is-necessary-while-creating-a-model-form)
+- [점프 투 장고, 2-10 폼](https://wikidocs.net/70855#_4)
