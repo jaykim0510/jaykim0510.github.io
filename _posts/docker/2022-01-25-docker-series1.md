@@ -18,10 +18,10 @@ tags: Docker
 ---
 **Dockerfile instruction**
 
-- [x] FROM
-- [x] LABEL
-- [ ] ARG
-- [x] ENV
+- [x] FROM: 베이스 이미지 지정
+- [x] LABEL: 이미지의 메타데이터를 key:value 형태로 지정
+- [ ] ARG: 이미지 빌드할 때만 사용할 변수
+- [x] ENV: 컨테이너 안에서 사용할 환경 변수
 
 
 # Dockerfile  

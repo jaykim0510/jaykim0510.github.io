@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  'Data Engineering Series [Part29]: MLOps'
+title:  'Data Engineering Series [Part30]: MLOps'
 description: 
 date:   2022-09-06 15:01:35 +0300
-image:  '/images/all_for_data_engineer.png'
+image:  '/images/mlops_1.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: data_engineering
 tags: DE

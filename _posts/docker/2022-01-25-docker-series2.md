@@ -18,9 +18,10 @@ tags: Docker
 ---
 **Dockerfile instruction**
 
-- [x] RUN
-- [x] CMD
-- [x] ENTRYPOINT 
+- [x] RUN: 이미지 빌드시에 실행되는 명령어
+- [x] ENTRYPOINT: 컨테이너가 기동할 때 실행되는 명령어 인자
+- [x] CMD: 컨테이너가 기동할 때 실행되는 명령어
+
 
 
 # RUN  
