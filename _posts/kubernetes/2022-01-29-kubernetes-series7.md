@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part7]: Replicaset로 배우는 kubectl 명령어'
+title:  'Kubernetes Series [Part7]: Pod로 배우는 kubectl 명령어'
 description: 
 date:   2022-01-29 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
@@ -17,95 +17,301 @@ tags: Kubernetes
 
 ---
 
-- spec에 `selector`와 `replicas`가 추가
-  - `selector`: Replicaset 오브젝트가 담당할 파드 매칭
-  - `replicas`: 복제할 파드의 개수
+# 환경변수
 
 ```yaml
-apiVersion: apps/v1
-kind: ReplicaSet
+apiVersion: v1
+kind: Pod
 metadata:
-  name: blue-replicaset
+  name: hello-app
 spec:
-  selector:
-    matchLabels:
-      app: blue-app
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: blue-app
-    spec:
-      containers:
-      - name: blue-app
-        image: yoonjeong/blue-app:1.0
-        ports:
-        - containerPort: 8080
-        env:
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        resources:
-          limits:
-            memory: "64Mi"
-            cpu: "50m"
+  containers:
+  - name: hello-app-con
+    image: yoonjeong/hello-app:1.0
+    ports:
+    - containerPort: 8080
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
+```
+
+```sh
+kubectl apply -f ./hello-app/pod.yaml
+```
+
+```sh
+kubectl get pods -o wide
+```
+
+![](/images/kube_pod_1.png)
+
+```sh
+kubectl exec -it hello-app -- /bin/sh
 ```
 
 ```
-kubectl get rs blue-replicaset -o wide
+env
 ```
 
-![](/images/kube_pod_19.png)
+![](/images/kube_pod_2.png)
+
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-app
+spec:
+  containers:
+  - name: hello-app-con
+    image: yoonjeong/hello-app:1.0
+    ports:
+    - containerPort: 8080
+    env:
+      - name: MY_NAME
+        value: "Jay"
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
+```
+
+```
+env
+```
+
+![](/images/kube_pod_3.png)
+
 
 
 ```
-kubectl apply -f ./blue-app/replicaset.yaml 
+kubectl get pod hello-app -o json
 ```
 
-![](/images/kube_pod_18.png)
+- 크게 metadata, spec, status 항목이 있음
 
-# 오브젝트 정보 확인
+![](/images/kube_pod_4.png)
 
-```
-kubectl describe rs blue-replicaset
-```
-
-![](/images/kube_repli_1.png)
-
-```
-kubectl get rs blue-replicaset -o json
-```
-
-![](/images/kube_repli_2.png)
-
-# 쿠버네티스 명령 수행 순서 확인하기
-
-```
-kubectl get events --sort-by=.metadata.creationTimestamp
-```
-
-![](/images/kube_repli_3.png)
-
-# Replicaset 오브젝트 삭제하기
-
-```
-kubectl delete rs blue-replicaset
-```
-
-(파드부터 삭제하면 Replicaset 오브젝트가 계속 새로 생성함 -> 삭제할 때는 Replicaset 오브젝트)
-
-# Scale up/down
-
-```
-kubectl scale rs blue-replicaset --replicas=1
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-app
+spec:
+  containers:
+  - name: hello-app-con
+    image: yoonjeong/hello-app:1.0
+    ports:
+    - containerPort: 8080
+    env:
+      - name: MY_NAME
+        value: "Jay"
+      - name: POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: NODE_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.hostIP
+      - name: NODE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
 ```
 
-![](/images/kube_repli_5.png)
+```
+env
+```
 
-# Replicaset 템플릿 변경후 다시 적용하면
+![](/images/kube_pod_5.png)
 
-- Replicaset 생성 후, 템플릿 변경 후 다시 apply 적용하면?
-- 이미 배포된 파드에는 변경이 적용 안됨 (이미 replicas 수만큼 배포돼 있으므로)
-- 만약 의도적으로 파드 한 개를 삭제하면, 그 다음부터 새로 띄어지는 파드는 템플릿 변경 후의 파드
-- 이를 자동으로 버전 롤업/롤백해주는 오브젝트가 Deployment
+
+# 네트워크
+
+## 파드내에 컨테이너끼리 통신
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: blue-green-app # Pod의 호스트명
+spec:
+  containers:
+  - name: blue-app
+    image: yoonjeong/blue-app:1.0
+    ports:
+    - containerPort: 8080
+    resources:
+      limits:
+        memory: "64Mi"
+        cpu: "100m"
+```
+
+```
+kubectl apply -f blue-green-app/pod.yaml
+```
+
+```
+kubectl logs blue-green-app -c blue-app
+```
+
+![](/images/kube_pod_6.png)
+
+```
+kubectl exec -it blue-green-app -c blue-app -- /bin/sh
+```
+
+```
+# 블루 앱에서 그린 앱에 localhost로 통신
+curl -vs localhost:8081/tree
+```
+
+![](/images/kube_pod_7.png)
+
+## 서로 다른 파드의 컨테이너간 통신
+
+```
+kubectl apply -f red-app/pod.yaml
+```
+
+```
+kubectl get pods -o wide
+```
+
+![](/images/kube_pod_8.png)
+
+```
+export RED_POD_IP=$(kubectl get pod red-app -o jsonpath="{.status.podIP}")
+```
+
+```
+echo $RED_POD_IP
+----------------------
+10.100.1.3
+```
+
+```
+kubectl exec blue-green-app -c blue-app -- curl -vs $RED_POD_IP:8080/rose
+```
+
+![](/images/kube_pod_9.png)
+
+```
+kubectl port-forward blue-green-app 8080:8080
+```
+
+```
+URL: localhost:8080/sky
+```
+
+![](/images/kube_pod_10.png)
+
+# 라벨링
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: red-app
+  labels:
+    category: nature
+    app: rose
+spec:
+  containers:
+  - name: red-app
+    image: yoonjeong/red-app:1.0
+    ports:
+    - containerPort: 8080
+    resources:
+      limits:
+        memory: "64Mi"
+        cpu: "100m"
+```
+
+```sh
+kubectl get pods --show-labels
+```
+
+![](/images/kube_pod_11.png)
+
+```sh
+# (라벨간에 띄어쓰기 허용 x)
+kubectl get pod -L app,category
+```
+
+![](/images/kube_pod_12.png)
+
+```sh
+# --selector 대신 -l 써도됨
+kubectl get pod --selector app=rose -L app
+```
+
+![](/images/kube_pod_13.png)
+
+```sh
+kubectl get pod -l 'app in (rose,sky-and-tree)' -L app
+```
+
+![](/images/kube_pod_14.png)
+
+
+# 배포할 노드 지정
+
+```sh
+# 노드 목록과 레이블 확인
+kubectl get nodes
+```
+
+```sh
+# 노드에 Label 추가
+# -- 첫번째, 세번째 노드에 soil=moist
+# -- 두번째 노드에 soil=dry
+kubectl label node <1번째 노드> <3번째 노드> soil=moist
+kubectl label node <2번째 노드> soil=dry
+```
+
+![](/images/kube_pod_15.png)
+
+```sh
+# soil 노드 레이블 확인
+kubectl get node -L soil
+```
+
+![](/images/kube_pod_16.png)
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: red-app
+spec:
+  nodeSelector:
+    soil: moist
+  containers:
+  - name: red-app
+    image: yoonjeong/red-app:1.0
+    ports:
+    - containerPort: 8080
+    resources:
+      limits:
+        memory: "64Mi"
+        cpu: "100m"
+```
+
+![](/images/kube_pod_17.png)
+
+# 파드 삭제하기
+
+```
+kubectl delete pod --all
+```
+
+```
+kubectl delete pod -l app=rose
+```

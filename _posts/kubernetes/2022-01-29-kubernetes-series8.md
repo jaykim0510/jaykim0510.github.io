@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part8]: Deployment로 배우는 kubectl 명령어'
+title:  'Kubernetes Series [Part8]: Replicaset로 배우는 kubectl 명령어'
 description: 
 date:   2022-01-29 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
@@ -17,70 +17,35 @@ tags: Kubernetes
 
 ---
 
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-app
-  labels:
-    app: my-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    metadata:
-      labels:
-        app: my-app
-        project: fastcampus
-        env: production
-    spec:
-      containers:
-      - name: my-app
-        image: yoonjeong/my-app:1.0
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            memory: "64Mi"
-            cpu: "50m"
-```
-
-```
-kubectl apply -f ./my-app/deployment.yaml
-```
-
-```
-kubectl get pods -L app,env,project
-```
-
-![](/images/kube_de_1.png)
+- spec에 `selector`와 `replicas`가 추가
+  - `selector`: Replicaset 오브젝트가 담당할 파드 매칭
+  - `replicas`: 복제할 파드의 개수
 
 ```yaml
 apiVersion: apps/v1
-kind: Deployment
+kind: ReplicaSet
 metadata:
-  name: my-app
-  labels:
-    app: my-app
+  name: blue-replicaset
 spec:
-  replicas: 3
   selector:
     matchLabels:
-      app: my-app
+      app: blue-app
+  replicas: 3
   template:
     metadata:
       labels:
-        app: my-app
-        project: fastcampus
-        env: development # 레이블 변경
+        app: blue-app
     spec:
       containers:
-      - name: my-app
-        image: yoonjeong/my-app:1.0
+      - name: blue-app
+        image: yoonjeong/blue-app:1.0
         ports:
         - containerPort: 8080
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         resources:
           limits:
             memory: "64Mi"
@@ -88,94 +53,59 @@ spec:
 ```
 
 ```
-kubectl apply -f ./my-app/deployment.yaml
+kubectl get rs blue-replicaset -o wide
 ```
 
-```
-kubectl get pods -L app,env,project
-```
+![](/images/kube_pod_19.png)
 
-![](/images/kube_de_2.png)
-
-위 과정을 `-w` (Watch 모드)를 사용해서 실시간으로 변화를 관찰할 수도 있음
 
 ```
-kubectl get pods -L app,env,project -w
+kubectl apply -f ./blue-app/replicaset.yaml 
 ```
 
-![](/images/kube_de_3.png)
+![](/images/kube_pod_18.png)
 
-# 배포 전략
-
-- spec의 `strategy`에 설정
-- Recreate
-  - 기존 버전 모두 삭제한 후, 새로운 버전으로 모두 새로 띄움
-  - 중간에 서비스가 중단되는 시점이 생김 -> 개발 단계에서 주로 사용
-- RollingUpdate
-  - 기존 버전을 단계적으로 줄이고, 새로운 버전을 단계적으로 늘려나감
-  - 무중단 업데이트 가능 -> 서비스 단계에서 주로 사용
-  - RollingUpdate에는 두 가지 옵션이 있다 (리소스 사용량을 조절하기 위해)
-  - maxUnavailable: 업데이트를 위해 한 번에 얼마나 기존 파드를 종료할 것인지 (개수 또는 퍼센트로 표현)
-  - maxSurge: 업데이트를 위해 리소스를 기존에 비해 얼마나 초과할 수 있는지 (개수 또는 퍼센트로 표현)
-  ```yaml
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 2
-      maxSurge: 1
-  ```
-
-```yaml
-kind: Deployment
-metadata:
-  name: my-app
-  labels:
-    app: my-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-app
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: my-app
-        project: fastcampus
-        env: production
-        version: v1
-    spec:
-      containers:
-      - name: my-app
-        image: yoonjeong/my-app:1.0
-        ports:
-        - containerPort: 8080
-        resources:
-          limits:
-            memory: "64Mi"
-            cpu: "50m"
-```
+# 오브젝트 정보 확인
 
 ```
-kubectl get pods -L app,version
+kubectl describe rs blue-replicaset
 ```
 
-![](/images/kube_de_4.png)
-
-version 레이블을 v2로 바꾸고 다시 적용(apply) 해보면,  
-
-![](/images/kube_de_5.png)
-
-변경이 잘 적용되었다. 정말 기존 버전 파드가 모두 삭제되고 새로운 버전이 생긴건지 확인해보자.  
+![](/images/kube_repli_1.png)
 
 ```
-kubectl get rw -w
+kubectl get rs blue-replicaset -o json
 ```
 
-![](/images/kube_de_6.png)
+![](/images/kube_repli_2.png)
 
+# 쿠버네티스 명령 수행 순서 확인하기
 
-strategy 를 RollingUpdate 했을 떄의 과정은 다음과 같다.  
+```
+kubectl get events --sort-by=.metadata.creationTimestamp
+```
 
-![](/images/kube_de_7.png)
+![](/images/kube_repli_3.png)
+
+# Replicaset 오브젝트 삭제하기
+
+```
+kubectl delete rs blue-replicaset
+```
+
+(파드부터 삭제하면 Replicaset 오브젝트가 계속 새로 생성함 -> 삭제할 때는 Replicaset 오브젝트)
+
+# Scale up/down
+
+```
+kubectl scale rs blue-replicaset --replicas=1
+```
+
+![](/images/kube_repli_5.png)
+
+# Replicaset 템플릿 변경후 다시 적용하면
+
+- Replicaset 생성 후, 템플릿 변경 후 다시 apply 적용하면?
+- 이미 배포된 파드에는 변경이 적용 안됨 (이미 replicas 수만큼 배포돼 있으므로)
+- 만약 의도적으로 파드 한 개를 삭제하면, 그 다음부터 새로 띄어지는 파드는 템플릿 변경 후의 파드
+- 이를 자동으로 버전 롤업/롤백해주는 오브젝트가 Deployment

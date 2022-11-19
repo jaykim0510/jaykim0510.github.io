@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part9]: Service로 배우는 kubectl 명령어'
+title:  'Kubernetes Series [Part8]: Deployment로 배우는 kubectl 명령어'
 description: 
 date:   2022-01-29 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
@@ -18,99 +18,27 @@ tags: Kubernetes
 ---
 
 ```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: order # <서비스명>
-  namespace: snackbar 
-  labels:
-    service: order
-    project: snackbar
-spec:
-  type: ClusterIP
-  selector: # <Deployment 오브젝트 매핑>
-    service: order
-    project: snackbar
-  ports:
-  - port: 80 # <서비스 오브젝트의 포트>
-    targetPort: 8080 # <Deployment 오브젝트에서 원하는 컨테이너의 포트>
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: payment
-  namespace: snackbar
-  labels:
-    service: payment
-    project: snackbar
-spec:
-  type: ClusterIP
-  selector:
-    service: payment
-    project: snackbar
-  ports:
-  - port: 80
-    targetPort: 8080
-
----
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order
-  namespace: snackbar
-  labels: # <서비스가 매핑하기 위해 찾는 부분>
-    service: order
-    project: snackbar
-spec:
-  replicas: 2
-  selector: # <복제할 파드 매핑>
-    matchLabels:
-      service: order
-      project: snackbar
-  template:
-    metadata:
-      labels:
-        service: order
-        project: snackbar
-    spec:
-      containers:
-      - name: order
-        image: yoonjeong/order:1.0
-        ports:
-        - containerPort: 8080 # <서비스 오브젝트의 targetPort와 일치시키는 부분>
-        resources:
-          limits:
-            memory: "64Mi"
-            cpu: "50m"
-
---- 
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: payment
-  namespace: snackbar
+  name: my-app
   labels:
-    service: payment
-    project: snackbar
+    app: my-app
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
-      service: payment
-      project: snackbar
+      app: my-app
   template:
     metadata:
       labels:
-        service: payment
-        project: snackbar
+        app: my-app
+        project: fastcampus
+        env: production
     spec:
       containers:
-      - name: payment
-        image: yoonjeong/payment:1.0
+      - name: my-app
+        image: yoonjeong/my-app:1.0
         ports:
         - containerPort: 8080
         resources:
@@ -119,67 +47,135 @@ spec:
             cpu: "50m"
 ```
 
-```sh
-kubectl create namespace snackbar
+```
+kubectl apply -f ./my-app/deployment.yaml
 ```
 
-```sh
-kubectl apply -f ./snackbar/service-deployment.yaml
+```
+kubectl get pods -L app,env,project
 ```
 
-```sh
-kubectl get all -n snackbar
+![](/images/kube_de_1.png)
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: fastcampus
+        env: development # 레이블 변경
+    spec:
+      containers:
+      - name: my-app
+        image: yoonjeong/my-app:1.0
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
 ```
 
-![](/images/kube_c_1.png)
-
-```sh
-kubectl get svc -o wide -n snackbar
+```
+kubectl apply -f ./my-app/deployment.yaml
 ```
 
-![](/images/kube_c_2.png)
-
-```sh
-kubectl get endpoints -n snackbar
+```
+kubectl get pods -L app,env,project
 ```
 
-- 서비스 오브젝트를 만들면 컨테이너에 엔드포인트 오브젝트 자동 생성
+![](/images/kube_de_2.png)
 
-![](/images/kube_c_3.png)
-
-```sh
-kubectl exec -it order-5d45bf5796-j4g7w -c order -n snackbar -- /bin/sh
-```
-
-```sh
-cat /etc/resolv.conf
-```
-
-![](/images/kube_c_4.png)
-
-서비스 관련 환경변수는 모든 오브젝트에 저장됨
-
-![](/images/kube_c_5.png)
-
-order 컨테이너에 payment 서비스 관련 환경변수도 저장되어 있음 -> 환경 변수로 통신할 수 있게함  
-
-```sh
-curl ${PAYMENT_SERVICE_HOST}:${PAYMENT_SERVICE_PORT}
-```
-
-![](/images/kube_c_6.png)
-
-payment 서비스를 이용해서 통신하는 방법  
-
-```sh
-# 여기서 payment는 Service 오브젝트의 metadata.name에 해당한다
-curl payment:80
-```
-
-![](/images/kube_c_7.png)
-
-만약 다른 네임스페이스에 있는 파드인 경우 <서비스명>.<네임스페이스명> 으로 하면된다.  
+위 과정을 `-w` (Watch 모드)를 사용해서 실시간으로 변화를 관찰할 수도 있음
 
 ```
-curl payment.snackbar:80
+kubectl get pods -L app,env,project -w
 ```
+
+![](/images/kube_de_3.png)
+
+# 배포 전략
+
+- spec의 `strategy`에 설정
+- Recreate
+  - 기존 버전 모두 삭제한 후, 새로운 버전으로 모두 새로 띄움
+  - 중간에 서비스가 중단되는 시점이 생김 -> 개발 단계에서 주로 사용
+- RollingUpdate
+  - 기존 버전을 단계적으로 줄이고, 새로운 버전을 단계적으로 늘려나감
+  - 무중단 업데이트 가능 -> 서비스 단계에서 주로 사용
+  - RollingUpdate에는 두 가지 옵션이 있다 (리소스 사용량을 조절하기 위해)
+  - maxUnavailable: 업데이트를 위해 한 번에 얼마나 기존 파드를 종료할 것인지 (개수 또는 퍼센트로 표현)
+  - maxSurge: 업데이트를 위해 리소스를 기존에 비해 얼마나 초과할 수 있는지 (개수 또는 퍼센트로 표현)
+  ```yaml
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 2
+      maxSurge: 1
+  ```
+
+```yaml
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: my-app
+        project: fastcampus
+        env: production
+        version: v1
+    spec:
+      containers:
+      - name: my-app
+        image: yoonjeong/my-app:1.0
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
+```
+
+```
+kubectl get pods -L app,version
+```
+
+![](/images/kube_de_4.png)
+
+version 레이블을 v2로 바꾸고 다시 적용(apply) 해보면,  
+
+![](/images/kube_de_5.png)
+
+변경이 잘 적용되었다. 정말 기존 버전 파드가 모두 삭제되고 새로운 버전이 생긴건지 확인해보자.  
+
+```
+kubectl get rw -w
+```
+
+![](/images/kube_de_6.png)
+
+
+strategy 를 RollingUpdate 했을 떄의 과정은 다음과 같다.  
+
+![](/images/kube_de_7.png)
