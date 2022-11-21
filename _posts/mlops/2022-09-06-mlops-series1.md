@@ -40,3 +40,6 @@ tags: MLOps
 - 자동화: kubeflow
 
 # 참고
+
+- [tecton, Why We Need DevOps for ML Data](https://www.tecton.ai/blog/devops-ml-data/?__hstc=145182251.a6226b731366ba276c4a4a107187f8d0.1669033771134.1669033771134.1669033771134.1&__hssc=145182251.5.1669033771134&__hsfp=4038990400){:target="_blank"}
+- [커피고래가 생각하는 MLOps](https://coffeewhale.com/what-is-mlops){:target="_blank"}

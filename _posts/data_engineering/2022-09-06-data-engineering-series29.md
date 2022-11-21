@@ -3,7 +3,7 @@ layout: post
 title:  'Data Engineering Series [Part29]: KPI (Key Performance Indicator) 데이터'
 description: 
 date:   2022-09-06 15:01:35 +0300
-image:  '/images/all_for_data_engineer.png'
+image:  '/images/data_engineering_logo.png'
 logo_image:  '/images/data_engineering_logo.png'
 categories: data_engineering
 tags: DE
