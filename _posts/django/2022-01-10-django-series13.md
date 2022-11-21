@@ -17,3 +17,7 @@ tags: [Django]
 
 ---
 
+# 참고
+
+- [Django REST Framework, ](https://www.django-rest-framework.org/){:target="_blank"}
+- [44 bits, Django Rest Framework 레시피](https://www.44bits.io/ko/post/django-rest-framework-recipes-korean){:target="_blank"}
