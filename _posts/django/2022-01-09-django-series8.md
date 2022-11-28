@@ -81,6 +81,10 @@ class Review:
 - (ex. 나를 팔로우하고 있는 사람들을 알고 싶을 때: `user.user_set`이 아니라, `user.followers`)
 - `user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews)` 이런식으로 작성해주면 된다. (`OneToOne`, `ManyToMany` 도 마찬가지로 똑같이 할 수 있다)
 
+- 주의할 점은 일대일 관계를 제외하고는, `user.review_set` 과 같은 역관계는 쿼리셋이 아니라, 매니저이다
+- 그래서 `user.review_set`과 같이 그대로 사용할 수는 없고, 뒤에 CRUD 연산을 붙여줘야 한다
+- ex. `user.review_set.all()`
+
 # CRUD
 
 # Database

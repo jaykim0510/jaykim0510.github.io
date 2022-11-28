@@ -82,19 +82,18 @@ class PostListView(ListView):
 
     # 페이지네이터
 
-    <a href=?page=1>first</a>
-    {% raw %}{% if page.has_previous %}{% endraw %}
-        <a href="?page={% raw %}{{ page.previous_page_number }}{% endraw %}">prev</a>
-    {% raw %}{% endif %}{% endraw %}
+    <div>
+        <a href=?page=1>first</a>
+        {% raw %}{% if page_obj.has_previous %}{% endraw %}
+            <a href="?page={% raw %}{{ page_obj.previous_page_number }}{% endraw %}">prev</a>
+        {% raw %}{% endif %}{% endraw %}
+        <span>{% raw %}{{ page_obj.number }}{% endraw %} of {% raw %}{{ page_obj.paginator.num_pages }}{% endraw %}</span>
 
-    <span>
-        <p>{% raw %}{{ page.number }}{% endraw %} of {% raw %}{{ page.paginator.page_number }}{% endraw %}</p>
-    </span>
-
-    {% raw %}{% if page.has_next %}{% endraw %}
-        <a href="?page={% raw %}{{ page.next_page_number }}{% endraw %}">next</a>
-    {% raw %}{% endif %}
-    <a href="?page={% raw %}{{ page.paginator.page_number }}{% endraw %}">last</a>
+        {% raw %}{% if page_obj.has_next %}{% endraw %}
+            <a href="?page={% raw %}{{ page_obj.next_page_number }}{% endraw %}">next</a>
+        {% raw %}{% endif %}{% endraw %}
+        <a href="?page={% raw %}{{ page_obj.paginator.num_pages }}{% endraw %}">last</a>
+    </div>
 
 {% raw %}{% endif %}{% endraw %}
 
@@ -186,11 +185,12 @@ class User(AbstractUser):
 ```py
 # settings.py
 
-AUTH_USER_MODEL = '<메인 앱이름: 보통프로젝트명>.User'
+# 유저 모델 정의한 앱이름.모델명
+AUTH_USER_MODEL = 'users.User'
 ```
 
 ```sh
-python3 manage.py makemigrations --name Create User model
+python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
@@ -228,11 +228,13 @@ UserAdmin.fieldsets += ("Custom fields", {"fields": ("nickname",)})
 # django-allauth 에서 기본적으로 제공하는 회원가입 폼이 있다
 # 하지만 보통 회원가입 폼은 커스텀하는 경우가 많다
 # 폼은 아래와 같이 커스터마이징 할 수 있다
+from django import forms
+from .models import User
 
-class SignUpForm(models.ModelForm):
+class SignUpForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['nickname'] # 별도로 추가한 필드만 적어주면 된다
+        fields = ['nickname'] # 별도로 추가한 필드만 적어주면 된다. 없으면 fields = '__all__'
 
     def signup(self, request, user):
         user.nickname = self.cleaned_date['nickname']
@@ -242,7 +244,7 @@ class SignUpForm(models.ModelForm):
 ```py
 # settings.py
 
-ACCOUNT_SIGNUP_FORM_CLASS = '<메인 앱: 프로젝트명>.forms.SignUpForm'
+ACCOUNT_SIGNUP_FORM_CLASS = 'users.forms.SignUpForm'
 ```
 
 ## 유저 접근
