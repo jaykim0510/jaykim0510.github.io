@@ -49,6 +49,23 @@ switch(fruit) {
 }
 ```
 
+```js
+// 삼항연산자
+const SCORE = 80;
+
+function passCheck(score) {
+    return score > SCORE ? 'PASS' : 'FAIL'
+}
+console.log(passCheck(95));
+
+
+function passCheck(score) {
+    score > SCORE ? console.log('성공') : console.log('실패');
+}
+passCheck(95);
+```
+
+
 # 반복문
 
 ```js
