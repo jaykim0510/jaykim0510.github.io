@@ -114,3 +114,15 @@ console.log(now.getDate()); // 일
 console.log(now.getDay()); // 요일 0: 일요일, 1: 월요일, ...
 ```
 
+# Math 객체
+
+```js
+console.log(Math.abs(-10)); // 10
+console.log(Math.max(2, -1, 4, 5, 0)); // 5
+console.log(Math.pow(2, 3)); // 8
+console.log(Math.sqrt(49)); // 7
+console.log(Math.round(2.3)); // 2
+console.log(Math.floor(2.8)); // 2
+console.log(Math.ceil(2.4)); // 3
+console.log(Math.random()); // 0과 1미만의 랜덤값
+```
