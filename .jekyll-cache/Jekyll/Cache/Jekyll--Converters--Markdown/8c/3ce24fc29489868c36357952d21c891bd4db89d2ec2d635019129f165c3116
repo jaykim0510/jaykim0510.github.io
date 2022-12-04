@@ -1,0 +1,201 @@
+I"�2<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#modeling" id="markdown-toc-modeling">Modeling</a>    <ul>
+      <li><a href="#일대일-관계" id="markdown-toc-일대일-관계">일대일 관계</a></li>
+      <li><a href="#일대다-관계" id="markdown-toc-일대다-관계">일대다 관계</a></li>
+      <li><a href="#다대다-관계" id="markdown-toc-다대다-관계">다대다 관계</a></li>
+      <li><a href="#역관계" id="markdown-toc-역관계">역관계</a></li>
+    </ul>
+  </li>
+  <li><a href="#crud" id="markdown-toc-crud">CRUD</a></li>
+  <li><a href="#database" id="markdown-toc-database">Database</a>    <ul>
+      <li><a href="#mysql" id="markdown-toc-mysql">MySQL</a></li>
+      <li><a href="#postgressql" id="markdown-toc-postgressql">PostgresSQL</a></li>
+    </ul>
+  </li>
+  <li><a href="#migration" id="markdown-toc-migration">Migration</a>    <ul>
+      <li><a href="#이전-마이그레이션으로-돌아가기" id="markdown-toc-이전-마이그레이션으로-돌아가기">이전 마이그레이션으로 돌아가기</a></li>
+      <li><a href="#디펜던시" id="markdown-toc-디펜던시">디펜던시</a></li>
+      <li><a href="#데이터-마이그레이션" id="markdown-toc-데이터-마이그레이션">데이터 마이그레이션</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="modeling">Modeling</h1>
+
+<h2 id="일대일-관계">일대일 관계</h2>
+
+<ul>
+  <li>데이터가 서로 일대일 관계인 경우</li>
+  <li>ex. 유저와 프로필: 유저당 프로필은 한 개만 만들 수 있고, 프로필도 하나의 유저에만 속할 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">user = models.OneToOneField(&lt;모델명&gt;, on_delete=models.CASCADE)</code> 이런식으로 작성한다</li>
+  <li>두 모델중 나중에 생성되는 모델에 만들어준다 (ex. 유저가 생기고 프로필이 생기므로, 프로필에 만들어준다)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="p">...</span>
+
+<span class="k">class</span> <span class="nc">Profile</span><span class="p">:</span>
+    <span class="p">...</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">OneToOneField</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">CASCADE</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="일대다-관계">일대다 관계</h2>
+
+<ul>
+  <li>데이터가 일대다 관계인 경우</li>
+  <li>ex. 유저와 리뷰: 하나의 유저는 여러 개의 리뷰를 가질 수 있고, 리뷰 한 개는 하나의 유저에만 속할 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">user = models.ForeignKey(User, on_delete=models.CASCADE)</code> 이런식으로 작성한다</li>
+  <li>두 모델중 Many에 해당하는 모델에 만들어준다 (ex. 리뷰가 Many에 해당하므로, 리뷰 모델에 만들어준다)</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
+    <span class="p">...</span>
+
+<span class="k">class</span> <span class="nc">Review</span><span class="p">:</span>
+    <span class="p">...</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="p">.</span><span class="n">CASCADE</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="다대다-관계">다대다 관계</h2>
+
+<ul>
+  <li>데이터가 다대다 관계인 경우</li>
+  <li>ex. 유저와 유저간의 팔로잉: 하나의 유저는 여러 유저를 팔로잉할 수 있고, 다른 유저도 여러 유저를 팔로잉 할 수 있다</li>
+  <li>ex. 포스트와 태그의 관계: 하나의 포스트는 여러 태그를 가질 수 있고, 하나의 태그에는 여러 포스트가 있을 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">tag = models.ManyToMany(Tag)</code> 이런식으로 작성한다</li>
+  <li>일대일, 일대다, 다대다에서 안에 모델을 인자로 줄 때 <code class="language-plaintext highlighter-rouge">Tag</code> 이렇게 줘도 되고, <code class="language-plaintext highlighter-rouge">'Tag'</code> 이렇게 문자열로 줘도 된다. 순서상 뒤에 정의되는 모델을 인자로 주면 정의되지 않은 클래스라고 빨간줄이 표시되기 때문에 문자열로 많이 표시한다</li>
+  <li>어느쪽에 정의해도 상관 없다</li>
+  <li>유저간의 팔로잉은 서로 대칭적이지 않다 (내가 BTS를 팔로잉 한다고 해서, BTS가 나를 팔로잉 하지는 않는다)
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">user = models.ManyToMany('User', symmetrical=False)</code> 이렇게 해준다</li>
+    </ul>
+  </li>
+  <li>유저간의 팔로잉은 두 모델 모두 <code class="language-plaintext highlighter-rouge">User</code>이다
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">user = models.ManyToMany('self', symmetrical=False)</code> 이렇게 <code class="language-plaintext highlighter-rouge">self</code>로 적기도 한다</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="역관계">역관계</h2>
+
+<ul>
+  <li>유저와 리뷰는 일대다 관계이기 때문에 리뷰 모델에,</li>
+  <li><code class="language-plaintext highlighter-rouge">user = models.ForeignKey(User, on_delete=models.CASCADE)</code> 이렇게 작성했다</li>
+  <li>그러면 리뷰에서 해당 리뷰를 작성한 유저를 알고 싶을 때,</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">Review.objects.get(user=5)</code> 또는 템플릿 언어에서 <code class="language-plaintext highlighter-rouge">review.user</code> 이런식으로 접근이 가능하다</p>
+  </li>
+  <li><strong>반대로 유저가 작성한 리뷰를 알고싶을 때는 그러면 어떻게 해야할까?</strong></li>
+  <li>만약 일대다 관계(ForeignKey)로 작성한 경우에는, <code class="language-plaintext highlighter-rouge">user.review_set</code> 이런식으로 접근 가능하다</li>
+  <li>만약 원투원 관계(OneToOne)으로 작성한 경우에는, <code class="language-plaintext highlighter-rouge">user.review</code> 이런식으로 접근 가능하다</li>
+  <li>
+    <p>만약 다대다 관계(ManyToMany)으로 작성한 경우에는, <code class="language-plaintext highlighter-rouge">user.review_set</code> 이런식으로 접근 가능하다</p>
+  </li>
+  <li><strong>이름이 마음에 안들면?</strong></li>
+  <li><code class="language-plaintext highlighter-rouge">user.review_set</code>이 아니라, <code class="language-plaintext highlighter-rouge">user.reviews</code> 라고 하고 싶은 경우가 있다</li>
+  <li>(ex. 나를 팔로우하고 있는 사람들을 알고 싶을 때: <code class="language-plaintext highlighter-rouge">user.user_set</code>이 아니라, <code class="language-plaintext highlighter-rouge">user.followers</code>)</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews)</code> 이런식으로 작성해주면 된다. (<code class="language-plaintext highlighter-rouge">OneToOne</code>, <code class="language-plaintext highlighter-rouge">ManyToMany</code> 도 마찬가지로 똑같이 할 수 있다)</p>
+  </li>
+  <li>주의할 점은 일대일 관계를 제외하고는, <code class="language-plaintext highlighter-rouge">user.review_set</code> 과 같은 역관계는 쿼리셋이 아니라, 매니저이다</li>
+  <li>그래서 <code class="language-plaintext highlighter-rouge">user.review_set</code>과 같이 그대로 사용할 수는 없고, 뒤에 CRUD 연산을 붙여줘야 한다</li>
+  <li>ex. <code class="language-plaintext highlighter-rouge">user.review_set.all()</code></li>
+</ul>
+
+<h1 id="crud">CRUD</h1>
+
+<h1 id="database">Database</h1>
+
+<h2 id="mysql">MySQL</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">pip install mysqlclient</code></li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
+       <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
+       <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'dbname'</span><span class="p">,</span>
+       <span class="s">'HOST'</span><span class="p">:</span> <span class="s">'localhost'</span><span class="p">,</span>
+       <span class="s">'PORT'</span><span class="p">:</span> <span class="s">'3306'</span><span class="p">,</span>
+       <span class="s">'USER'</span><span class="p">:</span> <span class="s">'username'</span><span class="p">,</span>
+       <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'password'</span><span class="p">,</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">python manage.py migrate</code></li>
+</ul>
+
+<h2 id="postgressql">PostgresSQL</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">pip install psycopg2</code></li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
+</span>
+<span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
+       <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.postgresql'</span><span class="p">,</span>
+       <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'dbname'</span><span class="p">,</span>
+       <span class="s">'HOST'</span><span class="p">:</span> <span class="s">'localhost'</span><span class="p">,</span>
+       <span class="s">'PORT'</span><span class="p">:</span> <span class="s">'5432'</span><span class="p">,</span>
+       <span class="s">'USER'</span><span class="p">:</span> <span class="s">'username'</span><span class="p">,</span>
+       <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'password'</span><span class="p">,</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">python manage.py migrate</code></li>
+</ul>
+
+<h1 id="migration">Migration</h1>
+
+<h2 id="이전-마이그레이션으로-돌아가기">이전 마이그레이션으로 돌아가기</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">python3 manage.py migrate {앱 이름} {돌아갈 버전의 번호}</code></li>
+  <li>이 후 번호 파일 삭제</li>
+  <li>이전으로 돌아가면 데이터도 모두 돌아간다 (다시 앞으로 돌아가도 데이터는 복구 안됨)</li>
+</ul>
+
+<h2 id="디펜던시">디펜던시</h2>
+
+<ul>
+  <li>만약 번호 0005 에서 0003으로 돌아간다고 하면,</li>
+  <li>0005, 0004와 0005, 0004를 디펜던시로 가지는 마이그레이션도 모두 이전으로 돌아간다</li>
+</ul>
+
+<h2 id="데이터-마이그레이션">데이터 마이그레이션</h2>
+
+<ul>
+  <li>기존 필드 데이터로 새로운 필드 추가할 때</li>
+  <li>기존 테이블로 새로운 테이블 만들 때</li>
+  <li>데이터 마이그레이션은 직접 마이그레이션 파일 작성해야함</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- 필드 추가할 모델 클래스에 null 허용하는 필드 하나 생성후 migrate
+    - python3 manage.py makemigrations --name {마이그레이션 이름}
+    - python3 manage.py migrate
+- 데이터 마이그레이션을 위한 마이그레이션 빈 파일 생성
+    - python3 manage.py makemigrations --empty {앱 이름} --name {마이그레이션 이름}
+- 마이그레이션 파일에 적용할 함수 작성
+    - apps,schema_editor를 파라미터로 갖는 함수 정의
+    - operations = [] 에 migrations.RunPython({함수명}, migrations.RunPython.noop) 추가
+- 데이터 마이그레이션 migrate
+    - python3 manage.py migrate
+</code></pre></div></div>
+:ET

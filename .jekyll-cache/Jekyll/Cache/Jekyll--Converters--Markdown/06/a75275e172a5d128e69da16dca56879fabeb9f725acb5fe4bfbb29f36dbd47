@@ -1,0 +1,180 @@
+I"�7<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#loggers" id="markdown-toc-loggers">Loggers</a></li>
+  <li><a href="#handlers" id="markdown-toc-handlers">Handlers</a></li>
+  <li><a href="#filters" id="markdown-toc-filters">Filters</a></li>
+  <li><a href="#formatters" id="markdown-toc-formatters">Formatters</a></li>
+  <li><a href="#장고-로깅" id="markdown-toc-장고-로깅">장고 로깅</a>    <ul>
+      <li><a href="#장고-로깅-설정" id="markdown-toc-장고-로깅-설정">장고 로깅 설정</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>
+    <p>A Python logging configuration consists of four parts:</p>
+  </li>
+  <li>Loggers</li>
+  <li>Handlers</li>
+  <li>Filters</li>
+  <li>Formatters</li>
+</ul>
+
+<h1 id="loggers">Loggers</h1>
+
+<ul>
+  <li>처음 로그 메세지를 받아들이는 진입점(entry point)이다</li>
+  <li>각각의 로거(logger)는 로그 레벨(level)을 가진다.</li>
+  <li>
+    <p>로거는 자신보다 낮은 레벨의 메세지는 무시하고, 자신의 레벨 혹은 그 이상의 레벨을 가지는 로그 메세지를 처리한다</p>
+  </li>
+  <li><strong>DEBUG</strong>: 디버깅 목적의 로그. 가장 낮은 레벨</li>
+  <li><strong>INFO</strong>: 일반적인 시스템 정보</li>
+  <li><strong>WARNING</strong>: 사소한(minor) 문제에 관한 정보</li>
+  <li><strong>ERROR</strong>: 주요(major) 문제에 관한 정보</li>
+  <li>
+    <p><strong>CRITICAL</strong>: 심각한(critical) 문제에 관한 정보</p>
+  </li>
+  <li>처리하기로 결정된 메세지는 핸들러(Handler)에게 넘겨준다</li>
+</ul>
+
+<h1 id="handlers">Handlers</h1>
+
+<ul>
+  <li>받은 로그 메세지를 어떻게 처리할지에 관한 결정을 내리는 곳이다</li>
+  <li>콘솔에 출력, 파일에 쓰기, 네트워크로 전송 등</li>
+  <li>핸들러도 마찬가지로 로그 레벨을 가진다 (자신의 레벨 혹은 그 이상의 메세지만 처리한다)</li>
+  <li>하나의 로거는 다른 레벨을 가지는 여러 핸들러를 가질 수 있다 -&gt; 중요도에 따라 다르게 처리할 수 있다</li>
+  <li>(하나의 핸들러는 <code class="language-plaintext highlighter-rouge">ERROR</code>와 <code class="language-plaintext highlighter-rouge">CRITICAL</code>을 메일로 알림을 보낸다)</li>
+  <li>(다른 핸들러는 <code class="language-plaintext highlighter-rouge">DEBUG</code>, <code class="language-plaintext highlighter-rouge">INFO</code>, <code class="language-plaintext highlighter-rouge">WARNING</code>, <code class="language-plaintext highlighter-rouge">ERROR와</code> <code class="language-plaintext highlighter-rouge">CRITIAL</code>를 분석을 위해 파일에 저장해둔다)</li>
+</ul>
+
+<h1 id="filters">Filters</h1>
+
+<ul>
+  <li>핸들러가 처리한 이후의 로그 레코드를 부가적으로 제어하기 위한 용도이다</li>
+  <li>예를 들어, 보통 <code class="language-plaintext highlighter-rouge">ERROR</code> 를 처리하는 핸들러는 <code class="language-plaintext highlighter-rouge">CRITICAL</code> 도 처리하는데, 필터를 통해 오직 <code class="language-plaintext highlighter-rouge">ERROR</code>만 처리하도록 할 수 있다</li>
+  <li>또한 ERROR 로그 레코드의 레벨을 WARNING 으로 낮출 수도 있다</li>
+  <li>필터는 로거(Logger), 핸들러(Handler) 어디에나 올 수 있으며 여러 필터를 체이닝할 수도 있다</li>
+</ul>
+
+<h1 id="formatters">Formatters</h1>
+
+<ul>
+  <li>로그 레코드를 최종적으로 원하는 문자열로 나타내기 위한 용도이다</li>
+  <li>파이썬에서 제공하는 포매터를 사용할 수도 있고, 직접 커스텀 포매터를 만들어 사용할 수도 있다</li>
+</ul>
+
+<h1 id="장고-로깅">장고 로깅</h1>
+
+<ul>
+  <li>Django’s logging module extends Python’s builtin logging</li>
+  <li><code class="language-plaintext highlighter-rouge">DEBUG=True</code>면, <code class="language-plaintext highlighter-rouge">django.server</code>를 제외한 모든 django hierarchy (<code class="language-plaintext highlighter-rouge">django</code>, <code class="language-plaintext highlighter-rouge">django.request</code>, <code class="language-plaintext highlighter-rouge">django.template</code>, ..)에서 <code class="language-plaintext highlighter-rouge">INFO</code> 레벨 이상의 메세지를 <code class="language-plaintext highlighter-rouge">console</code> 핸들러에 내보낸다</li>
+  <li><code class="language-plaintext highlighter-rouge">DEBUG=False</code>면 <code class="language-plaintext highlighter-rouge">django.server</code>를 제외한 모든 django hierarchy에서 <code class="language-plaintext highlighter-rouge">ERROR</code>, <code class="language-plaintext highlighter-rouge">CRITICAL</code> 레벨의 메세지를 <code class="language-plaintext highlighter-rouge">AdminEmailHandler</code> 핸들러로 보낸다</li>
+  <li><code class="language-plaintext highlighter-rouge">django.server</code>는 <code class="language-plaintext highlighter-rouge">DEBUG</code> 값에 상관없이 <code class="language-plaintext highlighter-rouge">INFO</code> 레벨 이상의 메세지를 <code class="language-plaintext highlighter-rouge">console</code> 핸들러에 내보낸다</li>
+  <li><code class="language-plaintext highlighter-rouge">django</code>는 루트 로거다. <code class="language-plaintext highlighter-rouge">django.server</code>를 제외한 모든 로거는 부모 로거를 거쳐 루트 로거에 까지 로깅을 전달한다. 위에서 얘기한 설명들을 따르기 위해 <code class="language-plaintext highlighter-rouge">django</code> 루트 로거에는 <code class="language-plaintext highlighter-rouge">console</code>과 <code class="language-plaintext highlighter-rouge">mail_admins</code> 핸들러가 붙어 있다</li>
+</ul>
+
+<h2 id="장고-로깅-설정">장고 로깅 설정</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">LOGGING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+
+    <span class="c1"># False: 디폴트 로거를 유지하면서, 확장해나간다
+</span>    <span class="s">'disable_existing_loggers'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+
+    <span class="c1"># 어떻게 출력할 것인가
+</span>    <span class="c1"># 'style': '{' =&gt; {}를 이용해 attribute를 감싼다 =&gt; {levelname}
+</span>    <span class="c1"># attribute 종류는 https://docs.python.org/3/library/logging.html#logrecord-attributes 참고
+</span>    <span class="s">'formatters'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'verbose'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'format'</span><span class="p">:</span> <span class="s">'{levelname} {asctime} {module} {process:d} {thread:d} {message}'</span><span class="p">,</span>
+            <span class="s">'style'</span><span class="p">:</span> <span class="s">'{'</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s">'simple'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'format'</span><span class="p">:</span> <span class="s">'{levelname} {message}'</span><span class="p">,</span>
+            <span class="s">'style'</span><span class="p">:</span> <span class="s">'{'</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+
+    <span class="s">'filters'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'special'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'()'</span><span class="p">:</span> <span class="s">'project.logging.SpecialFilter'</span><span class="p">,</span>
+            <span class="s">'foo'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s">'require_debug_true'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'()'</span><span class="p">:</span> <span class="s">'django.utils.log.RequireDebugTrue'</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+
+    <span class="c1"># 로거로부터 받아온 메세지를 어떻게 처리할 것인가
+</span>    <span class="c1"># 이름은 원하는대로 지어도 된다 (console을 babo로 해도 상관없다. class가 중요하다)
+</span>    <span class="c1"># 핸들러와 로거는 many-to-many 관계이다
+</span>    <span class="c1"># 파이썬에서 제공하는 핸들러: https://docs.python.org/3/library/logging.handlers.html
+</span>      <span class="c1"># logging.StreamHandler, logging.FileHandler, logging.handlers.RotatingFileHandler 등
+</span>    <span class="c1"># 장고에서 제공하는 핸들러: django.utils.log.AdminEmailHandler
+</span>
+    <span class="s">'handlers'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'console'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'level'</span><span class="p">:</span> <span class="s">'INFO'</span><span class="p">,</span>
+            <span class="s">'filters'</span><span class="p">:</span> <span class="p">[</span><span class="s">'require_debug_true'</span><span class="p">],</span>
+            <span class="s">'class'</span><span class="p">:</span> <span class="s">'logging.StreamHandler'</span><span class="p">,</span>
+            <span class="s">'formatter'</span><span class="p">:</span> <span class="s">'simple'</span>
+        <span class="p">},</span>
+        <span class="s">'mail_admins'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'level'</span><span class="p">:</span> <span class="s">'ERROR'</span><span class="p">,</span>
+            <span class="s">'class'</span><span class="p">:</span> <span class="s">'django.utils.log.AdminEmailHandler'</span><span class="p">,</span>
+            <span class="s">'filters'</span><span class="p">:</span> <span class="p">[</span><span class="s">'special'</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="c1"># 특정 부분에서 발생한 메세지 (요청 관련, 데이터베이스 관련, 특정앱/특정 뷰 관련 등) 받아 들일지 여부 결정
+</span>    <span class="c1"># '특정앱.특정뷰' 이런식으로 네이밍 하면, 특정앱의 특정뷰에서 발생한 메세지만 받아들인다
+</span>    <span class="c1"># '' 이런식으로 unnamed 를 만들면, 프로젝트 전체에서 발생한 메세지 받아들인다
+</span>    <span class="c1"># '특정앱.특정뷰' 는 '특정앱'에도 메세지를 전파(propagate)한다
+</span>    <span class="c1"># propagate의 기본값이 True이기 때문이다. 원치 않으면 False로 한다
+</span>    <span class="c1"># (만약 '특정앱' 로거를 따로 정의 안했으면 상관없다) ('특정앱', '특정앱.특정뷰' 둘 다 정의한 경우에만 해당한다)
+</span>    <span class="s">'loggers'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="c1"># 모든 장고 빌트인 로거의 부모 로거
+</span>        <span class="s">'django'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'handlers'</span><span class="p">:</span> <span class="p">[</span><span class="s">'console'</span><span class="p">],</span>
+            <span class="s">'propagate'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="c1"># 요청(request)과 관련된 로그 메세지의 진입점
+</span>        <span class="s">'django.request'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'handlers'</span><span class="p">:</span> <span class="p">[</span><span class="s">'mail_admins'</span><span class="p">],</span>
+            <span class="s">'level'</span><span class="p">:</span> <span class="s">'ERROR'</span><span class="p">,</span>
+            <span class="s">'propagate'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="c1"># 렌더링 관련 로그 메세지의 진입점
+</span>        <span class="s">'django.template'</span><span class="p">:</span> <span class="p">{},</span>
+
+        <span class="c1"># run 커맨드로 실행중인 서버 관련 로그 메세지의 진입점
+</span>        <span class="s">'django.server'</span><span class="p">:</span> <span class="p">{},</span>
+
+        <span class="c1"># DB에 실행된 SQL문 관련 로그 메세지의 진입점
+</span>        <span class="s">'django.db.backend'</span><span class="p">:</span> <span class="p">{},</span>
+
+        <span class="c1"># myapp 앱의 myview 뷰에서 발생한 로그 메세지의 진입점
+</span>        <span class="s">'myapp.myview'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'handlers'</span><span class="p">:</span> <span class="p">[</span><span class="s">'console'</span><span class="p">,</span> <span class="s">'mail_admins'</span><span class="p">],</span>
+            <span class="s">'level'</span><span class="p">:</span> <span class="s">'INFO'</span><span class="p">,</span>
+            <span class="s">'filters'</span><span class="p">:</span> <span class="p">[</span><span class="s">'special'</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://docs.djangoproject.com/en/4.1/topics/logging/#configuring-logging">django 공식문서, Logging Overview</a></li>
+  <li><a href="https://docs.djangoproject.com/en/4.1/howto/logging/#logging-how-to">django 공식문서, Logging Configuration</a></li>
+</ul>
+:ET

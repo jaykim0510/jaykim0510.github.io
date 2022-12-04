@@ -149,8 +149,10 @@ def test_multiply(calculator):
 
 또한, 테스트 코드(py)마다 중복되는 fixture도 있을 겁니다. 예를 들어, A 테스트 코드에서도 계산기 클래스가 필요한데, B 테스트 코드에서도 계산기 클래스가 필요한 경우 말이죠. 지금까지의 경우로 보자면 두 테스트 코드 파일 위에 fixture를 따로 선언한 후 사용했어야 했습니다.  
 
-이러한 문제를 해결하기 위해 conftest.py를 사용합니다.
-fixture 코드들은 conftest.py에 선언해두면, 모든 테스트 코드에서는 해당 fixture들을 공유하여 사용할 수 있습니다. 알아서 pytest에서 공유해주는 마법!  
+이러한 문제를 해결하기 위해 `conftest.py`를 사용합니다.
+fixture 코드들은 `conftest.py`에 선언해두면, 모든 테스트 코드에서는 해당 fixture들을 공유하여 사용할 수 있습니다. 알아서 pytest에서 공유해주는 마법!  
+
+(fixture들을 모아두는 모듈 -> `conftest.py`)
 
 ```sh
 # Directory tree

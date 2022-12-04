@@ -1,0 +1,191 @@
+I"�0<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#demonset" id="markdown-toc-demonset">DemonSet</a>    <ul>
+      <li><a href="#업데이트-전략" id="markdown-toc-업데이트-전략">업데이트 전략</a></li>
+      <li><a href="#매니페스트-파일" id="markdown-toc-매니페스트-파일">매니페스트 파일</a></li>
+    </ul>
+  </li>
+  <li><a href="#statefulset" id="markdown-toc-statefulset">StatefulSet</a></li>
+  <li><a href="#headless" id="markdown-toc-headless">Headless</a></li>
+</ul>
+
+<hr />
+
+<h1 id="demonset">DemonSet</h1>
+
+<ul>
+  <li>데몬셋은 레플리카셋의 특수한 형태</li>
+  <li>데몬셋은 파드를 각 노드에 한 개씩 배치하는 리소스</li>
+  <li>노드를 늘리면 파드도 자동으로 늘어남</li>
+  <li>모든 노드에서 반드시 동작해야 하는 프로세스에 유용하게 사용된다</li>
+  <li>(ex. 로그를 호스트 단위로 수집하는 Fluentd, 파드 리소스 사용 현황 및 노드 상태를 모니터링하는 Datadog)</li>
+</ul>
+
+<h2 id="업데이트-전략">업데이트 전략</h2>
+
+<ul>
+  <li><strong>OnDelete</strong>: 노드가 정지된 경우에만 다시 실행할 때 업데이트 된다 -&gt; 운영상 이유로 가급적 정지되면 안되는 경우 사용</li>
+  <li><strong>RollingUpdate</strong>: 즉시 파드를 업데이트한다 -&gt; 버전 업데이트가 바로바로 필요한 경우 사용</li>
+</ul>
+
+<h2 id="매니페스트-파일">매니페스트 파일</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">DaemonSet</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-ds</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">updateStrategy</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">OnDelete</span>
+  <span class="c1"># type: RollingUpdate</span>
+  <span class="c1"># rollingUpdate:</span>
+  <span class="c1">#   maxUnavailable: 2</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> sample-ds.yaml
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">-o</span> wide
+</code></pre></div></div>
+
+<h1 id="statefulset">StatefulSet</h1>
+
+<ul>
+  <li>레플리카셋의 특수한 형태</li>
+  <li>
+    <p>데이터베이스 등과 같은 스테이트풀한 워크로드에 사용하기 위한 리소스</p>
+  </li>
+  <li>생성되는 파드명의 접미사는 숫자 인덱스가 부여된 것</li>
+  <li>파드명이 바뀌지 않는다</li>
+  <li>
+    <p>데이터를 영구적으로 저장하기 위한 구조로 되어있다</p>
+  </li>
+  <li>스테이트풀셋에서는 <code class="language-plaintext highlighter-rouge">spec.volumeClaimTemplates</code>를 설정함으로써, 각 파드에 영구 볼륨 클레임을 설정할 수 있다</li>
+  <li>
+    <p>영구 볼륨 클레임을 사용하면 클러스터 외부의 영구 볼륨을 파드에 연결할 수 있기 때문에 언제든 데이터를 보유한 상태로 컨테이너가 생성된다. 영구 볼륨은 하나의 파드가 소유할 수도 있고, 여러 파드에서 공유할 수도 있다</p>
+  </li>
+  <li>레플리카셋은 파드를 삭제하면 무작위로 삭제된다</li>
+  <li>스테이트풀셋은 0번째 파드가 항상 가장 먼저 생성되고, 가장 늦게 삭제된다</li>
+  <li>만약 마스터-슬레이브 구조로 파드를 구성한다면 스테이트풀셋의 0번째 파드를 마스터로 사용하면 된다</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">StatefulSet</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-statefulset</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">updateStrategy</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">OnDelete</span>
+  <span class="na">serviceName</span><span class="pi">:</span> <span class="s">sample-statefulset</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+  <span class="na">templates</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
+        <span class="na">volumeMounts</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">www</span>
+          <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/usr/share/nginx/html</span>
+      <span class="na">volumeClaimTemplates</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">metadata</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">www</span>
+        <span class="na">spec</span><span class="pi">:</span>
+          <span class="na">accessModes</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">ReadWriteOnce</span>
+          <span class="na">resources</span><span class="pi">:</span>
+            <span class="na">requests</span><span class="pi">:</span>
+              <span class="na">storage</span><span class="pi">:</span> <span class="s">1G</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> sample-statefulset.yaml
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get statefulsets
+
+kubectl get pods <span class="nt">-o</span> wide
+
+kubectl get persistentvolumeclaims
+
+kubectl get persistentvolumes
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl scale statefulset sample-statefulset --replicas=5
+</code></pre></div></div>
+
+<h1 id="headless">Headless</h1>
+
+<ul>
+  <li>대상이 되는 개별 파드의 IP 주소가 직접 반환되는 서비스</li>
+  <li>로드 밸런싱을 위한 별도의 IP 주소를 제공하지 않는다</li>
+  <li>DNS 라운드 로빈을 사용한 엔드포인트를 제공한다</li>
+  <li>스테이트풀셋이 헤드리드 서비스를 사용하는 경우에만 파드명으로 IP 주소를 디스커버리할 수 있다</li>
+  <li>
+    <p>(즉, <code class="language-plaintext highlighter-rouge">sample-statefulset-0</code> 등의 파드명으로 IP 주소를 가져올 수 있다)</p>
+  </li>
+  <li>헤드리스 서비스는 다음 두 가지 조건을 만족해야 한다
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">spec.type</code>이 <code class="language-plaintext highlighter-rouge">ClusterIP</code></li>
+      <li><code class="language-plaintext highlighter-rouge">spec.clusterIP</code>가 <code class="language-plaintext highlighter-rouge">None</code></li>
+    </ul>
+  </li>
+  <li>추가로 <code class="language-plaintext highlighter-rouge">metadata.name</code> 과 스테이트풀셋의 <code class="language-plaintext highlighter-rouge">spec.serviceName</code>이 같으면, 스테이트풀셋의 파드명으로 디스커버리 가능</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Headless 서비스</span>
+
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-headless</span> <span class="c1">#</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+  <span class="na">clusterIP</span><span class="pi">:</span> <span class="s">None</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http-port"</span>
+    <span class="na">protocol</span><span class="pi">:</span> <span class="s2">"</span><span class="s">TCP"</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">80</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># StatefulSet</span>
+
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">StatefulSet</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-statefulset-headless</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">serviceName</span><span class="pi">:</span> <span class="s">sample-headless</span> <span class="c1">#</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">amsy810/echo-nginx:v2.0</span>
+</code></pre></div></div>
+:ET

@@ -17,6 +17,26 @@ tags: MLOps
 
 ---
 
+
+# 언제 Feature Store가 필요한가
+
+- 필요 없는 경우
+  -  All of our data points are independent, stateless, from client-side and there is no entity that has changing features over time
+- 필요한 경우
+  - when we need to have up-to-date features for an entity that we continually generate predictions for. For example, a user's behavior (clicks, purchases, etc.) on an e-commerce platform or the deliveries a food runner recently made in the last hour, etc
+
+# Feature Store의 핵심 구성 요소
+
+- digest: 여러 데이터 소스에서 데이터를 읽어올 수 있어야함
+- definition: feature를 정의할 수 있어야함
+- offline: 모델 훈련을 위해 적절한 feature를 제공할 수 있어야함
+- online: 추론을 위해 낮은 지연률로 feature를 제공할 수 있어야함
+
+# Feature Store
+
+- Feast, Hopsworks, Tecton, Rasgo, etc
+- AWS의 Sagemaker, GCP의 Vertex AI
+
 # What is Feast
 
 # Why Feast
@@ -30,6 +50,16 @@ tags: MLOps
 - 
 ```
 
+
+<div class="fire-para">
+    <div class="fire-bar"><i class="fas fa-fire"></i> Popular tools</div>
+    <div class="fire-content">Popular data ingestion tools include Fivetran, Airbyte, Stitch, etc.</div>
+</div>
+
+<div class="pen-para">
+    <div class="pen-bar"><i class="fas fa-pen"></i> Popular tools</div>
+    <div class="pen-content">Popular data ingestion tools include Fivetran, Airbyte, Stitch, etc.</div>
+</div>
 
 # 참고
 

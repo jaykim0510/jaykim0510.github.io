@@ -5,12 +5,166 @@
         <description>Jay Tech personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 17 Nov 2022 14:23:16 +0900</pubDate>
-        <lastBuildDate>Thu, 17 Nov 2022 14:23:16 +0900</lastBuildDate>
+        <pubDate>Sun, 04 Dec 2022 17:25:07 +0900</pubDate>
+        <lastBuildDate>Sun, 04 Dec 2022 17:25:07 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
-                <title>Data Engineering Series [Part30]: MLOps</title>
+                <title>MLOps Series [Part4]: MLflow</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mlflow.org/docs/latest/index.html&quot; target=&quot;_blank&quot;&gt;MLflow Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Tue, 06 Sep 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mlops-series4</link>
+                <guid isPermaLink="true">http://localhost:4000/mlops-series4</guid>
+                
+                <category>MLOps</category>
+                
+                
+                <category>data_engineering</category>
+                
+            </item>
+        
+            <item>
+                <title>MLOps Series [Part3]: Feast</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#언제-feature-store가-필요한가&quot; id=&quot;markdown-toc-언제-feature-store가-필요한가&quot;&gt;언제 Feature Store가 필요한가&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#feature-store의-핵심-구성-요소&quot; id=&quot;markdown-toc-feature-store의-핵심-구성-요소&quot;&gt;Feature Store의 핵심 구성 요소&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#feature-store&quot; id=&quot;markdown-toc-feature-store&quot;&gt;Feature Store&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#what-is-feast&quot; id=&quot;markdown-toc-what-is-feast&quot;&gt;What is Feast&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#why-feast&quot; id=&quot;markdown-toc-why-feast&quot;&gt;Why Feast&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;언제-feature-store가-필요한가&quot;&gt;언제 Feature Store가 필요한가&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;필요 없는 경우
+    &lt;ul&gt;
+      &lt;li&gt;All of our data points are independent, stateless, from client-side and there is no entity that has changing features over time&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;필요한 경우
+    &lt;ul&gt;
+      &lt;li&gt;when we need to have up-to-date features for an entity that we continually generate predictions for. For example, a user’s behavior (clicks, purchases, etc.) on an e-commerce platform or the deliveries a food runner recently made in the last hour, etc&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;feature-store의-핵심-구성-요소&quot;&gt;Feature Store의 핵심 구성 요소&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;digest: 여러 데이터 소스에서 데이터를 읽어올 수 있어야함&lt;/li&gt;
+  &lt;li&gt;definition: feature를 정의할 수 있어야함&lt;/li&gt;
+  &lt;li&gt;offline: 모델 훈련을 위해 적절한 feature를 제공할 수 있어야함&lt;/li&gt;
+  &lt;li&gt;online: 추론을 위해 낮은 지연률로 feature를 제공할 수 있어야함&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;feature-store&quot;&gt;Feature Store&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Feast, Hopsworks, Tecton, Rasgo, etc&lt;/li&gt;
+  &lt;li&gt;AWS의 Sagemaker, GCP의 Vertex AI&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;what-is-feast&quot;&gt;What is Feast&lt;/h1&gt;
+
+&lt;h1 id=&quot;why-feast&quot;&gt;Why Feast&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Online store를 통해 실시간 예측을 위한 과정을 자동화해준다&lt;/li&gt;
+  &lt;li&gt;모델을 훈련할 때 사용하는 데이터와 추론할 때 사용하는 데이터간의 일관성을 지켜준다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- Is Feast a database?: No. Feast is a tool that manages data stored in other systems (e.g. BigQuery, Cloud Firestore, Redshift, DynamoDB). It is not a database, but it helps manage data stored in other systems.
+
+- 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;fire-para&quot;&gt;
+    &lt;div class=&quot;fire-bar&quot;&gt;&lt;i class=&quot;fas fa-fire&quot;&gt;&lt;/i&gt; Popular tools&lt;/div&gt;
+    &lt;div class=&quot;fire-content&quot;&gt;Popular data ingestion tools include Fivetran, Airbyte, Stitch, etc.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;pen-para&quot;&gt;
+    &lt;div class=&quot;pen-bar&quot;&gt;&lt;i class=&quot;fas fa-pen&quot;&gt;&lt;/i&gt; Popular tools&lt;/div&gt;
+    &lt;div class=&quot;pen-content&quot;&gt;Popular data ingestion tools include Fivetran, Airbyte, Stitch, etc.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://feast.dev/&quot; target=&quot;_blank&quot;&gt;Feast.dev&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://feast.dev/blog/what-is-a-feature-store/&quot; target=&quot;_blank&quot;&gt;Feast, What is a Feature Store?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rtd.feast.dev/en/master/#&quot;&gt;Feast Python API Documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=p2cuq4eJ2BY&amp;amp;list=LL&amp;amp;index=4&amp;amp;t=561s&quot; target=&quot;_blank&quot;&gt;Youtube Prodramp, An AI Engineer technical guide to Feature Store with FEAST&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Tue, 06 Sep 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mlops-series3</link>
+                <guid isPermaLink="true">http://localhost:4000/mlops-series3</guid>
+                
+                <category>MLOps</category>
+                
+                
+                <category>data_engineering</category>
+                
+            </item>
+        
+            <item>
+                <title>MLOps Series [Part2]: dvc</title>
+                <description>&lt;hr /&gt;
+
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dvc.org/&quot; target=&quot;_blank&quot;&gt;dvc.org&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://minimin2.tistory.com/185&quot; target=&quot;_blank&quot;&gt;minimin2, [MLOps] DVC(Data Version Control) 데이터 버전 관리 사용법&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dvc.org/doc/use-cases/versioning-data-and-models&quot; target=&quot;_blank&quot;&gt;dvc, Versioning Data and Models&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dvc.org/doc/use-cases/versioning-data-and-models/tutorial&quot;&gt;dvc, Tutorial: Data and Model Versioning&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dvc.org/doc/start/data-management/data-versioning&quot;&gt;dvc, Get Started: Data Versioning&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dvc.org/doc/start/data-management/data-and-model-access&quot;&gt;dvc, Get Started: Data and Model Access&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dvc.org/doc/start/data-management/data-pipelines&quot;&gt;dvc, Get Started: Data Pipelines&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dvc.org/doc/start/data-management/metrics-parameters-plots&quot;&gt;dvc, Get Started: Metrics, Parameters, and Plots&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Tue, 06 Sep 2022 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/mlops-series2</link>
+                <guid isPermaLink="true">http://localhost:4000/mlops-series2</guid>
+                
+                <category>MLOps</category>
+                
+                
+                <category>data_engineering</category>
+                
+            </item>
+        
+            <item>
+                <title>MLOps Series [Part1]: Intro</title>
                 <description>&lt;hr /&gt;
 
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
@@ -42,6 +196,7 @@
 
 &lt;ul&gt;
   &lt;li&gt;ML 파이프라인: scikit-learn, pyspark&lt;/li&gt;
+  &lt;li&gt;피처 저장소: Feast&lt;/li&gt;
   &lt;li&gt;데이터 버저닝: dvc&lt;/li&gt;
   &lt;li&gt;모델 버저닝: MLflow&lt;/li&gt;
   &lt;li&gt;서빙: FastAPI, django&lt;/li&gt;
@@ -50,12 +205,17 @@
 &lt;/ul&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.tecton.ai/blog/devops-ml-data/?__hstc=145182251.a6226b731366ba276c4a4a107187f8d0.1669033771134.1669033771134.1669033771134.1&amp;amp;__hssc=145182251.5.1669033771134&amp;amp;__hsfp=4038990400&quot; target=&quot;_blank&quot;&gt;tecton, Why We Need DevOps for ML Data&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://coffeewhale.com/what-is-mlops&quot; target=&quot;_blank&quot;&gt;커피고래가 생각하는 MLOps&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
                 <pubDate>Tue, 06 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/data-engineering-series30</link>
-                <guid isPermaLink="true">http://localhost:4000/data-engineering-series30</guid>
+                <link>http://localhost:4000/mlops-series1</link>
+                <guid isPermaLink="true">http://localhost:4000/mlops-series1</guid>
                 
-                <category>DE</category>
+                <category>MLOps</category>
                 
                 
                 <category>data_engineering</category>
@@ -421,425 +581,6 @@
                 <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/tech_interview_series8</link>
                 <guid isPermaLink="true">http://localhost:4000/tech_interview_series8</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>computer_science</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part7]: Python</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#파이썬-관련-질문&quot; id=&quot;markdown-toc-파이썬-관련-질문&quot;&gt;파이썬 관련 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#파이썬-문법&quot; id=&quot;markdown-toc-파이썬-문법&quot;&gt;파이썬 문법&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#객체지향&quot; id=&quot;markdown-toc-객체지향&quot;&gt;객체지향&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#내부-동작&quot; id=&quot;markdown-toc-내부-동작&quot;&gt;내부 동작&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;제가 예전에 한국계 일본 메신저 기업에 면접을 볼때 면접관이 저에게 한 말이 있습니다.&lt;/p&gt;
-
-&lt;p&gt;“저는 리드 개발자입니다. 하지만 이 면접에서 만큼은  아무 것도 모른다고 가정하겠습니다. 저를 디자이너 출신 기획자라고 생각하고 답변해주세요. 당신은 수많은 개발자들과 협업을 할텐데, 그렇게 되면 당신의 커뮤니케이션 능력 역시 우리게엔 중요합니다.”&lt;/p&gt;
-
-&lt;h1 id=&quot;파이썬-관련-질문&quot;&gt;파이썬 관련 질문&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;파이썬의 주요 특징에 대해 이야기 해보세요&lt;/li&gt;
-  &lt;li&gt;파이썬에서 list와 tuple의 차이점에 대해 말해보세요&lt;/li&gt;
-  &lt;li&gt;파이썬의 삼향연산자(ternary operator)에 대해 설명하세요&lt;/li&gt;
-  &lt;li&gt;파이썬에게 어떤 약점이 있나요?&lt;/li&gt;
-  &lt;li&gt;파이썬에서 현재 작업중인 디렉토리를 확인하는 방법이 무엇인가요?&lt;/li&gt;
-  &lt;li&gt;컴파일 언어와 인터프리터 언어의 차이점에 대해 설명하세요&lt;/li&gt;
-  &lt;li&gt;파이썬에는 .pyc 파일이 있습니다. .py 파일과의 차이점을 설명하세요&lt;/li&gt;
-  &lt;li&gt;파이썬은 객체지향 입니까? 왜 그렇습니까?&lt;/li&gt;
-  &lt;li&gt;try… except… else 구문에서 else는 언제 실행되나요?&lt;/li&gt;
-  &lt;li&gt;list append 와 list extend 의 차이점을 설명하세요&lt;/li&gt;
-  &lt;li&gt;Python 에서 map() 함수는 어떤 역할을 하나요?&lt;/li&gt;
-  &lt;li&gt;try…raise…finally 구문이 어떻게 작동하는지 설명해 주세요&lt;/li&gt;
-  &lt;li&gt;파이썬에서 언더스코어(_) 는 언제 사용하나요?&lt;/li&gt;
-  &lt;li&gt;파이썬에서 switch… case 구문을 구현해 보았나요? 어떻게 하셨나요?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;파이썬-문법&quot;&gt;파이썬 문법&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;이터레이터&lt;/li&gt;
-  &lt;li&gt;제너레이터&lt;/li&gt;
-  &lt;li&gt;타입 힌트&lt;/li&gt;
-  &lt;li&gt;아스테리스크(*)&lt;/li&gt;
-  &lt;li&gt;컨텍스트 매니저&lt;/li&gt;
-  &lt;li&gt;스코프&lt;/li&gt;
-  &lt;li&gt;데코레이터&lt;/li&gt;
-  &lt;li&gt;코루틴&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;객체지향&quot;&gt;객체지향&lt;/h1&gt;
-
-&lt;h1 id=&quot;내부-동작&quot;&gt;내부 동작&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;GIL&lt;/li&gt;
-  &lt;li&gt;GC&lt;/li&gt;
-  &lt;li&gt;CPython vs PyPy&lt;/li&gt;
-  &lt;li&gt;유니코드와 UTF-8&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-1%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 1편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series7</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series7</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>computer_science</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part6]: Computer Architecture</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;컴퓨터의 구성&lt;/li&gt;
-  &lt;li&gt;중앙처리장치(CPU) 작동 원리&lt;/li&gt;
-  &lt;li&gt;캐시 메모리(Cache Memory)&lt;/li&gt;
-  &lt;li&gt;고정 소수점 &amp;amp; 부동 소수점&lt;/li&gt;
-  &lt;li&gt;패리티 비트 &amp;amp; 해밍 코드&lt;/li&gt;
-  &lt;li&gt;ARM 프로세서&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/WeareSoft/tech-interview&quot; target=&quot;_blank&quot;&gt;WeareSoft/tech-interview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gyoogle.dev/blog/guide/%EB%A9%B4%EC%A0%91%20%EC%A4%80%EB%B9%84.html&quot; target=&quot;_blank&quot;&gt;gyoogle, Tech Interview 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blex.me/@baealex/%EC%B7%A8%EC%A4%80%EC%83%9D%EC%9D%B4-%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EA%B8%B0%EC%88%A0%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84&quot; target=&quot;_blank&quot;&gt;배진오, 신입 개발자 기술면접 준비하기&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://syujisu.tistory.com/entry/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A7%81%EB%AC%B4-%EB%A9%B4%EC%A0%91-%EC%A7%88%EB%AC%B8?category=871132&quot; target=&quot;_blank&quot;&gt;exp_blog, 데이터베이스 직무 면접 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/88&quot; target=&quot;_blank&quot;&gt;망나니 개발자 CS 준비&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series6</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series6</guid>
-                
-                <category>tech_interview</category>
-                
-                
-                <category>computer_science</category>
-                
-            </item>
-        
-            <item>
-                <title>Tech Interview Series [Part5]: Database</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#트랜잭션&quot; id=&quot;markdown-toc-트랜잭션&quot;&gt;트랜잭션&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#트랜잭션의-4가지-특성-acid&quot; id=&quot;markdown-toc-트랜잭션의-4가지-특성-acid&quot;&gt;트랜잭션의 4가지 특성: ACID&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#mysql-스토리지-엔진&quot; id=&quot;markdown-toc-mysql-스토리지-엔진&quot;&gt;MySQL 스토리지 엔진&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#스틸과-포스정책&quot; id=&quot;markdown-toc-스틸과-포스정책&quot;&gt;스틸과 포스정책&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#잠금과-격리수준&quot; id=&quot;markdown-toc-잠금과-격리수준&quot;&gt;잠금과 격리수준&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#인덱스&quot; id=&quot;markdown-toc-인덱스&quot;&gt;인덱스&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#인덱스-적용-기준&quot; id=&quot;markdown-toc-인덱스-적용-기준&quot;&gt;인덱스 적용 기준&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#인덱스의-데이터-탐색-방식&quot; id=&quot;markdown-toc-인덱스의-데이터-탐색-방식&quot;&gt;인덱스의 데이터 탐색 방식&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#성능-개선&quot; id=&quot;markdown-toc-성능-개선&quot;&gt;성능 개선&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#쿼리-최적화&quot; id=&quot;markdown-toc-쿼리-최적화&quot;&gt;쿼리 최적화&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#서버-설정&quot; id=&quot;markdown-toc-서버-설정&quot;&gt;서버 설정&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#데이터베이스-모델링&quot; id=&quot;markdown-toc-데이터베이스-모델링&quot;&gt;데이터베이스 모델링&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#데이터베이스-일문일답&quot; id=&quot;markdown-toc-데이터베이스-일문일답&quot;&gt;데이터베이스 일문일답&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#index&quot; id=&quot;markdown-toc-index&quot;&gt;Index&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#정규화에-대해서&quot; id=&quot;markdown-toc-정규화에-대해서&quot;&gt;정규화에 대해서&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#transaction&quot; id=&quot;markdown-toc-transaction&quot;&gt;Transaction&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#교착상태&quot; id=&quot;markdown-toc-교착상태&quot;&gt;교착상태&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#sql&quot; id=&quot;markdown-toc-sql&quot;&gt;SQL&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#nosql&quot; id=&quot;markdown-toc-nosql&quot;&gt;NoSQL&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;트랜잭션&quot;&gt;트랜잭션&lt;/h1&gt;
-&lt;h2 id=&quot;트랜잭션의-4가지-특성-acid&quot;&gt;트랜잭션의 4가지 특성: ACID&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;트랜잭션: 여러 데이터의 변경 사항을 하나의 논리적인 작업 단위로 묶은 것&lt;/li&gt;
-  &lt;li&gt;트랜잭션의 4가지 특성: ACID&lt;/li&gt;
-  &lt;li&gt;Atomicity
-    &lt;ul&gt;
-      &lt;li&gt;트랜잭션으로 묶인 데이터의 변경 사항은 모두 반영되거나 하나도 반영되지 않아야 한다 (All or Nothing)&lt;/li&gt;
-      &lt;li&gt;만약 Commit 하기로 했다면 모든 변경 사항에 대한 리두로그가 플러시 되거나, 더티 페이지가 플러시 되어야 한다&lt;/li&gt;
-      &lt;li&gt;만약 Rollback 하기로 했다면 언두 로그 파일 데이터를 이용해 다시 DB를 롤백해야 한다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Isolation
-    &lt;ul&gt;
-      &lt;li&gt;하나의 트랜잭션 처리가 다른 트랜잭션에 영향을 주거나 받아서는 안된다&lt;/li&gt;
-      &lt;li&gt;실무에서는 격리 수준에 따라 정도가 달라진다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Durability
-    &lt;ul&gt;
-      &lt;li&gt;커밋된 데이터는 장애가 발생하더라도 DB에 반영되어야 한다&lt;/li&gt;
-      &lt;li&gt;InnoDB 버퍼 풀에 데이터를 커밋했으면 다른 트랜잭션에서는 커밋된 데이터를 읽어갈 것&lt;/li&gt;
-      &lt;li&gt;디스크에 플러시 되기 전에 장애가 나더라도 리두 로그를 미리 플러시 해둠으로써 복구 가능하도록&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;mysql-스토리지-엔진&quot;&gt;MySQL 스토리지 엔진&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;InnoDB Buffer Pool
-    &lt;ul&gt;
-      &lt;li&gt;데이터의 변경사항을 메모리에 캐시하는 공간&lt;/li&gt;
-      &lt;li&gt;데이터를 디스크에 플러시하기 전에 버퍼하는 역할&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Change Buffer
-    &lt;ul&gt;
-      &lt;li&gt;세컨더리 인덱스 페이지의 변경사항을 버퍼하는 공간&lt;/li&gt;
-      &lt;li&gt;나중에 InnoDB 버퍼 풀에 인덱스 페이지 생기면 병합&lt;/li&gt;
-      &lt;li&gt;쓰기 작업 많은 환경에 도움&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Log Buffer
-    &lt;ul&gt;
-      &lt;li&gt;데이터 변경사항으로 발생한 로그를 버퍼해 두는 공간&lt;/li&gt;
-      &lt;li&gt;트랜잭션 처리 vs 성능 간의 트레이드 오프를 조절&lt;/li&gt;
-      &lt;li&gt;(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;innodb_log_buffer_size&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;innodb_flush_log_at_trx_commit&lt;/code&gt;)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Redo Log
-    &lt;ul&gt;
-      &lt;li&gt;데이터의 변경사항을 기록하는 디스크 기반 자료구조&lt;/li&gt;
-      &lt;li&gt;커밋된 후 장애가 발생하더라도 Redo Log를 바탕으로 복구 가능&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Undo Log
-    &lt;ul&gt;
-      &lt;li&gt;데이터의 변경 이전의 데이터를 기록해두는 디스크 기반 자료구조&lt;/li&gt;
-      &lt;li&gt;롤백될 경우 Undo Log를 바탕으로 데이터를 되돌린다&lt;/li&gt;
-      &lt;li&gt;트랜잭션간의 Isolation을 위해 Undo Log에 기록된 변경 이전의 데이터를 보여준다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Durability는 InnoDB Buffer Pool, Log Buffer와 같은 버퍼가 어떤 주기로 플러시 되느냐에 따라 달라진다
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;스틸과-포스정책&quot;&gt;스틸과 포스정책&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Log Buffer가 아닌 &lt;strong&gt;InnoDB Buffer Pool 의 플러시 주기&lt;/strong&gt;는 어떻게 결정될까? =&amp;gt; 스틸과 포스 정책&lt;/li&gt;
-  &lt;li&gt;Log Buffer가 다 차기 전에 InnoDB Buffer Pool이 먼저 다 찰 수도 있다&lt;/li&gt;
-  &lt;li&gt;(Log Buffer는 변경 사항에 대한 로깅만 하면 되지만, InnoDB Buffer Pool은 페이지 단위로 메모리에 올린다)&lt;/li&gt;
-  &lt;li&gt;(그래서 하나의 트랜잭션이 변경 사항은 적은데 여러 페이지에서 발생하는 문제로 페이지를 많이 가져와야 할 수도 있다)&lt;/li&gt;
-  &lt;li&gt;대부분의 RDBMS는 &lt;strong&gt;스틸과 노-포스 정책&lt;/strong&gt;을 취한다&lt;/li&gt;
-  &lt;li&gt;스틸 정책
-    &lt;ul&gt;
-      &lt;li&gt;트랜잭션이 완료되기 전이라도 언제든 더티 페이지를 플러시 할 수 있다 (-&amp;gt; 롤백을 대비해 반드시 Undo Log 있어야함)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;노-포스 정책
-    &lt;ul&gt;
-      &lt;li&gt;트랜잭션이 커밋된다고 해도 더티 페이지를 무조건 플러시할 필요는 없다 (무조건 플러시하도록 하면 성능이 떨어진다)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;트랜잭션 완료 전에도 필요하면 InnoDB Buffer Pool에 있는 더티 페이지를 플러시할 수 있지만,&lt;/strong&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;그렇다고 트랜잭션이 완료됐다고 반드시 플러시할 필요는 없다&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;잠금과-격리수준&quot;&gt;잠금과 격리수준&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;잠금과 격리수준은 트랜잭션의 &lt;strong&gt;Isolation&lt;/strong&gt;과 깊은 관련이 있다&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;잠금은 레코드 쓰기와 관련&lt;/strong&gt;된 Isolation, &lt;strong&gt;격리수준은 레코드 읽기와 관련&lt;/strong&gt;된 Isolation이다&lt;/li&gt;
-  &lt;li&gt;잠금
-    &lt;ul&gt;
-      &lt;li&gt;하나의 레코드를 여러 커넥션에서 동시에 변경하지 못하게 한다&lt;/li&gt;
-      &lt;li&gt;스토리지 엔진 종류마다 테이블 잠금, 레코드 잠금, 인덱스 잠금 등이 있다&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;InnoDB는 인덱스 잠금을 사용&lt;/strong&gt;한다&lt;/li&gt;
-      &lt;li&gt;다른 커넥션에서 같은 레코드여도 해당 인덱스를 쓸 일이 없으면 접근 가능 =&amp;gt; 다른 잠금보다 훨씬 성능이 좋다&lt;/li&gt;
-      &lt;li&gt;만약 인덱스가 없으면 모든 레코드를 스캔해야 하므로 전체 레코드 잠금이 걸리게 된다 =&amp;gt; 인덱스 설계가 중요하다ㅓ&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;격리수준
-    &lt;ul&gt;
-      &lt;li&gt;서로 다른 트랜잭션간의 읽기를 어떻게 제공할지에 관한 설정이다&lt;/li&gt;
-      &lt;li&gt;오라클 DB는 READ COMMITTED, MySQL은 REATABLE READ를 주로 사용&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/mvcc.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;인덱스&quot;&gt;인덱스&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;인덱스는 DB의 쿼리 성능과 관련해서 빼놓을 수 없는 부분&lt;/li&gt;
-  &lt;li&gt;인덱스는 탐색해야 하는 레코드의 건수를 줄여준다&lt;/li&gt;
-  &lt;li&gt;인덱스의 자료구조적 특성은 &lt;strong&gt;B-Tree 형태&lt;/strong&gt;로 데이터가 &lt;strong&gt;정렬&lt;/strong&gt;되어 있다는 점이다&lt;/li&gt;
-  &lt;li&gt;-&amp;gt; 장점은 빠른 읽기, 단점은 느린 쓰기이다&lt;/li&gt;
-  &lt;li&gt;(해시 인덱스는 컬럼에 대한 해시값을 인덱스로 활용하는데 주로 메모리 기반 DB에서 사용한다)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;인덱스-적용-기준&quot;&gt;인덱스 적용 기준&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;WHERE, JOIN, ORDER BY절에 많이 사용되는 컬럼&lt;/li&gt;
-  &lt;li&gt;카디널리티가 높은 컬럼&lt;/li&gt;
-  &lt;li&gt;테이블 규모가 크지만 읽어오는 데이터는 많지 않은 쿼리&lt;/li&gt;
-  &lt;li&gt;MML 입장에서 인덱스는 성능은 떨어트리지만, 동시성 제어에서 잠금 측면에선 도움이 된다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;인덱스의-데이터-탐색-방식&quot;&gt;인덱스의 데이터 탐색 방식&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;인덱스 레인지 스캔&lt;/li&gt;
-  &lt;li&gt;인덱스 풀 스캔&lt;/li&gt;
-  &lt;li&gt;인덱스 루스 스캔&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;성능-개선&quot;&gt;성능 개선&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;성능은 크게 &lt;strong&gt;쿼리 최적화&lt;/strong&gt;, &lt;strong&gt;서버 설정&lt;/strong&gt;을 통해 개선할 수 있다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;쿼리-최적화&quot;&gt;쿼리 최적화&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;쿼리 최적화의 핵심은 옵티마이저가 인덱스를 쓰고 싶을 때, 가장 최적의 인덱스를 사용하도록 설계하는 것이다&lt;/li&gt;
-  &lt;li&gt;쿼리 실행을 보고 싶을 때는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EXPLAIN (SELECT ...)&lt;/code&gt;, 인덱스 정보는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SHOW INDEX ...&lt;/code&gt; 사용한다&lt;/li&gt;
-  &lt;li&gt;쿼리 실행은
-    &lt;ul&gt;
-      &lt;li&gt;SQL 파서가 SQL을 트리 형태로 파싱&lt;/li&gt;
-      &lt;li&gt;옵티마이저가 통계 정보를 이용해 실행 계획을 수립&lt;/li&gt;
-      &lt;li&gt;스토리지 엔진이 실행 계획대로 레코드를 읽고 쓴다&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;서버-설정&quot;&gt;서버 설정&lt;/h2&gt;
-
-&lt;h1 id=&quot;데이터베이스-모델링&quot;&gt;데이터베이스 모델링&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;비즈니스 모델링: 비즈니스 룰을 정의한다 (ex. 유저는 하나의 주문에 하나의 리뷰만 달 수 있다)&lt;/li&gt;
-  &lt;li&gt;논리적 모델링: 어떤 것을 테이블로 하고, 어떤 것을 컬럼으로 하고 테이블끼리의 관계를 어떻게 정의할지 정의한다&lt;/li&gt;
-  &lt;li&gt;정규화: 논리적 모델링을 보수 공사한다&lt;/li&gt;
-  &lt;li&gt;물리적 모델링: 테이블명, 컬럼명, 데이터 타입, 제약조건을 정의한다 (Schema, Table, Index 정의)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;데이터베이스-일문일답&quot;&gt;데이터베이스 일문일답&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;데이터베이스를 사용하는 이유&lt;/li&gt;
-  &lt;li&gt;데이터베이스 성능&lt;/li&gt;
-  &lt;li&gt;복제&lt;/li&gt;
-  &lt;li&gt;파티셔닝&lt;/li&gt;
-  &lt;li&gt;샤딩&lt;/li&gt;
-  &lt;li&gt;ORM&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;index&quot;&gt;Index&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Index 란 무엇인가&lt;/li&gt;
-  &lt;li&gt;Index 의 자료구조&lt;/li&gt;
-  &lt;li&gt;Primary index vs Secondary index&lt;/li&gt;
-  &lt;li&gt;Composite index&lt;/li&gt;
-  &lt;li&gt;Index 의 성능과 고려해야할 사항&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;정규화에-대해서&quot;&gt;정규화에 대해서&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;정규화란 무엇인가&lt;/li&gt;
-  &lt;li&gt;정규화의 종류&lt;/li&gt;
-  &lt;li&gt;정규화의 장단점&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;transaction&quot;&gt;Transaction&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;트랜잭션(Transaction)이란 무엇인가?&lt;/li&gt;
-  &lt;li&gt;트랜잭션과 Lock&lt;/li&gt;
-  &lt;li&gt;트랜잭션의 특성&lt;/li&gt;
-  &lt;li&gt;트랜잭션을 사용할 때 주의할 점&lt;/li&gt;
-  &lt;li&gt;트랜잭션 격리 수준&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;교착상태&quot;&gt;교착상태&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;교착상태란 무엇인가&lt;/li&gt;
-  &lt;li&gt;교착상태의 예(MySQL)&lt;/li&gt;
-  &lt;li&gt;교착 상태의 빈도를 낮추는 방법&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;sql&quot;&gt;SQL&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;JOIN&lt;/li&gt;
-  &lt;li&gt;Sargable&lt;/li&gt;
-  &lt;li&gt;Optimizer&lt;/li&gt;
-  &lt;li&gt;Statement vs PreparedStatement&lt;/li&gt;
-  &lt;li&gt;SQL Injection&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;nosql&quot;&gt;NoSQL&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;정의&lt;/li&gt;
-  &lt;li&gt;CAP 이론: 일관성, 가용성, 네트워크 분할 허용성&lt;/li&gt;
-  &lt;li&gt;저장방식에 따른 분류: Key-value, Document, Column&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/JaeYeopHan/Interview_Question_for_Beginner&quot; target=&quot;_blank&quot;&gt;JaeYeopHan/Interview_Question_for_Beginner&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/WeareSoft/tech-interview&quot; target=&quot;_blank&quot;&gt;WeareSoft/tech-interview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://gyoogle.dev/blog/guide/%EB%A9%B4%EC%A0%91%20%EC%A4%80%EB%B9%84.html&quot; target=&quot;_blank&quot;&gt;gyoogle, Tech Interview 준비&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blex.me/@baealex/%EC%B7%A8%EC%A4%80%EC%83%9D%EC%9D%B4-%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94-%EA%B0%9C%EB%B0%9C%EC%9E%90-%EA%B8%B0%EC%88%A0%EB%A9%B4%EC%A0%91-%EC%A4%80%EB%B9%84&quot; target=&quot;_blank&quot;&gt;배진오, 신입 개발자 기술면접 준비하기&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dingrr.com/blog/post/python-python-%EB%A9%B4%EC%A0%91-%EC%98%88%EC%A0%9C-2%ED%8E%B8&quot; target=&quot;_blank&quot;&gt;[PYTHON] Python 면접 예제 2편&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://syujisu.tistory.com/entry/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%A7%81%EB%AC%B4-%EB%A9%B4%EC%A0%91-%EC%A7%88%EB%AC%B8?category=871132&quot; target=&quot;_blank&quot;&gt;exp_blog, 데이터베이스 직무 면접 질문&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://mangkyu.tistory.com/88&quot; target=&quot;_blank&quot;&gt;망나니 개발자 CS 준비&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Thu, 01 Sep 2022 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/tech_interview_series5</link>
-                <guid isPermaLink="true">http://localhost:4000/tech_interview_series5</guid>
                 
                 <category>tech_interview</category>
                 
