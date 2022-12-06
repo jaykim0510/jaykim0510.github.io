@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kafka Series [Part11]: 카프카를 공부하면서 궁금한 점들'
+title:  'Kafka Series [Part11]: Python API for Kafka'
 description: 
 date:   2022-05-11 15:01:35 +0300
 image:  '/images/kafka_logo.png'
@@ -17,18 +17,153 @@ tags: Kafka
 
 ---  
 
-# Connect
+# Producer
 
-## 프로듀서/컨슈머의 설정값과 커넥터의 관계
+- A Kafka client that publishes records to the Kafka cluster.
+- The producer consists of a pool of buffer space that holds records that haven’t yet been transmitted to the server
 
-프로듀서와 컨슈머를 커넥터로 연결하고 나면 딱히 건드릴게 없다. 근데 생각해보면 프로듀서와 컨슈머 각각 설정할 configuration들이 굉장히 많다. 그러면 그런것들은 각각의 커넥터를 REST API로 등록할 때 바꿀 수 있는 것인가? [devidea: [Kafka] Connector-level producer/consumer configuration](https://devidea.tistory.com/96) 글을 보면 그런 것 같은데 아직 Confuent 쪽에서는 커넥터에 관해 이런 Configuration을 커스텀하도록 fully 지원하지는 않는 것 같기도 하다. 아마 예를 들어 MongoDB, MySQL 등 각각의 프로듀서/컨슈머별로 지원해야 하는 특성들을 자기들 생각에는 잘 설정해놓았기 때문에 사용자들이 직접 건드릴 필요가 없다고 생각해서 그런 건가?  
+## Keyword Arguments
+
+- **bootstrap_servers**: `host[:port]` string (or list of `host[:port]` strings) that the producer should contact to bootstrap initial cluster metadata. This does not have to be the full node list. It just needs to have at least one broker that will respond to a Metadata API Request. Default port is `9092`
+  - default: `localhost:9092`
+
+- **key_serializer** (callable): used to convert user-supplied keys to bytes If not None, called as f(key), should return bytes. 
+  - default: `None`
+
+- **value_serializer** (callable): used to convert user-supplied message values to bytes. If not None, called as f(value), should return bytes. 
+  - default: `None`
+  - ex. `KafkaProducer(value_serializer=lambda m: json.dumps(m).encode('ascii'))`
+  - ex. `KafkaProducer(value_serializer=msgpack.dumps)`
+
+- **acks** : The number of acknowledgments the producer requires the leader to have received before considering a request complete. This controls the durability of records that are sent. The following settings are common:
+  - `0`: Producer will not wait for any acknowledgment from the server.
+    The message will immediately be added to the socket buffer and considered sent. No guarantee can be made that the server has received the record in this case, and the retries configuration will not take effect (as the client won’t generally know of any failures). The offset given back for each record will always be set to -1.
+  - `1`: Wait for leader to write the record to its local log only.
+    Broker will respond without awaiting full acknowledgement from all followers. In this case should the leader fail immediately after acknowledging the record but before the followers have replicated it then the record will be lost.
+  - `all(-1)`: Wait for the full set of in-sync replicas to write the record.
+    This guarantees that the record will not be lost as long as at least one in-sync replica remains alive. This is the strongest available guarantee.
+  - default: `1`
+
+- **linger_ms** (int): The producer groups together any records that arrive in between request transmissions into a single batched request. Normally this occurs only under load when records arrive faster than they can be sent out. However in some circumstances the client may want to reduce the number of requests even under moderate load. This setting accomplishes this by adding a small amount of artificial delay; that is, rather than immediately sending out a record the producer will wait for up to the given delay to allow other records to be sent so that the sends can be batched together. This can be thought of as analogous to Nagle’s algorithm in TCP. This setting gives the upper bound on the delay for batching: once we get batch_size worth of records for a partition it will be sent immediately regardless of this setting, however if we have fewer than this many bytes accumulated for this partition we will ‘linger’ for the specified time waiting for more records to show up. This setting defaults to 0 (i.e. no delay). Setting linger_ms=5 would have the effect of reducing the number of requests sent but would add up to 5ms of latency to records sent in the absence of load. Default: 0.
+
+- **retries** (int): Setting a value greater than zero will cause the client to resend any record whose send fails with a potentially transient error. Note that this retry is no different than if the client resent the record upon receiving the error. Allowing retries without setting max_in_flight_requests_per_connection to 1 will potentially change the ordering of records because if two batches are sent to a single partition, and the first fails and is retried but the second succeeds, then the records in the second batch may appear first. 
+  - default: `0`
+
+- **batch_size** (int): Requests sent to brokers will contain multiple batches, one for each partition with data available to be sent. A small batch size will make batching less common and may reduce throughput (a batch size of zero will disable batching entirely). 
+  - default: `16384`
+
+- **compression_type** (str): The compression type for all data generated by the producer. Valid values are `gzip`, `snappy`, `lz4`, or `None`. Compression is of full batches of data, so the efficacy of batching will also impact the compression ratio (more batching means better compression). 
+  - default: `None`
+
+
+- **partitioner** (callable): Callable used to determine which partition each message is assigned to. Called (after key serialization): partitioner(key_bytes, all_partitions, available_partitions). The default partitioner implementation hashes each non-None key using the same murmur2 algorithm as the java client so that messages with the same key are assigned to the same partition. When a key is None, the message is delivered to a random partition (filtered to partitions with available leaders only, if possible).
+
+- **max_in_flight_requests_per_connection** (int): Requests are pipelined to kafka brokers up to this number of maximum requests per broker connection. Note that if this setting is set to be greater than 1 and there are failed sends, there is a risk of message re-ordering due to retries (i.e., if retries are enabled). 
+  - default: `5`
+
+- **buffer_memory** (int): The total bytes of memory the producer should use to buffer records waiting to be sent to the server. If records are sent faster than they can be delivered to the server the producer will block up to max_block_ms, raising an exception on timeout. In the current implementation, this setting is an approximation. 
+  - default: `33554432` (32MB)
+
+
+## send()
+
+- `send(topic, value=None, key=None, headers=None, partition=None, timestamp_ms=None)`
+- `send()` is asynchronous
+- When called, it adds the record to a buffer of pending record sends and immediately returns. This allows the producer to batch together
+
+- **topic** (str): topic where the message will be published
+- **value** (optional): message value. Must be type bytes, or be serializable to bytes via configured value_serializer. If value is None, key is required and message acts as a ‘delete’. See kafka compaction documentation for more details: https://kafka.apache.org/documentation.html#compaction (compaction requires kafka >= 0.8.1)
+- **partition** (int, optional): optionally specify a partition. If not set, the partition will be selected using the configured ‘partitioner’.
+- **key** (optional): a key to associate with the message. Can be used to determine which partition to send the message to. If partition is None (and producer’s partitioner config is left as default), then messages with the same key will be delivered to the same partition (but if key is None, partition is chosen randomly). Must be type bytes, or be serializable to bytes via configured key_serializer.
+- **headers** (optional): a list of header key value pairs. List items are tuples of str key and bytes value.
+- **timestamp_ms** (int, optional): epoch milliseconds (from Jan 1 1970 UTC) to use as the message timestamp. Defaults to current time.
+
+## flush()
+
+- `flush(timeout=None)`
+- Invoking this method makes all buffered records immediately available to send (even if linger_ms is greater than 0) and blocks on the completion of the requests associated with these records.
+
+- **timeout** (float, optional): timeout in seconds to wait for completion.
+
+## close()
+
+- `close(timeout=None)`
+- Close this producer
+
+- **timeout** (float, optional): timeout in seconds to wait for completion.
+
+## metrics()
+
+- Get metrics on producer performance.
+
+
+## partitions_for()
+
+- `partitions_for(topic)`
+- Returns set of all known partitions for the topic.
+
+## bootstrap_connected()
+
+- Return True if the bootstrap is connected.
+
+# Consumer
+
+- Consume records from a Kafka cluster.
+- It also interacts with the assigned kafka Group Coordinator
+- The consumer is not thread safe and should not be shared across threads
+
+## Parameters
+
+- ***topics** (str): optional list of topics to subscribe to. If not set, call `subscribe()` or `assign()` before consuming records.
+
+## Keyword Arguments
+
+- **bootstrap_servers**: ‘host[:port]’ string (or list of ‘host[:port]’ strings) that the consumer should contact to bootstrap initial cluster metadata. This does not have to be the full node list. It just needs to have at least one broker that will respond to a Metadata API Request. Default port is 9092. If no servers are specified, will default to localhost:9092.
+
+- **group_id** (str or None): The name of the consumer group to join for dynamic partition assignment (if enabled), and to use for fetching and committing offsets. If None, auto-partition assignment (via group coordinator) and offset commits are disabled. 
+  - default: `None`
+
+- **key_deserializer** (callable): Any callable that takes a raw message key and returns a deserialized key.
+
+- **value_deserializer** (callable): Any callable that takes a raw message value and returns a deserialized value.
+
+- **auto_offset_reset** (str): A policy for resetting offsets on OffsetOutOfRange errors: ‘earliest’ will move to the oldest available message, ‘latest’ will move to the most recent. Any other value will raise the exception. 
+  - default: `latest`
+
+- **enable_auto_commit** (bool): If True , the consumer’s offset will be periodically committed in the background. 
+  - Default: `True`
+
+- **auto_commit_interval_ms** (int): Number of milliseconds between automatic offset commits, if enable_auto_commit is True. 
+  - default: `5000`
+
+
+- **session_timeout_ms** (int): The timeout used to detect failures when using Kafka’s group management facilities. The consumer sends periodic heartbeats to indicate its liveness to the broker. If no heartbeats are received by the broker before the expiration of this session timeout, then the broker will remove this consumer from the group and initiate a rebalance. Note that the value must be in the allowable range as configured in the broker configuration by group.min.session.timeout.ms and group.max.session.timeout.ms. 
+  - default: `10000`
+
+- **heartbeat_interval_ms** (int): The expected time in milliseconds between heartbeats to the consumer coordinator when using Kafka’s group management facilities. Heartbeats are used to ensure that the consumer’s session stays active and to facilitate rebalancing when new consumers join or leave the group. The value must be set lower than session_timeout_ms, but typically should be set no higher than 1/3 of that value. It can be adjusted even lower to control the expected time for normal rebalances. 
+  - default: `3000`
+
+- **partition_assignment_strategy** (list): List of objects to use to distribute partition ownership amongst consumer instances when group management is used. 
+  - default: `[RangePartitionAssignor, RoundRobinPartitionAssignor]`
+
+## assignment()
+
+- Get the TopicPartitions currently assigned to this consumer.
+
+## bootstrap_connected()
+
+- Return True if the bootstrap is connected
+
+## beginning_offsets(partitions)
+
+- Get the first offset for the given partitions
+- This method may block indefinitely if the partition does not exist
+
+## end_offsets(partitions)
+
+- Get the last offset for the given partitions. The last offset of a partition is the offset of the upcoming message, i.e. the offset of the last available message + 1.
+- This method may block indefinitely if the partition does not exist.
 
 # 참고
 
-- [JDBC Sink Connector Configuration Properties](https://docs.confluent.io/kafka-connect-jdbc/current/sink-connector/sink_config_options.html){:target="_blank"}
-- [[Kafka] Sink Connector 생성](https://presentlee.tistory.com/6){:target="_blank"}
-- [JDBC Connector (Source and Sink) for Confluent Platform](https://docs.confluent.io/5.5.1/connect/kafka-connect-jdbc/index.html#mysql-server){:target="_blank"}
-- [[Kafka] Kafka Connect 개념/예제](https://cjw-awdsd.tistory.com/53){:target="_blank"}
-- [[Kafka] Kafka Connect - JDBC Connector 예제](https://wecandev.tistory.com/110){:target="_blank"}
-- [How to save a DataFrame to MySQL in PySpark](https://www.projectpro.io/recipes/save-dataframe-mysql-pyspark){:target="_blank"}
-- [devidea: [Kafka] Connector-level producer/consumer configuration](https://devidea.tistory.com/96)
+- [kafka-python API](https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html){:target="_blank"}

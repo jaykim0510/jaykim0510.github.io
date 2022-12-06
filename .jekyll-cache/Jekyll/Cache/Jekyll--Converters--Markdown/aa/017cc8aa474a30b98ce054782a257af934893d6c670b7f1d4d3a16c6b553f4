@@ -1,0 +1,150 @@
+I"V?<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#객체-생성" id="markdown-toc-객체-생성">객체 생성</a></li>
+  <li><a href="#캡슐화" id="markdown-toc-캡슐화">캡슐화</a></li>
+  <li><a href="#상속" id="markdown-toc-상속">상속</a></li>
+  <li><a href="#다형성" id="markdown-toc-다형성">다형성</a></li>
+  <li><a href="#static" id="markdown-toc-static">static</a></li>
+</ul>
+
+<hr />
+
+<h1 id="객체-생성">객체 생성</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// object literal</span>
+<span class="kd">const</span> <span class="nx">user</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">email</span><span class="p">:</span> <span class="dl">"</span><span class="s2">abc@de.com</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">birthday</span><span class="p">:</span> <span class="dl">"</span><span class="s2">1234-05-11</span><span class="dl">"</span><span class="p">,</span>
+    <span class="nx">buy</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span><span class="s2"> buys </span><span class="p">${</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">item</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">"</span><span class="s2">sweater</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">price</span><span class="p">:</span> <span class="mi">24000</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// factory function</span>
+<span class="kd">function</span> <span class="nx">createUser</span><span class="p">(</span><span class="nx">email</span><span class="p">,</span> <span class="nx">birthday</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">user</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">email</span><span class="p">:</span> <span class="nx">email</span><span class="p">,</span> 
+        <span class="nx">birthday</span><span class="p">,</span>  <span class="c1">// // 파라미터와 이름이 같으면 이렇게만 적어도 된다</span>
+        <span class="nx">buy</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span><span class="s2"> buys </span><span class="p">${</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+        <span class="p">},</span>
+    <span class="p">};</span>
+    <span class="k">return</span> <span class="nx">user</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// constructor function</span>
+<span class="kd">function</span> <span class="nx">User</span><span class="p">(</span><span class="nx">email</span><span class="p">,</span> <span class="nx">birthday</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">email</span> <span class="o">=</span> <span class="nx">email</span><span class="p">,</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">birthday</span> <span class="o">=</span> <span class="nx">birthday</span><span class="p">,</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">buy</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span><span class="s2"> buys </span><span class="p">${</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">user1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="dl">"</span><span class="s2">abc@de.com</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">1234-01-14</span><span class="dl">"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// class</span>
+<span class="kd">class</span> <span class="nx">User</span> <span class="p">{</span>
+    <span class="c1">// 생성자 메서드</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">email</span><span class="p">,</span> <span class="nx">birthday</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">email</span> <span class="o">=</span> <span class="nx">email</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">birthday</span> <span class="o">=</span> <span class="nx">birthday</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">buy</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span><span class="s2"> buys </span><span class="p">${</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">user1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="dl">"</span><span class="s2">abc@de.com</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">1234-01-14</span><span class="dl">"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h1 id="캡슐화">캡슐화</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// class</span>
+<span class="kd">class</span> <span class="nx">User</span> <span class="p">{</span>
+    <span class="c1">// 생성자 메서드</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">email</span><span class="p">,</span> <span class="nx">birthday</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">email</span> <span class="o">=</span> <span class="nx">email</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">birthday</span> <span class="o">=</span> <span class="nx">birthday</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">buy</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span><span class="s2"> buys </span><span class="p">${</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">set</span> <span class="nx">email</span><span class="p">(</span><span class="nx">address</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">address</span><span class="p">.</span><span class="nx">includes</span><span class="p">(</span><span class="dl">'</span><span class="s1">@</span><span class="dl">'</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_email</span> <span class="o">=</span> <span class="nx">address</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="dl">'</span><span class="s1">invalid address</span><span class="dl">'</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="kd">get</span> <span class="nx">email</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_email</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">user1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">User</span><span class="p">(</span><span class="dl">"</span><span class="s2">abc@de.com</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">1234-01-14</span><span class="dl">"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h1 id="상속">상속</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">User</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">email</span><span class="p">,</span> <span class="nx">birthday</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">email</span> <span class="o">=</span> <span class="nx">email</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">birthday</span> <span class="o">=</span> <span class="nx">birthday</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">buy</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span><span class="s2"> buys </span><span class="p">${</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">PremiumUser</span> <span class="kd">extends</span> <span class="nx">User</span> <span class="p">{</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">email</span><span class="p">,</span> <span class="nx">birthday</span><span class="p">,</span> <span class="nx">point</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">email</span><span class="p">,</span> <span class="nx">birthday</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">point</span> <span class="o">=</span> <span class="nx">point</span>
+    <span class="p">}</span>
+    <span class="nx">buy</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">.</span><span class="nx">buy</span><span class="p">(</span><span class="nx">item</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">point</span> <span class="o">+=</span> <span class="mi">5</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">streamMusic</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Music</span><span class="dl">"</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="다형성">다형성</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">user</span> <span class="o">=</span> <span class="nx">PremiumUser</span><span class="p">(</span><span class="dl">"</span><span class="s2">abv@de.com</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">1234-05-12</span><span class="dl">"</span><span class="p">,</span> <span class="mi">350</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">user</span> <span class="k">instanceof</span> <span class="nx">PremiumUser</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">user</span> <span class="k">instanceof</span> <span class="nx">User</span><span class="p">);</span> <span class="c1">// true</span>
+</code></pre></div></div>
+
+<h1 id="static">static</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nb">Math</span> <span class="p">{</span>
+    <span class="kd">static</span> <span class="nx">PI</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
+
+    <span class="kd">static</span> <span class="nx">getCircleArea</span><span class="p">(</span><span class="nx">radius</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span> <span class="o">*</span> <span class="nx">radius</span> <span class="o">*</span> <span class="nx">radius</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">PI</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">getCircleArea</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+</code></pre></div></div>
+:ET

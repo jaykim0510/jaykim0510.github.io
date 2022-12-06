@@ -113,6 +113,33 @@ ${KAFKA_HOME}/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --
 ${KAFKA_HOME}/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic myKafkaTopic --group groupA
 ```
 
+# 브로커 주요 옵션
+
+```
+- broker.id
+- zookeeper.connect
+- log.dirs
+- advertised.listeners
+- listeners
+- auto.create.topics.enable
+- delete.topic.enable
+- log.flush.interval.messages
+- log.flush.interval.ms
+- log.flush.scheduler.interval.ms
+- log.retention.bytes
+- log.retention.hours
+- log.retention.minutes
+- log.roll.hours
+- log.roll.ms
+- log.segment.bytes
+- log.segment.delete.delay.ms
+- message.max.bytes
+- min.insync.replicas
+- offsets.topic.replication.factor
+- offsets.topic.segment.bytes
+- inter.broker.listener.name
+```
+
 # 프로듀서 주요 옵션
 
 ```
@@ -170,3 +197,4 @@ acks=-1, min.insync.replicas=2 조합이 성능도 얻으면서, 신뢰성도 �
 # 참고
 
 - [intrepidgeeks, 카프카 기본 개념과 구조/프로듀서 옵션/컨슈머 옵션](https://intrepidgeeks.com/tutorial/kafka-basic-concept-and-structureproducer-optionsconsumer-options#7){:target="_blank"}
+- [kafka-python API](https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html){:target="_blank"}
