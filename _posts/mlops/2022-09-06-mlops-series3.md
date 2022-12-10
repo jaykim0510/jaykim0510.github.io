@@ -67,3 +67,7 @@ tags: MLOps
 - [Feast, What is a Feature Store?](https://feast.dev/blog/what-is-a-feature-store/){:target="_blank"}
 - [Feast Python API Documentation](https://rtd.feast.dev/en/master/#)
 - [Youtube Prodramp, An AI Engineer technical guide to Feature Store with FEAST](https://www.youtube.com/watch?v=p2cuq4eJ2BY&list=LL&index=4&t=561s){:target="_blank"}
+- [Compare, find and choose the best feature store](https://www.featurestorecomparison.com/){:target="_blank"}
+- [[패스트캠퍼스 챌린지 47일차] GCP - Feast Feature Store (1)](https://hotorch.tistory.com/m/192){:target="_blank"}
+- [Feature Store - why?](https://velog.io/@hsh/Feature-Store-why){:target="_blank"}
+- [](){:target="_blank"}

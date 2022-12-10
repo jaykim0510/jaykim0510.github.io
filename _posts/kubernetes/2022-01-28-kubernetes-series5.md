@@ -1,19 +1,21 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part5]: ConfigMap과 Secret'
-description: 
-date:   2022-01-28 15:01:35 +0300
-image:  '/images/kubernetes_logo.png'
-logo_image:  '/images/kubernetes_logo.png'
+title: "Kubernetes Series [Part5]: ConfigMap과 Secret"
+description:
+date: 2022-01-28 15:01:35 +0300
+image: "/images/kubernetes_logo.png"
+logo_image: "/images/kubernetes_logo.png"
 categories: devops
 tags: Kubernetes
 ---
 
 ---
+
 **Table of Contents**
 {: #toc }
-*  TOC
-{:toc}
+
+- TOC
+  {:toc}
 
 ---
 
@@ -25,8 +27,7 @@ tags: Kubernetes
 
 - 개별 컨테이너의 설정 내용은 환경 변수나 파일이 저장되어 있는 영역을 마운트하여 전달하는 것이 일반적이다
 - 쿠버네티스에서 환경 변수를 전달할 때는 파드 템플릿에 `env` 또는 `envForm`을 지정한다
-- `command`나 `args`에 환경 변수 전달할 때는 `$()` 표기법으로 나타낸다
-- 또한 매니페스트에서 정의한 환경 변수만 사용할 수 있다
+- `command`나 `args`에 환경 변수 전달할 때는 `$()` 표기법으로 나타낸다 (또한 매니페스트에서 정의한 환경 변수만 사용할 수 있다)
 
 ```yaml
 apiVersion: v1
@@ -37,26 +38,26 @@ metadata:
     app: sample-app
 spec:
   containers:
-  - name: nginx-container
-    image: nginx:1.16
-    command: ["echo"]
-    # K8S_NODE는 환경 변수로 인식, HOSTNAME은 그냥 문자열로 출력 (매니페스트에서 정의한 환경 변수만 사용 가능)
-    args: ["$(K8S_NODE)", "$(HOSTNAME)"] 
-    env:
-    # 단순 키,벨류 형태
-    - name: MAX_CONNECTION
-      value: "100"
-    # 파드 정보를 참조할 때
-    - name: K8S_NODE
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.nodeName
-    # 컨테이너 리소스 정보
-    - name: CPU_LIMITS
-      valueFrom:
-        resourceFieldRef:
-          containerName: nginx-container
-          resource: limits.cpu
+    - name: nginx-container
+      image: nginx:1.16
+      command: ["echo"]
+      # K8S_NODE는 환경 변수로 인식, HOSTNAME은 그냥 문자열로 출력 (매니페스트에서 정의한 환경 변수만 사용 가능)
+      args: ["$(K8S_NODE)", "$(HOSTNAME)"]
+      env:
+        # 단순 키,벨류 형태
+        - name: MAX_CONNECTION
+          value: "100"
+        # 파드 정보를 참조할 때
+        - name: K8S_NODE
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        # 컨테이너 리소스 정보
+        - name: CPU_LIMITS
+          valueFrom:
+            resourceFieldRef:
+              containerName: nginx-container
+              resource: limits.cpu
 ```
 
 # ConfigMap
@@ -69,8 +70,8 @@ spec:
 ## 컨피그맵 리소스 만드는 방법
 
 - 보통 리소스는 YAML 형태의 매니페스트 파일을 통해 만들지만, 컨피그맵은 여러 방법으로 리소스를 만들 수 있다
-- 파일에서 값을 참조해 생성하는 방법  (`--from-file`)
-- 직접 값을  전달해서 생성하는 방법 (`--from-literal`)
+- 파일에서 값을 참조해 생성하는 방법 (`--from-file`)
+- 직접 값을 전달해서 생성하는 방법 (`--from-literal`)
 - 매니페스트로 생성하는 방법(`-f`)
 
 ```sh
@@ -119,17 +120,17 @@ metadata:
   name: sample-pod
 spec:
   containers:
-  - name: configmap-container
-    image: nginx:1.16
-    env:
-    - name: CONNECTION_MAX
-      valueFrom:
-        configMapKeyRef: # 특정 키만
-          name: <컨피그 리소스명>
-          key: connection.max
-    envFrom:
-    - configMapRef: # 컨피그맵에 정의된 전체 키 (키 값이 매니페스트 파일에 직접 명시되지 않아 가독성 조금 떨어짐)
-        name: <컨피그 리소스명>
+    - name: configmap-container
+      image: nginx:1.16
+      env:
+        - name: CONNECTION_MAX
+          valueFrom:
+            configMapKeyRef: # 특정 키만
+              name: <컨피그 리소스명>
+              key: connection.max
+      envFrom:
+        - configMapRef: # 컨피그맵에 정의된 전체 키 (키 값이 매니페스트 파일에 직접 명시되지 않아 가독성 조금 떨어짐)
+            name: <컨피그 리소스명>
 ```
 
 - 볼륨으로 마운트하는 방법
@@ -171,7 +172,6 @@ spec:
 - 시크릿을 사용하는 파드가 있는 경우에만 etcd에서 쿠버네티스 노드에 데이터를 보낸다
 - 이 때 노드상에 영구적으로 데이터가 남지 않도록 tmpfs(메모리상에 구축된 임시 파일시스템)에 저장된다
 - 시크릿이 안전한 또 다른 이유는 kubectl 명령어로 표시했을 때 값이 보기 어렵게 되어있다는 점이다
-
 
 # 참고
 

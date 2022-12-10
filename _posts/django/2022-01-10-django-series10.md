@@ -1,19 +1,21 @@
 ---
 layout: post
-title:  'Django Series [Part10]: 장고의 이것저것'
-description: 
-date:   2022-01-10 15:01:35 +0300
-image:  '/images/django_logo.png'
-logo_image:  '/images/django_logo.png'
+title: "Django Series [Part10]: 장고의 이것저것"
+description:
+date: 2022-01-10 15:01:35 +0300
+image: "/images/django_logo.png"
+logo_image: "/images/django_logo.png"
 categories: web_development
 tags: [Django]
 ---
+
 ---
 
 **Table of Contents**
 {: #toc }
-*  TOC
-{:toc}
+
+- TOC
+  {:toc}
 
 ---
 
@@ -72,33 +74,33 @@ class PostListView(ListView):
 ```
 
 ```html
-# posts/post_list.html
+# posts/post_list.html {% raw %}{% if page.object_list %}{% endraw %} {% raw
+%}{% for post in page.object_list %}{% endraw %}
+<h2>{% raw %}{{post.title}}{% endraw %}</h2>
+... {% raw %}{% endfor %}{% endraw %} # 페이지네이터
 
-{% raw %}{% if page.object_list %}{% endraw %}
-    {% raw %}{% for post in page.object_list %}{% endraw %}
-        <h2>{% raw %}{{post.title}}{% endraw %}</h2>
-        ...
-    {% raw %}{% endfor %}{% endraw %}
+<div>
+  <a href="?page" ="1">first</a>
+  {% raw %}{% if page_obj.has_previous %}{% endraw %}
+  <a href="?page={% raw %}{{ page_obj.previous_page_number }}{% endraw %}"
+    >prev</a
+  >
+  {% raw %}{% endif %}{% endraw %}
+  <span
+    >{% raw %}{{ page_obj.number }}{% endraw %} of {% raw %}{{
+    page_obj.paginator.num_pages }}{% endraw %}</span
+  >
 
-    # 페이지네이터
-
-    <div>
-        <a href=?page=1>first</a>
-        {% raw %}{% if page_obj.has_previous %}{% endraw %}
-            <a href="?page={% raw %}{{ page_obj.previous_page_number }}{% endraw %}">prev</a>
-        {% raw %}{% endif %}{% endraw %}
-        <span>{% raw %}{{ page_obj.number }}{% endraw %} of {% raw %}{{ page_obj.paginator.num_pages }}{% endraw %}</span>
-
-        {% raw %}{% if page_obj.has_next %}{% endraw %}
-            <a href="?page={% raw %}{{ page_obj.next_page_number }}{% endraw %}">next</a>
-        {% raw %}{% endif %}{% endraw %}
-        <a href="?page={% raw %}{{ page_obj.paginator.num_pages }}{% endraw %}">last</a>
-    </div>
+  {% raw %}{% if page_obj.has_next %}{% endraw %}
+  <a href="?page={% raw %}{{ page_obj.next_page_number }}{% endraw %}">next</a>
+  {% raw %}{% endif %}{% endraw %}
+  <a href="?page={% raw %}{{ page_obj.paginator.num_pages }}{% endraw %}"
+    >last</a
+  >
+</div>
 
 {% raw %}{% endif %}{% endraw %}
-
 ```
-
 
 # User
 
@@ -112,7 +114,7 @@ class PostListView(ListView):
 - `django-allauth`는 이메일 존재여부 확인, SNS 아이디를 통한 로그인과 같은 기능들을 제공해준다
 - 또 django.contrib.auth는 view를 직접 구현해야하지만, django-allauth는 간단한 설정으로 가능하다
 
-📦 **django-allauth 설치**  
+📦 **django-allauth 설치**
 
 - [공식문서 참고](https://django-allauth.readthedocs.io/en/latest/installation.html)
 - `pip install django-allauth`
@@ -237,7 +239,7 @@ class SignUpForm(forms.ModelForm):
         fields = ['nickname'] # 별도로 추가한 필드만 적어주면 된다. 없으면 fields = '__all__'
 
     def signup(self, request, user):
-        user.nickname = self.cleaned_date['nickname']
+        user.nickname = self.cleaned_data['nickname']
         user.save()
 ```
 
@@ -367,17 +369,16 @@ LOGIN_URL = 'account_login'
 - 자신이 작성한 글에만 수정/삭제 버튼 보이도록 하기
 
 ```html
-
-{% raw %}{% if  post.author == user %}{% endraw %}
-    <a href="{% raw %}{% url 'post-update' post.id %}{% endraw %}">수정</a>
-    <a href="{% raw %}{% url 'post-delete' post.id %}{% endraw %}">삭제</a>
+{% raw %}{% if post.author == user %}{% endraw %}
+<a href="{% raw %}{% url 'post-update' post.id %}{% endraw %}">수정</a>
+<a href="{% raw %}{% url 'post-delete' post.id %}{% endraw %}">삭제</a>
 
 {% raw %}{% endif %}{% endraw %}
 ```
 
-💊 **Mixin**  
+💊 **Mixin**
 
-- Mixin은 파이썬의 일반적인 개념인데, 기존의 클래스에 어떤 기능을 더해줄 때 쓰인다 
+- Mixin은 파이썬의 일반적인 개념인데, 기존의 클래스에 어떤 기능을 더해줄 때 쓰인다
 - (여기서는 뷰 클래스에 접근 제어 기능을 더해줬다)
 
 ### Decorator 방식
@@ -392,7 +393,6 @@ def my_view(request):
     ...
 ```
 
-
 # 모델의 다양한 필드
 
 ```py
@@ -402,7 +402,7 @@ class Review(models.Model):
     titile = models.CharField(max_length=30)
     name = models.CharField(max_length=20)
     link = models.URLField()
-    
+
     RATING_CHOICES = [
         # (모델필드에 들어갈 값, 화면에 보일 값)
         (1, 1),
@@ -411,14 +411,14 @@ class Review(models.Model):
         (4, 4),
         (5, 5),
     ]
-    
+
     rating = models.IntegerField(choices=RATING_CHOICES)
-    
+
     image = models.ImageField()
     content = models.TextField()
     dt_created = models.DataTimeField(auto_now_add=True)
     dt_updated = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return self.title
 ```
@@ -428,14 +428,17 @@ class Review(models.Model):
 - 정적 파일
   - 웹 개발에서 사용한 파일
     - ex. CSS, 웹 사이트를 꾸미기 위해 사용한 고정된 이미지
-  - 미디어 파일 
+  - 미디어 파일
     - ex. 사용자가 생성/등록한 프로필 사진
 
 ```html
 <head>
-    <link rel="stylesheet" type="text/css" href= "{% raw %}{% static '<정적 파일 경로>' %}{% endraw %}">
+  <link
+    rel="stylesheet"
+    type="text/css"
+    href="{% raw %}{% static '<정적 파일 경로>' %}{% endraw %}"
+  />
 </head>
-
 ```
 
 ```py
@@ -450,7 +453,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '<미디어 파일 폴더명> ex.media')
 # 템플릿에서는 <img src="{{object.movie_image.url}}"> 이런식으로 .url로 접근하면 된다
 MEDIA_URL = '/uploads'
 ```
-
 
 # ImageField
 
@@ -473,7 +475,7 @@ class Review(models.Model):
     image1 = models.ImageField(upload_to='review_pics')
     image2 = models.ImageField(upload_to='review_pics', blank=True)
     image3 = models.ImageField(upload_to='review_pics', blank=True)
-    
+
 ```
 
 ```
