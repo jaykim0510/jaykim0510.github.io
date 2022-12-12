@@ -1,0 +1,133 @@
+I"B4<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+
+<ul>
+  <li>TOC</li>
+</ul>
+
+<hr />
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 실행하면 Start -&gt; End -&gt; result 순으로 출력됨</span>
+<span class="c1">// then은 콜백함수를 등록까지만 함</span>
+<span class="c1">// 실제 콜백함수가 실행되는 시점은 response를 받았을 때</span>
+<span class="c1">// 실행 흐름이 바로 다음 코드로 넘어가고, 나중에 콜백이 실행되는 것을 '비동기 실행'이라고 합니다.</span>
+<span class="c1">// 보통 '비동기 실행'이 '동기 실행'에 비해, 동일한 작업을 더 빠른 시간 내에 처리</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Start</span><span class="dl">"</span><span class="p">);</span>
+<span class="nx">fetch</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://www.naver.com</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">())</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">End</span><span class="dl">"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 다양한 비동기 실행 함수들</span>
+
+<span class="c1">// 설정한 밀리세컨즈만큼의 시간이 경과했을 때 실행</span>
+<span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">b</span><span class="dl">"</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
+
+<span class="c1">// 특정 콜백을 일정한 시간 간격으로 실행</span>
+<span class="nx">setInterval</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">b</span><span class="dl">"</span><span class="p">);</span>
+<span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
+
+<span class="c1">// 사용자가 웹 페이지에서 어떤 버튼 등을 클릭했을 때</span>
+<span class="nx">btn</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">click</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Hello Codeit!</span><span class="dl">"</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// fetch 함수는 콜백을 파라미터로 바로 전달받는 게 아니라, fetch 함수가 리턴하는 어떤 객체의 then 메소드를 사용해서 콜백을 등록</span>
+<span class="c1">// fetch 함수는, 좀 더 새로운 방식으로 비동기 실행을 지원하는 자바스크립트 문법과 연관이 있다</span>
+<span class="c1">// fetch 함수는 Promise 객체라는 것을 리턴하고, 이 Promise 객체는 비동기 실행을 지원하는 또 다른 종류의 문법에 해당</span>
+<span class="nx">fetch</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://www.google.com</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">())</span> <span class="c1">// fetch 함수가 리턴하는 객체의 then 메소드를 사용해서 콜백을 등록</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+  <span class="p">});</span>
+</code></pre></div></div>
+
+<h1 id="프로미스-객체">프로미스 객체</h1>
+
+<ul>
+  <li>작업에 관한 ‘상태정보’를 가지고 있는 객체</li>
+  <li>상태
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">pending</code>: 진행중 -&gt; response 받으면 <code class="language-plaintext highlighter-rouge">fulfilled</code>, 못 받으면 <code class="language-plaintext highlighter-rouge">rejected</code> 됨</li>
+      <li><code class="language-plaintext highlighter-rouge">fulfilled</code>: 성공 -&gt; 작업 성공 결과 추가로 가지게 됨 (이 때 콜백함수가 실행됨)</li>
+      <li><code class="language-plaintext highlighter-rouge">rejected</code>: 실패 -&gt; 작업 실패 결과 추가로 가지게 됨</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>then
+    - 프로미스 객체의 상태정보가 fulfilled가 되었을 때, 실행할 콜백함수를 등록하는 메서드
+    - 프로미스 객체를 다시 리턴 =&gt; 체이닝 가능 (Promise Chaining) =&gt; 비동기 작업을 순차적으로 처리하기 위함
+    - text 메소드와 json 메소드는 Promise 객체를 리턴하는 메소드
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">fetch</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://www.google.com</span><span class="dl">"</span><span class="p">)</span>
+  <span class="c1">// rejected 상태가 되면 실행할 콜백 함수</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">(</span>
+    <span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">(),</span>
+    <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+  <span class="p">});</span>
+
+<span class="nx">fetch</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://www.google.com</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">())</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+  <span class="p">})</span>
+  <span class="c1">// catch를 사용할 수도 있음 (catch 메서드는 보통 마지막에 써준다)</span>
+  <span class="p">.</span><span class="k">catch</span><span class="p">((</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="p">});</span>
+</code></pre></div></div>
+
+<h1 id="비동기-실행">비동기 실행</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 비동기 함수</span>
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">fetchAndPrint</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// await: 프로미스 객체를 기다림(pending이 fulfilled 또는 rejected 상태가 될 때 까지)</span>
+  <span class="c1">// 작업 성공 결과 또는 실패를 추출해 넘겨줌. 그리고 다음 코드 실행</span>
+  <span class="c1">// 근데 기다리는 동안 프로그램 전체가 멈춰있는 것은 아님 =&gt; 그동안 async 밖에 있는 코드가 실행됨</span>
+  <span class="c1">// ==&gt; await 은 프로미스 객체가 리턴될 때 까지 async 내부의 코드를 실행하지 않고 기다리며, 그동안 async 밖의 코드들을 비동기적으로 실행한다</span>
+  <span class="c1">// await 키워드는 async 함수 안에서만 사용 가능</span>
+  <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://www.google.com</span><span class="dl">"</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">fetchAndPrint</span><span class="p">();</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">async</span> <span class="kd">function</span> <span class="nx">fetchAndPrint</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="dl">"</span><span class="s2">https://www.google.com</span><span class="dl">"</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+  <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">end</span><span class="dl">"</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">fetchAndPrint</span><span class="p">();</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// async 함수는 항상 프로미스 객체를 리턴</span>
+<span class="c1">// PromiseState: fulfilled</span>
+<span class="c1">// PromiseResult: 3</span>
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">fetchAndPrint</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">3</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

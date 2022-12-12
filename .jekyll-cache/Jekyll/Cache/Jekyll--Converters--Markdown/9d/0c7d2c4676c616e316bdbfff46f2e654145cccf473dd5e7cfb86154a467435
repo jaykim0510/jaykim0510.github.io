@@ -1,15 +1,9 @@
-I"�4<hr />
+I"2<hr />
+
 <p id="toc"><strong>Table of Contents</strong></p>
-<ul id="markdown-toc">
-  <li><a href="#기본-방법" id="markdown-toc-기본-방법">기본 방법</a></li>
-  <li><a href="#configmap" id="markdown-toc-configmap">ConfigMap</a>    <ul>
-      <li><a href="#컨피그맵-리소스-만드는-방법" id="markdown-toc-컨피그맵-리소스-만드는-방법">컨피그맵 리소스 만드는 방법</a></li>
-      <li><a href="#컨피그맵-리소스-사용하는-방법" id="markdown-toc-컨피그맵-리소스-사용하는-방법">컨피그맵 리소스 사용하는 방법</a></li>
-      <li><a href="#컨피그맵-업데이트" id="markdown-toc-컨피그맵-업데이트">컨피그맵 업데이트</a></li>
-    </ul>
-  </li>
-  <li><a href="#secret" id="markdown-toc-secret">Secret</a></li>
-  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+
+<ul>
+  <li>TOC</li>
 </ul>
 
 <hr />
@@ -25,8 +19,7 @@
 <ul>
   <li>개별 컨테이너의 설정 내용은 환경 변수나 파일이 저장되어 있는 영역을 마운트하여 전달하는 것이 일반적이다</li>
   <li>쿠버네티스에서 환경 변수를 전달할 때는 파드 템플릿에 <code class="language-plaintext highlighter-rouge">env</code> 또는 <code class="language-plaintext highlighter-rouge">envForm</code>을 지정한다</li>
-  <li><code class="language-plaintext highlighter-rouge">command</code>나 <code class="language-plaintext highlighter-rouge">args</code>에 환경 변수 전달할 때는 <code class="language-plaintext highlighter-rouge">$()</code> 표기법으로 나타낸다</li>
-  <li>또한 매니페스트에서 정의한 환경 변수만 사용할 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">command</code>나 <code class="language-plaintext highlighter-rouge">args</code>에 환경 변수 전달할 때는 <code class="language-plaintext highlighter-rouge">$()</code> 표기법으로 나타낸다 (또한 매니페스트에서 정의한 환경 변수만 사용할 수 있다)</li>
 </ul>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
@@ -37,26 +30,26 @@
     <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
 <span class="na">spec</span><span class="pi">:</span>
   <span class="na">containers</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
-    <span class="na">command</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">echo"</span><span class="pi">]</span>
-    <span class="c1"># K8S_NODE는 환경 변수로 인식, HOSTNAME은 그냥 문자열로 출력 (매니페스트에서 정의한 환경 변수만 사용 가능)</span>
-    <span class="na">args</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">$(K8S_NODE)"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">$(HOSTNAME)"</span><span class="pi">]</span> 
-    <span class="na">env</span><span class="pi">:</span>
-    <span class="c1"># 단순 키,벨류 형태</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MAX_CONNECTION</span>
-      <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100"</span>
-    <span class="c1"># 파드 정보를 참조할 때</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">K8S_NODE</span>
-      <span class="na">valueFrom</span><span class="pi">:</span>
-        <span class="na">fieldRef</span><span class="pi">:</span>
-          <span class="na">fieldPath</span><span class="pi">:</span> <span class="s">spec.nodeName</span>
-    <span class="c1"># 컨테이너 리소스 정보</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">CPU_LIMITS</span>
-      <span class="na">valueFrom</span><span class="pi">:</span>
-        <span class="na">resourceFieldRef</span><span class="pi">:</span>
-          <span class="na">containerName</span><span class="pi">:</span> <span class="s">nginx-container</span>
-          <span class="na">resource</span><span class="pi">:</span> <span class="s">limits.cpu</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
+      <span class="na">command</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">echo"</span><span class="pi">]</span>
+      <span class="c1"># K8S_NODE는 환경 변수로 인식, HOSTNAME은 그냥 문자열로 출력 (매니페스트에서 정의한 환경 변수만 사용 가능)</span>
+      <span class="na">args</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">$(K8S_NODE)"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">$(HOSTNAME)"</span><span class="pi">]</span>
+      <span class="na">env</span><span class="pi">:</span>
+        <span class="c1"># 단순 키,벨류 형태</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MAX_CONNECTION</span>
+          <span class="na">value</span><span class="pi">:</span> <span class="s2">"</span><span class="s">100"</span>
+        <span class="c1"># 파드 정보를 참조할 때</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">K8S_NODE</span>
+          <span class="na">valueFrom</span><span class="pi">:</span>
+            <span class="na">fieldRef</span><span class="pi">:</span>
+              <span class="na">fieldPath</span><span class="pi">:</span> <span class="s">spec.nodeName</span>
+        <span class="c1"># 컨테이너 리소스 정보</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">CPU_LIMITS</span>
+          <span class="na">valueFrom</span><span class="pi">:</span>
+            <span class="na">resourceFieldRef</span><span class="pi">:</span>
+              <span class="na">containerName</span><span class="pi">:</span> <span class="s">nginx-container</span>
+              <span class="na">resource</span><span class="pi">:</span> <span class="s">limits.cpu</span>
 </code></pre></div></div>
 
 <h1 id="configmap">ConfigMap</h1>
@@ -72,8 +65,8 @@
 
 <ul>
   <li>보통 리소스는 YAML 형태의 매니페스트 파일을 통해 만들지만, 컨피그맵은 여러 방법으로 리소스를 만들 수 있다</li>
-  <li>파일에서 값을 참조해 생성하는 방법  (<code class="language-plaintext highlighter-rouge">--from-file</code>)</li>
-  <li>직접 값을  전달해서 생성하는 방법 (<code class="language-plaintext highlighter-rouge">--from-literal</code>)</li>
+  <li>파일에서 값을 참조해 생성하는 방법 (<code class="language-plaintext highlighter-rouge">--from-file</code>)</li>
+  <li>직접 값을 전달해서 생성하는 방법 (<code class="language-plaintext highlighter-rouge">--from-literal</code>)</li>
   <li>매니페스트로 생성하는 방법(<code class="language-plaintext highlighter-rouge">-f</code>)</li>
 </ul>
 
@@ -121,17 +114,17 @@ kubectl create configmap &lt;컨피그 리소스명&gt; <span class="nt">--from-
   <span class="na">name</span><span class="pi">:</span> <span class="s">sample-pod</span>
 <span class="na">spec</span><span class="pi">:</span>
   <span class="na">containers</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">configmap-container</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
-    <span class="na">env</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">CONNECTION_MAX</span>
-      <span class="na">valueFrom</span><span class="pi">:</span>
-        <span class="na">configMapKeyRef</span><span class="pi">:</span> <span class="c1"># 특정 키만</span>
-          <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;컨피그 리소스명&gt;</span>
-          <span class="na">key</span><span class="pi">:</span> <span class="s">connection.max</span>
-    <span class="na">envFrom</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">configMapRef</span><span class="pi">:</span> <span class="c1"># 컨피그맵에 정의된 전체 키 (키 값이 매니페스트 파일에 직접 명시되지 않아 가독성 조금 떨어짐)</span>
-        <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;컨피그 리소스명&gt;</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">configmap-container</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
+      <span class="na">env</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">CONNECTION_MAX</span>
+          <span class="na">valueFrom</span><span class="pi">:</span>
+            <span class="na">configMapKeyRef</span><span class="pi">:</span> <span class="c1"># 특정 키만</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;컨피그 리소스명&gt;</span>
+              <span class="na">key</span><span class="pi">:</span> <span class="s">connection.max</span>
+      <span class="na">envFrom</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">configMapRef</span><span class="pi">:</span> <span class="c1"># 컨피그맵에 정의된 전체 키 (키 값이 매니페스트 파일에 직접 명시되지 않아 가독성 조금 떨어짐)</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;컨피그 리소스명&gt;</span>
 </code></pre></div></div>
 
 <ul>

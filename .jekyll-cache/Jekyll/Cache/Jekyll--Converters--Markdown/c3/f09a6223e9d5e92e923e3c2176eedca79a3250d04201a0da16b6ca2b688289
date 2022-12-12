@@ -1,26 +1,9 @@
-I"��<hr />
+I"�<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
-<ul id="markdown-toc">
-  <li><a href="#seeding" id="markdown-toc-seeding">Seeding</a></li>
-  <li><a href="#pagination" id="markdown-toc-pagination">Pagination</a></li>
-  <li><a href="#user" id="markdown-toc-user">User</a>    <ul>
-      <li><a href="#패키지" id="markdown-toc-패키지">패키지</a></li>
-      <li><a href="#유저-모델" id="markdown-toc-유저-모델">유저 모델</a></li>
-      <li><a href="#유저-접근" id="markdown-toc-유저-접근">유저 접근</a></li>
-      <li><a href="#세션-설정" id="markdown-toc-세션-설정">세션 설정</a></li>
-      <li><a href="#django-allauth-url" id="markdown-toc-django-allauth-url">django-allauth URL</a></li>
-      <li><a href="#django-allauth-유용한-설정값" id="markdown-toc-django-allauth-유용한-설정값">django-allauth 유용한 설정값</a></li>
-      <li><a href="#접근-제어" id="markdown-toc-접근-제어">접근 제어</a>        <ul>
-          <li><a href="#mixin-방식" id="markdown-toc-mixin-방식">Mixin 방식</a></li>
-          <li><a href="#decorator-방식" id="markdown-toc-decorator-방식">Decorator 방식</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li><a href="#모델의-다양한-필드" id="markdown-toc-모델의-다양한-필드">모델의 다양한 필드</a></li>
-  <li><a href="#정적-파일과-미디어-파일" id="markdown-toc-정적-파일과-미디어-파일">정적 파일과 미디어 파일</a></li>
-  <li><a href="#imagefield" id="markdown-toc-imagefield">ImageField</a></li>
+
+<ul>
+  <li>TOC</li>
 </ul>
 
 <hr />
@@ -77,31 +60,31 @@
 
 </code></pre></div></div>
 
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># posts/post_list.html
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code># posts/post_list.html {% if page.object_list %} {% for post in page.object_list %}
+<span class="nt">&lt;h2&gt;</span>{{post.title}}<span class="nt">&lt;/h2&gt;</span>
+... {% endfor %} # 페이지네이터
 
-{% if page.object_list %}
-    {% for post in page.object_list %}
-        <span class="nt">&lt;h2&gt;</span>{{post.title}}<span class="nt">&lt;/h2&gt;</span>
-        ...
-    {% endfor %}
+<span class="nt">&lt;div&gt;</span>
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page"</span> <span class="err">="1"</span><span class="nt">&gt;</span>first<span class="nt">&lt;/a&gt;</span>
+  {% if page_obj.has_previous %}
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page_obj.previous_page_number }}"</span>
+    <span class="nt">&gt;</span>prev<span class="nt">&lt;/a</span>
+  <span class="nt">&gt;</span>
+  {% endif %}
+  <span class="nt">&lt;span</span>
+    <span class="nt">&gt;</span>{{ page_obj.number }} of {{
+    page_obj.paginator.num_pages }}<span class="nt">&lt;/span</span>
+  <span class="nt">&gt;</span>
 
-    # 페이지네이터
-
-    <span class="nt">&lt;div&gt;</span>
-        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">?page=1</span><span class="nt">&gt;</span>first<span class="nt">&lt;/a&gt;</span>
-        {% if page_obj.has_previous %}
-            <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page_obj.previous_page_number }}"</span><span class="nt">&gt;</span>prev<span class="nt">&lt;/a&gt;</span>
-        {% endif %}
-        <span class="nt">&lt;span&gt;</span>{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}<span class="nt">&lt;/span&gt;</span>
-
-        {% if page_obj.has_next %}
-            <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page_obj.next_page_number }}"</span><span class="nt">&gt;</span>next<span class="nt">&lt;/a&gt;</span>
-        {% endif %}
-        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page_obj.paginator.num_pages }}"</span><span class="nt">&gt;</span>last<span class="nt">&lt;/a&gt;</span>
-    <span class="nt">&lt;/div&gt;</span>
+  {% if page_obj.has_next %}
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page_obj.next_page_number }}"</span><span class="nt">&gt;</span>next<span class="nt">&lt;/a&gt;</span>
+  {% endif %}
+  <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"?page={{ page_obj.paginator.num_pages }}"</span>
+    <span class="nt">&gt;</span>last<span class="nt">&lt;/a</span>
+  <span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
 
 {% endif %}
-
 </code></pre></div></div>
 
 <h1 id="user">User</h1>
@@ -238,7 +221,7 @@ python3 manage.py migrate
         <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">'nickname'</span><span class="p">]</span> <span class="c1"># 별도로 추가한 필드만 적어주면 된다. 없으면 fields = '__all__'
 </span>
     <span class="k">def</span> <span class="nf">signup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
-        <span class="n">user</span><span class="p">.</span><span class="n">nickname</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cleaned_date</span><span class="p">[</span><span class="s">'nickname'</span><span class="p">]</span>
+        <span class="n">user</span><span class="p">.</span><span class="n">nickname</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s">'nickname'</span><span class="p">]</span>
         <span class="n">user</span><span class="p">.</span><span class="n">save</span><span class="p">()</span>
 </code></pre></div></div>
 
@@ -544,10 +527,9 @@ request.user.is_authenticated
   <li>자신이 작성한 글에만 수정/삭제 버튼 보이도록 하기</li>
 </ul>
 
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-{% if  post.author == user %}
-    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post-update' post.id %}"</span><span class="nt">&gt;</span>수정<span class="nt">&lt;/a&gt;</span>
-    <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post-delete' post.id %}"</span><span class="nt">&gt;</span>삭제<span class="nt">&lt;/a&gt;</span>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{% if post.author == user %}
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post-update' post.id %}"</span><span class="nt">&gt;</span>수정<span class="nt">&lt;/a&gt;</span>
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post-delete' post.id %}"</span><span class="nt">&gt;</span>삭제<span class="nt">&lt;/a&gt;</span>
 
 {% endif %}
 </code></pre></div></div>
@@ -578,7 +560,7 @@ request.user.is_authenticated
     <span class="n">titile</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="n">link</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">URLField</span><span class="p">()</span>
-    
+
     <span class="n">RATING_CHOICES</span> <span class="o">=</span> <span class="p">[</span>
         <span class="c1"># (모델필드에 들어갈 값, 화면에 보일 값)
 </span>        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
@@ -587,14 +569,14 @@ request.user.is_authenticated
         <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
         <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
     <span class="p">]</span>
-    
+
     <span class="n">rating</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">RATING_CHOICES</span><span class="p">)</span>
-    
+
     <span class="n">image</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ImageField</span><span class="p">()</span>
     <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">TextField</span><span class="p">()</span>
     <span class="n">dt_created</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DataTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">dt_updated</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">title</span>
 </code></pre></div></div>
@@ -619,9 +601,12 @@ request.user.is_authenticated
 </ul>
 
 <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;head&gt;</span>
-    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="na">href= </span><span class="s">"{% static '&lt;정적 파일 경로&gt;' %}"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;link</span>
+    <span class="na">rel=</span><span class="s">"stylesheet"</span>
+    <span class="na">type=</span><span class="s">"text/css"</span>
+    <span class="na">href=</span><span class="s">"{% static '&lt;정적 파일 경로&gt;' %}"</span>
+  <span class="nt">/&gt;</span>
 <span class="nt">&lt;/head&gt;</span>
-
 </code></pre></div></div>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># settings.py
@@ -657,7 +642,7 @@ request.user.is_authenticated
 </span>    <span class="n">image1</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">'review_pics'</span><span class="p">)</span>
     <span class="n">image2</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">'review_pics'</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">image3</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">'review_pics'</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    
+
 </code></pre></div></div>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>결론적으로,
