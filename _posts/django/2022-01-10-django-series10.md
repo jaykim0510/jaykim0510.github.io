@@ -15,7 +15,7 @@ tags: [Django]
 {: #toc }
 
 - TOC
-  {:toc}
+{:toc}
 
 ---
 
