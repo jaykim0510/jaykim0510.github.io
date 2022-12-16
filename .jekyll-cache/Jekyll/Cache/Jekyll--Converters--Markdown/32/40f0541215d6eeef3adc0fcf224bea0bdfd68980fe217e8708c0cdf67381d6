@@ -1,9 +1,27 @@
-I"�<hr />
+I"��<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 
-<ul>
-  <li>TOC</li>
+<ul id="markdown-toc">
+  <li><a href="#seeding" id="markdown-toc-seeding">Seeding</a></li>
+  <li><a href="#pagination" id="markdown-toc-pagination">Pagination</a></li>
+  <li><a href="#user" id="markdown-toc-user">User</a>    <ul>
+      <li><a href="#패키지" id="markdown-toc-패키지">패키지</a></li>
+      <li><a href="#유저-모델" id="markdown-toc-유저-모델">유저 모델</a></li>
+      <li><a href="#유저-접근" id="markdown-toc-유저-접근">유저 접근</a></li>
+      <li><a href="#세션-설정" id="markdown-toc-세션-설정">세션 설정</a></li>
+      <li><a href="#django-allauth-url" id="markdown-toc-django-allauth-url">django-allauth URL</a></li>
+      <li><a href="#django-allauth-유용한-설정값" id="markdown-toc-django-allauth-유용한-설정값">django-allauth 유용한 설정값</a></li>
+      <li><a href="#접근-제어" id="markdown-toc-접근-제어">접근 제어</a>        <ul>
+          <li><a href="#mixin-방식" id="markdown-toc-mixin-방식">Mixin 방식</a></li>
+          <li><a href="#decorator-방식" id="markdown-toc-decorator-방식">Decorator 방식</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#모델의-다양한-필드" id="markdown-toc-모델의-다양한-필드">모델의 다양한 필드</a></li>
+  <li><a href="#정적-파일과-미디어-파일" id="markdown-toc-정적-파일과-미디어-파일">정적 파일과 미디어 파일</a></li>
+  <li><a href="#imagefield" id="markdown-toc-imagefield">ImageField</a></li>
 </ul>
 
 <hr />
@@ -643,6 +661,16 @@ request.user.is_authenticated
     <span class="n">image2</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">'review_pics'</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">image3</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">ImageField</span><span class="p">(</span><span class="n">upload_to</span><span class="o">=</span><span class="s">'review_pics'</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 메인앱의 urls.py
+</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">django.conf.urls.static</span> <span class="kn">import</span> <span class="n">static</span>
+
+<span class="c1"># static 파일과 다르게,
+# 사용자가 등록하는 파일은 직접 이렇게 경로 추가해줘야함
+</span><span class="n">urlpatterns</span><span class="o">+=</span><span class="n">static</span><span class="p">(</span><span class="n">settings</span><span class="p">.</span><span class="n">MEDIA_URL</span><span class="p">,</span> <span class="n">document_root</span><span class="o">=</span><span class="n">settings</span><span class="p">.</span><span class="n">MEDIA_ROOT</span><span class="p">)</span>
 </code></pre></div></div>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>결론적으로,

@@ -478,6 +478,18 @@ class Review(models.Model):
 
 ```
 
+
+```py
+# 메인앱의 urls.py
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+# static 파일과 다르게,
+# 사용자가 등록하는 파일은 직접 이렇게 경로 추가해줘야함
+urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
 ```
 결론적으로,
 미디어 파일은 <MEDIA_ROOT>/<upload_to> 디렉터리에 저장되고,

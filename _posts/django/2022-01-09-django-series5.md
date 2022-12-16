@@ -180,7 +180,7 @@ data.delete()
 
 ![](/images/django_8.png)
 
-## 하나의 데이터 객체를 반환하는 APIPermalink
+## 하나의 데이터 객체를 반환하는 API
 
 ![](/images/django_9.png)
 
@@ -191,7 +191,7 @@ data.delete()
 
 # 관리자 도구(Admin) 사용하기
 
-- 관리자 도구가 모델을 관리할 수 있도록 모델 추가Permalink
+- 관리자 도구가 모델을 관리할 수 있도록 모델 추가
 
 ```py
 # admin.py
