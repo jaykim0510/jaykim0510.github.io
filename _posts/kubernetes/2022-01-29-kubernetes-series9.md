@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part8]: Deployment로 배우는 kubectl 명령어'
+title:  'Kubernetes Series [Part9]: Deployment로 배우는 kubectl 명령어'
 description: 
 date:   2022-01-29 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part2]: Kubernetes Workload Object'
+title:  'Kubernetes Series [Part3]: Kubernetes Workload Object'
 date:   2022-01-09 15:01:35 +0300
 image:  '/images/kube_22.png'
 logo_image:  '/images/kubernetes_logo.png'
