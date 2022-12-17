@@ -1,64 +1,11 @@
-I"�0<hr />
+I"$<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#demonset" id="markdown-toc-demonset">DemonSet</a>    <ul>
-      <li><a href="#업데이트-전략" id="markdown-toc-업데이트-전략">업데이트 전략</a></li>
-      <li><a href="#매니페스트-파일" id="markdown-toc-매니페스트-파일">매니페스트 파일</a></li>
-    </ul>
-  </li>
   <li><a href="#statefulset" id="markdown-toc-statefulset">StatefulSet</a></li>
   <li><a href="#headless" id="markdown-toc-headless">Headless</a></li>
 </ul>
 
 <hr />
-
-<h1 id="demonset">DemonSet</h1>
-
-<ul>
-  <li>데몬셋은 레플리카셋의 특수한 형태</li>
-  <li>데몬셋은 파드를 각 노드에 한 개씩 배치하는 리소스</li>
-  <li>노드를 늘리면 파드도 자동으로 늘어남</li>
-  <li>모든 노드에서 반드시 동작해야 하는 프로세스에 유용하게 사용된다</li>
-  <li>(ex. 로그를 호스트 단위로 수집하는 Fluentd, 파드 리소스 사용 현황 및 노드 상태를 모니터링하는 Datadog)</li>
-</ul>
-
-<h2 id="업데이트-전략">업데이트 전략</h2>
-
-<ul>
-  <li><strong>OnDelete</strong>: 노드가 정지된 경우에만 다시 실행할 때 업데이트 된다 -&gt; 운영상 이유로 가급적 정지되면 안되는 경우 사용</li>
-  <li><strong>RollingUpdate</strong>: 즉시 파드를 업데이트한다 -&gt; 버전 업데이트가 바로바로 필요한 경우 사용</li>
-</ul>
-
-<h2 id="매니페스트-파일">매니페스트 파일</h2>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">DaemonSet</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-ds</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">updateStrategy</span><span class="pi">:</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">OnDelete</span>
-  <span class="c1"># type: RollingUpdate</span>
-  <span class="c1"># rollingUpdate:</span>
-  <span class="c1">#   maxUnavailable: 2</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-  <span class="na">template</span><span class="pi">:</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
-        <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
-</code></pre></div></div>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> sample-ds.yaml
-</code></pre></div></div>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">-o</span> wide
-</code></pre></div></div>
 
 <h1 id="statefulset">StatefulSet</h1>
 

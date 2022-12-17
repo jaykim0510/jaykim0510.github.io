@@ -1,297 +1,26 @@
-I"�<hr />
+I"U<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#yellow-cab-table" id="markdown-toc-yellow-cab-table">Yellow cab table</a></li>
-  <li><a href="#쿠버네티스의-오브젝트" id="markdown-toc-쿠버네티스의-오브젝트">쿠버네티스의 오브젝트</a>    <ul>
-      <li><a href="#workload-object" id="markdown-toc-workload-object">Workload Object</a>        <ul>
-          <li><a href="#pod" id="markdown-toc-pod">Pod</a></li>
-          <li><a href="#replicaset" id="markdown-toc-replicaset">ReplicaSet</a></li>
-          <li><a href="#deployment" id="markdown-toc-deployment">Deployment</a></li>
-        </ul>
-      </li>
-      <li><a href="#service관련-리소스" id="markdown-toc-service관련-리소스">Service관련 리소스</a>        <ul>
-          <li><a href="#service" id="markdown-toc-service">Service</a></li>
-          <li><a href="#ingress" id="markdown-toc-ingress">Ingress</a></li>
-        </ul>
-      </li>
-      <li><a href="#config-and-storage관련-리소스" id="markdown-toc-config-and-storage관련-리소스">Config and Storage관련 리소스</a>        <ul>
-          <li><a href="#configmap" id="markdown-toc-configmap">ConfigMap</a></li>
-          <li><a href="#volume" id="markdown-toc-volume">Volume</a></li>
-        </ul>
-      </li>
+  <li><a href="#service관련-리소스" id="markdown-toc-service관련-리소스">Service관련 리소스</a>    <ul>
+      <li><a href="#service" id="markdown-toc-service">Service</a></li>
+      <li><a href="#ingress" id="markdown-toc-ingress">Ingress</a></li>
     </ul>
   </li>
-  <li><a href="#참고자료" id="markdown-toc-참고자료">참고자료</a></li>
-</ul>
-
-<hr />
-
-<hr />
-
-<hr />
-
-<h1 id="yellow-cab-table">Yellow cab table</h1>
-<p><br /></p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Planet</th>
-      <th>Distance from the Sun</th>
-      <th>1 Planetary day</th>
-      <th>Moons</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Mercury</td>
-      <td>57.9 million km</td>
-      <td>58.7 Earth days</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <td>Venus</td>
-      <td>108.2 million km</td>
-      <td>243 Earth days</td>
-      <td>0</td>
-    </tr>
-    <tr>
-      <td>Earth</td>
-      <td>149.6 million km</td>
-      <td>24 hours</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <td>Mars</td>
-      <td>227.9 million km</td>
-      <td>24.6 Earth hours</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <td>Jupiter</td>
-      <td>778.3 million km</td>
-      <td>9.84 Earth hours</td>
-      <td>67</td>
-    </tr>
-    <tr>
-      <td>Saturn</td>
-      <td>1,427.0 million km</td>
-      <td>10.2 Earth hours</td>
-      <td>62</td>
-    </tr>
-    <tr>
-      <td>Uranus</td>
-      <td>2,871.0 million km</td>
-      <td>17.9 Earth hours</td>
-      <td>27</td>
-    </tr>
-    <tr>
-      <td>Neptune</td>
-      <td>4,497.1 million km</td>
-      <td>19.1 Earth hours</td>
-      <td>13</td>
-    </tr>
-  </tbody>
-</table>
-
-<h1 id="쿠버네티스의-오브젝트">쿠버네티스의 오브젝트</h1>
-
-<ul>
-  <li>애플리케이션을 쿠버네티스 클러스터에 배포할 때 사용할 수 있는 리소스 단위</li>
-  <li>어떤 애플리케이션을 얼마나 어디에 어떤 방식으로 배포할지에 관한 것들을 Manifest 파일로 정의할 수 있음</li>
-  <li>사용자의 의도를 YAML 형식으로 정의</li>
-  <li>REST API로 마스터 노드에 전달</li>
-  <li>오브젝트에는 크게 Workload 관련 오브젝트와 Network 관련 오브젝트가 있음</li>
-</ul>
-
-<p><img src="/images/kube_42.png" alt="" /></p>
-
-<p><strong>Manifest 파일</strong></p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 간단한 예시</span>
-
-<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">containers</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">app</span>
-      <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v1</span>
-</code></pre></div></div>
-
-<ul>
-  <li>쿠버네티스 오브젝트를 명시적으로 관리하도록 해주는 YAML 파일</li>
-  <li>오브젝트의 목적에 따라 kind를 달리해줌
-    <ul>
-      <li>kind에는 크게 Pod, Replicaset, Deployment, Service, Ingress</li>
-    </ul>
-  </li>
-  <li>우리가 원하는 애플리케이션의 상태를 spec에 정의함
-    <ul>
-      <li>쿠버네티스 컨트롤러는 YAML 파일에 정의된 spec과 자신의 오브젝트 status를 비교</li>
-      <li>차이점이 발견되면 status를 spec(desired state)에 맞도록 업데이트 후 etcd에 저장</li>
+  <li><a href="#config-and-storage관련-리소스" id="markdown-toc-config-and-storage관련-리소스">Config and Storage관련 리소스</a>    <ul>
+      <li><a href="#configmap" id="markdown-toc-configmap">ConfigMap</a></li>
+      <li><a href="#volume" id="markdown-toc-volume">Volume</a></li>
     </ul>
   </li>
 </ul>
 
-<h2 id="workload-object">Workload Object</h2>
-<blockquote>
-  <p>Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.</p>
-</blockquote>
+<hr />
 
-<p><a href="https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/" target="_blank">(Rancher문서 참고)</a></p>
-
-<p><img src="/images/kube_10.png" alt="" /></p>
-
-<h3 id="pod">Pod</h3>
-
-<p><img src="/images/kube_11.png" alt="" /></p>
-
-<p>Pod는 쿠버네티스에서 배포할 수 있는 가장 작은 단위의 오브젝트로 한 개 이상의 컨테이너와 스토리지, 네트워크 속성을 가집니다. Pod에 속한 컨테이너는 스토리지와 네트워크를 공유하고 서로 <code class="language-plaintext highlighter-rouge">localhost</code>로 접근할 수 있습니다. 컨테이너를 하나만 사용하는 경우도 반드시 Pod으로 감싸서 관리합니다.</p>
-
-<p>Pod가 생성되는 과정은 다음과 같습니다.</p>
-
-<p><img src="/images/kube_12.png" alt="" /></p>
-
-<p>Scheduler는 계속 할당할 새로운 Pod가 있는지 체크하고 있으면 노드에 할당합니다. 그러면 노드에 있는 Kubelet은 컨테이너를 생성하고 결과를 API서버에 보고합니다.</p>
-
-<p>🐨 <strong>오브젝트 생성을 위한 YAML파일</strong></p>
-
-<p>Pod를 포함해 쿠버네티스의 오브젝트를 만들기 위해서는 YAML파일이 필요합니다. YAML파일에 오브젝트를 위한 설정들을 작성할 수 있는데, 이 때 필수적으로 사용되는 key값들이 있습니다.</p>
-
-<table>
-  <tbody>
-    <tr>
-      <td><strong>Key</strong></td>
-      <td><strong>설명</strong></td>
-      <td><strong>예</strong></td>
-    </tr>
-    <tr>
-      <td>apiVersion</td>
-      <td>오브젝트 버전</td>
-      <td>v1, app/v1, ..</td>
-    </tr>
-    <tr>
-      <td>kind</td>
-      <td>오브젝트 종류</td>
-      <td>Pod, ReplicaSet, Deployment, ..</td>
-    </tr>
-    <tr>
-      <td>metadata</td>
-      <td>메타데이터</td>
-      <td>name, label, ..</td>
-    </tr>
-    <tr>
-      <td>spec</td>
-      <td>오브젝트 별 상세 설정</td>
-      <td>오브젝트마다 다름</td>
-    </tr>
-  </tbody>
-</table>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">containers</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">app</span>
-      <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v1</span>
-</code></pre></div></div>
-
-<p>Pod의 spec에는 <code class="language-plaintext highlighter-rouge">containers</code>, <code class="language-plaintext highlighter-rouge">volumes</code>, <code class="language-plaintext highlighter-rouge">restartPolicy</code>, <code class="language-plaintext highlighter-rouge">hostname</code>, <code class="language-plaintext highlighter-rouge">hostNetwork</code> 등이 있습니다.<br />
-<a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/" target="_blank">(Pod공식문서 참고)</a></p>
-
-<h3 id="replicaset">ReplicaSet</h3>
-
-<p><img src="/images/kube_13.png" alt="" /></p>
-
-<p>ReplicaSet은 Pod을 여러 개(한 개 이상) 복제하여 관리하는 오브젝트입니다. 단일 노드 환경이면 Pod는 모두 단일 노드에서 생성되고, 여러개의 노드를 가지고 있는 상황이면, Pod는 노드에 각각 분산되어 배포됩니다.(노드 장애 대비) 이 때 Pod를 어떤 노드에 배치할지는 스케줄러가 결정하게 됩니다. 보통 직접적으로 ReplicaSet을 사용하기보다는 Deployment등 다른 오브젝트에 의해서 사용되는 경우가 많습니다.</p>
-
-<p>ReplicaSet은 다음과 같이 동작합니다.</p>
-
-<p><img src="/images/kube_14.png" alt="" /></p>
-
-<p>ReplicaSet controller가 desired state에 맞춰 Pod를 생성합니다. 그러면 Scheduler는 생성된 Pod를 노드에 할당해줍니다.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">ReplicaSet</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">echo-rs</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span> <span class="c1"># app: echo이고 tier: app인 label을 가지는 파드를 관리</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
-  <span class="na">template</span><span class="pi">:</span> <span class="c1"># replicaset이 만드는 pod의 템플릿</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
-        <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
-          <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v1</span>
-</code></pre></div></div>
-
-<p>ReplicaSet의 spec에는 <code class="language-plaintext highlighter-rouge">replicas</code>, <code class="language-plaintext highlighter-rouge">selector</code>, <code class="language-plaintext highlighter-rouge">template</code>, <code class="language-plaintext highlighter-rouge">minReadySeconds</code>가 있습니다.<br />
-<a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/#ReplicaSetSpec" target="_blank">(ReplicaSet 공식문서 참고)</a></p>
-
-<h3 id="deployment">Deployment</h3>
-
-<p><img src="/images/kube_18.png" alt="" /></p>
-
-<p>Deployment는 쿠버네티스에서 가장 널리 사용되는 오브젝트입니다. ReplicaSet을 이용하여 Pod을 업데이트하고 이력을 관리하여 롤백Rollback하거나 특정 버전revision으로 돌아갈 수 있습니다.</p>
-
-<p>Deployment 오브젝트가 Pod의 버전을 관리하는 과정은 다음과 같습니다.</p>
-
-<p><img src="/images/kube_17.png" alt="" /></p>
-
-<p>Deployment Controller가 Deploy 조건을 체크하면서 원하는 버전에 맞게 Pod의 버전을 맞춥니다. 이 때 ReplicaSet에 있는 Pod들을 보통 한 번에 바꾸지 않고 조건에 맞게(예를 들어, 25%씩) 바꿔나감으로써 버전을 바꾸더라도 중간에 서비스가 중단되지 않도록 합니다. (무중단배포)</p>
-
-<p><img src="/images/kube_19.png" alt="" /></p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">echo-deploy</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">strategy</span><span class="pi">:</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
-    <span class="na">rollingUpdate</span><span class="pi">:</span>
-      <span class="na">maxSurge</span><span class="pi">:</span> <span class="m">1</span>
-      <span class="na">maxUnavailable</span><span class="pi">:</span> <span class="m">0</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="m">4</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
-  <span class="na">template</span><span class="pi">:</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
-        <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
-          <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v2</span>
-</code></pre></div></div>
-
-<p>spec에는 <code class="language-plaintext highlighter-rouge">replicas</code>, <code class="language-plaintext highlighter-rouge">selector</code>, <code class="language-plaintext highlighter-rouge">template</code>, <code class="language-plaintext highlighter-rouge">strategy</code>  등이 있습니다.<br />
-<a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec" target="_blank">(Deployment 공식문서 참고)</a></p>
-
-<h2 id="service관련-리소스">Service관련 리소스</h2>
+<h1 id="service관련-리소스">Service관련 리소스</h1>
 <blockquote>
   <p>In many use cases, a workload has to be accessed by other workloads in the cluster or exposed to the outside world.</p>
 </blockquote>
 
-<h3 id="service">Service</h3>
+<h2 id="service">Service</h2>
 
 <p><img src="/images/kube_20.png" alt="" /></p>
 
@@ -353,7 +82,7 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
     <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
 </code></pre></div></div>
 
-<h3 id="ingress">Ingress</h3>
+<h2 id="ingress">Ingress</h2>
 
 <p><img src="/images/kube_21.png" alt="" /></p>
 
@@ -393,9 +122,9 @@ minikube addons <span class="nb">enable </span>ingress
 <p>spec에는 <code class="language-plaintext highlighter-rouge">rules</code>, <code class="language-plaintext highlighter-rouge">defaultBackend</code>(어느 rule에도 속하지 않을 경우) 등이 있습니다.<br />
 <a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/" target="_blank">(Ingress 공식문서 참고)</a></p>
 
-<h2 id="config-and-storage관련-리소스">Config and Storage관련 리소스</h2>
+<h1 id="config-and-storage관련-리소스">Config and Storage관련 리소스</h1>
 
-<h3 id="configmap">ConfigMap</h3>
+<h2 id="configmap">ConfigMap</h2>
 
 <p><img src="/images/kube_22.png" alt="" /></p>
 
@@ -497,7 +226,7 @@ kubectl apply <span class="nt">-f</span> env-config.yml
               <span class="na">key</span><span class="pi">:</span> <span class="s">hello</span>
 </code></pre></div></div>
 
-<h3 id="volume">Volume</h3>
+<h2 id="volume">Volume</h2>
 <p>Volume은 저장소와 관련된 오브젝트입니다. 지금까지 만들었던 컨테이너는 Pod을 제거하면 컨테이너 내부에 저장했던 데이터도 모두 사라집니다. MySQL과 같은 데이터베이스는 데이터가 유실되지 않도록 반드시 별도의 저장소에 데이터를 저장하고 컨테이너를 새로 만들 때 이전 데이터를 가져와야 합니다.<br />
 저장소를 호스트 디렉토리를 사용할 수도 있고 EBS 같은 스토리지를 동적으로 생성하여 사용할 수도 있습니다. 사실상 인기 있는 대부분의 저장 방식을 지원합니다.</p>
 
@@ -571,12 +300,4 @@ kubectl apply <span class="nt">-f</span> env-config.yml
       <span class="na">hostPath</span><span class="pi">:</span>
         <span class="na">path</span><span class="pi">:</span> <span class="s">/var/log</span>
 </code></pre></div></div>
-
-<h1 id="참고자료">참고자료</h1>
-<ul>
-  <li><a href="https://subicura.com/2019/05/19/kubernetes-basic-1.html" target="_blank">subicura님의 kubenetes안내서</a></li>
-  <li><a href="https://dailyheumsi.tistory.com/208#7.-configmap" target="_blank">하나씩 점을 찍어나가며 블로그</a></li>
-  <li><a href="https://kubernetes.io/docs/reference/kubernetes-api/" target="_blank">Kubernetes 공식문서</a></li>
-  <li><a href="https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/" target="_blank">Rancher 공식문서</a></li>
-</ul>
 :ET

@@ -6,26 +6,26 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kubernetes Series [Part11]: StatefulSet과 Headless의 조합</title>
+  <title>Kubernetes Series [Part0]: Kubernetes란 무엇인가</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/kubernetes-series11">
+  <link rel="canonical" href="http://localhost:4000/kubernetes-series0">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kubernetes Series [Part11]: StatefulSet과 Headless의 조합 – Code Museum">
+  <meta name="twitter:title" content="Kubernetes Series [Part0]: Kubernetes란 무엇인가 – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/kubernetes_logo.png">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/kube_0.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kubernetes Series [Part11]: StatefulSet과 Headless의 조합 – Code Museum">
+  <meta property="og:title" content="Kubernetes Series [Part0]: Kubernetes란 무엇인가 – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
-  <meta property="og:image" content="http://localhost:4000/images/kubernetes_logo.png">
+  <meta property="og:image" content="http://localhost:4000/images/kube_0.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -431,7 +431,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part11]: StatefulSet과 Headless의 조합">
+          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part0]: Kubernetes란 무엇인가">
         </div>
       </div>
       
@@ -452,7 +452,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Kubernetes Series [Part11]: StatefulSet과 Headless의 조합</h1>
+          <h1 class="post__title">Kubernetes Series [Part0]: Kubernetes란 무엇인가</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -461,7 +461,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-02-01T21:01:35+09:00">01 Feb 2022</time>
+              <time class="post__date" datetime="2022-01-01T21:01:35+09:00">01 Jan 2022</time>
             </div>
           </div>
   
@@ -487,6 +487,26 @@ Table of Contents
   
 
   
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
   	
   	
   	
@@ -498,10 +518,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part10]: Service로 배우는 kubectl 명령어</a>
+      <a href="#" class="pagination__prev pagination__item disabled">첫 번째 글입니다</a>
     
     
-      <a href="/kubernetes-series12" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part12]: kubectl<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series1" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part1]: Kubernetes 설치<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -510,193 +530,168 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#demonset" id="markdown-toc-demonset">DemonSet</a>    <ul>
-      <li><a href="#업데이트-전략" id="markdown-toc-업데이트-전략">업데이트 전략</a></li>
-      <li><a href="#매니페스트-파일" id="markdown-toc-매니페스트-파일">매니페스트 파일</a></li>
+  <li><a href="#쿠버네티스란-무엇인가" id="markdown-toc-쿠버네티스란-무엇인가">쿠버네티스란 무엇인가</a></li>
+  <li><a href="#쿠버네티스의-역사" id="markdown-toc-쿠버네티스의-역사">쿠버네티스의 역사</a></li>
+  <li><a href="#쿠버네티스-등장-배경" id="markdown-toc-쿠버네티스-등장-배경">쿠버네티스 등장 배경</a></li>
+  <li><a href="#쿠버네티스의-특징" id="markdown-toc-쿠버네티스의-특징">쿠버네티스의 특징</a></li>
+  <li><a href="#쿠버네티스가-제공하는-것들" id="markdown-toc-쿠버네티스가-제공하는-것들">쿠버네티스가 제공하는 것들</a></li>
+  <li><a href="#쿠버네티스-아키텍처" id="markdown-toc-쿠버네티스-아키텍처">쿠버네티스 아키텍처</a>    <ul>
+      <li><a href="#마스터-노드" id="markdown-toc-마스터-노드">마스터 노드</a></li>
+      <li><a href="#워커-노드" id="markdown-toc-워커-노드">워커 노드</a></li>
     </ul>
   </li>
-  <li><a href="#statefulset" id="markdown-toc-statefulset">StatefulSet</a></li>
-  <li><a href="#headless" id="markdown-toc-headless">Headless</a></li>
+  <li><a href="#desired-state" id="markdown-toc-desired-state">Desired State</a></li>
+  <li><a href="#쿠버네티스가-명령을-수행하는-과정" id="markdown-toc-쿠버네티스가-명령을-수행하는-과정">쿠버네티스가 명령을 수행하는 과정</a></li>
+  <li><a href="#쿠버네티스가-통신하는-과정" id="markdown-toc-쿠버네티스가-통신하는-과정">쿠버네티스가 통신하는 과정</a></li>
+  <li><a href="#마치며" id="markdown-toc-마치며">마치며</a></li>
+  <li><a href="#참고자료" id="markdown-toc-참고자료">참고자료</a></li>
 </ul>
 
 <hr />
 
-<h1 id="demonset">DemonSet</h1>
+<h1 id="쿠버네티스란-무엇인가">쿠버네티스란 무엇인가</h1>
+
+<blockquote>
+  <p>여러 개의 컨테이너화된 애플리케이션을 여러 서버(쿠버네티스 클러스터)에 자동으로 배포, 스케일링 및 관리해주는 오픈소스 플랫폼</p>
+</blockquote>
+
+<p><img src="/images/kube_0.png" alt="" /></p>
+
+<h1 id="쿠버네티스의-역사">쿠버네티스의 역사</h1>
+
+<p>쿠버네티스는 구글이 내부적으로 사용하던 컨테이너 클러스터 관리 도구 Borg에서 아이디어를 얻어 만들어진 오픈 소스 소프트웨어다. 2014년 6월에 공개되어, 2015년 7월에 클라우드 네이티브 컴퓨팅 파운데이션(CNCF)으로 이관되었다. CNCF는 쿠버네티스 외에도 많은 프로젝트를 호스트하고 있으며, 프로젝트별로 성숙도가 정의되어있다. 성숙도는 높은 순으로 Graduated, Incubating, Sandbox 중 하나로 분류된다. 쿠버네티스는 Graduated로 분류되어 성숙도를 인정받았다.</p>
+
+<p>쿠버네티스는 구글의 클라우드 플랫폼 GCP 에서 GKE 라는 서비스로, AWS에서 EKS 라는 서비스로 쿠버네티스를 제공한다.</p>
+
+<h1 id="쿠버네티스-등장-배경">쿠버네티스 등장 배경</h1>
 
 <ul>
-  <li>데몬셋은 레플리카셋의 특수한 형태</li>
-  <li>데몬셋은 파드를 각 노드에 한 개씩 배치하는 리소스</li>
-  <li>노드를 늘리면 파드도 자동으로 늘어남</li>
-  <li>모든 노드에서 반드시 동작해야 하는 프로세스에 유용하게 사용된다</li>
-  <li>(ex. 로그를 호스트 단위로 수집하는 Fluentd, 파드 리소스 사용 현황 및 노드 상태를 모니터링하는 Datadog)</li>
+  <li><strong>도커의 등장과 함께 컨테이너 기술</strong>이 개발자들에게 널리 이용되었다</li>
+  <li>동시에 서비스의 규모가 점차 커지게 되면서, 모놀리틱 아키텍처가 아닌 <strong>마이크로 서비스 아키텍처</strong>가 각광을 받았다</li>
+  <li><strong>클라우드 컴퓨팅, 분산 시스템의 등장</strong>으로 여러 서버를 클러스터로 구성하여 서비스를 운영하게 되었다</li>
+  <li>여러 컨테이너를 여러 서버에 배포하는데 이 때 <strong>컨테이너 크기와 서버의 리소스를 고려해 배포</strong>해주어야 한다</li>
+  <li>이 때 서비스에 요구되는 <strong>스케일 확장, 장애 대응, 버전 롤백</strong>과 같은 것들을 쉽게 해줄 도구가 필요했다</li>
+  <li>이를 해결해주기 위해 등장한 것이 <strong>쿠버네티스</strong>이다</li>
 </ul>
 
-<h2 id="업데이트-전략">업데이트 전략</h2>
+<h1 id="쿠버네티스의-특징">쿠버네티스의 특징</h1>
 
 <ul>
-  <li><strong>OnDelete</strong>: 노드가 정지된 경우에만 다시 실행할 때 업데이트 된다 -&gt; 운영상 이유로 가급적 정지되면 안되는 경우 사용</li>
-  <li><strong>RollingUpdate</strong>: 즉시 파드를 업데이트한다 -&gt; 버전 업데이트가 바로바로 필요한 경우 사용</li>
+  <li>쿠버네티스(Kubernetes)는 컨테이너로 향상된 리소스 활용의 이점을 누리면서도 복잡한 분산 시스템을 쉽게 배포하고 관리할 수 있도록 만들어준다.</li>
+  <li>쿠버네티스는 단순한 컨테이너 플랫폼을 넘어 마이크로서비스, 클라우드 플랫폼을 지향하고 컨테이너로 이루어진 것들을 손쉽게 담고 관리할 수 있는 그릇 역할을 한다. 또한 CI/CD, 머신러닝 등 다양한 기능이 쿠버네티스 플랫폼 위에서 동작한다.</li>
+  <li>쿠버네티스는 컨테이너 규모, 컨테이너의 상태, 네트워크, 스토리지, 버전과 같은 것들을 관리하며 이를 자동화한다.</li>
 </ul>
 
-<h2 id="매니페스트-파일">매니페스트 파일</h2>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">DaemonSet</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-ds</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">updateStrategy</span><span class="pi">:</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">OnDelete</span>
-  <span class="c1"># type: RollingUpdate</span>
-  <span class="c1"># rollingUpdate:</span>
-  <span class="c1">#   maxUnavailable: 2</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-  <span class="na">template</span><span class="pi">:</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
-        <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
-</code></pre></div></div>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> sample-ds.yaml
-</code></pre></div></div>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">-o</span> wide
-</code></pre></div></div>
-
-<h1 id="statefulset">StatefulSet</h1>
+<h1 id="쿠버네티스가-제공하는-것들">쿠버네티스가 제공하는 것들</h1>
 
 <ul>
-  <li>레플리카셋의 특수한 형태</li>
-  <li>
-    <p>데이터베이스 등과 같은 스테이트풀한 워크로드에 사용하기 위한 리소스</p>
-  </li>
-  <li>생성되는 파드명의 접미사는 숫자 인덱스가 부여된 것</li>
-  <li>파드명이 바뀌지 않는다</li>
-  <li>
-    <p>데이터를 영구적으로 저장하기 위한 구조로 되어있다</p>
-  </li>
-  <li>스테이트풀셋에서는 <code class="language-plaintext highlighter-rouge">spec.volumeClaimTemplates</code>를 설정함으로써, 각 파드에 영구 볼륨 클레임을 설정할 수 있다</li>
-  <li>
-    <p>영구 볼륨 클레임을 사용하면 클러스터 외부의 영구 볼륨을 파드에 연결할 수 있기 때문에 언제든 데이터를 보유한 상태로 컨테이너가 생성된다. 영구 볼륨은 하나의 파드가 소유할 수도 있고, 여러 파드에서 공유할 수도 있다</p>
-  </li>
-  <li>레플리카셋은 파드를 삭제하면 무작위로 삭제된다</li>
-  <li>스테이트풀셋은 0번째 파드가 항상 가장 먼저 생성되고, 가장 늦게 삭제된다</li>
-  <li>만약 마스터-슬레이브 구조로 파드를 구성한다면 스테이트풀셋의 0번째 파드를 마스터로 사용하면 된다</li>
-</ul>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">StatefulSet</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-statefulset</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">updateStrategy</span><span class="pi">:</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">OnDelete</span>
-  <span class="na">serviceName</span><span class="pi">:</span> <span class="s">sample-statefulset</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-  <span class="na">templates</span><span class="pi">:</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
-        <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
-        <span class="na">volumeMounts</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">www</span>
-          <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/usr/share/nginx/html</span>
-      <span class="na">volumeClaimTemplates</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">metadata</span><span class="pi">:</span>
-          <span class="na">name</span><span class="pi">:</span> <span class="s">www</span>
-        <span class="na">spec</span><span class="pi">:</span>
-          <span class="na">accessModes</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="s">ReadWriteOnce</span>
-          <span class="na">resources</span><span class="pi">:</span>
-            <span class="na">requests</span><span class="pi">:</span>
-              <span class="na">storage</span><span class="pi">:</span> <span class="s">1G</span>
-</code></pre></div></div>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> sample-statefulset.yaml
-</code></pre></div></div>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get statefulsets
-
-kubectl get pods <span class="nt">-o</span> wide
-
-kubectl get persistentvolumeclaims
-
-kubectl get persistentvolumes
-</code></pre></div></div>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl scale statefulset sample-statefulset --replicas=5
-</code></pre></div></div>
-
-<h1 id="headless">Headless</h1>
-
-<ul>
-  <li>대상이 되는 개별 파드의 IP 주소가 직접 반환되는 서비스</li>
-  <li>로드 밸런싱을 위한 별도의 IP 주소를 제공하지 않는다</li>
-  <li>DNS 라운드 로빈을 사용한 엔드포인트를 제공한다</li>
-  <li>스테이트풀셋이 헤드리드 서비스를 사용하는 경우에만 파드명으로 IP 주소를 디스커버리할 수 있다</li>
-  <li>
-    <p>(즉, <code class="language-plaintext highlighter-rouge">sample-statefulset-0</code> 등의 파드명으로 IP 주소를 가져올 수 있다)</p>
-  </li>
-  <li>헤드리스 서비스는 다음 두 가지 조건을 만족해야 한다
+  <li>선언적 코드를 사용한 관리 (IaC)
     <ul>
-      <li><code class="language-plaintext highlighter-rouge">spec.type</code>이 <code class="language-plaintext highlighter-rouge">ClusterIP</code></li>
-      <li><code class="language-plaintext highlighter-rouge">spec.clusterIP</code>가 <code class="language-plaintext highlighter-rouge">None</code></li>
+      <li>YAML 형식이나 JSON 형식으로 작성한 선언적 코드(매니페스트)를 통해 컨테이너 배포할 수 있다</li>
     </ul>
   </li>
-  <li>추가로 <code class="language-plaintext highlighter-rouge">metadata.name</code> 과 스테이트풀셋의 <code class="language-plaintext highlighter-rouge">spec.serviceName</code>이 같으면, 스테이트풀셋의 파드명으로 디스커버리 가능</li>
+  <li>(오토)-스케일링
+    <ul>
+      <li>부하에 따라서 레플리카 수를 자동으로 늘리거나 줄일 수 있다</li>
+    </ul>
+  </li>
+  <li>스케줄링
+    <ul>
+      <li>컨테이너를 노드에 배포할 때, 노드의 성능을 기준으로 스케줄링할 수 있다</li>
+    </ul>
+  </li>
+  <li>자동화된 복구
+    <ul>
+      <li>프로세스 모니터링, 헬스 체크 등을 이용해 컨테이너를 자동으로 재배포할 수 있다</li>
+    </ul>
+  </li>
+  <li>서비스 디스커버리
+    <ul>
+      <li>마이크로서비스 아키텍처에서  서로의 마이크로서비스를 참조할 수 있는 서비스 디스커버리 기능을 제공한다</li>
+    </ul>
+  </li>
+  <li>로드 밸런싱
+    <ul>
+      <li>로드 밸런서 주소를 엔드포인트로 할당하고, 트래픽을 여러 대의 서버로 분산시킬 수 있다</li>
+    </ul>
+  </li>
+  <li>데이터 관리
+    <ul>
+      <li>etcd를 사용해 데이터를 이중화된 상태로 관리할 수 있다</li>
+    </ul>
+  </li>
 </ul>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Headless 서비스</span>
+<h1 id="쿠버네티스-아키텍처">쿠버네티스 아키텍처</h1>
 
-<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-headless</span> <span class="c1">#</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
-  <span class="na">clusterIP</span><span class="pi">:</span> <span class="s">None</span>
-  <span class="na">ports</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">http-port"</span>
-    <span class="na">protocol</span><span class="pi">:</span> <span class="s2">"</span><span class="s">TCP"</span>
-    <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
-    <span class="na">targetPort</span><span class="pi">:</span> <span class="m">80</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-</code></pre></div></div>
+<p><img src="/images/kube_arch.png" alt="" /></p>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># StatefulSet</span>
+<h2 id="마스터-노드">마스터 노드</h2>
 
-<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">StatefulSet</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-statefulset-headless</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">serviceName</span><span class="pi">:</span> <span class="s">sample-headless</span> <span class="c1">#</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-  <span class="na">template</span><span class="pi">:</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
-        <span class="na">image</span><span class="pi">:</span> <span class="s">amsy810/echo-nginx:v2.0</span>
-</code></pre></div></div>
+<ul>
+  <li>Control Plane (클러스터 기능을 제어하고 전체 클러스터가 동작하게 만드는 역할)</li>
+  <li>전체 클러스터를 관리하는 서버</li>
+</ul>
+
+<p>쿠버네티스에서 모든 명령은 마스터의 API 서버를 호출하고 노드는 마스터와 통신하면서 필요한 작업을 수행합니다. 특정 노드의 컨테이너에 명령하거나 로그를 조회할 때도 노드에 직접 명령하는 게 아니라 마스터에 명령을 내리고 마스터가 노드에 접속하여 대신 결과를 응답합니다.</p>
+
+<p><img src="/images/kube_5.png" alt="" /></p>
+
+<p>마스터의 API 서버는 할일이 굉장히 많기 때문에, 함께 도와줄 일꾼들이 필요합니다. 이들을 스케줄러와 컨트롤러라고 합니다. 보통 하나의 스케줄러와 역할별로 다양한 컨트롤러가 존재합니다.</p>
+
+<p><img src="/images/kube_4.png" alt="" /></p>
+
+<ul>
+  <li><strong>API 서버</strong>: 클러스터 상태 조회, 변경을 위한 API 인터페이스 제공. 모든 명령은 마스터의 API 서버를 호출하고 노드는 마스터와 통신하면서 필요한 작업을 수행</li>
+  <li><strong>컨트롤러</strong>: 자신이 맡은 오브젝트의 상태를 계속 체크하고 Desired 상태를 유지, API서버 요청 처리</li>
+  <li><strong>스케줄러</strong>: 배포할 Pod(컨테이너와 비슷)가 있는지 계속 체크, 필요한 경우 가장 최적의 노드를 선택</li>
+  <li><strong>etcd</strong>: 클러스터에 배포된 애플리케이션 실행 정보를 저장. 고가용성을 제공하는 키-밸류(key-value) 저장소</li>
+</ul>
+
+<h2 id="워커-노드">워커 노드</h2>
+
+<ul>
+  <li>
+    <p>컨테이너가 배포되고 실제로 실행되는 서버</p>
+  </li>
+  <li><strong>kubelet</strong>: 클러스터내의 모든 노드에서 실행되는 에이전트. 파드내의 컨테이너들이 실행되는걸 직접적으로 관리하는 역할</li>
+  <li><strong>kube-proxy</strong>: 쿠버네티스는 클러스터 내부에 별도의 가상 네트워크를 설정하고 관리. kube-proxy는 이런 가상 네트워크가 동작할 수 있게 하는 실질적인 역할을 하는 프로세스. 호스트의 네트워크 규칙을 관리하거나 커넥션 포워딩을 하기도함.</li>
+  <li><strong>container runtime</strong>: 컨테이너 런타임은 실제로 컨테이너를 실행시키는 역할. 가장 많이 알려진 런타임으로는 도커(Docner)가 있고, 그외 rkt, runc같은 런타임도 지원. 그외에도 컨테이너에 관한 표준을 제정하는 역할을 하는 OCI의 런타임 규격을 구현하고 있는 컨테이너 런타임이라면 쿠버네티스에서 사용가능</li>
+</ul>
+
+<h1 id="desired-state">Desired State</h1>
+
+<p><img src="/images/kube_6.png" alt="" /></p>
+
+<p>쿠버네티스에서 가장 중요한 것은 <strong>desired state(원하는 상태)</strong>라는 개념이다. 원하는 상태라 함은 관리자가 바라는 환경을 의미하고 좀 더 구체적으로는 얼마나 많은 웹서버가 떠 있으면 좋은지, 몇 번 포트로 서비스하기를 원하는지 등을 말한다.<br />
+쿠버네티스는 복잡하고 다양한 작업을 하지만 자세히 들여다보면 현재 상태current state를 모니터링하면서 관리자가 설정한 원하는 상태를 유지하려고 내부적으로 이런저런 작업을 하는 로직을 가지고 있다.</p>
+
+<p><img src="/images/kube_7.png" alt="" /></p>
+
+<p>이렇게 상태가 바뀌게 되면 API서버는 차이점을 발견하고 컨트롤러에게 보내 desired state로 유지할 것을 요청한다. 그리고 컨트롤러가 변경한 후 결과를 다시 API서버에 보내고 API서버는 다시 이 결과를 etcd(상태를 저장하고 있는 곳)에 저장하게 된다.</p>
+
+<p><img src="/images/kube_8.png" alt="" /></p>
+
+<h1 id="쿠버네티스가-명령을-수행하는-과정">쿠버네티스가 명령을 수행하는 과정</h1>
+
+<p><img src="/images/kube_api_server.png" alt="" /></p>
+
+<h1 id="쿠버네티스가-통신하는-과정">쿠버네티스가 통신하는 과정</h1>
+
+<p><img src="/images/kube_network.png" alt="" /></p>
+
+<h1 id="마치며">마치며</h1>
+
+<p><img src="/images/kube_41.png" alt="" /></p>
+
+<p>지금까지는 쿠버네티스가 어떻게 명령을 수행하는지 알아봤다. 다음 포스트에서는 클라이언트가 무엇을 이용해 어떤식으로 쿠버네티스에 명령을 내리는지 알아보자.</p>
+
+<h1 id="참고자료">참고자료</h1>
+<ul>
+  <li><a href="https://subicura.com/2019/05/19/kubernetes-basic-1.html" target="_blank">subicura님의 kubenetes안내서</a></li>
+  <li><a href="https://www.oss.kr/info_techtip/show/a084eeb7-c3fe-457d-a50d-6e17fe9b8dbc" target="_blank">OSS, 쿠버네티스(kubernetes) 구성요소</a></li>
+  <li><a href="https://fastcampus.co.kr/" target="_blank">패스트캠퍼스, Kubernetes와 Docker로 한 번에 끝내는 컨테이너 기반 MSA</a></li>
+</ul>
 
     </div>
     <div class="post__tags_list">
@@ -967,22 +962,22 @@ kubectl get persistentvolumes
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part11]:%20StatefulSet%EA%B3%BC%20Headless%EC%9D%98%20%EC%A1%B0%ED%95%A9&url=http://localhost:4000/kubernetes-series11"
+          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part0]:%20Kubernetes%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80&url=http://localhost:4000/kubernetes-series0"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/kubernetes-series11"
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/kubernetes-series0"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series11&amp;media=http://localhost:4000/images/kubernetes_logo.png&amp;description=Kubernetes%20Series%20[Part11]:%20StatefulSet%EA%B3%BC%20Headless%EC%9D%98%20%EC%A1%B0%ED%95%A9"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series0&amp;media=http://localhost:4000/images/kube_0.png&amp;description=Kubernetes%20Series%20[Part0]:%20Kubernetes%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series11&title=Kubernetes%20Series%20[Part11]:%20StatefulSet%EA%B3%BC%20Headless%EC%9D%98%20%EC%A1%B0%ED%95%A9&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series0&title=Kubernetes%20Series%20[Part0]:%20Kubernetes%EB%9E%80%20%EB%AC%B4%EC%97%87%EC%9D%B8%EA%B0%80&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -991,6 +986,26 @@ kubectl get persistentvolumes
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
   
 
@@ -1008,10 +1023,10 @@ kubectl get persistentvolumes
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series10" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part10]: Service로 배우는 kubectl 명령어</a>
+      <a href="#" class="pagination__prev pagination__item disabled">첫 번째 글입니다</a>
     
     
-      <a href="/kubernetes-series12" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part12]: kubectl<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series1" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part1]: Kubernetes 설치<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

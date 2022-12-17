@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part1]: Kubernetes란 무엇인가'
+title:  'Kubernetes Series [Part1]: Kubernetes 설치'
 description: 
 date:   2022-01-01 15:01:35 +0300
 image:  '/images/kube_0.png'
@@ -17,111 +17,179 @@ tags: Kubernetes
 
 ---
 
-# 쿠버네티스란 무엇인가
+# 로컬환경
+쿠버네티스는 여러 플랫폼 환경에서 클러스터를 구성하여 사용할 수 있습니다. 로컬 쿠버네티스는 별다른 비용 발생 없이 간단하게 클러스터를 구축해 테스트해 볼 수 있어서 **테스트, 개발 환경에 적합**합니다.  
 
-> 여러 개의 컨테이너화된 애플리케이션을 여러 서버(쿠버네티스 클러스터)에 자동으로 배포, 스케일링 및 관리해주는 오픈소스 플랫폼
+## 미니큐브(minikube)
+미니큐브는 물리 머신에 로컬 쿠버네티스를 쉽게 구축하고 실행할 수 있는 도구입니다. 실행되는 쿠버네티스는 `단일 노드 구성`이기 때문에 여러 대의 구성이 필요한 쿠버네티스 기능은 사용할 수 없습니다. 또한 미니큐브는 로컬 가상 머신 위에 쿠버네티스를 설치하기 때문에 **하이퍼바이저(Docer, Hyperkit, VirtualBox, ..)가 필요**합니다. 제가 현재 사용하고 있는 맥 환경에서는 기본적으로 하이퍼킷이 설치되어 있습니다. 하지만 m1칩의 경우에는 아직 하이퍼킷을 지원하지 않기 때문에 먼저 도커를 설치, 실행한 후 미니큐브를 실행하셔야 합니다.
 
-![](/images/kube_0.png)
+```sh
+brew install minikube
 
-# 쿠버네티스의 역사
+minikube version
+# minikube version: v1.25.1
 
-쿠버네티스는 구글이 내부적으로 사용하던 컨테이너 클러스터 관리 도구 Borg에서 아이디어를 얻어 만들어진 오픈 소스 소프트웨어다. 2014년 6월에 공개되어, 2015년 7월에 클라우드 네이티브 컴퓨팅 파운데이션(CNCF)으로 이관되었다. CNCF는 쿠버네티스 외에도 많은 프로젝트를 호스트하고 있으며, 프로젝트별로 성숙도가 정의되어있다. 성숙도는 높은 순으로 Graduated, Incubating, Sandbox 중 하나로 분류된다. 쿠버네티스는 Graduated로 분류되어 성숙도를 인정받았다.  
+minikube start --driver=docker # --kubernetes-version 옵션으로 버전 선택 가능
+--------------------------------------------------------------------------------
+😄  Darwin 12.1 (arm64) 의 minikube v1.25.1
+✨  유저 환경 설정 정보에 기반하여 docker 드라이버를 사용하는 중
+👍  minikube 클러스터의 minikube 컨트롤 플레인 노드를 시작하는 중
+🚜  베이스 이미지를 다운받는 중 ...
+💾  쿠버네티스 v1.23.1 을 다운로드 중 ...
+    > preloaded-images-k8s-v16-v1...: 417.88 MiB / 417.88 MiB  100.00% 9.58 MiB
+    > gcr.io/k8s-minikube/kicbase: 343.02 MiB / 343.02 MiB  100.00% 3.90 MiB p/
+🔥  Creating docker container (CPUs=2, Memory=7903MB) ...
+🐳  쿠버네티스 v1.23.1 을 Docker 20.10.12 런타임으로 설치하는 중
+    ▪ kubelet.housekeeping-interval=5m
+    ▪ 인증서 및 키를 생성하는 중 ...
+    ▪ 컨트롤 플레인이 부팅...
+    ▪ RBAC 규칙을 구성하는 중 ...
+🔎  Kubernetes 구성 요소를 확인...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  애드온 활성화 : storage-provisioner, default-storageclass
+🏄  끝났습니다! kubectl이 "minikube" 클러스터와 "default" 네임스페이스를 기본적으로 사용하도록 구성되었습니다.
+```
 
-쿠버네티스는 구글의 클라우드 플랫폼 GCP 에서 GKE 라는 서비스로, AWS에서 EKS 라는 서비스로 쿠버네티스를 제공한다.  
+이제 도커로 띄운 가상머신 위에서 쿠버네티스가 돌아가고 있습니다. 한 번 확인해보겠습니다.  
 
-# 쿠버네티스 등장 배경
+```sh
+minikube status
+--------------------
+minikube
+type: Control Plane
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
 
-- **도커의 등장과 함께 컨테이너 기술**이 개발자들에게 널리 이용되었다
-- 동시에 서비스의 규모가 점차 커지게 되면서, 모놀리틱 아키텍처가 아닌 **마이크로 서비스 아키텍처**가 각광을 받았다
-- **클라우드 컴퓨팅, 분산 시스템의 등장**으로 여러 서버를 클러스터로 구성하여 서비스를 운영하게 되었다
-- 여러 컨테이너를 여러 서버에 배포하는데 이 때 **컨테이너 크기와 서버의 리소스를 고려해 배포**해주어야 한다
-- 이 때 서비스에 요구되는 **스케일 확장, 장애 대응, 버전 롤백**과 같은 것들을 쉽게 해줄 도구가 필요했다
-- 이를 해결해주기 위해 등장한 것이 **쿠버네티스**이다
+minikube ip
+# 192.168.49.2
+```
 
+정지하고 삭제하는 명령어도 간단합니다.  
 
-# 쿠버네티스의 특징
+```
+minikube stop
 
-- 쿠버네티스(Kubernetes)는 컨테이너로 향상된 리소스 활용의 이점을 누리면서도 복잡한 분산 시스템을 쉽게 배포하고 관리할 수 있도록 만들어준다.  
-- 쿠버네티스는 단순한 컨테이너 플랫폼을 넘어 마이크로서비스, 클라우드 플랫폼을 지향하고 컨테이너로 이루어진 것들을 손쉽게 담고 관리할 수 있는 그릇 역할을 한다. 또한 CI/CD, 머신러닝 등 다양한 기능이 쿠버네티스 플랫폼 위에서 동작한다.  
-- 쿠버네티스는 컨테이너 규모, 컨테이너의 상태, 네트워크, 스토리지, 버전과 같은 것들을 관리하며 이를 자동화한다. 
+minikube delete
+```
 
+## Docker Desktop  
+Docker Desktop은 도커를 맥/윈도우에서 사용하기 위한 목적으로 만들어졌습니다. 그리고 Docker Desktop 버전 18.06.0부터는 쿠버네티스도 사용할 수 있도록 지원하고 있습니다. 사용 방법은 간단합니다. Docker Desktop을 설치, 실행한 뒤 Enable Kubernetes 목록을 클릭해줍니다.  
 
-# 쿠버네티스가 제공하는 것들
+![](../images/../../images/kube_24.png)  
 
-- 선언적 코드를 사용한 관리 (IaC)
-  - YAML 형식이나 JSON 형식으로 작성한 선언적 코드(매니페스트)를 통해 컨테이너 배포할 수 있다
-- (오토)-스케일링
-  - 부하에 따라서 레플리카 수를 자동으로 늘리거나 줄일 수 있다
-- 스케줄링
-  - 컨테이너를 노드에 배포할 때, 노드의 성능을 기준으로 스케줄링할 수 있다
-- 자동화된 복구
-  - 프로세스 모니터링, 헬스 체크 등을 이용해 컨테이너를 자동으로 재배포할 수 있다
-- 서비스 디스커버리
-  - 마이크로서비스 아키텍처에서  서로의 마이크로서비스를 참조할 수 있는 서비스 디스커버리 기능을 제공한다
-- 로드 밸런싱
-  - 로드 밸런서 주소를 엔드포인트로 할당하고, 트래픽을 여러 대의 서버로 분산시킬 수 있다
-- 데이터 관리
-  - etcd를 사용해 데이터를 이중화된 상태로 관리할 수 있다
+(쿠버네티스를 Docker Desktop으로 실행할 때는 도커에서 제공하는 가상 머신위에 쿠버네티스 클러스터를 구성하는 것 같다. 그래서 클러스터 외부에서 쿠버네티스에 접속하려 할 때, 먼저 도커의 가상 머신 안으로 엔드포인트로 접근해야 하는데 이를 도커에서 localhost로 접근하도록 해준다. 그래서 별도로 도커 가상머신의 IP주소를 알려고 할 필요가 없다. 뇌피셜)  
 
+## kind(Kubernetes in Docker)
+minikube와 Docker Desktop은 단일 노드로 구성된 쿠버네티스였다면, kind는 도커 컨테이너를 여러 개 띄워서 컨테이너 각각을 노드로 사용함으로써 **멀티 노드 클러스터**를 구축할 수 있습니다.  
+[(kind 공식문서 참고)](https://kind.sigs.k8s.io){:target="_blank"}  
 
-# 쿠버네티스 아키텍처
+```sh
+brew install kind
 
-![](/images/kube_arch.png)
+kind version
+--------------------
+kind v0.11.1 go1.17.2 darwin/arm64
+```
 
-## 마스터 노드
+잘 설치가 되었습니다. 이제 kind를 이용해 쿠버네티스에서 마스터와 워커 노드 역할을 하는 노드를 각각 3개씩 띄워 다음과 같이 멀티 노드 클러스터를 구축해보겠습니다.  
 
-- Control Plane (클러스터 기능을 제어하고 전체 클러스터가 동작하게 만드는 역할)
-- 전체 클러스터를 관리하는 서버
+(실행 결과 리소스 부족으로 kindcluster-worker2를 만들다가 오류가)
 
-쿠버네티스에서 모든 명령은 마스터의 API 서버를 호출하고 노드는 마스터와 통신하면서 필요한 작업을 수행합니다. 특정 노드의 컨테이너에 명령하거나 로그를 조회할 때도 노드에 직접 명령하는 게 아니라 마스터에 명령을 내리고 마스터가 노드에 접속하여 대신 결과를 응답합니다. 
+![](/images/kube_9.png)  
 
-![](/images/kube_5.png)
+```sh
+# kind로 클러스터 구축을 위한 kind.yaml
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+```
 
-마스터의 API 서버는 할일이 굉장히 많기 때문에, 함께 도와줄 일꾼들이 필요합니다. 이들을 스케줄러와 컨트롤러라고 합니다. 보통 하나의 스케줄러와 역할별로 다양한 컨트롤러가 존재합니다.  
+```sh
+kind create cluster --config kind.yaml --name kindcluster
+----------------------------------------------------------------------
+Creating cluster "kindcluster" ...
+ ✓ Ensuring node image (kindest/node:v1.23.1) 🖼
+ ✓ Preparing nodes 📦 📦 📦 📦 📦 📦
+ ✓ Configuring the external load balancer ⚖️
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+ ✗ Joining worker nodes 🚜 
+```
 
-![](/images/kube_4.png)  
+실행 결과 리소스 부족으로 kindcluster-worker2를 만들다가 오류가 발생하여 마스터의 서버는 1개, 워커는 2개로 다시 구성해 실행해 보았습니다.  
 
-- **API 서버**: 클러스터 상태 조회, 변경을 위한 API 인터페이스 제공. 모든 명령은 마스터의 API 서버를 호출하고 노드는 마스터와 통신하면서 필요한 작업을 수행
-- **컨트롤러**: 자신이 맡은 오브젝트의 상태를 계속 체크하고 Desired 상태를 유지, API서버 요청 처리
-- **스케줄러**: 배포할 Pod(컨테이너와 비슷)가 있는지 계속 체크, 필요한 경우 가장 최적의 노드를 선택
-- **etcd**: 클러스터에 배포된 애플리케이션 실행 정보를 저장. 고가용성을 제공하는 키-밸류(key-value) 저장소
+```
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+- role: control-plane
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+- role: worker
+  image: kindest/node:v1.23.1
+```  
 
-## 워커 노드
+```sh
+kind create cluster --config kind.yaml --name kindcluster
+----------------------------------------------------------------------
+Creating cluster "kindcluster" ...
+ ✓ Ensuring node image (kindest/node:v1.23.1) 🖼
+ ✓ Preparing nodes 📦 📦 📦
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+ ✓ Joining worker nodes 🚜
+Set kubectl context to "kind-kindcluster"
+You can now use your cluster with:
 
-- 컨테이너가 배포되고 실제로 실행되는 서버
+kubectl cluster-info --context kind-kindcluster
 
-- **kubelet**: 클러스터내의 모든 노드에서 실행되는 에이전트. 파드내의 컨테이너들이 실행되는걸 직접적으로 관리하는 역할
-- **kube-proxy**: 쿠버네티스는 클러스터 내부에 별도의 가상 네트워크를 설정하고 관리. kube-proxy는 이런 가상 네트워크가 동작할 수 있게 하는 실질적인 역할을 하는 프로세스. 호스트의 네트워크 규칙을 관리하거나 커넥션 포워딩을 하기도함.
-- **container runtime**: 컨테이너 런타임은 실제로 컨테이너를 실행시키는 역할. 가장 많이 알려진 런타임으로는 도커(Docner)가 있고, 그외 rkt, runc같은 런타임도 지원. 그외에도 컨테이너에 관한 표준을 제정하는 역할을 하는 OCI의 런타임 규격을 구현하고 있는 컨테이너 런타임이라면 쿠버네티스에서 사용가능
+Have a nice day! 👋
+```
+클러스터가 성공적으로 구축되었습니다.  
+쿠버네티스에서 실행중인 노드를 확인해보겠습니다.  
 
-# Desired State
+```
+kubectl get nodes
+----------------------------------------------------------------------------
+NAME                        STATUS   ROLES                  AGE   VERSION
+kindcluster-control-plane   Ready    control-plane,master   58s   v1.23.1
+kindcluster-worker          Ready    <none>                 25s   v1.23.1
+kindcluster-worker2         Ready    <none>                 25s   v1.23.1
+```
 
-![](/images/kube_6.png)
+클러스터는 다음 명령어로 삭제하시면 됩니다.  
 
-쿠버네티스에서 가장 중요한 것은 **desired state(원하는 상태)**라는 개념이다. 원하는 상태라 함은 관리자가 바라는 환경을 의미하고 좀 더 구체적으로는 얼마나 많은 웹서버가 떠 있으면 좋은지, 몇 번 포트로 서비스하기를 원하는지 등을 말한다.  
-쿠버네티스는 복잡하고 다양한 작업을 하지만 자세히 들여다보면 현재 상태current state를 모니터링하면서 관리자가 설정한 원하는 상태를 유지하려고 내부적으로 이런저런 작업을 하는 로직을 가지고 있다.  
+```sh
+kind delete cluster --name kindcluster
+------------------------------------------
+Deleting cluster "kindcluster" ...
+```
 
-![](/images/kube_7.png)
+# 클라우드환경
 
-이렇게 상태가 바뀌게 되면 API서버는 차이점을 발견하고 컨트롤러에게 보내 desired state로 유지할 것을 요청한다. 그리고 컨트롤러가 변경한 후 결과를 다시 API서버에 보내고 API서버는 다시 이 결과를 etcd(상태를 저장하고 있는 곳)에 저장하게 된다.  
+## GKE(Google Kubernetes Engine)
 
-![](/images/kube_8.png)
-
-# 쿠버네티스가 명령을 수행하는 과정
-
-![](/images/kube_api_server.png)
-
-# 쿠버네티스가 통신하는 과정
-
-![](/images/kube_network.png)
-
-# 마치며
-
-![](/images/kube_41.png)
-
-지금까지는 쿠버네티스가 어떻게 명령을 수행하는지 알아봤다. 다음 포스트에서는 클라이언트가 무엇을 이용해 어떤식으로 쿠버네티스에 명령을 내리는지 알아보자.  
+## EKS(Elastic Kubernetes Service)
 
 # 참고자료  
-- [subicura님의 kubenetes안내서](https://subicura.com/2019/05/19/kubernetes-basic-1.html){:target="_blank"}
-- [OSS, 쿠버네티스(kubernetes) 구성요소](https://www.oss.kr/info_techtip/show/a084eeb7-c3fe-457d-a50d-6e17fe9b8dbc){:target="_blank"}
-- [패스트캠퍼스, Kubernetes와 Docker로 한 번에 끝내는 컨테이너 기반 MSA](https://fastcampus.co.kr/){:target="_blank"}
+- [쿠버네티스 완벽 가이드 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791165216283){:target="_blank"}  
+- [subicura님의 kubenetes안내서](https://subicura.com/k8s/guide/){:target="_blank"}

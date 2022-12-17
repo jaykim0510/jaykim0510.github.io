@@ -6,22 +6,26 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Kubernetes Series [Part3]: Kubernetes Service</title>
-  <meta name='description' content='쿠버네티스에서는 Service 리소스를 이용하면 다음과 같은 장점을 얻을 수 있습니다.'>
+  <title>Kubernetes Series [Part2]: Kubernetes Workload Object</title>
+  <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/kubernetes-series3">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Kubernetes Series [Part3]: Kubernetes Service – Code Museum">
-  <meta name="twitter:description" content="쿠버네티스에서는 Service 리소스를 이용하면 다음과 같은 장점을 얻을 수 있습니다.">
-  <meta name="twitter:image:src" content="http://localhost:4000/images/kube_26.png">
+  <meta name="twitter:title" content="Kubernetes Series [Part2]: Kubernetes Workload Object – Code Museum">
+  <meta name="twitter:description" content="
+Table of Contents
+">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/kube_22.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Kubernetes Series [Part3]: Kubernetes Service – Code Museum">
-  <meta property="og:description" content="쿠버네티스에서는 Service 리소스를 이용하면 다음과 같은 장점을 얻을 수 있습니다.">
-  <meta property="og:image" content="http://localhost:4000/images/kube_26.png">
+  <meta property="og:title" content="Kubernetes Series [Part2]: Kubernetes Workload Object – Code Museum">
+  <meta property="og:description" content="
+Table of Contents
+">
+  <meta property="og:image" content="http://localhost:4000/images/kube_22.png">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -427,7 +431,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part3]: Kubernetes Service">
+          <img class="lazy" data-src="/images/kubernetes_logo.png" alt="Kubernetes Series [Part2]: Kubernetes Workload Object">
         </div>
       </div>
       
@@ -448,7 +452,7 @@
               </div>
             
  
-          <h1 class="post__title">Kubernetes Series [Part3]: Kubernetes Service</h1>
+          <h1 class="post__title">Kubernetes Series [Part2]: Kubernetes Workload Object</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -457,7 +461,7 @@
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2022-01-23T21:01:35+09:00">23 Jan 2022</time>
+              <time class="post__date" datetime="2022-01-09T21:01:35+09:00">09 Jan 2022</time>
             </div>
           </div>
   
@@ -497,8 +501,6 @@
   
 
   
-
-  
   	
   	
   	
@@ -510,10 +512,10 @@
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part2]: Kubernetes Object</a>
+      <a href="/kubernetes-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part2]: Kubernetes 기본 명령어</a>
     
     
-      <a href="/kubernetes-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part3]: Kubernetes Service Object<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -522,20 +524,39 @@
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#kubernetes-network" id="markdown-toc-kubernetes-network">Kubernetes Network</a></li>
-  <li><a href="#network-오브젝트를-사용하는-이유" id="markdown-toc-network-오브젝트를-사용하는-이유">Network 오브젝트를 사용하는 이유</a>    <ul>
-      <li><a href="#외부-클라이언트와의-통신" id="markdown-toc-외부-클라이언트와의-통신">외부 클라이언트와의 통신</a></li>
-      <li><a href="#파드-집합에-대한-엔드포인트-제공" id="markdown-toc-파드-집합에-대한-엔드포인트-제공">파드 집합에 대한 엔드포인트 제공</a></li>
-      <li><a href="#파드-엔드포인트-추상화" id="markdown-toc-파드-엔드포인트-추상화">파드 엔드포인트 추상화</a></li>
-      <li><a href="#kube-dns" id="markdown-toc-kube-dns">kube-dns</a></li>
-    </ul>
-  </li>
-  <li><a href="#clusterip" id="markdown-toc-clusterip">ClusterIP</a></li>
-  <li><a href="#nodeport" id="markdown-toc-nodeport">NodePort</a></li>
-  <li><a href="#loacbalancer" id="markdown-toc-loacbalancer">LoacBalancer</a></li>
-  <li><a href="#ingress" id="markdown-toc-ingress">Ingress</a>    <ul>
-      <li><a href="#클러스터-외부의-로드-밸런서만을-이용한-ingress" id="markdown-toc-클러스터-외부의-로드-밸런서만을-이용한-ingress">클러스터 외부의 로드 밸런서만을 이용한 Ingress</a></li>
-      <li><a href="#클러스터-내부의-ingress-파드를-곁들인-ingress" id="markdown-toc-클러스터-내부의-ingress-파드를-곁들인-ingress">클러스터 내부의 Ingress 파드를 곁들인 Ingress</a></li>
+  <li><a href="#쿠버네티스의-오브젝트" id="markdown-toc-쿠버네티스의-오브젝트">쿠버네티스의 오브젝트</a></li>
+  <li><a href="#workload-object" id="markdown-toc-workload-object">Workload Object</a>    <ul>
+      <li><a href="#pod" id="markdown-toc-pod">Pod</a>        <ul>
+          <li><a href="#매니페스트-파일" id="markdown-toc-매니페스트-파일">매니페스트 파일</a></li>
+          <li><a href="#파드-디자인-패턴" id="markdown-toc-파드-디자인-패턴">파드 디자인 패턴</a></li>
+          <li><a href="#파드명-제한" id="markdown-toc-파드명-제한">파드명 제한</a></li>
+          <li><a href="#명령어-실행" id="markdown-toc-명령어-실행">명령어 실행</a></li>
+          <li><a href="#기타-설정" id="markdown-toc-기타-설정">기타 설정</a></li>
+          <li><a href="#파드-실습" id="markdown-toc-파드-실습">파드 실습</a></li>
+        </ul>
+      </li>
+      <li><a href="#replicaset" id="markdown-toc-replicaset">ReplicaSet</a>        <ul>
+          <li><a href="#메니페스트-파일" id="markdown-toc-메니페스트-파일">메니페스트 파일</a></li>
+          <li><a href="#레플리카셋-실습" id="markdown-toc-레플리카셋-실습">레플리카셋 실습</a></li>
+        </ul>
+      </li>
+      <li><a href="#deployment" id="markdown-toc-deployment">Deployment</a>        <ul>
+          <li><a href="#메니페스트-파일-1" id="markdown-toc-메니페스트-파일-1">메니페스트 파일</a></li>
+          <li><a href="#디플로이먼트-업데이트-전략" id="markdown-toc-디플로이먼트-업데이트-전략">디플로이먼트 업데이트 전략</a></li>
+          <li><a href="#디플로이먼트-실습" id="markdown-toc-디플로이먼트-실습">디플로이먼트 실습</a></li>
+        </ul>
+      </li>
+      <li><a href="#daemonset" id="markdown-toc-daemonset">DaemonSet</a>        <ul>
+          <li><a href="#매니페스트-파일-1" id="markdown-toc-매니페스트-파일-1">매니페스트 파일</a></li>
+          <li><a href="#업데이트-전략" id="markdown-toc-업데이트-전략">업데이트 전략</a></li>
+          <li><a href="#데몬셋-실습" id="markdown-toc-데몬셋-실습">데몬셋 실습</a></li>
+        </ul>
+      </li>
+      <li><a href="#statefulset" id="markdown-toc-statefulset">StatefulSet</a>        <ul>
+          <li><a href="#메니페스트-파일-2" id="markdown-toc-메니페스트-파일-2">메니페스트 파일</a></li>
+          <li><a href="#스테이트풀셋-실습" id="markdown-toc-스테이트풀셋-실습">스테이트풀셋 실습</a></li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li><a href="#참고자료" id="markdown-toc-참고자료">참고자료</a></li>
@@ -543,111 +564,394 @@
 
 <hr />
 
-<h1 id="kubernetes-network">Kubernetes Network</h1>
-<p>쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 <strong>localhost</strong>로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 <strong>파드의 IP 주소</strong>로 통신하면 됩니다.</p>
-
-<p><img src="../../images/kube_25.png" alt="" /></p>
-
-<h1 id="network-오브젝트를-사용하는-이유">Network 오브젝트를 사용하는 이유</h1>
-
-<p>이렇게 쿠버네티스에서는 클러스터 내부에서는 네트워크가 자동으로 구성되어 Service 리소스를 이용하지 않고도 파드 간 통신이 가능합니다. 그러면 Network 오브젝트를 굳이 사용하는 이유는 뭘까요?</p>
-
-<h2 id="외부-클라이언트와의-통신">외부 클라이언트와의 통신</h2>
+<h1 id="쿠버네티스의-오브젝트">쿠버네티스의 오브젝트</h1>
 
 <ul>
-  <li>파드가 가지고 있는 IP는 클러스터 내부에서 유효한 IP 주소</li>
-  <li>클러스터 외부에 있는 클라이언트와 통신하기 위해서는 <strong>외부로 노출시킬 IP 주소</strong>가 필요하다</li>
-  <li>이를 위해 쿠버네티스에서는 LoadBalancer, Ingress를 제공한다</li>
+  <li>애플리케이션을 쿠버네티스 클러스터에 배포할 때 사용할 수 있는 리소스 단위</li>
+  <li>프로젝트를 구성하는 워크로드, 네트워크(서비스), 스토리지(볼륨), 설정 파일 등</li>
+  <li>어떤 애플리케이션을 얼마나 어디에 어떤 방식으로 배포할지에 관한 것들을 Manifest 파일로 정의할 수 있음</li>
+  <li>사용자의 의도를 YAML 형식으로 정의</li>
+  <li>REST API로 마스터 노드에 전달</li>
+  <li>오브젝트에는 크게 Workload 관련 오브젝트와 Network 관련 오브젝트가 있음</li>
 </ul>
 
-<h2 id="파드-집합에-대한-엔드포인트-제공">파드 집합에 대한 엔드포인트 제공</h2>
+<p><img src="/images/kube_42.png" alt="" /></p>
+
+<p><strong>Manifest 파일</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 간단한 예시</span>
+
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">app</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v1</span>
+</code></pre></div></div>
 
 <ul>
-  <li>파드 IP 주소로 통신한다는 말은 특정 파드 한 개 하고만 통신을 한다는 뜻이다</li>
-  <li>이렇게 되면, 해당 파드가 위치한 노드가 장애가 난 경우, 대처가 불가능하다</li>
-  <li>트래픽도 모두 그 파드 한 곳에만 모두 몰리게 될 것이다</li>
-  <li>이를 해결하기 위해서 쿠버네티스 서비스 오브젝트는 <strong>파드 집합에 대한 단일 엔드포인트</strong>를 제공한다</li>
+  <li>쿠버네티스 오브젝트를 명시적으로 관리하도록 해주는 YAML 파일</li>
+  <li>오브젝트의 목적에 따라 kind를 달리해줌
+    <ul>
+      <li>kind에는 크게 Pod, Replicaset, Deployment, Service, Ingress</li>
+    </ul>
+  </li>
+  <li>우리가 원하는 애플리케이션의 상태를 spec에 정의함
+    <ul>
+      <li>쿠버네티스 컨트롤러는 YAML 파일에 정의된 spec과 자신의 오브젝트 status를 비교</li>
+      <li>차이점이 발견되면 status를 spec(desired state)에 맞도록 업데이트 후 etcd에 저장</li>
+    </ul>
+  </li>
 </ul>
 
-<h2 id="파드-엔드포인트-추상화">파드 엔드포인트 추상화</h2>
+<h1 id="workload-object">Workload Object</h1>
+
+<blockquote>
+  <p>Workloads are objects that set deployment rules for pods. Based on these rules, Kubernetes performs the deployment and updates the workload with the current state of the application. Workloads let you define the rules for application scheduling, scaling, and upgrade.</p>
+</blockquote>
+
+<p><a href="https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/workloads/" target="_blank">(Rancher문서 참고)</a></p>
+
+<p><img src="/images/kube_10.png" alt="" /></p>
+
+<h2 id="pod">Pod</h2>
+
+<p><img src="/images/kube_11.png" alt="" /></p>
 
 <ul>
-  <li>파드는 중간에 장애가 날 경우, 해당 파드를 종료하고 새로운 파드를 실행한다</li>
-  <li>또한 중간에 업데이트가 발생하면, 또 새로운 파드를 실행한다</li>
-  <li>이렇게 파드는 계속 변경되기 때문에 파드 IP 주소를 직접 사용할 경우 계속 수동으로 업데이트 해줘야 한다</li>
+  <li>Pod는 쿠버네티스에서 배포할 수 있는 가장 작은 단위의 오브젝트로 한 개 이상의 컨테이너와 스토리지, 네트워크 속성을 가집니다.</li>
+  <li>Pod에 속한 컨테이너는 스토리지와 네트워크를 공유하고 서로 <code class="language-plaintext highlighter-rouge">localhost</code>로 접근할 수 있습니다.</li>
+  <li>(IP 주소는 파드 단위로 할당 =&gt; 컨테이너들은 서로 같은 IP 주소를 가진다 =&gt; 포트 번호로 구분)</li>
+  <li>
+    <p>컨테이너를 하나만 사용하는 경우도 반드시 Pod으로 감싸서 관리합니다.</p>
+  </li>
+  <li>Scheduler는 계속 할당할 새로운 Pod가 있는지 체크하고 있으면 노드에 파드를 할당.</li>
+  <li>그리고 노드에 있는 Kubelet은 컨테이너를 생성하고 결과를 API서버에 보고합니다.</li>
 </ul>
 
-<h2 id="kube-dns">kube-dns</h2>
+<h3 id="매니페스트-파일">매니페스트 파일</h3>
 
-<p><img src="/images/kube-dns.webp" alt="" /></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">app</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v1</span>
+</code></pre></div></div>
+
+<p>Pod의 spec에는 <code class="language-plaintext highlighter-rouge">containers</code>, <code class="language-plaintext highlighter-rouge">volumes</code>, <code class="language-plaintext highlighter-rouge">restartPolicy</code>, <code class="language-plaintext highlighter-rouge">hostname</code>, <code class="language-plaintext highlighter-rouge">hostNetwork</code> 등이 있습니다.<br />
+<a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/" target="_blank">(Pod공식문서 참고)</a></p>
+
+<h3 id="파드-디자인-패턴">파드 디자인 패턴</h3>
 
 <ul>
-  <li>쿠버네티스는 서비스명으로 통신을 제공하기 위해 마스터 노드에 kube-dns라는 서버를 가지고 있다</li>
-  <li>쿠버네티스는 서비스 오브젝트 정보를 kube-dns에 저장하고 있다</li>
-  <li>워커 노드에 실행되고 있는 컨테이너들은 <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> 파일에 이 kube-dns 네임서버 정보를 가지고 있다</li>
-  <li>컨테이너는 서비스 디스커버리가 필요하면 <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> 파일에 있는 네임서버(kube-dns)로 이동하고, 네임서버에 저장되어 있는 서비스를 디스커버리한다</li>
+  <li>대부분의 경우 하나의 파드에 하나의 컨테이너를 가진다</li>
+  <li>하지만 메인 컨테이너를 지원하는 서브 컨테이너를 가지도록 파드를 디자인할 수도 있다 =&gt; 이를 사이드카 패턴이라고 한다</li>
+  <li>(서브 컨테이너의 예: 프록시 역할, 설정값을 동적으로 변경시키는 역할, 로컬 캐시 역할 등)</li>
 </ul>
 
-<h1 id="clusterip">ClusterIP</h1>
+<h3 id="파드명-제한">파드명 제한</h3>
 
 <ul>
-  <li>ClusterIP는 서비스의 기본 타입</li>
-  <li>ClusterIP 서비스를 생성하면 <strong>클러스터 내부에서만 통신 가능한 가상 IP</strong>가 할당</li>
-  <li>kube-proxy는 노드 안에서 ClusterIP에서 들어온 트래픽을 원하는 파드로 전송</li>
-  <li>(위의 장점중 파드 집합에 대한 엔드포인트, 엔드포인트 추상화 이점을 제공)</li>
+  <li>이용 가능한 문자: ‘영어 소문자’, ‘숫자’, ‘-‘, ‘.’ (언더바(_)는 안됨)</li>
+  <li>시작과 끝은 ‘영문 소문자’</li>
 </ul>
 
-<p><img src="../../images/kube_clusterip.png" alt="" /></p>
-
-<p>(개발 단계에서는 <code class="language-plaintext highlighter-rouge">kubectl port-forward service/&lt;서비스명&gt; &lt;target port&gt;:&lt;service port&gt;</code>로 포트 포워딩해서 <code class="language-plaintext highlighter-rouge">localhost:&lt;target port&gt;</code> 로 접근 가능)</p>
-
-<h1 id="nodeport">NodePort</h1>
-<ul>
-  <li>외부에서 접근할 수 있도록 모든 노드에 <code class="language-plaintext highlighter-rouge">node port</code> 포트를 열어둔다</li>
-  <li>클러스터 외부의 클라이언트는 <code class="language-plaintext highlighter-rouge">&lt;임의의 노드 IP&gt;:node port</code> 로 클러스터와 통신</li>
-  <li>해당 트래픽은 ClusterIP 서비스 오브젝트에게 전달되고, ClusterIP 서비스 오브젝트를 이를 파드 집합으로 포워딩</li>
-  <li><strong>노출된 IP주소의 노드는 단일 장애점(Single Point of Failure)</strong>이 된다</li>
-  <li>NodePort는 쿠버네티스에서 <strong>지정한 범위(30000~32767)</strong> 안에서만 지정 가능</li>
-  <li>노드 포트 번호는 범위 안에서 직접 지정 가능하지만 쿠버네티스에서는 노드 포트 번호를 직접 지정하는 것을 지양</li>
-</ul>
-
-<p><img src="/images/kube_node_port.png" alt="" /></p>
-
-<h1 id="loacbalancer">LoacBalancer</h1>
+<h3 id="명령어-실행">명령어 실행</h3>
 
 <ul>
-  <li>외부에서 접근 가능한 External IP를 할당 받는다</li>
-  <li>LoadBalancer서비스를 생성하면 컨테이너 내부에서의 통신을 위해 ClusterIP도 자동 생성 (Interal IP)</li>
+  <li><code class="language-plaintext highlighter-rouge">spec.containers.command</code> 와 <code class="language-plaintext highlighter-rouge">spec.containers.args</code> 로 나타낼 수 있다</li>
+  <li>(<code class="language-plaintext highlighter-rouge">command</code>는 기본 명령어, <code class="language-plaintext highlighter-rouge">args</code>는 <code class="language-plaintext highlighter-rouge">command</code>에 전달할 인자로 생각하면 된다)</li>
+  <li>(여기에 명령어를 명시하면, 도커 이미지의 <code class="language-plaintext highlighter-rouge">ENTRYPOINT</code>와 <code class="language-plaintext highlighter-rouge">CMD</code>를 덮어 쓴다)</li>
+  <li><code class="language-plaintext highlighter-rouge">kubectl exec -it &lt;파드명&gt; -- &lt;전달할 명령어&gt;</code> 명령어로 실행중인 컨테이너에 명령어를 실행할 수도 있다</li>
+  <li>특정 컨테이너에 명령어를 전달하고 싶으면 <code class="language-plaintext highlighter-rouge">kubectl exec -it &lt;파드명&gt; -c &lt;컨테이너명&gt; -- &lt;전달할 명령어&gt;</code> 이렇게 쓴다</li>
 </ul>
 
-<p><img src="/images/kube_load_balancer.png" alt="" /></p>
+<h3 id="기타-설정">기타 설정</h3>
 
-<h1 id="ingress">Ingress</h1>
-<p>인그레스는 L7(application layer) 로드 밸런싱을 제공하는 리소스입니다. 인그레스는 서비스들을 묶는 상위 객체로, <code class="language-plaintext highlighter-rouge">kind: Ingress</code>타입 리소스를 지정합니다. 인그레스를 이용하면 하나의 IP주소로 N개의 애플리케이션을 로드 밸런싱할 수 있습니다.</p>
-<h2 id="클러스터-외부의-로드-밸런서만을-이용한-ingress">클러스터 외부의 로드 밸런서만을 이용한 Ingress</h2>
 <ul>
-  <li>GKE 인그레스</li>
+  <li><code class="language-plaintext highlighter-rouge">spec.hostNetwork</code>
+    <ul>
+      <li>호스트(노드) IP 주소를 파드의 IP 주소로 설정할 수 있다</li>
+      <li>모든 파드가 같은 IP 주소 가지게 되므로 포트 충돌 주의</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">spec.dnsPolicy</code>
+    <ul>
+      <li>어디있는 DNS를 이용해서 서비스를 디스커버리할 것인지 정의할 수 있다</li>
+      <li>기본값은 ClusterFIrst로 클러스터 내부 DNS를 이용한다</li>
+      <li>그 외에 Default 값을 이용하면 각 노드에 정의된 /etc/resolv.conf를 상속받는다</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">spec.hostAliases</code>
+    <ul>
+      <li>파드 내부 모든 컨테이너의 <code class="language-plaintext highlighter-rouge">/etc/hosts</code>를 변경할 수 있다</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">spec.containers.workingDir</code>
+    <ul>
+      <li>작업 디렉터리를 설정할 수 있다</li>
+      <li>쿠버네티스에서 특정 스크립트를 실행하는 명령어를 실행할 때, 해당 디렉터리에서 스크립트를 실행한다</li>
+    </ul>
+  </li>
 </ul>
 
-<p>외부 로드 밸런서로 인그레스를 사용한다면, 인그레스 리소스 생성만으로 충분합니다.<br />
-<img src="../../images/kube_ingress.png" alt="" /></p>
-<h2 id="클러스터-내부의-ingress-파드를-곁들인-ingress">클러스터 내부의 Ingress 파드를 곁들인 Ingress</h2>
+<h3 id="파드-실습">파드 실습</h3>
+
+<h2 id="replicaset">ReplicaSet</h2>
+
+<p><img src="/images/kube_13.png" alt="" /></p>
+
 <ul>
-  <li>Nginx 인그레스</li>
+  <li>ReplicaSet은 Pod을 여러 개(한 개 이상) 복제하여 관리하는 오브젝트이다</li>
+  <li>단일 노드 환경이면 Pod는 모두 단일 노드에서 생성되고, 여러개의 노드를 가지고 있는 상황이면, Pod는 노드에 각각 분산되어 배포된다</li>
+  <li>(Pod를 어떤 노드에 배치할지는 스케줄러가 결정한다)</li>
+  <li>Replicaset을 사용하는 이유는 노드 장애 대비(High Availability), 트래픽 분산(Load Balancing) 때문이다</li>
+  <li>보통 직접적으로 ReplicaSet을 사용하기보다는 Deployment등 다른 오브젝트에 의해서 사용되는 경우가 많다</li>
 </ul>
 
-<p>클러스터 내부에서 인그레스를 이용해 로드 밸런싱을 할 경우 인그레스용 파드를 클러스터 내부에 생성해야 합니다. 또 내부의 인그레스용 파드를 외부에서 접속할 수 있도록 하기 위해 별도의 LoadBalancer 서비스를 생성해야 합니다.</p>
+<h3 id="메니페스트-파일">메니페스트 파일</h3>
 
-<p>Nginx 인그레스 컨트롤러는 이름은 컨트롤러이지만 L7 수준의 로드 밸런싱을 직접 처리하기도 합니다.<br />
-<img src="../../images/kube_30.png" alt="" /></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">ReplicaSet</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">echo-rs</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">selector</span><span class="pi">:</span> <span class="c1"># 어떤 파드의 복제를 관리할 것인가</span>
+    <span class="na">matchLabels</span><span class="pi">:</span> <span class="c1"># app: echo이고 tier: app인 label을 가지는 파드를 관리</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
+  <span class="na">template</span><span class="pi">:</span> <span class="c1"># replicaset이 만드는 pod의 템플릿</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v1</span>
+</code></pre></div></div>
+
+<p>ReplicaSet의 spec에는 <code class="language-plaintext highlighter-rouge">replicas</code>, <code class="language-plaintext highlighter-rouge">selector</code>, <code class="language-plaintext highlighter-rouge">template</code>, <code class="language-plaintext highlighter-rouge">minReadySeconds</code>가 있습니다.<br />
+<a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/#ReplicaSetSpec" target="_blank">(ReplicaSet 공식문서 참고)</a></p>
+
+<h3 id="레플리카셋-실습">레플리카셋 실습</h3>
+
+<h2 id="deployment">Deployment</h2>
+
+<p><img src="/images/kube_18.png" alt="" /></p>
+
+<ul>
+  <li>Deployment는 쿠버네티스에서 가장 널리 사용되는 오브젝트중 하나</li>
+  <li>Pod를 중단없이 업데이트하거나 특정 버전으로 롤백할 수 있다 (무중단 배포)</li>
+  <li>쿠버네티스에서는 컨테이너 하나를 가동하더라도 디플로이먼트 사용을 권장한다</li>
+  <li>파드에 장애가 발생했을 때 자동으로 파드가 다시 생성된다</li>
+  <li>Deployment 오브젝트가 Pod의 버전을 관리하는 과정
+<img src="/images/kube_17.png" alt="" /></li>
+</ul>
+
+<h3 id="메니페스트-파일-1">메니페스트 파일</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">echo-deploy</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">strategy</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
+    <span class="na">rollingUpdate</span><span class="pi">:</span>
+      <span class="na">maxSurge</span><span class="pi">:</span> <span class="m">1</span>
+      <span class="na">maxUnavailable</span><span class="pi">:</span> <span class="m">0</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">4</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">echo</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">echo</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">ghcr.io/subicura/echo:v2</span>
+</code></pre></div></div>
+
+<p>spec에는 <code class="language-plaintext highlighter-rouge">replicas</code>, <code class="language-plaintext highlighter-rouge">selector</code>, <code class="language-plaintext highlighter-rouge">template</code>, <code class="language-plaintext highlighter-rouge">strategy</code>  등이 있습니다.<br />
+<a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec" target="_blank">(Deployment 공식문서 참고)</a></p>
+
+<h3 id="디플로이먼트-업데이트-전략">디플로이먼트 업데이트 전략</h3>
+
+<ul>
+  <li>
+    <p>기본값은 RollingUpdate 이고 그 밖에 Recreate가 있다</p>
+  </li>
+  <li>Recreate
+    <ul>
+      <li>모든 파드를 한 번 삭제하고 다시 파드를 생성 =&gt; 다운타임이 발생하지만 추가 리로스를 사용하지 않고 전환이 빠른 장점이 있다</li>
+      <li>(기존 레플리카셋의 레플리카 수를 0으로 한다. 이 후 신규 레플리카셋을 생성해서 파드수를 늘린다</li>
+      <li>(딱 레플리카 수만큼의 컴퓨팅 리소스만 필요)</li>
+      <li>개발 단계에서 유용</li>
+    </ul>
+  </li>
+  <li>RollingUpdate
+    <ul>
+      <li>새로운 버전을 배포하면서 이전 버전을 종료한다</li>
+      <li>레플리카 수 이상의 컴퓨팅 리소스가 일시적으로 필요하게 된다</li>
+      <li>RollingUpdate 옵션: <code class="language-plaintext highlighter-rouge">maxUnavailable</code>, <code class="language-plaintext highlighter-rouge">maxSurge</code>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">maxUnavailable</code>: 업데이트 중에 한 번에 정지 가능한 최대 파드 수 (또는 비율)</li>
+          <li><code class="language-plaintext highlighter-rouge">maxSurge</code>: 업데이트 중에 가질 수 있는 최대 파드 수 (또는 비율)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/images/kube_19.png" alt="" /></p>
+
+<h3 id="디플로이먼트-실습">디플로이먼트 실습</h3>
+
+<h2 id="daemonset">DaemonSet</h2>
+
+<ul>
+  <li>데몬셋은 레플리카셋의 특수한 형태</li>
+  <li>데몬셋은 파드를 각 노드에 한 개씩 배치하는 리소스</li>
+  <li>노드를 늘리면 파드도 자동으로 늘어남</li>
+  <li>모든 노드에서 반드시 동작해야 하는 프로세스에 유용하게 사용된다</li>
+  <li>(ex. 로그를 호스트 단위로 수집하는 Fluentd, 파드 리소스 사용 현황 및 노드 상태를 모니터링하는 Datadog)</li>
+</ul>
+
+<h3 id="매니페스트-파일-1">매니페스트 파일</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">DaemonSet</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-ds</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">updateStrategy</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">OnDelete</span>
+  <span class="c1"># type: RollingUpdate</span>
+  <span class="c1"># rollingUpdate:</span>
+  <span class="c1">#   maxUnavailable: 2</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
+</code></pre></div></div>
+
+<h3 id="업데이트-전략">업데이트 전략</h3>
+
+<ul>
+  <li><strong>OnDelete</strong>: 노드가 정지된 경우에만 다시 실행할 때 업데이트 된다 -&gt; 운영상 이유로 가급적 정지되면 안되는 경우 사용</li>
+  <li><strong>RollingUpdate</strong>: 즉시 파드를 업데이트한다 -&gt; 버전 업데이트가 바로바로 필요한 경우 사용</li>
+</ul>
+
+<h3 id="데몬셋-실습">데몬셋 실습</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> sample-ds.yaml
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods <span class="nt">-o</span> wide
+</code></pre></div></div>
+
+<h2 id="statefulset">StatefulSet</h2>
+
+<ul>
+  <li>레플리카셋의 특수한 형태</li>
+  <li>
+    <p>데이터베이스 등과 같은 스테이트풀한 워크로드에 사용하기 위한 리소스</p>
+  </li>
+  <li>생성되는 파드명의 접미사는 숫자 인덱스가 부여된 것</li>
+  <li>파드명이 바뀌지 않는다</li>
+  <li>
+    <p>데이터를 영구적으로 저장하기 위한 구조로 되어있다</p>
+  </li>
+  <li>스테이트풀셋에서는 <code class="language-plaintext highlighter-rouge">spec.volumeClaimTemplates</code>를 설정함으로써, 각 파드에 영구 볼륨 클레임을 설정할 수 있다</li>
+  <li>
+    <p>영구 볼륨 클레임을 사용하면 클러스터 외부의 영구 볼륨을 파드에 연결할 수 있기 때문에 언제든 데이터를 보유한 상태로 컨테이너가 생성된다. 영구 볼륨은 하나의 파드가 소유할 수도 있고, 여러 파드에서 공유할 수도 있다</p>
+  </li>
+  <li>레플리카셋은 파드를 삭제하면 무작위로 삭제된다</li>
+  <li>스테이트풀셋은 0번째 파드가 항상 가장 먼저 생성되고, 가장 늦게 삭제된다</li>
+  <li>만약 마스터-슬레이브 구조로 파드를 구성한다면 스테이트풀셋의 0번째 파드를 마스터로 사용하면 된다</li>
+</ul>
+
+<h3 id="메니페스트-파일-2">메니페스트 파일</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">StatefulSet</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">sample-statefulset</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">updateStrategy</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">OnDelete</span>
+  <span class="na">serviceName</span><span class="pi">:</span> <span class="s">sample-statefulset</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+  <span class="na">templates</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">sample-app</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">nginx-container</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">nginx:1.16</span>
+        <span class="na">volumeMounts</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">www</span>
+          <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/usr/share/nginx/html</span>
+      <span class="na">volumeClaimTemplates</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">metadata</span><span class="pi">:</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">www</span>
+        <span class="na">spec</span><span class="pi">:</span>
+          <span class="na">accessModes</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="s">ReadWriteOnce</span>
+          <span class="na">resources</span><span class="pi">:</span>
+            <span class="na">requests</span><span class="pi">:</span>
+              <span class="na">storage</span><span class="pi">:</span> <span class="s">1G</span>
+</code></pre></div></div>
+
+<h3 id="스테이트풀셋-실습">스테이트풀셋 실습</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> sample-statefulset.yaml
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get statefulsets
+
+kubectl get pods <span class="nt">-o</span> wide
+
+kubectl get persistentvolumeclaims
+
+kubectl get persistentvolumes
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl scale statefulset sample-statefulset --replicas=5
+</code></pre></div></div>
 
 <h1 id="참고자료">참고자료</h1>
 <ul>
-  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791165216283" target="_blank">쿠버네티스 완벽 가이드 책</a></li>
-  <li><a href="https://subicura.com/k8s/guide/" target="_blank">subicura님의 kubenetes안내서</a></li>
-  <li><a href="https://stackoverflow.com/questions/65887993/when-to-choose-loadbalancer-over-nodeport-service-typeor-vice-versa-in-kub" target="_blank">NodePort vs LoadBalancer stackoverflow</a></li>
-  <li><a href="https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview" target="_blank">Google Kubernetes Engine 가이드</a></li>
-  <li><a href="https://www.confluent.io/blog/kafka-listeners-explained/" target="_blank">Confluent 블로그</a></li>
+  <li><a href="https://subicura.com/2019/05/19/kubernetes-basic-1.html" target="_blank">subicura님의 kubenetes안내서</a></li>
+  <li><a href="https://dailyheumsi.tistory.com/208#7.-configmap" target="_blank">하나씩 점을 찍어나가며 블로그</a></li>
+  <li><a href="https://kubernetes.io/docs/reference/kubernetes-api/" target="_blank">Kubernetes 공식문서</a></li>
+  <li><a href="https://rancher.com/docs/rancher/v2.5/en/k8s-in-rancher/" target="_blank">Rancher 공식문서</a></li>
 </ul>
 
     </div>
@@ -919,7 +1223,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part3]:%20Kubernetes%20Service&url=http://localhost:4000/kubernetes-series3"
+          href="https://twitter.com/intent/tweet?text=Kubernetes%20Series%20[Part2]:%20Kubernetes%20Workload%20Object&url=http://localhost:4000/kubernetes-series3"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -929,12 +1233,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series3&amp;media=http://localhost:4000/images/kube_26.png&amp;description=Kubernetes%20Series%20[Part3]:%20Kubernetes%20Service"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/kubernetes-series3&amp;media=http://localhost:4000/images/kube_22.png&amp;description=Kubernetes%20Series%20[Part2]:%20Kubernetes%20Workload%20Object"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series3&title=Kubernetes%20Series%20[Part3]:%20Kubernetes%20Service&summary=%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4%EC%97%90%EC%84%9C%EB%8A%94%20Service%20%EB%A6%AC%EC%86%8C%EC%8A%A4%EB%A5%BC%20%EC%9D%B4%EC%9A%A9%ED%95%98%EB%A9%B4%20%EB%8B%A4%EC%9D%8C%EA%B3%BC%20%EA%B0%99%EC%9D%80%20%EC%9E%A5%EC%A0%90%EC%9D%84%20%EC%96%BB%EC%9D%84%20%EC%88%98%20%EC%9E%88%EC%8A%B5%EB%8B%88%EB%8B%A4.&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/kubernetes-series3&title=Kubernetes%20Series%20[Part2]:%20Kubernetes%20Workload%20Object&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -943,8 +1247,6 @@
 <!--첫 번째 문단-->
 
 
-
-  
 
   
 
@@ -976,10 +1278,10 @@
 
   <div class="post_pagination">
     
-      <a href="/kubernetes-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part2]: Kubernetes Object</a>
+      <a href="/kubernetes-series2" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Kubernetes Series [Part2]: Kubernetes 기본 명령어</a>
     
     
-      <a href="/kubernetes-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part4]: Kubernetes 실습환경 구축하기<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/kubernetes-series4" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Kubernetes Series [Part3]: Kubernetes Service Object<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

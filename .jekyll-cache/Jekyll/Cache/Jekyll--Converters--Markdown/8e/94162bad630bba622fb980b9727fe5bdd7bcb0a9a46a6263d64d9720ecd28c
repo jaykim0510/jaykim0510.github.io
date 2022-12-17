@@ -1,4 +1,4 @@
-I"�$<hr />
+I"�><hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#kubernetes-network" id="markdown-toc-kubernetes-network">Kubernetes Network</a></li>
@@ -9,20 +9,32 @@
       <li><a href="#kube-dns" id="markdown-toc-kube-dns">kube-dns</a></li>
     </ul>
   </li>
-  <li><a href="#clusterip" id="markdown-toc-clusterip">ClusterIP</a></li>
-  <li><a href="#nodeport" id="markdown-toc-nodeport">NodePort</a></li>
-  <li><a href="#loacbalancer" id="markdown-toc-loacbalancer">LoacBalancer</a></li>
+  <li><a href="#clusterip" id="markdown-toc-clusterip">ClusterIP</a>    <ul>
+      <li><a href="#메니페스트-파일" id="markdown-toc-메니페스트-파일">메니페스트 파일</a></li>
+    </ul>
+  </li>
+  <li><a href="#nodeport" id="markdown-toc-nodeport">NodePort</a>    <ul>
+      <li><a href="#메니페스트-파일-1" id="markdown-toc-메니페스트-파일-1">메니페스트 파일</a></li>
+    </ul>
+  </li>
+  <li><a href="#loacbalancer" id="markdown-toc-loacbalancer">LoacBalancer</a>    <ul>
+      <li><a href="#메니페스트-파일-2" id="markdown-toc-메니페스트-파일-2">메니페스트 파일</a></li>
+    </ul>
+  </li>
   <li><a href="#ingress" id="markdown-toc-ingress">Ingress</a>    <ul>
       <li><a href="#클러스터-외부의-로드-밸런서만을-이용한-ingress" id="markdown-toc-클러스터-외부의-로드-밸런서만을-이용한-ingress">클러스터 외부의 로드 밸런서만을 이용한 Ingress</a></li>
       <li><a href="#클러스터-내부의-ingress-파드를-곁들인-ingress" id="markdown-toc-클러스터-내부의-ingress-파드를-곁들인-ingress">클러스터 내부의 Ingress 파드를 곁들인 Ingress</a></li>
+      <li><a href="#메니페스트-파일-3" id="markdown-toc-메니페스트-파일-3">메니페스트 파일</a></li>
     </ul>
   </li>
+  <li><a href="#headless" id="markdown-toc-headless">Headless</a></li>
   <li><a href="#참고자료" id="markdown-toc-참고자료">참고자료</a></li>
 </ul>
 
 <hr />
 
 <h1 id="kubernetes-network">Kubernetes Network</h1>
+
 <p>쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 <strong>localhost</strong>로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 <strong>파드의 IP 주소</strong>로 통신하면 됩니다.</p>
 
 <p><img src="../../images/kube_25.png" alt="" /></p>
@@ -80,6 +92,23 @@
 
 <p>(개발 단계에서는 <code class="language-plaintext highlighter-rouge">kubectl port-forward service/&lt;서비스명&gt; &lt;target port&gt;:&lt;service port&gt;</code>로 포트 포워딩해서 <code class="language-plaintext highlighter-rouge">localhost:&lt;target port&gt;</code> 로 접근 가능)</p>
 
+<h2 id="메니페스트-파일">메니페스트 파일</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ClusterIP</span>
+<span class="c1"># redis라는 Deployment 오브젝트에 IP할당</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">6379</span> <span class="c1"># clusterIP의 포트 (targetPort따로 없으면 targetPort(pod의 포트)도 6379가 됨)</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="na">selector</span><span class="pi">:</span> <span class="c1"># 어떤pod로 트래픽을 전달할지 결정</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">counter</span>
+    <span class="na">tier</span><span class="pi">:</span> <span class="s">db</span>
+</code></pre></div></div>
+
 <h1 id="nodeport">NodePort</h1>
 <ul>
   <li>외부에서 접근할 수 있도록 모든 노드에 <code class="language-plaintext highlighter-rouge">node port</code> 포트를 열어둔다</li>
@@ -92,6 +121,24 @@
 
 <p><img src="/images/kube_node_port.png" alt="" /></p>
 
+<h2 id="메니페스트-파일-1">메니페스트 파일</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># NodePort</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">counter-np</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3000</span> <span class="c1"># ClusterIP, Pod IP의 포트</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+      <span class="na">nodePort</span><span class="pi">:</span> <span class="m">31000</span> <span class="c1"># Node IP의 포트</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">counter</span>
+    <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
+</code></pre></div></div>
+
 <h1 id="loacbalancer">LoacBalancer</h1>
 
 <ul>
@@ -100,6 +147,24 @@
 </ul>
 
 <p><img src="/images/kube_load_balancer.png" alt="" /></p>
+
+<h2 id="메니페스트-파일-2">메니페스트 파일</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># LoadBalancer</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">counter-lb</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">LoadBalancer</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">30000</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="m">3000</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">counter</span>
+    <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
+</code></pre></div></div>
 
 <h1 id="ingress">Ingress</h1>
 <p>인그레스는 L7(application layer) 로드 밸런싱을 제공하는 리소스입니다. 인그레스는 서비스들을 묶는 상위 객체로, <code class="language-plaintext highlighter-rouge">kind: Ingress</code>타입 리소스를 지정합니다. 인그레스를 이용하면 하나의 IP주소로 N개의 애플리케이션을 로드 밸런싱할 수 있습니다.</p>
@@ -119,6 +184,32 @@
 
 <p>Nginx 인그레스 컨트롤러는 이름은 컨트롤러이지만 L7 수준의 로드 밸런싱을 직접 처리하기도 합니다.<br />
 <img src="../../images/kube_30.png" alt="" /></p>
+
+<h2 id="메니페스트-파일-3">메니페스트 파일</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">echo-v1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">rules</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">v1.echo.192.168.64.5.sslip.io</span>
+      <span class="na">http</span><span class="pi">:</span>
+        <span class="na">paths</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+            <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+            <span class="na">backend</span><span class="pi">:</span>
+              <span class="na">service</span><span class="pi">:</span>
+                <span class="na">name</span><span class="pi">:</span> <span class="s">echo-v1</span>
+                <span class="na">port</span><span class="pi">:</span>
+                  <span class="na">number</span><span class="pi">:</span> <span class="m">3000</span>
+<span class="c1"># 들어오는 요청의 host가 v1.echo.192.168.64.5.sslip.io이면 host echo-v1이라는 서비스가 가지는 IP 주소의 3000번 포트로 보내라</span>
+</code></pre></div></div>
+
+<p>spec에는 <code class="language-plaintext highlighter-rouge">rules</code>, <code class="language-plaintext highlighter-rouge">defaultBackend</code>(어느 rule에도 속하지 않을 경우) 등이 있습니다.<br />
+<a href="https://kubernetes.io/docs/reference/kubernetes-api/service-resources/ingress-v1/" target="_blank">(Ingress 공식문서 참고)</a></p>
+
+<h1 id="headless">Headless</h1>
 
 <h1 id="참고자료">참고자료</h1>
 <ul>

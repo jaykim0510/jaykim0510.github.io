@@ -1,0 +1,176 @@
+I"�0<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#kubernetes-network" id="markdown-toc-kubernetes-network">Kubernetes Network</a></li>
+  <li><a href="#network-오브젝트를-사용하는-이유" id="markdown-toc-network-오브젝트를-사용하는-이유">Network 오브젝트를 사용하는 이유</a>    <ul>
+      <li><a href="#외부-클라이언트와의-통신" id="markdown-toc-외부-클라이언트와의-통신">외부 클라이언트와의 통신</a></li>
+      <li><a href="#파드-집합에-대한-엔드포인트-제공" id="markdown-toc-파드-집합에-대한-엔드포인트-제공">파드 집합에 대한 엔드포인트 제공</a></li>
+      <li><a href="#파드-엔드포인트-추상화" id="markdown-toc-파드-엔드포인트-추상화">파드 엔드포인트 추상화</a></li>
+      <li><a href="#kube-dns" id="markdown-toc-kube-dns">kube-dns</a></li>
+    </ul>
+  </li>
+  <li><a href="#clusterip" id="markdown-toc-clusterip">ClusterIP</a>    <ul>
+      <li><a href="#메니페스트-파일" id="markdown-toc-메니페스트-파일">메니페스트 파일</a></li>
+    </ul>
+  </li>
+  <li><a href="#nodeport" id="markdown-toc-nodeport">NodePort</a>    <ul>
+      <li><a href="#메니페스트-파일-1" id="markdown-toc-메니페스트-파일-1">메니페스트 파일</a></li>
+    </ul>
+  </li>
+  <li><a href="#loacbalancer" id="markdown-toc-loacbalancer">LoacBalancer</a></li>
+  <li><a href="#ingress" id="markdown-toc-ingress">Ingress</a>    <ul>
+      <li><a href="#클러스터-외부의-로드-밸런서만을-이용한-ingress" id="markdown-toc-클러스터-외부의-로드-밸런서만을-이용한-ingress">클러스터 외부의 로드 밸런서만을 이용한 Ingress</a></li>
+      <li><a href="#클러스터-내부의-ingress-파드를-곁들인-ingress" id="markdown-toc-클러스터-내부의-ingress-파드를-곁들인-ingress">클러스터 내부의 Ingress 파드를 곁들인 Ingress</a></li>
+    </ul>
+  </li>
+  <li><a href="#headless" id="markdown-toc-headless">Headless</a></li>
+  <li><a href="#참고자료" id="markdown-toc-참고자료">참고자료</a></li>
+</ul>
+
+<hr />
+
+<h1 id="kubernetes-network">Kubernetes Network</h1>
+
+<p>쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 <strong>localhost</strong>로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 <strong>파드의 IP 주소</strong>로 통신하면 됩니다.</p>
+
+<p><img src="../../images/kube_25.png" alt="" /></p>
+
+<h1 id="network-오브젝트를-사용하는-이유">Network 오브젝트를 사용하는 이유</h1>
+
+<p>이렇게 쿠버네티스에서는 클러스터 내부에서는 네트워크가 자동으로 구성되어 Service 리소스를 이용하지 않고도 파드 간 통신이 가능합니다. 그러면 Network 오브젝트를 굳이 사용하는 이유는 뭘까요?</p>
+
+<h2 id="외부-클라이언트와의-통신">외부 클라이언트와의 통신</h2>
+
+<ul>
+  <li>파드가 가지고 있는 IP는 클러스터 내부에서 유효한 IP 주소</li>
+  <li>클러스터 외부에 있는 클라이언트와 통신하기 위해서는 <strong>외부로 노출시킬 IP 주소</strong>가 필요하다</li>
+  <li>이를 위해 쿠버네티스에서는 LoadBalancer, Ingress를 제공한다</li>
+</ul>
+
+<h2 id="파드-집합에-대한-엔드포인트-제공">파드 집합에 대한 엔드포인트 제공</h2>
+
+<ul>
+  <li>파드 IP 주소로 통신한다는 말은 특정 파드 한 개 하고만 통신을 한다는 뜻이다</li>
+  <li>이렇게 되면, 해당 파드가 위치한 노드가 장애가 난 경우, 대처가 불가능하다</li>
+  <li>트래픽도 모두 그 파드 한 곳에만 모두 몰리게 될 것이다</li>
+  <li>이를 해결하기 위해서 쿠버네티스 서비스 오브젝트는 <strong>파드 집합에 대한 단일 엔드포인트</strong>를 제공한다</li>
+</ul>
+
+<h2 id="파드-엔드포인트-추상화">파드 엔드포인트 추상화</h2>
+
+<ul>
+  <li>파드는 중간에 장애가 날 경우, 해당 파드를 종료하고 새로운 파드를 실행한다</li>
+  <li>또한 중간에 업데이트가 발생하면, 또 새로운 파드를 실행한다</li>
+  <li>이렇게 파드는 계속 변경되기 때문에 파드 IP 주소를 직접 사용할 경우 계속 수동으로 업데이트 해줘야 한다</li>
+</ul>
+
+<h2 id="kube-dns">kube-dns</h2>
+
+<p><img src="/images/kube-dns.webp" alt="" /></p>
+
+<ul>
+  <li>쿠버네티스는 서비스명으로 통신을 제공하기 위해 마스터 노드에 kube-dns라는 서버를 가지고 있다</li>
+  <li>쿠버네티스는 서비스 오브젝트 정보를 kube-dns에 저장하고 있다</li>
+  <li>워커 노드에 실행되고 있는 컨테이너들은 <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> 파일에 이 kube-dns 네임서버 정보를 가지고 있다</li>
+  <li>컨테이너는 서비스 디스커버리가 필요하면 <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> 파일에 있는 네임서버(kube-dns)로 이동하고, 네임서버에 저장되어 있는 서비스를 디스커버리한다</li>
+</ul>
+
+<h1 id="clusterip">ClusterIP</h1>
+
+<ul>
+  <li>ClusterIP는 서비스의 기본 타입</li>
+  <li>ClusterIP 서비스를 생성하면 <strong>클러스터 내부에서만 통신 가능한 가상 IP</strong>가 할당</li>
+  <li>kube-proxy는 노드 안에서 ClusterIP에서 들어온 트래픽을 원하는 파드로 전송</li>
+  <li>(위의 장점중 파드 집합에 대한 엔드포인트, 엔드포인트 추상화 이점을 제공)</li>
+</ul>
+
+<p><img src="../../images/kube_clusterip.png" alt="" /></p>
+
+<p>(개발 단계에서는 <code class="language-plaintext highlighter-rouge">kubectl port-forward service/&lt;서비스명&gt; &lt;target port&gt;:&lt;service port&gt;</code>로 포트 포워딩해서 <code class="language-plaintext highlighter-rouge">localhost:&lt;target port&gt;</code> 로 접근 가능)</p>
+
+<h2 id="메니페스트-파일">메니페스트 파일</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ClusterIP</span>
+<span class="c1"># redis라는 Deployment 오브젝트에 IP할당</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">6379</span> <span class="c1"># clusterIP의 포트 (targetPort따로 없으면 targetPort(pod의 포트)도 6379가 됨)</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+  <span class="na">selector</span><span class="pi">:</span> <span class="c1"># 어떤pod로 트래픽을 전달할지 결정</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">counter</span>
+    <span class="na">tier</span><span class="pi">:</span> <span class="s">db</span>
+</code></pre></div></div>
+
+<h1 id="nodeport">NodePort</h1>
+<ul>
+  <li>외부에서 접근할 수 있도록 모든 노드에 <code class="language-plaintext highlighter-rouge">node port</code> 포트를 열어둔다</li>
+  <li>클러스터 외부의 클라이언트는 <code class="language-plaintext highlighter-rouge">&lt;임의의 노드 IP&gt;:node port</code> 로 클러스터와 통신</li>
+  <li>해당 트래픽은 ClusterIP 서비스 오브젝트에게 전달되고, ClusterIP 서비스 오브젝트를 이를 파드 집합으로 포워딩</li>
+  <li><strong>노출된 IP주소의 노드는 단일 장애점(Single Point of Failure)</strong>이 된다</li>
+  <li>NodePort는 쿠버네티스에서 <strong>지정한 범위(30000~32767)</strong> 안에서만 지정 가능</li>
+  <li>노드 포트 번호는 범위 안에서 직접 지정 가능하지만 쿠버네티스에서는 노드 포트 번호를 직접 지정하는 것을 지양</li>
+</ul>
+
+<p><img src="/images/kube_node_port.png" alt="" /></p>
+
+<h2 id="메니페스트-파일-1">메니페스트 파일</h2>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># NodePort</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">counter-np</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3000</span> <span class="c1"># ClusterIP, Pod IP의 포트</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+      <span class="na">nodePort</span><span class="pi">:</span> <span class="m">31000</span> <span class="c1"># Node IP의 포트</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">counter</span>
+    <span class="na">tier</span><span class="pi">:</span> <span class="s">app</span>
+</code></pre></div></div>
+
+<h1 id="loacbalancer">LoacBalancer</h1>
+
+<ul>
+  <li>외부에서 접근 가능한 External IP를 할당 받는다</li>
+  <li>LoadBalancer서비스를 생성하면 컨테이너 내부에서의 통신을 위해 ClusterIP도 자동 생성 (Interal IP)</li>
+</ul>
+
+<p><img src="/images/kube_load_balancer.png" alt="" /></p>
+
+<h1 id="ingress">Ingress</h1>
+<p>인그레스는 L7(application layer) 로드 밸런싱을 제공하는 리소스입니다. 인그레스는 서비스들을 묶는 상위 객체로, <code class="language-plaintext highlighter-rouge">kind: Ingress</code>타입 리소스를 지정합니다. 인그레스를 이용하면 하나의 IP주소로 N개의 애플리케이션을 로드 밸런싱할 수 있습니다.</p>
+<h2 id="클러스터-외부의-로드-밸런서만을-이용한-ingress">클러스터 외부의 로드 밸런서만을 이용한 Ingress</h2>
+<ul>
+  <li>GKE 인그레스</li>
+</ul>
+
+<p>외부 로드 밸런서로 인그레스를 사용한다면, 인그레스 리소스 생성만으로 충분합니다.<br />
+<img src="../../images/kube_ingress.png" alt="" /></p>
+<h2 id="클러스터-내부의-ingress-파드를-곁들인-ingress">클러스터 내부의 Ingress 파드를 곁들인 Ingress</h2>
+<ul>
+  <li>Nginx 인그레스</li>
+</ul>
+
+<p>클러스터 내부에서 인그레스를 이용해 로드 밸런싱을 할 경우 인그레스용 파드를 클러스터 내부에 생성해야 합니다. 또 내부의 인그레스용 파드를 외부에서 접속할 수 있도록 하기 위해 별도의 LoadBalancer 서비스를 생성해야 합니다.</p>
+
+<p>Nginx 인그레스 컨트롤러는 이름은 컨트롤러이지만 L7 수준의 로드 밸런싱을 직접 처리하기도 합니다.<br />
+<img src="../../images/kube_30.png" alt="" /></p>
+
+<h1 id="headless">Headless</h1>
+
+<h1 id="참고자료">참고자료</h1>
+<ul>
+  <li><a href="http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&amp;mallGb=KOR&amp;barcode=9791165216283" target="_blank">쿠버네티스 완벽 가이드 책</a></li>
+  <li><a href="https://subicura.com/k8s/guide/" target="_blank">subicura님의 kubenetes안내서</a></li>
+  <li><a href="https://stackoverflow.com/questions/65887993/when-to-choose-loadbalancer-over-nodeport-service-typeor-vice-versa-in-kub" target="_blank">NodePort vs LoadBalancer stackoverflow</a></li>
+  <li><a href="https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview" target="_blank">Google Kubernetes Engine 가이드</a></li>
+  <li><a href="https://www.confluent.io/blog/kafka-listeners-explained/" target="_blank">Confluent 블로그</a></li>
+</ul>
+:ET
