@@ -61,7 +61,7 @@ spec:
 
 ![](/images/kube_10.png)  
 
-## Pod
+# Pod
 
 ![](/images/kube_11.png)  
 
@@ -73,7 +73,7 @@ spec:
 - Scheduler는 계속 할당할 새로운 Pod가 있는지 체크하고 있으면 노드에 파드를 할당. 
 - 그리고 노드에 있는 Kubelet은 컨테이너를 생성하고 결과를 API서버에 보고합니다.
 
-### 매니페스트 파일
+## 매니페스트 파일
 
 ```yaml
 apiVersion: v1
@@ -92,18 +92,18 @@ Pod의 spec에는 `containers`, `volumes`, `restartPolicy`, `hostname`, `hostNet
 [(Pod공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/){:target="_blank"}
 
 
-### 파드 디자인 패턴
+## 파드 디자인 패턴
 
 - 대부분의 경우 하나의 파드에 하나의 컨테이너를 가진다
 - 하지만 메인 컨테이너를 지원하는 서브 컨테이너를 가지도록 파드를 디자인할 수도 있다 => 이를 사이드카 패턴이라고 한다
 - (서브 컨테이너의 예: 프록시 역할, 설정값을 동적으로 변경시키는 역할, 로컬 캐시 역할 등)
 
-### 파드명 제한
+## 파드명 제한
 
 - 이용 가능한 문자: '영어 소문자', '숫자', '-', '.' (언더바(_)는 안됨)
 - 시작과 끝은 '영문 소문자'
 
-### 명령어 실행
+## 명령어 실행
 
 - `spec.containers.command` 와 `spec.containers.args` 로 나타낼 수 있다
 - (`command`는 기본 명령어, `args`는 `command`에 전달할 인자로 생각하면 된다)
@@ -111,7 +111,7 @@ Pod의 spec에는 `containers`, `volumes`, `restartPolicy`, `hostname`, `hostNet
 - `kubectl exec -it <파드명> -- <전달할 명령어>` 명령어로 실행중인 컨테이너에 명령어를 실행할 수도 있다
 - 특정 컨테이너에 명령어를 전달하고 싶으면 `kubectl exec -it <파드명> -c <컨테이너명> -- <전달할 명령어>` 이렇게 쓴다
 
-### 기타 설정
+## 기타 설정
 
 - `spec.hostNetwork`
   - 호스트(노드) IP 주소를 파드의 IP 주소로 설정할 수 있다
@@ -126,14 +126,14 @@ Pod의 spec에는 `containers`, `volumes`, `restartPolicy`, `hostname`, `hostNet
   - 작업 디렉터리를 설정할 수 있다
   - 쿠버네티스에서 특정 스크립트를 실행하는 명령어를 실행할 때, 해당 디렉터리에서 스크립트를 실행한다
 
-### 파드 실습
+## 파드 실습
 
 
 
 
 
 
-## ReplicaSet
+# ReplicaSet
 
 ![](/images/kube_13.png)  
 
@@ -143,7 +143,7 @@ Pod의 spec에는 `containers`, `volumes`, `restartPolicy`, `hostname`, `hostNet
 - Replicaset을 사용하는 이유는 노드 장애 대비(High Availability), 트래픽 분산(Load Balancing) 때문이다
 - 보통 직접적으로 ReplicaSet을 사용하기보다는 Deployment등 다른 오브젝트에 의해서 사용되는 경우가 많다  
 
-### 메니페스트 파일
+## 매니페스트 파일
 
 ```yaml
 apiVersion: apps/v1
@@ -171,7 +171,7 @@ ReplicaSet의 spec에는 `replicas`, `selector`, `template`, `minReadySeconds`�
 [(ReplicaSet 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/replica-set-v1/#ReplicaSetSpec){:target="_blank"}
 
 
-### 레플리카셋 실습
+## 레플리카셋 실습
 
 
 
@@ -179,7 +179,7 @@ ReplicaSet의 spec에는 `replicas`, `selector`, `template`, `minReadySeconds`�
 
 
 
-## Deployment  
+# Deployment  
 
 ![](/images/kube_18.png)  
 
@@ -190,7 +190,7 @@ ReplicaSet의 spec에는 `replicas`, `selector`, `template`, `minReadySeconds`�
 - Deployment 오브젝트가 Pod의 버전을 관리하는 과정
   ![](/images/kube_17.png)  
 
-### 메니페스트 파일
+## 매니페스트 파일
 
 ```yaml
 apiVersion: apps/v1
@@ -222,7 +222,7 @@ spec:
 spec에는 `replicas`, `selector`, `template`, `strategy`  등이 있습니다.  
 [(Deployment 공식문서 참고)](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/#DeploymentSpec){:target="_blank"}  
 
-### 디플로이먼트 업데이트 전략
+## 디플로이먼트 업데이트 전략
 
 - 기본값은 RollingUpdate 이고 그 밖에 Recreate가 있다
 
@@ -246,7 +246,7 @@ spec에는 `replicas`, `selector`, `template`, `strategy`  등이 있습니다.
 
 
 
-## DaemonSet
+# DaemonSet
 
 
 - 데몬셋은 레플리카셋의 특수한 형태
@@ -256,7 +256,7 @@ spec에는 `replicas`, `selector`, `template`, `strategy`  등이 있습니다.
 - (ex. 로그를 호스트 단위로 수집하는 Fluentd, 파드 리소스 사용 현황 및 노드 상태를 모니터링하는 Datadog)
 
 
-### 매니페스트 파일
+## 매니페스트 파일
 
 ```yaml
 apiVersion: apps/v1
@@ -283,12 +283,12 @@ spec:
 ```
 
 
-### 업데이트 전략
+## 업데이트 전략
 
   - **OnDelete**: 노드가 정지된 경우에만 다시 실행할 때 업데이트 된다 -> 운영상 이유로 가급적 정지되면 안되는 경우 사용
   - **RollingUpdate**: 즉시 파드를 업데이트한다 -> 버전 업데이트가 바로바로 필요한 경우 사용
 
-### 데몬셋 실습
+## 데몬셋 실습
 
 ```sh
 kubectl apply -f sample-ds.yaml
@@ -299,7 +299,7 @@ kubectl get pods -o wide
 ```
 
 
-## StatefulSet
+# StatefulSet
 
 
 - 레플리카셋의 특수한 형태
@@ -316,8 +316,9 @@ kubectl get pods -o wide
 - 레플리카셋은 파드를 삭제하면 무작위로 삭제된다
 - 스테이트풀셋은 0번째 파드가 항상 가장 먼저 생성되고, 가장 늦게 삭제된다
 - 만약 마스터-슬레이브 구조로 파드를 구성한다면 스테이트풀셋의 0번째 파드를 마스터로 사용하면 된다
+- 스테이트풀셋은 서비스 오브젝트의 Headless, 볼륨 오브젝트의 StorageClass 부분에서 더 다뤄볼 것이다
 
-### 메니페스트 파일
+## 매니페스트 파일
 
 ```yaml
 apiVersion: apps/v1
@@ -354,7 +355,7 @@ spec:
               storage: 1G
 ```
 
-### 스테이트풀셋 실습
+## 스테이트풀셋 실습
 
 ```sh
 kubectl apply -f sample-statefulset.yaml

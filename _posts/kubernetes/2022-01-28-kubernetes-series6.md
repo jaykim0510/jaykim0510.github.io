@@ -79,6 +79,8 @@ spec:
 - (미리 영구 디스크를 생성한 후에 적용해야 한다)
 - ex. GCE Persistent Disk, AWS Elastic Block Store 등
 
+## 매니페스트 파일
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -103,6 +105,8 @@ spec:
 - 영구볼륨을 요청하는 리소스
 - 영구볼륨은 영구볼륨클레임을 통해 사용한다
 - 영구볼륨클레임에서 지정된 조건을 기반으로 영구볼륨을 요청하면, 스케줄러는 현재 가지고 있는 영구볼륨중에서 적당한 볼륨을 할당한다
+
+## 매니페스트 파일
 
 ```yaml
 apiVersion: v1
@@ -144,12 +148,31 @@ spec:
       claimName: # 영구볼륨클레임명
 ```
 
-## 동적 프로비저닝
+```
+1. 저장소 생성(Local, GCP, AWS 등)
+2. PersistentVolume 생성
+3. PersistentVolumeClaim 생성
+4. 워크로드 오브젝트에서 사용
+5. 정적으로 PersistentVolume 할당 (자원 낭비)
+```
+
+# StorageClass
 
 - 위의 방법은 사전에 영구 볼륨을 생성해야 하는 번거로움
 - 용량을 동적으로 확보할 수 없어서 리소스를 낭비할 수 있다
+- StorageClass로 어디서(Local, GCP, AWS 등) 저장소를 사용할지만 정의하고, 볼륨의 크기는 PersistentVolumeClaim 에서 동적으로 프로비저닝 하자
 - 동적 프로비저닝을 이용하면, 영구볼륨클레임이 생성될때 동적으로 영구볼륨을 생성하고 할당한다
 - 동적 프로비저닝을 사용하려면, 사전에 어떤 영구 볼륨을 생성할지 정의하는 스토리지클래스를 정의해야 한다
+
+```
+1. 저장소 생성(Local, GCP, AWS 등)
+2. StorageClass 생성
+3. PersistentVolumeClaim 생성
+4. 워크로드 오브젝트에서 사용
+5. 동적으로 PersistentVolume 생성 및 할당
+```
+
+## 매니페스트 파일
 
 ```yaml
 apiVersion: storage.k8s.io/v1
@@ -163,18 +186,31 @@ reclaimPolicy:
 
 ```yaml
 apiVersion: v1
-kind:
+kind: PersistentVolumeClaim
 metadata:
   name:
 spec:
   storageClassName: # 스토리지클래스명
-  ...
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
 ```
 
-## 스테이트풀셋에서 영구볼륨클레임 사용
+# 스테이트풀셋에서 영구볼륨클레임 사용
 
 - 스테이트풀셋에서는 영구 데이터 영역을 사용하는 경우가 많다
 - `spec.volumeClaimTemplate` 항목을 통해 영구볼륨클레임을 별도로 정의하지 않고도, 자동으로 영구볼륨클레임을 생성할 수 있다 (스토리지클래스 + 스테이트풀셋)
+
+```
+1. 저장소 생성(Local, GCP, AWS 등)
+2. StorageClass 생성
+3. 워크로드 오브젝트에서 spec.volumeClaimTemplate을 이용해 PersistentVolumeClaim 생성
+4. 동적으로 PersistentVolume 생성 및 할당
+```
+
+## 매니페스트 파일
 
 ```yaml
 apiVersion: apps/v1
@@ -182,11 +218,22 @@ kind: StatefulSet
 ...
 spec:
   template:
-  ...
+    ...
+    spec:
+      containers:
+      - name:
+        image:
+        volumeMounts:
+        - name: pvc-template-volume
+          mountPath: /tmp
   volumeClaimTemplates:
   - metadata:
-      name:
+      name: pvc-template-volume
     spec:
       storageClassName:
-      ...
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
 ```

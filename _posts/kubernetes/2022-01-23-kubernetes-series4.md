@@ -20,9 +20,9 @@ tags: Kubernetes
 
 > In many use cases, a workload has to be accessed by other workloads in the cluster or exposed to the outside world.
 
-![](/images/kube_20.png)  
+![](../../images/kube_25.png)  
 
-쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 **localhost**로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 **파드의 IP 주소**로 통신하면 됩니다.  
+쿠버네티스에서 파드 내부에는 여러 컨테이너가 존재할 수 있는데, 같은 파드 내에 있는 컨테이너는 동일한 IP 주소를 할당받게 됩니다. 따라서 같은 파드의 컨테이너로 통신하려면 `localhost`로 통신할 수 있고, 다른 파드의 컨테이너와 통신하려면 **파드의 IP 주소**로 통신하면 됩니다.  
 
 Service는 네트워크와 관련된 오브젝트입니다. Pod은 자체 IP를 가지고 다른 Pod와 통신할 수 있지만, 쉽게 사라지고 생성되는 특징 때문에 직접 통신하는 방법은 권장하지 않습니다. 쿠버네티스는 Pod와 직접 통신하는 방법 대신, 별도의 고정된 IP를 가진 서비스를 만들고 그 서비스를 통해 Pod에 접근하는 방식을 사용합니다.  
 Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 내부 로드 밸런서를 생성할 때 사용합니다. 내부 DNS에 서비스 이름을 도메인으로 등록하기 때문에 서비스 디스커버리 역할도 합니다.  
@@ -33,8 +33,7 @@ Pod을 외부 네트워크와 연결해주고 여러 개의 Pod을 바라보는 
 
 NodePort는 기본적으로 ClusterIP의 기능을 포함하고 있고, LoadBalancer는 NodePort의 기능을 포함하고 있습니다.  
 
-
-![](../../images/kube_25.png)  
+![](/images/kube_20.png)  
 
 # Network 오브젝트를 사용하는 이유
 
@@ -82,7 +81,7 @@ NodePort는 기본적으로 ClusterIP의 기능을 포함하고 있고, LoadBala
 
 (개발 단계에서는 `kubectl port-forward service/<서비스명> <target port>:<service port>`로 포트 포워딩해서 `localhost:<target port>` 로 접근 가능)
 
-## 메니페스트 파일
+## 매니페스트 파일
 
 ```yaml
 # ClusterIP
@@ -110,7 +109,7 @@ spec:
 
 ![](/images/kube_node_port.png)
 
-## 메니페스트 파일
+## 매니페스트 파일
 
 
 ```yaml
@@ -138,7 +137,7 @@ spec:
 
 ![](/images/kube_load_balancer.png)
  
-## 메니페스트 파일
+## 매니페스트 파일
 
 
 ```yaml
@@ -186,7 +185,7 @@ Ingress는 Pod, ReplicaSet, Deployment, Service와 달리 별도의 컨트롤러
 Nginx 인그레스 컨트롤러는 이름은 컨트롤러이지만 L7 수준의 로드 밸런싱을 직접 처리하기도 합니다.  
 ![](../../images/kube_30.png)
 
-## 메니페스트 파일
+## 매니페스트 파일
 
 
 ```yaml
@@ -214,6 +213,56 @@ spec에는 `rules`, `defaultBackend`(어느 rule에도 속하지 않을 경우) 
 
 
 # Headless
+
+- 헤드리스 서비스는 파드의 집합에 대한 엔드포인트인 **ClusterIP가 없다**
+- 개별 파드에 직접 접근한다
+- 워크로드 오브젝트가 **스테이트풀셋**인 경우에만 특별히 **파드명으로 IP 주소를 디스커버리할 수 있다**
+- (다른 오브젝트는 파드명에 해시값이 붙지만, 스테이트풀셋의 경우에는 특별히 파드명 뒤에 인덱스 번호만 붙어 있다)
+
+## 매니페스트 파일
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-headless
+spec:
+  type: CLusterIP
+  clusterIP: None
+  ports:
+  - name: "http-port"
+    protocol: "TCP"
+    port: 80
+    targetPort: 80
+  selector:
+    app: sample-app
+```
+
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sample-statefulset
+spec:
+  serviceName: sample-headless
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sample-app
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      containers:
+      - name: nginx-container
+        image: amsy810/echo-nginx:v2.0
+```
+
+## 헤드리스 서비스로 파드명 디스커버리
+
+- `<파드명>.<서비스명>.<네임스페이스명>.svc.cluster.local`
+- (ex. `sample-statefulset-0.sample-headless.default.svc.cluster.local`)
 
 # 참고자료
 - [쿠버네티스 완벽 가이드 책](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9791165216283){:target="_blank"}  
