@@ -57,8 +57,12 @@ tags: MLOps
 </div>
 
 <div class="pen-para">
-    <div class="pen-bar"><i class="fas fa-pen"></i> Popular tools</div>
-    <div class="pen-content">Popular data ingestion tools include Fivetran, Airbyte, Stitch, etc.</div>
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Popular tools
+    </div>
+    <div class="pen-content">
+      Popular data ingestion tools include Fivetran, Airbyte, Stitch, etc.
+    </div>
 </div>
 
 # 참고
