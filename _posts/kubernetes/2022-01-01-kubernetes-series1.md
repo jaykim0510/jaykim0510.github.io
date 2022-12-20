@@ -188,6 +188,27 @@ Deleting cluster "kindcluster" ...
 
 ## GKE(Google Kubernetes Engine)
 
+- 클러스터 생성하기
+
+![](/images/kube_43.png)
+
+![](/images/kube_44.png)
+
+- gcloud (Google SDK)설치 프로그램 다운로드
+    - https://cloud.google.com/sdk/docs/install?hl=ko 접속
+    - tar -xzf google-cloud-cli-402.0.0-darwin-arm.tar.gz
+    - ./google-cloud-sdk/install.sh
+    - ./google-cloud-sdk/bin/gcloud init
+    - source ~/.zshrc
+- 나의 GKE에 관한 정보를 ~/.kube/config 파일에 저장 => kubectl 명령어를 전달할 쿠버네티스 클러스터 설정
+    - gcloud components install gke-gcloud-auth-plugin
+- 클러스터에 연결
+    - gcloud container clusters get-credentials my-cluster --zone us-central1-a --project second-lodge-364202
+- 연결 테스트
+    - kubectl get pods
+- 노드 수 줄이기 (사실상 GKE 종료하는 방법)
+    - gcloud container clusters resize my-cluster --num-nodes=0 --zone us-central1-a(GKE 종료)
+
 ## EKS(Elastic Kubernetes Service)
 
 # 참고자료  

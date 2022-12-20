@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Kubernetes Series [Part13]: Helm'
+title:  'Kubernetes Series [Part15]: Django on Kubernetes'
 description: 
 date:   2022-02-01 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
