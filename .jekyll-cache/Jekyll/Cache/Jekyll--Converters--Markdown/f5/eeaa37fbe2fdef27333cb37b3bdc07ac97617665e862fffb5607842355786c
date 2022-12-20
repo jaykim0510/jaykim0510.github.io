@@ -1,0 +1,297 @@
+I"�h<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#what-is-feast" id="markdown-toc-what-is-feast">What is Feast</a></li>
+  <li><a href="#언제-feature-store가-필요한가" id="markdown-toc-언제-feature-store가-필요한가">언제 Feature Store가 필요한가</a></li>
+  <li><a href="#feature-store의-핵심-구성-요소" id="markdown-toc-feature-store의-핵심-구성-요소">Feature Store의 핵심 구성 요소</a></li>
+  <li><a href="#why-feast" id="markdown-toc-why-feast">Why Feast</a></li>
+  <li><a href="#feast-실습" id="markdown-toc-feast-실습">Feast 실습</a>    <ul>
+      <li><a href="#initialization" id="markdown-toc-initialization">Initialization</a></li>
+      <li><a href="#data-ingestion" id="markdown-toc-data-ingestion">Data Ingestion</a></li>
+      <li><a href="#feature-definition" id="markdown-toc-feature-definition">Feature Definition</a></li>
+      <li><a href="#historical-features" id="markdown-toc-historical-features">Historical features</a></li>
+      <li><a href="#materialize" id="markdown-toc-materialize">Materialize</a></li>
+      <li><a href="#online-features" id="markdown-toc-online-features">Online Features</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="what-is-feast">What is Feast</h1>
+
+<p><img src="/images/feast_3.png" alt="" /></p>
+
+<p>To operate machine learning systems at scale, teams need to have access to a wealth of feature data to both train their models, as well as to serve them in production. GO-JEK and Google Cloud are pleased to announce the release of Feast, an open source feature store that allows teams to manage, store, and discover features for use in machine learning projects.</p>
+
+<p>Feast gives teams the ability to define and publish features to this unified store, which in turn facilitates discovery and feature reuse across machine learning projects.</p>
+
+<p>Feast <strong>standardize the definition, storage and access of features for training and serving.</strong> It acts as a bridge between data engineering and machine learning.</p>
+
+<h1 id="언제-feature-store가-필요한가">언제 Feature Store가 필요한가</h1>
+
+<ul>
+  <li>필요 없는 경우
+    <ul>
+      <li>All of our data points are independent, stateless, from client-side and there is no entity that has changing features over time</li>
+    </ul>
+  </li>
+  <li>필요한 경우
+    <ul>
+      <li>when we need to have up-to-date features for an entity that we continually generate predictions for. For example, a user’s behavior (clicks, purchases, etc.) on an e-commerce platform or the deliveries a food runner recently made in the last hour, etc</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="feature-store의-핵심-구성-요소">Feature Store의 핵심 구성 요소</h1>
+
+<p><img src="/images/feast.png" alt="" /></p>
+
+<ul>
+  <li>digest: 여러 데이터 소스에서 데이터를 읽어올 수 있어야함</li>
+  <li>definition: feature를 정의할 수 있어야함</li>
+  <li>offline: 모델 훈련을 위해 적절한 feature를 제공할 수 있어야함</li>
+  <li>online: 추론을 위해 낮은 지연률로 feature를 제공할 수 있어야함</li>
+</ul>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Feature Store
+    </div>
+    <div class="pen-content">
+      <li>Feast, Hopsworks, Tecton, Rasgo, etc</li>
+      <li>AWS의 Sagemaker, GCP의 Vertex AI</li>
+    </div>
+</div>
+
+<h1 id="why-feast">Why Feast</h1>
+
+<ul>
+  <li>
+    <p>Discoverability and reuse of features: A centralized feature store allows organizations to build up a foundation of features that can be reused across projects. Teams are then able to utilize features developed by other teams, and as more features are added to the store it becomes easier and cheaper to build models.</p>
+  </li>
+  <li>
+    <p>Access to features for training: Feast allows users to easily access historical feature data. This allows users to produce datasets of features for use in training models. ML practitioners can then focus more on modelling and less on feature engineering.</p>
+  </li>
+  <li>
+    <p>Access to features in serving: Feature data is also available to models in production through a feature serving API. The serving API has been designed to provide low latency access to the latest feature values.</p>
+  </li>
+  <li>
+    <p>Consistency between training and serving: Feast provides consistency by managing and unifying the ingestion of data from batch and streaming sources, using Apache Beam, into both the feature warehouse and feature serving stores. Users can query features in the warehouse and the serving API using the same set of feature identifiers.</p>
+  </li>
+  <li>
+    <p>Standardization of features: Teams are able to capture documentation, metadata and metrics about features. This allows teams to communicate clearly about features, test features data, and determine if a feature is useful for a particular model.</p>
+  </li>
+</ul>
+
+<div class="fire-para">
+    <div class="fire-bar"><i class="fas fa-question"></i> Is Feast a database?</div>
+    <div class="fire-content">No. Feast is a tool that manages data stored in other systems (e.g. BigQuery, Cloud Firestore, Redshift, DynamoDB). It is not a database, but it helps manage data stored in other systems.</div>
+</div>
+
+<h1 id="feast-실습">Feast 실습</h1>
+
+<p><img src="/images/feast_2.png" alt="" /></p>
+
+<h2 id="initialization">Initialization</h2>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>feast
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>feast init <span class="nt">--minimal</span> <span class="nt">--template</span> <span class="nb">local </span>feast_project
+<span class="nt">------------------------------------------------------------------------</span>
+Creating a new Feast repository <span class="k">in</span> /Users/peter/feast_project.
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir -p ~/feast_project/store
+
+touch ~/feast_project/feature_repo/features.py
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>feast_project
+├── feature_repo
+│   └── feature_store.yaml <span class="c"># configuration</span>
+│   └── features.py <span class="c"># feature definitions</span>
+└── store
+</code></pre></div></div>
+
+<p>We’re going to configure the locations for our registry and online store (SQLite) in our <code class="language-plaintext highlighter-rouge">feature_store.yaml</code> file.</p>
+
+<ul>
+  <li>registry: contains information about our feature repository, such as data sources, feature views, etc. Since it’s in a DB, instead of a Python file, it can very quickly be accessed in production.</li>
+  <li>online store: DB (SQLite for local) that stores the (latest) features for defined entities to be used for online inference.</li>
+</ul>
+
+<p>If all our feature definitions look valid, Feast will sync the metadata about Feast objects to the registry. The registry is a tiny database storing most of the same information you have in the feature repository. This step is necessary because the production feature serving infrastructure won’t be able to access Python files in the feature repository at run time, but it will be able to efficiently and securely read the feature definitions from the registry.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># feature_store.yaml</span>
+
+<span class="na">project</span><span class="pi">:</span> <span class="s">feature_project</span>
+<span class="na">registry</span><span class="pi">:</span> <span class="s">../store/registry.db</span>
+<span class="na">provider</span><span class="pi">:</span> <span class="s">local</span>
+<span class="na">online_store</span><span class="pi">:</span>
+    <span class="na">path</span><span class="pi">:</span> <span class="s">../store/online_store.db</span>
+
+</code></pre></div></div>
+
+<h2 id="data-ingestion">Data Ingestion</h2>
+
+<p>The first step is to establish connections with our data sources (databases, data warehouse, etc.). Feast requires it’s data sources to either come from a file (Parquet), data warehouse (BigQuery) or data stream (Kafka / Kinesis).</p>
+
+<p>여기서는 DataOps에서 <code class="language-plaintext highlighter-rouge">.parquet</code> 파일의 형태로 feature를 제공한다고 하겠습니다.</p>
+
+<h2 id="feature-definition">Feature Definition</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># features.py
+</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">feast</span> <span class="kn">import</span> <span class="n">Entity</span><span class="p">,</span> <span class="n">Feature</span><span class="p">,</span> <span class="n">FeatureView</span><span class="p">,</span> <span class="n">ValueType</span>
+<span class="kn">from</span> <span class="nn">feast.data_source</span> <span class="kn">import</span> <span class="n">FileSource</span>
+<span class="kn">from</span> <span class="nn">google.protobuf.duration_pb2</span> <span class="kn">import</span> <span class="n">Duration</span>
+
+<span class="c1"># Read data
+# (feature 데이터 읽어오기)
+</span><span class="n">START_TIME</span> <span class="o">=</span> <span class="s">"2020-02-17"</span>
+<span class="n">project_details</span> <span class="o">=</span> <span class="n">FileSource</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s">"features.parquet"</span><span class="p">)),</span>
+    <span class="n">event_timestamp_column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Define an entity
+# (데이터를 고유하게 식별할 수 있는 컬럼)
+</span><span class="n">project</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">"id"</span><span class="p">,</span>
+    <span class="n">value_type</span><span class="o">=</span><span class="n">ValueType</span><span class="p">.</span><span class="n">INT64</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s">"project id"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Define a Feature View for each project
+# (읽어온 feature 데이터를 뷰로 만든다 =&gt; 특정 컬럼, 특정 시간대)
+</span><span class="n">project_details_view</span> <span class="o">=</span> <span class="n">FeatureView</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">"project_details"</span><span class="p">,</span>
+    <span class="n">entities</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">],</span>
+    <span class="n">ttl</span><span class="o">=</span><span class="n">Duration</span><span class="p">(</span>
+        <span class="n">seconds</span><span class="o">=</span><span class="p">(</span><span class="n">datetime</span><span class="p">.</span><span class="n">today</span><span class="p">()</span> <span class="o">-</span> <span class="n">datetime</span><span class="p">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">START_TIME</span><span class="p">,</span> <span class="s">"%Y-%m-%d"</span><span class="p">)).</span><span class="n">days</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+    <span class="p">),</span>
+    <span class="n">features</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Feature</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"text"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ValueType</span><span class="p">.</span><span class="n">STRING</span><span class="p">),</span>
+        <span class="n">Feature</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ValueType</span><span class="p">.</span><span class="n">STRING</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">online</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="nb">input</span><span class="o">=</span><span class="n">project_details</span><span class="p">,</span> <span class="c1">#
+</span>    <span class="n">tags</span><span class="o">=</span><span class="p">{},</span>
+<span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>Once we’ve defined our feature views, we can apply it to push a version controlled definition of our features to the registry for fast access. It will also configure our registry and online stores that we’ve defined in our <code class="language-plaintext highlighter-rouge">feature_store.yaml</code>.</p>
+
+<p>Feature View는 실제 데이터를 저장하는건 아니고, 어떤 메타 정보를 저장하고 있는 것이다. 실제 데이터는 로컬에 저장되어 있는 <code class="language-plaintext highlighter-rouge">features.parquet</code>이다.</p>
+
+<p>실무에서는 이런 방법보다는 Bigquery와 같은 저장소에 저장되어 있는 데이터가 더 일반적이다.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>feast apply
+<span class="nt">------------------------------------------------------------</span>
+Registered entity <span class="nb">id
+</span>Registered feature view project_details
+Deploying infrastructure <span class="k">for </span>project_details
+</code></pre></div></div>
+
+<h2 id="historical-features">Historical features</h2>
+
+<p>이제 ML팀에서는 등록된 뷰를 이용해 모델을 훈련시킬 수 있다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># ex. train.py
+</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">feast</span> <span class="kn">import</span> <span class="n">FeatureStore</span>
+
+
+<span class="c1"># Identify entities
+</span><span class="n">project_ids</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="nb">id</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">].</span><span class="n">to_list</span><span class="p">()</span>
+<span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">()</span>
+<span class="n">timestamps</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="p">(</span><span class="n">now</span><span class="p">.</span><span class="n">year</span><span class="p">,</span> <span class="n">now</span><span class="p">.</span><span class="n">month</span><span class="p">,</span> <span class="n">now</span><span class="p">.</span><span class="n">day</span><span class="p">)]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">project_ids</span><span class="p">)</span>
+<span class="n">entity_df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s">"id"</span><span class="p">:</span> <span class="n">project_ids</span><span class="p">,</span> <span class="s">"event_timestamp"</span><span class="p">:</span> <span class="n">timestamps</span><span class="p">})</span>
+<span class="n">entity_df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="o">------------------------</span>
+<span class="nb">id</span>	<span class="n">event_timestamp</span>
+<span class="mi">0</span>	<span class="mi">6</span>	<span class="mi">2022</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">23</span>
+<span class="mi">1</span>	<span class="mi">7</span>	<span class="mi">2022</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">23</span>
+<span class="mi">2</span>	<span class="mi">9</span>	<span class="mi">2022</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">23</span>
+<span class="o">------------------------</span>
+
+<span class="c1"># Get historical features
+</span><span class="n">store</span> <span class="o">=</span> <span class="n">FeatureStore</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="s">"features"</span><span class="p">)</span>
+<span class="n">training_df</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="n">get_historical_features</span><span class="p">(</span>
+    <span class="n">entity_df</span><span class="o">=</span><span class="n">entity_df</span><span class="p">,</span>
+    <span class="n">feature_refs</span><span class="o">=</span><span class="p">[</span><span class="s">"project_details:text"</span><span class="p">,</span> <span class="s">"project_details:tag"</span><span class="p">],</span>
+<span class="p">).</span><span class="n">to_df</span><span class="p">()</span>
+<span class="n">training_df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="o">------------------------------------------------------------------------------------------------</span>
+  <span class="n">event_timestamp</span>	          <span class="nb">id</span> <span class="n">project_details__text</span>	                           <span class="n">project_details__tag</span>
+<span class="mi">0</span>	<span class="mi">2022</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">23</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">+</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>	<span class="mi">6</span>	<span class="n">Comparison</span> <span class="n">between</span> <span class="n">YOLO</span> <span class="ow">and</span> <span class="n">RCNN</span> <span class="n">on</span> <span class="n">real</span> <span class="n">world</span><span class="p">...</span>	<span class="n">computer</span><span class="o">-</span><span class="n">vision</span>
+<span class="mi">1</span>	<span class="mi">2022</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">23</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">+</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>	<span class="mi">7</span>	<span class="n">Show</span><span class="p">,</span> <span class="n">Infer</span> <span class="o">&amp;</span> <span class="n">Tell</span><span class="p">:</span> <span class="n">Contextual</span> <span class="n">Inference</span> <span class="k">for</span> <span class="n">C</span><span class="p">...</span>	<span class="n">computer</span><span class="o">-</span><span class="n">vision</span>
+<span class="mi">2</span>	<span class="mi">2022</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">23</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="o">+</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span>	<span class="mi">9</span>	<span class="n">Awesome</span> <span class="n">Graph</span> <span class="n">Classification</span> <span class="n">A</span> <span class="n">collection</span> <span class="n">of</span> <span class="n">i</span><span class="p">...</span>	<span class="n">graph</span><span class="o">-</span><span class="n">learning</span>
+<span class="o">------------------------------------------------------------------------------------------------</span>
+
+</code></pre></div></div>
+
+<h2 id="materialize">Materialize</h2>
+
+<p>For online inference, we want to retrieve features very quickly via our online store. However, the features are not in our online store just yet, so we’ll need to materialize them first.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">CURRENT_TIME</span><span class="o">=</span><span class="si">$(</span><span class="nb">date</span> <span class="nt">-u</span> +<span class="s2">"%Y-%m-%dT%H:%M:%S"</span><span class="si">)</span>
+feast materialize-incremental <span class="nv">$CURRENT_TIME</span>
+<span class="nt">------------------------------------------------------------------------------------------------</span>
+Materializing 1 feature views to 2022-06-23 19:16:05+00:00 into the sqlite online store.
+project_details from 2020-02-17 19:16:06+00:00 to 2022-06-23 19:16:05+00:00:
+100%|██████████████████████████████████████████████████████████| 955/955 <span class="o">[</span>00:00&lt;00:00, 10596.97it/s]
+</code></pre></div></div>
+
+<p>This has moved the features for all of our projects into the online store since this was first time materializing to the online store. When we subsequently run the <code class="language-plaintext highlighter-rouge">materialize-incremental</code> command, Feast keeps track of previous materializations and so we’ll only materialize the new data since the last attempt.</p>
+
+<p>(처음 명령어를 실행하면, 전체 feature 데이터를 온라인 저장소로 모두 옮긴다. 이 후에는 명령어를 실행할 때마다 마지막 회수된 데이터 이 후의 데이터만 가져온다)</p>
+
+<p>(Note that they may not be the most recent feature values for that entity.)</p>
+
+<h2 id="online-features">Online Features</h2>
+
+<p>Once we’ve materialized the features (or directly sent to the online store in the stream scenario), we can use the online store to retrieve features.</p>
+
+<p>(위와 같이 오프라인 저장소에서 materialized된 데이터를 inference에 이용할 수도 있고, 스트림 프로세싱에서 읽어온 데이터를 inference에 이용할 수도 있다)</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get online features
+</span><span class="n">store</span> <span class="o">=</span> <span class="n">FeatureStore</span><span class="p">(</span><span class="n">repo_path</span><span class="o">=</span><span class="s">"features"</span><span class="p">)</span>
+<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">store</span><span class="p">.</span><span class="n">get_online_features</span><span class="p">(</span>
+    <span class="n">feature_refs</span><span class="o">=</span><span class="p">[</span><span class="s">"project_details:text"</span><span class="p">,</span> <span class="s">"project_details:tag"</span><span class="p">],</span>
+    <span class="n">entity_rows</span><span class="o">=</span><span class="p">[{</span><span class="s">"id"</span><span class="p">:</span> <span class="mi">6</span><span class="p">}],</span>
+<span class="p">).</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="n">feature_vector</span>
+<span class="o">------------------------------------------------------------------------------------------------</span>
+<span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+ <span class="s">'project_details__tag'</span><span class="p">:</span> <span class="p">[</span><span class="s">'computer-vision'</span><span class="p">],</span>
+ <span class="s">'project_details__text'</span><span class="p">:</span> <span class="p">[</span><span class="s">'Comparison between YOLO and RCNN on real world videos Bringing theory to experiment is cool. We can easily train models in colab and find the results in minutes.'</span><span class="p">]}</span>
+
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://feast.dev/" target="_blank">Feast.dev</a></li>
+  <li><a href="https://feast.dev/blog/what-is-a-feature-store/" target="_blank">Feast, What is a Feature Store?</a></li>
+  <li><a href="https://rtd.feast.dev/en/master/#">Feast Python API Documentation</a></li>
+  <li><a href="https://www.youtube.com/watch?v=p2cuq4eJ2BY&amp;list=LL&amp;index=4&amp;t=561s" target="_blank">Youtube Prodramp, An AI Engineer technical guide to Feature Store with FEAST</a></li>
+  <li><a href="https://www.featurestorecomparison.com/" target="_blank">Compare, find and choose the best feature store</a></li>
+  <li><a href="https://hotorch.tistory.com/m/192" target="_blank">[패스트캠퍼스 챌린지 47일차] GCP - Feast Feature Store (1)</a></li>
+  <li><a href="https://velog.io/@hsh/Feature-Store-why" target="_blank">Feature Store - why?</a></li>
+  <li><a href="https://zzsza.github.io/mlops/2020/02/02/feature-store/" target="_blank">zzsza, Machine Learning의 Feature Store란?</a></li>
+  <li><a href="https://cloud.google.com/blog/products/ai-machine-learning/introducing-feast-an-open-source-feature-store-for-machine-learning?hl=en" target="_blank">Google cloud, Introducing Feast: an open source feature store for machine learning</a></li>
+  <li><a href="https://madewithml.com/courses/mlops/feature-store/" target="_blank">madewithml, Feature Store</a></li>
+</ul>
+:ET
