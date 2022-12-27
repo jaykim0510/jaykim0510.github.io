@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>MLOps Series [Part6]: Testing Code, Data and Model</title>
+  <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
+
+  <link rel="canonical" href="http://localhost:4000/mlops-series6">
+  <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MLOps Series [Part6]: Testing Code, Data and Model – Code Museum">
+  <meta name="twitter:description" content="
+Table of Contents
+">
+  <meta name="twitter:image:src" content="http://localhost:4000/images/mlops_logo.png">
+
+  <!-- Facebook OpenGraph -->
+  <meta property="og:title" content="MLOps Series [Part6]: Testing Code, Data and Model – Code Museum">
+  <meta property="og:description" content="
+Table of Contents
+">
+  <meta property="og:image" content="http://localhost:4000/images/mlops_logo.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;900&display=swap" as="style">
+
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+
+  <!-- Ionicons -->
+  <link rel="preload" href="https://unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css" as="style">
+
+  <link href="https://unpkg.com/ionicons@4.2.2/dist/css/ionicons.min.css" rel="stylesheet">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://kit.fontawesome.com/869a10f869.js" crossorigin="anonymous"></script>
+
+  <script>
+    
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.setAttribute("dark", "");
+      document.documentElement.classList.add('dark-mode');
+    }
+    
+  </script>
+
+  <style>
+  
+  /*!------------------------------------------------------------------
+[MAIN STYLESHEET]
+-------------------------------------------------------------------*/:root{--brand-color: #0073ec;--white: #fff;--light-gray: #f0f0f0;--light-blue: #f3f7ff;--blue-gray: #716f8a;--gray: #9e9e9e;--dark: #0c101a;--dark-blue: #1e2740;--dark-grey: rgb(97, 97, 97);--background-color: rgb(250, 250, 250);--background-alt-color: var(--dark-blue);--text-color: var(--dark-grey);--text-alt-color: var(--blue-gray);--heading-font-color: var(--dark-blue);--link-color: var(--dark-blue);--link-color-hover: var(--dark-blue);--button-color: var(--white);--button-background-color: var(--brand-color);--button-background-hover: #4f31c7;--pagination-item: whitesmoke;--border-color: var(--light-blue);--border-color-alt: var(--light-blue);--th-color: rgba(95, 158, 160, 0.808);--tr-color: var(--light-gray);--td-color: rgb(255, 255, 240);--syntax-highlighting-background: #f3f3f3;--article__inner-background: white;--top-background: black;--strong-font-color: palevioletred;--article-highlighing-background: lightgrey;--article-highlighing-font: blueviolet;--drag-background-color: darksalmon;--drag-font-color: greenyellow;--quote-font-color: cadetblue;--post-tag-list-background-color: gainsboro;--post-category-list-background-color: antiquewhite}[dark]:root{--brand-color: #0073ec;--white: #fff;--light-gray: #f0f0f0;--gray: #9e9e9e;--dark: #111016;--background-color: var(--dark);--background-alt-color: #1a1a1f;--text-color: var(--gray);--text-alt-color: var(--gray);--heading-font-color: darkgrey;--link-color: var(--light-gray);--link-color-hover: var(--light-gray);--button-color: var(--white);--button-background-color: var(--brand-color);--button-background-hover: #4f31c7;--pagination-item: black;--border-color: #252629;--border-color-alt: #080b12;--th-color: black;--tr-color: #080b12;--td-color: dimgray;--syntax-highlighting-background: #292c33;--article__inner-background: rgb(65, 65, 65);--top-background: black;--strong-font-color: darkseagreen;--article-highlighing-background: darkslategrey;--article-highlighing-font: goldenrod;--drag-background-color: darkslategrey;--drag-font-color: rgb(115, 192, 0);--quote-font-color: palevioletred;--post-tag-list-background-color: darkslateblue;--post-category-list-background-color: darkred}.list-reset{list-style-type:none;margin:0;padding:0}.clearfix::after,.clearfix ::before{content:"";display:table;clear:both}.screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}/*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-webkit-text-size-adjust:100%}body{margin:0}h1{font-size:2em;margin:0.67em 0}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace, monospace;font-size:1em}a{background-color:transparent}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder;color:var(--strong-font-color)}code,kbd,samp{font-family:Monaco, Consolas, "Lucida Console", monospace;font-size:1.15em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}img{border-style:none}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,[type="button"],[type="reset"],[type="submit"]{-webkit-appearance:button}button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:0.35em 0.75em 0.625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{vertical-align:baseline}textarea{overflow:auto}[type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0}[type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto}[type="search"]{-webkit-appearance:textfield;outline-offset:-2px}[type="search"]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details{display:block}summary{display:list-item}template{display:none}[hidden]{display:none}bold{font-weight:1000}mark{background-color:rgba(210,105,30,0.493)}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:32px}ul,ol,dd{margin-left:16px}ul li,ol li{margin-bottom:10px}.highlight{margin-bottom:32px;background:var(--syntax-highlighting-background)}.highlighter-rouge .highlight{background:#1d1f27;border-radius:9px}.highlight .p{color:lightgrey;font-weight:bold}.highlight .n{color:#518cad;font-weight:bold}.highlight .c{color:forestgreen;font-style:italic}.highlight .k{color:#b679e9;font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:forestgreen;font-style:italic}.highlight .cp{color:forestgreen;font-weight:bold}.highlight .c1{color:forestgreen;font-style:italic}.highlight .cs{color:forestgreen;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{color:#569cd7;font-weight:bold}.highlight .kd{color:#569cd7;font-weight:bold}.highlight .kp{color:#569cd7;font-weight:bold}.highlight .kr{color:#569cd7;font-weight:bold}.highlight .kt{color:#5d76bf;font-weight:bold}.highlight .m{color:#099}.highlight .na{color:#b679e9;font-weight:bold}.highlight .nb{color:darksalmon;font-weight:bold}.highlight .nc{color:#5d76bf;font-weight:bold}.highlight .no{color:#008080}.highlight .ni{color:#800080}.highlight .nl{color:#79bae2;font-weight:bold}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:darksalmon;font-weight:bold}.highlight .nn{color:#ffcb6b}.highlight .nt{color:#4d65dc}.highlight .ow{color:#b679e9;font-weight:bold}.highlight .w{color:#bbb}.highlight .sb{color:#d19379}.highlight .sc{color:#d19379}.highlight .sd{color:#d19379}.highlight .s2{color:#d19379}.highlight .se{color:#d19379}.highlight .sh{color:#d19379}.highlight .si{color:#d19379}.highlight .sx{color:#d19379}.highlight .sr{color:#d19379}.highlight .s1{color:#d19379}.highlight .ss{color:#d19379}.highlight .bp{color:#999}.highlight .vc{color:#008080}.highlight .vg{color:#008080}.highlight .vi{color:#008080}.highlight .il{color:#099}@media only screen and (min-width: 768px){.post__content{grid-column:span 9}}@media only screen and (max-width: 768px){.post__content{grid-column:span 11}}@media only screen and (max-width: 576px){.post__content{grid-column:span 11}}@media only screen and (min-width: 768px){.post__tags_list{grid-column:span 2;padding-left:2vw}}@media only screen and (max-width: 768px){.post__tags_list{grid-column:span 0;display:none}}@media only screen and (max-width: 576px){.post__tags_list{grid-column:span 0;display:none}}.container_post{max-width:1140px;padding-left:16px;padding-right:16px;margin:0 auto}@media only screen and (max-width: 1140px){.container_post{max-width:1000px}}@media only screen and (max-width: 1024px){.container_post{max-width:740px}}@media only screen and (min-width: 768px){.container_post{display:grid;grid-template-columns:repeat(11, 1fr)}}@media only screen and (max-width: 768px){.container_post{max-width:560px}}@media only screen and (max-width: 576px){.container_post{max-width:480px;padding-left:calc(16px + 4px);padding-right:calc(16px + 4px)}}.container{max-width:1140px;padding-left:16px;padding-right:16px;margin:0 auto}@media only screen and (max-width: 1140px){.container{max-width:1000px}}@media only screen and (max-width: 1024px){.container{max-width:740px}}@media only screen and (max-width: 768px){.container{max-width:560px}}@media only screen and (max-width: 576px){.container{max-width:480px;padding-left:calc(16px + 4px);padding-right:calc(16px + 4px)}}.row{display:flex;flex-wrap:wrap;flex:0 1 auto;flex-direction:row;box-sizing:border-box;margin-left:-16px;margin-right:-16px}.col{padding-left:16px;padding-right:16px}[class^="col-"]{flex:auto}.col-0{width:0%}.col-1{width:8.3333333333%}.col-2{width:16.6666666667%}.col-3{width:25%}.col-4{width:33.3333333333%}.col-5{width:41.6666666667%}.col-6{width:50%}.col-7{width:58.3333333333%}.col-8{width:66.6666666667%}.col-9{width:75%}.col-10{width:83.3333333333%}.col-11{width:91.6666666667%}.col-12{width:100%}.push-0{margin-left:0%}.push-1{margin-left:8.3333333333%}.push-2{margin-left:16.6666666667%}.push-3{margin-left:25%}.push-4{margin-left:33.3333333333%}.push-5{margin-left:41.6666666667%}.push-6{margin-left:50%}.push-7{margin-left:58.3333333333%}.push-8{margin-left:66.6666666667%}.push-9{margin-left:75%}.push-10{margin-left:83.3333333333%}.push-11{margin-left:91.6666666667%}.push-12{margin-left:100%}.pull-0{margin-right:0%}.pull-1{margin-right:8.3333333333%}.pull-2{margin-right:16.6666666667%}.pull-3{margin-right:25%}.pull-4{margin-right:33.3333333333%}.pull-5{margin-right:41.6666666667%}.pull-6{margin-right:50%}.pull-7{margin-right:58.3333333333%}.pull-8{margin-right:66.6666666667%}.pull-9{margin-right:75%}.pull-10{margin-right:83.3333333333%}.pull-11{margin-right:91.6666666667%}.pull-12{margin-right:100%}@media (max-width: 1024px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}@media (max-width: 1024px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}@media (max-width: 1024px){.col-d-0{width:0%}.col-d-1{width:8.3333333333%}.col-d-2{width:16.6666666667%}.col-d-3{width:25%}.col-d-4{width:33.3333333333%}.col-d-5{width:41.6666666667%}.col-d-6{width:50%}.col-d-7{width:58.3333333333%}.col-d-8{width:66.6666666667%}.col-d-9{width:75%}.col-d-10{width:83.3333333333%}.col-d-11{width:91.6666666667%}.col-d-12{width:100%}.push-d-0{margin-left:0%}.push-d-1{margin-left:8.3333333333%}.push-d-2{margin-left:16.6666666667%}.push-d-3{margin-left:25%}.push-d-4{margin-left:33.3333333333%}.push-d-5{margin-left:41.6666666667%}.push-d-6{margin-left:50%}.push-d-7{margin-left:58.3333333333%}.push-d-8{margin-left:66.6666666667%}.push-d-9{margin-left:75%}.push-d-10{margin-left:83.3333333333%}.push-d-11{margin-left:91.6666666667%}.push-d-12{margin-left:100%}.pull-d-0{margin-right:0%}.pull-d-1{margin-right:8.3333333333%}.pull-d-2{margin-right:16.6666666667%}.pull-d-3{margin-right:25%}.pull-d-4{margin-right:33.3333333333%}.pull-d-5{margin-right:41.6666666667%}.pull-d-6{margin-right:50%}.pull-d-7{margin-right:58.3333333333%}.pull-d-8{margin-right:66.6666666667%}.pull-d-9{margin-right:75%}.pull-d-10{margin-right:83.3333333333%}.pull-d-11{margin-right:91.6666666667%}.pull-d-12{margin-right:100%}}@media (max-width: 768px){.col-t-0{width:0%}.col-t-1{width:8.3333333333%}.col-t-2{width:16.6666666667%}.col-t-3{width:25%}.col-t-4{width:33.3333333333%}.col-t-5{width:41.6666666667%}.col-t-6{width:50%}.col-t-7{width:58.3333333333%}.col-t-8{width:66.6666666667%}.col-t-9{width:75%}.col-t-10{width:83.3333333333%}.col-t-11{width:91.6666666667%}.col-t-12{width:100%}.push-t-0{margin-left:0%}.push-t-1{margin-left:8.3333333333%}.push-t-2{margin-left:16.6666666667%}.push-t-3{margin-left:25%}.push-t-4{margin-left:33.3333333333%}.push-t-5{margin-left:41.6666666667%}.push-t-6{margin-left:50%}.push-t-7{margin-left:58.3333333333%}.push-t-8{margin-left:66.6666666667%}.push-t-9{margin-left:75%}.push-t-10{margin-left:83.3333333333%}.push-t-11{margin-left:91.6666666667%}.push-t-12{margin-left:100%}.pull-t-0{margin-right:0%}.pull-t-1{margin-right:8.3333333333%}.pull-t-2{margin-right:16.6666666667%}.pull-t-3{margin-right:25%}.pull-t-4{margin-right:33.3333333333%}.pull-t-5{margin-right:41.6666666667%}.pull-t-6{margin-right:50%}.pull-t-7{margin-right:58.3333333333%}.pull-t-8{margin-right:66.6666666667%}.pull-t-9{margin-right:75%}.pull-t-10{margin-right:83.3333333333%}.pull-t-11{margin-right:91.6666666667%}.pull-t-12{margin-right:100%}}@media (max-width: 576px){.col-m-0{width:0%}.col-m-1{width:8.3333333333%}.col-m-2{width:16.6666666667%}.col-m-3{width:25%}.col-m-4{width:33.3333333333%}.col-m-5{width:41.6666666667%}.col-m-6{width:50%}.col-m-7{width:58.3333333333%}.col-m-8{width:66.6666666667%}.col-m-9{width:75%}.col-m-10{width:83.3333333333%}.col-m-11{width:91.6666666667%}.col-m-12{width:100%}.push-m-0{margin-left:0%}.push-m-1{margin-left:8.3333333333%}.push-m-2{margin-left:16.6666666667%}.push-m-3{margin-left:25%}.push-m-4{margin-left:33.3333333333%}.push-m-5{margin-left:41.6666666667%}.push-m-6{margin-left:50%}.push-m-7{margin-left:58.3333333333%}.push-m-8{margin-left:66.6666666667%}.push-m-9{margin-left:75%}.push-m-10{margin-left:83.3333333333%}.push-m-11{margin-left:91.6666666667%}.push-m-12{margin-left:100%}.pull-m-0{margin-right:0%}.pull-m-1{margin-right:8.3333333333%}.pull-m-2{margin-right:16.6666666667%}.pull-m-3{margin-right:25%}.pull-m-4{margin-right:33.3333333333%}.pull-m-5{margin-right:41.6666666667%}.pull-m-6{margin-right:50%}.pull-m-7{margin-right:58.3333333333%}.pull-m-8{margin-right:66.6666666667%}.pull-m-9{margin-right:75%}.pull-m-10{margin-right:83.3333333333%}.pull-m-11{margin-right:91.6666666667%}.pull-m-12{margin-right:100%}}.animate{animation:animateElement cubic-bezier(0.3, 0.45, 0.45, 0.95) 0.75s;animation-duration:0.5s;animation-iteration-count:1;transition:transform .15s}@keyframes animateElement{0%{transform:translate(0px, 50px)}100%{transform:translate(0px, 0px)}}@keyframes pulse{0%{transform:scale(1, 1)}25%{transform:scale(1, 1)}50%{transform:scale(1.2, 1.2)}100%{transform:scale(1, 1)}}*,*::after,*::before{box-sizing:border-box}body{font-family:"Nanum Gothic Coding",monospace;font-size:16px;line-height:1.5;overflow-x:hidden;color:var(--text-color);letter-spacing:-0.4px;background-color:var(--background-color);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}@media only screen and (max-width: 576px){body{font-size:18px}}*::selection{color:var(--text-color);background-color:var(--drag-background-color)}h1,h2,h3,h4,h5,h6{font-family:"Noto Sans","Apple SD Gothic Neo","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;font-weight:700;line-height:1.3;letter-spacing:-1px;color:var(--heading-font-color)}h1{font-size:36px;font-family:"Gowun Batang", serif}h2{font-family:"Stylish", sans-serif;font-size:28px;font-weight:500}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}blockquote{position:relative;margin:40px 0;padding-left:26px;font-size:22px;line-height:1.4}blockquote p{padding-left:24px;padding-top:10px;color:var(--quote-font-color);font-family:"Kalam", cursive;font-weight:400}blockquote cite{display:block;margin-top:8px;font-size:14px;font-weight:700;font-style:normal;color:var(--heading-font-color)}@media only screen and (max-width: 576px){blockquote{font-size:21px}}blockquote::before{content:"\f10d";font-size:32px;color:#ccc;font-family:FontAwesome;font-style:normal;font-weight:normal;text-decoration:inherit;text-align:center;position:absolute;left:0;top:0}pre{overflow:auto;padding:15px;margin-bottom:0;font-size:14px;word-wrap:break-word;word-break:break-all;color:lightgrey}img,.lightense-wrap{max-width:100%;height:auto;vertical-align:middle}img+em,.lightense-wrap+em,.gallery+em{display:block;margin-top:20px;font-size:12px;line-height:22px;font-style:normal;font-weight:normal;text-align:center;color:var(--heading-font-color)}img+em a,.lightense-wrap+em a,.gallery+em a{font-weight:500;border-bottom:1px solid var(--border-color);transition:all 0.35s}img+em a:hover,.lightense-wrap+em a:hover,.gallery+em a:hover{color:var(--link-color);border-color:var(--link-color-hover)}@media only screen and (max-width: 576px){img+em,.lightense-wrap+em,.gallery+em{margin-top:12px}}a{text-decoration:none;color:var(--link-color);transition:all 0.35s}a:hover{color:var(--link-color-hover)}hr{width:100%;height:1px;margin:60px 0;border:0;background:var(--text-color)}.table-container{display:block;max-width:100%;overflow-x:auto}table{font-size:12px;color:var(--dark);width:100%;border-width:1px;border-color:var(--background-alt-color);border-collapse:collapse;color:var(--heading-font-color)}table th{padding:10px;font-size:16px;text-align:left;border:1.5px solid var(--background-alt-color);color:var(--heading-font-color);font-weight:700;background-color:var(--th-color)}table tr{background-color:var(--tr-color);transition:all 0.3s ease}table td{padding:10px;font-size:14px;background-color:var(--td-color);border:1px solid var(--background-alt-color)}.button{display:inline-block;padding:20px 26px;font-size:16px;font-weight:700;text-decoration:none;border-radius:2px;border:none;outline:none;cursor:pointer;transition:all 0.25s;color:var(--heading-font-color);background:var(--background-alt-color)}.button--primary{color:var(--white);background-color:var(--button-background-color)}.button--primary:hover{background:var(--button-background-hover)}.button--big{display:block;width:100%}.lazy{opacity:0;transition:opacity 0.3s ease-in-out}.lazy.loaded{opacity:1}.lightense-backdrop{background-color:var(--background-color) !important}code.language-plaintext.highlighter-rouge{font-family:"Roboto Mono", monospace;font-size:13.6px;background-color:var(--article-highlighing-background);border-radius:0.1em;padding-left:0.1em;padding-right:0.1em;color:var(--article-highlighing-font)}.portfolio_img{width:10%;text-align:center;margin-bottom:30px;padding-left:3%;padding-right:3%;background-color:#d4442e}.point_heading{font-family:"Gowun Batang",serif}#top{background-color:var(--top-background);font:white;top:0;left:0;width:100%;position:fixed;z-index:1}.header .header__inner{position:relative;display:flex;align-items:center;flex-wrap:wrap}.logo__link{padding:4px 0;font-family:"Noto Sans","Apple SD Gothic Neo","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;font-size:28px;letter-spacing:-1px;line-height:1;font-weight:700;transition:color .25s ease;color:white}.logo__link:hover{color:var(--brand-color)}.logo__image{max-height:75px}.main-nav{margin-left:auto}@media only screen and (max-width: 1024px){.main-nav{position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;opacity:0;visibility:hidden;background-color:var(--background-color)}.main-nav.is-open{opacity:1;visibility:visible;transition:all .25s ease;background-color:#728f39}.main-nav .nav__list{flex-direction:column;width:100%}.main-nav .nav__list .nav__item{display:block;margin:0}.main-nav .nav__list .nav__item.nav__item-icon{margin-right:0}.main-nav .nav__list .nav__item .nav__link{display:inline-block;padding:16px 0;font-size:18px;transition:color .25s ease}.main-nav .nav__list .nav__item .nav__link:hover{color:var(--brand-color)}}.main-nav__box{display:flex;align-items:center}.main-nav__box .nav__icon-close{display:none;justify-content:center;align-items:center;width:36px;height:36px;font-size:24px;line-height:1;border-radius:50%;color:var(--heading-font-color);background:var(--background-alt-color);cursor:pointer}.main-nav__box .nav__icon-close:hover .ion-md-close{transform:rotate(90deg)}.main-nav__box .nav__icon-close .ion-md-close{transition:all 0.35s}.main-nav__box .nav__title{display:none}@media only screen and (max-width: 1024px){.main-nav__box{display:block;align-items:center;width:80%;height:80vh;padding-top:180px;margin:0 auto;text-align:center;overflow-y:auto}.main-nav__box .nav__icon-close{display:flex;position:absolute;top:40px;right:40px}.main-nav__box .nav__title{display:inline-block;margin-bottom:12px;font-family:"Noto Sans", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "돋움", dotum, sans-serif;font-size:36px;font-weight:700;letter-spacing:-1px;color:var(--heading-font-color)}}@media only screen and (max-width: 768px){.main-nav__box{padding-top:100px}}.nav__list{display:flex;align-items:center}.nav__list .nav__item{display:inline-block;margin-right:48px;margin-bottom:0}.nav__list .nav__item.nav__item-icon{margin-right:12px}.nav__list .nav__item .nav__link{position:relative;padding:4px 0;font-size:20px;line-height:1;font-weight:700;transition:color .25s ease;color:lightgrey}.nav__list .nav__item .nav__link:hover{color:indianred;text-decoration:underline}.nav-button{font-size:21px;color:var(--link-color);cursor:pointer}.nav-button .icon__menu{display:none;margin-right:12px}.nav-button .icon__menu,.nav-button .icon__search{transition:color .25s ease;color:lightgrey}.nav-button .icon__menu:hover,.nav-button .icon__search:hover{color:indianred}@media only screen and (max-width: 1024px){.nav-button{display:flex;align-items:center;margin-left:auto;font-size:24px}.nav-button .icon__menu{display:block}}.toggle-theme{position:relative;display:flex;justify-content:center;align-items:center;width:24px;height:24px;user-select:none;cursor:pointer}@media only screen and (max-width: 1024px){.toggle-theme{padding:20px 0}}.toggle-sun,.toggle-moon{position:absolute;font-size:20px;transition:color .25s ease;color:lightgrey}.toggle-sun:hover,.toggle-moon:hover{color:indianred}.toggle-sun{display:none}.dark-mode .toggle-sun{display:block}.dark-mode .toggle-moon{display:none}.search{position:fixed;top:0;left:0;right:0;bottom:0;z-index:-1;overflow:auto;opacity:0;background:var(--background-color);transition:all .25s ease}.search.is-visible{z-index:100;opacity:1;transition:all .25s ease}.search__box{max-width:540px;margin:0 auto;padding-top:120px}@media only screen and (max-width: 1024px){.search__box{padding-top:100px}}.search__group{position:relative;margin-bottom:48px}.search__group .search__close{position:absolute;right:28px;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;width:32px;height:32px;font-size:24px;line-height:1;border-radius:50%;color:var(--heading-font-color);cursor:pointer;will-change:transform;transition:all .25s;background:var(--background-color)}.search__group .search__close:hover{transform:translateY(-50%) rotate(90deg)}.search__group .search__close .ion-md-close{vertical-align:middle}.search__group .search__text{width:100%;padding:28px;font-size:20px;font-weight:700;line-height:24px;border:2px solid transparent;border-radius:2px;color:var(--heading-font-color);background-color:#d3d1d1;outline:0;transition:all .25s}.search__group .search__text::placeholder{font-weight:700;color:var(--heading-font-color)}.search__group .search__text:focus{border-color:var(--brand-color)}.search__group .search__text::-ms-clear{display:none}@media only screen and (max-width: 576px){.search__group{margin-bottom:32px}.search__group .search__text{padding:24px}}.search-results-list .no-results{width:100%;margin:0;text-align:center;color:var(--heading-font-color)}.pagination{margin-bottom:80px}@media only screen and (max-width: 576px){.pagination{margin-bottom:60px}}.pagination__inner{display:flex;justify-content:center;align-items:center}.pagination__list{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:18px;font-weight:700;line-height:1;color:var(--text-color)}@media only screen and (max-width: 576px){.pagination__list{align-items:stretch;font-size:16px}}.pagination__item{font-size:20px;font-family:"Gowun Batang", serif;display:flex;justify-content:center;align-items:center;width:100%;padding:24px 20px;text-align:center;border-radius:8px;background:var(--pagination-item);margin-top:0.3em}@media only screen and (max-width: 576px){.pagination__item{align-items:center;padding:20px;border-radius:8px}}.pagination__count{margin:0 32px;font-size:16px;color:var(--link-color)}@media only screen and (max-width: 768px){.pagination__count{margin:0 12px}}@media only screen and (max-width: 576px){.pagination__count{margin:0 8px;font-size:14px;line-height:1.2}}.pagination__next:hover,.pagination__prev:hover{color:var(--heading-font-color);background-color:var(--article-highlighing-background)}.pagination__next i,.pagination__prev i{font-size:15px;transition:transform 0.15s ease;will-change:transform}.pagination__next.disabled,.pagination__prev.disabled{opacity:0.64;cursor:not-allowed;color:inherit}.pagination__next.disabled:hover i,.pagination__prev.disabled:hover i{transform:none}.dark-mode .pagination__next.disabled,.dark-mode .pagination__prev.disabled{opacity:0.78}.pagination__next:hover i{transform:translateX(2px)}.pagination__next i{margin-left:5px}.pagination__prev:hover i{transform:translateX(-2px)}.pagination__prev i{margin-right:5px}.prev_next{font-size:20px;font-family:"Kalam", cursive;color:var(--strong-font-color);font-weight:bold}.footer{margin-top:48px;background-color:var(--background-alt-color)}@media only screen and (max-width: 576px){.footer{margin-top:60px}}.footer__inner{padding:80px 0}.footer__inner .row .col{flex-grow:1}@media only screen and (max-width: 576px){.footer__inner{padding:60px 0}}@media only screen and (max-width: 1024px){.footer__author{margin-bottom:60px}}@media only screen and (max-width: 576px){.footer__author{margin-bottom:40px}}.footer__author-avatar{position:relative;width:105px;height:105px;margin-bottom:20px;transform:translate(0);border-radius:50%;overflow:hidden;box-shadow:0px 100px 80px rgba(0,0,0,0.07),0px 12.5216px 10.0172px rgba(0,0,0,0.035);background-color:var(--background-color)}.footer__author-avatar img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;user-select:none}.footer__author-name{margin-bottom:20px;font-size:32px;font-weight:900;line-height:1;color:var(--text-alt-color)}.footer__author-bio{margin-bottom:0;color:var(--text-alt-color)}.social{margin-top:16px}.social .social__list{display:flex;align-items:center;flex-wrap:wrap}.social .social__list .social__item:first-child>.social__link{padding-left:0}.social .social__item{margin-bottom:0;margin-right:16px}.social .social__item:last-child{margin-right:0}.social .social__link{display:flex;align-items:center;padding:4px;font-size:20px;color:var(--text-alt-color)}.social .social__link:hover{color:var(--brand-color)}.footer__gallery .footer__gallery-title{margin-bottom:24px;font-size:28px}.footer__gallery .gallery__image img{height:100%;border-radius:8px;overflow:hidden}.footer__gallery .gallery__image img.lightense-open{border-radius:0}.footer__info{padding:44px 0;background-color:var(--background-color)}.footer__info .footer__info-box{display:flex;align-items:center;justify-content:space-between}@media only screen and (max-width: 1024px){.footer__info{padding:40px 0}}.copyright{margin-right:20px;font-size:14px;font-weight:500;color:var(--text-alt-color)}.copyright a{text-decoration:underline;text-decoration-color:transparent;color:var(--heading-font-color)}.copyright a:hover{text-decoration-color:var(--heading-font-color);color:var(--heading-font-color)}.top{min-width:36px;height:36px;font-size:20px;line-height:36px;text-align:center;border-radius:8px;color:white;background-color:var(--background-alt-color);cursor:pointer;position:fixed;bottom:0.7em;right:0.7em}.gallery-box{margin:32px 0}.gallery{display:grid;grid-template-columns:repeat(3, auto);justify-content:center;align-content:center;grid-gap:10px}.gallery .gallery__image{background:var(--background-color)}.gallery .gallery__image img{display:block;width:100%;height:auto;object-fit:cover}.hero{padding-top:100px;padding-bottom:80px;margin-bottom:80px;background-color:var(--background-alt-color)}.hero__inner{display:flex;align-items:center}@media only screen and (max-width: 1024px){.hero__inner{flex-direction:column}}.hero__left{max-width:450px;margin-right:auto}@media only screen and (max-width: 1140px){.hero__left{max-width:440px}}@media only screen and (max-width: 1024px){.hero__left{max-width:100%}}.hero__title{font-family:'Tangerine', cursive;margin-bottom:20px;font-size:120px;font-weight:400;line-height:1.3;color:var(--text-alt-color)}@media only screen and (max-width: 1024px){.hero__title{font-size:50px}}@media only screen and (max-width: 768px){.hero__title{font-size:40px}}@media only screen and (max-width: 576px){.hero__title{font-size:32px}}.hero__description{margin-bottom:0;font-size:21px;color:var(--text-alt-color)}@media only screen and (max-width: 1024px){.hero__description{font-size:inherit}}.hero__subscribe{margin-top:32px}.hero__subscribe .subscribe-form{position:relative;border-radius:2px;background-color:var(--background-color)}.hero__subscribe .subscribe-email{width:100%;height:70px;padding:20px;font-size:16px;line-height:21px;border:2px solid transparent;border-radius:2px;outline:0;color:var(--heading-font-color);background-color:transparent;transition:all .25s ease}.hero__subscribe .subscribe-email::placeholder{opacity:0.6;color:var(--text-alt-color)}.hero__subscribe .subscribe-email:focus{border-color:var(--brand-color)}.hero__subscribe .subscribe-button{position:absolute;top:6px;right:6px}@media only screen and (max-width: 1024px){.hero__subscribe{margin-top:24px}}@media only screen and (max-width: 576px){.hero__subscribe{margin-top:20px}.hero__subscribe .subscribe-form{display:flex;flex-direction:column;padding:6px}.hero__subscribe .subscribe-email{height:56px;margin-bottom:4px}.hero__subscribe .subscribe-button{position:relative;top:0;right:0}}.hero__right{width:50%}@media only screen and (max-width: 1024px){.hero__right{width:100%;margin-top:40px}}@media only screen and (max-width: 576px){.hero__right{margin-top:32px}}.hero__image{position:relative;transform:translate(0);width:100%;height:410px;border-radius:8px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.02);background-color:var(--background-color);user-select:none}.hero__image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}@media only screen and (max-width: 1140px){.hero__image{height:380px}}@media only screen and (max-width: 1024px){.hero__image{height:440px}}@media only screen and (max-width: 768px){.hero__image{height:420px}}@media only screen and (max-width: 576px){.hero__image{height:280px}}.article{margin-bottom:32px;will-change:transform;transition:transform .2s}.article:hover{transform:translateY(-3px)}.article:hover .article__title a{text-decoration:underline;text-decoration-color:var(--link-color-hover);text-decoration-thickness:2px}.article__head{position:relative}.article__date{position:absolute;z-index:1;top:16px;left:16px;display:inline-block;padding:8px 12px;font-size:12px;line-height:1;font-weight:500;border-radius:4px;color:var(--heading-font-color);background:var(--background-color);pointer-events:none}.article__image{position:relative;transform:translate(0);display:block;height:0;margin-bottom:24px;padding-bottom:62%;overflow:hidden;background:var(--background-alt-color)}.article__image img{position:absolute;width:100%;height:100%;object-fit:cover;user-select:none}.video-icon{position:absolute;z-index:1;top:50%;left:50%;width:50%;height:50%;transform:translate(-50%, -50%);pointer-events:none}.video-icon .circle{width:50px;height:50px;position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;overflow:hidden;margin:auto;transform:scale(1, 1)}.video-icon .circle.pulse{animation-timing-function:ease;animation:pulse 2s infinite;background-color:rgba(255,255,255,0.25)}.video-icon svg{fill:rgba(255,255,255,0.25);stroke:var(--light-blue);stroke-linejoin:round;stroke-width:5;backdrop-filter:blur(3.5px);-webkit-backdrop-filter:blur(4.5px);transition:all 0.3s}.article__title{margin-bottom:12px;margin-left:10px;margin-right:10px;text-align:center;font-family:"Gowun Batang",serif;font-size:20px;font-weight:lighter}.article__title a{text-decoration:underline;text-decoration-color:transparent;text-decoration-thickness:2px}.article__title a:hover{color:var(--heading-font-color)}.article__excerpt{margin-bottom:0;font-size:16px;margin-left:10px;margin-right:10px;color:var(--text-alt-color);text-align:center}.article__inner{background-color:var(--article__inner-background)}.portfolio_wrapper{display:grid;background-color:var(--article__inner-background);grid-template-columns:repeat(9, 1fr);grid-template-rows:20vw;margin-bottom:5vw;overflow:hidden}.portfolio_image{grid-column:span 3}.portfolio_content{grid-column:span 6;margin-left:1em;font-size:calc(5px + 1vw);text-align:left}.portfolio_title{font-family:"Gowun Batang",serif;font-size:calc(10px + 1.1vw);font-weight:bold}.portfolio_content_row{margin-bottom:0.2em;color:var(--text-alt-color)}.portfolio__page__title{margin-top:150px;font-family:"Gowun Batang",serif}.contact-head{margin-bottom:32px}.form__group{margin-bottom:20px}.form__group:last-child{margin-bottom:0}.form__input{width:100%;padding:20px;font-size:16px;font-weight:400;border:2px solid var(--border-color);border-radius:2px;outline:0;transition:.25s ease-in-out;resize:vertical;color:var(--light-gray);background-color:var(--background-alt-color)}.form__input::placeholder{color:var(--text-alt-color)}.form__input:focus{border-color:var(--brand-color)}.section__head{position:relative;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:40px}.section__head::after{content:"";position:absolute;z-index:-1;display:block;width:100%;height:1px;background:var(--background-alt-color);pointer-events:none}@media only screen and (max-width: 768px){.section__head::after{content:none}}.section__title{padding-right:20px;margin-bottom:0;font-size:28px}@media only screen and (max-width: 576px){.section__title{font-size:24px}}.section__link{padding-left:20px;font-size:18px;font-weight:500;text-decoration:underline;text-decoration-color:transparent;color:var(--link-color);transition:text-decoration .35s}.section__link:hover{text-decoration-color:var(--heading-font-color);color:var(--link-color-hover)}@media only screen and (max-width: 768px){.section__link{padding-left:0}}@media only screen and (max-width: 576px){.section__link{font-size:16px}}.section__title,.section__link{background:var(--background-color)}@media only screen and (max-width: 576px){.section-tags .row .col:last-child>.tag-image{margin-bottom:0}}.tag-image{margin-bottom:32px;position:relative;transform:translate(0);display:block;height:0;padding-bottom:62%;border-radius:8px;overflow:hidden;background:var(--background-alt-color);transition:transform .2s}.tag-image:hover{transform:translateY(-3px)}.tag-image img{position:absolute;width:100%;height:100%;object-fit:cover;user-select:none}.tag-image .tag-name{position:absolute;top:2%;right:2%;z-index:1;max-width:90%;display:inline-block;padding:8px 8px;font-size:1.6rem;line-height:1;font-weight:700;text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px;color:white;pointer-events:none}.post-head,.page-head{margin-bottom:48px;padding-top:80px}.post-head .row,.page-head .row{align-items:center}@media only screen and (max-width: 1024px){.post-head,.page-head{margin-bottom:40px}}@media only screen and (max-width: 576px){.post-head,.page-head{margin-bottom:32px}}.post-image,.page-image{position:relative;transform:translate(0);padding-top:90%;min-height:100px;border-radius:8px;overflow:hidden;background:var(--background-alt-color);margin-top:60px}.post-image img,.page-image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;user-select:none}@media only screen and (max-width: 1024px){.post-image,.page-image{padding-top:65%;margin-bottom:40px}}@media only screen and (max-width: 576px){.post-image,.page-image{margin-bottom:32px}}.page-image{padding-top:56.25%;margin-bottom:48px}@media only screen and (max-width: 1024px){.page-image{margin-bottom:40px}}@media only screen and (max-width: 576px){.page-image{margin-bottom:32px}}.post-video,.page-video{margin-bottom:48px;border-radius:8px;overflow:hidden;transform:translate(0);background-color:var(--th-color)}.post-video .post-video__wrap,.post-video .page-video__wrap,.page-video .post-video__wrap,.page-video .page-video__wrap{position:relative;width:100%;height:0;padding-bottom:56.25%}.post-video .post-video__wrap iframe,.post-video .page-video__wrap iframe,.page-video .post-video__wrap iframe,.page-video .page-video__wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%}@media only screen and (max-width: 1024px){.post-video,.page-video{margin-bottom:40px}}@media only screen and (max-width: 576px){.post-video,.page-video{margin-bottom:32px}}.post__info{margin-left:44px}.post__info.post__info-video{max-width:760px;margin:0 auto}@media only screen and (max-width: 1024px){.post__info{margin-left:0}}.page__info{max-width:760px;margin:0 auto}.post__tags{display:flex;align-items:center;flex-wrap:wrap;margin-bottom:20px}.post__tags .post__tag{padding:12px 16px;margin:4px 8px 4px 0;font-size:14px;line-height:1;font-weight:500;text-transform:capitalize;border:none;border-radius:8px;color:var(--heading-font-color);transition:none;background-color:var(--pagination-item)}.post__tags .post__tag:hover{color:indianred}.post__tags .post__tag:last-child{margin-right:0}@media only screen and (max-width: 576px){.post__tags{margin-bottom:16px}}.post__title,.page__title{margin-bottom:24px;font-size:46px;line-height:1.2;font-weight:500}@media only screen and (max-width: 576px){.post__title,.page__title{margin-bottom:20px;font-size:32px}}.page__title{margin-bottom:0;font-family:"Gowun Batang",serif}.post__meta{display:flex;align-items:center;line-height:1}.post__meta .post__author-image{position:relative;transform:translate(0);width:50px;height:50px;border-radius:50%;overflow:hidden;margin-right:12px;background-color:var(--th-color)}.post__meta .post__author-image img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;user-select:none}.post__meta .post__meta-bottom{display:flex;flex-direction:column}.post__meta .post__author{display:inline-block;margin-bottom:7px;font-size:16px;font-weight:500;text-decoration:underline;text-decoration-color:transparent;color:var(--heading-font-color);transition:text-decoration-color 0.35s}.post__meta .post__author:hover{text-decoration-color:var(--heading-font-color)}.post__meta .post__date{font-size:14px;font-weight:400;color:var(--text-alt-color)}.post,.page{max-width:760px;margin:0 auto 60px;color:var(--text-color)}.post a,.page a{font-weight:500;border-bottom:1px solid var(--border-color)}.post a:hover,.page a:hover{color:var(--link-color);border-bottom-color:var(--link-color-hover)}.post img,.post .js-reframe,.page img,.page .js-reframe{overflow:hidden}.post img.lightense-open,.post .js-reframe.lightense-open,.page img.lightense-open,.page .js-reframe.lightense-open{border-radius:0}.post img[src$="#wide"],.page img[src$="#wide"]{display:block;width:100vw;max-width:none;margin-left:50%;transform:translateX(-50%);border-radius:0;pointer-events:none;user-select:none}.post .button,.page .button{border:none;text-decoration:none}.post__share .share__list{display:flex;align-items:center;width:100%}.post__share .share__item{width:25%;margin-right:8px;margin-bottom:0;text-align:center}.post__share .share__item:last-child{margin-right:0}.post__share .share__link{display:flex;justify-content:center;align-items:center;width:100%;height:54px;font-size:18px;text-transform:uppercase;border:none;border-radius:8px;background:var(--th-color)}.post__share .share__link i{transition:transform 0.25s;will-change:transform}.post__share .share__link:hover{color:var(--heading-font-color)}.post__share .share__link:hover i{transform:scale(1.1)}.related-posts{display:none;margin-top:80px}.related-posts.is-related{display:block}.related-posts .related-tag{text-transform:capitalize}@media only screen and (max-width: 576px){.related-posts{margin-top:60px}.related-posts .row .col:last-child{margin-bottom:0}}.show-comments{margin:48px 0 32px;text-align:center}.show-comments .disqus-button{padding:28px;border-radius:8px;text-decoration:underline;text-decoration-color:transparent;background:var(--th-color)}.show-comments .disqus-button:hover{text-decoration-color:var(--heading-font-color)}@media only screen and (max-width: 576px){.show-comments{margin:60px 0 0}.show-comments .disqus-button{padding:24px}}.post__comments{max-width:760px;margin:0 auto}.post__comments.is-open{margin:0 auto 32px}@media only screen and (max-width: 576px){.post__comments.is-open{margin:0 auto}}.error{text-align:center}.error .error__title{margin-bottom:24px;font-size:100px;line-height:1}.error .error__text{margin-bottom:0;color:var(--text-alt-color)}@media only screen and (max-width: 576px){.error .error__title{font-size:68px}}.recent-posts{margin-top:80px}@media only screen and (max-width: 576px){.recent-posts{margin-top:60px}.recent-posts .row .col:last-child{margin-bottom:0}}.post_tag_list{font-family:"Shadows Into Light", cursive;font-size:16px;border-radius:4px;background-color:var(--post-tag-list-background-color);color:var(--article-highlighing-font);padding-right:2px;padding-left:2px}.post_category_list{font-family:"Shadows Into Light", cursive;font-size:16px;border-radius:4px;background-color:var(--post-category-list-background-color);color:var(--article-highlighing-font);padding-right:2px;padding-left:2px}#markdown-toc li{font-size:15px;line-height:18px}#markdown-toc li>ul{font-size:12px;line-height:30px}.post__title{font-family:"Gowun Batang",serif}.toc{font-family:"Tangerine", cursive;color:gold;background-color:#9acaa5;border-radius:0.5}.toc .nav__title{color:#fff;font-size:1em;background:gray}.toc .active a{background-color:greenyellow}.toc__menu{margin:0;padding:0;width:100%;list-style:none;font-size:0.5em}.page__content .archive__item-title{margin-top:0.5em;border-bottom:none}.sidebar__right{margin-bottom:0.5em;position:sticky;top:0;right:0;width:100%}.fire-para{border-radius:2px;border-left:4px solid #00bfa5;margin-top:30px;margin-bottom:50px;margin-left:20px;margin-right:30px}.fire-bar{background-color:rgba(0,191,165,0.1);border:0.5px solid #e9e6e6;font-weight:600;font-size:15.2px;padding-left:20px;padding-top:7px;padding-bottom:7px}.fa-fire{color:#00bfa5;margin-right:5px}.fa-question{color:#00bfa5;margin-right:5px}.fire-content{border-right:0.5px solid #e9e6e6;border-bottom:0.5px solid #e9e6e6;padding-left:13px;padding-top:13px;padding-bottom:10px;font-size:14.4px}.pen-para{border-radius:2px;border-left:4px solid #448aff;margin-top:30px;margin-bottom:50px;margin-left:20px;margin-right:30px}.pen-bar{background-color:rgba(68,138,255,0.1);border:0.5px solid #e9e6e6;font-weight:600;font-size:15.2px;padding-left:20px;padding-top:7px;padding-bottom:7px}.fa-pen{color:#005bd1;margin-right:5px}.pen-content{border-right:0.5px solid #e9e6e6;border-bottom:0.5px solid #e9e6e6;padding-left:13px;padding-top:13px;padding-bottom:10px;font-size:14.4px}.tag__head{margin-top:150px}@media only screen and (max-width: 1024px){.tag__head{margin:40px 0}}.tags__inner{margin-bottom:90px}@media only screen and (max-width: 576px){.tags__inner{margin-bottom:60px}}.tag__title{margin-bottom:32px;font-size:46px;font-weight:600;font-family:"Gowun Batang",serif}@media only screen and (max-width: 576px){.tag__title{font-size:32px}}.tag__list{display:flex;align-items:center;flex-wrap:wrap;padding-bottom:80px}.tag__list .tag__item{margin-right:12px;margin-bottom:12px}.tag__list .tag__item:last-child{margin-right:0}.tag__list .tag__link{display:block;padding:12px 16px;font-size:16px;font-weight:500;text-transform:capitalize;border-radius:8px;transition:none;background:var(--th-color)}.tag__list .tag__link:hover{color:var(--heading-font-color)}@media only screen and (max-width: 576px){.tag__list{padding-bottom:48px}.tag__list .tag__item{margin-right:8px;margin-bottom:8px}.tag__list .tag__link{font-size:14px}}.tag__info{position:relative;display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}.tag__info::after{content:"";position:absolute;z-index:-1;display:block;width:100%;height:1px;background:var(--th-color);pointer-events:none}@media only screen and (max-width: 576px){.tag__info::after{content:none}}.tag__info-box{display:flex;align-items:center}.tag__counter{display:flex;flex-direction:column;align-items:center;padding:12px 24px;border-radius:8px;color:var(--heading-font-color);background:var(--pagination-item)}.tag__counter span{font-family:"Noto Sans","Apple SD Gothic Neo","맑은 고딕","Malgun Gothic","돋움",dotum,sans-serif;font-size:32px;font-weight:700;line-height:1}.tag__counter small{font-size:16px;font-weight:500}@media only screen and (max-width: 576px){.tag__counter{display:none}}.tag__name{padding:50px 20px 50px 20px;margin-bottom:0;font-size:36px;text-transform:capitalize;background-color:var(--background-color);font-family:"Gowun Batang",serif}.tag__name span{font-weight:400;color:var(--text-alt-color)}@media only screen and (max-width: 768px){.tag__name{font-size:32px}}@media only screen and (max-width: 576px){.tag__name{padding:32px 12px 32px 0;font-size:26px}}.top__link{padding-left:20px;font-size:18px;font-weight:500;text-decoration:underline;text-decoration-color:transparent;color:var(--link-color);transition:text-decoration 0.35s;background:var(--background-color)}.top__link:hover{text-decoration-color:var(--heading-font-color);color:var(--link-color-hover)}@media only screen and (max-width: 576px){.top__link{padding-left:0;font-size:16px}}.tag__box{display:flex;align-items:center;margin-top:120px}.tag_list{display:block;padding:12px 16px;font-size:16px;font-weight:500;text-transform:capitalize;border-radius:8px;transition:none;background:var(--th-color)}.tag_list:hover{color:indianred}.tag__box_recent_posts{display:flex;align-items:center}
+
+  </style>
+</head>
+
+<body>
+
+  
+
+  <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+</head>
+<!-- begin header -->
+<header class="header" id="top">
+  <div class="container">
+    <div class="row">
+      <div class="header__inner col col-12">
+
+        <div class="logo">
+          <a class="logo__link" href="/">
+          
+            <img class="logo__image" src="/images/code_museum_logo.png" alt="Code Museum">
+          
+          </a>
+        </div>
+
+        <nav class="main-nav">
+          <div class="main-nav__box">
+            <div class="nav__icon-close">
+              <i class="ion ion-md-close"></i>
+            </div>
+            <div class="nav__title">Menu</div>
+            <ul class="nav__list list-reset">
+              <li class="nav__item">
+                <a href="/about" class="nav__link">About</a>
+              </li>
+              <li class="nav__item">
+                <a href="/categories" class="nav__link">Categories</a>
+              </li>
+              <li class="nav__item">
+                <a href="/tags" class="nav__link">Tags</a>
+              </li>
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  
+                  <li class="nav__item">
+                    <a href="/deviation/" class="nav__link">Deviation</a>
+                  </li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                  
+                  <li class="nav__item">
+                    <a href="/gallery/" class="nav__link">Gallery</a>
+                  </li>
+                  
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+              
+              <li class="nav__item nav__item-icon">
+                <div class="toggle-theme">
+                  <div class="toggle-moon" title="Enable dark mode"><i class="ion ion-ios-moon"></i></div>
+                  <div class="toggle-sun" title="Enable light mode"><i class="ion ion-ios-sunny"></i></div>
+                </div>
+              </li>
+              
+            </ul>
+          </div>
+        </nav>
+
+        <div class="nav-button">
+          <i class="nav__icon icon__menu ion ion-md-menu"></i>
+          <i class="nav__icon icon__search ion ion-md-search"></i>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->
+
+<!-- begin search -->
+<div class="search">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="search__box">
+          <div class="search__group">
+            <div class="search__close">
+              <i class="ion ion-md-close"></i>
+            </div>
+            <label for="js-search-input" class="screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="search__text" autocomplete="off" placeholder="Type to search...">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row search-results-list" id="js-results-container"></div>
+  </div>
+
+</div>
+<!-- end search -->
+
+  <!-- begin content -->
+  <main class="content" aria-label="Content">
+    <!-- HTML elements for search -->
+    <input type="text" id="search-input" placeholder="Search blog posts..">
+    <ul id="results-container"></ul>
+
+    <!-- or without installing anything -->
+    <script src="https://unpkg.com/simple-jekyll-search@latest/dest/simple-jekyll-search.min.js"></script>
+    <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Stylish&display=swap" rel="stylesheet">
+</head>
+
+
+
+
+
+
+<div class="post-head">
+  <div class="container">
+    <div class="row">
+      
+      
+
+      
+      <div class="col col-5 col-d-12">
+        <div class="post-image">
+          <img class="lazy" data-src="/images/mlops_logo.png" alt="MLOps Series [Part6]: Testing Code, Data and Model">
+        </div>
+      </div>
+      
+
+      
+      
+      
+      <div class="col col-7 col-d-12">
+        <div class="post__info ">
+            
+              <div class="post__tags">
+                
+                  <a href="/MLOps" class="post__tag">#MLOps</a>
+                
+                
+                  <a href="/data_engineering" class="post__tag">#data_engineering</a>
+                
+              </div>
+            
+ 
+          <h1 class="post__title">MLOps Series [Part6]: Testing Code, Data and Model</h1>
+  
+          <div class="post__meta">
+            <a href="/about/" class="post__author-image">
+              <img class="lazy" data-src="/images/zepeto_me.jpeg" alt="Jay Kim">
+            </a>
+
+            <div class="post__meta-bottom">
+              <a class="post__author" href="/about/">Jay Kim</a>
+              <time class="post__date" datetime="2022-09-07T21:01:35+09:00">07 Sep 2022</time>
+            </div>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- begin post -->
+<div class="container_post animate">
+
+  
+
+    <div class="post__content">
+      
+<!--첫 번째 문단-->
+
+
+
+  
+  	
+  	
+  	
+  	
+  	
+
+<!--두 번째 문단-->
+
+
+  <div class="post_pagination">
+    
+      <a href="/mlops-series5" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MLOps Series [Part5]: Weights and Biases</a>
+    
+    
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+    
+  </div>
+
+
+
+      <hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#intuition" id="markdown-toc-intuition">Intuition</a>    <ul>
+      <li><a href="#how-should-we-test" id="markdown-toc-how-should-we-test">How should we test</a></li>
+      <li><a href="#what-should-we-test" id="markdown-toc-what-should-we-test">What should we test</a></li>
+    </ul>
+  </li>
+  <li><a href="#hierachy" id="markdown-toc-hierachy">Hierachy</a></li>
+  <li><a href="#testing-code" id="markdown-toc-testing-code">Testing Code</a>    <ul>
+      <li><a href="#initialization" id="markdown-toc-initialization">Initialization</a></li>
+      <li><a href="#assertions" id="markdown-toc-assertions">Assertions</a></li>
+      <li><a href="#execution" id="markdown-toc-execution">Execution</a></li>
+      <li><a href="#classes" id="markdown-toc-classes">Classes</a></li>
+      <li><a href="#parametrize" id="markdown-toc-parametrize">Parametrize</a></li>
+      <li><a href="#fixture" id="markdown-toc-fixture">Fixture</a></li>
+      <li><a href="#markers" id="markdown-toc-markers">Markers</a></li>
+    </ul>
+  </li>
+  <li><a href="#data" id="markdown-toc-data">Data</a>    <ul>
+      <li><a href="#projects" id="markdown-toc-projects">Projects</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>Learn how to test ML artifacts (code, data and models) to ensure a reliable ML system.</li>
+</ul>
+
+<h1 id="intuition">Intuition</h1>
+
+<ul>
+  <li>In this lesson, we’ll learn how to test code, data and machine learning models to construct a machine learning system that we can reliably iterate on. Tests are a way for us to ensure that something works as intended.</li>
+  <li>We’re incentivized to implement tests and discover sources of error as early in the development cycle as possible so that we can decrease downstream costs and wasted time.</li>
+  <li>Once we’ve designed our tests, we can automatically execute them every time we change or add to our codebase.</li>
+</ul>
+
+<h2 id="how-should-we-test">How should we test</h2>
+
+<p>The framework to use when composing tests is the Arrange Act Assert methodology.</p>
+
+<ul>
+  <li><strong>Arrange</strong>: set up the different inputs to test on.</li>
+  <li><strong>Act</strong>: apply the inputs on the component we want to test.</li>
+  <li><strong>Assert</strong>: confirm that we received the expected output.</li>
+</ul>
+
+<p>In Python, there are many tools, such as <code class="language-plaintext highlighter-rouge">unittest</code>, <code class="language-plaintext highlighter-rouge">pytest</code>, etc. that allow us to easily implement our tests while adhering to the Arrange Act Assert framework. These tools come with powerful built-in functionality such as parametrization, filters, and more, to test many conditions at scale.</p>
+
+<h2 id="what-should-we-test">What should we test</h2>
+
+<p>When arranging our inputs and asserting our expected outputs, what are some aspects of our inputs and outputs that we should be testing for?</p>
+
+<ul>
+  <li>inputs: data types, format, length, edge cases (min/max, small/large, etc.)</li>
+  <li>outputs: data types, formats, exceptions, intermediary and final outputs</li>
+</ul>
+
+<h1 id="hierachy">Hierachy</h1>
+
+<ul>
+  <li>tests 디렉터리에 저장</li>
+  <li><code class="language-plaintext highlighter-rouge">test_</code> 접두사</li>
+  <li>코드 하나당 테스트 코드 하나인 경우도 있고, 코드 하나에 여러 기능을 내포한 경우 함수 하나당 테스트 코드 하나인 경우도 있다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root
+├── code
+│   └── train.py
+└── tests
+    ├── code
+    │   └── test_train.py
+    ├── data
+    └── model
+</code></pre></div></div>
+
+<h1 id="testing-code">Testing Code</h1>
+
+<ul>
+  <li>We’ll start by testing our code and we’ll use pytest as our testing framework for it’s powerful builtin features such as parametrization, fixtures, markers and more.</li>
+</ul>
+
+<h2 id="initialization">Initialization</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install pytest
+</code></pre></div></div>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># pyproject.toml
+</span>
+<span class="nn">[tool.pytest.ini_options]</span>
+<span class="py">testpaths</span> <span class="p">=</span> <span class="s">["tests"]</span>
+<span class="py">python_files</span> <span class="p">=</span> <span class="s">"test_*.py"</span>
+</code></pre></div></div>
+
+<h2 id="assertions">Assertions</h2>
+
+<ul>
+  <li>Let’s see what a sample test and it’s results look like. Assume we have a simple function that determines whether a fruit is crisp or not:</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># food/fruits.py
+</span><span class="k">def</span> <span class="nf">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">fruit</span><span class="p">:</span>
+        <span class="n">fruit</span> <span class="o">=</span> <span class="n">fruit</span><span class="p">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fruit</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"apple"</span><span class="p">,</span> <span class="s">"watermelon"</span><span class="p">,</span> <span class="s">"cherries"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">elif</span> <span class="n">fruit</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"orange"</span><span class="p">,</span> <span class="s">"mango"</span><span class="p">,</span> <span class="s">"strawberry"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">fruit</span><span class="si">}</span><span class="s"> not in known list of fruits."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tests/food/test_fruits.py
+</span><span class="k">def</span> <span class="nf">test_is_crisp</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"apple"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"Apple"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"orange"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="p">.</span><span class="n">raises</span><span class="p">(</span><span class="nb">ValueError</span><span class="p">):</span>
+        <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"pear"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h2 id="execution">Execution</h2>
+
+<p>We can execute our tests above using several different levels of granularity:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> pytest                                           <span class="c"># all tests</span>
+python3 <span class="nt">-m</span> pytest tests/food                                <span class="c"># tests under a directory</span>
+python3 <span class="nt">-m</span> pytest tests/food/test_fruits.py                 <span class="c"># tests for a single file</span>
+python3 <span class="nt">-m</span> pytest tests/food/test_fruits.py::test_is_crisp  <span class="c"># tests for a single function</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 테스트 성공했을 때 출력</span>
+tests/food/test_fruits.py::test_is_crisp <span class="nb">.</span>           <span class="o">[</span>100%]
+
+<span class="c"># 테스트 실패했을 때 출력</span>
+tests/food/test_fruits.py F                          <span class="o">[</span>100%]
+
+    def test_is_crisp<span class="o">()</span>:
+<span class="o">&gt;</span>       assert is_crisp<span class="o">(</span><span class="nv">fruit</span><span class="o">=</span><span class="s2">"orange"</span><span class="o">)</span>
+E       AssertionError: assert False
+E        +  where False <span class="o">=</span> is_crisp<span class="o">(</span><span class="nv">fruit</span><span class="o">=</span><span class="s1">'orange'</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h2 id="classes">Classes</h2>
+
+<p>We can also test classes and their respective functions by creating test classes. Within our test class, we can optionally define functions which will automatically be executed when we setup or teardown a class instance or use a class method.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">setup_class</code>: set up the state for any class instance.</li>
+  <li><code class="language-plaintext highlighter-rouge">teardown_class</code>: teardown the state created in setup_class.</li>
+  <li><code class="language-plaintext highlighter-rouge">setup_method</code>: called before every method to setup any state.</li>
+  <li><code class="language-plaintext highlighter-rouge">teardown_method</code>: called after every method to teardown any state.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Fruit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+<span class="k">class</span> <span class="nc">TestFruit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="o">@</span><span class="nb">classmethod</span>
+    <span class="k">def</span> <span class="nf">setup_class</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="s">"""Set up the state for any class instance."""</span>
+        <span class="k">pass</span>
+
+    <span class="o">@</span><span class="nb">classmethod</span>
+    <span class="k">def</span> <span class="nf">teardown_class</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="s">"""Teardown the state created in setup_class."""</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">setup_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Called before every method to setup any state."""</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">fruit</span> <span class="o">=</span> <span class="n">Fruit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"apple"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">teardown_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Called after every method to teardown any state."""</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="p">.</span><span class="n">fruit</span>
+
+    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="p">.</span><span class="n">fruit</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">"apple"</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>We can execute all the tests for our class by specifying the class name:</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> pytest tests/food/test_fruits.py::TestFruit
+</code></pre></div></div>
+
+<h2 id="parametrize">Parametrize</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">assert</code>문이 계속 반복되는 문제를 해결해준다</li>
+  <li><code class="language-plaintext highlighter-rouge">@pytest.mark.parametrize</code> 데코레이터를 이용한다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s">"fruit, crisp"</span><span class="p">,[(</span><span class="s">"apple"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="s">"Apple"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="s">"orange"</span><span class="p">,</span> <span class="bp">False</span><span class="p">),],)</span>
+<span class="k">def</span> <span class="nf">test_is_crisp_parametrize</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">crisp</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="n">fruit</span><span class="p">)</span> <span class="o">==</span> <span class="n">crisp</span>
+
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s">"fruit, exception"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s">"pear"</span><span class="p">,</span> <span class="nb">ValueError</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_is_crisp_exceptions</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">exception</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="p">.</span><span class="n">raises</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+        <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="n">fruit</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h2 id="fixture">Fixture</h2>
+
+<ul>
+  <li>Parametrize는 함수내에서 <code class="language-plaintext highlighter-rouge">assert</code>문을 없애줬다</li>
+  <li>Fixture는 여러 함수에서 적용되는 반복 요소를 줄여준다</li>
+  <li><code class="language-plaintext highlighter-rouge">@pytest.fixture</code> 데코레이터를 이용한다</li>
+  <li>테스트 함수에는 Fixture의 이름을 쓰면 된다 (ex. <code class="language-plaintext highlighter-rouge">my_fruit</code>)</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">my_fruit</span><span class="p">():</span>
+    <span class="c1"># 여기서만 한 번 Fruit 객체를 생성하면 된다 (매번 생성할 필요 없다)
+</span>    <span class="n">fruit</span> <span class="o">=</span> <span class="n">Fruit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"apple"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fruit</span>
+
+<span class="k">def</span> <span class="nf">test_fruit</span><span class="p">(</span><span class="n">my_fruit</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">my_fruit</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">"apple"</span>
+
+<span class="c1"># 이렇게 하면 테스트 클래스의 어떤 메소드에도 사용할 수 있다
+</span><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">usefixtures</span><span class="p">(</span><span class="s">"my_fruit"</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestFruit</span><span class="p">:</span>
+    <span class="p">...</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>Fixtures can have different scopes depending on how we want to use them.</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">function</code>: fixture is destroyed after every test. [default]</li>
+  <li><code class="language-plaintext highlighter-rouge">class</code>: fixture is destroyed after the last test in the class.</li>
+  <li><code class="language-plaintext highlighter-rouge">module</code>: fixture is destroyed after the last test in the module (script).</li>
+  <li><code class="language-plaintext highlighter-rouge">package</code>: fixture is destroyed after the last test in the package.</li>
+  <li><code class="language-plaintext highlighter-rouge">session</code>: fixture is destroyed after the last test of the session.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">"module"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">df</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a0"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b0"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c0"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a1"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b1"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c1"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a2"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b2"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c1"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a3"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b3"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c2"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a4"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b4"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c2"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a5"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b5"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c2"</span><span class="p">},</span>
+    <span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+</code></pre></div></div>
+
+<h2 id="markers">Markers</h2>
+
+<ul>
+  <li>we can create custom granularity by using markers.</li>
+  <li>Parametrize도 Marker중 하나 (<code class="language-plaintext highlighter-rouge">@pytest.mark.parametrize</code>)</li>
+  <li>there are several other builtin markers as well. For example, the <code class="language-plaintext highlighter-rouge">skipif</code> marker allows us to skip execution of a test if a condition is met</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># GPU 사용이 불가하면 training을 test하는 코드를 건너띈다
+</span><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="n">reason</span><span class="o">=</span><span class="s">"Full training tests require a GPU."</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_training</span><span class="p">():</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필터링 할 수 있다
+</span><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">fruits</span>
+<span class="k">def</span> <span class="nf">test_fruit</span><span class="p">(</span><span class="n">my_fruit</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">my_fruit</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">"apple"</span>
+
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pytest <span class="nt">-m</span> <span class="s2">"fruits"</span>      <span class="c">#  runs all tests marked with `fruits`</span>
+pytest <span class="nt">-m</span> <span class="s2">"not fruits"</span>  <span class="c">#  runs all tests besides those marked with `fruits`</span>
+</code></pre></div></div>
+
+<h1 id="data">Data</h1>
+
+<p>So far, we’ve used unit and integration tests to test the functions that interact with our data but we haven’t tested the validity of the data itself. We’re going to use the <code class="language-plaintext highlighter-rouge">great expectations</code> library to test what our data is expected to look like. It’s a library that allows us to create expectations as to what our data should look like in a standardized way. It also provides modules to seamlessly connect with backend data sources such as local file systems, S3, databases, etc. Let’s explore the library by implementing the expectations we’ll need for our application.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>great-expectations
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">great_expectations</span> <span class="k">as</span> <span class="n">ge</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="c1"># Load labeled projects
+</span><span class="n">projects</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"https://raw.githubusercontent.com/GokuMohandas/Made-With-ML/main/datasets/projects.csv"</span><span class="p">)</span>
+<span class="n">tags</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"https://raw.githubusercontent.com/GokuMohandas/Made-With-ML/main/datasets/tags.csv"</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">ge</span><span class="p">.</span><span class="n">dataset</span><span class="p">.</span><span class="n">PandasDataset</span><span class="p">(</span><span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s">"id"</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s"> projects"</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>When it comes to organizing expectations, it’s recommended to start with table-level ones and then move on to individual feature columns.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Presence of specific features
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Unique combinations of features (detect data leaks!)
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>
+
+<span class="c1"># Missing values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+
+<span class="c1"># Unique values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># Type adherence
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># List (categorical) / range (continuous) of allowed values
+</span><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s">"computer-vision"</span><span class="p">,</span> <span class="s">"graph-learning"</span><span class="p">,</span> <span class="s">"reinforcement-learning"</span><span class="p">,</span>
+        <span class="s">"natural-language-processing"</span><span class="p">,</span> <span class="s">"mlops"</span><span class="p">,</span> <span class="s">"time-series"</span><span class="p">]</span>
+<span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_in_set</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">value_set</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>We can group all the expectations together to create an Expectation Suite object which we can use to validate any Dataset module.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expectation suite
+</span><span class="n">expectation_suite</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">get_expectation_suite</span><span class="p">(</span><span class="n">discard_failed_expectations</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">validate</span><span class="p">(</span><span class="n">expectation_suite</span><span class="o">=</span><span class="n">expectation_suite</span><span class="p">,</span> <span class="n">only_return_failures</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="projects">Projects</h2>
+
+<ul>
+  <li>So far we’ve worked with the Great Expectations library at the adhoc script / notebook level but we can further organize our expectations by creating a Project.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>tests
+great_expectations init
+
+<span class="nt">---------------------------------</span>
+tests/great_expectations/
+├── checkpoints/
+├── expectations/
+├── plugins/
+├── uncommitted/
+├── .gitignore
+└── great_expectations.yml
+</code></pre></div></div>
+
+<ul>
+  <li>The first step is to establish our datasource which tells Great Expectations where our data lives:</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations datasource new
+</code></pre></div></div>
+
+<ul>
+  <li>Create expectations manually, interactively or automatically and save them as suites (a set of expectations for a particular data asset).</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations suite new
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>How would you like to create your Expectation Suite?
+    1. Manually, without interacting with a sample batch of data (default)
+    2. Interactively, with a sample batch of data 👈
+    3. Automatically, using a profiler
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Which data asset (accessible by data connector "default_inferred_data_connector_name") would you like to use?
+    1. labeled_projects.csv
+    2. projects.csv 👈
+    3. tags.csv
+------------------------------------------------------------------------------------------------------------
+Name the new Expectation Suite [projects.csv.warning]: projects
+
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://madewithml.com/courses/mlops/testing/" target="_blank">Made With ML, Testing Machine Learning Systems: Code, Data and Models View all lessons</a></li>
+</ul>
+
+    </div>
+    <div class="post__tags_list">
+      <div class="container">
+        <h3 class="point_heading">All Tag</h3>
+        <ul class="tag__list list-reset">
+          
+            
+              
+              <li class="tag__item"><a href="/API" class="post_tag_list">#API</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/AWS" class="post_tag_list">#AWS</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Airflow" class="post_tag_list">#Airflow</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Blockchain_basic" class="post_tag_list">#Blockchain_basic</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Coding_Test" class="post_tag_list">#Coding_Test</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/DE" class="post_tag_list">#DE</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/DL_theory" class="post_tag_list">#DL_theory</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Django" class="post_tag_list">#Django</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Docker" class="post_tag_list">#Docker</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Elastic" class="post_tag_list">#Elastic</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Finance" class="post_tag_list">#Finance</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Flink" class="post_tag_list">#Flink</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Git" class="post_tag_list">#Git</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Hadoop" class="post_tag_list">#Hadoop</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Java" class="post_tag_list">#Java</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Javascript" class="post_tag_list">#Javascript</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Jenkins" class="post_tag_list">#Jenkins</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Kafka" class="post_tag_list">#Kafka</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Kubernetes" class="post_tag_list">#Kubernetes</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/MLOps" class="post_tag_list">#MLOps</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/MongoDB" class="post_tag_list">#MongoDB</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/MySQL" class="post_tag_list">#MySQL</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Network" class="post_tag_list">#Network</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/OS" class="post_tag_list">#OS</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Pandas" class="post_tag_list">#Pandas</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Python" class="post_tag_list">#Python</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Pytorch" class="post_tag_list">#Pytorch</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Scikit_learn" class="post_tag_list">#Scikit_learn</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Spark" class="post_tag_list">#Spark</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Spring" class="post_tag_list">#Spring</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/TDD" class="post_tag_list">#TDD</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Terraform" class="post_tag_list">#Terraform</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/etc" class="post_tag_list">#etc</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/tech_interview" class="post_tag_list">#tech_interview</a></li>
+            
+          
+            
+          
+        </ul>
+        <h3 class="point_heading">All Category</h3>
+        <ul class="tag__list list-reset">
+          
+            
+              
+              <li class="tag__item"><a href="/AI" class="post_category_list">#AI</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Blockchain" class="post_category_list">#Blockchain</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Cloud" class="post_category_list">#Cloud</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Development_knowledge" class="post_category_list">#Development_knowledge</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Economics" class="post_category_list">#Economics</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/computer_science" class="post_category_list">#computer_science</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/data_analytics" class="post_category_list">#data_analytics</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/data_engineering" class="post_category_list">#data_engineering</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/devops" class="post_category_list">#devops</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/machine_learning" class="post_category_list">#machine_learning</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/programming_language" class="post_category_list">#programming_language</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/web_development" class="post_category_list">#web_development</a></li>
+            
+          
+            
+          
+        </ul>
+        <section class="page__content" itemprop="text">
+          
+          
+        </section>
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<!-- share -->
+<div class="container">
+  <div class="post__share">
+    <ul class="share__list list-reset">
+      <li class="share__item">
+        <a class="share__link share__twitter"
+          href="https://twitter.com/intent/tweet?text=MLOps%20Series%20[Part6]:%20Testing%20Code,%20Data%20and%20Model&url=http://localhost:4000/mlops-series6"
+          onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+          title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/mlops-series6"
+          onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
+          title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mlops-series6&amp;media=http://localhost:4000/images/mlops_logo.png&amp;description=MLOps%20Series%20[Part6]:%20Testing%20Code,%20Data%20and%20Model"
+        onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
+        rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
+      </li>
+      <li class="share__item">
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mlops-series6&title=MLOps%20Series%20[Part6]:%20Testing%20Code,%20Data%20and%20Model&summary=&source=Code%20Museum"
+        onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
+      </li>
+    </ul>
+  </div>
+  
+<!--첫 번째 문단-->
+
+
+
+  
+  	
+  	
+  	
+  	
+  	
+
+<!--두 번째 문단-->
+
+
+  <div class="post_pagination">
+    
+      <a href="/mlops-series5" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MLOps Series [Part5]: Weights and Biases</a>
+    
+    
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
+    
+  </div>
+
+
+
+</div>
+
+
+
+<!-- end post -->
+
+
+
+
+
+
+
+
+<!-- begin related posts -->
+<div class="container">
+  <section class="related-posts is-related animate">
+    <div class="row">
+      <div class="col col-12">
+        <div class="container__inner">
+          <div class="section__info">
+            <div class="section__head">
+              <h2 class="section__title">You may also like</h2>
+              <a class="section__link" href="/blog">
+                
+                
+                  
+                    <a href="/data_engineering" class="section__link related-tag">See all<span> data_engineering</span></a>
+                  
+                
+              
+              </a>
+            </div>
+          </div>
+          <div class="row">
+
+          
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/mlops-series5">
+        <img class="lazy" data-src="/images/mlops_logo.png" alt="MLOps Series [Part5]: Weights and Biases">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/mlops-series5">MLOps Series [Part5]: Weights and Biases</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/mlops-series4">
+        <img class="lazy" data-src="/images/mlops_logo.png" alt="MLOps Series [Part4]: MLflow">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/mlops-series4">MLOps Series [Part4]: MLflow</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/mlops-series3">
+        <img class="lazy" data-src="/images/mlops_logo.png" alt="MLOps Series [Part3]: Feast">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/mlops-series3">MLOps Series [Part3]: Feast</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+                  
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- end related posts -->
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <!-- begin comments -->
+<div class="show-comments">
+  <button class="button disqus-button" id="show-comments-button" onclick="disqus();return false;">Show Comments</button>
+</div>
+
+<div id="disqus_thread" class="post__comments">
+  <div id="disqus_empty"></div>
+</div>
+
+<script>
+  var disqus_loaded = false;
+  var disqus_shortname = 'Jay';
+  var disqus_container = document.getElementById("disqus_thread");
+  function disqus() {
+    if (!disqus_loaded) {
+      disqus_loaded = true;
+      var e = document.createElement("script");
+      e.type = "text/javascript";
+      e.async = true;
+      e.src = "//" + disqus_shortname + ".disqus.com/embed.js";
+      (document.getElementsByTagName("head")[0] ||
+        document.getElementsByTagName("body")[0])
+        .appendChild(e);
+      // Hide the button after opening
+      document.getElementById("show-comments-button").style.display = "none";
+      // Show disqus comments
+      disqus_container.classList.add("is-open");
+    }
+  }
+</script>
+
+<noscript>Please enable JavaScript to view the
+  <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+<!-- end comments --> 
+      </div>
+    </div>
+  </div>
+
+  </main>
+  <!-- end content -->
+
+  <!-- begin footer -->
+<footer class="footer">
+
+  <div class="footer__inner">
+    <div class="container">
+      <div class="row">
+
+        <div class="col col-5 col-d-12">
+          <div class="footer__author">
+            <div class="footer__author-avatar">
+              <img class="lazy" data-src="/images/zepeto_me.jpeg" alt="Jay Kim">
+            </div>
+            <h3 class="footer__author-name">Jay Kim</h3>
+            <p class="footer__author-bio">Data Engineer</p>
+            
+            <div class="social">
+              <ul class="social__list list-reset">
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://github.com/kimziont" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-github"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://linkedin.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-linkedin"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://facebook.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-facebook"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://instagram.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-instagram"></i></a>
+                </li>
+                
+                <li class="social__item">
+                  <a class="social__link" href="https://youtube.com" target="_blank" rel="noopener"
+                    aria-label=" link"><i class="ion ion-logo-youtube"></i></a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </div>
+        </div>
+
+        
+        <div class="col col-6 push-1 col-d-12 push-d-0">
+          <div class="footer__gallery">
+            <h3 class="footer__gallery-title">Gallery</h3>
+            
+            <div class="gallery-footer">
+              <div class="gallery" style="grid-template-columns: repeat(3, auto);">
+                
+                <div class="gallery__image">
+                  <img src="/images/100.jpg" alt="Rest" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/101.jpg" alt="Lifestyle" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/102.jpg" alt="Hobby" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/103.jpg" alt="Notes" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/104.jpg" alt="Rest" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/105.jpg" alt="Hobby" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/106.jpg" alt="Fashion" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/107.jpg" alt="Notes" loading="lazy">
+                </div>
+                
+                <div class="gallery__image">
+                  <img src="/images/108.jpg" alt="Rest" loading="lazy">
+                </div>
+                
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        
+
+      </div>
+    </div>
+  </div>
+
+  <div class="footer__info">
+    <div class="container">
+      <div class="row">
+        <div class="col col-12">
+          <div class="footer__info-box">
+            <div class="copyright">2022 &copy; <a href="/">Code Museum</a>. Crafted & Designed by <a href="https://jekyllthemes.io/developers/artem-sheludko">Artem Sheludko</a>.</div>
+            <div class="top" title="Top"><i class="ion ion-ios-arrow-up"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</footer>
+<!-- end footer -->
+
+  <script src="/js/scripts.js"></script>
+  <script src="/js/common.js"></script>
+</body>

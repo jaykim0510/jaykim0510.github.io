@@ -1,0 +1,95 @@
+I"K<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#typing" id="markdown-toc-typing">Typing</a></li>
+  <li><a href="#docstrings" id="markdown-toc-docstrings">Docstrings</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>Documenting code for your team and your future self.</li>
+</ul>
+
+<p>We can further organize our code by documenting it to make it easier for others (and our future selves) to easily navigate and extend it. We know our code base best the moment we finish writing it but fortunately documenting it will allow us to quickly get back to that familiar state of mind. Documentation can mean many different things to developers, so let’s define the most common components:</p>
+
+<ul>
+  <li><strong>comments</strong>: short descriptions as to why a piece of code exists.</li>
+  <li><strong>typing</strong>: specification of a function’s inputs and outputs’ data types, providing information pertaining to what a function consumes and produces.</li>
+  <li><strong>docstrings</strong>: meaningful descriptions for functions and classes that describe overall utility, arguments, returns, etc.</li>
+  <li><strong>docs</strong>: rendered webpage that summarizes all the functions, classes, workflows, examples, etc.</li>
+</ul>
+
+<h1 id="typing">Typing</h1>
+
+<p>It’s important to be as explicit as possible with our code. We’ve already discussed choosing explicit names for variables, functions, etc. but another way we can be explicit is by defining the types for our function’s inputs and outputs.</p>
+
+<p>So far, our functions have looked like this:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="k">def</span> <span class="nf">some_function</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">c</span>
+</code></pre></div></div>
+
+<p>There are many other data types that we can work with, including <code class="language-plaintext highlighter-rouge">List</code>, <code class="language-plaintext highlighter-rouge">Set</code>, <code class="language-plaintext highlighter-rouge">Dict</code>, <code class="language-plaintext highlighter-rouge">Tuple</code>, <code class="language-plaintext highlighter-rouge">Sequence</code> and more, as well as included types such as <code class="language-plaintext highlighter-rouge">int</code>, <code class="language-plaintext highlighter-rouge">float</code>, etc. You can also use types from packages we install (ex. <code class="language-plaintext highlighter-rouge">np.ndarray</code>) and even from our own defined classes (ex. <code class="language-plaintext highlighter-rouge">LabelEncoder</code>).</p>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Tip
+    </div>
+    <div class="pen-content">
+      Starting from Python 3.9+, common types are built in so we don't need to import them with from typing import List, Set, Dict, Tuple, Sequence anymore.
+    </div>
+</div>
+
+<h1 id="docstrings">Docstrings</h1>
+
+<ul>
+  <li>We can make our code even more explicit by adding docstrings to describe overall utility, arguments, returns, exceptions and more. Let’s take a look at an example:</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="k">def</span> <span class="nf">some_function</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="p">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="s">"""Function description.
+
+    ```python
+    c = some_function(a=[], b=0)
+    print (c)
+    ```
+    &lt;pre&gt;
+    [[1 2]
+     [3 4]]
+    &lt;/pre&gt;
+
+    Args:
+        a (List): description of `a`.
+        b (int, optional): description of `b`. Defaults to 0.
+
+    Raises:
+        ValueError: Input list is not one-dimensional.
+
+    Returns:
+        np.ndarray: Description of `c`.
+
+    """</span>
+    <span class="k">return</span> <span class="n">c</span>
+
+</code></pre></div></div>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Tip
+    </div>
+    <div class="pen-content">
+      If using Visual Studio Code, be sure to use the Python Docstrings Generator extension so you can type `"""` under a function and then hit the `Shift` key to generate a template docstring. It will autofill parts of the docstring using the typing information and even exception in your code!
+    </div>
+</div>
+
+<h1 id="참고">참고</h1>
+<ul>
+  <li><a href="https://sjquant.tistory.com/68" target="_blank">sol-a-qua, 파이썬 Typing 파헤치기 - 기초편</a></li>
+  <li><a href="https://madewithml.com/courses/mlops/documentation/" target="_blank">Made With ML, Documenting Code</a></li>
+</ul>
+:ET

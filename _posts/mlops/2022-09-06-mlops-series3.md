@@ -223,7 +223,7 @@ training_df = store.get_historical_features(
 training_df.head()
 
 ------------------------------------------------------------------------------------------------
-  event_timestamp	          id project_details__text	                           project_details__tag
+        event_timestamp                  id       project_details__text                           project_details__tag
 0	2022-06-23 00:00:00+00:00	6	Comparison between YOLO and RCNN on real world...	computer-vision
 1	2022-06-23 00:00:00+00:00	7	Show, Infer & Tell: Contextual Inference for C...	computer-vision
 2	2022-06-23 00:00:00+00:00	9	Awesome Graph Classification A collection of i...	graph-learning
