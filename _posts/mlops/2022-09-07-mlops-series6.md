@@ -300,6 +300,78 @@ df.head(5)
 
 ```
 
+## Expectations
+
+- When it comes to creating expectations as to what our data should look like, we want to think about our entire dataset and all the features (columns) within it.
+
+```py
+# Presence of specific features
+df.expect_table_columns_to_match_ordered_list(
+    column_list=["id", "created_on", "title", "description", "tag"]
+)
+
+# Unique combinations of features (detect data leaks!)
+df.expect_compound_columns_to_be_unique(column_list=["title", "description"])
+
+# Missing values
+df.expect_column_values_to_not_be_null(column="tag")
+
+# Unique values
+df.expect_column_values_to_be_unique(column="id")
+
+# Type adherence
+df.expect_column_values_to_be_of_type(column="title", type_="str")
+
+# List (categorical) / range (continuous) of allowed values
+tags = ["computer-vision", "graph-learning", "reinforcement-learning",
+        "natural-language-processing", "mlops", "time-series"]
+df.expect_column_values_to_be_in_set(column="tag", value_set=tags)
+
+```
+
+Each of these expectations will create an output with details about success or failure, expected and observed values, expectations raised, etc. For example, the expectation `df.expect_column_values_to_be_of_type(column="title", type_="str")` would produce the following if successful:  
+
+```json
+{
+  "exception_info": {
+    "raised_exception": false,
+    "exception_traceback": null,
+    "exception_message": null
+  },
+  "success": true,
+  "meta": {},
+  "expectation_config": {
+    "kwargs": {
+      "column": "title",
+      "type_": "str",
+      "result_format": "BASIC"
+    },
+    "meta": {},
+    "expectation_type": "_expect_column_values_to_be_of_type__map"
+  },
+  "result": {
+    "element_count": 955,
+    "missing_count": 0,
+    "missing_percent": 0.0,
+    "unexpected_count": 0,
+    "unexpected_percent": 0.0,
+    "unexpected_percent_nonmissing": 0.0,
+    "partial_unexpected_list": []
+  }
+}
+
+```
+
+There are just a few of the different expectations that we can create. Be sure to explore all the [expectations](https://greatexpectations.io/expectations/), including [custom expectations](https://docs.greatexpectations.io/docs/guides/expectations/creating_custom_expectations/overview/). Here are some other popular expectations that don't pertain to our specific dataset but are widely applicable:  
+
+- feature value relationships with other feature values → `expect_column_pair_values_a_to_be_greater_than_b`
+- row count (exact or range) of samples → `expect_table_row_count_to_be_between`
+- value statistics (mean, std, median, max, min, sum, etc.) → `expect_column_mean_to_be_between`
+
+
+
+## Organization
+
 - When it comes to organizing expectations, it's recommended to start with table-level ones and then move on to individual feature columns.
 
 ```py
@@ -532,6 +604,7 @@ At the end of this lesson, we'll create a target in our `Makefile` that run all 
 </div>
 
 ## Documentation
+
 When we create expectations using the CLI application, Great Expectations automatically generates documentation for our tests. It also stores information about validation runs and their results. We can launch the generate data documentation with the following command: `great_expectations docs build`
 
 ![](/images/test_data_2.png)
@@ -539,6 +612,7 @@ When we create expectations using the CLI application, Great Expectations automa
 - By default, Great Expectations stores our expectations, results and metrics locally but for production, we'll want to set up remote metadata stores.
 
 ## Production
+
 The advantage of using a library such as great expectations, as opposed to isolated assert statements is that we can:
 
 - reduce redundant efforts for creating tests across data modalities
