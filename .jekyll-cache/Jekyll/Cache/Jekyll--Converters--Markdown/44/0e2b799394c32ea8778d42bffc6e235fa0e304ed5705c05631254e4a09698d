@@ -1,4 +1,4 @@
-I"��<hr />
+I" �<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#intuition" id="markdown-toc-intuition">Intuition</a>    <ul>
@@ -18,7 +18,11 @@
     </ul>
   </li>
   <li><a href="#data" id="markdown-toc-data">Data</a>    <ul>
+      <li><a href="#expectations" id="markdown-toc-expectations">Expectations</a></li>
+      <li><a href="#organization" id="markdown-toc-organization">Organization</a></li>
       <li><a href="#projects" id="markdown-toc-projects">Projects</a></li>
+      <li><a href="#documentation" id="markdown-toc-documentation">Documentation</a></li>
+      <li><a href="#production" id="markdown-toc-production">Production</a></li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -314,6 +318,78 @@ pytest <span class="nt">-m</span> <span class="s2">"not fruits"</span>  <span cl
 
 </code></pre></div></div>
 
+<h2 id="expectations">Expectations</h2>
+
+<ul>
+  <li>When it comes to creating expectations as to what our data should look like, we want to think about our entire dataset and all the features (columns) within it.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Presence of specific features
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Unique combinations of features (detect data leaks!)
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>
+
+<span class="c1"># Missing values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+
+<span class="c1"># Unique values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># Type adherence
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># List (categorical) / range (continuous) of allowed values
+</span><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s">"computer-vision"</span><span class="p">,</span> <span class="s">"graph-learning"</span><span class="p">,</span> <span class="s">"reinforcement-learning"</span><span class="p">,</span>
+        <span class="s">"natural-language-processing"</span><span class="p">,</span> <span class="s">"mlops"</span><span class="p">,</span> <span class="s">"time-series"</span><span class="p">]</span>
+<span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_in_set</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">value_set</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>Each of these expectations will create an output with details about success or failure, expected and observed values, expectations raised, etc. For example, the expectation <code class="language-plaintext highlighter-rouge">df.expect_column_values_to_be_of_type(column="title", type_="str")</code> would produce the following if successful:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"exception_info"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"raised_exception"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"exception_traceback"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"exception_message"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+  </span><span class="nl">"expectation_config"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"title"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type_"</span><span class="p">:</span><span class="w"> </span><span class="s2">"str"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"result_format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BASIC"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nl">"expectation_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"_expect_column_values_to_be_of_type__map"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"element_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">955</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"missing_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"missing_percent"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"unexpected_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"unexpected_percent"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"unexpected_percent_nonmissing"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"partial_unexpected_list"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div></div>
+
+<p>There are just a few of the different expectations that we can create. Be sure to explore all the <a href="https://greatexpectations.io/expectations/">expectations</a>, including <a href="https://docs.greatexpectations.io/docs/guides/expectations/creating_custom_expectations/overview/">custom expectations</a>. Here are some other popular expectations that don’t pertain to our specific dataset but are widely applicable:</p>
+
+<ul>
+  <li>feature value relationships with other feature values → <code class="language-plaintext highlighter-rouge">expect_column_pair_values_a_to_be_greater_than_b</code></li>
+  <li>row count (exact or range) of samples → <code class="language-plaintext highlighter-rouge">expect_table_row_count_to_be_between</code></li>
+  <li>value statistics (mean, std, median, max, min, sum, etc.) → <code class="language-plaintext highlighter-rouge">expect_column_mean_to_be_between</code></li>
+</ul>
+
+<h2 id="organization">Organization</h2>
+
 <ul>
   <li>When it comes to organizing expectations, it’s recommended to start with table-level ones and then move on to individual feature columns.</li>
 </ul>
@@ -375,6 +451,17 @@ tests/great_expectations/
 </ul>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations datasource new
+<span class="nt">-----------------------------------------------------------------------------</span>
+What data would you like Great Expectations to connect to?
+    1. Files on a filesystem <span class="o">(</span><span class="k">for </span>processing with Pandas or Spark<span class="o">)</span> 👈
+    2. Relational database <span class="o">(</span>SQL<span class="o">)</span>
+<span class="nt">-----------------------------------------------------------------------------</span>
+What are you processing your files with?
+1. Pandas 👈
+2. PySpark
+<span class="nt">-----------------------------------------------------------------------------</span>
+Enter the path of the root directory where the data files are stored: ../data
+
 </code></pre></div></div>
 
 <ul>
@@ -398,6 +485,168 @@ tests/great_expectations/
 Name the new Expectation Suite [projects.csv.warning]: projects
 
 </code></pre></div></div>
+
+<p>This will open up an interactive notebook where we can add expectations. Copy and paste the expectations below and run all the cells. Repeat this step for <code class="language-plaintext highlighter-rouge">tags.csv</code> and <code class="language-plaintext highlighter-rouge">labeled_projects.csv</code>.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expections for projects.csv
+</span>
+<span class="c1"># Presence of features
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>  <span class="c1"># data leak
+</span>
+<span class="c1"># id
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># create_on
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_match_strftime_format</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">,</span> <span class="n">strftime_format</span><span class="o">=</span><span class="s">"%Y-%m-%d %H:%M:%S"</span><span class="p">)</span>
+
+<span class="c1"># title
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># description
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expections for tags.csv
+</span>
+<span class="c1"># Presence of features
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">])</span>
+
+<span class="c1"># id
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># tag
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expections for labeled_projects.csv
+</span>
+<span class="c1"># Presence of features
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">])</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>  <span class="c1"># data leak
+</span>
+<span class="c1"># id
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># create_on
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_match_strftime_format</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">,</span> <span class="n">strftime_format</span><span class="o">=</span><span class="s">"%Y-%m-%d %H:%M:%S"</span><span class="p">)</span>
+
+<span class="c1"># title
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># description
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># tag
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>All of these expectations have been saved under <code class="language-plaintext highlighter-rouge">great_expectations/expectations</code>:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations/
+├── expectations/
+│   ├── labeled_projects.csv
+│   ├── projects.csv
+│   └── tags.csv
+</code></pre></div></div>
+
+<ul>
+  <li>And we can also list the suites with:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations suite list
+--------------------------------
+Using v3 (Batch Request) API
+3 Expectation Suites found:
+ - labeled_projects
+ - projects
+ - tags
+</code></pre></div></div>
+
+<ul>
+  <li>To edit a suite, we can execute the follow CLI command:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations suite edit &lt;SUITE_NAME&gt;
+
+</code></pre></div></div>
+
+<ul>
+  <li>Create Checkpoints where a Suite of Expectations are applied to a specific data asset. This is a great way of programmatically applying checkpoints on our existing and new data sources.</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd tests
+great_expectations checkpoint new CHECKPOINT_NAME
+</code></pre></div></div>
+
+<ul>
+  <li>So for our project, it would be:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations checkpoint new projects
+great_expectations checkpoint new tags
+great_expectations checkpoint new labeled_projects
+</code></pre></div></div>
+
+<p>Each of these checkpoint creation calls will launch a notebook where we can define which suites to apply this checkpoint to. We have to change the lines for <code class="language-plaintext highlighter-rouge">data_asset_name</code> (which data asset to run the checkpoint suite on) and <code class="language-plaintext highlighter-rouge">expectation_suite_name</code> (name of the suite to use). For example, the <code class="language-plaintext highlighter-rouge">projects</code> checkpoint would use the <code class="language-plaintext highlighter-rouge">projects.csv</code> data asset and the projects suite.</p>
+
+<p>Repeat these same steps for the <code class="language-plaintext highlighter-rouge">tags</code> and <code class="language-plaintext highlighter-rouge">labeled_projects</code> checkpoints and then we’re ready to execute them:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations checkpoint run projects
+great_expectations checkpoint run tags
+great_expectations checkpoint run labeled_projects
+</code></pre></div></div>
+
+<p><img src="/images/test_data_1.png" alt="" /></p>
+
+<p>At the end of this lesson, we’ll create a target in our <code class="language-plaintext highlighter-rouge">Makefile</code> that run all these tests (code, data and models) and we’ll automate their execution in our pre-commit lesson.</p>
+
+<div class="pen-para">
+    <div class="pen-bar"><i class="fas fa-pen"></i>Note</div>
+    <div class="fire-content">We've applied expectations on our source dataset but there are many other key areas to test the data as well. For example, the intermediate outputs from processes such as cleaning, augmentation, splitting, preprocessing, tokenization, etc.</div>
+</div>
+
+<h2 id="documentation">Documentation</h2>
+
+<p>When we create expectations using the CLI application, Great Expectations automatically generates documentation for our tests. It also stores information about validation runs and their results. We can launch the generate data documentation with the following command: <code class="language-plaintext highlighter-rouge">great_expectations docs build</code></p>
+
+<p><img src="/images/test_data_2.png" alt="" /></p>
+
+<ul>
+  <li>By default, Great Expectations stores our expectations, results and metrics locally but for production, we’ll want to set up remote metadata stores.</li>
+</ul>
+
+<h2 id="production">Production</h2>
+
+<p>The advantage of using a library such as great expectations, as opposed to isolated assert statements is that we can:</p>
+
+<ul>
+  <li>reduce redundant efforts for creating tests across data modalities</li>
+  <li>automatically create testing checkpoints to execute as our dataset grows</li>
+  <li>automatically generate documentation on expectations and report on runs</li>
+  <li>easily connect with backend data sources such as local file systems, S3, databases, etc.</li>
+</ul>
+
+<p>Many of these expectations will be executed when the data is extracted, loaded and transformed during our DataOps workflows. Typically, the data will be extracted from a source (database, API, etc.) and loaded into a data system (ex. data warehouse) before being transformed there (ex. using dbt) for downstream applications. Throughout these tasks, Great Expectations checkpoint validations can be run to ensure the validity of the data and the changes applied to it. We’ll see a simplified version of when data validation should occur in our data workflows in the orchestration lesson.</p>
+
+<p><img src="/images/test_data_3.png" alt="" /></p>
 
 <h1 id="참고">참고</h1>
 

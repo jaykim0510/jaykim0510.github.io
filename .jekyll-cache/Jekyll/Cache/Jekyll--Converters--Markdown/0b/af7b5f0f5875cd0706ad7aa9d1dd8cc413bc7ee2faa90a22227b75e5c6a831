@@ -1,4 +1,4 @@
-I")7<hr />
+I"+S<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#intuition" id="markdown-toc-intuition">Intuition</a>    <ul>
@@ -10,6 +10,7 @@
       <li><a href="#변수-주입" id="markdown-toc-변수-주입">변수 주입</a></li>
       <li><a href="#사용자-정의-변수" id="markdown-toc-사용자-정의-변수">사용자 정의 변수</a></li>
       <li><a href="#로직-적용" id="markdown-toc-로직-적용">로직 적용</a></li>
+      <li><a href="#다양한-함수들" id="markdown-toc-다양한-함수들">다양한 함수들</a></li>
     </ul>
   </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -189,13 +190,121 @@ MyChart
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 함수</span>
 <span class="o">{{</span> <span class="o">[</span>함수명] 인자1 인자2 ... <span class="o">}}</span>
 ex. <span class="o">{{</span> quote .Values.name <span class="o">}}</span> <span class="c"># (quote 함수에 .Values.name 을 인자로 넣는다 =&gt; 양쪽에 쌍따옴표가 붙은 결과물 출력)</span>
+</code></pre></div></div>
 
-
-<span class="c"># 파이프라인 =&gt; 여러 함수를 쓸 때는 파이프라인 방식을 써야된다</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 파이프라인 =&gt; 여러 함수를 쓸 때는 파이프라인 방식을 써야된다</span>
 <span class="c"># 함수 하나를 쓰더라도 그냥 파이프라인으로 많이 쓴다</span>
 <span class="o">{{</span> <span class="o">[</span>인자] | <span class="o">[</span>함수명] <span class="o">}}</span>
 ex <span class="o">{{</span> .Values.name | quote <span class="o">}}</span> <span class="c"># .Values.name을 quote 함수의 인자로 넣는다</span>
 </code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># if문</span>
+<span class="c"># false가 되는 예시 0, "", [], {}, Null, false</span>
+<span class="c"># eq(=), ne(!=), not(!), ge(&gt;=), gt(&gt;), le(&lt;=), lt(&lt;), and(&amp;&amp;), or(||), default, empty</span>
+<span class="o">{{</span>- <span class="k">if </span>eq .Values.dev.env <span class="s2">"dev"</span> <span class="o">}}</span>
+  log: debug
+<span class="o">{{</span>- <span class="k">else if</span> .Values.dev.env <span class="o">}}</span>
+  log: <span class="o">{{</span> .Vlaues.dev.log <span class="o">}}</span>
+<span class="o">{{</span>- <span class="k">else</span> <span class="o">}}</span>
+  log: error
+<span class="o">{{</span>- end <span class="o">}}</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{{</span>- with .Values.dev <span class="o">}}</span>
+  <span class="nb">env</span>: <span class="o">{{</span> .env <span class="o">}}</span> <span class="c"># {{ .Values.dev.env }}</span>
+  log: <span class="o">{{</span> .log <span class="o">}}</span> <span class="c"># {{ .Values.dev.log }}</span>
+<span class="o">{{</span>- end <span class="o">}}</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{{</span>- range .Values.list <span class="o">}}</span> <span class="c"># [a, b, c]</span>
+- <span class="o">{{</span> <span class="nb">.</span> <span class="o">}}</span> <span class="c"># a -&gt; b -&gt; c</span>
+<span class="o">{{</span>- end <span class="o">}}</span>
+</code></pre></div></div>
+
+<h2 id="다양한-함수들">다양한 함수들</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">{{- .Values.data | toYaml | nindent 4 }}</code>: 리스트 요소를 YAML 형태로 열거하고 싶을 때</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># values.yaml</span>
+
+<span class="na">data</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">a</span>
+  <span class="pi">-</span> <span class="s">b</span>
+  <span class="pi">-</span> <span class="s">c</span>
+</code></pre></div></div>
+
+<ul>
+  <li>위의 데이터를 아래와 같이 템플릿에 주입하고 싶다</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># deployment.yaml</span>
+
+<span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">a</span>
+    <span class="pi">-</span> <span class="s">b</span>
+    <span class="pi">-</span> <span class="s">c</span>
+
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span>
+    <span class="pi">{{</span> <span class="nv">.Values.data | toYaml</span> <span class="pi">}}</span> <span class="c1"># toYaml 함수에 넣으면 리스트형 데이터를 YAML에 맞게 형변환 시켜준다</span>
+<span class="s">----------------------------------------------------</span>
+
+<span class="c1"># 하지만 결과는 이상하게 나온다 (첫 번째 요소에만 4칸이 띄어지고, 나머지는 indent가 없다)</span>
+<span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span> 
+    <span class="pi">-</span> <span class="s">a</span>
+<span class="pi">-</span> <span class="s">b</span>
+<span class="pi">-</span> <span class="s">c</span>
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span>
+<span class="pi">{{</span> <span class="nv">.Values.data | toYaml | indent 4</span> <span class="pi">}}</span> <span class="c1"># indent 4를 넣어 각 요소에 indent 4를 넣어준다</span>
+
+<span class="c1"># 결과는 올바르지만 정작 템플릿은 indent가 제대로 적용이 안되기 때문에 가독성이 떨어진다</span>
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span>
+  <span class="pi">{{</span><span class="nv">- .Values.data | toYaml | indent 4</span> <span class="pi">}}</span> <span class="c1"># -를 추가하면 앞에 공백문자를 없애준다</span>
+<span class="s">---------------------------------------------------------------------</span>
+
+<span class="c1"># 앞에 공백문자 2칸 뿐만 아니라 줄바꿈도 없애버린다</span>
+<span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span> <span class="s">- a</span>
+    <span class="s">- b</span>
+    <span class="s">- c</span>
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span>
+  <span class="pi">{{</span><span class="nv">- .Values.data | toYaml | nindent 4</span> <span class="pi">}}</span> <span class="c1"># 앞에 한 번 줄바꿈을 실행하고 각 요소에 indent 4를 넣어준다</span>
+<span class="s">------------------------------------------------</span>
+
+<span class="c1"># 템플릿 indent도 보기좋게 유지하면서 원하는 결과를 얻었다</span>
+<span class="na">foo</span><span class="pi">:</span>
+  <span class="na">bar</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">a</span>
+    <span class="pi">-</span> <span class="s">b</span>
+    <span class="pi">-</span> <span class="s">c</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">{{- .Values.data | default 5 }}</code>: <code class="language-plaintext highlighter-rouge">.Values.data</code>가 <code class="language-plaintext highlighter-rouge">false</code>이면 default 값 <code class="language-plaintext highlighter-rouge">5</code>가 나온다</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">{{ trim "  hello " }}</code>: 좌우 공백문자를 제거 (“hello” 리턴)</li>
+  <li><code class="language-plaintext highlighter-rouge">{{ trimPrefix "-" "-hello-" }}</code>: 왼쪽에 - 문자 제거 (“hello-“ 리턴)</li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">{{ trimSuffix "-" "-hello-" }}</code>: 오른쪽에 - 문자 제거 (“-hello” 리턴)</p>
+  </li>
+  <li></li>
+</ul>
 
 <h1 id="참고">참고</h1>
 :ET
