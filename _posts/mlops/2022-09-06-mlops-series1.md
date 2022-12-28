@@ -34,8 +34,8 @@ tags: MLOps
 - ML 파이프라인: scikit-learn, pyspark
 - 피처 저장소: Feast
 - 데이터 버저닝: dvc
-- 모델 버저닝: MLflow
-- 서빙: FastAPI, django
+- 모델 공유: MLflow
+- 서빙: FastAPI, BentoML
 - 모니터링: Grafana
 - 자동화: kubeflow
 

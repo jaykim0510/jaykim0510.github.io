@@ -22,19 +22,11 @@ tags: MLOps
 
 ![](/images/feast_3.png)
 
-To operate machine learning systems at scale, teams need to have access to a wealth of feature data to both train their models, as well as to serve them in production. GO-JEK and Google Cloud are pleased to announce the release of Feast, an open source feature store that allows teams to manage, store, and discover features for use in machine learning projects.
+> Feast standardize the definition, storage and access of features for training and serving. It acts as a bridge between data engineering and machine learning.
 
-Feast gives teams the ability to define and publish features to this unified store, which in turn facilitates discovery and feature reuse across machine learning projects.
+머신러닝 시스템을 운영하게 되면 피처 데이터를 모델을 훈련시키고 프로덕션 환경에서 서비스하기 위해 여러 팀에서 사용하게 된다. 그렇기 때문에 피처 데이터는 일관적으로 유지되어야 한다. 이를 위해 구글에서는 Feast라는 피처 저장소를 오픈 소스로 발표했다.  
 
-Feast **standardize the definition, storage and access of features for training and serving.** It acts as a bridge between data engineering and machine learning.
-
-
-# 언제 Feature Store가 필요한가
-
-- 필요 없는 경우
-  -  All of our data points are independent, stateless, from client-side and there is no entity that has changing features over time
-- 필요한 경우
-  - when we need to have up-to-date features for an entity that we continually generate predictions for. For example, a user's behavior (clicks, purchases, etc.) on an e-commerce platform or the deliveries a food runner recently made in the last hour, etc
+Feast는 피처를 정의하고 일관되게 유지시켜주는 통합된 저장소로, 결과적으로 여러 팀 그리고 프로젝트에서 재사용 가능하도록 해준다.  
 
 # Feature Store의 핵심 구성 요소
 
@@ -70,8 +62,18 @@ Feast **standardize the definition, storage and access of features for training 
 
 
 <div class="fire-para">
-    <div class="fire-bar"><i class="fas fa-question"></i> Is Feast a database?</div>
+    <div class="fire-bar"><i class="fas fa-question"></i>Is Feast a database?</div>
     <div class="fire-content">No. Feast is a tool that manages data stored in other systems (e.g. BigQuery, Cloud Firestore, Redshift, DynamoDB). It is not a database, but it helps manage data stored in other systems.</div>
+</div>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-question"></i>When do we need Feature Store?
+    </div>
+    <div class="pen-content">
+      <li>We don't need Feast when all of our data points are independent, stateless, from client-side and there is no entity that has changing features over time</li>
+      <li>We need Feast when we need to have up-to-date features for an entity that we continually generate predictions for. For example, a user's behavior (clicks, purchases, etc.) on an e-commerce platform or the deliveries a food runner recently made in the last hour, etc</li>
+    </div>
 </div>
 
 

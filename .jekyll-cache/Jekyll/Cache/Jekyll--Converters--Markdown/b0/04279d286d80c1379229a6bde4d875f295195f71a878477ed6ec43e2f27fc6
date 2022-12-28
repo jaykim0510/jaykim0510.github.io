@@ -1,0 +1,293 @@
+I"X<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#intuition" id="markdown-toc-intuition">Intuition</a></li>
+  <li><a href="#mlflow" id="markdown-toc-mlflow">MLflow</a></li>
+  <li><a href="#mlflow-실습" id="markdown-toc-mlflow-실습">MLflow 실습</a>    <ul>
+      <li><a href="#initialization" id="markdown-toc-initialization">Initialization</a></li>
+      <li><a href="#mlflow-tracking" id="markdown-toc-mlflow-tracking">MLflow Tracking</a>        <ul>
+          <li><a href="#experiment와-run" id="markdown-toc-experiment와-run">Experiment와 Run</a></li>
+          <li><a href="#log" id="markdown-toc-log">Log</a></li>
+          <li><a href="#예제-코드" id="markdown-toc-예제-코드">예제 코드</a></li>
+        </ul>
+      </li>
+      <li><a href="#mlflow-project" id="markdown-toc-mlflow-project">MLflow Project</a></li>
+      <li><a href="#model-loading" id="markdown-toc-model-loading">Model loading</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<p style="text-align: center;"><span style="margin-right: 10px;"><a href="https://naver.com"><img src="https://img.shields.io/static/v1?label=&amp;message=View%20On%20GitHub&amp;color=586069&amp;logo=github&amp;labelColor=2f363d" /></a></span> <span><a href="https://naver.com"><img src="https://colab.research.google.com/assets/colab-badge.svg" /></a></span></p>
+
+<h1 id="intuition">Intuition</h1>
+
+<ul>
+  <li>머신러닝 모델을 개발할 때는 일련의 프로세스가 있다.</li>
+  <li>데이터 로드 - 모델 선택 - 모델 학습 - 모델 평가 - 모델 서빙</li>
+  <li>어떤 데이터, 어떤 모델, 어떻게 학습, 어떻게 평가하는지에 따라 서빙 단계에서의 모델 성능은 달라지게 된다</li>
+  <li>그래서 위의 모든 요소들을 조합해 가장 높은 성능을 갖는 모델을 서빙하는 것이 머신러닝 팀의 목표이다</li>
+</ul>
+
+<h1 id="mlflow">MLflow</h1>
+
+<p>위와 같은 머신러닝 모델 개발의 전체 사이클을 원활하게 하기 위해 MLflow는 다음과 같은 요소들을 지원한다.</p>
+
+<p><img src="/images/mlflow_1.png" alt="" /></p>
+
+<ul>
+  <li>Tracking: <strong>실험 과정들을 기록</strong></li>
+  <li>Projects: <strong>어떤 환경에서든, 누구든 똑같은 실험을 다시 할 수 있도록 전체 코드를 패키징</strong></li>
+  <li>Models: 다양한 환경에서 <strong>모델을 배포</strong></li>
+  <li>Registry: 팀원들이 편하게 <strong>모델을 공유할 수 있는 저장소</strong></li>
+</ul>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Note
+    </div>
+    <div class="pen-content">
+      모두 훌륭한 기능이지만, MLflow는 Artifact를 공유하는 Registry 용도로 가장 많이 사용된다. Tracking은 wandb로 많이 대체되는 편이다.
+    </div>
+</div>
+
+<p>MLflow enables Data Scientists to easily track the progress during the model development and tuning. It takes care of the packaging and deployment of models, no matter which framework or programming language was used to create it. In addition, MLflow provides a registry, where the models we want to keep or share can be safely stored and readily accessible</p>
+
+<p>We can run MLflow on our own servers and databases so there are no storage cost / limitations, making it one of the most popular options and is used by Microsoft, Facebook, Databricks and others. You can also set up your own Tracking servers to synchronize runs amongst multiple team members collaborating on the same task.</p>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Other tools
+    </div>
+    <div class="pen-content">
+      <li>Weights and Biases: Tracking에 특화된 툴</li>
+      <li>BentoML: Serving에 특화된 툴</li>
+    </div>
+</div>
+
+<h1 id="mlflow-실습">MLflow 실습</h1>
+
+<h2 id="initialization">Initialization</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install mlflow
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir mlflow_project
+</code></pre></div></div>
+
+<h2 id="mlflow-tracking">MLflow Tracking</h2>
+
+<ul>
+  <li>
+    <p>MLflow offers tools for tracking metrics, artifacts, and metadata.</p>
+  </li>
+  <li>
+    <p>MLflow Tracking is an API-based tool for logging metrics, parameters, model versions, code versions, and files. MLflow Tracking is integrated with a UI for visualizing and managing artifacts, models, files, etc.</p>
+  </li>
+  <li>
+    <p>MLflow Tracking allows you to generate runs through MLflow’s Python, R, Java, and REST APIs. By default, the runs are stored in the directory where the code session is executed. However, MLflow also allows storing artifacts on a local or remote server.</p>
+  </li>
+</ul>
+
+<h3 id="experiment와-run">Experiment와 Run</h3>
+
+<ul>
+  <li>
+    <p>하나의 experiment는 여러개의 run을 가질수 있다</p>
+  </li>
+  <li>experiment: 기능 단위로 분리 (또는 모델)
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">mlflow.create_experiment()</code>: 새로운 experiment 생성</li>
+      <li><code class="language-plaintext highlighter-rouge">mlflow.set_experiment()</code>: 이미 존재하는 experiment를 active로 설정</li>
+      <li><code class="language-plaintext highlighter-rouge">mlflow.get_experiment_by_name(exp_name)</code>: exp_name 이라는 이름의 experiment가 있는 지 검색해서 있으면 리턴</li>
+    </ul>
+  </li>
+  <li>run: 하이퍼 파라미터 단위로 분리
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">mlflow.start_run(run_name=name)</code>: name라는 run을 생성해 학습 메트릭, 파라미터 등 관련 인자를 관리</li>
+      <li><code class="language-plaintext highlighter-rouge">mlflow.end_run()</code>:  현재 실행되고있는 run을 종료</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="log">Log</h3>
+
+<ul>
+  <li>MLflow에서는 자동 로깅을 권장한다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 파라미터, 아티팩트를 자동으로 로깅해준다
+</span><span class="n">mlflow</span><span class="p">.</span><span class="n">sklearn</span><span class="p">.</span><span class="n">autolog</span><span class="p">()</span>
+
+<span class="c1"># 파라미터 아티팩트, 메트릭, 태그까지 자동으로 로깅해준다
+</span><span class="n">mlflow</span><span class="p">.</span><span class="n">autolog</span><span class="p">()</span>
+</code></pre></div></div>
+
+<ul>
+  <li>자기가 커스텀 하고 싶은 로깅에 대해서만 추가적으로 <code class="language-plaintext highlighter-rouge">log_param</code>, <code class="language-plaintext highlighter-rouge">log_metric을</code> 쓰도록 한다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 파라미터 로깅
+</span><span class="n">mlflow</span><span class="p">.</span><span class="n">log_param</span><span class="p">(</span><span class="s">"alpha"</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+<span class="n">mlflow</span><span class="p">.</span><span class="n">log_param</span><span class="p">(</span><span class="s">"l1_ratio"</span><span class="p">,</span> <span class="n">l1_ratio</span><span class="p">)</span>
+
+<span class="c1"># 메트릭 로깅
+</span><span class="n">mlflow</span><span class="p">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s">"rmse"</span><span class="p">,</span> <span class="n">rmse</span><span class="p">)</span>
+<span class="n">mlflow</span><span class="p">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s">"r2"</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="예제-코드">예제 코드</h3>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">mlflow</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">ElasticNet</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">r2_score</span>
+
+
+<span class="n">MODEL_NAME</span> <span class="o">=</span> <span class="s">"ElasticNet"</span>
+<span class="n">EXPERIMENT_NAME</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"recommand/</span><span class="si">{</span><span class="n">MODEL_NAME</span><span class="si">}</span><span class="s">"</span>
+
+<span class="n">RUN_ARGUMENTS</span> <span class="o">=</span> <span class="p">{</span><span class="s">"tags"</span><span class="p">:</span> <span class="p">{</span><span class="s">"model"</span><span class="p">:</span> <span class="s">"ElasticNet"</span><span class="p">},</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"this is second test"</span><span class="p">}</span>
+
+<span class="n">mlflow</span><span class="p">.</span><span class="n">set_tracking_uri</span><span class="p">(</span><span class="s">"http://localhost:8000"</span><span class="p">)</span>
+<span class="n">mlflow</span><span class="p">.</span><span class="n">set_experiment</span><span class="p">(</span><span class="n">EXPERIMENT_NAME</span><span class="p">)</span>
+
+<span class="c1"># 뭔가 커스텀 하고 싶은 메트릭 있을 때만 이렇게 정의 하면 된다. 없으면 autolog()
+</span><span class="k">def</span> <span class="nf">eval_metrics</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">pred</span><span class="p">):</span>
+    <span class="n">rmse</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">pred</span><span class="p">))</span>
+    <span class="n">mae</span> <span class="o">=</span> <span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">actual</span><span class="p">,</span> <span class="n">pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rmse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">";"</span><span class="p">)</span>
+    
+    <span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="n">train_x</span> <span class="o">=</span> <span class="n">train</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">"quality"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">test_x</span> <span class="o">=</span> <span class="n">test</span><span class="p">.</span><span class="n">drop</span><span class="p">([</span><span class="s">"quality"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">train_y</span> <span class="o">=</span> <span class="n">train</span><span class="p">[[</span><span class="s">"quality"</span><span class="p">]]</span>
+    <span class="n">test_y</span> <span class="o">=</span> <span class="n">test</span><span class="p">[[</span><span class="s">"quality"</span><span class="p">]]</span>
+
+    <span class="n">lr</span> <span class="o">=</span> <span class="n">ElasticNet</span><span class="p">(</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="n">mlflow</span><span class="p">.</span><span class="n">autolog</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">mlflow</span><span class="p">.</span><span class="n">start_run</span><span class="p">(</span><span class="o">**</span><span class="n">RUN_ARGUMENTS</span><span class="p">)</span> <span class="k">as</span> <span class="n">run</span><span class="p">:</span>
+        
+        <span class="n">lr</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_x</span><span class="p">,</span> <span class="n">train_y</span><span class="p">)</span>
+        <span class="n">predict</span> <span class="o">=</span> <span class="n">lr</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>MLflow를 본격적으로 사용하기 전에 짚고 넘어갈 중요한 설정이 있다.</li>
+</ul>
+
+<h2 id="mlflow-project">MLflow Project</h2>
+
+<ul>
+  <li>It also provides standard formats for packaging, distributing, and deploying models and projects.</li>
+</ul>
+
+<p>MLflow Projects provides a standard format for packaging, sharing, and reusing machine learning projects. Each project can be a remote repository or a local directory. Unlike MLflow Models, MLflow Projects aims at the portability and distribution of machine learning projects.</p>
+
+<p>An MLflow Project is defined by a YAML manifest called <code class="language-plaintext highlighter-rouge">MLProject</code>, where the project’s specifications are exposed.</p>
+
+<p>The key features for the implementation of the model are specified in the MLProject file. These include:</p>
+
+<ul>
+  <li>the input parameters that the model receives,</li>
+  <li>the data type of the parameters,</li>
+  <li>the command for executing the model, and</li>
+  <li>the environment in which the project runs.</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sklearn_logistic_regression
+├── MLproject
+├── conda.yaml
+└── train.py
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># MLProject</span>
+
+<span class="na">name</span><span class="pi">:</span> <span class="s">tutorial</span>
+<span class="na">conda_env</span><span class="pi">:</span> <span class="s">conda.yaml</span>
+<span class="c1"># python_env:</span>
+
+<span class="na">entry_points</span><span class="pi">:</span>
+  <span class="na">main</span><span class="pi">:</span>
+    <span class="na">parameters</span><span class="pi">:</span>
+      <span class="na">alpha</span><span class="pi">:</span> <span class="pi">{</span><span class="nv">type</span><span class="pi">:</span> <span class="nv">float</span><span class="pi">,</span> <span class="nv">default</span><span class="pi">:</span> <span class="nv">0.5</span><span class="pi">}</span>
+      <span class="na">l1_ratio</span><span class="pi">:</span> <span class="pi">{</span><span class="nv">type</span><span class="pi">:</span> <span class="nv">float</span><span class="pi">,</span> <span class="nv">default</span><span class="pi">:</span> <span class="nv">0.1</span><span class="pi">}</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s2">"</span><span class="s">python</span><span class="nv"> </span><span class="s">train.py</span><span class="nv"> </span><span class="s">{alpha}</span><span class="nv"> </span><span class="s">{l1_ratio}"</span>
+</code></pre></div></div>
+
+<p>Likewise, MLflow provides a CLI to run projects located on a local server or a remote repository. The following code snippet shows an example of how a project is run from a local server or a remote repository:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mlflow run sklearn_logistic_regression <span class="nt">-e</span> main <span class="nt">-P</span> <span class="nv">alpha</span><span class="o">=</span>0.1 <span class="nt">-P</span> <span class="nv">l1_ratio</span><span class="o">=</span>0.5
+</code></pre></div></div>
+
+<p>In both examples, the environment will be generated based on the <code class="language-plaintext highlighter-rouge">MLProject file</code> specification. The command that triggers the model will be executed under the arguments passed on the command line. Since the model allows input parameters, these are assigned through the <code class="language-plaintext highlighter-rouge">-P</code> flag. In both examples, the model parameter refers to the maximum depth of the decision tree.</p>
+
+<p>By default, a run like the one shown in the example will store the artifacts in the <code class="language-plaintext highlighter-rouge">.mlruns</code> directory.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker
+├── Dockerfile
+├── MLproject
+├── train.py
+└── wine-quality.csv
+</code></pre></div></div>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Dockerfile</span>
+
+<span class="k">FROM</span><span class="s"> python:3.8.8-slim-buster</span>
+
+<span class="k">RUN </span>pip <span class="nb">install </span>mlflow&gt;<span class="o">=</span>1.0 <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> pip <span class="nb">install </span>numpy <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> pip <span class="nb">install </span>pandas <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> pip <span class="nb">install </span>scikit-learn
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># MLproject</span>
+
+<span class="na">name</span><span class="pi">:</span> <span class="s">docker-example</span>
+
+<span class="na">docker_env</span><span class="pi">:</span>
+  <span class="na">image</span><span class="pi">:</span>  <span class="s">mlflow-docker-example</span>
+
+<span class="na">entry_points</span><span class="pi">:</span>
+  <span class="na">main</span><span class="pi">:</span>
+    <span class="na">parameters</span><span class="pi">:</span>
+      <span class="na">alpha</span><span class="pi">:</span> <span class="s">float</span>
+      <span class="na">l1_ratio</span><span class="pi">:</span> <span class="pi">{</span><span class="nv">type</span><span class="pi">:</span> <span class="nv">float</span><span class="pi">,</span> <span class="nv">default</span><span class="pi">:</span> <span class="nv">0.1</span><span class="pi">}</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s2">"</span><span class="s">python</span><span class="nv"> </span><span class="s">train.py</span><span class="nv"> </span><span class="s">--alpha</span><span class="nv"> </span><span class="s">{alpha}</span><span class="nv"> </span><span class="s">--l1-ratio</span><span class="nv"> </span><span class="s">{l1_ratio}"</span>
+</code></pre></div></div>
+
+<h2 id="model-loading">Model loading</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">mlflow</span>
+
+<span class="n">model_path</span> <span class="o">=</span> <span class="s">'s3://jay-ml-models/1/006d75d20d9847a4af884bca40e2a66e/artifacts/model/'</span>
+
+<span class="n">loaded_model</span> <span class="o">=</span> <span class="n">mlflow</span><span class="p">.</span><span class="n">sklearn</span><span class="p">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+
+<span class="n">loaded_model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://mlflow.org/docs/latest/index.html" target="_blank">MLflow Documentation</a></li>
+  <li><a href="https://pajamacoder.tistory.com/32" target="_blank">pajamacoder, [mlflow ] mlflow 소개와 사용 이유 (1/3)</a></li>
+  <li><a href="https://www.kdnuggets.com/2022/08/package-distribute-machine-learning-models-mlflow.html" target="_blank">KD nuggets, How to Package and Distribute Machine Learning Models with MLFlow</a></li>
+  <li><a href="https://www.adaltas.com/en/2020/03/23/mlflow-open-source-ml-platform-tutorial/" target="_blank">Petra KAFERLE DEVISSCHERE, MLflow tutorial: an open source Machine Learning (ML) platform</a></li>
+  <li><a href="https://dailyheumsi.tistory.com/263" target="_blank">하나씩 점을 찍어 나가며, MLflow - MLflow Projects</a></li>
+  <li><a href="https://blog.noodle.ai/introduction-to-mlflow-for-mlops-part-3-database-tracking-minio-artifact-storage-and-registry/" target="_blank">noodle.ai, Introduction to MLflow for MLOps Part 3: Database Tracking, Minio Artifact Storage, and Registry</a></li>
+</ul>
+:ET
