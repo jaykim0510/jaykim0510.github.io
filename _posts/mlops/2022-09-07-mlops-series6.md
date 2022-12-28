@@ -21,24 +21,32 @@ tags: MLOps
 
 # Intuition
 
-- In this lesson, we'll learn how to test code, data and machine learning models to construct a machine learning system that we can reliably iterate on. Tests are a way for us to ensure that something works as intended.  
-- We're incentivized to implement tests and discover sources of error as early in the development cycle as possible so that we can decrease downstream costs and wasted time.  
-- Once we've designed our tests, we can automatically execute them every time we change or add to our codebase.  
+- 머신러닝 시스템을 신뢰성있게 반복하기 위해 코드, 데이터, 모델을 테스트하는 방법을 배워야 한다
+- 테스트는 무엇인가가 우리의 의도대로 동작한다는 것을 확신시켜준다
+- 우리는 가능한 에러를 빨리 찾음으로써 다운 스트림 태스크로 에러가 확장되지 않도록 해야한다
 
 ## How should we test
 
-The framework to use when composing tests is the Arrange Act Assert methodology.  
+테스트 코드의 방법론은 다음과 같이 Arrange-Act-Assert로 이루어진다
 
-- **Arrange**: set up the different inputs to test on.
-- **Act**: apply the inputs on the component we want to test.
-- **Assert**: confirm that we received the expected output.
+- **Arrange**: 여러 다른 입력 데이터를 준비한다
+- **Act**: 준비된 입력 데이터를 테스트 하고 싶은 요소에 넣는다
+- **Assert**: 결과물을 우리의 기대값과 비교한다
 
-In Python, there are many tools, such as `unittest`, `pytest`, etc. that allow us to easily implement our tests while adhering to the Arrange Act Assert framework. These tools come with powerful built-in functionality such as parametrization, filters, and more, to test many conditions at scale.  
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-hammer"></i>Tools
+    </div>
+    <div class="pen-content">
+      In Python, there are many tools, such as `unittest`, `pytest`, etc. that allow us to easily implement our tests while adhering to the Arrange Act Assert framework. These tools come with powerful built-in functionality such as parametrization, filters, and more, to test many conditions at scale.  
+    </div>
+</div>
+
 
 
 ## What should we test
 
-When arranging our inputs and asserting our expected outputs, what are some aspects of our inputs and outputs that we should be testing for?
+우리는 대표적으로 데이터 자체에 대한 테스트, 그리고 데이터를 모델에 넣고난 후 나온 결과에 대한 테스트 해야한다.  
 
 - inputs: data types, format, length, edge cases (min/max, small/large, etc.)
 - outputs: data types, formats, exceptions, intermediary and final outputs
@@ -57,19 +65,20 @@ root
 └── tests
     ├── code
     │   └── test_train.py
+    │   └── test_valid.py
     ├── data
     └── model
 ```
 
 # Testing Code
 
-- We'll start by testing our code and we'll use pytest as our testing framework for it's powerful builtin features such as parametrization, fixtures, markers and more.
-
 ## Initialization
 
 ```
 pip install pytest
 ```
+
+- `pytest`는 기본적으로 `tests` 폴더의 `test_`로 시작하는 파일들을 테스트하지만, 설정을 통해 변경할 수도 있다.  
 
 ```ini
 # pyproject.toml
@@ -137,10 +146,12 @@ E        +  where False = is_crisp(fruit='orange')
 
 We can also test classes and their respective functions by creating test classes. Within our test class, we can optionally define functions which will automatically be executed when we setup or teardown a class instance or use a class method.
 
-- `setup_class`: set up the state for any class instance.
-- `teardown_class`: teardown the state created in setup_class.
-- `setup_method`: called before every method to setup any state.
-- `teardown_method`: called after every method to teardown any state.
+- `setup_class`: 클래스에서 가장 처음 실행되는 메서드 이전에 딱 한 번 실행되는 메서드
+- `teardown_class`: 클래스에서 가장 나중에 실행되는 메서드 이후에 딱 한 번 실행되는 메서드
+- `setup_method`: 클래스 내의 모든 메서드(setup_method, teardown_method 제외)가 실행되기 전에 먼저 실행되는 메서드
+- `teardown_method`: 클래스 내의 모든 메서드(setup_method, teardown_method 제외)가 실행되고 나서 실행되는 메서드
+
+- 이 방법은 `unittest`에서 즐겨쓰는 방법으로, `pytest`에서는 Fixture를 더 많이 사용한다
 
 ```py
 class Fruit(object):
@@ -190,12 +201,7 @@ def test_is_crisp_parametrize(fruit, crisp):
 ```
 
 ```py
-@pytest.mark.parametrize(
-    "fruit, exception",
-    [
-        ("pear", ValueError),
-    ],
-)
+@pytest.mark.parametrize("fruit, exception",[("pear", ValueError),],)
 def test_is_crisp_exceptions(fruit, exception):
     with pytest.raises(exception):
         is_crisp(fruit=fruit)
@@ -279,10 +285,10 @@ pytest -m "not fruits"  #  runs all tests besides those marked with `fruits`
 
 # Data
 
-So far, we've used unit and integration tests to test the functions that interact with our data but we haven't tested the validity of the data itself. We're going to use the `great expectations` library to test what our data is expected to look like. It's a library that allows us to create expectations as to what our data should look like in a standardized way. It also provides modules to seamlessly connect with backend data sources such as local file systems, S3, databases, etc. Let's explore the library by implementing the expectations we'll need for our application.  
+So far, we've used unit and integration tests to test the functions that interact with our data but we haven't tested the validity of the data itself. We're going to use the `great_expectations` library to test what our data is expected to look like. It's a library that allows us to create expectations as to what our data should look like in a standardized way. It also provides modules to seamlessly connect with backend data sources such as local file systems, S3, databases, etc. Let's explore the library by implementing the expectations we'll need for our application.  
 
 ```sh
-pip install great-expectations
+pip install great_expectations
 ```
 
 ```py
@@ -405,6 +411,19 @@ df.expect_column_values_to_be_in_set(column="tag", value_set=tags)
 # Expectation suite
 expectation_suite = df.get_expectation_suite(discard_failed_expectations=False)
 print(df.validate(expectation_suite=expectation_suite, only_return_failures=True))
+-------------------------------------------------------------------------------------
+
+{
+  "success": true,
+  "results": [],
+  "statistics": {
+    "evaluated_expectations": 11,
+    "successful_expectations": 11,
+    "unsuccessful_expectations": 0,
+    "success_percent": 100.0
+  },
+  "evaluation_parameters": {}
+}
 ```
 
 ## Projects

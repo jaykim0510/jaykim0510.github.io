@@ -1,0 +1,663 @@
+I"��<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#intuition" id="markdown-toc-intuition">Intuition</a>    <ul>
+      <li><a href="#how-should-we-test" id="markdown-toc-how-should-we-test">How should we test</a></li>
+      <li><a href="#what-should-we-test" id="markdown-toc-what-should-we-test">What should we test</a></li>
+    </ul>
+  </li>
+  <li><a href="#hierachy" id="markdown-toc-hierachy">Hierachy</a></li>
+  <li><a href="#testing-code" id="markdown-toc-testing-code">Testing Code</a>    <ul>
+      <li><a href="#initialization" id="markdown-toc-initialization">Initialization</a></li>
+      <li><a href="#assertions" id="markdown-toc-assertions">Assertions</a></li>
+      <li><a href="#execution" id="markdown-toc-execution">Execution</a></li>
+      <li><a href="#classes" id="markdown-toc-classes">Classes</a></li>
+      <li><a href="#parametrize" id="markdown-toc-parametrize">Parametrize</a></li>
+      <li><a href="#fixture" id="markdown-toc-fixture">Fixture</a></li>
+      <li><a href="#markers" id="markdown-toc-markers">Markers</a></li>
+    </ul>
+  </li>
+  <li><a href="#data" id="markdown-toc-data">Data</a>    <ul>
+      <li><a href="#expectations" id="markdown-toc-expectations">Expectations</a></li>
+      <li><a href="#organization" id="markdown-toc-organization">Organization</a></li>
+      <li><a href="#projects" id="markdown-toc-projects">Projects</a></li>
+      <li><a href="#documentation" id="markdown-toc-documentation">Documentation</a></li>
+      <li><a href="#production" id="markdown-toc-production">Production</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>Learn how to test ML artifacts (code, data and models) to ensure a reliable ML system.</li>
+</ul>
+
+<h1 id="intuition">Intuition</h1>
+
+<ul>
+  <li>머신러닝 시스템을 신뢰성있게 반복하기 위해 코드, 데이터, 모델을 테스트하는 방법을 배워야 한다</li>
+  <li>테스트는 무엇인가가 우리의 의도대로 동작한다는 것을 확신시켜준다</li>
+  <li>우리는 가능한 에러를 빨리 찾음으로써 다운 스트림 태스크로 에러가 확장되지 않도록 해야한다</li>
+</ul>
+
+<h2 id="how-should-we-test">How should we test</h2>
+
+<p>테스트 코드의 방법론은 다음과 같이 Arrange-Act-Assert로 이루어진다</p>
+
+<ul>
+  <li><strong>Arrange</strong>: 여러 다른 입력 데이터를 준비한다</li>
+  <li><strong>Act</strong>: 준비된 입력 데이터를 테스트 하고 싶은 요소에 넣는다</li>
+  <li><strong>Assert</strong>: 결과물을 우리의 기대값과 비교한다</li>
+</ul>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-hammer"></i>Tools
+    </div>
+    <div class="pen-content">
+      In Python, there are many tools, such as `unittest`, `pytest`, etc. that allow us to easily implement our tests while adhering to the Arrange Act Assert framework. These tools come with powerful built-in functionality such as parametrization, filters, and more, to test many conditions at scale.  
+    </div>
+</div>
+
+<h2 id="what-should-we-test">What should we test</h2>
+
+<p>When arranging our inputs and asserting our expected outputs, what are some aspects of our inputs and outputs that we should be testing for?</p>
+
+<ul>
+  <li>inputs: data types, format, length, edge cases (min/max, small/large, etc.)</li>
+  <li>outputs: data types, formats, exceptions, intermediary and final outputs</li>
+</ul>
+
+<h1 id="hierachy">Hierachy</h1>
+
+<ul>
+  <li>tests 디렉터리에 저장</li>
+  <li><code class="language-plaintext highlighter-rouge">test_</code> 접두사</li>
+  <li>코드 하나당 테스트 코드 하나인 경우도 있고, 코드 하나에 여러 기능을 내포한 경우 함수 하나당 테스트 코드 하나인 경우도 있다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root
+├── code
+│   └── train.py
+└── tests
+    ├── code
+    │   └── test_train.py
+    ├── data
+    └── model
+</code></pre></div></div>
+
+<h1 id="testing-code">Testing Code</h1>
+
+<ul>
+  <li>We’ll start by testing our code and we’ll use pytest as our testing framework for it’s powerful builtin features such as parametrization, fixtures, markers and more.</li>
+</ul>
+
+<h2 id="initialization">Initialization</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install pytest
+</code></pre></div></div>
+
+<div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># pyproject.toml
+</span>
+<span class="nn">[tool.pytest.ini_options]</span>
+<span class="py">testpaths</span> <span class="p">=</span> <span class="s">["tests"]</span>
+<span class="py">python_files</span> <span class="p">=</span> <span class="s">"test_*.py"</span>
+</code></pre></div></div>
+
+<h2 id="assertions">Assertions</h2>
+
+<ul>
+  <li>Let’s see what a sample test and it’s results look like. Assume we have a simple function that determines whether a fruit is crisp or not:</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># food/fruits.py
+</span><span class="k">def</span> <span class="nf">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">fruit</span><span class="p">:</span>
+        <span class="n">fruit</span> <span class="o">=</span> <span class="n">fruit</span><span class="p">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">fruit</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"apple"</span><span class="p">,</span> <span class="s">"watermelon"</span><span class="p">,</span> <span class="s">"cherries"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">elif</span> <span class="n">fruit</span> <span class="ow">in</span> <span class="p">[</span><span class="s">"orange"</span><span class="p">,</span> <span class="s">"mango"</span><span class="p">,</span> <span class="s">"strawberry"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="nb">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">fruit</span><span class="si">}</span><span class="s"> not in known list of fruits."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tests/food/test_fruits.py
+</span><span class="k">def</span> <span class="nf">test_is_crisp</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"apple"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"Apple"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"orange"</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="p">.</span><span class="n">raises</span><span class="p">(</span><span class="nb">ValueError</span><span class="p">):</span>
+        <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="s">"pear"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h2 id="execution">Execution</h2>
+
+<p>We can execute our tests above using several different levels of granularity:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> pytest                                           <span class="c"># all tests</span>
+python3 <span class="nt">-m</span> pytest tests/food                                <span class="c"># tests under a directory</span>
+python3 <span class="nt">-m</span> pytest tests/food/test_fruits.py                 <span class="c"># tests for a single file</span>
+python3 <span class="nt">-m</span> pytest tests/food/test_fruits.py::test_is_crisp  <span class="c"># tests for a single function</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 테스트 성공했을 때 출력</span>
+tests/food/test_fruits.py::test_is_crisp <span class="nb">.</span>           <span class="o">[</span>100%]
+
+<span class="c"># 테스트 실패했을 때 출력</span>
+tests/food/test_fruits.py F                          <span class="o">[</span>100%]
+
+    def test_is_crisp<span class="o">()</span>:
+<span class="o">&gt;</span>       assert is_crisp<span class="o">(</span><span class="nv">fruit</span><span class="o">=</span><span class="s2">"orange"</span><span class="o">)</span>
+E       AssertionError: assert False
+E        +  where False <span class="o">=</span> is_crisp<span class="o">(</span><span class="nv">fruit</span><span class="o">=</span><span class="s1">'orange'</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h2 id="classes">Classes</h2>
+
+<p>We can also test classes and their respective functions by creating test classes. Within our test class, we can optionally define functions which will automatically be executed when we setup or teardown a class instance or use a class method.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">setup_class</code>: set up the state for any class instance.</li>
+  <li><code class="language-plaintext highlighter-rouge">teardown_class</code>: teardown the state created in setup_class.</li>
+  <li><code class="language-plaintext highlighter-rouge">setup_method</code>: called before every method to setup any state.</li>
+  <li><code class="language-plaintext highlighter-rouge">teardown_method</code>: called after every method to teardown any state.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Fruit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+<span class="k">class</span> <span class="nc">TestFruit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="o">@</span><span class="nb">classmethod</span>
+    <span class="k">def</span> <span class="nf">setup_class</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="s">"""Set up the state for any class instance."""</span>
+        <span class="k">pass</span>
+
+    <span class="o">@</span><span class="nb">classmethod</span>
+    <span class="k">def</span> <span class="nf">teardown_class</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="s">"""Teardown the state created in setup_class."""</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">setup_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Called before every method to setup any state."""</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">fruit</span> <span class="o">=</span> <span class="n">Fruit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"apple"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">teardown_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">"""Called after every method to teardown any state."""</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="p">.</span><span class="n">fruit</span>
+
+    <span class="k">def</span> <span class="nf">test_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="p">.</span><span class="n">fruit</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">"apple"</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>We can execute all the tests for our class by specifying the class name:</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> pytest tests/food/test_fruits.py::TestFruit
+</code></pre></div></div>
+
+<h2 id="parametrize">Parametrize</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">assert</code>문이 계속 반복되는 문제를 해결해준다</li>
+  <li><code class="language-plaintext highlighter-rouge">@pytest.mark.parametrize</code> 데코레이터를 이용한다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s">"fruit, crisp"</span><span class="p">,[(</span><span class="s">"apple"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="s">"Apple"</span><span class="p">,</span> <span class="bp">True</span><span class="p">),</span> <span class="p">(</span><span class="s">"orange"</span><span class="p">,</span> <span class="bp">False</span><span class="p">),],)</span>
+<span class="k">def</span> <span class="nf">test_is_crisp_parametrize</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">crisp</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="n">fruit</span><span class="p">)</span> <span class="o">==</span> <span class="n">crisp</span>
+
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">parametrize</span><span class="p">(</span>
+    <span class="s">"fruit, exception"</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s">"pear"</span><span class="p">,</span> <span class="nb">ValueError</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_is_crisp_exceptions</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">exception</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="p">.</span><span class="n">raises</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
+        <span class="n">is_crisp</span><span class="p">(</span><span class="n">fruit</span><span class="o">=</span><span class="n">fruit</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h2 id="fixture">Fixture</h2>
+
+<ul>
+  <li>Parametrize는 함수내에서 <code class="language-plaintext highlighter-rouge">assert</code>문을 없애줬다</li>
+  <li>Fixture는 여러 함수에서 적용되는 반복 요소를 줄여준다</li>
+  <li><code class="language-plaintext highlighter-rouge">@pytest.fixture</code> 데코레이터를 이용한다</li>
+  <li>테스트 함수에는 Fixture의 이름을 쓰면 된다 (ex. <code class="language-plaintext highlighter-rouge">my_fruit</code>)</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">my_fruit</span><span class="p">():</span>
+    <span class="c1"># 여기서만 한 번 Fruit 객체를 생성하면 된다 (매번 생성할 필요 없다)
+</span>    <span class="n">fruit</span> <span class="o">=</span> <span class="n">Fruit</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"apple"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fruit</span>
+
+<span class="k">def</span> <span class="nf">test_fruit</span><span class="p">(</span><span class="n">my_fruit</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">my_fruit</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">"apple"</span>
+
+<span class="c1"># 이렇게 하면 테스트 클래스의 어떤 메소드에도 사용할 수 있다
+</span><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">usefixtures</span><span class="p">(</span><span class="s">"my_fruit"</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">TestFruit</span><span class="p">:</span>
+    <span class="p">...</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>Fixtures can have different scopes depending on how we want to use them.</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">function</code>: fixture is destroyed after every test. [default]</li>
+  <li><code class="language-plaintext highlighter-rouge">class</code>: fixture is destroyed after the last test in the class.</li>
+  <li><code class="language-plaintext highlighter-rouge">module</code>: fixture is destroyed after the last test in the module (script).</li>
+  <li><code class="language-plaintext highlighter-rouge">package</code>: fixture is destroyed after the last test in the package.</li>
+  <li><code class="language-plaintext highlighter-rouge">session</code>: fixture is destroyed after the last test of the session.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">fixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s">"module"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">df</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a0"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b0"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c0"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a1"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b1"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c1"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a2"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b2"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c1"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a3"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b3"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c2"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a4"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b4"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c2"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">"title"</span><span class="p">:</span> <span class="s">"a5"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">:</span> <span class="s">"b5"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">:</span> <span class="s">"c2"</span><span class="p">},</span>
+    <span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span>
+</code></pre></div></div>
+
+<h2 id="markers">Markers</h2>
+
+<ul>
+  <li>we can create custom granularity by using markers.</li>
+  <li>Parametrize도 Marker중 하나 (<code class="language-plaintext highlighter-rouge">@pytest.mark.parametrize</code>)</li>
+  <li>there are several other builtin markers as well. For example, the <code class="language-plaintext highlighter-rouge">skipif</code> marker allows us to skip execution of a test if a condition is met</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># GPU 사용이 불가하면 training을 test하는 코드를 건너띈다
+</span><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">skipif</span><span class="p">(</span><span class="ow">not</span> <span class="n">torch</span><span class="p">.</span><span class="n">cuda</span><span class="p">.</span><span class="n">is_available</span><span class="p">(),</span> <span class="n">reason</span><span class="o">=</span><span class="s">"Full training tests require a GPU."</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_training</span><span class="p">():</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필터링 할 수 있다
+</span><span class="o">@</span><span class="n">pytest</span><span class="p">.</span><span class="n">mark</span><span class="p">.</span><span class="n">fruits</span>
+<span class="k">def</span> <span class="nf">test_fruit</span><span class="p">(</span><span class="n">my_fruit</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">my_fruit</span><span class="p">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">"apple"</span>
+
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pytest <span class="nt">-m</span> <span class="s2">"fruits"</span>      <span class="c">#  runs all tests marked with `fruits`</span>
+pytest <span class="nt">-m</span> <span class="s2">"not fruits"</span>  <span class="c">#  runs all tests besides those marked with `fruits`</span>
+</code></pre></div></div>
+
+<h1 id="data">Data</h1>
+
+<p>So far, we’ve used unit and integration tests to test the functions that interact with our data but we haven’t tested the validity of the data itself. We’re going to use the <code class="language-plaintext highlighter-rouge">great expectations</code> library to test what our data is expected to look like. It’s a library that allows us to create expectations as to what our data should look like in a standardized way. It also provides modules to seamlessly connect with backend data sources such as local file systems, S3, databases, etc. Let’s explore the library by implementing the expectations we’ll need for our application.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>great-expectations
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">great_expectations</span> <span class="k">as</span> <span class="n">ge</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="c1"># Load labeled projects
+</span><span class="n">projects</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"https://raw.githubusercontent.com/GokuMohandas/Made-With-ML/main/datasets/projects.csv"</span><span class="p">)</span>
+<span class="n">tags</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"https://raw.githubusercontent.com/GokuMohandas/Made-With-ML/main/datasets/tags.csv"</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">ge</span><span class="p">.</span><span class="n">dataset</span><span class="p">.</span><span class="n">PandasDataset</span><span class="p">(</span><span class="n">pd</span><span class="p">.</span><span class="n">merge</span><span class="p">(</span><span class="n">projects</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s">"id"</span><span class="p">))</span>
+<span class="k">print</span> <span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s"> projects"</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h2 id="expectations">Expectations</h2>
+
+<ul>
+  <li>When it comes to creating expectations as to what our data should look like, we want to think about our entire dataset and all the features (columns) within it.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Presence of specific features
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Unique combinations of features (detect data leaks!)
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>
+
+<span class="c1"># Missing values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+
+<span class="c1"># Unique values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># Type adherence
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># List (categorical) / range (continuous) of allowed values
+</span><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s">"computer-vision"</span><span class="p">,</span> <span class="s">"graph-learning"</span><span class="p">,</span> <span class="s">"reinforcement-learning"</span><span class="p">,</span>
+        <span class="s">"natural-language-processing"</span><span class="p">,</span> <span class="s">"mlops"</span><span class="p">,</span> <span class="s">"time-series"</span><span class="p">]</span>
+<span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_in_set</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">value_set</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>Each of these expectations will create an output with details about success or failure, expected and observed values, expectations raised, etc. For example, the expectation <code class="language-plaintext highlighter-rouge">df.expect_column_values_to_be_of_type(column="title", type_="str")</code> would produce the following if successful:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"exception_info"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"raised_exception"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"exception_traceback"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"exception_message"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+  </span><span class="nl">"expectation_config"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"kwargs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"column"</span><span class="p">:</span><span class="w"> </span><span class="s2">"title"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"type_"</span><span class="p">:</span><span class="w"> </span><span class="s2">"str"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"result_format"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BASIC"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nl">"expectation_type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"_expect_column_values_to_be_of_type__map"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"result"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"element_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">955</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"missing_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"missing_percent"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"unexpected_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"unexpected_percent"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"unexpected_percent_nonmissing"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"partial_unexpected_list"</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div></div>
+
+<p>There are just a few of the different expectations that we can create. Be sure to explore all the <a href="https://greatexpectations.io/expectations/">expectations</a>, including <a href="https://docs.greatexpectations.io/docs/guides/expectations/creating_custom_expectations/overview/">custom expectations</a>. Here are some other popular expectations that don’t pertain to our specific dataset but are widely applicable:</p>
+
+<ul>
+  <li>feature value relationships with other feature values → <code class="language-plaintext highlighter-rouge">expect_column_pair_values_a_to_be_greater_than_b</code></li>
+  <li>row count (exact or range) of samples → <code class="language-plaintext highlighter-rouge">expect_table_row_count_to_be_between</code></li>
+  <li>value statistics (mean, std, median, max, min, sum, etc.) → <code class="language-plaintext highlighter-rouge">expect_column_mean_to_be_between</code></li>
+</ul>
+
+<h2 id="organization">Organization</h2>
+
+<ul>
+  <li>When it comes to organizing expectations, it’s recommended to start with table-level ones and then move on to individual feature columns.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Presence of specific features
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Unique combinations of features (detect data leaks!)
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>
+
+<span class="c1"># Missing values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+
+<span class="c1"># Unique values
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># Type adherence
+</span><span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># List (categorical) / range (continuous) of allowed values
+</span><span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="s">"computer-vision"</span><span class="p">,</span> <span class="s">"graph-learning"</span><span class="p">,</span> <span class="s">"reinforcement-learning"</span><span class="p">,</span>
+        <span class="s">"natural-language-processing"</span><span class="p">,</span> <span class="s">"mlops"</span><span class="p">,</span> <span class="s">"time-series"</span><span class="p">]</span>
+<span class="n">df</span><span class="p">.</span><span class="n">expect_column_values_to_be_in_set</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">value_set</span><span class="o">=</span><span class="n">tags</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>We can group all the expectations together to create an Expectation Suite object which we can use to validate any Dataset module.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expectation suite
+</span><span class="n">expectation_suite</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">get_expectation_suite</span><span class="p">(</span><span class="n">discard_failed_expectations</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">validate</span><span class="p">(</span><span class="n">expectation_suite</span><span class="o">=</span><span class="n">expectation_suite</span><span class="p">,</span> <span class="n">only_return_failures</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="projects">Projects</h2>
+
+<ul>
+  <li>So far we’ve worked with the Great Expectations library at the adhoc script / notebook level but we can further organize our expectations by creating a Project.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>tests
+great_expectations init
+
+<span class="nt">---------------------------------</span>
+tests/great_expectations/
+├── checkpoints/
+├── expectations/
+├── plugins/
+├── uncommitted/
+├── .gitignore
+└── great_expectations.yml
+</code></pre></div></div>
+
+<ul>
+  <li>The first step is to establish our datasource which tells Great Expectations where our data lives:</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations datasource new
+<span class="nt">-----------------------------------------------------------------------------</span>
+What data would you like Great Expectations to connect to?
+    1. Files on a filesystem <span class="o">(</span><span class="k">for </span>processing with Pandas or Spark<span class="o">)</span> 👈
+    2. Relational database <span class="o">(</span>SQL<span class="o">)</span>
+<span class="nt">-----------------------------------------------------------------------------</span>
+What are you processing your files with?
+1. Pandas 👈
+2. PySpark
+<span class="nt">-----------------------------------------------------------------------------</span>
+Enter the path of the root directory where the data files are stored: ../data
+
+</code></pre></div></div>
+
+<ul>
+  <li>Create expectations manually, interactively or automatically and save them as suites (a set of expectations for a particular data asset).</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations suite new
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>How would you like to create your Expectation Suite?
+    1. Manually, without interacting with a sample batch of data (default)
+    2. Interactively, with a sample batch of data 👈
+    3. Automatically, using a profiler
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Which data asset (accessible by data connector "default_inferred_data_connector_name") would you like to use?
+    1. labeled_projects.csv
+    2. projects.csv 👈
+    3. tags.csv
+------------------------------------------------------------------------------------------------------------
+Name the new Expectation Suite [projects.csv.warning]: projects
+
+</code></pre></div></div>
+
+<p>This will open up an interactive notebook where we can add expectations. Copy and paste the expectations below and run all the cells. Repeat this step for <code class="language-plaintext highlighter-rouge">tags.csv</code> and <code class="language-plaintext highlighter-rouge">labeled_projects.csv</code>.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expections for projects.csv
+</span>
+<span class="c1"># Presence of features
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>  <span class="c1"># data leak
+</span>
+<span class="c1"># id
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># create_on
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_match_strftime_format</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">,</span> <span class="n">strftime_format</span><span class="o">=</span><span class="s">"%Y-%m-%d %H:%M:%S"</span><span class="p">)</span>
+
+<span class="c1"># title
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># description
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expections for tags.csv
+</span>
+<span class="c1"># Presence of features
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">])</span>
+
+<span class="c1"># id
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># tag
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Expections for labeled_projects.csv
+</span>
+<span class="c1"># Presence of features
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_table_columns_to_match_ordered_list</span><span class="p">(</span>
+    <span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"id"</span><span class="p">,</span> <span class="s">"created_on"</span><span class="p">,</span> <span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">,</span> <span class="s">"tag"</span><span class="p">])</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_compound_columns_to_be_unique</span><span class="p">(</span><span class="n">column_list</span><span class="o">=</span><span class="p">[</span><span class="s">"title"</span><span class="p">,</span> <span class="s">"description"</span><span class="p">])</span>  <span class="c1"># data leak
+</span>
+<span class="c1"># id
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_unique</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"id"</span><span class="p">)</span>
+
+<span class="c1"># create_on
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_match_strftime_format</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s">"created_on"</span><span class="p">,</span> <span class="n">strftime_format</span><span class="o">=</span><span class="s">"%Y-%m-%d %H:%M:%S"</span><span class="p">)</span>
+
+<span class="c1"># title
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"title"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># description
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"description"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+<span class="c1"># tag
+</span><span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_not_be_null</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">)</span>
+<span class="n">validator</span><span class="p">.</span><span class="n">expect_column_values_to_be_of_type</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s">"tag"</span><span class="p">,</span> <span class="n">type_</span><span class="o">=</span><span class="s">"str"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>All of these expectations have been saved under <code class="language-plaintext highlighter-rouge">great_expectations/expectations</code>:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations/
+├── expectations/
+│   ├── labeled_projects.csv
+│   ├── projects.csv
+│   └── tags.csv
+</code></pre></div></div>
+
+<ul>
+  <li>And we can also list the suites with:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations suite list
+--------------------------------
+Using v3 (Batch Request) API
+3 Expectation Suites found:
+ - labeled_projects
+ - projects
+ - tags
+</code></pre></div></div>
+
+<ul>
+  <li>To edit a suite, we can execute the follow CLI command:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations suite edit &lt;SUITE_NAME&gt;
+
+</code></pre></div></div>
+
+<ul>
+  <li>Create Checkpoints where a Suite of Expectations are applied to a specific data asset. This is a great way of programmatically applying checkpoints on our existing and new data sources.</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd tests
+great_expectations checkpoint new CHECKPOINT_NAME
+</code></pre></div></div>
+
+<ul>
+  <li>So for our project, it would be:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations checkpoint new projects
+great_expectations checkpoint new tags
+great_expectations checkpoint new labeled_projects
+</code></pre></div></div>
+
+<p>Each of these checkpoint creation calls will launch a notebook where we can define which suites to apply this checkpoint to. We have to change the lines for <code class="language-plaintext highlighter-rouge">data_asset_name</code> (which data asset to run the checkpoint suite on) and <code class="language-plaintext highlighter-rouge">expectation_suite_name</code> (name of the suite to use). For example, the <code class="language-plaintext highlighter-rouge">projects</code> checkpoint would use the <code class="language-plaintext highlighter-rouge">projects.csv</code> data asset and the projects suite.</p>
+
+<p>Repeat these same steps for the <code class="language-plaintext highlighter-rouge">tags</code> and <code class="language-plaintext highlighter-rouge">labeled_projects</code> checkpoints and then we’re ready to execute them:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>great_expectations checkpoint run projects
+great_expectations checkpoint run tags
+great_expectations checkpoint run labeled_projects
+</code></pre></div></div>
+
+<p><img src="/images/test_data_1.png" alt="" /></p>
+
+<p>At the end of this lesson, we’ll create a target in our <code class="language-plaintext highlighter-rouge">Makefile</code> that run all these tests (code, data and models) and we’ll automate their execution in our pre-commit lesson.</p>
+
+<div class="pen-para">
+    <div class="pen-bar"><i class="fas fa-pen"></i>Note</div>
+    <div class="fire-content">We've applied expectations on our source dataset but there are many other key areas to test the data as well. For example, the intermediate outputs from processes such as cleaning, augmentation, splitting, preprocessing, tokenization, etc.</div>
+</div>
+
+<h2 id="documentation">Documentation</h2>
+
+<p>When we create expectations using the CLI application, Great Expectations automatically generates documentation for our tests. It also stores information about validation runs and their results. We can launch the generate data documentation with the following command: <code class="language-plaintext highlighter-rouge">great_expectations docs build</code></p>
+
+<p><img src="/images/test_data_2.png" alt="" /></p>
+
+<ul>
+  <li>By default, Great Expectations stores our expectations, results and metrics locally but for production, we’ll want to set up remote metadata stores.</li>
+</ul>
+
+<h2 id="production">Production</h2>
+
+<p>The advantage of using a library such as great expectations, as opposed to isolated assert statements is that we can:</p>
+
+<ul>
+  <li>reduce redundant efforts for creating tests across data modalities</li>
+  <li>automatically create testing checkpoints to execute as our dataset grows</li>
+  <li>automatically generate documentation on expectations and report on runs</li>
+  <li>easily connect with backend data sources such as local file systems, S3, databases, etc.</li>
+</ul>
+
+<p>Many of these expectations will be executed when the data is extracted, loaded and transformed during our DataOps workflows. Typically, the data will be extracted from a source (database, API, etc.) and loaded into a data system (ex. data warehouse) before being transformed there (ex. using dbt) for downstream applications. Throughout these tasks, Great Expectations checkpoint validations can be run to ensure the validity of the data and the changes applied to it. We’ll see a simplified version of when data validation should occur in our data workflows in the orchestration lesson.</p>
+
+<p><img src="/images/test_data_3.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://madewithml.com/courses/mlops/testing/" target="_blank">Made With ML, Testing Machine Learning Systems: Code, Data and Models View all lessons</a></li>
+</ul>
+:ET

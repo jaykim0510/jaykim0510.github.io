@@ -1,4 +1,4 @@
-I"�v<hr />
+I"-{<hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
@@ -11,6 +11,9 @@
           <li><a href="#log" id="markdown-toc-log">Log</a></li>
           <li><a href="#예제-코드" id="markdown-toc-예제-코드">예제 코드</a></li>
           <li><a href="#실제로-적용한-코드" id="markdown-toc-실제로-적용한-코드">실제로 적용한 코드</a></li>
+        </ul>
+      </li>
+      <li><a href="#mlflow-models" id="markdown-toc-mlflow-models">MLflow Models</a>        <ul>
           <li><a href="#model-loading" id="markdown-toc-model-loading">Model Loading</a></li>
           <li><a href="#model-serving" id="markdown-toc-model-serving">Model Serving</a></li>
         </ul>
@@ -262,6 +265,8 @@
   <li>여기까지가 Tracking과 Registry에 관한 내용이었다</li>
 </ul>
 
+<h2 id="mlflow-models">MLflow Models</h2>
+
 <h3 id="model-loading">Model Loading</h3>
 
 <ul>
@@ -286,6 +291,13 @@
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 모델을 저장해둔 S3의 URI를 복사했다</span>
 <span class="c"># 나의 로컬서버 9999번으로 입력 데이터를 전달하면, inference 해준다</span>
 mlflow models serve <span class="nt">-m</span> s3://jay-ml-models/1/ee8b2fb611744d49a674603c120fc092/artifacts/model/ <span class="nt">-p</span> 9999
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 테스트 인풋</span>
+
+curl <span class="nt">-X</span> POST http://127.0.0.1:9999/invocations <span class="nt">-H</span> <span class="s1">'Content-Type: application/json'</span> <span class="nt">-d</span> <span class="s1">'{"dataframe_split": {"columns":["alcohol", "chlorides", "citric acid", "density", "fixed acidity", "free sulfur dioxide", "pH", "residual sugar", "sulphates", "total sulfur dioxide", "volatile acidity"],"data":[[12.8, 0.029, 0.48, 0.98, 6.2, 29, 3.33, 1.2, 0.39, 75, 0.66]]}}'</span>
+<span class="nt">------------------------------------------------------------------------------------------------------------------------</span>
+<span class="o">{</span><span class="s2">"predictions"</span>: <span class="o">[</span>5.827915454317569]<span class="o">}</span>%
 </code></pre></div></div>
 
 <h2 id="mlflow-project">MLflow Project</h2>
