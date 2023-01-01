@@ -646,3 +646,4 @@ Many of these expectations will be executed when the data is extracted, loaded a
 # 참고 
 
 - [Made With ML, Testing Machine Learning Systems: Code, Data and Models View all lessons](https://madewithml.com/courses/mlops/testing/){:target="_blank"}
+- [Edwin Tan, How to Test PySpark ETL Data Pipeline](https://towardsdatascience.com/how-to-test-pyspark-etl-data-pipeline-1c5a6ab6a04b){:target="_blank"}

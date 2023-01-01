@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Apache Pyspark Series [Part5]: PySpark Structured Streaming (1)'
+title:  'Apache Pyspark Series [Part6]: PySpark Structured Streaming (1) Input & Output'
 description: 
 date:   2022-04-17 15:01:35 +0300
 image:  '/images/pyspark_logo.png'
@@ -256,6 +256,88 @@ Batch: 3
 ```
 
 
+# Output Sinks
+
+In Spark Streaming, output sinks store results into external storage.  
+
+- **Console sink**: Displays the content of the DataFrame to console.
+- **File sink**: Stores the contents of a DataFrame in a file within a directory. Supported file formats are `csv`, `json`, `orc`, and `parquet`.
+- **Kafka sink**: Publishes data to a Kafka topic.
+- **Foreach sink**: Applies to each row of a DataFrame and can be used when writing custom logic to store data.
+- **ForeachBatch sink**: Applies to each micro-batch of a DataFrame and also can be used when writing custom logic to store data.
+
+## File
+
+The file sink stores the contents of a streaming DataFrame to a specified directory and format.  
+
+```py
+resultDf
+  .writeStream
+  .outputMode("append") // Filesink only support Append mode.
+  .format("csv") // supports these formats : csv, json, orc, parquet
+  .option("path", "output/filesink_output")
+  .option("header", true)
+  .option("checkpointLocation", "checkpoint/filesink_checkpoint")
+  .start()
+  .awaitTermination()
+```
+
+## Kafka
+
+With the kafka sink, we publish the content of our streaming DataFrame to a Kafka topic.  
+
+```py
+
+resultDf
+  .writeStream
+  .format("kafka")
+  .option("kafka.bootstrap.servers", "localhost:9092")
+  .option("topic", "testConsumer")
+  .option("checkpointLocation", "checkpoint/kafka_checkpoint")
+  .start()
+  .awaitTermination()
+
+```
+
+## foreachBatch
+
+So far we discussed sinks where the output system was already defined like `file`, `kafka`, or `console`. What if we would like to store data in any arbitrary storage like a NoSQL DB (for example MongoDB) or a Relational DB (like MySQL). By using `foreach` and `foreachBatch` we can write custom logic to store data. `foreach` performs custom write logic on each row and `foreachBatch` performs custom write logic on each micro-batch.  
+
+Use the `savetoMySQL()` function to save our streaming DataFrame to MySQL
+
+
+```py
+resultDf
+  .writeStream
+  .outputMode("append")
+  .foreachBatch(saveToMySql)
+  .start()
+  .awaitTermination()
+```
+
+## foreach
+
+The foreach output sink performs custom write logic to **each record** in a streaming DataFrame. If `foreachBatch` is not an option, e.g. in continuous processing mode or if a batch data writer does not exist, then we can use the foreach sink for custom write logic.  
+
+To use foreach we need to implement 3 methods (open, process, and close).  
+
+- **open**: function to open connection
+- **process**: write data to the specified connection
+- **close**: function to close connection
+
+Then we create an instance of the `ForeachWriter` class and implement the `open()`, `process()`, and `close()` methods.  
+
+Use the `ForeachWriter` instance defined above to write data using the foreach sink.
+
+```py
+initDF
+  .writeStream
+  .outputMode("append")
+  .foreach(customWriter)
+  .start()
+  .awaitTermination()
+```
+
 
 
 
@@ -266,4 +348,4 @@ Batch: 3
 - [pyspark, Structured Streaming](https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/index.html){:target="_blank"}
 - [Spark Streaming – Different Output modes explained](https://sparkbyexamples.com/spark/spark-streaming-outputmode/){:target="_blank"}
 - [Apache Spark Structured Streaming — First Streaming Example (1 of 6)](https://medium.com/expedia-group-tech/apache-spark-structured-streaming-first-streaming-example-1-of-6-e8f3219748ef){:target="_blank"}
-- [](){:target="_blank"}
+- [Spark 공식문서, Pyspark Structured Streaming Guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html){:target="_blank"}
