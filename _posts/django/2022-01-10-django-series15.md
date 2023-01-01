@@ -165,3 +165,4 @@ LOGGING = {
 
 - [django 공식문서, Logging Overview](https://docs.djangoproject.com/en/4.1/topics/logging/#configuring-logging)
 - [django 공식문서, Logging Configuration](https://docs.djangoproject.com/en/4.1/howto/logging/#logging-how-to)
+- [[ Python ] logging 만들어보기 (FileHandler 와 StreamHandler 위주로)](https://data-newbie.tistory.com/248)

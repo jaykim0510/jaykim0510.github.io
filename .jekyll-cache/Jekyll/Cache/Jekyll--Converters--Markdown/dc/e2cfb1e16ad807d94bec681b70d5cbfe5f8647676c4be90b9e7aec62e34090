@@ -1,0 +1,159 @@
+I"�;<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#overview" id="markdown-toc-overview">Overview</a>    <ul>
+      <li><a href="#output-modes" id="markdown-toc-output-modes">Output modes</a></li>
+      <li><a href="#example" id="markdown-toc-example">Example</a></li>
+    </ul>
+  </li>
+  <li><a href="#input-sources" id="markdown-toc-input-sources">Input Sources</a>    <ul>
+      <li><a href="#socket" id="markdown-toc-socket">Socket</a></li>
+      <li><a href="#file" id="markdown-toc-file">File</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="overview">Overview</h1>
+
+<p>Working with streaming data is a little different from working with batch data. With streaming data, we will never have complete data for analysis, as data is continuously coming in. <strong>Apache Spark provides a streaming API to analyze streaming data in pretty much the same way we work with batch data.</strong> Apache Spark Structured Streaming is built on top of the Spark-SQL API to leverage its optimization. Spark Streaming is a processing engine to process data in real-time from sources and output data to external storage systems.</p>
+
+<p>Spark Streaming has 3 major components: input sources, streaming engine, and sink. Input sources generate data like Kafka, Flume, HDFS/S3, etc. Spark Streaming engine processes incoming data from various input sources. Sinks store processed data from Spark Streaming engine like HDFS, relational databases, or NoSQL datastores.</p>
+
+<p>Let’s conceptualise Spark Streaming data as an unbounded table where new data will always be appended at the end of the table.</p>
+
+<p><img src="/images/spark_stream_1.png" alt="" /></p>
+
+<p>Spark will process data in micro-batches which can be defined by triggers. For example, let’s say we define a trigger as <code class="language-plaintext highlighter-rouge">1 second</code>, this means Spark will create micro-batches every second and process them accordingly.</p>
+
+<h2 id="output-modes">Output modes</h2>
+
+<p>After processing the streaming data, Spark needs to store it somewhere on persistent storage. Spark uses various output modes to store the streaming data.</p>
+
+<ul>
+  <li><strong>Append Mode</strong>: In this mode, Spark will output only newly processed rows since the last trigger.</li>
+  <li><strong>Update Mode</strong>: In this mode, Spark will output only updated rows since the last trigger. If we are not using aggregation on streaming data (meaning previous records can’t be updated) then it will behave similarly to append mode.</li>
+  <li><strong>Complete Mode</strong>: In this mode, Spark will output all the rows it has processed so far.</li>
+</ul>
+
+<h2 id="example">Example</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+<span class="kn">import</span> <span class="nn">pyspark.sql.functions</span> <span class="k">as</span> <span class="n">F</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="p">.</span><span class="n">builder</span><span class="p">.</span><span class="n">appName</span><span class="p">(</span><span class="s">"test"</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">master</span><span class="p">(</span><span class="s">"spark://spark-master:7077"</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="n">spark</span><span class="p">.</span><span class="n">sparkContext</span><span class="p">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="s">"ERROR"</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">readStream</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"rate"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"rowsPerSecond"</span><span class="p">,</span> <span class="mi">3</span><span class="p">).</span><span class="n">load</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="n">df</span><span class="p">.</span><span class="n">isStreaming</span> <span class="o">==</span> <span class="bp">True</span>
+
+<span class="n">result_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s">"result"</span><span class="p">,</span> <span class="n">F</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="s">"value"</span><span class="p">)</span> <span class="o">+</span> <span class="n">F</span><span class="p">.</span><span class="n">lit</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">result_df</span><span class="p">.</span><span class="n">writeStream</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">).</span><span class="n">outputMode</span><span class="p">(</span><span class="s">"append"</span><span class="p">).</span><span class="n">start</span><span class="p">().</span><span class="n">awaitTermination</span><span class="p">()</span>
+<span class="o">------------------------------------------------------------------------------------------------</span>
+<span class="n">Batch</span><span class="p">:</span> <span class="mi">1</span>
+<span class="o">-------------------------------------------</span>
+<span class="o">+--------------------+-----+------+</span>
+<span class="o">|</span>           <span class="n">timestamp</span><span class="o">|</span><span class="n">value</span><span class="o">|</span><span class="n">result</span><span class="o">|</span>
+<span class="o">+--------------------+-----+------+</span>
+<span class="o">|</span><span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">11</span><span class="p">:</span><span class="mi">35</span><span class="p">:...</span><span class="o">|</span>    <span class="mi">0</span><span class="o">|</span>     <span class="mi">1</span><span class="o">|</span>
+<span class="o">|</span><span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">11</span><span class="p">:</span><span class="mi">35</span><span class="p">:...</span><span class="o">|</span>    <span class="mi">2</span><span class="o">|</span>     <span class="mi">3</span><span class="o">|</span>
+<span class="o">|</span><span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">11</span><span class="p">:</span><span class="mi">35</span><span class="p">:...</span><span class="o">|</span>    <span class="mi">1</span><span class="o">|</span>     <span class="mi">2</span><span class="o">|</span>
+<span class="o">+--------------------+-----+------+</span>
+
+<span class="o">-------------------------------------------</span>
+<span class="n">Batch</span><span class="p">:</span> <span class="mi">2</span>
+<span class="o">-------------------------------------------</span>
+<span class="o">+--------------------+-----+------+</span>
+<span class="o">|</span>           <span class="n">timestamp</span><span class="o">|</span><span class="n">value</span><span class="o">|</span><span class="n">result</span><span class="o">|</span>
+<span class="o">+--------------------+-----+------+</span>
+<span class="o">|</span><span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">11</span><span class="p">:</span><span class="mi">35</span><span class="p">:...</span><span class="o">|</span>    <span class="mi">3</span><span class="o">|</span>     <span class="mi">4</span><span class="o">|</span>
+<span class="o">|</span><span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">11</span><span class="p">:</span><span class="mi">35</span><span class="p">:...</span><span class="o">|</span>    <span class="mi">5</span><span class="o">|</span>     <span class="mi">6</span><span class="o">|</span>
+<span class="o">|</span><span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">11</span><span class="p">:</span><span class="mi">35</span><span class="p">:...</span><span class="o">|</span>    <span class="mi">4</span><span class="o">|</span>     <span class="mi">5</span><span class="o">|</span>
+<span class="o">+--------------------+-----+------+</span>
+</code></pre></div></div>
+
+<h1 id="input-sources">Input Sources</h1>
+
+<p>Spark Streaming ingests data from different types of input sources for processing in real-time.</p>
+
+<ul>
+  <li><strong>Rate</strong> (for Testing): It will automatically generate data including 2 columns timestamp and value . This is generally used for testing purposes.</li>
+  <li><strong>Socket</strong> (for Testing): This data source will listen to the specified socket and ingest any data into Spark Streaming. It is also used only for testing purposes.</li>
+  <li><strong>File</strong>: This will listen to a particular directory as streaming data. It supports file formats like CSV, JSON, ORC, and Parquet. You can find the latest supported file format list here.</li>
+  <li><strong>Kafka</strong>: This will read data from Apache Kafka and is compatible with Kafka broker versions 0.10.0 or higher</li>
+</ul>
+
+<h2 id="socket">Socket</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt update
+apt install netcat
+
+nc -lk 9999
+</code></pre></div></div>
+
+<p><img src="/images/spark_stream_2.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Socket Source
+</span><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">readStream</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"socket"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"host"</span><span class="p">,</span> <span class="s">"127.0.0.1"</span><span class="p">).</span><span class="n">option</span><span class="p">(</span><span class="s">"port"</span><span class="p">,</span> <span class="mi">9999</span><span class="p">).</span><span class="n">load</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="n">df</span><span class="p">.</span><span class="n">isStreaming</span> <span class="o">==</span> <span class="bp">True</span>
+
+<span class="n">df</span><span class="p">.</span><span class="n">writeStream</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">).</span><span class="n">outputMode</span><span class="p">(</span><span class="s">"append"</span><span class="p">).</span><span class="n">start</span><span class="p">().</span><span class="n">awaitTermination</span><span class="p">()</span>
+<span class="o">------------------------------------------------------------------------------------------------------------------</span>
+<span class="o">-------------------------------------------</span>
+<span class="n">Batch</span><span class="p">:</span> <span class="mi">0</span>
+<span class="o">-------------------------------------------</span>
+<span class="o">+-----+</span>
+<span class="o">|</span><span class="n">value</span><span class="o">|</span>
+<span class="o">+-----+</span>
+<span class="o">+-----+</span>
+
+<span class="o">-------------------------------------------</span>
+<span class="n">Batch</span><span class="p">:</span> <span class="mi">1</span>
+<span class="o">-------------------------------------------</span>
+<span class="o">+------+</span>
+<span class="o">|</span> <span class="n">value</span><span class="o">|</span>
+<span class="o">+------+</span>
+<span class="o">|</span><span class="n">London</span><span class="o">|</span>
+<span class="o">+------+</span>
+
+<span class="o">-------------------------------------------</span>
+<span class="n">Batch</span><span class="p">:</span> <span class="mi">2</span>
+<span class="o">-------------------------------------------</span>
+<span class="o">+-----+</span>
+<span class="o">|</span><span class="n">value</span><span class="o">|</span>
+<span class="o">+-----+</span>
+<span class="o">|</span><span class="n">Paris</span><span class="o">|</span>
+<span class="o">+-----+</span>
+
+<span class="o">-------------------------------------------</span>
+<span class="n">Batch</span><span class="p">:</span> <span class="mi">3</span>
+<span class="o">-------------------------------------------</span>
+<span class="o">+-----+</span>
+<span class="o">|</span><span class="n">value</span><span class="o">|</span>
+<span class="o">+-----+</span>
+<span class="o">|</span><span class="n">Seoul</span><span class="o">|</span>
+<span class="o">+-----+</span>
+</code></pre></div></div>
+
+<h2 id="file">File</h2>
+
+<p>With file input source, our application will wait for available data in the specified directory. We will use some of the stock data available here. For example, Apple stock data present in this file: <a href="https://github.com/szrlee/Stock-Time-Series-Analysis/blob/master/data/AAPL_2006-01-01_to_2018-01-01.csv">AAPL_2006–01–01_to_2018–01–01.csv</a>. We will take the data for a few years like 2015, 2016, and 2017 and manually save it to a different file like AAPL_2015.csv, AAPL_2016.csvand AAPL_2017.csv respectively. Similarly, we will create the sample data for Google, Amazon, and Microsoft as well. We will keep all the CSV files locally under data/stocks folder. Also, create another folder data/stream which we will use to simulate the streaming data.</p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://medium.com/analytics-vidhya/apache-spark-structured-streaming-with-pyspark-b4a054a7947d" target="_blank">Apache Spark Structured Streaming with Pyspark</a></li>
+  <li><a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/index.html" target="_blank">pyspark, Structured Streaming</a></li>
+  <li><a href="https://sparkbyexamples.com/spark/spark-streaming-outputmode/" target="_blank">Spark Streaming – Different Output modes explained</a></li>
+  <li><a href="https://medium.com/expedia-group-tech/apache-spark-structured-streaming-first-streaming-example-1-of-6-e8f3219748ef" target="_blank">Apache Spark Structured Streaming — First Streaming Example (1 of 6)</a></li>
+  <li><a href="" target="_blank"></a></li>
+</ul>
+:ET
