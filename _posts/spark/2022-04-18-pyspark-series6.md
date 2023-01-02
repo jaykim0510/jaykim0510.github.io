@@ -347,5 +347,5 @@ initDF
 - [Apache Spark Structured Streaming with Pyspark](https://medium.com/analytics-vidhya/apache-spark-structured-streaming-with-pyspark-b4a054a7947d){:target="_blank"}
 - [pyspark, Structured Streaming](https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/index.html){:target="_blank"}
 - [Spark Streaming – Different Output modes explained](https://sparkbyexamples.com/spark/spark-streaming-outputmode/){:target="_blank"}
-- [Apache Spark Structured Streaming — First Streaming Example (1 of 6)](https://medium.com/expedia-group-tech/apache-spark-structured-streaming-first-streaming-example-1-of-6-e8f3219748ef){:target="_blank"}
+- [Neeraj Bhadani, Apache Spark Structured Streaming — First Streaming Example (1 of 6)](https://medium.com/expedia-group-tech/apache-spark-structured-streaming-first-streaming-example-1-of-6-e8f3219748ef){:target="_blank"}
 - [Spark 공식문서, Pyspark Structured Streaming Guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html){:target="_blank"}
