@@ -1,0 +1,98 @@
+I"[(<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#operations" id="markdown-toc-operations">Operations</a>    <ul>
+      <li><a href="#filter" id="markdown-toc-filter">Filter</a></li>
+      <li><a href="#groupby" id="markdown-toc-groupby">GroupBy</a></li>
+      <li><a href="#join" id="markdown-toc-join">Join</a></li>
+      <li><a href="#udf" id="markdown-toc-udf">UDF</a></li>
+      <li><a href="#window" id="markdown-toc-window">Window</a>        <ul>
+          <li><a href="#tumbling-window" id="markdown-toc-tumbling-window">Tumbling window</a></li>
+          <li><a href="#sliding-window" id="markdown-toc-sliding-window">Sliding window</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#watermark" id="markdown-toc-watermark">Watermark</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="operations">Operations</h1>
+
+<p>We can perform various operations on a streaming DataFrame like select, filter, groupBy, join, window, UDF, map, flatMap, etc.</p>
+
+<h2 id="filter">Filter</h2>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">resultDF</span> <span class="k">=</span> <span class="nv">initDF</span><span class="o">.</span><span class="py">select</span><span class="o">(</span><span class="s">"Name"</span><span class="o">,</span> <span class="s">"Date"</span><span class="o">,</span> <span class="s">"Open"</span><span class="o">,</span> <span class="s">"Close"</span><span class="o">)</span>
+                    <span class="o">.</span><span class="py">filter</span><span class="o">(</span><span class="nf">col</span><span class="o">(</span><span class="s">"Close"</span><span class="o">)</span> <span class="o">-</span> <span class="nf">col</span><span class="o">(</span><span class="s">"Open"</span><span class="o">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h2 id="groupby">GroupBy</h2>
+
+<h2 id="join">Join</h2>
+
+<h2 id="udf">UDF</h2>
+
+<h2 id="window">Window</h2>
+
+<p>Window operations are very similar to <code class="language-plaintext highlighter-rouge">groupBy</code> operations. In <code class="language-plaintext highlighter-rouge">groupBy</code>, aggregation is based on the specified group or key while in <code class="language-plaintext highlighter-rouge">window</code> operations, aggregation is based on event windows. Spark supports 2 types of windows Tumbling window and Sliding window.</p>
+
+<p>Let’s discuss each one of them in detail. Take an example of numbers from 1–10 and we will calculate <code class="language-plaintext highlighter-rouge">SUM</code> using different window operations.</p>
+
+<h3 id="tumbling-window">Tumbling window</h3>
+
+<p>Tumbling windows are non-overlapping which means each data point will be part of only one window.</p>
+
+<p><img src="/images/spark_stream_4.png" alt="" /></p>
+
+<p>Here the size of the window is 2 and we have 5 non-overlapping windows along with the sum of the elements in each window. Also, we can verify that none of the elements are overlapping between windows.</p>
+
+<p>Now let us define one in our streaming application. We can use a window function and specify the <code class="language-plaintext highlighter-rouge">DateTime</code> column and window duration say <code class="language-plaintext highlighter-rouge">2 minutes</code> or <code class="language-plaintext highlighter-rouge">30 seconds</code> or <code class="language-plaintext highlighter-rouge">1 hour</code> or <code class="language-plaintext highlighter-rouge">5 days</code> etc.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">resultDF</span> <span class="k">=</span> <span class="nv">initDF</span><span class="o">.</span><span class="py">select</span><span class="o">(</span><span class="s">"Name"</span><span class="o">,</span> <span class="s">"Date"</span><span class="o">,</span> <span class="s">"Open"</span><span class="o">,</span> <span class="s">"High"</span><span class="o">,</span> <span class="s">"Low"</span><span class="o">)</span>
+  <span class="o">.</span><span class="py">groupBy</span><span class="o">(</span><span class="nf">window</span><span class="o">(</span><span class="n">$</span><span class="s">"Date"</span><span class="o">,</span> <span class="s">"10 days"</span><span class="o">),</span> <span class="n">$</span><span class="s">"Name"</span><span class="o">)</span>
+  <span class="o">.</span><span class="py">agg</span><span class="o">(</span><span class="nf">max</span><span class="o">(</span><span class="s">"High"</span><span class="o">).</span><span class="py">as</span><span class="o">(</span><span class="s">"Max"</span><span class="o">))</span>
+  <span class="o">.</span><span class="py">orderBy</span><span class="o">(</span><span class="n">$</span><span class="s">"window.start"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h3 id="sliding-window">Sliding window</h3>
+
+<p>As its name suggests, this window will slide instead of tumbling on the data. We can specify the level of sliding needed. These are overlapping windows. Let’s first try to understand with a simple example of numbers from 1–10.</p>
+
+<p><img src="/images/spark_stream_5.png" alt="" /></p>
+
+<p>Here we have defined the window size as 3 and slide interval as 2. As we can see in the snapshot above, these windows overlap. For example, the number 3 is present in both windows 1 and 2.</p>
+
+<p>To define a sliding window, along with <code class="language-plaintext highlighter-rouge">DateTime</code> and <code class="language-plaintext highlighter-rouge">Window Size</code> in the window function, we specify <code class="language-plaintext highlighter-rouge">slide Duration</code> as the third argument. Let’s try to perform a sliding window operation in our streaming application.</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">resultDF</span> <span class="k">=</span> <span class="nv">initDF</span><span class="o">.</span><span class="py">select</span><span class="o">(</span><span class="s">"Name"</span><span class="o">,</span> <span class="s">"Date"</span><span class="o">,</span> <span class="s">"Open"</span><span class="o">,</span> <span class="s">"High"</span><span class="o">,</span> <span class="s">"Low"</span><span class="o">)</span>
+  <span class="o">.</span><span class="py">groupBy</span><span class="o">(</span><span class="nf">window</span><span class="o">(</span><span class="n">$</span><span class="s">"Date"</span><span class="o">,</span> <span class="s">"10 days"</span><span class="o">,</span> <span class="s">"5 days"</span><span class="o">),</span> 
+          <span class="n">$</span><span class="s">"Name"</span><span class="o">,</span> <span class="nf">year</span><span class="o">(</span><span class="n">$</span><span class="s">"Date"</span><span class="o">).</span><span class="py">as</span><span class="o">(</span><span class="s">"Year"</span><span class="o">))</span>
+  <span class="o">.</span><span class="py">agg</span><span class="o">(</span><span class="nf">max</span><span class="o">(</span><span class="s">"High"</span><span class="o">).</span><span class="py">as</span><span class="o">(</span><span class="s">"Max"</span><span class="o">))</span>
+  <span class="o">.</span><span class="py">orderBy</span><span class="o">(</span><span class="n">$</span><span class="s">"window.start"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<h1 id="watermark">Watermark</h1>
+
+<p>We can use <code class="language-plaintext highlighter-rouge">watermarking</code> to handle late data so that the system discards records automatically.</p>
+
+<p>Now let’s add <code class="language-plaintext highlighter-rouge">withWatermark()</code> to our application and see how it works. We set watermark to <code class="language-plaintext highlighter-rouge">delayThreshold = 10 minutes</code> as well as <code class="language-plaintext highlighter-rouge">windowDuration = 5 minutes</code> using <code class="language-plaintext highlighter-rouge">groupBy()</code>. Watermark is set to <code class="language-plaintext highlighter-rouge">max event time seen so far — delayThreshold</code>.</p>
+
+<p>(수신한 데이터중 이벤트 시간이 가장 큰 값이 2022-12-27 10:30:00 이라면, 워터마크는 2022-12-27 10:20:00에 찍힌다. -&gt; 10:20:00 이전에 발생한 데이터는 수신하더라도 처리하지 않겠다는 의미이다. -&gt; 10:15:00 ~ 10:20:00 윈도우에서 출력되는 값은 더 이상 업데이트 하지 않겠다는 의미이다.)</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="nv">resultDF</span> <span class="k">=</span> <span class="n">eventDF</span>
+  <span class="o">.</span><span class="py">withWatermark</span><span class="o">(</span><span class="s">"event_timestamp"</span><span class="o">,</span> <span class="s">"10 minutes"</span><span class="o">)</span>
+  <span class="o">.</span><span class="py">groupBy</span><span class="o">(</span><span class="nf">window</span><span class="o">(</span><span class="nf">col</span><span class="o">(</span><span class="s">"event_timestamp"</span><span class="o">),</span> <span class="s">"5 minute"</span><span class="o">))</span>
+  <span class="o">.</span><span class="py">agg</span><span class="o">(</span><span class="nf">sum</span><span class="o">(</span><span class="s">"val"</span><span class="o">).</span><span class="py">as</span><span class="o">(</span><span class="s">"sum"</span><span class="o">))</span>
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://medium.com/expedia-group-tech/apache-spark-structured-streaming-first-streaming-example-1-of-6-e8f3219748ef" target="_blank">Apache Spark Structured Streaming — First Streaming Example (1 of 6)</a></li>
+  <li><a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Spark 공식문서, Pyspark Structured Streaming Guide</a></li>
+</ul>
+:ET
