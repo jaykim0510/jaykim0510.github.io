@@ -1,0 +1,66 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#문자열-함수" id="markdown-toc-문자열-함수">문자열 함수</a></li>
+  <li><a href="#날짜-함수" id="markdown-toc-날짜-함수">날짜 함수</a></li>
+  <li><a href="#수학-함수" id="markdown-toc-수학-함수">수학 함수</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+----+------------+-----------+----------------------------+------+--------+------------+--------------------------------+-----------------------+---------------+---------------------+
+| id | first_name | last_name | email                      | age  | gender | state      | street_address                 | city                  | country       | created_at          |
++----+------------+-----------+----------------------------+------+--------+------------+--------------------------------+-----------------------+---------------+---------------------+
+|  1 | Justin     | Lee       | justinlee@example.org      |   48 | M      | Cataluña   | 856 Morgan Highway Apt. 238    | Sant Adrià de Besòs   | Spain         | 2019-02-10 04:40:00 |
+|  2 | Jennifer   | Garcia    | jennifergarcia@example.net |   28 | F      | Chongqing  | 96683 Cunningham Ports Apt. 20 | Putian                | China         | 2022-06-22 00:41:00 |
+|  3 | Renee      | Ramirez   | reneeramirez@example.net   |   15 | F      | Bahia      | 5102 Melanie Turnpike          | Campo Formoso         | Brasil        | 2020-08-24 06:12:00 |
+|  4 | Brent      | Webster   | brentwebster@example.com   |   57 | M      | Arizona    | 9041 Kirby Lights Apt. 193     | Phoenix               | United States | 2022-08-21 14:42:00 |
+|  5 | Mark       | Bradley   | markbradley@example.com    |   30 | M      | São Paulo  | 3700 Tiffany Radial            | Jardinópolis          | Brasil        | 2019-12-18 12:20:00 |
++----+------------+-----------+----------------------------+------+--------+------------+--------------------------------+-----------------------+---------------+---------------------+
+</code></pre></div></div>
+
+<h1 id="문자열-함수">문자열 함수</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">last_name</span><span class="p">,</span> <span class="k">CHAR_LENGTH</span><span class="p">(</span><span class="n">last_name</span><span class="p">)</span> <span class="k">AS</span> <span class="k">length</span>
+<span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span>
+<span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
+<span class="c1">------------------------------------------------------</span>
+<span class="o">+</span><span class="c1">-----------+------------------------+</span>
+<span class="o">|</span> <span class="n">last_name</span> <span class="o">|</span> <span class="k">CHAR_LENGTH</span><span class="p">(</span><span class="n">last_name</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------------------+</span>
+<span class="o">|</span> <span class="n">Lee</span>       <span class="o">|</span>                      <span class="mi">3</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Garcia</span>    <span class="o">|</span>                      <span class="mi">6</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Ramirez</span>   <span class="o">|</span>                      <span class="mi">7</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Webster</span>   <span class="o">|</span>                      <span class="mi">7</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Bradley</span>   <span class="o">|</span>                      <span class="mi">7</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">CONCAT</span><span class="p">(</span><span class="k">state</span><span class="p">,</span> <span class="n">city</span><span class="p">,</span> <span class="n">country</span><span class="p">)</span> <span class="k">AS</span> <span class="n">address</span>
+<span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span>
+<span class="k">LIMIT</span> <span class="mi">5</span>
+<span class="c1">-----</span>
+<span class="o">+</span><span class="c1">-------------------------------------+</span>
+<span class="o">|</span> <span class="n">address</span>                             <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------+</span>
+<span class="o">|</span> <span class="n">Catalu</span><span class="err">ñ</span><span class="n">aSant</span> <span class="n">Adri</span><span class="err">à</span> <span class="n">de</span> <span class="n">Bes</span><span class="err">ò</span><span class="n">sSpain</span>    <span class="o">|</span>
+<span class="o">|</span> <span class="n">ChongqingPutianChina</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">BahiaCampo</span> <span class="n">FormosoBrasil</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="n">ArizonaPhoenixUnited</span> <span class="n">States</span>         <span class="o">|</span>
+<span class="o">|</span> <span class="n">S</span><span class="err">ã</span><span class="n">o</span> <span class="n">PauloJardin</span><span class="err">ó</span><span class="n">polisBrasil</span>         <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------+</span>
+</code></pre></div></div>
+
+<h1 id="날짜-함수">날짜 함수</h1>
+
+<h1 id="수학-함수">수학 함수</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/built-in-function-reference.html" target="_blank">MySQL 공식문서, 12.1 Built-In Function and Operator Reference</a></li>
+  <li><a href="https://www.w3schools.com/mysql/mysql_ref_functions.asp" target="_blank">W3School, MySQL Functions</a></li>
+  <li><a href="" target="_blank"></a></li>
+</ul>
+:ET

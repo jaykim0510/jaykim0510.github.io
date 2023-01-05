@@ -522,13 +522,53 @@
 
 <p>A checkpoint helps build <strong>fault-tolerant and resilient</strong> Spark applications. In Spark Structured Streaming, it maintains intermediate state on HDFS compatible file systems to recover from failures. To specify the checkpoint in a streaming query, we use the <code class="language-plaintext highlighter-rouge">checkpointLocation</code> parameter. The parameter enables the checkpoint and specifies the location where we keep checkpoint information.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">resultDF</span>
-  <span class="p">.</span><span class="n">writeStream</span>
-  <span class="p">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s">"complete"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"checkpointLocation"</span><span class="p">,</span> <span class="s">"checkpoint"</span><span class="p">)</span>
-  <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">start</span><span class="p">()</span>
-  <span class="p">.</span><span class="n">awaitTermination</span><span class="p">()</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 인풋 소스를 csv 파일로 하는 과정에서, </span>
+<span class="c"># spark cluster로 동작중이어서 일반 파일 시스템은 사용불가</span>
+<span class="c"># HDFS에서 파일 읽어와야함</span>
+hdfs dfs <span class="nt">-mkdir</span> /data
+
+hdfs dfs <span class="nt">-put</span> ./data/AAPL.csv /data
+hdfs dfs <span class="nt">-put</span> ./data/GOOGL.csv /data
+hdfs dfs <span class="nt">-put</span> ./data/MSFT.csv /data
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+<span class="kn">import</span> <span class="nn">pyspark.sql.functions</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="p">.</span><span class="n">builder</span><span class="p">.</span><span class="n">appName</span><span class="p">(</span><span class="s">"test"</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">master</span><span class="p">(</span><span class="s">"spark://spark-master:7077"</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="n">spark</span><span class="p">.</span><span class="n">sparkContext</span><span class="p">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="s">"ERROR"</span><span class="p">)</span>
+
+<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span>
+      <span class="n">StructField</span><span class="p">(</span><span class="s">"Date"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="bp">True</span><span class="p">),</span>
+      <span class="n">StructField</span><span class="p">(</span><span class="s">"Open"</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">(),</span> <span class="bp">True</span><span class="p">),</span>
+      <span class="n">StructField</span><span class="p">(</span><span class="s">"High"</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">(),</span> <span class="bp">True</span><span class="p">),</span>
+      <span class="n">StructField</span><span class="p">(</span><span class="s">"Low"</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">(),</span> <span class="bp">True</span><span class="p">),</span>
+      <span class="n">StructField</span><span class="p">(</span><span class="s">"Close"</span><span class="p">,</span> <span class="n">DoubleType</span><span class="p">(),</span> <span class="bp">True</span><span class="p">),</span>
+      <span class="n">StructField</span><span class="p">(</span><span class="s">"Volume"</span><span class="p">,</span> <span class="n">IntegerType</span><span class="p">(),</span> <span class="bp">True</span><span class="p">),</span>
+      <span class="n">StructField</span><span class="p">(</span><span class="s">"Name"</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="bp">True</span><span class="p">),</span>
+<span class="p">])</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="p">.</span><span class="n">readStream</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"csv"</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"path"</span><span class="p">,</span> <span class="s">"hdfs://hdfs-name-node:8020/data"</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"maxFilesPerTrigger"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"header"</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"truncate"</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> \
+                    <span class="p">.</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">).</span><span class="n">load</span><span class="p">()</span>
+
+<span class="n">result_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="s">"Name"</span><span class="p">,</span><span class="s">"Date"</span><span class="p">,</span> <span class="s">"Open"</span><span class="p">,</span> <span class="s">"High"</span><span class="p">,</span> <span class="s">"Low"</span><span class="p">)</span> \
+  <span class="p">.</span><span class="n">groupBy</span><span class="p">(</span><span class="n">F</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="s">"Name"</span><span class="p">),</span> <span class="n">F</span><span class="p">.</span><span class="n">year</span><span class="p">(</span><span class="n">F</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="s">"Date"</span><span class="p">)))</span> \
+  <span class="p">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="p">.</span><span class="n">avg</span><span class="p">(</span><span class="s">"High"</span><span class="p">)).</span><span class="n">withColumn</span><span class="p">(</span><span class="s">"timestamp"</span><span class="p">,</span> <span class="n">F</span><span class="p">.</span><span class="n">lit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">datetime</span><span class="p">.</span><span class="n">now</span><span class="p">())))</span>
+                    <span class="c1"># .withColumn("timestamp", F.current_date().cast("string")) 이렇게 쓰는 것이 더 나은 방법
+</span>
+
+<span class="n">result_df</span><span class="p">.</span><span class="n">writeStream</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span> \
+        <span class="p">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s">"complete"</span><span class="p">)</span> \
+        <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"checkpointLocation"</span><span class="p">,</span> <span class="s">"checkpoint"</span><span class="p">)</span> \
+        <span class="p">.</span><span class="n">start</span><span class="p">().</span><span class="n">awaitTermination</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p><img src="/images/spark_stream_3.png" alt="" /></p>
@@ -542,36 +582,38 @@
 <ul>
   <li><strong>Default</strong>: Executes a micro-batch as soon as the previous finishes.</li>
   <li><strong>Fixed interval micro-batches</strong>: Specifies the interval when the micro-batches will execute. For example, 1 minute , 30 seconds or 1 hour etc.</li>
-</ul>
-
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">resultDF</span>
-  <span class="p">.</span><span class="n">writeStream</span>
-  <span class="p">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s">"complete"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">Trigger</span><span class="p">.</span><span class="n">ProcessingTime</span><span class="p">(</span><span class="s">"1 minute"</span><span class="p">))</span>
-  <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"truncate"</span><span class="p">,</span> <span class="n">false</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">start</span><span class="p">()</span>
-  <span class="p">.</span><span class="n">awaitTermination</span><span class="p">()</span>
-</code></pre></div></div>
-
-<ul>
   <li><strong>One-time micro-batch</strong>: Executes only one micro-batch to process all available data and then stops.</li>
+  <li><strong>Available-now micro-batch</strong>: Similar to queries one-time micro-batch trigger, the query will process all the available data and then stop on its own. The difference is that, it will process the data in (possibly) multiple micro-batches based on the source options (e.g. maxFilesPerTrigger for file source), which will result in better query scalability.</li>
 </ul>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">resultDF</span>
-  <span class="p">.</span><span class="n">writeStream</span>
-  <span class="p">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s">"complete"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">Trigger</span><span class="p">.</span><span class="n">Once</span><span class="p">())</span>
-  <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span>
-  <span class="p">.</span><span class="n">option</span><span class="p">(</span><span class="s">"truncate"</span><span class="p">,</span> <span class="n">false</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Default trigger (runs micro-batch as soon as it can)
+</span><span class="n">df</span><span class="p">.</span><span class="n">writeStream</span> \
+  <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span> \
   <span class="p">.</span><span class="n">start</span><span class="p">()</span>
-  <span class="p">.</span><span class="n">awaitTermination</span><span class="p">()</span>
+
+<span class="c1"># ProcessingTime trigger with two-seconds micro-batch interval
+</span><span class="n">df</span><span class="p">.</span><span class="n">writeStream</span> \
+  <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span> \
+  <span class="p">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">processingTime</span><span class="o">=</span><span class="s">'2 seconds'</span><span class="p">)</span> \
+  <span class="p">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="c1"># One-time trigger
+</span><span class="n">df</span><span class="p">.</span><span class="n">writeStream</span> \
+  <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span> \
+  <span class="p">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">once</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> \
+  <span class="p">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="c1"># Available-now trigger
+</span><span class="n">df</span><span class="p">.</span><span class="n">writeStream</span> \
+  <span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="s">"console"</span><span class="p">)</span> \
+  <span class="p">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">availableNow</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> \
+  <span class="p">.</span><span class="n">start</span><span class="p">()</span>
 </code></pre></div></div>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://medium.com/expedia-group-tech/apache-spark-structured-streaming-first-streaming-example-1-of-6-e8f3219748ef" target="_blank">Apache Spark Structured Streaming — First Streaming Example (1 of 6)</a></li>
+  <li><a href="https://medium.com/expedia-group-tech/apache-spark-structured-streaming-checkpoints-and-triggers-4-of-6-b6f15d5cfd8d" target="_blank">Neeraj Bhadani, Apache Spark Structured Streaming — Checkpoints and Triggers (4 of 6)</a></li>
   <li><a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Spark 공식문서, Pyspark Structured Streaming Guide</a></li>
 </ul>
 

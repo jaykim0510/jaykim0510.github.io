@@ -1,0 +1,631 @@
+I"d�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#샘플-데이터" id="markdown-toc-샘플-데이터">샘플 데이터</a></li>
+  <li><a href="#문자열-함수" id="markdown-toc-문자열-함수">문자열 함수</a></li>
+  <li><a href="#날짜-함수" id="markdown-toc-날짜-함수">날짜 함수</a></li>
+  <li><a href="#수학-함수" id="markdown-toc-수학-함수">수학 함수</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="샘플-데이터">샘플 데이터</h1>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+----+------------+-----------+----------------------------+------+--------+------------+--------------------------------+-----------------------+---------------+---------------------+
+| id | first_name | last_name | email                      | age  | gender | state      | street_address                 | city                  | country       | created_at          |
++----+------------+-----------+----------------------------+------+--------+------------+--------------------------------+-----------------------+---------------+---------------------+
+|  1 | Justin     | Lee       | justinlee@example.org      |   48 | M      | Cataluña   | 856 Morgan Highway Apt. 238    | Sant Adrià de Besòs   | Spain         | 2019-02-10 04:40:00 |
+|  2 | Jennifer   | Garcia    | jennifergarcia@example.net |   28 | F      | Chongqing  | 96683 Cunningham Ports Apt. 20 | Putian                | China         | 2022-06-22 00:41:00 |
+|  3 | Renee      | Ramirez   | reneeramirez@example.net   |   15 | F      | Bahia      | 5102 Melanie Turnpike          | Campo Formoso         | Brasil        | 2020-08-24 06:12:00 |
+|  4 | Brent      | Webster   | brentwebster@example.com   |   57 | M      | Arizona    | 9041 Kirby Lights Apt. 193     | Phoenix               | United States | 2022-08-21 14:42:00 |
+|  5 | Mark       | Bradley   | markbradley@example.com    |   30 | M      | São Paulo  | 3700 Tiffany Radial            | Jardinópolis          | Brasil        | 2019-12-18 12:20:00 |
++----+------------+-----------+----------------------------+------+--------+------------+--------------------------------+-----------------------+---------------+---------------------+
+</code></pre></div></div>
+
+<h1 id="문자열-함수">문자열 함수</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CHAR_LENGTH: Returns the length of a string (in characters)</span>
+
+<span class="k">SELECT</span> <span class="n">last_name</span><span class="p">,</span> <span class="k">CHAR_LENGTH</span><span class="p">(</span><span class="n">last_name</span><span class="p">)</span> <span class="k">AS</span> <span class="k">length</span>
+<span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span>
+<span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
+<span class="c1">------------------------------------------------------</span>
+<span class="o">+</span><span class="c1">-----------+------------------------+</span>
+<span class="o">|</span> <span class="n">last_name</span> <span class="o">|</span> <span class="k">CHAR_LENGTH</span><span class="p">(</span><span class="n">last_name</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------------------+</span>
+<span class="o">|</span> <span class="n">Lee</span>       <span class="o">|</span>                      <span class="mi">3</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Garcia</span>    <span class="o">|</span>                      <span class="mi">6</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Ramirez</span>   <span class="o">|</span>                      <span class="mi">7</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Webster</span>   <span class="o">|</span>                      <span class="mi">7</span> <span class="o">|</span>
+<span class="o">|</span> <span class="n">Bradley</span>   <span class="o">|</span>                      <span class="mi">7</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CONCAT: Adds two or more expressions together</span>
+
+<span class="k">SELECT</span> <span class="n">CONCAT</span><span class="p">(</span><span class="k">state</span><span class="p">,</span> <span class="n">city</span><span class="p">,</span> <span class="n">country</span><span class="p">)</span> <span class="k">AS</span> <span class="n">address</span>
+<span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span>
+<span class="k">LIMIT</span> <span class="mi">5</span>
+<span class="c1">------------------------------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------------------------+</span>
+<span class="o">|</span> <span class="n">address</span>                             <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------+</span>
+<span class="o">|</span> <span class="n">Catalu</span><span class="err">ñ</span><span class="n">aSant</span> <span class="n">Adri</span><span class="err">à</span> <span class="n">de</span> <span class="n">Bes</span><span class="err">ò</span><span class="n">sSpain</span>    <span class="o">|</span>
+<span class="o">|</span> <span class="n">ChongqingPutianChina</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">BahiaCampo</span> <span class="n">FormosoBrasil</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="n">ArizonaPhoenixUnited</span> <span class="n">States</span>         <span class="o">|</span>
+<span class="o">|</span> <span class="n">S</span><span class="err">ã</span><span class="n">o</span> <span class="n">PauloJardin</span><span class="err">ó</span><span class="n">polisBrasil</span>         <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------+</span>
+
+<span class="k">SELECT</span> <span class="n">CONCAT</span><span class="p">(</span><span class="k">state</span><span class="p">,</span> <span class="nv">", "</span><span class="p">,</span> <span class="n">city</span><span class="p">,</span> <span class="nv">", "</span><span class="p">,</span> <span class="n">country</span><span class="p">)</span> <span class="k">AS</span> <span class="n">address</span> 
+<span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span> 
+<span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
+<span class="c1">------------------------------------------------------</span>
+<span class="o">+</span><span class="c1">-----------------------------------------+</span>
+<span class="o">|</span> <span class="n">address</span>                                 <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------------------------------------+</span>
+<span class="o">|</span> <span class="n">Catalu</span><span class="err">ñ</span><span class="n">a</span><span class="p">,</span> <span class="n">Sant</span> <span class="n">Adri</span><span class="err">à</span> <span class="n">de</span> <span class="n">Bes</span><span class="err">ò</span><span class="n">s</span><span class="p">,</span> <span class="n">Spain</span>    <span class="o">|</span>
+<span class="o">|</span> <span class="n">Chongqing</span><span class="p">,</span> <span class="n">Putian</span><span class="p">,</span> <span class="n">China</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">Bahia</span><span class="p">,</span> <span class="n">Campo</span> <span class="n">Formoso</span><span class="p">,</span> <span class="n">Brasil</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="n">Arizona</span><span class="p">,</span> <span class="n">Phoenix</span><span class="p">,</span> <span class="n">United</span> <span class="n">States</span>         <span class="o">|</span>
+<span class="o">|</span> <span class="n">S</span><span class="err">ã</span><span class="n">o</span> <span class="n">Paulo</span><span class="p">,</span> <span class="n">Jardin</span><span class="err">ó</span><span class="n">polis</span><span class="p">,</span> <span class="n">Brasil</span>         <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CONCAT_WS: Adds two or more expressions together with a separator</span>
+
+<span class="k">SELECT</span> <span class="n">CONCAT_WS</span><span class="p">(</span><span class="nv">" + "</span><span class="p">,</span> <span class="k">state</span><span class="p">,</span> <span class="n">city</span><span class="p">,</span> <span class="n">country</span><span class="p">)</span> <span class="k">AS</span> <span class="n">address</span> 
+<span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span> 
+<span class="k">LIMIT</span> <span class="mi">5</span><span class="p">;</span>
+<span class="c1">------------------------------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------------------------------+</span>
+<span class="o">|</span> <span class="n">address</span>                                   <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------------+</span>
+<span class="o">|</span> <span class="n">Catalu</span><span class="err">ñ</span><span class="n">a</span> <span class="o">+</span> <span class="n">Sant</span> <span class="n">Adri</span><span class="err">à</span> <span class="n">de</span> <span class="n">Bes</span><span class="err">ò</span><span class="n">s</span> <span class="o">+</span> <span class="n">Spain</span>    <span class="o">|</span>
+<span class="o">|</span> <span class="n">Chongqing</span> <span class="o">+</span> <span class="n">Putian</span> <span class="o">+</span> <span class="n">China</span>                <span class="o">|</span>
+<span class="o">|</span> <span class="n">Bahia</span> <span class="o">+</span> <span class="n">Campo</span> <span class="n">Formoso</span> <span class="o">+</span> <span class="n">Brasil</span>            <span class="o">|</span>
+<span class="o">|</span> <span class="n">Arizona</span> <span class="o">+</span> <span class="n">Phoenix</span> <span class="o">+</span> <span class="n">United</span> <span class="n">States</span>         <span class="o">|</span>
+<span class="o">|</span> <span class="n">S</span><span class="err">ã</span><span class="n">o</span> <span class="n">Paulo</span> <span class="o">+</span> <span class="n">Jardin</span><span class="err">ó</span><span class="n">polis</span> <span class="o">+</span> <span class="n">Brasil</span>         <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- FORMAT: ,와 . 으로 숫자를 보기좋게 포맷팅 (뒤에 숫자는 반올림하고자 하는 소수점 자리)</span>
+
+<span class="k">SELECT</span> <span class="n">FORMAT</span><span class="p">(</span><span class="mi">250500</span><span class="p">.</span><span class="mi">5664</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">------------------------+</span>
+<span class="o">|</span> <span class="n">FORMAT</span><span class="p">(</span><span class="mi">250500</span><span class="p">.</span><span class="mi">5664</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------+</span>
+<span class="o">|</span> <span class="mi">250</span><span class="p">,</span><span class="mi">500</span><span class="p">.</span><span class="mi">57</span>             <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- INSERT: 특정 위치에 있는 문자열 대신 다른 문자열을 삽입</span>
+
+<span class="k">SELECT</span> <span class="k">INSERT</span><span class="p">(</span><span class="nv">"Apple.com"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nv">"Samsung"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">--------------------------------------+</span>
+<span class="o">|</span> <span class="k">INSERT</span><span class="p">(</span><span class="nv">"Apple.com"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="nv">"Samsung"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------------------+</span>
+<span class="o">|</span> <span class="n">Samsung</span><span class="p">.</span><span class="n">com</span>                          <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- INSTR: 특정 문자열을 찾아 첫 번째로 발견된 곳의 위치를 리턴한다</span>
+
+<span class="k">SELECT</span> <span class="n">INSTR</span><span class="p">(</span><span class="nv">"Apple"</span><span class="p">,</span> <span class="nv">"p"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="n">INSTR</span><span class="p">(</span><span class="nv">"Apple"</span><span class="p">,</span> <span class="nv">"p"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span>                   <span class="mi">2</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- LCASE: 문자열 전체를 소문자로 변환한다</span>
+<span class="c1">-- LOWER: LCASE와 같다</span>
+
+<span class="k">SELECT</span> <span class="n">LCASE</span><span class="p">(</span><span class="nv">"SQL Tutorial is FUN!"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------------------+</span>
+<span class="o">|</span> <span class="n">LCASE</span><span class="p">(</span><span class="nv">"SQL Tutorial is FUN!"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------+</span>
+<span class="o">|</span> <span class="k">sql</span> <span class="n">tutorial</span> <span class="k">is</span> <span class="n">fun</span><span class="o">!</span>          <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- LEFT: 왼쪽 문자열 일부를 추출한다</span>
+
+<span class="k">SELECT</span> <span class="k">LEFT</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">AS</span> <span class="n">ExtractString</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">ExtractString</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="k">SQL</span>           <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- LENGTH: Returns the length of a string (in bytes)</span>
+<span class="c1">-- LENGTH 함수는 문자의 BYTE 길이를 가져오기 때문에 한글 같은 문자는 정확한 길이를 할 수 없는데 이 때 사용하는 것이 CHAR_LENGTH 함수이다</span>
+<span class="k">SELECT</span> <span class="k">LENGTH</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">)</span> <span class="k">AS</span> <span class="n">LengthOfString</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">----------------+</span>
+<span class="o">|</span> <span class="n">LengthOfString</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------+</span>
+<span class="o">|</span>             <span class="mi">12</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- LOCATE: Returns the position of the first occurrence of a substring in a string</span>
+
+<span class="k">SELECT</span> <span class="n">LOCATE</span><span class="p">(</span><span class="nv">"3S"</span><span class="p">,</span> <span class="nv">"W3Schools.com"</span><span class="p">)</span> <span class="k">AS</span> <span class="n">MatchPosition</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">MatchPosition</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span>             <span class="mi">2</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+
+<span class="k">SELECT</span> <span class="n">LOCATE</span><span class="p">(</span><span class="nv">"3a"</span><span class="p">,</span> <span class="nv">"W3Schools.com"</span><span class="p">)</span> <span class="k">AS</span> <span class="n">MatchPosition</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">MatchPosition</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span>             <span class="mi">0</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- LPAD</span>
+<span class="k">SELECT</span> <span class="n">LPAD</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="nv">"abc"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------------------------+</span>
+<span class="o">|</span> <span class="n">LPAD</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="nv">"abc"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------------------+</span>
+<span class="o">|</span> <span class="n">abcabcabSQL</span> <span class="n">Tutorial</span>            <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- LTRIM</span>
+
+<span class="k">SELECT</span> <span class="n">LTRIM</span><span class="p">(</span><span class="nv">"     SQL Tutorial"</span><span class="p">)</span> <span class="k">AS</span> <span class="n">LeftTrimmedString</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+<span class="o">|</span> <span class="n">LeftTrimmedString</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+<span class="o">|</span> <span class="k">SQL</span> <span class="n">Tutorial</span>      <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- REPEAT</span>
+
+<span class="k">SELECT</span> <span class="n">REPEAT</span><span class="p">(</span><span class="nv">"ABC "</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+<span class="o">|</span> <span class="n">REPEAT</span><span class="p">(</span><span class="nv">"ABC "</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+<span class="o">|</span> <span class="n">ABC</span> <span class="n">ABC</span> <span class="n">ABC</span>       <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- REPLACE</span>
+
+<span class="k">SELECT</span> <span class="k">REPLACE</span><span class="p">(</span><span class="nv">"Apple in Apple"</span><span class="p">,</span> <span class="nv">"Apple"</span><span class="p">,</span> <span class="nv">"Samsung"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">-----------------------------------------------+</span>
+<span class="o">|</span> <span class="k">REPLACE</span><span class="p">(</span><span class="nv">"Apple in Apple"</span><span class="p">,</span> <span class="nv">"Apple"</span><span class="p">,</span> <span class="nv">"Samsung"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------------------------------------------+</span>
+<span class="o">|</span> <span class="n">Samsung</span> <span class="k">in</span> <span class="n">Samsung</span>                            <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------------------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- REVERSE</span>
+
+<span class="k">SELECT</span> <span class="n">REVERSE</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+<span class="o">|</span> <span class="n">REVERSE</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+<span class="o">|</span> <span class="n">lairotuT</span> <span class="n">LQS</span>            <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- RIGHT</span>
+
+<span class="k">SELECT</span> <span class="k">RIGHT</span><span class="p">(</span><span class="nv">"SQL Tutorial is cool"</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="k">AS</span> <span class="n">ExtractString</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">ExtractString</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">cool</span>          <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- RPAD</span>
+
+<span class="k">SELECT</span> <span class="n">RPAD</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="nv">"+++"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------------------------+</span>
+<span class="o">|</span> <span class="n">RPAD</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="nv">"+++"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------------------+</span>
+<span class="o">|</span> <span class="k">SQL</span> <span class="n">Tutorial</span><span class="o">++++++++</span>            <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- RTRIM</span>
+
+<span class="k">SELECT</span> <span class="n">RTRIM</span><span class="p">(</span><span class="nv">"SQL Tutorial     "</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RightTrimmedString</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">--------------------+</span>
+<span class="o">|</span> <span class="n">RightTrimmedString</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------+</span>
+<span class="o">|</span> <span class="k">SQL</span> <span class="n">Tutorial</span>       <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- SUBSTR, SUBSTRING</span>
+
+<span class="k">SELECT</span> <span class="n">SUBSTR</span><span class="p">(</span><span class="nv">"SQL Tutorial"</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">AS</span> <span class="n">ExtractString</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">ExtractString</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">Tut</span>           <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- SUBSTRING_INDEX</span>
+
+<span class="k">SELECT</span> <span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="nv">"www.naver.com"</span><span class="p">,</span> <span class="nv">"."</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+<span class="o">|</span> <span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="nv">"www.naver.com"</span><span class="p">,</span> <span class="nv">"."</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+<span class="o">|</span> <span class="n">www</span>                                      <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+
+<span class="k">SELECT</span> <span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="nv">"www.naver.com"</span><span class="p">,</span> <span class="nv">"."</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+<span class="o">|</span> <span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="nv">"www.naver.com"</span><span class="p">,</span> <span class="nv">"."</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+<span class="o">|</span> <span class="n">www</span><span class="p">.</span><span class="n">naver</span>                                <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+
+<span class="k">SELECT</span> <span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="nv">"www.naver.com"</span><span class="p">,</span> <span class="nv">"."</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+<span class="o">|</span> <span class="n">SUBSTRING_INDEX</span><span class="p">(</span><span class="nv">"www.naver.com"</span><span class="p">,</span> <span class="nv">"."</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+<span class="o">|</span> <span class="n">www</span><span class="p">.</span><span class="n">naver</span><span class="p">.</span><span class="n">com</span>                            <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- TRIM</span>
+
+<span class="k">SELECT</span> <span class="k">TRIM</span><span class="p">(</span><span class="s1">'    SQL Tutorial    '</span><span class="p">)</span> <span class="k">AS</span> <span class="n">TrimmedString</span><span class="p">;</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="n">TrimmedString</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+<span class="o">|</span> <span class="k">SQL</span> <span class="n">Tutorial</span>  <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- UCASE, UPPER</span>
+
+<span class="k">SELECT</span> <span class="n">UCASE</span><span class="p">(</span><span class="nv">"SQL Tutorial is FUN!"</span><span class="p">);</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------------------+</span>
+<span class="o">|</span> <span class="n">UCASE</span><span class="p">(</span><span class="nv">"SQL Tutorial is FUN!"</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------+</span>
+<span class="o">|</span> <span class="k">SQL</span> <span class="n">TUTORIAL</span> <span class="k">IS</span> <span class="n">FUN</span><span class="o">!</span>          <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------------+</span>
+</code></pre></div></div>
+
+<h1 id="날짜-함수">날짜 함수</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- ADDDATE(date, INTERVAL value addunit)</span>
+<span class="c1">-- (addunit: MICROSECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR 등)</span>
+<span class="c1">-- or ADDDATE(date, days)</span>
+
+<span class="k">SELECT</span> <span class="n">ADDDATE</span><span class="p">(</span><span class="nv">"2017-06-15"</span><span class="p">,</span> <span class="n">INTERVAL</span> <span class="mi">10</span> <span class="k">DAY</span><span class="p">);</span>
+<span class="c1">-----------------------------------------------</span>
+<span class="o">+</span><span class="c1">----------------------------------------+</span>
+<span class="o">|</span> <span class="n">ADDDATE</span><span class="p">(</span><span class="nv">"2017-06-15"</span><span class="p">,</span> <span class="n">INTERVAL</span> <span class="mi">10</span> <span class="k">DAY</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------------------------+</span>
+<span class="o">|</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">25</span>                             <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------------------------+</span>
+
+<span class="k">SELECT</span> <span class="n">ADDDATE</span><span class="p">(</span><span class="nv">"2017-06-15 09:34:21"</span><span class="p">,</span> <span class="n">INTERVAL</span> <span class="o">-</span><span class="mi">3</span> <span class="n">HOUR</span><span class="p">);</span>
+<span class="c1">----------------------------------------------------------</span>
+<span class="o">+</span><span class="c1">--------------------------------------------------+</span>
+<span class="o">|</span> <span class="n">ADDDATE</span><span class="p">(</span><span class="nv">"2017-06-15 09:34:21"</span><span class="p">,</span> <span class="n">INTERVAL</span> <span class="o">-</span><span class="mi">3</span> <span class="n">HOUR</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------------------------------+</span>
+<span class="o">|</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">15</span> <span class="mi">06</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">21</span>                              <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------------------------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CURDATE, CURRENT_DATE</span>
+
+<span class="k">SELECT</span> <span class="n">CURDATE</span><span class="p">();</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">------------+</span>
+<span class="o">|</span> <span class="n">CURDATE</span><span class="p">()</span>  <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------+</span>
+<span class="o">|</span> <span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">06</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CURRENT_TIMESTAMP</span>
+
+<span class="k">SELECT</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">();</span>
+<span class="c1">------------------------------------------</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">()</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="mi">2023</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">06</span> <span class="mi">05</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mi">06</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="c1">------------------------------------------</span>
+</code></pre></div></div>
+
+<h1 id="수학-함수">수학 함수</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- COS</span>
+
+<span class="k">SELECT</span> <span class="n">COS</span><span class="p">(</span><span class="mi">3</span><span class="p">.</span><span class="mi">141592</span><span class="p">)</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="n">COS</span><span class="p">(</span><span class="mi">3</span><span class="p">.</span><span class="mi">141592</span><span class="p">)</span>       <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">9999999999997864</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CEIL, CEILING</span>
+<span class="c1">-- FLOOR</span>
+<span class="c1">-- ROUND</span>
+<span class="c1">-- TRUNCATE</span>
+
+
+<span class="k">SELECT</span> <span class="n">CEIL</span><span class="p">(</span><span class="mi">25</span><span class="p">.</span><span class="mi">75</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span> <span class="n">CEIL</span><span class="p">(</span><span class="mi">25</span><span class="p">.</span><span class="mi">75</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span>          <span class="mi">26</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+
+
+<span class="k">SELECT</span> <span class="n">ROUND</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+<span class="o">|</span> <span class="n">ROUND</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+<span class="o">|</span>            <span class="mi">135</span><span class="p">.</span><span class="mi">38</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------+</span>
+
+
+<span class="k">SELECT</span> <span class="n">FLOOR</span><span class="p">(</span><span class="mi">25</span><span class="p">.</span><span class="mi">75</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">--------------+</span>
+<span class="o">|</span> <span class="n">FLOOR</span><span class="p">(</span><span class="mi">25</span><span class="p">.</span><span class="mi">75</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------+</span>
+<span class="o">|</span>           <span class="mi">25</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">--------------+</span>
+
+
+<span class="k">SELECT</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+<span class="o">|</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+<span class="o">|</span>               <span class="mi">135</span><span class="p">.</span><span class="mi">37</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+
+<span class="k">SELECT</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+<span class="o">|</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+<span class="o">|</span>                <span class="mi">135</span><span class="p">.</span><span class="mi">3</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+
+<span class="k">SELECT</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+<span class="o">|</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+<span class="o">|</span>                  <span class="mi">135</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------+</span>
+
+<span class="k">SELECT</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-----------------------+</span>
+<span class="o">|</span> <span class="k">TRUNCATE</span><span class="p">(</span><span class="mi">135</span><span class="p">.</span><span class="mi">375</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------------------+</span>
+<span class="o">|</span>                   <span class="mi">130</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- GREATEST</span>
+<span class="c1">-- LEAST</span>
+
+<span class="k">SELECT</span> <span class="n">GREATEST</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">25</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------------------------+</span>
+<span class="o">|</span> <span class="n">GREATEST</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------------+</span>
+<span class="o">|</span>                         <span class="mi">34</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------------------------+</span>
+
+<span class="k">SELECT</span> <span class="n">LEAST</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">25</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+<span class="o">|</span> <span class="n">LEAST</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+<span class="o">|</span>                       <span class="mi">3</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------------------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- COUNT</span>
+<span class="c1">-- MAX</span>
+<span class="c1">-- MIN</span>
+<span class="c1">-- SUM</span>
+<span class="c1">-- AVG</span>
+
+
+<span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> 
+<span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span> 
+<span class="k">WHERE</span> <span class="n">country</span><span class="o">=</span><span class="nv">"Spain"</span><span class="p">;</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="k">COUNT</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span>      <span class="mi">3941</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+
+
+<span class="k">SELECT</span> <span class="k">MAX</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span><span class="p">;</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="k">MAX</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span>       <span class="mi">70</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+
+
+<span class="k">SELECT</span> <span class="k">MIN</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span><span class="p">;</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="k">MIN</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span>       <span class="mi">12</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+
+
+<span class="k">SELECT</span> <span class="k">SUM</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span><span class="p">;</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="k">SUM</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span>  <span class="mi">4103528</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+
+
+<span class="k">SELECT</span> <span class="k">AVG</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">ecommerce</span><span class="p">.</span><span class="k">USER</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="k">AVG</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span>  <span class="mi">41</span><span class="p">.</span><span class="mi">0353</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- MOD: Return the remainder</span>
+<span class="c1">-- POW, POWER</span>
+
+<span class="k">SELECT</span> <span class="k">MOD</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">------------+</span>
+<span class="o">|</span> <span class="k">MOD</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------+</span>
+<span class="o">|</span>          <span class="mi">2</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">------------+</span>
+
+
+<span class="k">SELECT</span> <span class="n">POW</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span> <span class="n">POW</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+<span class="o">|</span>        <span class="mi">16</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-----------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- SIGN: 양수면 1, 음수면 -1, 0이면 0</span>
+<span class="c1">-- ABS</span>
+<span class="c1">-- SQRT</span>
+
+<span class="k">SELECT</span> <span class="n">SIGN</span><span class="p">(</span><span class="mi">255</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span> <span class="n">SIGN</span><span class="p">(</span><span class="mi">255</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span>           <span class="mi">1</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+
+
+<span class="k">SELECT</span> <span class="k">ABS</span><span class="p">(</span><span class="o">-</span><span class="mi">243</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span> <span class="k">ABS</span><span class="p">(</span><span class="o">-</span><span class="mi">243</span><span class="p">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+<span class="o">|</span>       <span class="mi">243</span><span class="p">.</span><span class="mi">5</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">-------------+</span>
+
+
+<span class="k">SELECT</span> <span class="n">SQRT</span><span class="p">(</span><span class="mi">64</span><span class="p">);</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span> <span class="n">SQRT</span><span class="p">(</span><span class="mi">64</span><span class="p">)</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+<span class="o">|</span>        <span class="mi">8</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">----------+</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- RAND: 0 &lt;= x &lt; 1 의 랜덤 값</span>
+
+<span class="k">SELECT</span> <span class="n">RAND</span><span class="p">();</span>
+<span class="c1">------------------------------</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="n">RAND</span><span class="p">()</span>              <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+<span class="o">|</span> <span class="mi">0</span><span class="p">.</span><span class="mi">10379043789933476</span> <span class="o">|</span>
+<span class="o">+</span><span class="c1">---------------------+</span>
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://dev.mysql.com/doc/refman/8.0/en/built-in-function-reference.html" target="_blank">MySQL 공식문서, 12.1 Built-In Function and Operator Reference</a></li>
+  <li><a href="https://www.w3schools.com/mysql/mysql_ref_functions.asp" target="_blank">W3School, MySQL Functions</a></li>
+  <li><a href="" target="_blank"></a></li>
+</ul>
+:ET
