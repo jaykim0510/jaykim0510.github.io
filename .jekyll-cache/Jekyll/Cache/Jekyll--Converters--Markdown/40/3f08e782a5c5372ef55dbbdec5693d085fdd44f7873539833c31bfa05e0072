@@ -1,0 +1,255 @@
+I"7k<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#series" id="markdown-toc-series">Series</a></li>
+  <li><a href="#dataframe" id="markdown-toc-dataframe">DataFrame</a></li>
+  <li><a href="#index" id="markdown-toc-index">Index</a>    <ul>
+      <li><a href="#컬럼을-인덱스로-만들기" id="markdown-toc-컬럼을-인덱스로-만들기">컬럼을 인덱스로 만들기</a></li>
+      <li><a href="#인덱스를-컬럼으로-만들기" id="markdown-toc-인덱스를-컬럼으로-만들기">인덱스를 컬럼으로 만들기</a></li>
+      <li><a href="#인덱스-재배열" id="markdown-toc-인덱스-재배열">인덱스 재배열</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="series">Series</h1>
+
+<ul>
+  <li>index가 있는 ndarray</li>
+  <li>Series 안에 data type은 모두 같아야함 (다르게 하면 에러가 나지는 않지만 타입 변환이 일어난다)</li>
+  <li>Series의 data type에 따라 여러 기능들을 제공한다 (ex. df[‘종목명’].str.contains(‘삼성’))</li>
+  <li>Series 간의 연산은 index 기준</li>
+  <li>int형 타입에 하나라도 nan이 있으면 float형이 됨</li>
+  <li>nan &gt; 0 -&gt; False, nan &lt;= 0 -&gt; False : nan 은 0보다 큰 범위에도 속하지 않고, 같거나 작은 범위에도 속하지 않는다 =&gt; nan 처리가 중요하다</li>
+  <li>s = pd.Series(data, index, dtype)</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="o">----------------------</span>
+<span class="mi">0</span>    <span class="mi">3</span>
+<span class="mi">1</span>    <span class="mi">4</span>
+<span class="mi">2</span>    <span class="mi">5</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+
+<span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s">'float'</span><span class="p">)</span>
+<span class="o">--------------------------------------</span>
+<span class="mi">0</span>    <span class="mf">3.0</span>
+<span class="mi">1</span>    <span class="mf">4.0</span>
+<span class="mi">2</span>    <span class="mf">5.0</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+
+<span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">])</span>
+<span class="o">--------------------------------------------</span>
+<span class="n">a</span>    <span class="mi">3</span>
+<span class="n">b</span>    <span class="mi">4</span>
+<span class="n">c</span>    <span class="mi">5</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+
+<span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">({</span><span class="s">'a'</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">'b'</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">'c'</span><span class="p">:</span> <span class="mi">5</span><span class="p">})</span>
+<span class="o">--------------------------------------</span>
+<span class="n">a</span>    <span class="mi">3</span>
+<span class="n">b</span>    <span class="mi">4</span>
+<span class="n">c</span>    <span class="mi">5</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">])</span>
+
+<span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x</span><span class="p">.</span><span class="n">size</span>
+<span class="n">x</span><span class="p">.</span><span class="n">count</span><span class="p">()</span>
+<span class="o">------------</span>
+<span class="mi">4</span>
+<span class="mi">4</span>
+<span class="mi">3</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">])</span>
+
+<span class="c1"># unique() 에 nan 도 포함된다
+</span><span class="n">x</span><span class="p">.</span><span class="n">unique</span><span class="p">()</span>
+<span class="o">----------------------------------</span>
+<span class="n">array</span><span class="p">([</span> <span class="mf">3.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">5.</span><span class="p">,</span> <span class="n">nan</span><span class="p">])</span>
+
+<span class="n">x</span><span class="p">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="o">--------------------</span>
+<span class="mf">3.0</span>    <span class="mi">1</span>
+<span class="mf">4.0</span>    <span class="mi">1</span>
+<span class="mf">5.0</span>    <span class="mi">1</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s">'d'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">])</span>
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="o">----------------------------------</span>
+<span class="n">a</span>    <span class="mi">9</span>
+<span class="n">b</span>    <span class="mi">9</span>
+<span class="n">c</span>    <span class="mi">9</span>
+<span class="n">d</span>    <span class="mi">9</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">,</span> <span class="s">'e'</span><span class="p">,</span> <span class="s">'f'</span><span class="p">])</span>
+
+<span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="o">----------------------------------</span>
+<span class="n">a</span>     <span class="n">NaN</span>
+<span class="n">b</span>     <span class="n">NaN</span>
+<span class="n">c</span>     <span class="mf">8.0</span>
+<span class="n">d</span>    <span class="mf">10.0</span>
+<span class="n">e</span>     <span class="n">NaN</span>
+<span class="n">f</span>     <span class="n">NaN</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+
+<span class="c1"># Series의 add 메서드를 사용하면 fill_value 파라미터를 이용해 더하기 연산을 하기 전에 Nan값을 채울 수 있다
+</span><span class="n">x</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">----------------------------------</span>
+<span class="n">a</span>     <span class="mf">1.0</span>
+<span class="n">b</span>     <span class="mf">2.0</span>
+<span class="n">c</span>     <span class="mf">8.0</span>
+<span class="n">d</span>    <span class="mf">10.0</span>
+<span class="n">e</span>     <span class="mf">7.0</span>
+<span class="n">f</span>     <span class="mf">8.0</span>
+<span class="n">dtype</span><span class="p">:</span> <span class="n">float64</span>
+</code></pre></div></div>
+
+<h1 id="dataframe">DataFrame</h1>
+
+<ul>
+  <li>여러 Series를 index 기준으로 align 시킨 자료형</li>
+  <li>{‘컬럼1’: Series1, ‘컬럼2’: Series2}</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'col1'</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">]),</span> 
+              <span class="s">'col2'</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">])})</span>
+<span class="o">--------------------------------------------------------------------------</span>
+   <span class="n">col1</span>  <span class="n">col2</span>
+<span class="n">a</span>     <span class="mi">1</span>     <span class="mi">4</span>
+<span class="n">b</span>     <span class="mi">2</span>     <span class="mi">5</span>
+<span class="n">c</span>     <span class="mi">3</span>     <span class="mi">6</span>
+
+
+<span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">'col1'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s">'col2'</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]},</span> 
+             <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">])</span>
+<span class="o">----------------------------------------------------------</span>
+   <span class="n">col1</span>  <span class="n">col2</span>
+<span class="n">a</span>     <span class="mi">1</span>     <span class="mi">4</span>
+<span class="n">b</span>     <span class="mi">2</span>     <span class="mi">5</span>
+<span class="n">c</span>     <span class="mi">3</span>     <span class="mi">6</span>
+
+<span class="c1"># 단일 리스트는 열이 된다
+</span><span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'col1'</span><span class="p">])</span>
+<span class="o">------------------------------------------------</span>
+   <span class="n">col1</span>
+<span class="mi">0</span>     <span class="mi">1</span>
+<span class="mi">1</span>     <span class="mi">2</span>
+<span class="mi">2</span>     <span class="mi">3</span>
+<span class="mi">3</span>     <span class="mi">4</span>
+
+
+<span class="c1"># 리스트 안의 리스트는 행이 된다
+</span><span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> 
+             <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'col1'</span><span class="p">,</span> <span class="s">'col2'</span><span class="p">],</span> 
+             <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">])</span>
+<span class="o">----------------------------------------------</span>
+   <span class="n">col1</span>  <span class="n">col2</span>
+<span class="n">a</span>     <span class="mi">1</span>     <span class="mi">4</span>
+<span class="n">b</span>     <span class="mi">2</span>     <span class="mi">5</span>
+<span class="n">c</span>     <span class="mi">3</span>     <span class="mi">6</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># index 기준으로 align 한다
+</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">])</span>
+
+<span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'col1'</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s">'col2'</span><span class="p">:</span> <span class="n">y</span><span class="p">})</span>
+<span class="o">------------------------------------------------</span>
+   <span class="n">col1</span>  <span class="n">col2</span>
+<span class="n">a</span>   <span class="mf">1.0</span>   <span class="n">NaN</span>
+<span class="n">b</span>   <span class="mf">2.0</span>   <span class="mf">4.0</span>
+<span class="n">c</span>   <span class="mf">3.0</span>   <span class="mf">5.0</span>
+<span class="n">d</span>   <span class="n">NaN</span>   <span class="mf">6.0</span>
+</code></pre></div></div>
+
+<h1 id="index">Index</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">'a'</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="s">'b'</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="s">'c'</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'col1'</span><span class="p">,</span> <span class="s">'col2'</span><span class="p">,</span> <span class="s">'col3'</span><span class="p">])</span>
+<span class="n">df</span>
+<span class="o">----------------------------------------------------------------------------------------------</span>
+  <span class="n">col1</span>  <span class="n">col2</span>  <span class="n">col3</span>
+<span class="mi">0</span>    <span class="n">a</span>     <span class="mi">1</span>     <span class="mi">4</span>
+<span class="mi">1</span>    <span class="n">b</span>     <span class="mi">2</span>     <span class="mi">5</span>
+<span class="mi">2</span>    <span class="n">c</span>     <span class="mi">3</span>     <span class="mi">6</span>
+</code></pre></div></div>
+
+<h2 id="컬럼을-인덱스로-만들기">컬럼을 인덱스로 만들기</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">'col1'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="o">------------------------------------</span>
+      <span class="n">col2</span>  <span class="n">col3</span>
+<span class="n">col1</span>
+<span class="n">a</span>        <span class="mi">1</span>     <span class="mi">4</span>
+<span class="n">b</span>        <span class="mi">2</span>     <span class="mi">5</span>
+<span class="n">c</span>        <span class="mi">3</span>     <span class="mi">6</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">'col2'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="o">------------------------------------------------</span>
+           <span class="n">col3</span>
+<span class="n">col1</span> <span class="n">col2</span>
+<span class="n">a</span>    <span class="mi">1</span>        <span class="mi">4</span>
+<span class="n">b</span>    <span class="mi">2</span>        <span class="mi">5</span>
+<span class="n">c</span>    <span class="mi">3</span>        <span class="mi">6</span>
+</code></pre></div></div>
+
+<h2 id="인덱스를-컬럼으로-만들기">인덱스를 컬럼으로 만들기</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="s">'col1'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="o">------------------------------------------------</span>
+     <span class="n">col1</span>  <span class="n">col3</span>
+<span class="n">col2</span>
+<span class="mi">1</span>       <span class="n">a</span>     <span class="mi">4</span>
+<span class="mi">2</span>       <span class="n">b</span>     <span class="mi">5</span>
+<span class="mi">3</span>       <span class="n">c</span>     <span class="mi">6</span>
+</code></pre></div></div>
+
+<h2 id="인덱스-재배열">인덱스 재배열</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s">'col'</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">]),</span> <span class="s">'col2'</span><span class="p">:</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">,</span> <span class="s">'e'</span><span class="p">])})</span>
+<span class="o">------------------------------------------</span>
+   <span class="n">col</span>  <span class="n">col2</span>
+<span class="n">b</span>  <span class="mf">1.0</span>   <span class="n">NaN</span>
+<span class="n">c</span>  <span class="mf">2.0</span>   <span class="mf">4.0</span>
+<span class="n">d</span>  <span class="mf">3.0</span>   <span class="mf">5.0</span>
+<span class="n">e</span>  <span class="n">NaN</span>   <span class="mf">6.0</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">reindex</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">,</span> <span class="s">'e'</span><span class="p">,</span> <span class="s">'f'</span><span class="p">])</span>
+<span class="o">------------------------------------------</span>
+   <span class="n">col</span>  <span class="n">col2</span>
+<span class="n">a</span>  <span class="n">NaN</span>   <span class="n">NaN</span>
+<span class="n">b</span>  <span class="mf">1.0</span>   <span class="n">NaN</span>
+<span class="n">c</span>  <span class="mf">2.0</span>   <span class="mf">4.0</span>
+<span class="n">d</span>  <span class="mf">3.0</span>   <span class="mf">5.0</span>
+<span class="n">e</span>  <span class="n">NaN</span>   <span class="mf">6.0</span>
+<span class="n">f</span>  <span class="n">NaN</span>   <span class="n">NaN</span>
+
+<span class="n">df</span><span class="p">.</span><span class="n">reindex</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">,</span> <span class="s">'e'</span><span class="p">,</span> <span class="s">'f'</span><span class="p">],</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">----------------------------------------------------------</span>
+   <span class="n">col</span>  <span class="n">col2</span>
+<span class="n">a</span>  <span class="mf">0.0</span>   <span class="mf">0.0</span>
+<span class="n">b</span>  <span class="mf">1.0</span>   <span class="n">NaN</span>
+<span class="n">c</span>  <span class="mf">2.0</span>   <span class="mf">4.0</span>
+<span class="n">d</span>  <span class="mf">3.0</span>   <span class="mf">5.0</span>
+<span class="n">e</span>  <span class="n">NaN</span>   <span class="mf">6.0</span>
+<span class="n">f</span>  <span class="mf">0.0</span>   <span class="mf">0.0</span>
+
+<span class="c1"># 일부 남아있는 NaN은 reindex로 인한 NaN이 아니라 처음부터 있던 NaN이기 때문에 안 채워진다
+# 이런값들은 fillna 로 해결해야 한다
+</span></code></pre></div></div>
+:ET

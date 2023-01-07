@@ -1,0 +1,100 @@
+I"�"<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#by-column" id="markdown-toc-by-column">By Column</a></li>
+  <li><a href="#by-type" id="markdown-toc-by-type">By Type</a></li>
+  <li><a href="#by-row" id="markdown-toc-by-row">By Row</a></li>
+  <li><a href="#by-at" id="markdown-toc-by-at">By At</a></li>
+</ul>
+
+<hr />
+
+<p><img src="/images/pd_1.png" alt="" /></p>
+
+<h1 id="by-column">By Column</h1>
+
+<ul>
+  <li>DataFrame 에 대괄호는 컬럼 기준으로 인덱싱한다</li>
+  <li>대괄호 안에 컬럼명을 넣으면 Series 리턴</li>
+  <li>대괄호 안에 다시 대괄호로 리스트를 넘기면 DataFrame 리턴</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'ticker'</span><span class="p">]</span>
+
+<span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="o">--------------------------</span>
+<span class="n">pandas</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">series</span><span class="p">.</span><span class="n">Series</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_17.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s">'ticker'</span><span class="p">]]</span>
+
+<span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="o">----------------------------</span>
+<span class="n">pandas</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">DataFrame</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_18.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s">'(배)'</span><span class="p">).</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_19.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s">'\([배원]\)'</span><span class="p">).</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_20.png" alt="" /></p>
+
+<h1 id="by-type">By Type</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s">'object'</span><span class="p">]).</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_21.png" alt="" /></p>
+
+<h1 id="by-row">By Row</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">'ticker'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">'종목명'</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_22.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 숫자(순서) 이용 -&gt; 잘 안쓰임
+</span><span class="n">df</span><span class="p">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">df</span><span class="p">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_23.png" alt="" />
+<img src="/images/pd_24.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># loc
+</span><span class="n">df</span><span class="p">.</span><span class="n">loc</span><span class="p">[[</span><span class="s">'AK홀딩스'</span><span class="p">,</span> <span class="s">'삼성전자'</span><span class="p">],</span> <span class="p">[</span><span class="s">'매출액(억원)'</span><span class="p">,</span> <span class="s">'순이익률(%)'</span><span class="p">]]</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_25.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># 인덱스를 정렬하고 나면 '삼성' 처럼 '삼성'이 없어도 범위 인덱싱을 지원
+</span><span class="n">df</span><span class="p">.</span><span class="n">loc</span><span class="p">[</span><span class="s">'삼성'</span><span class="p">:</span><span class="s">'삼성생명'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_26.png" alt="" /></p>
+
+<h1 id="by-at">By At</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">%</span><span class="n">timeit</span> <span class="n">df</span><span class="p">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="s">'순이익률(%)'</span><span class="p">]</span>
+<span class="o">----------------------------------------------------------------------------</span>
+<span class="mf">3.73</span> <span class="n">µs</span> <span class="err">±</span> <span class="mf">4.38</span> <span class="n">ns</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">±</span> <span class="n">std</span><span class="p">.</span> <span class="n">dev</span><span class="p">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span><span class="mi">000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># df.at 이 2배 이상 빠르다
+</span><span class="o">%</span><span class="n">timeit</span> <span class="n">df</span><span class="p">.</span><span class="n">at</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="s">'순이익률(%)'</span><span class="p">]</span>
+<span class="o">------------------------------------------------------------------------------</span>
+<span class="mf">1.73</span> <span class="n">µs</span> <span class="err">±</span> <span class="mf">2.25</span> <span class="n">ns</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">±</span> <span class="n">std</span><span class="p">.</span> <span class="n">dev</span><span class="p">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="mi">000</span><span class="p">,</span><span class="mi">000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
+</code></pre></div></div>
+
+:ET

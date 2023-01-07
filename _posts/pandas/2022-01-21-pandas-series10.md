@@ -2,7 +2,7 @@
 layout: post
 title:  'Pandas Series [Part10]: 주피터 노트북에서 시각화를 위한 대시보드 만들기'
 description: 
-date:   2022-01-20 15:01:35 +0300
+date:   2022-01-21 15:01:35 +0300
 image:  '/images/pandas_logo.png'
 logo_image:  '/images/pandas_logo.png'
 categories: data_analytics

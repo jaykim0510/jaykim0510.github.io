@@ -1,0 +1,77 @@
+I"<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#extraction-data" id="markdown-toc-extraction-data">Extraction Data</a>    <ul>
+      <li><a href="#by-column" id="markdown-toc-by-column">By Column</a></li>
+      <li><a href="#by-type" id="markdown-toc-by-type">By Type</a></li>
+      <li><a href="#by-row" id="markdown-toc-by-row">By Row</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="extraction-data">Extraction Data</h1>
+
+<p><img src="/images/pd_1.png" alt="" /></p>
+
+<h2 id="by-column">By Column</h2>
+
+<ul>
+  <li>DataFrame 에 대괄호는 컬럼 기준으로 인덱싱한다</li>
+  <li>대괄호 안에 컬럼명을 넣으면 Series 리턴</li>
+  <li>대괄호 안에 다시 대괄호로 리스트를 넘기면 DataFrame 리턴</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'ticker'</span><span class="p">]</span>
+
+<span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="o">--------------------------</span>
+<span class="n">pandas</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">series</span><span class="p">.</span><span class="n">Series</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_17.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s">'ticker'</span><span class="p">]]</span>
+
+<span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="o">----------------------------</span>
+<span class="n">pandas</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">frame</span><span class="p">.</span><span class="n">DataFrame</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_18.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">like</span><span class="o">=</span><span class="s">'(배)'</span><span class="p">).</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_19.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="nb">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s">'\([배원]\)'</span><span class="p">).</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_20.png" alt="" /></p>
+
+<h2 id="by-type">By Type</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s">'object'</span><span class="p">]).</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_21.png" alt="" /></p>
+
+<h2 id="by-row">By Row</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">'ticker'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">'종목명'</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_22.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 숫자(순서) 이용 -&gt; 잘 안쓰임
+</span><span class="n">df</span><span class="p">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">df</span><span class="p">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_23.png" alt="" />
+<img src="/images/pd_24.png" alt="" /></p>
+
+:ET
