@@ -1,0 +1,123 @@
+I"�4<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#matplotlib-구성요소" id="markdown-toc-matplotlib-구성요소">Matplotlib 구성요소</a></li>
+  <li><a href="#figures-and-axes-만들기" id="markdown-toc-figures-and-axes-만들기">Figures and Axes 만들기</a>    <ul>
+      <li><a href="#첫-번째-방법" id="markdown-toc-첫-번째-방법">첫 번째 방법</a></li>
+      <li><a href="#두-번째-방법" id="markdown-toc-두-번째-방법">두 번째 방법</a></li>
+      <li><a href="#세-번째-방법" id="markdown-toc-세-번째-방법">세 번째 방법</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="matplotlib-구성요소">Matplotlib 구성요소</h1>
+
+<p><img src="/images/plt_1.png" alt="" /></p>
+
+<h1 id="figures-and-axes-만들기">Figures and Axes 만들기</h1>
+
+<ul>
+  <li>하나의 도화지를 Figure, 그 안에 그린 그래프 한 개를 ax, 그래프 ax의 모음을 axes</li>
+</ul>
+
+<h2 id="첫-번째-방법">첫 번째 방법</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ax = fig.add_subplot()</code></li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1"># jupyter lab 사용시 추가해줄 명령어
+</span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="n">ipympl</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">widget</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'aliceblue'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_0.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_1.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">ax4</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_2.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ax1</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span> <span class="c1"># 2행 2열중 첫 번째
+</span><span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span> <span class="c1"># 2행 2열중 두 번째
+</span><span class="n">ax3</span> <span class="o">=</span> <span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span> <span class="c1"># 2행 1열중 두 번째
+</span></code></pre></div></div>
+
+<p><img src="/images/matplot_3.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">141</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>  <span class="c1"># subplot with no frame
+</span><span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">142</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s">'polar'</span><span class="p">)</span>  <span class="c1"># polar subplot
+</span><span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">143</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>  <span class="c1"># subplot sharing x-axis with ax1
+</span><span class="n">fig</span><span class="p">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">144</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">"red"</span><span class="p">)</span>  <span class="c1"># red subplot
+</span></code></pre></div></div>
+
+<p><img src="/images/matplot_4.png" alt="" /></p>
+
+<h2 id="두-번째-방법">두 번째 방법</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">fig, axes = plt.subplots()</code></li>
+  <li>하나하나 <code class="language-plaintext highlighter-rouge">add_subplot()</code> 해 줄 필요없어진다</li>
+  <li>하지만 이 방법으로는 일정하지 않은 간격을 갖는 axes를 만들 수는 없다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_5.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">axes</span>
+<span class="o">----------------------------------------------------------</span>
+<span class="n">array</span><span class="p">([[</span><span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">],</span>
+       <span class="p">[</span><span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ax4</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="n">axes</span> <span class="o">=</span> <span class="n">axes</span><span class="p">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="o">----------------------------------------------------------</span>
+<span class="n">array</span><span class="p">([</span><span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">AxesSubplot</span><span class="p">:</span> <span class="o">&gt;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+
+<span class="n">ax1</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">ax4</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="세-번째-방법">세 번째 방법</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ax = plt.subplot2grid(fig=fig)</code></li>
+  <li>코드는 짧아지지만 첫 번째 방법에 비해 헷갈린다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># shape=(3, 3): 3행 3열로 할 때의 9칸중 1칸에 해당하는 모습
+# loc=(0, 0): 0행 0열에서 그림을 그린다
+# colspan=2: 9칸중 1칸에 해당하는 그림의 컬럼 너비를 2칸 차지하도록 한다
+</span><span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplot2grid</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'blue'</span><span class="p">)</span>
+
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplot2grid</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'green'</span><span class="p">)</span>
+
+<span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplot2grid</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">rowspan</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">colspan</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'red'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_6.png" alt="" /></p>
+
+:ET

@@ -1,0 +1,100 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#named-color" id="markdown-toc-named-color">Named Color</a></li>
+  <li><a href="#colormap" id="markdown-toc-colormap">Colormap</a></li>
+  <li><a href="#style" id="markdown-toc-style">Style</a></li>
+</ul>
+
+<hr />
+
+<h1 id="named-color">Named Color</h1>
+
+<p><img src="/images/color_1.png" alt="" /></p>
+
+<h1 id="colormap">Colormap</h1>
+
+<p><img src="/images/color_3.png" alt="" /></p>
+
+<p><img src="/images/matplot_14.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pastel_cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s">'Pastel1'</span><span class="p">)</span> <span class="c1"># matplotlib.colors.ListedColormap (불연속)
+</span>
+<span class="n">tab10_cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s">'tab10'</span><span class="p">)</span> <span class="c1"># matplotlib.colors.ListedColormap (불연속)
+</span>
+<span class="n">ylorbr_cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s">'YlOrBr'</span><span class="p">)</span> <span class="c1"># matplotlib.colors.LinearSegmentedColormap (연속)
+</span></code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 불연속한 경우 cmap.colors 를 통해 리스트를 얻을 수 있다
+</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tab10_cmap</span><span class="p">.</span><span class="n">colors</span><span class="p">)])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tab10_cmap</span><span class="p">.</span><span class="n">colors</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s">"color="</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">tab10_cmap</span><span class="p">(</span><span class="n">i</span><span class="p">)),</span> <span class="n">color</span><span class="o">=</span><span class="n">tab10_cmap</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">ha</span><span class="o">=</span><span class="s">'center'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_15.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 연속할 경우 리스트를 얻을 수 없다
+</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s">"color="</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">ylorbr_cmap</span><span class="p">(</span><span class="n">i</span><span class="p">)),</span> <span class="n">color</span><span class="o">=</span><span class="n">ylorbr_cmap</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">ha</span><span class="o">=</span><span class="s">'center'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_16.png" alt="" /></p>
+
+<h1 id="style">Style</h1>
+
+<ul>
+  <li>색깔을 테마 정하듯이 자동으로 지정할 수도 있다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 가능한 스타일
+</span><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">available</span>
+<span class="o">-------------------------------------</span>
+<span class="p">[</span><span class="s">'Solarize_Light2'</span><span class="p">,</span>
+ <span class="s">'_classic_test_patch'</span><span class="p">,</span>
+ <span class="s">'_mpl-gallery'</span><span class="p">,</span>
+ <span class="s">'_mpl-gallery-nogrid'</span><span class="p">,</span>
+ <span class="s">'bmh'</span><span class="p">,</span>
+ <span class="s">'classic'</span><span class="p">,</span>
+ <span class="s">'dark_background'</span><span class="p">,</span>
+ <span class="s">'fast'</span><span class="p">,</span>
+ <span class="s">'fivethirtyeight'</span><span class="p">,</span>
+ <span class="s">'ggplot'</span><span class="p">,</span>
+ <span class="s">'grayscale'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-bright'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-colorblind'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-dark'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-dark-palette'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-darkgrid'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-deep'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-muted'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-notebook'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-paper'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-pastel'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-poster'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-talk'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-ticks'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-white'</span><span class="p">,</span>
+ <span class="s">'seaborn-v0_8-whitegrid'</span><span class="p">,</span>
+ <span class="s">'tableau-colorblind10'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">plt</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">use</span><span class="p">(</span><span class="s">'seaborn-pastel'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>적용 전</li>
+</ul>
+
+<p><img src="/images/matplot_17.png" alt="" /></p>
+
+<ul>
+  <li>적용 후</li>
+</ul>
+
+<p><img src="/images/matplot_18.png" alt="" /></p>
+
+:ET
