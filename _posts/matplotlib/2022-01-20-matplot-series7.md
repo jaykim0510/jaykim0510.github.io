@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Matplotlib Series [Part7] Histogram Plot'
+title:  'Matplotlib Series [Part7] Bar Plot'
 description: 
 date:   2022-01-20 15:01:35 +0300
 image:  '/images/matplotlib_logo.png'
@@ -16,94 +16,135 @@ tags: Matplotlib
 
 --- 
 
+
 ```py
 import numpy as np
 import matplotlib.pyplot as plt
 
-n_data = 1000
-data = np.random.normal(0, 1, (n_data,))
+data = [1, 4, 3, 2]
+x_label = ['a', 'b', 'c', 'd']
 ```
 
-# 히스토그램 기본
-
-```py
-fig, ax = plt.subplots(figsize=(4, 3))
-
-ax.hist(data)
-```
-
-![](/images/matplot_27.png)
-
-```py
-ax.hist(data, bins=20)
-```
-
-![](/images/matplot_28.png)
-
-# 히스토그램 꾸미기
-
-```py
-ax.hist(data, facecolor='skyblue', edgecolor='darkblue', hatch='/')
-```
-
-![](/images/matplot_29.png)
-
-
-
-# 여러 개의 히스토그램
+# 기본 막대
 
 
 ```py
 fig, ax = plt.subplots(figsize=(4, 3))
 
-ax.hist(data, facecolor='skyblue', edgecolor='darkblue', hatch='/')
-ax.hist(data, bins=20, facecolor='coral', edgecolor='red', linewidth=3)
+ax.bar(x_label, data)
 ```
 
-![](/images/matplot_30.png)
+![](/images/matplot_19.png)
+
+# 막대 꾸미기
 
 ```py
 fig, ax = plt.subplots(figsize=(4, 3))
 
-ax.hist(data, bins=10, align='mid', alpha=0.5)
-ax.hist(data, bins=20, facecolor='coral', align='left', alpha=0.5)
-ax.hist(data, bins=20, facecolor='skyblue', align='right', alpha=0.5)
+ax.bar(x_label, data, facecolor='skyblue', edgecolor='darkblue', hatch='/')
 ```
 
-![](/images/matplot_31.png)
+![](/images/matplot_20.png)
 
+
+# 정렬하기
 
 ```py
-n_class = 3
-n_data = 300
+fig, ax = plt.subplots(figsize=(4, 3))
 
-data = np.random.normal(0, 1, (n_data, n_class))
+sorted_x_idx = np.argsort(data)
+sorted_x_label = np.array(x_label)[sorted_x_idx]
+sorted_data = np.array(data)[sorted_x_idx]
 
-fig, ax = plt.subplots(figsize=(14, 10))
-ax.hist(data)
+ax.bar(sorted_x_label, sorted_data)
 ```
 
-![](/images/matplot_32.png)
+![](/images/matplot_21.png)
 
-
-
-# 텍스트 넣기
+# 여러 막대 그래프
 
 ```py
-n_data = 1000
-data = np.random.normal(0, 1, (n_data,))
+fig, ax = plt.subplots(figsize=(4, 3))
 
-fig, ax = plt.subplots(figsize=(6, 4))
+WIDTH = 0.4
 
-freqs, bin_edges, rects = ax.hist(data, edgecolor='darkblue')
+x_idx = np.arange(len(data))
+data_1 = [1, 4, 6, 2]
+data_2 = [4, 2, 1, 7]
 
-for idx, rect in enumerate(rects):
+
+ax.bar(x_idx - WIDTH/2, data_1, width=WIDTH)
+ax.bar(x_idx + WIDTH/2, data_2, width=WIDTH)
+
+ax.set_xticks(x_idx)
+ax.set_xticklabels(['a', 'b', 'c', 'd'])
+```
+
+![](/images/matplot_22.png)
+
+```py
+fig, ax = plt.subplots(figsize=(6, 3))
+
+WIDTH = 0.2
+
+x_idx = np.arange(len(data))
+data_1 = [1, 4, 6, 2]
+data_2 = [4, 2, 1, 7]
+data_3 = [2, 5, 6, 8]
+
+
+ax.bar(x_idx - WIDTH, data_1, width=WIDTH)
+ax.bar(x_idx, data_2, width=WIDTH)
+ax.bar(x_idx + WIDTH, data_3, width=WIDTH)
+
+ax.set_xticks(x_idx)
+ax.set_xticklabels(['a', 'b', 'c', 'd'])
+```
+
+![](/images/matplot_25.png)
+
+# 막대에 텍스트 넣기
+
+```py
+fig, ax = plt.subplots(figsize=(4, 3))
+
+rects = ax.bar(x_label, data)
+
+for rect_idx, rect in enumerate(rects):
+    x = rect.get_x()
     width = rect.get_width()
-    x_pos = rect.get_x()
-    y_pos = rect.get_height()
-    ax.text(x_pos + width/2, y_pos + 2, int(freqs[idx]), ha='center', fontsize=8)
+    height = rect.get_height()
+    ax.text(x + width/2, height + 0.05, str(round(data[rect_idx])),
+    rotation=20, ha='center', fontsize=10)
 ```
 
-![](/images/matplot_33.png)
+![](/images/matplot_23.png)
+
+
+
+# 수평 막대
+
+```py
+fig, ax = plt.subplots(figsize=(4, 3))
+
+ax.barh(x_label, data)
+```
+
+![](/images/matplot_24.png)
+
+```py
+fig, ax = plt.subplots(figsize=(4, 3))
+
+ax.barh(x_label, data)
+ax.invert_yaxis()
+```
+
+![](/images/matplot_26.png)
+
+
+
+
+
+
 
 
