@@ -308,8 +308,75 @@ df.sort_index(inplace=True)
 df.index.is_monotonic_increasing
 ```
 
+# 행/열 데이터 추가
+
+## 행 데이터 추가
+
+- `append`와 `concat`이 있지만, `append`는 deprecated 됐다
 
 
+```py
+df1 = pd.DataFrame([['mike', 15], ['carl', 21], ['bob', 25]], columns=['name', 'age'])
+df2 = pd.DataFrame([['steven', 32], ['joey', 24], ['monica', 45]], columns=['name', 'age'])
+
+df1
+df2
+```
+
+![](/images/pd_48.png)
+
+
+```py
+pd.concat([df1, df2])
+```
+
+![](/images/pd_49.png)
+
+```py
+pd.concat([df1, df2], ignore_index=True)
+```
+
+![](/images/pd_50.png)
+
+```py
+pd.concat([df1, df2], keys=['1기', '2기'], names=['기수', 'id'])
+```
+
+![](/images/pd_51.png)
+
+
+## 열 데이터 추가
+
+```py
+df1 = pd.DataFrame([['mike', 15], ['monica', 21], ['bob', 25]], columns=['name', 'age'])
+df1.set_index('name', inplace=True)
+
+df2 = pd.DataFrame([['bob', 'M'], ['mike', 'M'], ['monica', 'F']], columns=['name', 'gender'])
+df2.set_index('name', inplace=True)
+
+df1
+df2
+```
+
+
+![](/images/pd_52.png)
+
+```py
+pd.concat([df1, df2], axis=1)
+```
+
+
+![](/images/pd_53.png)
+
+```py
+df1 = pd.DataFrame([['mike', 15], ['carl', 21], ['bob', 25]], columns=['name', 'age'])
+df2 = pd.DataFrame([['steven', 32], ['joey', 24], ['monica', 45]], columns=['name', 'age'])
+
+pd.concat([df1, df2], axis=1, keys=['1기', '2기'])
+```
+
+
+![](/images/pd_54.png)
 
 
 

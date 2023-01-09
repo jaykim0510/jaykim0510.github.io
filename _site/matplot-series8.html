@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Matplotlib Series [Part8] Pie Plot</title>
+  <title>Matplotlib Series [Part8] Histogram Plot</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/matplot-series8">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Matplotlib Series [Part8] Pie Plot – Code Museum">
+  <meta name="twitter:title" content="Matplotlib Series [Part8] Histogram Plot – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/matplotlib_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Matplotlib Series [Part8] Pie Plot – Code Museum">
+  <meta property="og:title" content="Matplotlib Series [Part8] Histogram Plot – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -363,6 +363,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -445,7 +447,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part8] Pie Plot">
+          <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part8] Histogram Plot">
         </div>
       </div>
       
@@ -466,7 +468,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">Matplotlib Series [Part8] Pie Plot</h1>
+          <h1 class="post__title">Matplotlib Series [Part8] Histogram Plot</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -501,6 +503,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -512,10 +516,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/matplot-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Matplotlib Series [Part7] Histogram Plot</a>
+      <a href="/matplot-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Matplotlib Series [Part7] Bar Plot</a>
     
     
-      <a href="/matplot-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Matplotlib Series [Part9] Scatter Plot<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/matplot-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Matplotlib Series [Part9] Pie Plot<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -524,86 +528,89 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#파이-그래프-기본" id="markdown-toc-파이-그래프-기본">파이 그래프 기본</a></li>
-  <li><a href="#퍼센티지-표기" id="markdown-toc-퍼센티지-표기">퍼센티지 표기</a></li>
-  <li><a href="#파이-정렬" id="markdown-toc-파이-정렬">파이 정렬</a></li>
-  <li><a href="#도넛-그래프" id="markdown-toc-도넛-그래프">도넛 그래프</a></li>
+  <li><a href="#히스토그램-기본" id="markdown-toc-히스토그램-기본">히스토그램 기본</a></li>
+  <li><a href="#히스토그램-꾸미기" id="markdown-toc-히스토그램-꾸미기">히스토그램 꾸미기</a></li>
+  <li><a href="#여러-개의-히스토그램" id="markdown-toc-여러-개의-히스토그램">여러 개의 히스토그램</a></li>
+  <li><a href="#텍스트-넣기" id="markdown-toc-텍스트-넣기">텍스트 넣기</a></li>
 </ul>
 
 <hr />
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="k">as</span> <span class="n">cm</span>
 
-<span class="n">n_can</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="n">votes</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="p">(</span><span class="n">n_can</span><span class="p">,</span> <span class="p">))</span>
-
-<span class="n">cans</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">([</span><span class="s">'A'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="s">'C'</span><span class="p">,</span> <span class="s">'D'</span><span class="p">,</span> <span class="s">'E'</span><span class="p">])</span>
-
-<span class="n">total_vote</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">votes</span><span class="p">)</span>
-<span class="n">percentages</span> <span class="o">=</span> <span class="n">votes</span><span class="o">/</span><span class="n">total_vote</span><span class="o">*</span><span class="mi">100</span>
+<span class="n">n_data</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">n_data</span><span class="p">,))</span>
 </code></pre></div></div>
 
-<h1 id="파이-그래프-기본">파이 그래프 기본</h1>
+<h1 id="히스토그램-기본">히스토그램 기본</h1>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'lightsteelblue'</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
-<span class="n">ax</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">percentages</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><img src="/images/matplot_34.png" alt="" /></p>
+<p><img src="/images/matplot_27.png" alt="" /></p>
 
-<h1 id="퍼센티지-표기">퍼센티지 표기</h1>
-
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'lightsteelblue'</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">percentages</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">'%1.1f%%'</span><span class="p">,</span> <span class="n">textprops</span><span class="o">=</span><span class="p">{</span><span class="s">'fontsize'</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s">'color'</span><span class="p">:</span> <span class="s">'w'</span><span class="p">})</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><img src="/images/matplot_35.png" alt="" /></p>
+<p><img src="/images/matplot_28.png" alt="" /></p>
 
-<h1 id="파이-정렬">파이 정렬</h1>
+<h1 id="히스토그램-꾸미기">히스토그램 꾸미기</h1>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sorted_idx</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">percentages</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">sorted_percentages</span> <span class="o">=</span> <span class="n">percentages</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span>
-<span class="n">sorted_legend</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">cans</span><span class="p">)[</span><span class="n">sorted_idx</span><span class="p">]</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'lightsteelblue'</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">sorted_percentages</span><span class="p">,</span> <span class="n">counterclock</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">startangle</span><span class="o">=-</span><span class="mi">270</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">sorted_legend</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'skyblue'</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">'darkblue'</span><span class="p">,</span> <span class="n">hatch</span><span class="o">=</span><span class="s">'/'</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><img src="/images/matplot_36.png" alt="" /></p>
+<p><img src="/images/matplot_29.png" alt="" /></p>
 
-<h1 id="도넛-그래프">도넛 그래프</h1>
+<h1 id="여러-개의-히스토그램">여러 개의 히스토그램</h1>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">wedgeprops</span> <span class="o">=</span> <span class="p">{</span><span class="s">'width'</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s">'edgecolor'</span><span class="p">:</span> <span class="s">'skyblue'</span><span class="p">,</span> <span class="s">'linewidth'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'lightsteelblue'</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">sorted_percentages</span><span class="p">,</span> <span class="n">counterclock</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">startangle</span><span class="o">=-</span><span class="mi">270</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">'%1.1f%%'</span><span class="p">,</span> <span class="n">wedgeprops</span><span class="o">=</span><span class="n">wedgeprops</span><span class="p">,</span> <span class="n">pctdistance</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">sorted_legend</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'skyblue'</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">'darkblue'</span><span class="p">,</span> <span class="n">hatch</span><span class="o">=</span><span class="s">'/'</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'coral'</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">'red'</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><img src="/images/matplot_37.png" alt="" /></p>
+<p><img src="/images/matplot_30.png" alt="" /></p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cmap</span> <span class="o">=</span> <span class="n">cm</span><span class="p">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'Set2'</span><span class="p">,</span> <span class="n">lut</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span> 
-<span class="n">outer_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">cmap</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 
-
-<span class="n">wedgeprops</span> <span class="o">=</span> <span class="p">{</span><span class="s">'width'</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s">'edgecolor'</span><span class="p">:</span> <span class="s">'skyblue'</span><span class="p">,</span> <span class="s">'linewidth'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'lightsteelblue'</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">sorted_percentages</span><span class="p">,</span> <span class="n">counterclock</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">startangle</span><span class="o">=-</span><span class="mi">270</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">'%1.1f%%'</span><span class="p">,</span> \
-       <span class="n">wedgeprops</span><span class="o">=</span><span class="n">wedgeprops</span><span class="p">,</span> <span class="n">pctdistance</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">outer_colors</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">sorted_legend</span><span class="p">)</span>
-
+<span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s">'mid'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'coral'</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s">'left'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s">'skyblue'</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s">'right'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><img src="/images/matplot_38.png" alt="" /></p>
+<p><img src="/images/matplot_31.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n_class</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">n_data</span> <span class="o">=</span> <span class="mi">300</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">n_data</span><span class="p">,</span> <span class="n">n_class</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_32.png" alt="" /></p>
+
+<h1 id="텍스트-넣기">텍스트 넣기</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n_data</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">n_data</span><span class="p">,))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">freqs</span><span class="p">,</span> <span class="n">bin_edges</span><span class="p">,</span> <span class="n">rects</span> <span class="o">=</span> <span class="n">ax</span><span class="p">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s">'darkblue'</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">rect</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rects</span><span class="p">):</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">rect</span><span class="p">.</span><span class="n">get_width</span><span class="p">()</span>
+    <span class="n">x_pos</span> <span class="o">=</span> <span class="n">rect</span><span class="p">.</span><span class="n">get_x</span><span class="p">()</span>
+    <span class="n">y_pos</span> <span class="o">=</span> <span class="n">rect</span><span class="p">.</span><span class="n">get_height</span><span class="p">()</span>
+    <span class="n">ax</span><span class="p">.</span><span class="n">text</span><span class="p">(</span><span class="n">x_pos</span> <span class="o">+</span> <span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">y_pos</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">freqs</span><span class="p">[</span><span class="n">idx</span><span class="p">]),</span> <span class="n">ha</span><span class="o">=</span><span class="s">'center'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/matplot_33.png" alt="" /></p>
 
 
     </div>
@@ -890,7 +897,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Matplotlib%20Series%20[Part8]%20Pie%20Plot&url=http://localhost:4000/matplot-series8"
+          href="https://twitter.com/intent/tweet?text=Matplotlib%20Series%20[Part8]%20Histogram%20Plot&url=http://localhost:4000/matplot-series8"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -900,12 +907,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/matplot-series8&amp;media=http://localhost:4000/images/matplotlib_logo.png&amp;description=Matplotlib%20Series%20[Part8]%20Pie%20Plot"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/matplot-series8&amp;media=http://localhost:4000/images/matplotlib_logo.png&amp;description=Matplotlib%20Series%20[Part8]%20Histogram%20Plot"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/matplot-series8&title=Matplotlib%20Series%20[Part8]%20Pie%20Plot&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/matplot-series8&title=Matplotlib%20Series%20[Part8]%20Histogram%20Plot&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -914,6 +921,8 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
 
   
 
@@ -931,10 +940,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/matplot-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Matplotlib Series [Part7] Histogram Plot</a>
+      <a href="/matplot-series7" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Matplotlib Series [Part7] Bar Plot</a>
     
     
-      <a href="/matplot-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Matplotlib Series [Part9] Scatter Plot<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/matplot-series9" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Matplotlib Series [Part9] Pie Plot<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -2781,8 +2790,8 @@ Table of Contents
       
 
       
-      <a class="article__image" href="/matplot-series10">
-        <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part10] Box and Whisker Plot">
+      <a class="article__image" href="/matplot-series11">
+        <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part11] Box and Whisker Plot">
       </a>
       
 
@@ -2791,7 +2800,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/matplot-series10">Matplotlib Series [Part10] Box and Whisker Plot</a>
+        <a href="/matplot-series11">Matplotlib Series [Part11] Box and Whisker Plot</a>
       </h2>
 
       
@@ -2815,13 +2824,13 @@ Table of Contents
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-01-20T21:01:35+09:00">20 Jan 2022</time>
+      <time class="article__date" datetime="2022-01-21T21:01:35+09:00">21 Jan 2022</time>
 
       
 
       
-      <a class="article__image" href="/pandas-series3">
-        <img class="lazy" data-src="/images/pandas_logo.png" alt="Pandas Series [Part3] 판다스 데이터 부분 추출">
+      <a class="article__image" href="/matplot-series10">
+        <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part10] Scatter Plot">
       </a>
       
 
@@ -2830,7 +2839,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/pandas-series3">Pandas Series [Part3] 판다스 데이터 부분 추출</a>
+        <a href="/matplot-series10">Matplotlib Series [Part10] Scatter Plot</a>
       </h2>
 
       

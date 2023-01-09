@@ -363,6 +363,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -503,6 +505,14 @@ Table of Contents
   
 
   
+
+  
+
+  
+
+  
+
+  
   	
   	
   	
@@ -534,6 +544,11 @@ Table of Contents
       <li><a href="#인덱스를-컬럼으로-만들기" id="markdown-toc-인덱스를-컬럼으로-만들기">인덱스를 컬럼으로 만들기</a></li>
       <li><a href="#인덱스-재배열" id="markdown-toc-인덱스-재배열">인덱스 재배열</a></li>
       <li><a href="#인덱스명-바꾸기" id="markdown-toc-인덱스명-바꾸기">인덱스명 바꾸기</a></li>
+    </ul>
+  </li>
+  <li><a href="#행열-데이터-추가" id="markdown-toc-행열-데이터-추가">행/열 데이터 추가</a>    <ul>
+      <li><a href="#행-데이터-추가" id="markdown-toc-행-데이터-추가">행 데이터 추가</a></li>
+      <li><a href="#열-데이터-추가" id="markdown-toc-열-데이터-추가">열 데이터 추가</a></li>
     </ul>
   </li>
 </ul>
@@ -813,6 +828,65 @@ Table of Contents
 </span><span class="n">df</span><span class="p">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">is_monotonic_increasing</span>
 </code></pre></div></div>
+
+<h1 id="행열-데이터-추가">행/열 데이터 추가</h1>
+
+<h2 id="행-데이터-추가">행 데이터 추가</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">append</code>와 <code class="language-plaintext highlighter-rouge">concat</code>이 있지만, <code class="language-plaintext highlighter-rouge">append</code>는 deprecated 됐다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">'mike'</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="p">[</span><span class="s">'carl'</span><span class="p">,</span> <span class="mi">21</span><span class="p">],</span> <span class="p">[</span><span class="s">'bob'</span><span class="p">,</span> <span class="mi">25</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'name'</span><span class="p">,</span> <span class="s">'age'</span><span class="p">])</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">'steven'</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="p">[</span><span class="s">'joey'</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="s">'monica'</span><span class="p">,</span> <span class="mi">45</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'name'</span><span class="p">,</span> <span class="s">'age'</span><span class="p">])</span>
+
+<span class="n">df1</span>
+<span class="n">df2</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_48.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_49.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_50.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">],</span> <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s">'1기'</span><span class="p">,</span> <span class="s">'2기'</span><span class="p">],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s">'기수'</span><span class="p">,</span> <span class="s">'id'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_51.png" alt="" /></p>
+
+<h2 id="열-데이터-추가">열 데이터 추가</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">'mike'</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="p">[</span><span class="s">'monica'</span><span class="p">,</span> <span class="mi">21</span><span class="p">],</span> <span class="p">[</span><span class="s">'bob'</span><span class="p">,</span> <span class="mi">25</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'name'</span><span class="p">,</span> <span class="s">'age'</span><span class="p">])</span>
+<span class="n">df1</span><span class="p">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">'name'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">'bob'</span><span class="p">,</span> <span class="s">'M'</span><span class="p">],</span> <span class="p">[</span><span class="s">'mike'</span><span class="p">,</span> <span class="s">'M'</span><span class="p">],</span> <span class="p">[</span><span class="s">'monica'</span><span class="p">,</span> <span class="s">'F'</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'name'</span><span class="p">,</span> <span class="s">'gender'</span><span class="p">])</span>
+<span class="n">df2</span><span class="p">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">'name'</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df1</span>
+<span class="n">df2</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_52.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_53.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">'mike'</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span> <span class="p">[</span><span class="s">'carl'</span><span class="p">,</span> <span class="mi">21</span><span class="p">],</span> <span class="p">[</span><span class="s">'bob'</span><span class="p">,</span> <span class="mi">25</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'name'</span><span class="p">,</span> <span class="s">'age'</span><span class="p">])</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">'steven'</span><span class="p">,</span> <span class="mi">32</span><span class="p">],</span> <span class="p">[</span><span class="s">'joey'</span><span class="p">,</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="s">'monica'</span><span class="p">,</span> <span class="mi">45</span><span class="p">]],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'name'</span><span class="p">,</span> <span class="s">'age'</span><span class="p">])</span>
+
+<span class="n">pd</span><span class="p">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s">'1기'</span><span class="p">,</span> <span class="s">'2기'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_54.png" alt="" /></p>
 
 
     </div>
@@ -1123,6 +1197,14 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
+
+  
 
   
 
@@ -2992,8 +3074,8 @@ Table of Contents
       
 
       
-      <a class="article__image" href="/matplot-series10">
-        <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part10] Box and Whisker Plot">
+      <a class="article__image" href="/matplot-series11">
+        <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part11] Box and Whisker Plot">
       </a>
       
 
@@ -3002,7 +3084,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/matplot-series10">Matplotlib Series [Part10] Box and Whisker Plot</a>
+        <a href="/matplot-series11">Matplotlib Series [Part11] Box and Whisker Plot</a>
       </h2>
 
       
@@ -3026,13 +3108,13 @@ Table of Contents
   <div class="article__inner">
 
     <div class="article__head">
-      <time class="article__date" datetime="2022-01-20T21:01:35+09:00">20 Jan 2022</time>
+      <time class="article__date" datetime="2022-01-21T21:01:35+09:00">21 Jan 2022</time>
 
       
 
       
-      <a class="article__image" href="/pandas-series3">
-        <img class="lazy" data-src="/images/pandas_logo.png" alt="Pandas Series [Part3] 판다스 데이터 부분 추출">
+      <a class="article__image" href="/matplot-series10">
+        <img class="lazy" data-src="/images/matplotlib_logo.png" alt="Matplotlib Series [Part10] Scatter Plot">
       </a>
       
 
@@ -3041,7 +3123,7 @@ Table of Contents
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/pandas-series3">Pandas Series [Part3] 판다스 데이터 부분 추출</a>
+        <a href="/matplot-series10">Matplotlib Series [Part10] Scatter Plot</a>
       </h2>
 
       

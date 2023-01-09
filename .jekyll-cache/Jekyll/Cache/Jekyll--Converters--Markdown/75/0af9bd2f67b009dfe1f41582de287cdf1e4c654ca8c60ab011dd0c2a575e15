@@ -1,0 +1,47 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#그룹별-집계-연산" id="markdown-toc-그룹별-집계-연산">그룹별 집계 연산</a></li>
+  <li><a href="#그룹-만들기" id="markdown-toc-그룹-만들기">그룹 만들기</a></li>
+</ul>
+
+<hr />
+
+<h1 id="그룹별-집계-연산">그룹별 집계 연산</h1>
+
+<p><img src="/images/pd_41.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'PER_group'</span><span class="p">).</span><span class="n">agg</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s">'매출액(억원)'</span><span class="p">:</span> <span class="p">[</span><span class="s">'mean'</span><span class="p">,</span> <span class="s">'min'</span><span class="p">],</span>
+        <span class="s">'순이익률(%)'</span><span class="p">:</span> <span class="s">'mean'</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_42.png" alt="" /></p>
+
+<ul>
+  <li>아래와 같은 방법도 가능하지만, 위 방식이 가장 자유도가 높다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># df.groupby('PER_group')[['매출액(억원)', '순이익률(%)']].mean()
+# df.groupby('PER_group')[['매출액(억원)', '순이익률(%)']].agg(['mean', 'min'])
+</span></code></pre></div></div>
+
+<h1 id="그룹-만들기">그룹 만들기</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s">'PER(배)'</span><span class="p">],</span> 
+       <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">],</span>
+       <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s">'저평가주'</span><span class="p">,</span> <span class="s">'보통주'</span><span class="p">,</span> <span class="s">'고평가주'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_43.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'PER_group'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="s">'PER(배)'</span><span class="p">],</span> 
+                       <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">inf</span><span class="p">],</span>
+                       <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s">'저평가주'</span><span class="p">,</span> <span class="s">'보통주'</span><span class="p">,</span> <span class="s">'고평가주'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_44.png" alt="" /></p>
+:ET
