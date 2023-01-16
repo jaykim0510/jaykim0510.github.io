@@ -30,28 +30,71 @@ DAGs, Operators, Tasks, Sensors, Executor, Scheduler
 
 ![](/images/airflow_2.png)
 
+# Airflow 배경
 
-# Airflow 동작원리
+- 개인, 기업을 넘어 공공기관까지 일상적 비즈니스의 일부로 데이터 파이프라인을 도입하고 있다
+- Airflow는 데이터 파이프라인중 배치 태스크에 중심을 둔 **Batch-Oriented Framework** 이다
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Airflow가 적합하지 않은 경우
+    </div>
+    <div class="pen-content">
+      <li>스트리밍 워크플로</li>
+      <li>추가 및 삭제 태스크가 빈번한 동적 파이프라인</li>
+    </div>
+</div>
+
+# Airflow 구조
 
 ![](/images/airflow_1.png)
 
-- 유저는 Web Server를 통해 Airflow를 모니터링, 조작
-- 유저가 정의한 DAG는 DAGs에 저장
-- Scheduler는 DAGs에 저장된 DAG를 주기적으로 실행
-  
-```
-1. Scheduler가 DAG를 실행하면 DagRun 오브젝트 생성됨
-2. DagRun 오브젝트는 안에 정의된 Operator를 Task로 인스턴스화
-3. Task들이 Scheduler에 의해 Worker에게 전달됨
-```
+- Scheduler:
+  - DAG Directory에 저장된 DAG(=workflow)를 트리거
+  - DAG에 저장된 태스크를 인스턴스화하여 Executer에게 전달
+- Executer:
+  - 전달받은 태스크를 Worker에게 전달
+- Worker:
+  - 태스크를 실행
+- Web Server:
+  - User Interface를 통해 접근해 쉽게 Airflow를 동작시키기 위한 웹서버
+- DAG Directory:
+  - 한 개 이상의 DAG를 정의해놓은 디렉터리
+- Metadata DB:
+  - DAG 저장
+  - 태스크 결과 저장
+- airflow.cfg: 
+  - Airflow 설정값을 포함하는 파일
+
+# Airflow 동작원리
 
 ![](/images/airflow_3.png)
 
-# DAG Skeleton
+1. 유저가 DAG로 워크플로 작성
+2. 유저가 정의한 DAG는 DAG Directory에 저장
+3. Scheduler는 DAG Directory의 모든 DAG를 확인하고 파싱, 태스크를 대기열에 추가  
+    - 3-1. 파일로부터 DAG를 확인 (태스크, 의존성, 스케줄 주기)   
+    - 3-2. 예약된 시간이 지난 태스크의 의존성을 확인하고, 이전 태스크가 모두 해결되었으면 대기열에 추가  
+4. Worker는 예약된 태스크를 실행하고 그 결과를 Metadata DB에 저장
+5. 저장된 태스크 결과를 Web Server가 읽어감
+
+
+# DAG
 
 - DAG(Directed Acyclic Graph): 워크플로우를 파이썬 언어로 코드화한 것
 - Airflow의 핵심은 DAG를 잘 작성하는 것
 - DAG는 크게 DAG 선언, Operator, Sensor, Operator간 의존성 주입
+
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>DAG가 절차적 스크립트 파이프라인과 다른 점
+    </div>
+    <div class="pen-content">
+      <li>DAG는 독립적인 태스크의 경우 병렬로 실행할 수 있다</li>
+      <li>DAG는 중간 태스크가 실패했을 때, 실패한 부분부터 다시 시작할 수 있다</li>
+    </div>
+</div>
 
 ```python
 with DAG("my-dag") as dag:
@@ -87,6 +130,17 @@ S3FileTransformOperator
 PrestoToMySqlOperator
 SlackAPIOperator
 ```
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>오퍼레이터와 태스크의 차이점
+    </div>
+    <div class="pen-content">
+      <li>Airflow 문서 전반에 걸쳐 오퍼레이터와 태스크를 같은 의미로 사용</li>
+      <li>사용자는 오퍼레이터 작성에 집중</li>
+      <li>Airflow는 오퍼레이터의 올바른 실행을 보장하기 위해 태스크로 래핑(wrapping)</li>
+    </div>
+</div>
 
 ## Sensors
 
@@ -172,6 +226,28 @@ with DAG(dag_id='recruitment-airflow',
 ```
 
 ![](/images/airflow_4.png)
+
+# Task
+
+![](/images/airflow_11.png)
+
+The possible states for a Task Instance are:  
+
+- **none**: The Task has not yet been queued for execution (its dependencies are not yet met)
+- **scheduled**: The scheduler has determined the Task’s dependencies are met and it should run
+- **queued**: The task has been assigned to an Executor and is awaiting a worker
+- **running**: The task is running on a worker (or on a local/synchronous executor)
+- **success**: The task finished running without errors
+- **shutdown**: The task was externally requested to shut down when it was running
+- **restarting**: The task was externally requested to restart when it was running
+- **failed**: The task had an error during execution and failed to run
+- **skipped**: The task was skipped due to branching, LatestOnly, or similar.
+- **upstream_failed**: An upstream task failed and the Trigger Rule says we needed it
+- **up_for_retry**: The task failed, but has retry attempts left and will be rescheduled.
+- **up_for_reschedule**: The task is a Sensor that is in reschedule mode
+- **deferred**: The task has been deferred to a trigger
+- **removed**: The task has vanished from the DAG since the run started
+
 
 # Dashboard
 

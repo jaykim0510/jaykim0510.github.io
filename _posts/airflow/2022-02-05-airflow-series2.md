@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Airflow Series [Part2]: Airflow example'
+title: 'Airflow Series [Part2]: Airflow Command'
 description: 
 date: 2022-02-05 15:01:35 +0300
 image: '/images/airflow_logo.png'
