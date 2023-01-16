@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Airflow Series [Part7]: 의존성 정의하기</title>
+  <title>Airflow Series [Part7]: 워크플로 컨트롤</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/airflow-series7">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Airflow Series [Part7]: 의존성 정의하기 – Code Museum">
+  <meta name="twitter:title" content="Airflow Series [Part7]: 워크플로 컨트롤 – Code Museum">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/airflow_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="Airflow Series [Part7]: 의존성 정의하기 – Code Museum">
+  <meta property="og:title" content="Airflow Series [Part7]: 워크플로 컨트롤 – Code Museum">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/airflow_logo.png">
@@ -447,7 +447,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/airflow_logo.png" alt="Airflow Series [Part7]: 의존성 정의하기">
+          <img class="lazy" data-src="/images/airflow_logo.png" alt="Airflow Series [Part7]: 워크플로 컨트롤">
         </div>
       </div>
       
@@ -468,7 +468,7 @@
               </div>
             
  
-          <h1 class="post__title">Airflow Series [Part7]: 의존성 정의하기</h1>
+          <h1 class="post__title">Airflow Series [Part7]: 워크플로 컨트롤</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -499,8 +499,6 @@
 
 
   
-
-  
   	
   	
   	
@@ -515,7 +513,7 @@
       <a href="/airflow-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Airflow Series [Part6]: 템플릿 변수</a>
     
     
-      <a href="/airflow-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Airflow Series [Part8]: 트리거<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 
@@ -527,6 +525,8 @@
 <ul id="markdown-toc">
   <li><a href="#의존성-정의하기" id="markdown-toc-의존성-정의하기">의존성 정의하기</a></li>
   <li><a href="#브랜치-하기" id="markdown-toc-브랜치-하기">브랜치 하기</a></li>
+  <li><a href="#태스크-트리거" id="markdown-toc-태스크-트리거">태스크 트리거</a></li>
+  <li><a href="#워크플로-트리거" id="markdown-toc-워크플로-트리거">워크플로 트리거</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
@@ -602,6 +602,114 @@
     <span class="n">bash_pick</span> <span class="o">&gt;&gt;</span> <span class="p">[</span><span class="n">bash_a1</span><span class="p">,</span> <span class="n">bash_b1</span><span class="p">]</span>
     <span class="n">bash_a1</span> <span class="o">&gt;&gt;</span> <span class="n">bash_a2</span> <span class="o">&gt;&gt;</span> <span class="n">bash_a3</span>
     <span class="n">bash_b1</span> <span class="o">&gt;&gt;</span> <span class="n">bash_b2</span> <span class="o">&gt;&gt;</span> <span class="n">bash_b3</span>
+</code></pre></div></div>
+
+<h1 id="태스크-트리거">태스크 트리거</h1>
+
+<ul>
+  <li>업스트림 태스크가 어떤 상태일 때 태스크가 실행되도록 할지 결정한다</li>
+  <li>디폴트는 <code class="language-plaintext highlighter-rouge">all_success</code>로, 업스트림 태스크가 모두 성공했을 때 실행된다</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">트리거 규칙</th>
+      <th style="text-align: center">동작</th>
+      <th style="text-align: center">사용 사례</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">all_success</td>
+      <td style="text-align: center">모든 상위 태스크가 성공하면 트리거 된다</td>
+      <td style="text-align: center">일반적인 워크플로에 대한 기본 트리거 규칙</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">all_failed</td>
+      <td style="text-align: center">모든 상위 태스크가 실패했거나, 오류가 발생한 경우 트리거 된다</td>
+      <td style="text-align: center">오류를 처리하는 태스크의 트리거 규칙</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">all_done</td>
+      <td style="text-align: center">결과 상태에 관계없이 모든 부모가 실행을 완료하면 트리거 된다</td>
+      <td style="text-align: center">시스템 종료 또는 클러스터 중지하는 태스크의 트리거 규칙</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">one_success</td>
+      <td style="text-align: center">한 부모가 성공하자마자 트리거 된다</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">one_failed</td>
+      <td style="text-align: center">하나 이상의 상위 태스크가 실패하자마자 트리거 된다</td>
+      <td style="text-align: center">알림 또는 롤백과 같은 일부 오류 처리 태스크의 트리거 규칙</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">none_failed</td>
+      <td style="text-align: center">실패한 태스크 없이, 모든 상위 태스크가 성공 또는 건너뛴 경우 트리거 된다</td>
+      <td style="text-align: center">스킵된 태스크와 성공한 태스크를 결합한 태스크의 트리거 규칙</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">none_skipped</td>
+      <td style="text-align: center">스킵한 태스크 없이, 모든 상위 태스크가 성공 또는 실패한 경우 트리거 된다</td>
+      <td style="text-align: center"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">dummy</td>
+      <td style="text-align: center">업스트림 태스크의 상태와 관계없이 트리거 된다</td>
+      <td style="text-align: center">테스트 용도</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="/images/airflow_14.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">bash_join</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">"bash_join"</span><span class="p">,</span> 
+        <span class="n">bash_command</span><span class="o">=</span><span class="s">"echo JOIN"</span><span class="p">,</span>
+        <span class="n">trigger_rule</span><span class="o">=</span><span class="s">"none_failed"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/airflow_15.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">bash_join</span> <span class="o">=</span> <span class="n">BashOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">"bash_join"</span><span class="p">,</span> 
+        <span class="n">bash_command</span><span class="o">=</span><span class="s">"echo JOIN"</span><span class="p">,</span>
+        <span class="n">trigger_rule</span><span class="o">=</span><span class="s">"none_skipped"</span>
+    <span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="워크플로-트리거">워크플로 트리거</h1>
+
+<ul>
+  <li><strong>센서</strong>를 이용하면, 고정된 스케줄링 방식이 아닌 <strong>특정 이벤트로 파이프라인을 트리거</strong> 할 수도 있다</li>
+  <li>ex. 새로운 데이터가 도착, 공유 드라이브에 파일이 업로드, 코드를 리포지터리로 푸시, Hive 테이블에 파티션이 있을 때와 같은 경우</li>
+  <li>센서는 오퍼레이터의 특수 타입(서브클래스)</li>
+  <li>센서는 특정 조건이 True인지 지속적으로 확인하고, True이면 태스크가 성공한 것으로 간주된다. False이면 True 또는 타임아웃이 될 때까지 확인</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">airflow.sensors.filesystem</span> <span class="kn">import</span> <span class="n">FileSensor</span>
+
+<span class="n">wait_for_data</span> <span class="o">=</span> <span class="n">FileSensor</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s">"wait_for_data"</span><span class="p">,</span>
+    <span class="n">filepath</span><span class="o">=</span><span class="s">"/data/data.csv"</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">airflow.sensors.python</span> <span class="kn">import</span> <span class="n">PythonSensor</span>
+
+<span class="k">def</span> <span class="nf">_wait_for_data</span><span class="p">():</span>
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s">"/data/data.csv"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_path</span>
+
+<span class="n">wait_for_data</span> <span class="o">=</span> <span class="n">PythonSensor</span><span class="p">(</span>
+    <span class="n">task_id</span><span class="o">=</span><span class="s">"wait_for_data"</span><span class="p">,</span>
+    <span class="n">python_callable</span><span class="o">=</span><span class="n">_wait_for_data</span>
+<span class="p">)</span>
+
 </code></pre></div></div>
 
 <h1 id="참고">참고</h1>
@@ -890,7 +998,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=Airflow%20Series%20[Part7]:%20%EC%9D%98%EC%A1%B4%EC%84%B1%20%EC%A0%95%EC%9D%98%ED%95%98%EA%B8%B0&url=http://localhost:4000/airflow-series7"
+          href="https://twitter.com/intent/tweet?text=Airflow%20Series%20[Part7]:%20%EC%9B%8C%ED%81%AC%ED%94%8C%EB%A1%9C%20%EC%BB%A8%ED%8A%B8%EB%A1%A4&url=http://localhost:4000/airflow-series7"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -900,12 +1008,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/airflow-series7&amp;media=http://localhost:4000/images/airflow_logo.png&amp;description=Airflow%20Series%20[Part7]:%20%EC%9D%98%EC%A1%B4%EC%84%B1%20%EC%A0%95%EC%9D%98%ED%95%98%EA%B8%B0"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/airflow-series7&amp;media=http://localhost:4000/images/airflow_logo.png&amp;description=Airflow%20Series%20[Part7]:%20%EC%9B%8C%ED%81%AC%ED%94%8C%EB%A1%9C%20%EC%BB%A8%ED%8A%B8%EB%A1%A4"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/airflow-series7&title=Airflow%20Series%20[Part7]:%20%EC%9D%98%EC%A1%B4%EC%84%B1%20%EC%A0%95%EC%9D%98%ED%95%98%EA%B8%B0&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/airflow-series7&title=Airflow%20Series%20[Part7]:%20%EC%9B%8C%ED%81%AC%ED%94%8C%EB%A1%9C%20%EC%BB%A8%ED%8A%B8%EB%A1%A4&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -914,8 +1022,6 @@
 <!--첫 번째 문단-->
 
 
-
-  
 
   
   	
@@ -932,7 +1038,7 @@
       <a href="/airflow-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Airflow Series [Part6]: 템플릿 변수</a>
     
     
-      <a href="/airflow-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Airflow Series [Part8]: 트리거<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 

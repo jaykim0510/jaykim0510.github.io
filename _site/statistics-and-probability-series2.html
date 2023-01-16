@@ -530,11 +530,234 @@
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
   <li><a href="#기술-통계" id="markdown-toc-기술-통계">기술 통계</a></li>
+  <li><a href="#도수분포표와-히스토그램" id="markdown-toc-도수분포표와-히스토그램">도수분포표와 히스토그램</a>    <ul>
+      <li><a href="#도수분포표" id="markdown-toc-도수분포표">도수분포표</a></li>
+      <li><a href="#히스토그램" id="markdown-toc-히스토그램">히스토그램</a></li>
+    </ul>
+  </li>
+  <li><a href="#상대도수와-누적-상대도수" id="markdown-toc-상대도수와-누적-상대도수">상대도수와 누적 상대도수</a></li>
+  <li><a href="#대표값" id="markdown-toc-대표값">대표값</a>    <ul>
+      <li><a href="#평균값mean" id="markdown-toc-평균값mean">평균값(mean)</a></li>
+      <li><a href="#중앙값median" id="markdown-toc-중앙값median">중앙값(median)</a></li>
+      <li><a href="#대표값으로-예측하는-데이터-분포" id="markdown-toc-대표값으로-예측하는-데이터-분포">대표값으로 예측하는 데이터 분포</a></li>
+    </ul>
+  </li>
+  <li><a href="#4분위수와-상자수염도" id="markdown-toc-4분위수와-상자수염도">4분위수와 상자수염도</a>    <ul>
+      <li><a href="#4분위수" id="markdown-toc-4분위수">4분위수</a></li>
+      <li><a href="#상자수염도" id="markdown-toc-상자수염도">상자수염도</a></li>
+    </ul>
+  </li>
+  <li><a href="#분산과-표준편차" id="markdown-toc-분산과-표준편차">분산과 표준편차</a>    <ul>
+      <li><a href="#분산" id="markdown-toc-분산">분산</a></li>
+      <li><a href="#표준편차" id="markdown-toc-표준편차">표준편차</a></li>
+    </ul>
+  </li>
+  <li><a href="#상관관계와-산포도" id="markdown-toc-상관관계와-산포도">상관관계와 산포도</a>    <ul>
+      <li><a href="#공분산을-구하는-방법" id="markdown-toc-공분산을-구하는-방법">공분산을 구하는 방법</a></li>
+      <li><a href="#상관계수-구하는-방법" id="markdown-toc-상관계수-구하는-방법">상관계수 구하는 방법</a></li>
+    </ul>
+  </li>
 </ul>
 
 <hr />
 
 <h1 id="기술-통계">기술 통계</h1>
+
+<ul>
+  <li>수집한 데이터의 경향이나 성질을 수치나 표, 그래프 등으로 표현하는 방법</li>
+</ul>
+
+<h1 id="도수분포표와-히스토그램">도수분포표와 히스토그램</h1>
+
+<ul>
+  <li>데이터가 흩어진 정도를 파악</li>
+  <li>데이터를 적당한 구간으로 계급화해 각 계급에 속하는 데이터 수의 분포를 파악할 수 있다</li>
+  <li>스터지스 공식에 따르면, 데이터의 수가 2^n 개일 때, 적절할 계급의 개수는 n+1 개이다</li>
+  <li>도수분포표를 그래프로 나타낸 것을 히스토그램이라고 한다</li>
+</ul>
+
+<h2 id="도수분포표">도수분포표</h2>
+
+<ul>
+  <li>계급: 각 구간</li>
+  <li>계급값: 각 계급의 중간값</li>
+  <li>도수: 각 계급에 포함된 데이터의 수</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)])</span>
+<span class="n">data</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_70.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">freq_data</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> 
+                   <span class="n">bins</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+<span class="n">freq_data</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_71.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">freq_data</span><span class="p">.</span><span class="n">value_counts</span><span class="p">().</span><span class="n">to_frame</span><span class="p">()</span>
+
+<span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">"계급"</span>
+
+<span class="n">df</span><span class="p">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">df</span><span class="p">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">'도수'</span><span class="p">]</span>
+
+<span class="n">class_values</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
+    <span class="n">class_values</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">mid</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'계급값'</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_values</span>
+
+<span class="n">df</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_72.png" alt="" /></p>
+
+<h2 id="히스토그램">히스토그램</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">.</span><span class="n">bar</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">.</span><span class="n">values</span><span class="p">],</span> <span class="n">df</span><span class="p">[</span><span class="s">'도수'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_73.png" alt="" /></p>
+
+<h1 id="상대도수와-누적-상대도수">상대도수와 누적 상대도수</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tot</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'도수'</span><span class="p">].</span><span class="nb">sum</span><span class="p">()</span>
+<span class="n">relative_freq_values</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
+    <span class="n">relative_freq_values</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">tot</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'상대도수'</span><span class="p">]</span> <span class="o">=</span> <span class="n">relative_freq_values</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s">'누적상대도수'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'상대도수'</span><span class="p">].</span><span class="n">cumsum</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_74.png" alt="" /></p>
+
+<h1 id="대표값">대표값</h1>
+
+<ul>
+  <li>데이터 전체의 특징을 하나의 값으로 표현하는 방법</li>
+  <li>대표적인 대표값으로는 평균값, 중앙값, 최빈값이 있다</li>
+  <li>대표값을 알더라도 분포를 모르면 알 수 있는 내용은 많지 않다</li>
+</ul>
+
+<h2 id="평균값mean">평균값(mean)</h2>
+
+<ul>
+  <li>평편하고 균일하게 만든 값</li>
+  <li>통계에서 가장 많이 사용하는 평균 계산법은 산술평균 (x1 + x2 + … + xn / n)</li>
+</ul>
+
+<h2 id="중앙값median">중앙값(median)</h2>
+
+<ul>
+  <li>데이터를 크기순으로 나열했을 때 순서상 가운데 있는 값</li>
+  <li>평균값과 중앙값을 알면 대략적인 분포를 예측할 수 있다</li>
+  <li>데이터의 개수가 홀수면 중앙값은 정확히 가운데 값, 짝수면 중앙에 있는 두 값의 평균</li>
+  <li>데이터에 아웃라이어 값이 있을 때는 평균값보다 중앙값이 데이터를 더 잘 대표한다</li>
+</ul>
+
+<h2 id="대표값으로-예측하는-데이터-분포">대표값으로 예측하는 데이터 분포</h2>
+
+<ul>
+  <li>평균값 = 중앙값: 분포가 좌우대칭이다</li>
+  <li>평균값 &lt; 중앙값: 분포가 오른쪽으로 치우쳐있다</li>
+  <li>평균값 &gt; 중앙값: 분포가 왼쪽으로 치우쳐있다</li>
+</ul>
+
+<h1 id="4분위수와-상자수염도">4분위수와 상자수염도</h1>
+
+<h2 id="4분위수">4분위수</h2>
+
+<ul>
+  <li>중앙값을 기준으로 데이터의 흩어진 정도를 나타내는 값</li>
+  <li>Q1, Q2, Q3
+    <ul>
+      <li>Q1: 데이터를 크기순으로 나열했을 때 순서상 25%에 해당하는 값</li>
+      <li>Q2: 순서상 50%에 해당하는 값 (중앙값)</li>
+      <li>Q3: 순서상 75%에 해당하는 값</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="p">.</span><span class="n">describe</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/images/pd_75.png" alt="" /></p>
+
+<h2 id="상자수염도">상자수염도</h2>
+
+<p><img src="/images/pd_76.png" alt="" /></p>
+
+<h1 id="분산과-표준편차">분산과 표준편차</h1>
+
+<ul>
+  <li>평균값을 기준으로 데이터의 흩어진 정도는 표준편차로 알 수 있다</li>
+  <li>평균에서 각 데이터가 흩어진 정도는 편차(deviation)로 나타낼 수 있다 (편차 = x_i - 평균)</li>
+</ul>
+
+<h2 id="분산">분산</h2>
+
+<ul>
+  <li>편차는 평균을 구해보면 항상 0이다. 그래서 각 편차를 제곱해서 평균을 구하면 그 값이 곧 분산(variance)이다</li>
+  <li>분산값이 평균에서 흩어진 정도를 나타내는 하나의 값이 된다</li>
+</ul>
+
+<p><img src="/images/statistic_1.png" alt="" /></p>
+
+<ul>
+  <li>분산 식을 조금 더 간단하게 표현하면 아래와 같다</li>
+</ul>
+
+<p><img src="/images/statistic_2.png" alt="" /></p>
+
+<h2 id="표준편차">표준편차</h2>
+
+<ul>
+  <li>분산은 단위가 원래의 제곱이 된다는 문제가 있다</li>
+  <li>그래서 분산에 제곱근을 한 값을 표준편차(standard deviation)이라 한다</li>
+</ul>
+
+<p><img src="/images/statistic_3.png" alt="" /></p>
+
+<h1 id="상관관계와-산포도">상관관계와 산포도</h1>
+
+<ul>
+  <li>상관관계는 2변량 데이터의 변량간 경향성을 나타낸다</li>
+  <li>한쪽이 증가할 때 다른 쪽도 증가하는 경향을 양의 상관관계에 있다고 한다</li>
+  <li>공분산은 상관관계의 세기를 수치화 하는 방법이다</li>
+  <li>공분산만으로는 A 데이터셋의 상관관계와 B 데이터셋의 상관관계의 정도를 비교할 수 없다 (공분산은 단위가 커지면 같이 커진다)</li>
+  <li>상관계수를 이용하면 여러 데이터셋간의 상관관계를 비교해 어떤 데이터셋이 더 큰 상관관계를 있는지 대소관계를 비교할 수 있다</li>
+</ul>
+
+<h2 id="공분산을-구하는-방법">공분산을 구하는 방법</h2>
+
+<p><img src="/images/statistics_4.png" alt="" /></p>
+
+<ul>
+  <li>(x1, y1) 데이터의 편차곱 <code class="language-plaintext highlighter-rouge">(x1 - x의 평균) X (y1 - y의 평균)</code> 의 평균이 공분산 값이다</li>
+</ul>
+
+<p><img src="/images/statistics_5.png" alt="" /></p>
+
+<ul>
+  <li>노란색 영역과 회색 영역을 표시해둔 이유는, 노란색 영역은 편차곱이 양수, 회색 영역은 편차곱이 음수이다</li>
+  <li>그래서 노란색 영역에 데이터가 많이 분포하면 공분산값이 양수가 되고, 회색 영역에 많이 분포하면 공분산값이 음이 된다</li>
+</ul>
+
+<h2 id="상관계수-구하는-방법">상관계수 구하는 방법</h2>
+
+<ul>
+  <li>상관계수는 공분산을 각 변량의 표준편차로 나누면 된다</li>
+  <li>상관계수는 단위가 바뀌어도 영향을 받지 않는다 (ex. 원에서 만원으로 바꿔도 상관 없다)</li>
+</ul>
+
+<p><img src="/images/statistics_6.png" alt="" /></p>
+
 
     </div>
     <div class="post__tags_list">
