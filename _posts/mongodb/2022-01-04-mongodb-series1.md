@@ -16,3 +16,18 @@ tags: MongoDB
 {:toc}
 
 ---
+
+# Atlas 이용
+
+![](/images/mongo_27.png)
+
+![](/images/mongo_28.png)
+
+![](/images/mongo_29.png)
+
+
+# 로컬 서버에 설치
+
+
+
+# 도커 이미지 이용
