@@ -1,0 +1,324 @@
+I"�z<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#read-query" id="markdown-toc-read-query">Read (Query)</a>    <ul>
+      <li><a href="#내장-도큐먼트" id="markdown-toc-내장-도큐먼트">내장 도큐먼트</a></li>
+      <li><a href="#배열" id="markdown-toc-배열">배열</a></li>
+    </ul>
+  </li>
+  <li><a href="#update" id="markdown-toc-update">Update</a>    <ul>
+      <li><a href="#array-update-operators" id="markdown-toc-array-update-operators">Array Update Operators</a></li>
+      <li><a href="#" id="markdown-toc-">$</a></li>
+      <li><a href="#-1" id="markdown-toc--1">$[]</a></li>
+      <li><a href="#identifier" id="markdown-toc-identifier">$[identifier]</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pymongo</span>
+<span class="kn">import</span> <span class="nn">dateutil.parser</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">pymongo</span><span class="p">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="s">"mongodb+srv://ziont0510:ziont0510@cluster0.zao0oj4.mongodb.net/?retryWrites=true&amp;w=majority"</span><span class="p">)</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">test</span>
+</code></pre></div></div>
+
+<h1 id="read-query">Read (Query)</h1>
+
+<h2 id="내장-도큐먼트">내장 도큐먼트</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">sales</span><span class="p">.</span><span class="n">find_one</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_12.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># document 필드안의 document 필드는 .을 이용해 접근할 수 있다
+</span><span class="n">db</span><span class="p">.</span><span class="n">sales</span><span class="p">.</span><span class="n">find_one</span><span class="p">(</span>
+    <span class="p">{</span><span class="s">'customer.email'</span><span class="p">:</span> <span class="s">'cauho@witwuta.sv'</span><span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_13.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">sales</span><span class="p">.</span><span class="n">find</span><span class="p">(</span>
+        <span class="p">{</span><span class="s">'customer.age'</span><span class="p">:</span> <span class="p">{</span><span class="s">'$lt'</span><span class="p">:</span> <span class="mi">20</span><span class="p">}}</span>
+      <span class="p">)</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+    <span class="k">break</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_14.png" alt="" /></p>
+
+<h2 id="배열">배열</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">insert_many</span><span class="p">([</span>
+   <span class="p">{</span> <span class="s">"item"</span><span class="p">:</span> <span class="s">"journal"</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">],</span> <span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">[</span> <span class="mi">14</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"item"</span><span class="p">:</span> <span class="s">"journal"</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span> <span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">,</span> <span class="s">"blue"</span><span class="p">],</span> <span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">[</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">21</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"item"</span><span class="p">:</span> <span class="s">"notebook"</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">,</span> <span class="s">"blank"</span><span class="p">],</span> <span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">[</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">21</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"item"</span><span class="p">:</span> <span class="s">"paper"</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">,</span> <span class="s">"blue"</span><span class="p">,</span> <span class="s">"plain"</span><span class="p">],</span> <span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">[</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">21</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"item"</span><span class="p">:</span> <span class="s">"planner"</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"blank"</span><span class="p">,</span> <span class="s">"red"</span><span class="p">],</span> <span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">[</span> <span class="mf">22.85</span><span class="p">,</span> <span class="mi">30</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"item"</span><span class="p">:</span> <span class="s">"postcard"</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span> <span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"blue"</span><span class="p">],</span> <span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">[</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">15.25</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"item"</span><span class="p">:</span> <span class="s">"postcard"</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span> <span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"blue"</span><span class="p">,</span> <span class="s">"red"</span><span class="p">],</span> <span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">[</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span> <span class="p">]</span> <span class="p">}</span>
+<span class="p">])</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tags에 red만 있는 도큐먼트
+</span><span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">]})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_15.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tags에 red가 있는 도큐먼트
+</span><span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"tags"</span><span class="p">:</span> <span class="s">"red"</span><span class="p">})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_16.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tags에 red 또는 blue가 있는 도큐먼트
+</span><span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"tags"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$in"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">,</span> <span class="s">"blue"</span><span class="p">]}})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_16.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tags에 red와 blue가 있는 도큐먼트
+</span><span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"tags"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$all"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">,</span> <span class="s">"blue"</span><span class="p">]}})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_17.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># tags에 red랑 blue만 있는 도큐먼트
+# cur = db.inventory.find({"tags": ["red", "blue"]}) # 이렇게 하면 순서가 정확히 red, blue 인 데이터만 필터링한다
+</span>
+<span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"tags"</span><span class="p">:</span> <span class="p">[</span><span class="s">"red"</span><span class="p">,</span> <span class="s">"blue"</span><span class="p">]})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_18.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># dim_cm에 15 이하인 값을 하나라도 가지는 도큐먼트
+</span><span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$lte"</span><span class="p">:</span> <span class="mi">15</span><span class="p">}})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_19.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># dim_cm에 있는 값이 15이상 20이하인 값을 하나라도 가지는 도큐먼트
+</span>
+<span class="c1"># elemMatch: 각 요소에 대해 여러 조건을 걸 수 있다
+# 만약 {"dim_cm": {"gte": 15, "lte": 20}} 이렇게 하면, 
+# (15 이상인 요소를 가지는 도큐먼트) and (20 이하인 요소를 가지는 도큐먼트) 이렇게 된다
+</span>
+<span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"dim_cm"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$elemMatch"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$gte"</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s">"$lte"</span><span class="p">:</span> <span class="mi">20</span><span class="p">}}})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_20.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 배열의 첫 번째 값이 15 이상인 도큐먼트
+</span>
+<span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"dim_cm.0"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$gte"</span><span class="p">:</span> <span class="mi">15</span><span class="p">}})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_22.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 배열의 크기가 1인 도큐먼트
+</span>
+<span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"tags"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$size"</span><span class="p">:</span> <span class="mi">1</span><span class="p">}})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_23.png" alt="" /></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 여러 조건을 동시에 만족하는 원소가 있는 배열을 가지는 도큐먼트
+# 그 도큐먼트의 _id와 saleDate만 출력 (1대신 True해도됨)
+</span><span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">sales</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"items"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$elemMatch"</span><span class="p">:</span> <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"binder"</span><span class="p">,</span> <span class="s">"quantity"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$gte"</span><span class="p">:</span> <span class="mi">10</span><span class="p">}}}},</span>
+                   <span class="p">{</span><span class="s">"_id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"saleDate"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+    <span class="k">break</span>
+</code></pre></div></div>
+
+<h1 id="update">Update</h1>
+
+<h2 id="array-update-operators">Array Update Operators</h2>
+
+<ul>
+  <li>(https://www.mongodb.com/docs/manual/reference/operator/update-array/ 참고)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Name</th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">$</td>
+      <td style="text-align: center">Acts as a placeholder to update the first element that matches the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$[]</td>
+      <td style="text-align: center">Acts as a placeholder to update all elements in an array for the documents that match the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$[&lt;identifier&gt;]</td>
+      <td style="text-align: center">Acts as a placeholder to update all elements that match the arrayFilters condition for the documents that match the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$addToSet</td>
+      <td style="text-align: center">Adds elements to an array only if they do not already exist in the set.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pop</td>
+      <td style="text-align: center">Removes the first or last item of an array.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pull</td>
+      <td style="text-align: center">Removes all array elements that match a specified query.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$push</td>
+      <td style="text-align: center">Adds an item to an array.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pullAll</td>
+      <td style="text-align: center">Removes all matching values from an array.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>$</h2>
+
+<ul>
+  <li>The positional <code class="language-plaintext highlighter-rouge">$</code> operator identifies an element in an array to update without explicitly specifying the position of the element in the array.</li>
+</ul>
+
+<div class="pen-para">
+    <div class="pen-bar">
+      <i class="fas fa-pen"></i>Note
+    </div>
+    <div class="pen-content">
+      <li>To project, or return, an array element from a read operation, see the <a href="https://www.mongodb.com/docs/manual/reference/operator/projection/positional/#mongodb-projection-proj.-">$ projection operator</a> instead.</li>
+      <li>To update all elements in an array, see the <a href="https://www.mongodb.com/docs/manual/reference/operator/update/positional-all/#mongodb-update-up.---">all positional operator $[]</a> instead.</li>
+      <li>To update all elements that match an array filter condition or conditions, see <a href="https://www.mongodb.com/docs/manual/reference/operator/update/positional-filtered/#mongodb-update-up.---identifier--">the filtered positional operator</a> $[\&lt;identifier\&gt;] instead.</li>
+    </div>
+</div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">insert_many</span><span class="p">(</span> <span class="p">[</span>
+   <span class="p">{</span> <span class="s">"_id"</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"grades"</span> <span class="p">:</span> <span class="p">[</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">80</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"_id"</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">"grades"</span> <span class="p">:</span> <span class="p">[</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">80</span> <span class="p">]</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"_id"</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s">"grades"</span> <span class="p">:</span> <span class="p">[</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">90</span> <span class="p">]</span> <span class="p">}</span>
+<span class="p">]</span> <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 가장 처음 매치되는 도큐먼트(update_one)의 처음 매치되는 요소(grades.$) 를 업데이트 한다
+# 모든 도큐먼트의 처음 매치되는 요소를 업데이트 하려면, update_many를 쓰면 된다
+</span><span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">update_one</span><span class="p">(</span>
+   <span class="p">{</span> <span class="s">"grades"</span><span class="p">:</span> <span class="mi">80</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"$set"</span><span class="p">:</span> <span class="p">{</span> <span class="s">"grades.$"</span> <span class="p">:</span> <span class="mi">82</span> <span class="p">}</span> <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">find</span><span class="p">({})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_24.png" alt="" /></p>
+
+<h2 id="-1">$[]</h2>
+
+<ul>
+  <li>The all positional operator <code class="language-plaintext highlighter-rouge">$[]</code> indicates that the update operator should modify all elements in the specified array field.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 처음 매치되는 요소가 아니라, 처음 매치되는 요소를 가지는 배열의 모든 요소(grades.$[])를 업데이트 한다
+</span><span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">update_one</span><span class="p">(</span>
+   <span class="p">{</span> <span class="s">"grades"</span><span class="p">:</span> <span class="mi">80</span> <span class="p">},</span>
+   <span class="p">{</span> <span class="s">"$set"</span><span class="p">:</span> <span class="p">{</span> <span class="s">"grades.$[]"</span> <span class="p">:</span> <span class="mi">82</span> <span class="p">}</span> <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">find</span><span class="p">({})</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_25.png" alt="" /></p>
+
+<h2 id="identifier">$[identifier]</h2>
+
+<ul>
+  <li>The filtered positional operator <code class="language-plaintext highlighter-rouge">$[\&lt;identifier\&gt;]</code> identifies the array elements that match the arrayFilters conditions for an update operation, e.g. <code class="language-plaintext highlighter-rouge">db.collection.updateMany()</code> and <code class="language-plaintext highlighter-rouge">db.collection.findAndModify()</code>.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">insert_many</span><span class="p">(</span> <span class="p">[</span>
+   <span class="p">{</span>
+      <span class="s">"_id"</span> <span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+      <span class="s">"grades"</span> <span class="p">:</span> <span class="p">[</span>
+         <span class="p">{</span> <span class="s">"grade"</span> <span class="p">:</span> <span class="mi">80</span><span class="p">,</span> <span class="s">"mean"</span> <span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="s">"std"</span> <span class="p">:</span> <span class="mi">6</span> <span class="p">},</span>
+         <span class="p">{</span> <span class="s">"grade"</span> <span class="p">:</span> <span class="mi">85</span><span class="p">,</span> <span class="s">"mean"</span> <span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s">"std"</span> <span class="p">:</span> <span class="mi">4</span> <span class="p">},</span>
+         <span class="p">{</span> <span class="s">"grade"</span> <span class="p">:</span> <span class="mi">85</span><span class="p">,</span> <span class="s">"mean"</span> <span class="p">:</span> <span class="mi">85</span><span class="p">,</span> <span class="s">"std"</span> <span class="p">:</span> <span class="mi">6</span> <span class="p">}</span>
+      <span class="p">]</span>
+   <span class="p">},</span>
+   <span class="p">{</span>
+      <span class="s">"_id"</span> <span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+      <span class="s">"grades"</span> <span class="p">:</span> <span class="p">[</span>
+         <span class="p">{</span> <span class="s">"grade"</span> <span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s">"mean"</span> <span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="s">"std"</span> <span class="p">:</span> <span class="mi">6</span> <span class="p">},</span>
+         <span class="p">{</span> <span class="s">"grade"</span> <span class="p">:</span> <span class="mi">87</span><span class="p">,</span> <span class="s">"mean"</span> <span class="p">:</span> <span class="mi">90</span><span class="p">,</span> <span class="s">"std"</span> <span class="p">:</span> <span class="mi">3</span> <span class="p">},</span>
+         <span class="p">{</span> <span class="s">"grade"</span> <span class="p">:</span> <span class="mi">85</span><span class="p">,</span> <span class="s">"mean"</span> <span class="p">:</span> <span class="mi">85</span><span class="p">,</span> <span class="s">"std"</span> <span class="p">:</span> <span class="mi">4</span> <span class="p">}</span>
+      <span class="p">]</span>
+   <span class="p">}</span>
+<span class="p">]</span> <span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># `filter`: A query that matches the documents to update. (조건을 만족하는 도큐먼트를 필터링)
+# `array_filters` (optional): A list of filters specifying which array elements an update should apply. (배열에 있는 특정 요소에 대해서만 업데이트 적용)
+</span>
+<span class="c1"># filter에 의해 _id가 5인 도큐먼트가 선택된다
+# array_filters 에 의해 2번째 3번째 요소에만 업데이트 적용된다
+</span>
+<span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">update_many</span><span class="p">(</span>
+    <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s">"grades.grade"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$gt"</span><span class="p">:</span> <span class="mi">85</span><span class="p">}},</span>
+    <span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s">"$set"</span><span class="p">:</span> <span class="p">{</span><span class="s">"grades.$[element].grade"</span><span class="p">:</span> <span class="mi">100</span><span class="p">}},</span>
+    <span class="n">array_filters</span><span class="o">=</span><span class="p">[{</span><span class="s">"element.mean"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$gte"</span><span class="p">:</span> <span class="mi">80</span><span class="p">}}]</span>
+<span class="p">)</span>
+
+<span class="n">cur</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">students</span><span class="p">.</span><span class="n">find</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">cur</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/images/mongo_26.png" alt="" /></p>
+:ET

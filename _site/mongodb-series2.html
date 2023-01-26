@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MongoDB Series [Part2]: MongoDB CRUD</title>
+  <title>MongoDB Series [Part2]: MongoDB CRUD(1) 기본 CRUD 연산</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/mongodb-series2">
@@ -14,14 +14,14 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MongoDB Series [Part2]: MongoDB CRUD – Code Museum">
+  <meta name="twitter:title" content="MongoDB Series [Part2]: MongoDB CRUD(1) 기본 CRUD 연산 – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/mongodb_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MongoDB Series [Part2]: MongoDB CRUD – Code Museum">
+  <meta property="og:title" content="MongoDB Series [Part2]: MongoDB CRUD(1) 기본 CRUD 연산 – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -367,6 +367,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -449,7 +451,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mongo_logo.png" alt="MongoDB Series [Part2]: MongoDB CRUD">
+          <img class="lazy" data-src="/images/mongo_logo.png" alt="MongoDB Series [Part2]: MongoDB CRUD(1) 기본 CRUD 연산">
         </div>
       </div>
       
@@ -470,7 +472,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MongoDB Series [Part2]: MongoDB CRUD</h1>
+          <h1 class="post__title">MongoDB Series [Part2]: MongoDB CRUD(1) 기본 CRUD 연산</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -503,6 +505,14 @@ Table of Contents
   
 
   
+
+  
+
+  
+
+  
+
+  
   	
   	
   	
@@ -514,10 +524,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mongodb-intro" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part1]: MongoDB Intro</a>
+      <a href="/mongodb-series11" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part3]: MongoDB Query</a>
     
     
-      <a href="/mongodb-series3" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MongoDB Series [Part3]: MongoDB Query<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mongodb-series3" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MongoDB Series [Part3]: MongoDB CRUD(2) 배열과 내장 도큐먼트 다루기<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -526,16 +536,25 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#create" id="markdown-toc-create">Create</a>    <ul>
+  <li><a href="#create-insert" id="markdown-toc-create-insert">Create (Insert)</a>    <ul>
+      <li><a href="#insert-a-single-document" id="markdown-toc-insert-a-single-document">Insert a Single Document</a></li>
+      <li><a href="#insert-multiple-documents" id="markdown-toc-insert-multiple-documents">Insert Multiple Documents</a></li>
       <li><a href="#그-밖의-연산" id="markdown-toc-그-밖의-연산">그 밖의 연산</a></li>
     </ul>
   </li>
   <li><a href="#read-query" id="markdown-toc-read-query">Read (Query)</a>    <ul>
       <li><a href="#모든-도큐먼트-조회" id="markdown-toc-모든-도큐먼트-조회">모든 도큐먼트 조회</a></li>
       <li><a href="#조건을-이용한-도큐먼트-조회" id="markdown-toc-조건을-이용한-도큐먼트-조회">조건을 이용한 도큐먼트 조회</a></li>
+      <li><a href="#도큐먼트의-특정-컬럼만-조회" id="markdown-toc-도큐먼트의-특정-컬럼만-조회">도큐먼트의 특정 컬럼만 조회</a></li>
     </ul>
   </li>
-  <li><a href="#update" id="markdown-toc-update">Update</a></li>
+  <li><a href="#update" id="markdown-toc-update">Update</a>    <ul>
+      <li><a href="#update-documents" id="markdown-toc-update-documents">Update Documents</a></li>
+      <li><a href="#field-update-operators" id="markdown-toc-field-update-operators">Field Update Operators</a></li>
+      <li><a href="#array-update-operators" id="markdown-toc-array-update-operators">Array Update Operators</a></li>
+      <li><a href="#그-밖의-연산-1" id="markdown-toc-그-밖의-연산-1">그 밖의 연산</a></li>
+    </ul>
+  </li>
   <li><a href="#delete" id="markdown-toc-delete">Delete</a></li>
   <li><a href="#bulk-write" id="markdown-toc-bulk-write">Bulk Write</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -543,7 +562,7 @@ Table of Contents
 
 <hr />
 
-<h1 id="create">Create</h1>
+<h1 id="create-insert">Create (Insert)</h1>
 
 <ul>
   <li>도큐먼트를 컬렉션에 추가하는 연산</li>
@@ -551,6 +570,10 @@ Table of Contents
   <li>도큐먼트 하나에 대해서 원자성을 가진다 -&gt; 필드 일부만 생기거나 하는 일은 발생하지 않는다</li>
   <li><code class="language-plaintext highlighter-rouge">_id</code> 필드를 표기하지 않으면, 자동으로 <code class="language-plaintext highlighter-rouge">ObjectId</code> 타입의 값이 부여된다</li>
 </ul>
+
+<p><img src="/images/mongo_1.png" alt="" /></p>
+
+<h2 id="insert-a-single-document">Insert a Single Document</h2>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 몽고 쉘의 경우 카멜 케이스 (insertOne)
 # 파이썬의 경우 스네이크 케이스 표기법 (inser_one)
@@ -570,6 +593,8 @@ Table of Contents
     <span class="p">}</span>
 <span class="p">)</span>
 </code></pre></div></div>
+
+<h2 id="insert-multiple-documents">Insert Multiple Documents</h2>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">insert_many</span><span class="p">(</span>
     <span class="p">[</span>
@@ -597,11 +622,13 @@ Table of Contents
 
 <h2 id="그-밖의-연산">그 밖의 연산</h2>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_one</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_many</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_and_modify</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_update</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_replace</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># upsert: True 이면, 도큐먼트가 없을 때 inert 기능도 한다
+</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_one</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_many</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_and_modify</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_update</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_replace</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
 </span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">bulk_write</span><span class="p">()</span>
 </code></pre></div></div>
 
@@ -610,6 +637,8 @@ Table of Contents
 <ul>
   <li>한 개의 컬렉션내에서 도큐먼트를 읽어오는 연산</li>
 </ul>
+
+<p><img src="/images/mongo_2.png" alt="" /></p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="o">&lt;</span><span class="n">컬렌션명</span><span class="o">&gt;</span><span class="p">.</span><span class="n">find</span><span class="p">()</span>
 </code></pre></div></div>
@@ -638,11 +667,22 @@ Table of Contents
 </span><span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"$or"</span><span class="p">:</span> <span class="p">[{</span><span class="s">"status"</span><span class="p">:</span> <span class="s">"A"</span><span class="p">},</span> <span class="p">{</span><span class="s">"qty"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$lt"</span><span class="p">:</span> <span class="mi">30</span><span class="p">}}]})</span>
 </code></pre></div></div>
 
+<h2 id="도큐먼트의-특정-컬럼만-조회">도큐먼트의 특정 컬럼만 조회</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"status"</span><span class="p">:</span> <span class="s">"D"</span><span class="p">},</span>
+                  <span class="p">{</span><span class="s">"status"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</code></pre></div></div>
+
 <h1 id="update">Update</h1>
 
 <ul>
   <li>한 개의 컬렉션내에 존재하는 도큐먼트를 수정하는 연산</li>
+  <li>To update a document, MongoDB provides update operators such as <code class="language-plaintext highlighter-rouge">$set</code> to modify field values.</li>
 </ul>
+
+<p><img src="/images/mongo_3.png" alt="" /></p>
+
+<h2 id="update-documents">Update Documents</h2>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필터에 매칭되는 도큐먼트 1개(여러개가 매칭되더라도)의 필드값을 수정한다
 # upsert=True로 하면, 매칭되는 도큐먼트가 없을 때 update 기반으로 추가한다
@@ -679,15 +719,114 @@ Table of Contents
 <span class="p">)</span>
 </code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- $currentDate: Sets the value of a field to current date, either as a Date or a Timestamp.
-- $inc: Increments the value of the field by the specified amount.
-- $min: Only updates the field if the specified value is less than the existing field value.
-- $max: Only updates the field if the specified value is greater than the existing field value.
-- $mul: Multiplies the value of the field by the specified amount.
-- $rename: Renames a field.
-- $set: Sets the value of a field in a document.
-- $setOnInsert: Sets the value of a field if an update results in an insert of a document. Has no effect on update operations that modify existing documents.
-- $unset: Removes the specified field from a document.
+<h2 id="field-update-operators">Field Update Operators</h2>
+
+<ul>
+  <li>(https://www.mongodb.com/docs/manual/reference/operator/update-field/ 참고)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Name</th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">$currentDate</td>
+      <td style="text-align: center">Sets the value of a field to current date, either as a Date or a Timestamp.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$inc</td>
+      <td style="text-align: center">Increments the value of the field by the specified amount.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$min</td>
+      <td style="text-align: center">Only updates the field if the specified value is less than the existing field value.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$max</td>
+      <td style="text-align: center">Only updates the field if the specified value is greater than the existing field value.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$mul</td>
+      <td style="text-align: center">Multiplies the value of the field by the specified amount.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$rename</td>
+      <td style="text-align: center">Renames a field.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$set</td>
+      <td style="text-align: center">Sets the value of a field in a document.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$setOnInsert</td>
+      <td style="text-align: center">Sets the value of a field if an update results in an insert of a document. Has no effect on update operations that modify existing documents.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$unset</td>
+      <td style="text-align: center">Removes the specified field from a document.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="array-update-operators">Array Update Operators</h2>
+
+<ul>
+  <li>(https://www.mongodb.com/docs/manual/reference/operator/update-array/ 참고)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Name</th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">$</td>
+      <td style="text-align: center">Acts as a placeholder to update the first element that matches the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$[]</td>
+      <td style="text-align: center">Acts as a placeholder to update all elements in an array for the documents that match the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$[&lt;identifier&gt;]</td>
+      <td style="text-align: center">Acts as a placeholder to update all elements that match the arrayFilters condition for the documents that match the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$addToSet</td>
+      <td style="text-align: center">Adds elements to an array only if they do not already exist in the set.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pop</td>
+      <td style="text-align: center">Removes the first or last item of an array.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pull</td>
+      <td style="text-align: center">Removes all array elements that match a specified query.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$push</td>
+      <td style="text-align: center">Adds an item to an array.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pullAll</td>
+      <td style="text-align: center">Removes all matching values from an array.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="그-밖의-연산-1">그 밖의 연산</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">findOneAndReplace</span><span class="p">()</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">findOneAndUpdate</span><span class="p">()</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">findAndModify</span><span class="p">()</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">bulkWrite</span><span class="p">()</span>
 </code></pre></div></div>
 
 <h1 id="delete">Delete</h1>
@@ -695,6 +834,8 @@ Table of Contents
 <ul>
   <li>한 개의 컬렉션내에서 도큐먼트를 삭제하는 연산</li>
 </ul>
+
+<p><img src="/images/mongo_4.png" alt="" /></p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필터에 매칭되는 도큐먼트 1개 (여러 개가 매치되더라도)를 삭제
 </span><span class="n">db</span><span class="p">.</span><span class="o">&lt;</span><span class="n">컬렉션명</span><span class="o">&gt;</span><span class="p">.</span><span class="n">delete_one</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="p">..)</span>
@@ -713,6 +854,22 @@ Table of Contents
 </code></pre></div></div>
 
 <h1 id="bulk-write">Bulk Write</h1>
+
+<ul>
+  <li>Create, Update, Delete와 같은 연산 여러 개를 한 번에 요청할 수 있도록 해준다</li>
+  <li>ordered 한 경우, 중간에 에러가 발생하면, 이후 동작은 실행하지 않는다</li>
+  <li>unordered 한 경우, 병렬로 실행하며, 중간에 에러가 발생해도 나머지 동작은 멈추지 않는다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">requests</span> <span class="o">=</span> <span class="p">[</span><span class="n">InsertOne</span><span class="p">({</span><span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Cody"</span><span class="p">}),</span>
+            <span class="n">InsertOne</span><span class="p">({</span> <span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Drew"</span><span class="p">}),</span>
+            <span class="n">DeleteOne</span><span class="p">({</span><span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Cody"</span><span class="p">}),</span>
+            <span class="n">ReplaceOne</span><span class="p">({</span><span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Drew"</span><span class="p">},</span>
+                       <span class="p">{</span> <span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Andrew"</span><span class="p">},</span> <span class="n">upsert</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)]</span>
+  
+<span class="c1"># executing the requests
+</span><span class="n">result</span> <span class="o">=</span> <span class="n">mycollection</span><span class="p">.</span><span class="n">bulk_write</span><span class="p">(</span><span class="n">requests</span><span class="p">)</span>
+</code></pre></div></div>
 
 <h1 id="참고">참고</h1>
 
@@ -1006,7 +1163,7 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MongoDB%20Series%20[Part2]:%20MongoDB%20CRUD&url=http://localhost:4000/mongodb-series2"
+          href="https://twitter.com/intent/tweet?text=MongoDB%20Series%20[Part2]:%20MongoDB%20CRUD(1)%20%EA%B8%B0%EB%B3%B8%20CRUD%20%EC%97%B0%EC%82%B0&url=http://localhost:4000/mongodb-series2"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -1016,12 +1173,12 @@ Table of Contents
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mongodb-series2&amp;media=http://localhost:4000/images/mongodb_logo.png&amp;description=MongoDB%20Series%20[Part2]:%20MongoDB%20CRUD"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mongodb-series2&amp;media=http://localhost:4000/images/mongodb_logo.png&amp;description=MongoDB%20Series%20[Part2]:%20MongoDB%20CRUD(1)%20%EA%B8%B0%EB%B3%B8%20CRUD%20%EC%97%B0%EC%82%B0"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mongodb-series2&title=MongoDB%20Series%20[Part2]:%20MongoDB%20CRUD&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mongodb-series2&title=MongoDB%20Series%20[Part2]:%20MongoDB%20CRUD(1)%20%EA%B8%B0%EB%B3%B8%20CRUD%20%EC%97%B0%EC%82%B0&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -1030,6 +1187,14 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
+
+  
+
+  
 
   
 
@@ -1045,10 +1210,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mongodb-intro" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part1]: MongoDB Intro</a>
+      <a href="/mongodb-series11" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part3]: MongoDB Query</a>
     
     
-      <a href="/mongodb-series3" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MongoDB Series [Part3]: MongoDB Query<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/mongodb-series3" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MongoDB Series [Part3]: MongoDB CRUD(2) 배열과 내장 도큐먼트 다루기<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

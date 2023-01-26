@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MongoDB Series [Part1]: MongoDB Intro'
+title:  'MongoDB Series [Part0]: MongoDB Intro'
 description: 
 date:   2022-01-04 15:01:35 +0300
 image:  '/images/mongodb_logo.png'
@@ -19,7 +19,7 @@ tags: MongoDB
 
 # MongoDB
 
-- C++로 개발된 도큐먼트 기반 NoSQL 오픈소스 데이터베이스
+- C++로 개발된 **도큐먼트 기반 NoSQL 오픈소스 데이터베이스**
 - Humongous(거대한) Database를 줄인 MongoDB로 명명
 - 2007년 뉴욕 기반의 10gen 이라는 기관에서 시작
 - 기존의 회사가 운영하던 관계형 데이터베이스의 확장성에 심각한 한계점을 느끼고 나서 높은 확장성을 제공하는 데이터베이스를 만들기로 결심
@@ -65,6 +65,7 @@ tags: MongoDB
   - 컬렉션 단위로 인덱스를 생성할 수 있다
   - 컬렉션 단위로 샤딩할 수 있다
 - Document
+  - (MongoDB documents are similar to JSON objects. The values of fields may include other documents, arrays, and arrays of documents)
   - RDBMS의 레코드와 비슷한 개념
   - JSON 형태로 표현하고, BSOn 형태로 저장한다
   - 도큐먼트마다 고유한 `_id` 프라이머리 키 값이 있다.
@@ -80,6 +81,7 @@ tags: MongoDB
 - ObjectId 데이터 타입을 사용하는 주된 이유는 몽고DB의 분산 특성 때문이다
 - 샤딩된 환경에서 고유 식별자를 쉽게 생성하도록 도와준다
 - (여러 서버에 걸쳐 자동으로 증가하는 기본 키를 동기화하는 작업은 어렵고 시간이 걸린다)
+- (https://www.mongodb.com/docs/manual/core/document/#the-_id-field 참고)
 
 
 ## BSON
@@ -89,6 +91,7 @@ tags: MongoDB
 - JSON 데이터를 이진 형식으로 인코딩한 포맷
 - 컴퓨터가 쉽게 이해할 수 있는 이진 포맷으로 검색 속도가 빠름
 - 날짜 및 이진 데이터 타입을 지원함
+- (https://www.mongodb.com/docs/manual/reference/bson-types/ 참고)
 
 ![](/images/json_bson_2.png)
 
@@ -96,6 +99,8 @@ tags: MongoDB
 
 ![](/images/replica_set_1.png)
 
+- A replica set is a group of MongoDB servers that maintain the same data set, providing redundancy and increasing data availability.
+- automatic failover, data redundancy 제공
 - 높은 가용성(HA)를 위한 솔루션
 - 크게 Primary와 Secondary로 구성
 - Primary
@@ -132,6 +137,8 @@ tags: MongoDB
 
 # 참고
 
+- [MongoDB 공식문서, Home](https://www.mongodb.com/docs/manual/tutorial/getting-started/){:target="_blank"}
+- [MongoDB 공식문서, Why Use MongoDB and When to Use It?](https://www.mongodb.com/why-use-mongodb){:target="_blank"}
 - [NHN 클라우드, mongoDB Story 1: mongoDB 정의와 NoSQL](https://meetup.toast.com/posts/274){:target="_blank"}
 - [BYTESCOUT, MONGODB HISTORY AND ADVANTAGES](https://bytescout.com/blog/2019/09/mongodb-history-and-advantages.html){:target="_blank"}
 - [Guru99, What is MongoDB? Introduction, Architecture, Features & Example](https://www.guru99.com/what-is-mongodb.html){:target="_blank"}

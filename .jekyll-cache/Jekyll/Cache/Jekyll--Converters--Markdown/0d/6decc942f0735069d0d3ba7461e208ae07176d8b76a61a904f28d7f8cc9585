@@ -1,16 +1,25 @@
-I"R<hr />
+I"�p<hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#create" id="markdown-toc-create">Create</a>    <ul>
+  <li><a href="#create-insert" id="markdown-toc-create-insert">Create (Insert)</a>    <ul>
+      <li><a href="#insert-a-single-document" id="markdown-toc-insert-a-single-document">Insert a Single Document</a></li>
+      <li><a href="#insert-multiple-documents" id="markdown-toc-insert-multiple-documents">Insert Multiple Documents</a></li>
       <li><a href="#그-밖의-연산" id="markdown-toc-그-밖의-연산">그 밖의 연산</a></li>
     </ul>
   </li>
   <li><a href="#read-query" id="markdown-toc-read-query">Read (Query)</a>    <ul>
       <li><a href="#모든-도큐먼트-조회" id="markdown-toc-모든-도큐먼트-조회">모든 도큐먼트 조회</a></li>
       <li><a href="#조건을-이용한-도큐먼트-조회" id="markdown-toc-조건을-이용한-도큐먼트-조회">조건을 이용한 도큐먼트 조회</a></li>
+      <li><a href="#도큐먼트의-특정-컬럼만-조회" id="markdown-toc-도큐먼트의-특정-컬럼만-조회">도큐먼트의 특정 컬럼만 조회</a></li>
     </ul>
   </li>
-  <li><a href="#update" id="markdown-toc-update">Update</a></li>
+  <li><a href="#update" id="markdown-toc-update">Update</a>    <ul>
+      <li><a href="#update-documents" id="markdown-toc-update-documents">Update Documents</a></li>
+      <li><a href="#field-update-operators" id="markdown-toc-field-update-operators">Field Update Operators</a></li>
+      <li><a href="#array-update-operators" id="markdown-toc-array-update-operators">Array Update Operators</a></li>
+      <li><a href="#그-밖의-연산-1" id="markdown-toc-그-밖의-연산-1">그 밖의 연산</a></li>
+    </ul>
+  </li>
   <li><a href="#delete" id="markdown-toc-delete">Delete</a></li>
   <li><a href="#bulk-write" id="markdown-toc-bulk-write">Bulk Write</a></li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
@@ -18,7 +27,7 @@
 
 <hr />
 
-<h1 id="create">Create</h1>
+<h1 id="create-insert">Create (Insert)</h1>
 
 <ul>
   <li>도큐먼트를 컬렉션에 추가하는 연산</li>
@@ -26,6 +35,10 @@
   <li>도큐먼트 하나에 대해서 원자성을 가진다 -&gt; 필드 일부만 생기거나 하는 일은 발생하지 않는다</li>
   <li><code class="language-plaintext highlighter-rouge">_id</code> 필드를 표기하지 않으면, 자동으로 <code class="language-plaintext highlighter-rouge">ObjectId</code> 타입의 값이 부여된다</li>
 </ul>
+
+<p><img src="/images/mongo_1.png" alt="" /></p>
+
+<h2 id="insert-a-single-document">Insert a Single Document</h2>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 몽고 쉘의 경우 카멜 케이스 (insertOne)
 # 파이썬의 경우 스네이크 케이스 표기법 (inser_one)
@@ -45,6 +58,8 @@
     <span class="p">}</span>
 <span class="p">)</span>
 </code></pre></div></div>
+
+<h2 id="insert-multiple-documents">Insert Multiple Documents</h2>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">insert_many</span><span class="p">(</span>
     <span class="p">[</span>
@@ -72,11 +87,13 @@
 
 <h2 id="그-밖의-연산">그 밖의 연산</h2>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_one</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_many</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_and_modify</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_update</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
-</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_replace</span><span class="p">()</span> <span class="c1"># when (upsert: true) option.
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># upsert: True 이면, 도큐먼트가 없을 때 inert 기능도 한다
+</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_one</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">update_many</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_and_modify</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_update</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
+</span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one_and_replace</span><span class="p">()</span> <span class="c1"># when (upsert: True) option.
 </span><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">bulk_write</span><span class="p">()</span>
 </code></pre></div></div>
 
@@ -85,6 +102,8 @@
 <ul>
   <li>한 개의 컬렉션내에서 도큐먼트를 읽어오는 연산</li>
 </ul>
+
+<p><img src="/images/mongo_2.png" alt="" /></p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="o">&lt;</span><span class="n">컬렌션명</span><span class="o">&gt;</span><span class="p">.</span><span class="n">find</span><span class="p">()</span>
 </code></pre></div></div>
@@ -113,11 +132,22 @@
 </span><span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"$or"</span><span class="p">:</span> <span class="p">[{</span><span class="s">"status"</span><span class="p">:</span> <span class="s">"A"</span><span class="p">},</span> <span class="p">{</span><span class="s">"qty"</span><span class="p">:</span> <span class="p">{</span><span class="s">"$lt"</span><span class="p">:</span> <span class="mi">30</span><span class="p">}}]})</span>
 </code></pre></div></div>
 
+<h2 id="도큐먼트의-특정-컬럼만-조회">도큐먼트의 특정 컬럼만 조회</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">inventory</span><span class="p">.</span><span class="n">find</span><span class="p">({</span><span class="s">"status"</span><span class="p">:</span> <span class="s">"D"</span><span class="p">},</span>
+                  <span class="p">{</span><span class="s">"status"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"qty"</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+</code></pre></div></div>
+
 <h1 id="update">Update</h1>
 
 <ul>
   <li>한 개의 컬렉션내에 존재하는 도큐먼트를 수정하는 연산</li>
+  <li>To update a document, MongoDB provides update operators such as <code class="language-plaintext highlighter-rouge">$set</code> to modify field values.</li>
 </ul>
+
+<p><img src="/images/mongo_3.png" alt="" /></p>
+
+<h2 id="update-documents">Update Documents</h2>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필터에 매칭되는 도큐먼트 1개(여러개가 매칭되더라도)의 필드값을 수정한다
 # upsert=True로 하면, 매칭되는 도큐먼트가 없을 때 update 기반으로 추가한다
@@ -154,15 +184,114 @@
 <span class="p">)</span>
 </code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- $currentDate: Sets the value of a field to current date, either as a Date or a Timestamp.
-- $inc: Increments the value of the field by the specified amount.
-- $min: Only updates the field if the specified value is less than the existing field value.
-- $max: Only updates the field if the specified value is greater than the existing field value.
-- $mul: Multiplies the value of the field by the specified amount.
-- $rename: Renames a field.
-- $set: Sets the value of a field in a document.
-- $setOnInsert: Sets the value of a field if an update results in an insert of a document. Has no effect on update operations that modify existing documents.
-- $unset: Removes the specified field from a document.
+<h2 id="field-update-operators">Field Update Operators</h2>
+
+<ul>
+  <li>(https://www.mongodb.com/docs/manual/reference/operator/update-field/ 참고)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Name</th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">$currentDate</td>
+      <td style="text-align: center">Sets the value of a field to current date, either as a Date or a Timestamp.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$inc</td>
+      <td style="text-align: center">Increments the value of the field by the specified amount.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$min</td>
+      <td style="text-align: center">Only updates the field if the specified value is less than the existing field value.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$max</td>
+      <td style="text-align: center">Only updates the field if the specified value is greater than the existing field value.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$mul</td>
+      <td style="text-align: center">Multiplies the value of the field by the specified amount.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$rename</td>
+      <td style="text-align: center">Renames a field.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$set</td>
+      <td style="text-align: center">Sets the value of a field in a document.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$setOnInsert</td>
+      <td style="text-align: center">Sets the value of a field if an update results in an insert of a document. Has no effect on update operations that modify existing documents.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$unset</td>
+      <td style="text-align: center">Removes the specified field from a document.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="array-update-operators">Array Update Operators</h2>
+
+<ul>
+  <li>(https://www.mongodb.com/docs/manual/reference/operator/update-array/ 참고)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">Name</th>
+      <th style="text-align: center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">$</td>
+      <td style="text-align: center">Acts as a placeholder to update the first element that matches the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$[]</td>
+      <td style="text-align: center">Acts as a placeholder to update all elements in an array for the documents that match the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$[&lt;identifier&gt;]</td>
+      <td style="text-align: center">Acts as a placeholder to update all elements that match the arrayFilters condition for the documents that match the query condition.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$addToSet</td>
+      <td style="text-align: center">Adds elements to an array only if they do not already exist in the set.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pop</td>
+      <td style="text-align: center">Removes the first or last item of an array.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pull</td>
+      <td style="text-align: center">Removes all array elements that match a specified query.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$push</td>
+      <td style="text-align: center">Adds an item to an array.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">$pullAll</td>
+      <td style="text-align: center">Removes all matching values from an array.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="그-밖의-연산-1">그 밖의 연산</h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">findOneAndReplace</span><span class="p">()</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">findOneAndUpdate</span><span class="p">()</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">findAndModify</span><span class="p">()</span>
+<span class="n">db</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">bulkWrite</span><span class="p">()</span>
 </code></pre></div></div>
 
 <h1 id="delete">Delete</h1>
@@ -170,6 +299,8 @@
 <ul>
   <li>한 개의 컬렉션내에서 도큐먼트를 삭제하는 연산</li>
 </ul>
+
+<p><img src="/images/mongo_4.png" alt="" /></p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 필터에 매칭되는 도큐먼트 1개 (여러 개가 매치되더라도)를 삭제
 </span><span class="n">db</span><span class="p">.</span><span class="o">&lt;</span><span class="n">컬렉션명</span><span class="o">&gt;</span><span class="p">.</span><span class="n">delete_one</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="p">..)</span>
@@ -188,6 +319,22 @@
 </code></pre></div></div>
 
 <h1 id="bulk-write">Bulk Write</h1>
+
+<ul>
+  <li>Create, Update, Delete와 같은 연산 여러 개를 한 번에 요청할 수 있도록 해준다</li>
+  <li>ordered 한 경우, 중간에 에러가 발생하면, 이후 동작은 실행하지 않는다</li>
+  <li>unordered 한 경우, 병렬로 실행하며, 중간에 에러가 발생해도 나머지 동작은 멈추지 않는다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">requests</span> <span class="o">=</span> <span class="p">[</span><span class="n">InsertOne</span><span class="p">({</span><span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Cody"</span><span class="p">}),</span>
+            <span class="n">InsertOne</span><span class="p">({</span> <span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Drew"</span><span class="p">}),</span>
+            <span class="n">DeleteOne</span><span class="p">({</span><span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Cody"</span><span class="p">}),</span>
+            <span class="n">ReplaceOne</span><span class="p">({</span><span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Drew"</span><span class="p">},</span>
+                       <span class="p">{</span> <span class="s">"Student name"</span><span class="p">:</span> <span class="s">"Andrew"</span><span class="p">},</span> <span class="n">upsert</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)]</span>
+  
+<span class="c1"># executing the requests
+</span><span class="n">result</span> <span class="o">=</span> <span class="n">mycollection</span><span class="p">.</span><span class="n">bulk_write</span><span class="p">(</span><span class="n">requests</span><span class="p">)</span>
+</code></pre></div></div>
 
 <h1 id="참고">참고</h1>
 
