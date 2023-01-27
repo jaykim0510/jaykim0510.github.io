@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MongoDB Series [Part4]: MongoDB Aggregation'
+title:  'MongoDB Series [Part4]: MongoDB CRUD(3): Aggregation'
 description: 
 date:   2022-01-04 15:01:35 +0300
 image:  '/images/mongodb_logo.png'

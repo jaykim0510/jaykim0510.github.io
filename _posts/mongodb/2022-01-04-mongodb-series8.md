@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MongoDB Series [Part7]: MongoDB Sharding'
+title:  'MongoDB Series [Part8]: MongoDB Replica Set'
 description: 
 date:   2022-01-04 15:01:35 +0300
 image:  '/images/mongodb_logo.png'

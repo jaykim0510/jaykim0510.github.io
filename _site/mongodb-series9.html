@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MongoDB Series [Part3]: MongoDB Query</title>
+  <title>MongoDB Series [Part9]: MongoDB Sharded Cluster</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/mongodb-series11">
+  <link rel="canonical" href="http://localhost:4000/mongodb-series9">
   <link rel="alternate" type="application/rss+xml" title="Code Museum" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MongoDB Series [Part3]: MongoDB Query – Code Museum">
+  <meta name="twitter:title" content="MongoDB Series [Part9]: MongoDB Sharded Cluster – Code Museum">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/mongodb_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="MongoDB Series [Part3]: MongoDB Query – Code Museum">
+  <meta property="og:title" content="MongoDB Series [Part9]: MongoDB Sharded Cluster – Code Museum">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -451,7 +451,7 @@ Table of Contents
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/mongo_logo.png" alt="MongoDB Series [Part3]: MongoDB Query">
+          <img class="lazy" data-src="/images/mongo_logo.png" alt="MongoDB Series [Part9]: MongoDB Sharded Cluster">
         </div>
       </div>
       
@@ -472,7 +472,7 @@ Table of Contents
               </div>
             
  
-          <h1 class="post__title">MongoDB Series [Part3]: MongoDB Query</h1>
+          <h1 class="post__title">MongoDB Series [Part9]: MongoDB Sharded Cluster</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -503,18 +503,6 @@ Table of Contents
 
 
   
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
   	
   	
   	
@@ -526,10 +514,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mongodb-series1" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part1]: MongoDB 실습환경 세팅</a>
+      <a href="/mongodb-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part8]: MongoDB Replica Set</a>
     
     
-      <a href="/mongodb-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MongoDB Series [Part2]: MongoDB CRUD(1) 기본 CRUD 연산<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 
@@ -537,8 +525,119 @@ Table of Contents
 
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#sharded-cluster" id="markdown-toc-sharded-cluster">Sharded Cluster</a>    <ul>
+      <li><a href="#sharded-cluster의-장단점" id="markdown-toc-sharded-cluster의-장단점">Sharded Cluster의 장단점</a></li>
+      <li><a href="#sharded-cluster의-구조" id="markdown-toc-sharded-cluster의-구조">Sharded Cluster의 구조</a></li>
+    </ul>
+  </li>
+  <li><a href="#sharding" id="markdown-toc-sharding">Sharding</a>    <ul>
+      <li><a href="#shard-key" id="markdown-toc-shard-key">Shard Key</a></li>
+      <li><a href="#sharding-algorithm" id="markdown-toc-sharding-algorithm">Sharding Algorithm</a>        <ul>
+          <li><a href="#range-sharding" id="markdown-toc-range-sharding">Range Sharding</a></li>
+          <li><a href="#hash-sharding" id="markdown-toc-hash-sharding">Hash Sharding</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#실습" id="markdown-toc-실습">실습</a>    <ul>
+      <li><a href="#sharding-활성화" id="markdown-toc-sharding-활성화">Sharding 활성화</a></li>
+      <li><a href="#sharded-cluster-구축" id="markdown-toc-sharded-cluster-구축">Sharded Cluster 구축</a></li>
+    </ul>
+  </li>
+  <li><a href="#replca-set과-sharded-cluster" id="markdown-toc-replca-set과-sharded-cluster">Replca Set과 Sharded Cluster</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
 
 <hr />
+
+<h1 id="sharded-cluster">Sharded Cluster</h1>
+
+<ul>
+  <li>샤드 클러스터는 샤딩을 고려해 설계된 데이터베이스 배포 방식이다</li>
+  <li>샤딩은 데이터를 여러 서버에 분산해서 저장하고 처리할 수 있도록 하는 기술을 말한다</li>
+  <li>샤딩은 분산 처리를 위한 솔루션이다</li>
+</ul>
+
+<h2 id="sharded-cluster의-장단점">Sharded Cluster의 장단점</h2>
+
+<ul>
+  <li>샤드 클러스터는 Scale-out 방식의 확장성을 가능하게 한다</li>
+  <li>
+    <p>Scale-out은 클러스터의 데이터 처리 용량을 투자 비용에 선형적으로 늘릴 수 있다</p>
+  </li>
+  <li>다루는 데이터가 작으면, 분산 데이터를 결합하는 과정 때문에 오히려 성능이 떨어질 수 있다</li>
+  <li>샤딩을 고려해야 하기 때문에 개발 생산성이 떨어지고 관리가 복잡하다</li>
+</ul>
+
+<h2 id="sharded-cluster의-구조">Sharded Cluster의 구조</h2>
+
+<ul>
+  <li>샤드 클러스터는 컨피그(Config) 서버와 라우터(Router) 서버가 필요하다
+    <ul>
+      <li>컨피그 서버: 샤드 위치 정보 등의 메타 정보를 저장</li>
+      <li>라우터 서버: 컨피그 서버의 메타 정보를 참조해 필요한 데이터가 저장된 샤드로 클라이언트의 쿼리를 전달</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/images/mongo_30.png" alt="" /></p>
+
+<ul>
+  <li>라우터는 쿼리를 전달하고, 결과를 병합해서 다시 클라이언트에게 반환한다</li>
+  <li>쿼리를 전달할 때, 쿼리의 조건에 샤딩 키가 사용된 경우 특정 샤드에만 쿼리를 요청할 수 있다</li>
+  <li>특정 샤드로만 쿼리를 요청하는 형태를 <strong>타겟 쿼리</strong>, 모든 샤드 서버로 요청하는 경우를 <strong>브로드캐스트 쿼리</strong>라고 한다</li>
+</ul>
+
+<h1 id="sharding">Sharding</h1>
+
+<ul>
+  <li>하나의 컬렉션에 저장된 도큐먼트들을 샤딩/파티셔닝/청킹해서 각 샤드가 나눠 가진다</li>
+  <li>샤딩에서 중요한 것은 <strong>샤드 키를 선정</strong>하는 것과 <strong>적절한 샤딩 알고리즘을 선택</strong>하는 것이다</li>
+  <li>대용량 컬렉션은 샤딩을 하고, 데이터가 적은 컬렉션은 굳이 샤딩할 필요 없다</li>
+</ul>
+
+<p><img src="/images/mongo_31.png" alt="" /></p>
+
+<h2 id="shard-key">Shard Key</h2>
+
+<ul>
+  <li>데이터를 샤딩하는 기준</li>
+  <li>한 번 설정한 샤드 키는 변경할 수 없다</li>
+</ul>
+
+<h2 id="sharding-algorithm">Sharding Algorithm</h2>
+
+<h3 id="range-sharding">Range Sharding</h3>
+
+<ul>
+  <li>샤드 키의 값을 기준으로 범위를 나누고, 사용자 데이터가 어느 청크에 포함될지 결정하는 샤딩 알고리즘이다</li>
+  <li>샤드 키 값이 별도의 변형 과정을 거치지 않고 그 자체로 정렬되서 각 청크의 범위가 결정된다</li>
+  <li>장점: 범위 쿼리를 타겟 쿼리로 실행할 수 있다</li>
+  <li>단점: 데이터가 균형 있게 분산되지 않을 가능성이 높다</li>
+</ul>
+
+<h3 id="hash-sharding">Hash Sharding</h3>
+
+<ul>
+  <li>샤드 키 값을 MD5 해시 함수를 사용해 청크를 할당하는 샤딩 방식이다</li>
+  <li>해시값을 계산한 다음 해시값의 앞쪽 64bit만 잘라서 정수형으로 사용한다</li>
+  <li>해시 함수를 거친 샤드 키 값은 전체 범위에 대해서 골고루 분산되는 효과를 내게 된다</li>
+</ul>
+
+<h1 id="실습">실습</h1>
+
+<h2 id="sharding-활성화">Sharding 활성화</h2>
+
+<h2 id="sharded-cluster-구축">Sharded Cluster 구축</h2>
+
+<h1 id="replca-set과-sharded-cluster">Replca Set과 Sharded Cluster</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://dataonair.or.kr/db-tech-reference/d-guide/data-practical/?mod=document&amp;uid=391">MongoDB – DATA ON-AIR - 데이터온에어</a></li>
+</ul>
 
     </div>
     <div class="post__tags_list">
@@ -824,22 +923,22 @@ Table of Contents
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=MongoDB%20Series%20[Part3]:%20MongoDB%20Query&url=http://localhost:4000/mongodb-series11"
+          href="https://twitter.com/intent/tweet?text=MongoDB%20Series%20[Part9]:%20MongoDB%20Sharded%20Cluster&url=http://localhost:4000/mongodb-series9"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/mongodb-series11"
+        <a class="share__link share__facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/mongodb-series9"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mongodb-series11&amp;media=http://localhost:4000/images/mongodb_logo.png&amp;description=MongoDB%20Series%20[Part3]:%20MongoDB%20Query"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/mongodb-series9&amp;media=http://localhost:4000/images/mongodb_logo.png&amp;description=MongoDB%20Series%20[Part9]:%20MongoDB%20Sharded%20Cluster"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mongodb-series11&title=MongoDB%20Series%20[Part3]:%20MongoDB%20Query&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/mongodb-series9&title=MongoDB%20Series%20[Part9]:%20MongoDB%20Sharded%20Cluster&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -848,18 +947,6 @@ Table of Contents
 <!--첫 번째 문단-->
 
 
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
   	
@@ -873,10 +960,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/mongodb-series1" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part1]: MongoDB 실습환경 세팅</a>
+      <a href="/mongodb-series8" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>MongoDB Series [Part8]: MongoDB Replica Set</a>
     
     
-      <a href="/mongodb-series2" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>MongoDB Series [Part2]: MongoDB CRUD(1) 기본 CRUD 연산<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">마지막 글 입니다</a>
     
   </div>
 
