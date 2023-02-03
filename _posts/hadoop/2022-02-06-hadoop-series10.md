@@ -2,7 +2,7 @@
 layout: post
 title: 'Hadoop Series [Part10]: HDFS에서 Spark 사용하기'
 description: 
-date: 2022-02-05 15:01:35 +0300
+date: 2022-02-06 15:01:35 +0300
 image: '/images/hadoop_logo.png'
 logo_image: '/images/hadoop_logo.png'
 categories: data_engineering

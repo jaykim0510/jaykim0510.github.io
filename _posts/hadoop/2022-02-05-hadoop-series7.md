@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Hadoop Series [Part4]: Hadoop Hive 실습'
+title: 'Hadoop Series [Part7]: Hadoop Hive(2) 실습'
 description: 
 date: 2022-02-05 15:01:35 +0300
 image: '/images/hadoop_logo.png'
