@@ -201,6 +201,22 @@ hadoop fs -setrep 2 /dir1
 ```
 
 
+# HDFS 궁금한 것
+
+## Streaming Data Access가 무슨 뜻일까
+
+HDFS is built around the idea that the most efficient data processing pattern is write-once, read-many-times pattern. A dataset is typically generated or copied from source, then various analyses are performed on that dataset over time. Each analysis will involve a large proportion, if not all, of the dataset, so the time to read the whole dataset is more important than the latency in reading the first record.  
+
+IT stores data in large blocks -- like 64 MB. The idea is that you want your data layed out sequentially on your hard drive, reducing the number of seeks your hard drive has to do to read data.  
+
+In addition, HDFS is a user-space file system, so there is a single central name node that contains an in-memory directory of where all of the blocks (and their replicas) are stored across the cluster. Files are expected to be large (say 1 GB or more), and are split up into several blocks. In order to read a file, the code asks the name node for a list of blocks and then reads the blocks sequentially.  
+
+The data is "streamed" off the hard drive by maintaining the maximum I/O rate that the drive can sustain for these large blocks of data.  
+
+## 128MB 보다 훨씬 더 크게 가져가지는 않는 이유는?
+
+
+
 # 참고
 
 - [[토크ON세미나] 아파치 하둡](https://www.youtube.com/watch?v=OPodJE1jYbg){:target="_blank"}

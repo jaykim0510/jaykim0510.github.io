@@ -21,4 +21,5 @@ tags: Hadoop
 
 # 참고
 
+- [GURU99, Hive Tutorial for Beginners: Learn with Examples in 3 Days](https://www.guru99.com/hive-tutorials.html)
 - [ETL 성능 향상을 위한 몇 가지 팁들](https://danbi-ncsoft.github.io/works/2021/11/05/etl-performace-tips.html)
