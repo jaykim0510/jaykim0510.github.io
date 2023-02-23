@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '통계를 이용한 데이터 분석 [Part4]: Confirmatory Data Analysis'
+title:  '통계를 이용한 데이터 분석 [Part4]: 통계적 머신러닝'
 description: 
 date:   2022-09-07 15:01:35 +0300
 image:  '/images/probability_logo.jpeg'
