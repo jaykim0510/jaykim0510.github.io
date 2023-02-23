@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '데이터 엔지니어링을 위한 통계 [Part1]: Intro'
+title:  'Statistics and Probability Series [Part1]: Intro'
 description: 
 date:   2022-09-06 15:01:35 +0300
 image:  '/images/probability_logo.jpeg'
