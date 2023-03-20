@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Statistics and Probability Series [Part3]: 확률'
+title:  'Statistics and Probability Series [Part3]: 확률(1) 확률 구하기'
 description: 
 date:   2022-09-06 15:01:35 +0300
 image:  '/images/probability_logo.jpeg'
@@ -129,6 +129,27 @@ tags: Statistics
 ![](/images/statistics_48.png)
 
 
+## 결합 확률(Joint Probability)
+
+- 결합 확률(Joint probability)은 2개의 사건이 동시에 일어나는 확률
+
+![](/images/statistics_53.png)
+
+## 조건부 확률(Conditional Probability)
+
+- 사건 A와 B가 독립사건이 아닌 경우, 두 사건이 모두 일어날 확률은 조건부 확률로 나타낸다
+- 사건 A가 발생했을 때 사건 B가 발생할 조건부 확률을 `P(B|A)` 로 나타낸다
+- 조건부확률을 이용하면, 원인 A로 인해 발생한 결과 B의 확률을 통해 역으로 일어난 결과 B에 대해 그 원인이 A일 확률을 구할 수 있다
+- ex. 전체 남자중에 색맹의 비율을 알면, 역으로 색맹인 사람에 대해 그 사람의 성별이 남자일 확률을 알 수 있다
+
+![](/images/statistics_52.png)
+
+## 주변 확률(Marginal Probability)
+
+- 결합 확률을 하나의 확률 변수에 대해 적분함으로써 다른 확률 변수에 관한 확률로 나타낸다
+
+![](/images/statistics_54.png)
+
 ## 배반사건과 독립사건
 
 - 배반사건: 두 사건의 교집합이 공집합인 경우
@@ -142,11 +163,3 @@ tags: Statistics
 
 
 
-## 조건부확률
-
-- 사건 A와 B가 독립사건이 아닌 경우, 두 사건이 모두 일어날 확률은 조건부 확률로 나타낸다
-- 사건 A가 발생했을 때 사건 B가 발생할 조건부 확률을 `P(B|A)` 로 나타낸다
-- 조건부확률을 이용하면, 원인 A로 인해 발생한 결과 B의 확률을 통해 역으로 일어난 결과 B에 대해 그 원인이 A일 확률을 구할 수 있다
-- ex. 전체 남자중에 색맹의 비율을 알면, 역으로 색맹인 사람에 대해 그 사람의 성별이 남자일 확률을 알 수 있다
-
-![](/images/statistics_52.png)

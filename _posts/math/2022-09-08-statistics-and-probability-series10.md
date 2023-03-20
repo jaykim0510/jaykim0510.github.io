@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  '통계를 이용한 데이터 분석 [Part2]: 회귀와 예측'
+title:  '통계를 이용한 데이터 분석 [Part3]: 분류'
 description: 
-date:   2022-09-07 15:01:35 +0300
+date:   2022-09-08 15:01:35 +0300
 image:  '/images/probability_logo.jpeg'
 logo_image:  '/images/probability_logo.jpeg'
 categories: Math
