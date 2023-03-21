@@ -369,6 +369,8 @@ Table of Contents
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -568,6 +570,8 @@ Table of Contents
   <li><a href="#권한-삭제" id="markdown-toc-권한-삭제">권한 삭제</a></li>
   <li><a href="#유저-삭제" id="markdown-toc-유저-삭제">유저 삭제</a></li>
   <li><a href="#현재-서버-사용중인-유저" id="markdown-toc-현재-서버-사용중인-유저">현재 서버 사용중인 유저</a></li>
+  <li><a href="#root-비밀번호-분실시" id="markdown-toc-root-비밀번호-분실시">root 비밀번호 분실시</a></li>
+  <li><a href="#mysql-서버-실행" id="markdown-toc-mysql-서버-실행">MySQL 서버 실행</a></li>
 </ul>
 
 <hr />
@@ -575,7 +579,7 @@ Table of Contents
 <h1 id="유저-목록">유저 목록</h1>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">USE</span> <span class="n">mysql</span><span class="p">;</span>
-<span class="k">SELECT</span> <span class="k">user</span><span class="p">,</span> <span class="n">localhost</span> <span class="k">FROM</span> <span class="k">user</span><span class="p">;</span>
+<span class="k">SELECT</span> <span class="k">user</span> <span class="k">FROM</span> <span class="k">user</span><span class="p">;</span>
 </code></pre></div></div>
 
 <h1 id="유저-생성하기">유저 생성하기</h1>
@@ -616,6 +620,56 @@ Table of Contents
 <h1 id="현재-서버-사용중인-유저">현재 서버 사용중인 유저</h1>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">CURRENT_USER</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h1 id="root-비밀번호-분실시">root 비밀번호 분실시</h1>
+
+<p>https://harrydony.tistory.com/873 참고</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># 안전모드로 데몬 실행 (비밀번호 없이 mysql 접속 가능)
+mysqld_safe --skip-grant-tables &amp;
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql -u root mysql
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>UPDATE user SET authentication_string=null WHERE user='root';
+flush privileges;
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>exit;
+mysql -u root
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY '변경할 패스워드';
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ps aux | grep mysql
+kill -9 '안전모드로 켜져있는 mysql의 PID'
+</code></pre></div></div>
+
+<h1 id="mysql-서버-실행">MySQL 서버 실행</h1>
+
+<p>https://velog.io/@taelee/mysql-%EC%84%9C%EB%B2%84-%EC%8B%9C%EC%9E%91-%EB%98%90%EB%8A%94-%EC%9E%AC%EC%8B%9C%EC%9E%91-%ED%95%98%EA%B8%B0MAC</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MAC
+
+- mysql 서버 시작
+    mysql.server start
+- mysql 서버 중지
+    mysql.server stop
+- mysql 서버 재시작
+    mysql.server restart
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Linux
+
+- mysql 서버 시작
+    service mysql start
+    systemctl start mysql.service
+- mysql 서버 재시작
+    service mysql restart
+    systemctl restart mysql.service
 </code></pre></div></div>
 
     </div>
@@ -1056,6 +1110,13 @@ Table of Contents
             
                 
               
+            
+            
+            
+      
+            
+      
+            
             
             
             

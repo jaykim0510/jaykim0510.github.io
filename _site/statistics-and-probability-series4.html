@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>데이터 엔지니어링을 위한 통계 [Part4]: 추측 통계(1) 추정</title>
+  <title>Statistics and Probability Series [Part4]: 확률(2) 확률 분포</title>
   <meta name='description' content='Jay Tech personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/statistics-and-probability-series4">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="데이터 엔지니어링을 위한 통계 [Part4]: 추측 통계(1) 추정 – Code Museum">
+  <meta name="twitter:title" content="Statistics and Probability Series [Part4]: 확률(2) 확률 분포 – Code Museum">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/probability_logo.jpeg">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="데이터 엔지니어링을 위한 통계 [Part4]: 추측 통계(1) 추정 – Code Museum">
+  <meta property="og:title" content="Statistics and Probability Series [Part4]: 확률(2) 확률 분포 – Code Museum">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/probability_logo.jpeg">
@@ -367,6 +367,8 @@
               
                 
               
+                
+              
               
               <li class="nav__item nav__item-icon">
                 <div class="toggle-theme">
@@ -449,7 +451,7 @@
       
       <div class="col col-5 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/probability_logo.jpeg" alt="데이터 엔지니어링을 위한 통계 [Part4]: 추측 통계(1) 추정">
+          <img class="lazy" data-src="/images/probability_logo.jpeg" alt="Statistics and Probability Series [Part4]: 확률(2) 확률 분포">
         </div>
       </div>
       
@@ -470,7 +472,7 @@
               </div>
             
  
-          <h1 class="post__title">데이터 엔지니어링을 위한 통계 [Part4]: 추측 통계(1) 추정</h1>
+          <h1 class="post__title">Statistics and Probability Series [Part4]: 확률(2) 확률 분포</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -505,6 +507,10 @@
   
 
   
+
+  
+
+  
   	
   	
   	
@@ -516,10 +522,10 @@
 
   <div class="post_pagination">
     
-      <a href="/statistics-and-probability-series3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>데이터 엔지니어링을 위한 통계 [Part3]: 확률</a>
+      <a href="/statistics-and-probability-series3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Statistics and Probability Series [Part3]: 확률(1) 확률 구하기</a>
     
     
-      <a href="/statistics-and-probability-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>데이터 엔지니어링을 위한 통계 [Part5]: 베이지안 통계<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/statistics-and-probability-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Statistics and Probability Series [Part5]: 추측 통계(1): 추정(Estimation)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -561,8 +567,6 @@
       <li><a href="#표본평균의-평균과-표준편차" id="markdown-toc-표본평균의-평균과-표준편차">표본평균의 평균과 표준편차</a></li>
       <li><a href="#큰수의-법칙" id="markdown-toc-큰수의-법칙">큰수의 법칙</a></li>
       <li><a href="#중심극한정리" id="markdown-toc-중심극한정리">중심극한정리</a></li>
-      <li><a href="#점추정" id="markdown-toc-점추정">점추정</a></li>
-      <li><a href="#구간추정" id="markdown-toc-구간추정">구간추정</a></li>
     </ul>
   </li>
 </ul>
@@ -800,7 +804,7 @@
   <li>모집단의 어떤 변량에 관한 분포를 모집단 분포라하고, 모집단 분포를 특징짓는 상수를 모수(모평균, 모분산, 모표준편차 등)라고 한다</li>
   <li>모집단에 관한 정보는 이미 확정되어 있다</li>
   <li>표본집단은 일반적으로 매번 다르다. 그래서 E(X)도 일반적으로 매번 다르다</li>
-  <li>E(X)는 sigma(X<sub>k</sub>*p<sub>k</sub>) 이므로 E(X)도 확률변수가 될 수 있다</li>
+  <li>E(X)는 ∑(X<sub>k</sub>*p<sub>k</sub>) 이므로 E(X)도 확률변수가 될 수 있다</li>
 </ul>
 
 <h2 id="표본평균의-평균과-표준편차">표본평균의 평균과 표준편차</h2>
@@ -809,7 +813,7 @@
   <li>표본평균의 평균, 분산 그리고 표준편차는 아래와 같다</li>
   <li>표본 크기 n이 커질수록 표본평균의 표준편차가 작아진다</li>
   <li>(모집단에서 추출을 충분히 많이 하면, 표본의 평균이 표본집단마다 거의 같아진다는 의미이다)</li>
-  <li>(m은 모평균, sigma는 모표준편차)</li>
+  <li>(m은 모평균, σ는 모표준편차)</li>
 </ul>
 
 <p><img src="/images/statistics_31.png" alt="" /></p>
@@ -833,49 +837,9 @@
 <h2 id="중심극한정리">중심극한정리</h2>
 
 <ul>
-  <li>표본평균은 기대값 m, 분산이 sigma<sup>2</sup>/n 인 정규분포를 근사적으로 따른다</li>
+  <li>표본평균은 기대값 m, 분산이 σ<sup>2</sup>/n 인 정규분포를 근사적으로 따른다</li>
   <li>중심극한정리는 큰수의 법칙 내용을 포함하는 정리 (큰 수의 법칙을 보다 정밀하게 표현한 정리)</li>
   <li>모집단이 어떤 분포라도 표본평균의 분포는 정규분포로 가까워진다</li>
-</ul>
-
-<h2 id="점추정">점추정</h2>
-
-<ul>
-  <li>점추정: 표본에서 구한 추정값으로부터 모수값을 추정하는 방법</li>
-  <li>(즉, 표본 평균을 모평균으로, 표본 분산을 모분산으로 생각할 수 있을까?)</li>
-  <li>이에 대해 “예”라고 대답하기 위해서는 두 가지 조건을 만족해야 한다
-    <ul>
-      <li>비편향성: 기대값이 모수값과 같다
-        <ul>
-          <li>(표본평균의 평균이 모평균과 같으면 표본평균을 모평균이라고 할 수 있다)</li>
-          <li>(표본분산의 평균이 모분산과 같으면 표본분산을 모분산이라고 할 수 있다)</li>
-        </ul>
-      </li>
-      <li>일치성: 표본의 크기가 커지면 모수값에 가까워진다</li>
-    </ul>
-  </li>
-  <li>위에서 표본평균의 평균은 m 이고, 분산은 sigma&lt;sup2&lt;/sup&gt;/n 이라고 배웠으므로, 표본평균을 모평균이라고 할 수 있다</li>
-  <li>이제 표본분산의 평균이 sigma<sup>2</sup>과 같은지 확인해보자. 계산하면 (n-1/n)sigma<sup>2</sup>이 나온다</li>
-  <li>그래서 비편향성을 가지지 않는다. 그래서 n/n-1 을 곱해 보정한 값을 비편향 분산이라고 하고, 보통 모분산을 (n/n-1)*S<sup>2</sup> 으로 한다 (S<sup>2</sup>는 표본분산)</li>
-</ul>
-
-<p><img src="/images/statistics_32.png" alt="" /></p>
-
-<ul>
-  <li>점추정은 값이 딱 나와서 명료하지만 표본의 크기에 의한 오차를 고려할 수 없어서 한계가 있다</li>
-</ul>
-
-<h2 id="구간추정">구간추정</h2>
-
-<ul>
-  <li>추정한 모수값이 특정 범위내에 있을거라고 (ex. 95, 99, 99.9)%의 신뢰도를 가지고 추정할 수 있다</li>
-</ul>
-
-<p><img src="/images/statistics_33.png" alt="" /></p>
-
-<ul>
-  <li>근데 실제로 추정을 수행할 때는 모분산도 모르는 경우가 많다</li>
-  <li>모분산을 사용하지 않고 모평균을 구간추정하려면 어떻게 해야할까?</li>
 </ul>
 
     </div>
@@ -1162,7 +1126,7 @@
     <ul class="share__list list-reset">
       <li class="share__item">
         <a class="share__link share__twitter"
-          href="https://twitter.com/intent/tweet?text=%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%86%B5%EA%B3%84%20[Part4]:%20%EC%B6%94%EC%B8%A1%20%ED%86%B5%EA%B3%84(1)%20%EC%B6%94%EC%A0%95&url=http://localhost:4000/statistics-and-probability-series4"
+          href="https://twitter.com/intent/tweet?text=Statistics%20and%20Probability%20Series%20[Part4]:%20%ED%99%95%EB%A5%A0(2)%20%ED%99%95%EB%A5%A0%20%EB%B6%84%ED%8F%AC&url=http://localhost:4000/statistics-and-probability-series4"
           onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
           title="Share on Twitter" rel="nofollow"><i class="ion ion-logo-twitter"></i></a>
       </li>
@@ -1172,12 +1136,12 @@
           title="Share on Facebook" rel="nofollow"><i class="ion ion-logo-facebook"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/statistics-and-probability-series4&amp;media=http://localhost:4000/images/probability_logo.jpeg&amp;description=%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%86%B5%EA%B3%84%20[Part4]:%20%EC%B6%94%EC%B8%A1%20%ED%86%B5%EA%B3%84(1)%20%EC%B6%94%EC%A0%95"
+        <a class="share__link share__pinterest" href="http://pinterest.com/pin/create/button/?url=http://localhost:4000/statistics-and-probability-series4&amp;media=http://localhost:4000/images/probability_logo.jpeg&amp;description=Statistics%20and%20Probability%20Series%20[Part4]:%20%ED%99%95%EB%A5%A0(2)%20%ED%99%95%EB%A5%A0%20%EB%B6%84%ED%8F%AC"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;" title="Share on Pinterest"
         rel="nofollow"><i class="ion ion-logo-pinterest"></i></a>
       </li>
       <li class="share__item">
-        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/statistics-and-probability-series4&title=%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81%EC%9D%84%20%EC%9C%84%ED%95%9C%20%ED%86%B5%EA%B3%84%20[Part4]:%20%EC%B6%94%EC%B8%A1%20%ED%86%B5%EA%B3%84(1)%20%EC%B6%94%EC%A0%95&summary=&source=Code%20Museum"
+        <a class="share__link share__linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http://localhost:4000/statistics-and-probability-series4&title=Statistics%20and%20Probability%20Series%20[Part4]:%20%ED%99%95%EB%A5%A0(2)%20%ED%99%95%EB%A5%A0%20%EB%B6%84%ED%8F%AC&summary=&source=Code%20Museum"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn" rel="nofollow"><i class="ion ion-logo-linkedin"></i></a>
       </li>
     </ul>
@@ -1186,6 +1150,10 @@
 <!--첫 번째 문단-->
 
 
+
+  
+
+  
 
   
 
@@ -1203,10 +1171,10 @@
 
   <div class="post_pagination">
     
-      <a href="/statistics-and-probability-series3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>데이터 엔지니어링을 위한 통계 [Part3]: 확률</a>
+      <a href="/statistics-and-probability-series3" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Statistics and Probability Series [Part3]: 확률(1) 확률 구하기</a>
     
     
-      <a href="/statistics-and-probability-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>데이터 엔지니어링을 위한 통계 [Part5]: 베이지안 통계<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/statistics-and-probability-series5" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Statistics and Probability Series [Part5]: 추측 통계(1): 추정(Estimation)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1261,6 +1229,38 @@
             
       
             
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-09-07T21:01:35+09:00">07 Sep 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/statistics-and-probability-series8">
+        <img class="lazy" data-src="/images/probability_logo.jpeg" alt="통계를 이용한 데이터 분석 [Part8]: 회귀와 예측">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/statistics-and-probability-series8">통계를 이용한 데이터 분석 [Part8]: 회귀와 예측</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
             
             
             
@@ -1289,6 +1289,52 @@
             
       
             
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article col col-4 col-d-6 col-t-12">
+  <div class="article__inner">
+
+    <div class="article__head">
+      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
+
+      
+
+      
+      <a class="article__image" href="/statistics-and-probability-series7">
+        <img class="lazy" data-src="/images/probability_logo.jpeg" alt="Statistics and Probability Series [Part7]: 베이지안 통계">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="/statistics-and-probability-series7">Statistics and Probability Series [Part7]: 베이지안 통계</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
             
             
             
@@ -1307,7 +1353,7 @@
 
       
       <a class="article__image" href="/statistics-and-probability-series6">
-        <img class="lazy" data-src="/images/probability_logo.jpeg" alt="Statistics and Probability Series [Part6]: 가설검정">
+        <img class="lazy" data-src="/images/probability_logo.jpeg" alt="Statistics and Probability Series [Part6]: 추측 통계(2): 검정(Testing)">
       </a>
       
 
@@ -1316,92 +1362,7 @@
     <div class="article__content">
 
       <h2 class="article__title">
-        <a href="/statistics-and-probability-series6">Statistics and Probability Series [Part6]: 가설검정</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/statistics-and-probability-series5">
-        <img class="lazy" data-src="/images/probability_logo.jpeg" alt="데이터 엔지니어링을 위한 통계 [Part5]: 베이지안 통계">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/statistics-and-probability-series5">데이터 엔지니어링을 위한 통계 [Part5]: 베이지안 통계</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article col col-4 col-d-6 col-t-12">
-  <div class="article__inner">
-
-    <div class="article__head">
-      <time class="article__date" datetime="2022-09-06T21:01:35+09:00">06 Sep 2022</time>
-
-      
-
-      
-      <a class="article__image" href="/statistics-and-probability-series3">
-        <img class="lazy" data-src="/images/probability_logo.jpeg" alt="데이터 엔지니어링을 위한 통계 [Part3]: 확률">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-
-      <h2 class="article__title">
-        <a href="/statistics-and-probability-series3">데이터 엔지니어링을 위한 통계 [Part3]: 확률</a>
+        <a href="/statistics-and-probability-series6">Statistics and Probability Series [Part6]: 추측 통계(2): 검정(Testing)</a>
       </h2>
 
       
