@@ -6,7 +6,7 @@ date:   2021-04-04 15:01:35 +0300
 image:  '/images/cnn_3.png'
 logo_image:  '/images/ai_logo.jpeg'
 categories: AI
-tags: DL_theory
+tags: Deep_Learning
 ---
 ---
 
