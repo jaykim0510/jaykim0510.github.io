@@ -2,7 +2,7 @@
 layout: post
 title:  'Javascript Series [Part11]: Javascript 웹개발'
 description:
-date:   2022-04-03 15:01:35 +0300
+date:   2022-04-04 15:01:35 +0300
 image:  '/images/js_logo.jpg'
 logo_image:  '/images/javascript_logo.png'
 categories: programming_language
