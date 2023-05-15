@@ -19,6 +19,8 @@ tags: Javascript
 
 ---
 
+- 비동기 프로그래밍(42장), 프로미스(45장), 제너레이터와 async/await(46장)
+
 ```js
 // 실행하면 Start -> End -> result 순으로 출력됨
 // then은 콜백함수를 등록까지만 함

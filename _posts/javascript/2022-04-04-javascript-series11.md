@@ -17,6 +17,8 @@ tags: Javascript
 
 ---
 
+- 브라우저의 렌더링 과정(38장), DOM(39장), 이벤트(40장), Ajax(41장), REST API(44장)
+
 ```js
 // request 보내고, response 리턴 받는 함수
 fetch('https://www.google.co.kr')

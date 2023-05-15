@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Javascript Series [Part5]: Javascript 제어문과 반복문'
+title:  'Javascript Series [Part5]: Javascript 제어문'
 description: 이 시리즈는 이웅모님의 모던 자바스크립트 Deep Dive 책을 읽고 정리한 내용입니다.
 date:   2022-04-01 15:01:35 +0300
 image:  '/images/js_logo.jpg'
@@ -18,6 +18,8 @@ tags: Javascript
 ---
 
 # 제어문
+
+## 조건문
 
 ```js
 let temp = 0;
@@ -66,7 +68,7 @@ passCheck(95);
 ```
 
 
-# 반복문
+## 반복문
 
 ```js
 for (let i = 1; i <= 10; i++) {
@@ -109,3 +111,20 @@ for (let i = 0; i < 100; i++) {
     console.log(`${i}`);
 }
 ```
+
+```js
+// do-while문은 코드 블럭을 먼저 실행하고 조건식을 평가한다
+// 따라서 코드 블록은 무조건 한 번 이상 실행된다
+
+let count = 0;
+
+do {
+    console.log(count);
+    count++;
+} while (count < 0);
+
+// 0
+// 0 보다 작으면 출력하는 반복문이어도, 조건을 확인하기 전에 한 번은 실행한다
+```
+
+# 에러 처리
