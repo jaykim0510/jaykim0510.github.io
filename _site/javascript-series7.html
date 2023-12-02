@@ -164,11 +164,21 @@
                 
               
                 
+              
+                
                   
                   <li class="nav__item">
                     <a href="/gallery/" class="nav__link">Gallery</a>
                   </li>
                   
+                
+              
+                
+              
+                
+              
+                
+              
                 
               
                 
@@ -509,6 +519,12 @@
   
 
   
+
+  
+
+  
+
+  
   	
   	
   	
@@ -520,7 +536,7 @@
 
   <div class="post_pagination">
     
-      <a href="/javascript-series12" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Javascript Series [Part11]: Javascript 웹개발(2) 비동기 실행</a>
+      <a href="/javascript-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Javascript Series [Part6]: Javascript 함수와 스코프</a>
     
     
       <a href="/javascript-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Javascript Series [Part8]: Javascript 배열<i class="ion ion-ios-arrow-forward"></i></a>
@@ -533,6 +549,16 @@
 
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#객체" id="markdown-toc-객체">객체</a>    <ul>
+      <li><a href="#객체-생성-방법" id="markdown-toc-객체-생성-방법">객체 생성 방법</a>        <ul>
+          <li><a href="#객체-리터럴" id="markdown-toc-객체-리터럴">객체 리터럴</a></li>
+          <li><a href="#프로퍼티" id="markdown-toc-프로퍼티">프로퍼티</a></li>
+          <li><a href="#es6에-추가된-기능" id="markdown-toc-es6에-추가된-기능">ES6에 추가된 기능</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#원시-값과-객체의-비교" id="markdown-toc-원시-값과-객체의-비교">원시 값과 객체의 비교</a></li>
   <li><a href="#date-객체" id="markdown-toc-date-객체">Date 객체</a></li>
   <li><a href="#math-객체" id="markdown-toc-math-객체">Math 객체</a></li>
 </ul>
@@ -540,82 +566,111 @@
 <hr />
 
 <ul>
+  <li>객체 리터럴(10장), 원시 값과 객체의 비교(11장), 프로퍼티 어트리뷰트(16장), 생성자 함수에 의한 객체 생성(17장), 함수와 일급 객체 (18장), 프로토타입(19장), 빌트인 객체(21장), 클래스(25장)</li>
   <li>자바스크립트의 모든 것이 객체다</li>
 </ul>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-<span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">,</span>
-    <span class="dl">'</span><span class="s1">birth-day</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1999-09-09</span><span class="dl">'</span><span class="p">,</span>
-    <span class="dl">'</span><span class="s1">home location</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">busan</span><span class="dl">'</span><span class="p">,</span>
-    <span class="na">age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
-    <span class="na">live</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="na">previous</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="na">family</span><span class="p">:</span> <span class="p">{</span>
-        <span class="na">mother</span><span class="p">:</span> <span class="dl">'</span><span class="s1">yoon</span><span class="dl">'</span><span class="p">,</span>
-        <span class="na">father</span><span class="p">:</span> <span class="dl">'</span><span class="s1">kim</span><span class="dl">'</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-
-<span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">live</span><span class="dl">'</span><span class="p">;</span>
-
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">family</span><span class="p">.</span><span class="nx">father</span><span class="p">);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">[</span><span class="dl">'</span><span class="s1">birth-day</span><span class="dl">'</span><span class="p">]);</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">[</span><span class="nx">y</span><span class="p">]);</span>
-</code></pre></div></div>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">x</span><span class="p">[</span><span class="dl">'</span><span class="s1">age</span><span class="dl">'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
-</code></pre></div></div>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">delete</span> <span class="nx">x</span><span class="p">.</span><span class="nx">age</span><span class="p">;</span>
-<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span>
-<span class="o">-----------------------</span>
-<span class="c1">// undefined</span>
-</code></pre></div></div>
-
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">live</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">x</span><span class="p">);</span>
-<span class="o">-------------------------</span>
-<span class="c1">// true</span>
-</code></pre></div></div>
+<h1 id="객체">객체</h1>
 
 <ul>
-  <li>메서드</li>
+  <li>자바스크립틑 객체 기반의 프로그래밍 언어이며, 자바스크립트에서 원시 값을 제외한 나머지 값은 모두 객체다 (함수, 배열, 정규 표현식 등)</li>
+  <li>객체는 다양한 타입을 하나의 단위로 구성한 자료구조</li>
+  <li>객체는 값을 변경하기 위해 재할당이 필요 없다 (mutable value)</li>
+  <li>객체는 크게 프로퍼티와 메서드로 이루어진다</li>
 </ul>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">,</span>
-    <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Hello </span><span class="p">${</span><span class="nx">na</span><span class="p">}</span><span class="s2">!!`</span><span class="p">)</span>
-    <span class="p">}</span>
-
-<span class="p">};</span>
-
-<span class="nx">x</span><span class="p">.</span><span class="nx">sayHello</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
-</code></pre></div></div>
+<h2 id="객체-생성-방법">객체 생성 방법</h2>
 
 <ul>
-  <li>for in 반복문</li>
+  <li>자바스크립트는 프로토타입 기반 객체지향 언어이다 -&gt; 다양한 객체 생성 방법을 지원한다</li>
+  <li>객체 리터럴, Object 생성자 함수, 생성자 함수, Object.create 메서드</li>
+  <li>클래스(ES6)</li>
 </ul>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mike</span><span class="dl">'</span><span class="p">,</span>
-    <span class="na">age</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
-    <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">na</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Hello </span><span class="p">${</span><span class="nx">na</span><span class="p">}</span><span class="s2">!!`</span><span class="p">)</span>
-    <span class="p">}</span>
+<h3 id="객체-리터럴">객체 리터럴</h3>
 
+<ul>
+  <li>가장 일반적이고 간단한 방법이다</li>
+  <li>변수에 할당되는 시점에 자바스크립트 엔진이 객체 리터럴을 해석하고 객체를 생성한다</li>
+  <li>중괄호를 이용해 정의한다 (뒤에 세미콜론 붙여야 된다. 단순 코드 블록은 뒤에 세미콜론 안 붙인다)</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Lee</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Hi My name is </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+    <span class="p">}</span>
 <span class="p">};</span>
 
-
-<span class="k">for</span> <span class="p">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`</span><span class="p">${</span><span class="nx">prop</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="o">----------------------------</span>
-<span class="c1">// name</span>
-<span class="c1">// age</span>
-<span class="c1">// sayHello</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">person</span><span class="p">);</span> <span class="c1">// object</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">);</span> <span class="c1">// {name: "Lee", sayHello: f}</span>
 </code></pre></div></div>
+
+<h3 id="프로퍼티">프로퍼티</h3>
+
+<ul>
+  <li>프로퍼티를 나열할 때는 쉼표로 구분한다</li>
+  <li>키(key)값은 네이밍 규칙을 준수하면 따옴표로 감싸지 않아도 된다 (위의 코드에서 <code class="language-plaintext highlighter-rouge">name</code>을 보면 따옴표로 감싸지 않았다)</li>
+  <li>네이밍 규칙을 따르지 않으면 따옴표로 감싸야 한다 (ex. <code class="language-plaintext highlighter-rouge">'last-name'</code>, <code class="language-plaintext highlighter-rouge">'last name'</code>)</li>
+  <li>객체에 존재하지 않는 프로퍼티에 접근하면 <code class="language-plaintext highlighter-rouge">undefined</code>를 반환한다 (<code class="language-plaintext highlighter-rouge">ReferenceError</code>가 발생하지 않는다)</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Jay Kim</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">last-name</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Kim</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">'</span><span class="s1">first name</span><span class="dl">'</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Jay</span><span class="dl">"</span>
+<span class="p">};</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// Jay Kim</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">[</span><span class="dl">"</span><span class="s2">last-name</span><span class="dl">"</span><span class="p">]);</span> <span class="c1">// Kim</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">[</span><span class="dl">"</span><span class="s2">first name</span><span class="dl">"</span><span class="p">]);</span> <span class="c1">//Jay</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span> <span class="c1">//undefiend</span>
+
+
+<span class="nx">person</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">24</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span> <span class="c1">// 24</span>
+
+<span class="k">delete</span> <span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">)</span> <span class="c1">// undefined</span>
+</code></pre></div></div>
+
+<h3 id="es6에-추가된-기능">ES6에 추가된 기능</h3>
+
+<ul>
+  <li>프로퍼티 축약 표현</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 프로퍼티 키와 사용할 변수의 이름이 같으면 프로퍼티 키를 생략해도 자동 생성된다</span>
+<span class="kd">const</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">};</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="c1">// { x: 1, y: 2 }</span>
+
+
+<span class="c1">// 문자열로 평가되는 표현식을 사용하면 프로퍼티 키를 동적으로 생성할 수 있다</span>
+<span class="kd">const</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">prop</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">[</span><span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}</span><span class="s2">-</span><span class="p">${</span><span class="o">++</span><span class="nx">i</span><span class="p">}</span><span class="s2">`</span><span class="p">]:</span> <span class="nx">i</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}</span><span class="s2">-</span><span class="p">${</span><span class="o">++</span><span class="nx">i</span><span class="p">}</span><span class="s2">`</span><span class="p">]:</span> <span class="nx">i</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}</span><span class="s2">-</span><span class="p">${</span><span class="o">++</span><span class="nx">i</span><span class="p">}</span><span class="s2">`</span><span class="p">]:</span> <span class="nx">i</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span> <span class="c1">// { 'prop-1': 1, 'prop-2': 2, 'prop-3': 3 }</span>
+
+
+<span class="c1">// 메서드를 정의할 때 function 키워드를 생략한 축약 표현을 쓸 수 있다</span>
+<span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Lee</span><span class="dl">'</span><span class="p">,</span>
+    <span class="nx">sayHi</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hi</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">obj</span><span class="p">.</span><span class="nx">sayHi</span><span class="p">();</span>
+</code></pre></div></div>
+
+<h1 id="원시-값과-객체의-비교">원시 값과 객체의 비교</h1>
 
 <h1 id="date-객체">Date 객체</h1>
 
@@ -704,6 +759,11 @@
           
             
               
+              <li class="tag__item"><a href="/FastAPI" class="post_tag_list">#FastAPI</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/Finance" class="post_tag_list">#Finance</a></li>
             
           
@@ -774,7 +834,17 @@
           
             
               
+              <li class="tag__item"><a href="/NestJS" class="post_tag_list">#NestJS</a></li>
+            
+          
+            
+              
               <li class="tag__item"><a href="/Network" class="post_tag_list">#Network</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/NextJS" class="post_tag_list">#NextJS</a></li>
             
           
             
@@ -795,6 +865,11 @@
             
               
               <li class="tag__item"><a href="/Pytorch" class="post_tag_list">#Pytorch</a></li>
+            
+          
+            
+              
+              <li class="tag__item"><a href="/Redis" class="post_tag_list">#Redis</a></li>
             
           
             
@@ -965,6 +1040,12 @@
   
 
   
+
+  
+
+  
+
+  
   	
   	
   	
@@ -976,7 +1057,7 @@
 
   <div class="post_pagination">
     
-      <a href="/javascript-series12" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Javascript Series [Part11]: Javascript 웹개발(2) 비동기 실행</a>
+      <a href="/javascript-series6" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next">이전 글  &nbsp</span>Javascript Series [Part6]: Javascript 함수와 스코프</a>
     
     
       <a href="/javascript-series8" class="pagination__next pagination__item"><span class="prev_next">다음 글  &nbsp</span>Javascript Series [Part8]: Javascript 배열<i class="ion ion-ios-arrow-forward"></i></a>
@@ -1021,6 +1102,34 @@
           <div class="row">
 
           
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+            
             
             
       

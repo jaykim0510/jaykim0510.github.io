@@ -1,0 +1,156 @@
+I"	@<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#객체" id="markdown-toc-객체">객체</a>    <ul>
+      <li><a href="#객체-생성-방법" id="markdown-toc-객체-생성-방법">객체 생성 방법</a>        <ul>
+          <li><a href="#객체-리터럴" id="markdown-toc-객체-리터럴">객체 리터럴</a></li>
+          <li><a href="#프로퍼티" id="markdown-toc-프로퍼티">프로퍼티</a></li>
+          <li><a href="#es6에-추가된-기능" id="markdown-toc-es6에-추가된-기능">ES6에 추가된 기능</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#원시-값과-객체의-비교" id="markdown-toc-원시-값과-객체의-비교">원시 값과 객체의 비교</a></li>
+  <li><a href="#date-객체" id="markdown-toc-date-객체">Date 객체</a></li>
+  <li><a href="#math-객체" id="markdown-toc-math-객체">Math 객체</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>객체 리터럴(10장), 원시 값과 객체의 비교(11장), 프로퍼티 어트리뷰트(16장), 생성자 함수에 의한 객체 생성(17장), 함수와 일급 객체 (18장), 프로토타입(19장), 빌트인 객체(21장), 클래스(25장)</li>
+  <li>자바스크립트의 모든 것이 객체다</li>
+</ul>
+
+<h1 id="객체">객체</h1>
+
+<ul>
+  <li>자바스크립틑 객체 기반의 프로그래밍 언어이며, 자바스크립트에서 원시 값을 제외한 나머지 값은 모두 객체다 (함수, 배열, 정규 표현식 등)</li>
+  <li>객체는 다양한 타입을 하나의 단위로 구성한 자료구조</li>
+  <li>객체는 값을 변경하기 위해 재할당이 필요 없다 (mutable value)</li>
+  <li>객체는 크게 프로퍼티와 메서드로 이루어진다</li>
+</ul>
+
+<h2 id="객체-생성-방법">객체 생성 방법</h2>
+
+<ul>
+  <li>자바스크립트는 프로토타입 기반 객체지향 언어이다 -&gt; 다양한 객체 생성 방법을 지원한다</li>
+  <li>객체 리터럴, Object 생성자 함수, 생성자 함수, Object.create 메서드</li>
+  <li>클래스(ES6)</li>
+</ul>
+
+<h3 id="객체-리터럴">객체 리터럴</h3>
+
+<ul>
+  <li>가장 일반적이고 간단한 방법이다</li>
+  <li>변수에 할당되는 시점에 자바스크립트 엔진이 객체 리터럴을 해석하고 객체를 생성한다</li>
+  <li>중괄호를 이용해 정의한다 (뒤에 세미콜론 붙여야 된다. 단순 코드 블록은 뒤에 세미콜론 안 붙인다)</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Lee</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">sayHello</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Hi My name is </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">person</span><span class="p">);</span> <span class="c1">// object</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">);</span> <span class="c1">// {name: "Lee", sayHello: f}</span>
+</code></pre></div></div>
+
+<h3 id="프로퍼티">프로퍼티</h3>
+
+<ul>
+  <li>프로퍼티를 나열할 때는 쉼표로 구분한다</li>
+  <li>키(key)값은 네이밍 규칙을 준수하면 따옴표로 감싸지 않아도 된다 (위의 코드에서 <code class="language-plaintext highlighter-rouge">name</code>을 보면 따옴표로 감싸지 않았다)</li>
+  <li>네이밍 규칙을 따르지 않으면 따옴표로 감싸야 한다 (ex. <code class="language-plaintext highlighter-rouge">'last-name'</code>, <code class="language-plaintext highlighter-rouge">'last name'</code>)</li>
+  <li>객체에 존재하지 않는 프로퍼티에 접근하면 <code class="language-plaintext highlighter-rouge">undefined</code>를 반환한다 (<code class="language-plaintext highlighter-rouge">ReferenceError</code>가 발생하지 않는다)</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Jay Kim</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">"</span><span class="s2">last-name</span><span class="dl">"</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Kim</span><span class="dl">"</span><span class="p">,</span>
+    <span class="dl">'</span><span class="s1">first name</span><span class="dl">'</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Jay</span><span class="dl">"</span>
+<span class="p">};</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// Jay Kim</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">[</span><span class="dl">"</span><span class="s2">last-name</span><span class="dl">"</span><span class="p">]);</span> <span class="c1">// Kim</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">[</span><span class="dl">"</span><span class="s2">first name</span><span class="dl">"</span><span class="p">]);</span> <span class="c1">//Jay</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span> <span class="c1">//undefiend</span>
+
+
+<span class="nx">person</span><span class="p">.</span><span class="nx">age</span> <span class="o">=</span> <span class="mi">24</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">);</span> <span class="c1">// 24</span>
+
+<span class="k">delete</span> <span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">person</span><span class="p">.</span><span class="nx">age</span><span class="p">)</span> <span class="c1">// undefined</span>
+</code></pre></div></div>
+
+<h3 id="es6에-추가된-기능">ES6에 추가된 기능</h3>
+
+<ul>
+  <li>프로퍼티 축약 표현</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 프로퍼티 키와 사용할 변수의 이름이 같으면 프로퍼티 키를 생략해도 자동 생성된다</span>
+<span class="kd">const</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span><span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">};</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="c1">// { x: 1, y: 2 }</span>
+
+
+<span class="c1">// 문자열로 평가되는 표현식을 사용하면 프로퍼티 키를 동적으로 생성할 수 있다</span>
+<span class="kd">const</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">prop</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">[</span><span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}</span><span class="s2">-</span><span class="p">${</span><span class="o">++</span><span class="nx">i</span><span class="p">}</span><span class="s2">`</span><span class="p">]:</span> <span class="nx">i</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}</span><span class="s2">-</span><span class="p">${</span><span class="o">++</span><span class="nx">i</span><span class="p">}</span><span class="s2">`</span><span class="p">]:</span> <span class="nx">i</span><span class="p">,</span>
+    <span class="p">[</span><span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}</span><span class="s2">-</span><span class="p">${</span><span class="o">++</span><span class="nx">i</span><span class="p">}</span><span class="s2">`</span><span class="p">]:</span> <span class="nx">i</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">obj</span><span class="p">);</span> <span class="c1">// { 'prop-1': 1, 'prop-2': 2, 'prop-3': 3 }</span>
+
+
+<span class="c1">// 메서드를 정의할 때 function 키워드를 생략한 축약 표현을 쓸 수 있다</span>
+<span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Lee</span><span class="dl">'</span><span class="p">,</span>
+    <span class="nx">sayHi</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hi</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">obj</span><span class="p">.</span><span class="nx">sayHi</span><span class="p">();</span>
+</code></pre></div></div>
+
+<h1 id="원시-값과-객체의-비교">원시 값과 객체의 비교</h1>
+
+<h1 id="date-객체">Date 객체</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+<span class="kd">let</span> <span class="nx">date_1</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="dl">'</span><span class="s1">2021-01-04</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">date_2</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="dl">'</span><span class="s1">2022-04-05T14:25:42</span><span class="dl">'</span><span class="p">);</span>
+
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">date_1</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">date_2</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getFullYear</span><span class="p">());</span> <span class="c1">// 년</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getMonth</span><span class="p">());</span> <span class="c1">// 월 0: 1월</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getDate</span><span class="p">());</span> <span class="c1">// 일</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getDay</span><span class="p">());</span> <span class="c1">// 요일 0: 일요일, 1: 월요일, ...</span>
+</code></pre></div></div>
+
+<h1 id="math-객체">Math 객체</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">));</span> <span class="c1">// 10</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span> <span class="c1">// 5</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span> <span class="c1">// 8</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">sqrt</span><span class="p">(</span><span class="mi">49</span><span class="p">));</span> <span class="c1">// 7</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">(</span><span class="mf">2.3</span><span class="p">));</span> <span class="c1">// 2</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="mf">2.8</span><span class="p">));</span> <span class="c1">// 2</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="mf">2.4</span><span class="p">));</span> <span class="c1">// 3</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">());</span> <span class="c1">// 0과 1미만의 랜덤값</span>
+</code></pre></div></div>
+:ET
