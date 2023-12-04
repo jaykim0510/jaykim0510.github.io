@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'NestJS Series [Part3]: NestJS 구성요소(1) Module, Controller'
+title:  'NestJS Series [Part3]: NestJS 구성요소(1) Modules, Controllers'
 description: 
 date:   2023-12-02 15:01:35 +0300
 image:  '/images/nestjs_logo.png'
