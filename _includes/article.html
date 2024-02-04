@@ -1,6 +1,5 @@
-<div class="article col col-4 col-d-6 col-t-12">
+<div class="article">
   <div class="article__inner">
-
     <div class="article__head">
       <time class="article__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
 
@@ -24,6 +23,19 @@
     </div>
 
     <div class="article__content">
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          <a href="{{ site.baseurl }}/_pages/categories/{{ post.category }}">
+            <div class="article__category_text">
+              {{ post.category }}
+            </div>
+          </a>
+          <a href="{{ site.baseurl }}/_pages/tags/{{ post.category }}/{{ post.tag }}" class="article__tag">{{ post.tag }}</a>
+          {% for related_tag in post.related_tags limit:2 %}
+            <span class="article__tag">{{ related_tag }}</span>
+          {% endfor %}
+        </div>
+      </div>
 
       <h2 class="article__title">
         <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>

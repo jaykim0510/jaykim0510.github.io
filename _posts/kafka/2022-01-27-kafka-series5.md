@@ -5,8 +5,8 @@ description:
 date:   2022-01-27 15:01:35 +0300
 image:  '/images/kafka_logo.png'
 logo_image:  '/images/kafka_logo.png'
-categories: data_engineering
-tags: Kafka
+category: data_engineering
+tag: [kafka]
 ---
 
 ---
@@ -35,7 +35,7 @@ ${KAFKA_HOME}/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 ${KAFKA_HOME}/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic myKafkaTopic --create
 
 # 주키퍼로 나타내면 --partition, --replication-factor 반드시 명시해야함
-${KAFKA_HOME}/bin/kafka-topics.sh --zookeeper zookeeper:2181 --topic myKafkaTopic --create \
+${KAFKA_HOME}/bin/kafka-topics.sh --zookeeper zookeeper:2181 --topic myKafkaTopic --create
 --partitions 1 --replication-factor 1
 ```
 
@@ -68,7 +68,7 @@ ${KAFKA_HOME}/bin/kafka-server-start.sh ${KAFKA_HOME}/config/server.properties
 # https://kafka.apache.org/081/documentation.html#topic-config
 
 # 토픽 생성할 때,
-${KAFKA_HOME}/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic myKafkaTopic --create \
+${KAFKA_HOME}/bin/kafka-topics.sh --bootstrap-server localhost:9092 --topic myKafkaTopic --create
 --config min.insync.replicas=2 --config min.cleanable.dirty.ratio=0.5
 
 # 토픽 생성 후,
@@ -87,11 +87,11 @@ ${KAFKA_HOME}/bin/kafka-configs.sh --bootstrap-server localhost:9092 --broker 1 
 ${KAFKA_HOME}/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic myKafkaTopic
 
 # key와 value를 콤마(,)로 구분
-${KAFKA_HOME}/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic myKafkaTopic \
+${KAFKA_HOME}/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic myKafkaTopic
 --property "key.separator=,"
 
 # key값을 이용해 파티셔닝 하겠지만 consumer에게는 value만 전달한다
-${KAFKA_HOME}/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic myKafkaTopic \
+${KAFKA_HOME}/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic myKafkaTopic
 --property "key.separator=," --property "parse.key=true"
 ```
 

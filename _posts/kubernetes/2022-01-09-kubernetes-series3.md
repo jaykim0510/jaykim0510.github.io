@@ -2,10 +2,10 @@
 layout: post
 title:  'Kubernetes Series [Part3]: Kubernetes Workload Object'
 date:   2022-01-09 15:01:35 +0300
-image:  '/images/kube_22.png'
+image:  '/images/kubernetes_logo.png'
 logo_image:  '/images/kubernetes_logo.png'
-categories: devops
-tags: Kubernetes
+category: devops
+tag: [kubernetes]
 ---
 
 ---

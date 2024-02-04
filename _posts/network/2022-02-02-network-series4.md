@@ -3,10 +3,10 @@ layout: post
 title:  'Network Series [Part4]: 네트워크 프로토콜(1) HTTP'
 description: 
 date:   2022-02-02 15:01:35 +0300
-image:  '/images/http_logo.png'
-logo_image: '/images/cs_logo.jpeg'
-categories: computer_science
-tags: Network
+image:  '/images/network_logo.png'
+logo_image: '/images/network_logo.png'
+category: CS
+tag: [network]
 ---
 
 ---

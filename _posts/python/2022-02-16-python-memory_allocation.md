@@ -5,8 +5,8 @@ description: 메모리를 효율적으로 사용하는 프로그램/어플리케
 date:   2022-02-16 15:01:35 +0300
 image:  '/images/python_advanced_logo.png'
 logo_image: '/images/python_advanced_logo.png'
-categories: programming_language
-tags: Python
+category: language
+tag: python
 ---
 ---
 **Table of Contents**

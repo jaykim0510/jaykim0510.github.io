@@ -3,10 +3,10 @@ layout: post
 title: 'Kafka Series [Part2]: Main elements of Kafka'
 description: 프로듀서는 메세지의 전송, 브로커는 저장, 컨슈머는 읽어가는 역할을 담당합니다.
 date: 2022-01-23 15:01:35 +0300
-image: '/images/kafka_30.png'
+image: '/images/kafka_logo.png'
 logo_image: '/images/kafka_logo.png'
-categories: data_engineering
-tags: Kafka
+category: data_engineering
+tag: [kafka]
 ---
 
 ---

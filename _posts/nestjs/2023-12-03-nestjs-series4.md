@@ -1,12 +1,12 @@
 ---
 layout: post
-title:  'NestJS Series [Part4]: NestJS 구성요소(2) Providers'
+title:  '[NestJS] 구성요소(2) Providers'
 description: 
 date:   2023-12-03 15:01:35 +0300
-image:  '/images/nestjs_logo.png'
-logo_image: '/images/nestjs_logo.png'
-categories: web_development
-tags: NestJS
+image:  '/images/nest_logo.png'
+logo_image: '/images/nest_logo.png'
+category: backend
+tag: [nestjs]
 ---
 
 ---

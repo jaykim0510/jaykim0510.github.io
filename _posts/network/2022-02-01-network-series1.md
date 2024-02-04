@@ -3,10 +3,10 @@ layout: post
 title:  'Network Series [Part1]: 네트워크 용어'
 description: 
 date:   2022-02-01 15:01:35 +0300
-image:  '/images/net_6.png'
-logo_image: '/images/cs_logo.jpeg'
-categories: computer_science
-tags: Network
+image:  '/images/network_logo.png'
+logo_image: '/images/network_logo.png'
+category: CS
+tag: [network]
 ---
 
 ---

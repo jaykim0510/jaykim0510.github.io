@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Theory Series [Part4] 인덱스'
 description: 
 date:   2022-04-15 15:01:35 +0300
-image:  '/images/sql_10.png'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

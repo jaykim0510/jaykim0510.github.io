@@ -5,8 +5,8 @@ description:
 date:   2022-04-11 15:01:35 +0300
 image:  '/images/kafka_logo.png'
 logo_image:  '/images/kafka_logo.png'
-categories: data_engineering
-tags: Kafka
+category: data_engineering
+tag: [kafka]
 ---
 
 ---
@@ -182,8 +182,8 @@ value.converter.schemas.enable=false
 # connect 제외한 아무 컨테이너(나의 경우 kafka 컨테이너)에서 REST API를 이용해 커넥터 등록/실행
 
 ```sh
-curl -X POST -H'Accept:application/json' -H'Content-Type:application/json' http://connect1:8083/connectors \
-  -w "\n" \
+curl -X POST -H'Accept:application/json' -H'Content-Type:application/json' http://connect1:8083/connectors 
+  -w "\n"
   -d '{"name": "mongo-sink",
       "config": {
          "connector.class":"com.mongodb.kafka.connect.MongoSinkConnector",

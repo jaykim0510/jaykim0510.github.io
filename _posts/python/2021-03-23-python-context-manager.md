@@ -3,10 +3,10 @@ layout: post
 title:  'Python Basic Series [Part8]: 파이썬의 컨텍스트 매니저'
 description:
 date:   2021-03-23 15:01:35 +0300
-image:  '/images/python_logo.jpg'
-logo_image: '/images/python_logo.jpg'
-categories: programming_language
-tags: Python
+image:  '/images/python_logo.png'
+logo_image: '/images/python_logo.png'
+category: language
+tag: python
 ---
 ---
 **Table of Contents**

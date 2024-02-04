@@ -3,10 +3,10 @@ layout: post
 title:  'Next.js Series [Part1]: 네트워크 용어'
 description: 
 date:   2023-12-01 15:01:35 +0300
-image:  '/images/nextjs_logo.png'
-logo_image: '/images/nextjs_logo.png'
-categories: web_development
-tags: NextJS
+image:  '/images/next_logo.png'
+logo_image: '/images/next_logo.png'
+category: frontend
+tag: [nextjs]
 ---
 
 ---

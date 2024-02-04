@@ -3,10 +3,10 @@ layout: post
 title:  'Kafka Series [Part8]: Client Won’t Connect to Apache Kafka Cluster in Docker/AWS/My Laptop.[번역]'
 description: 클라이언트와 카프카간의 메세지를 주고받기 위해서는 두 가지의 연결이 반드시 선행되어야 한다. 
 date:   2022-01-31 15:01:35 +0300
-image:  '/images/kafka_54.png'
+image:  '/images/kafka_logo.png'
 logo_image:  '/images/kafka_logo.png'
-categories: data_engineering
-tags: Kafka
+category: data_engineering
+tag: [kafka]
 ---
 
 ---
@@ -116,12 +116,12 @@ docker build -t python_kafka_test_client .
 ```sh
 docker network create rmoff_kafka
 docker run --network=rmoff_kafka --rm --detach --name zookeeper -e ZOOKEEPER_CLIENT_PORT=2181 confluentinc/cp-zookeeper:5.5.0
-docker run --network=rmoff_kafka --rm --detach --name broker \
-           -p 9092:9092 \
-           -e KAFKA_BROKER_ID=1 \
-           -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 \
-           -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
-           -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+docker run --network=rmoff_kafka --rm --detach --name broker 
+           -p 9092:9092
+           -e KAFKA_BROKER_ID=1 
+           -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 
+           -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 
+           -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
            confluentinc/cp-kafka:5.5.0
 
 ```
@@ -138,7 +138,7 @@ confluentinc/cp-zookeeper:5.5.0    Up 33 seconds       2181/tcp, 2888/tcp, 3888/
 위에서 우리는 우리만의 도커 네트워크를 만들었고 이제 이 네트워크를 통해 클라이언트와 브로커가 통신하도록 해보자
 
 ```
-$ docker run --network=rmoff_kafka --rm --name python_kafka_test_client \
+$ docker run --network=rmoff_kafka --rm --name python_kafka_test_client
         --tty python_kafka_test_client broker:9092
 ```
 
@@ -151,12 +151,12 @@ $ docker run --network=rmoff_kafka --rm --name python_kafka_test_client \
 
 ```sh
 # 수정 전
--e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+-e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
 ```
 
 ```sh
 # 수정 후 
--e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://broker:9092 \
+-e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://broker:9092
 ```  
 
 ![](/images/kafka_48.png)  
@@ -165,12 +165,12 @@ $ docker run --network=rmoff_kafka --rm --name python_kafka_test_client \
 
 ```sh
 docker stop broker
-docker run --network=rmoff_kafka --rm --detach --name broker \
-           -p 9092:9092 \
-           -e KAFKA_BROKER_ID=1 \
-           -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 \
-           -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://broker:9092 \
-           -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+docker run --network=rmoff_kafka --rm --detach --name broker 
+           -p 9092:9092 
+           -e KAFKA_BROKER_ID=1 
+           -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 
+           -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://broker:9092 
+           -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 
            confluentinc/cp-kafka:5.5.0
 
 ```

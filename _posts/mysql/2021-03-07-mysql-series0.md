@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Series [Part0] MySQL 소개'
 description: 데이터베이스를 체계적으로 작동할 수 있도록 돕는 소프트웨어가 나오게 되었으며 이를 DBMS라고 한다
 date:   2021-03-07 15:01:35 +0300
-image:  '/images/mysql_logo.webp'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

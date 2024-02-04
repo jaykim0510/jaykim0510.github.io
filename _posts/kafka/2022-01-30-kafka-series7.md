@@ -3,10 +3,10 @@ layout: post
 title:  'Kafka Series [Part7]: Kafka Listeners – Explained[번역]'
 description: 카프카 클라이언트가 카프카에 연결되기 위해서는 advertised.listeners를 external IP 주소로 설정해야 합니다.
 date:   2022-01-30 15:01:35 +0300
-image:  '/images/kafka_36.png'
+image:  '/images/kafka_logo.png'
 logo_image:  '/images/kafka_logo.png'
-categories: data_engineering
-tags: Kafka
+category: data_engineering
+tag: [kafka]
 ---
 
 ---
@@ -51,7 +51,7 @@ KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
 
 ```sh
 # 9092포트로 연결시, localhost:9092 리스너가 반환
-$ kafkacat -b kafka0:9092 \
+$ kafkacat -b kafka0:9092
            -L
 Metadata for all topics (from broker -1: kafka0:9092/bootstrap):
 1 brokers:
@@ -60,7 +60,7 @@ Metadata for all topics (from broker -1: kafka0:9092/bootstrap):
 
 ```sh
 # 29092포트로 연결시, kafka0:29092 리스너가 반환
-$ kafkacat -b kafka0:29092 \
+$ kafkacat -b kafka0:29092
            -L
 Metadata for all topics (from broker 0: kafka0:29092/0):
 1 brokers:

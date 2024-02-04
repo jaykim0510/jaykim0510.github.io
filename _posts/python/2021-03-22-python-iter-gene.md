@@ -3,10 +3,10 @@ layout: post
 title:  'Python Basic Series [Part6]: 파이썬의 이터레이터와 제너레이터'
 description:
 date:   2021-03-22 15:01:35 +0300
-image:  '/images/python_logo.jpg'
-logo_image: '/images/python_logo.jpg'
-categories: programming_language
-tags: Python
+image:  '/images/python_logo.png'
+logo_image: '/images/python_logo.png'
+category: language
+tag: python
 ---
 ---
 **Table of Contents**

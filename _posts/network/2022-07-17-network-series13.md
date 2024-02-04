@@ -3,10 +3,10 @@ layout: post
 title:  'Network Series [Part13]: 네트워크 용어(3): IPC, RPC'
 description: 
 date:   2022-07-17 15:01:35 +0300
-image:  '/images/rpc_2.png'
-logo_image: '/images/cs_logo.jpeg'
-categories: computer_science
-tags: Network
+image:  '/images/network_logo.png'
+logo_image: '/images/network_logo.png'
+category: CS
+tag: [network]
 ---
 
 ---

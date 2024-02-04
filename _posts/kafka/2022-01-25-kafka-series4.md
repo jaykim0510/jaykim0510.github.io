@@ -2,11 +2,11 @@
 layout: post
 title:  'Kafka Series [Part4]: 카프카의 데이터 저장'
 description: 
-date:   2022-01-25 15:01:35 +0300
-image:  '/images/kafka_78.png'
+date:   2022-01-23 15:01:35 +0300
+image:  '/images/kafka_logo.png'
 logo_image:  '/images/kafka_logo.png'
-categories: data_engineering
-tags: Kafka
+category: data_engineering
+tag: [kafka]
 ---
 
 ---
@@ -112,13 +112,13 @@ $ cat freblogg-2/*.log
 위와 같은 랜덤한 문자열들을 읽고 싶으면 Kafka 툴을 사용할 수 있다.  
 
 ```sh
-kafka-run-class.bat kafka.tools.DumpLogSegments --deep-iteration --print-data-log --files logs\freblogg-2\00000000000000000000.log
+kafka-run-class.bat kafka.tools.DumpLogSegments --deep-iteration --print-data-log --files logs/freblogg-2/00000000000000000000.log
 ```
 
 This gives the output
 
 ```sh
-Dumping logs\freblogg-2\00000000000000000000.log
+Dumping logs/freblogg-2/00000000000000000000.log
 Starting offset: 0
 
 offset: 0 position: 0 CreateTime: 1533443377944 isvalid: true keysize: -1 valuesize: 11 producerId: -1 headerKeys: [] payload: Hello World

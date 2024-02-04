@@ -3,10 +3,10 @@ layout: post
 title:  'Python Basic Series [Part1]: 파이썬에서 데이터의 특성'
 description: 이를 변수를 통해 객체를 참조한다라고 합니다. 여기에는 예외가 없으며 심지어 문자와 숫자도 모두 객체입니다.
 date:   2021-03-12 15:01:35 +0300
-image:  '/images/python_logo.jpg'
-logo_image: '/images/python_logo.jpg'
-categories: programming_language
-tags: Python
+image:  '/images/python_logo.png'
+logo_image: '/images/python_logo.png'
+category: language
+tag: python
 ---
 
 ---

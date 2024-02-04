@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Command Series [Part4] DML(4): INSERT, UPDATE, DELETE'
 description: 
 date:   2021-03-21 15:01:35 +0300
-image:  '/images/insert_logo.png'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

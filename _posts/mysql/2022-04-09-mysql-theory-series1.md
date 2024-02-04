@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Theory Series [Part1] 아키텍처'
 description: 
 date:   2022-04-09 15:01:35 +0300
-image:  '/images/mysql_3.png'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

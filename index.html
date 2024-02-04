@@ -3,44 +3,12 @@ layout: default
 image: '/images/01.jpg'
 ---
 
-<!-- main page -->
-
 {% include hero.html %}
 
-<!--tag part 현재는 comment처리하여 안보이도록 해놓았다-->
-{% comment %}{% include section-tags.html %}{% endcomment %}
-<h5> </h5>
-
-
-{% capture site_tags %}{% for tag in site.tags %}{{ tag | first }}{% unless forloop.last %},{% endunless %}{% endfor %}{% endcapture %}
-{% assign tag_words = site_tags | split:',' | sort %}
-
-<!-- Tags 페이지 -->
-<section class="tags">
-
-
-  <div class="container">
-    <ul class="tag__list list-reset">
-      {% for item in (0..site.tags.size) %}
-        {% unless forloop.last %}
-          {% capture this_word %}{{ tag_words[item] | strip_newlines }}{% endcapture %}
-          <li class="tag__item"><a href="{{ site.baseurl }}/{{ this_word }}" class="tag_list">#{{ this_word }}</a></li>
-        {% endunless %}
-      {% endfor %}
-    </ul>
-  </div>
-
-
-
 <div class="container">
-  <div class="section__head">
-    <h3 class="section__title">Recent Posts</h3>
-    <a href="{{ site.baseurl }}/recent_posts/" class="section__link">See all</a>
-  </div>
-  <h5> </h5>
-  <div class="row animate">
+  <div class="article__container animate">
     {% if site.posts.size > 0 %}
-      {% for post in paginator.posts limit:6 %}
+      {% for post in paginator.posts %}
         {% include article.html %}
       {% endfor %}
     {% endif %}
@@ -49,3 +17,4 @@ image: '/images/01.jpg'
 
 {% include pagination.html %}
 
+{% include section-tags.html %}

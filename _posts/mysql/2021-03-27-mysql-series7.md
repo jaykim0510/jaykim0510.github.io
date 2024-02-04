@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Command Series [Part7] TCL: COMMIT, ROLLBACK, SAVEPOINT'
 description: 
 date:   2021-03-27 15:01:35 +0300
-image:  '/images/commit_logo.png'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

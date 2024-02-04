@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Thoery Series [Part6] MySQL 파티션'
 description: 
 date:   2022-04-17 15:01:35 +0300
-image:  '/images/partition_logo.jpeg'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

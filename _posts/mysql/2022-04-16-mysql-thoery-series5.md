@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Thoery Series [Part5] 데이터베이스 모델링'
 description: 
 date:   2022-04-16 15:01:35 +0300
-image:  '/images/sql_13.png'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

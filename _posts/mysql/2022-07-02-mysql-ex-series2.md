@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Experimental Series [Part2] MySQL 성능 점검/튜닝하기'
 description: 
 date:   2022-07-02 15:01:35 +0300
-image:  '/images/mysql_opt_logo.jpeg'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

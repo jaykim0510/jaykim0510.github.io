@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Command Series [Part9] 인덱스 명령어'
 description: 
 date:   2021-03-29 15:01:35 +0300
-image:  '/images/index_logo.png'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

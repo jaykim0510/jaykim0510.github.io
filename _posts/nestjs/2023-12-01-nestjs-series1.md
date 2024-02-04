@@ -1,12 +1,12 @@
 ---
 layout: post
-title:  'NestJS Series [Part1]: 백엔드 개요'
+title:  '[NestJS] 백엔드 개요'
 description: 
 date:   2023-12-01 15:01:35 +0300
-image:  '/images/nestjs_logo.png'
-logo_image: '/images/nestjs_logo.png'
-categories: web_development
-tags: NestJS
+image:  '/images/nest_logo.png'
+logo_image: '/images/nest_logo.png'
+category: backend
+tag: [nestjs]
 ---
 
 ---

@@ -3,10 +3,10 @@ layout: post
 title:  'MySQL Experimental Series [Part5] SQL을 이용한 데이터 분석에서 겪었던 다양한 경험들'
 description: 
 date:   2022-07-12 15:01:35 +0300
-image:  '/images/coding_test_problem.jpg'
-logo_image: '/images/mysql_logo.webp'
-categories: data_engineering
-tags: MySQL
+image:  '/images/mysql_logo.png'
+logo_image: '/images/mysql_logo.png'
+category: data_engineering
+tag: [mysql]
 ---
 
 ---

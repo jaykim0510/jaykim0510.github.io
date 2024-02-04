@@ -3,10 +3,10 @@ layout: post
 title:  'Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어'
 description: 
 date:   2022-07-15 15:01:35 +0300
-image:  '/images/network_linux_logo.png'
-logo_image: '/images/cs_logo.jpeg'
-categories: computer_science
-tags: Network
+image:  '/images/network_logo.png'
+logo_image: '/images/network_logo.png'
+category: CS
+tag: [network]
 ---
 
 ---
@@ -26,14 +26,13 @@ ifconfig, ip, netstat, ss, iptables, ping, ssh, telnet, route, curl, wget
 
 ```
 ifconfig
-
-----------------------------------------------------------------------------
+----------------
 en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
-    ...
-	inet <ip주소> netmask <서브넷 마스크> broadcast <브로드캐스트 주소>
-    ...
-	status: active
+...
+inet <ip주소> netmask <서브넷 마스크> broadcast <브로드캐스트 주소>
+status: active
 ```
+
 
 ## netstat
 

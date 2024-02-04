@@ -1,4 +1,4 @@
-<!-- 홈에서 보이는 Tags -->
+<!-- begin section-tags -->
 <section class="section section-tags">
   <div class="container">
     <div class="row">
@@ -12,13 +12,13 @@
         {% assign tag_words = site_tags | split:',' | sort %}
 
         <div class="row">
-          {% for item in (0..site.tags.size) limit:6 %}{% unless forloop.last %}
+          {% for item in (0..site.tags.size) limit:5 %}{% unless forloop.last %}
           {% capture this_word %}{{ tag_words[item] | strip_newlines }}{% endcapture %}
           <div class="col col-3 col-d-6 col-m-12">
-              <a href="{{ site.baseurl }}/tags#{{ this_word }}" class="tag-image">
+            <a href="{{ site.baseurl }}/tags#{{ this_word | cgi_escape }}" class="tag-image">
               <span class="tag-name">{{ this_word }}</span>
-              <img class="lazy" {% for post in site.tags[this_word] %}{% if forloop.index==1 and post.image %} data-src="{{site.baseurl}}{{post.image}}" alt="post.title" {% endif %}{% endfor %}>
-              </a>
+              <img class="lazy" {% for post in site.tags[this_word] %}{% if forloop.index==1 and post.image %} data-src="{{site.baseurl}}{{post.logo_image}}" alt="post.title" {% endif %}{% endfor %}>
+            </a>
           </div>
           {% endunless %}
           {% endfor %}

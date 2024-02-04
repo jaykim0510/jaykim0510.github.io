@@ -3,10 +3,10 @@ layout: post
 title:  'Network Series [Part3]: 네트워크 계층 TCP/IP 4계층과 OSI 7계층'
 description: 
 date:   2022-02-02 15:01:35 +0300
-image:  '/images/net_12.png'
-logo_image: '/images/cs_logo.jpeg'
-categories: computer_science
-tags: Network
+image:  '/images/network_logo.png'
+logo_image: '/images/network_logo.png'
+category: CS
+tag: [network]
 ---
 
 ---
@@ -100,7 +100,7 @@ tags: Network
 ![](/images/pdu_2.png)
 
 ```
-내 생각에는 ①번이나 ②번 정도가 맞는 것 같다
+내 생각에는 1번이나 2번 정도가 맞는 것 같다
 전송 계층에서는 확실히 TCP를 사용했는지 UDP를 사용했는지에 따라 세그먼트/데이터그램으로 분류되고,
 네트워크 계층에서는 TCP, UDP에 따라 패킷/데이터그램으로 분류하기도 하고, 그냥 모두 패킷으로 표현하는 것 같다
 ```

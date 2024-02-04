@@ -1,6 +1,34 @@
-*,
-*::after,
-*::before {
+@font-face {
+  font-family: "NanumBaegEuiEuiCeonSa";
+  src: url("/font/NanumBaegEuiEuiCeonSa.ttf");
+}
+
+@font-face {
+  font-family: "NanumHaengBogHanDoBi";
+  src: url("/font/NanumHaengBogHanDoBi.ttf");
+}
+
+@font-face {
+  font-family: "NanumSquareRoundR";
+  src: url("/font/NanumSquareRoundR.ttf");
+}
+
+@font-face {
+  font-family: "DoveMayoGothic";
+  src: url("/font/DoveMayoGothic.ttf");
+}
+
+@font-face {
+  font-family: "IntelOneMonoLightItalic";
+  src: url("/font/IntelOneMonoLightItalic.ttf");
+}
+
+@font-face {
+  font-family: "IntelOneMonoMedium";
+  src: url("/font/IntelOneMonoMedium.ttf");
+}
+
+*, *::after, *::before {
   box-sizing: border-box;
 }
 
@@ -10,7 +38,6 @@ body {
   line-height: $base-line-height;
   overflow-x: hidden;
   color: var(--text-color);
-  letter-spacing: -0.4px;
   background-color: var(--background-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -21,8 +48,8 @@ body {
 }
 
 *::selection {
-  color: var(--text-color);
-  background-color: var(--drag-background-color);
+  color: var(--white);
+  background-color: var(--brand-color);
 }
 
 h1,
@@ -31,7 +58,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: $heading-font-family;
+  font-family: $heading-font;
   font-weight: $heading-font-weight;
   line-height: $heading-line-height;
   letter-spacing: $heading-letter-spacing;
@@ -39,54 +66,60 @@ h6 {
 }
 
 h1 {
+  margin-top: 64px;
   font-size: $font-size-h1;
-  font-family: "Gowun Batang", serif;
+  font-weight: $font-weight-h1;
 }
 
 h2 {
-  font-family: "Stylish", sans-serif;
+  margin-top: 32px;
   font-size: $font-size-h2;
-  font-weight: 500;
+  font-weight: $font-weight-h2;
 }
 
 h3 {
   font-size: $font-size-h3;
+  font-weight: $font-weight-h3;
 }
 
 h4 {
   font-size: $font-size-h4;
+  font-weight: $font-weight-h3;
 }
 
 h5 {
   font-size: $font-size-h5;
+  font-weight: $font-weight-h3;
 }
 
 h6 {
   font-size: $font-size-h6;
+  font-weight: $font-weight-h3;
+
 }
 
 blockquote {
   position: relative;
   margin: 40px 0;
   padding-left: 26px;
-  font-size: 22px;
-  line-height: 1.4;
+  font-size: 24px;
+  line-height: 1.7;
+  font-weight: 900;
+  border-left: 4px solid var(--brand-color);
+  color: var(--heading-font-color);
 
   p {
-    padding-left: 24px;
-    padding-top: 10px;
-    color: var(--quote-font-color);
-    font-family: "Kalam", cursive;
-    font-weight: 400;
+    margin-bottom: 10px;
   }
 
   cite {
-    display: block;
+    display: inline-block;
     margin-top: 8px;
     font-size: 14px;
     font-weight: 700;
     font-style: normal;
     color: var(--heading-font-color);
+
   }
 
   @media only screen and (max-width: $mobile) {
@@ -94,29 +127,15 @@ blockquote {
   }
 }
 
-blockquote::before {
-  content: "\f10d";
-  font-size: 32px;
-  color: #ccc;
-  font-family: FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  text-decoration: inherit;
-  text-align: center;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
 pre {
   overflow: auto;
   padding: 15px;
   margin-bottom: 0;
   font-size: 14px;
-  // white-space: pre-wrap;
+  white-space: pre-wrap;
   word-wrap: break-word;
   word-break: break-all;
-  color: lightgrey;
+  color: var(--heading-font-color);
 }
 
 img,
@@ -129,7 +148,7 @@ img,
 img,
 .lightense-wrap,
 .gallery {
-  & + em {
+  &+em {
     display: block;
     margin-top: 20px;
     font-size: 12px;
@@ -138,7 +157,7 @@ img,
     font-weight: normal;
     text-align: center;
     color: var(--heading-font-color);
-
+  
     a {
       font-weight: 500;
       border-bottom: 1px solid var(--border-color);
@@ -149,7 +168,7 @@ img,
         border-color: var(--link-color-hover);
       }
     }
-
+  
     @media only screen and (max-width: $mobile) {
       margin-top: 12px;
     }
@@ -166,17 +185,12 @@ a {
   }
 }
 
-p > a {
-  font-weight: 900;
-  text-decoration-line: underline;
-}
-
 hr {
   width: 100%;
   height: 1px;
   margin: 60px 0;
   border: 0;
-  background: var(--text-color);
+  background: var(--background-alt-color);
 }
 
 .table-container {
@@ -199,7 +213,7 @@ table th {
   padding: 10px;
   font-size: 16px;
   text-align: left;
-  border: 1.5px solid var(--background-alt-color);
+  border: 1px solid var(--th-color);
   color: var(--heading-font-color);
   font-weight: 700;
   background-color: var(--th-color);
@@ -207,13 +221,15 @@ table th {
 
 table tr {
   background-color: var(--tr-color);
-  transition: all 0.3s ease;
+  transition: all .3s ease;
+  &:nth-child(even) {
+    background-color: transparent;
+  }
 }
 
 table td {
   padding: 10px;
   font-size: 14px;
-  background-color: var(--td-color);
   border: 1px solid var(--background-alt-color);
 }
 
@@ -227,7 +243,7 @@ table td {
   border: none;
   outline: none;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all .25s;
   color: var(--heading-font-color);
   background: var(--background-alt-color);
 
@@ -257,27 +273,4 @@ table td {
 
 .lightense-backdrop {
   background-color: var(--background-color) !important;
-}
-
-code.language-plaintext.highlighter-rouge {
-  font-family: "Roboto Mono", monospace;
-  font-size: $base-font-size * 0.85;
-  background-color: var(--article-highlighing-background);
-  border-radius: 0.1em;
-  padding-left: 0.1em;
-  padding-right: 0.1em;
-  color: var(--article-highlighing-font);
-}
-
-.portfolio_img {
-  width: 10%;
-  text-align: center;
-  margin-bottom: 30px;
-  padding-left: 3%;
-  padding-right: 3%;
-  background-color: #d4442e;
-}
-
-.point_heading {
-  font-family: $point-font-family;
 }
