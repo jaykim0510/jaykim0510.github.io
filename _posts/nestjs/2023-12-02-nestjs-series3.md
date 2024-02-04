@@ -6,7 +6,7 @@ date:   2023-12-02 15:01:35 +0300
 image:  '/images/nest_logo.png'
 logo_image: '/images/nest_logo.png'
 category: backend
-tag: [nestjs]
+tag: nestjs
 ---
 
 ---

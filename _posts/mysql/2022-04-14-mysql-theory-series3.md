@@ -6,7 +6,7 @@ date:   2022-04-14 15:01:35 +0300
 image:  '/images/mysql_logo.png'
 logo_image: '/images/mysql_logo.png'
 category: data_engineering
-tag: [mysql]
+tag: mysql
 ---
 
 ---

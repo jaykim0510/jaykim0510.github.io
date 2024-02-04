@@ -6,7 +6,7 @@ date:   2023-12-01 15:01:35 +0300
 image:  '/images/next_logo.png'
 logo_image: '/images/next_logo.png'
 category: frontend
-tag: [nextjs]
+tag: nextjs
 ---
 
 ---

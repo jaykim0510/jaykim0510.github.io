@@ -5,7 +5,7 @@ date:   2022-01-23 15:01:35 +0300
 image:  '/images/kubernetes_logo.png'
 logo_image:  '/images/kubernetes_logo.png'
 category: devops
-tag: [kubernetes]
+tag: kubernetes
 ---
 
 ---

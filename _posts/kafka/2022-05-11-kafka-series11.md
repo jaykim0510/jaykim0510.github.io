@@ -6,7 +6,7 @@ date:   2022-05-11 15:01:35 +0300
 image:  '/images/kafka_logo.png'
 logo_image:  '/images/kafka_logo.png'
 category: data_engineering
-tag: [kafka]
+tag: kafka
 ---
 
 ---
