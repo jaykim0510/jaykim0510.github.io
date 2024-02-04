@@ -1,0 +1,489 @@
+I"<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#파이토치-모델" id="markdown-toc-파이토치-모델">파이토치 모델</a></li>
+  <li><a href="#모델-직접-만들기" id="markdown-toc-모델-직접-만들기">모델 직접 만들기</a>    <ul>
+      <li><a href="#간단한-선형-모델-만들어보기" id="markdown-toc-간단한-선형-모델-만들어보기">간단한 선형 모델 만들어보기</a></li>
+      <li><a href="#torchnn-모듈-사용하기" id="markdown-toc-torchnn-모듈-사용하기">torch.nn 모듈 사용하기</a></li>
+    </ul>
+  </li>
+  <li><a href="#모델-파헤치기" id="markdown-toc-모델-파헤치기">모델 파헤치기</a></li>
+  <li><a href="#pretrained-모델" id="markdown-toc-pretrained-모델">Pretrained 모델</a>    <ul>
+      <li><a href="#사전학습된-모델-불러오기" id="markdown-toc-사전학습된-모델-불러오기">사전학습된 모델 불러오기</a></li>
+      <li><a href="#사전학습된-모델-커스텀-하기" id="markdown-toc-사전학습된-모델-커스텀-하기">사전학습된 모델 커스텀 하기</a></li>
+      <li><a href="#사전학습된-모델-파인튜닝-하기" id="markdown-toc-사전학습된-모델-파인튜닝-하기">사전학습된 모델 파인튜닝 하기</a></li>
+    </ul>
+  </li>
+  <li><a href="#모델-저장하기--불러오기" id="markdown-toc-모델-저장하기--불러오기">모델 저장하기 / 불러오기</a>    <ul>
+      <li><a href="#모델-저장하기" id="markdown-toc-모델-저장하기">모델 저장하기</a></li>
+      <li><a href="#저장된-모델-불러오기" id="markdown-toc-저장된-모델-불러오기">저장된 모델 불러오기</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="파이토치-모델">파이토치 모델</h1>
+
+<ul>
+  <li>파이토치 모델은 기본적으로 <code class="language-plaintext highlighter-rouge">nn.Module</code> 클래스를 상속하여 사용한다</li>
+  <li>공식문서에 따르면 <code class="language-plaintext highlighter-rouge">nn.Module</code> 은 다음과 같은 기능을 한다
+    <ul>
+      <li>Base class for all neural network modules.</li>
+      <li>Your models should also subclass this class.</li>
+      <li>Modules can also contain other Modules, allowing to nest them in a tree structure. You can assign the submodules as regular attributes</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="모델-직접-만들기">모델 직접 만들기</h1>
+
+<h2 id="간단한-선형-모델-만들어보기">간단한 선형 모델 만들어보기</h2>
+
+<ul>
+  <li>딥러닝 모델의 기본적인 기능을 제공 받기 위해 <code class="language-plaintext highlighter-rouge">nn.Module</code> 을 상속받는다</li>
+  <li>모델의 가중치는 <code class="language-plaintext highlighter-rouge">Parameter()</code>를 통해 생성한다</li>
+  <li>순전파(forward propagation)를 통해 모델의 예측값을 얻기 위해 <code class="language-plaintext highlighter-rouge">forward()</code> 메서드를 구현한다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
+
+<span class="k">class</span> <span class="nc">MyLinearModel</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyLinearModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">((</span><span class="n">out_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">ones</span><span class="p">(</span><span class="n">out_features</span><span class="p">))</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">mm</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">W</span><span class="p">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">mm</span> <span class="o">+</span> <span class="bp">self</span><span class="p">.</span><span class="n">b</span>
+        <span class="k">return</span> <span class="n">output</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="o">=</span> <span class="n">MyLinearModel</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># 모델 생성
+</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="c1"># 입력 데이터
+</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># 순전파를 통한 예측값 반환
+</span></code></pre></div></div>
+
+<ul>
+  <li>가중치(weight)와 바이어스(bias)는 업데이트되어야 할 값이기 떄문에 <code class="language-plaintext highlighter-rouge">Parameter</code>로 정의한다</li>
+  <li>이동평균과 같이 학습은 필요없지만 모델을 저장할 때 같이 저장하고 싶은 값들은 <code class="language-plaintext highlighter-rouge">Buffer</code>로 정의한다</li>
+  <li>파이토치에서 사용되는 변수들을 정리하면 다음과 같다
+    <ul>
+      <li><strong>Tensor</strong>
+        <ul>
+          <li>❌ gradient 계산</li>
+          <li>❌ 값 업데이트</li>
+          <li>❌ 모델 저장시 값 저장</li>
+        </ul>
+      </li>
+      <li><strong>Parameter</strong>
+        <ul>
+          <li>✅ gradient 계산</li>
+          <li>✅ 값 업데이트</li>
+          <li>✅ 모델 저장시 값 저장</li>
+        </ul>
+      </li>
+      <li><strong>Buffer</strong>
+        <ul>
+          <li>❌ gradient 계산</li>
+          <li>❌ 값 업데이트</li>
+          <li>✅ 모델 저장시 값 저장</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="p">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">7</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">7</span><span class="p">])</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s">'buffer'</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">tensor</span><span class="p">)</span> <span class="c1"># tensor를 buffer로 등록
+</span></code></pre></div></div>
+
+<h2 id="torchnn-모듈-사용하기">torch.nn 모듈 사용하기</h2>
+
+<ul>
+  <li>Linear를 비롯해 Convolution, RNN, BatchNorm, Sigmoid, CrossEntropyLoss 등 여러 모듈들을 이미 파이토치에서 만들어놨다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>실제로 논문에서 구현하는 여러 모듈들이 복합적으로 사용하는 모델을 구현할 때에는, 직접 기본적인 모듈을 직접 만들 필요 없이, <code class="language-plaintext highlighter-rouge">torch.nn</code>에서 제공해주는 모듈을 활용하면 된다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">bn1</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">bn1</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">F</span><span class="p">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div></div>
+
+<ul>
+  <li>그리고 논문에 있는 모델들을 보면 여러 개의 모듈을 포함하는 레이어가 수십개씩 쌓여있는 모습을 볼 수 있다</li>
+  <li>그런 모델을 구현할 때에는 모델안의 모듈들을 컨테이너로 구분해서 감싸주는게 좋다</li>
+  <li>또한 모델에서 다른 부분은 얼려두고, 특정 모듈만 학습하는 파인튜닝을 위해서라도 컨테이너 단위로 모델을 나누는게 좋다</li>
+  <li>컨테이너 종류로는 <code class="language-plaintext highlighter-rouge">Sequential</code>, <code class="language-plaintext highlighter-rouge">ModuleList</code>, <code class="language-plaintext highlighter-rouge">ModuleDict</code> 등이 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">Sequential</code>은 입력 데이터가 모든 모듈을 다 통과하고, <code class="language-plaintext highlighter-rouge">ModuleList</code>, <code class="language-plaintext highlighter-rouge">ModuleDict</code>는 동적으로 특정 모듈만 통과하도록 할 수 있다</li>
+  <li>아래는 컴퓨터 비전 분야에서 사용되는 AlexNet의 모델 코드이다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">AlexNet</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="n">Module</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AlexNet</span><span class="p">,</span> <span class="bp">self</span><span class="p">).</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">192</span><span class="p">,</span> <span class="mi">384</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">384</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">avgpool</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">AdaptiveAvgPool2d</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Dropout</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">4096</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Dropout</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">4096</span><span class="p">,</span> <span class="mi">4096</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">4096</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">features</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">avgpool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">classifier</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+</code></pre></div></div>
+
+<h1 id="모델-파헤치기">모델 파헤치기</h1>
+
+<ul>
+  <li>모델을 구성하는 모듈과 파라미터를 살펴보고 싶을 때가 있다. 이 때는 model 객체의 <code class="language-plaintext highlighter-rouge">named_parameters()</code> 메서드를 사용하면 된다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">model</span><span class="p">.</span><span class="n">named_parameters</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"파라미터 명: </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"파라미터 크기: </span><span class="si">{</span><span class="n">weight</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"파라미터 값: </span><span class="si">{</span><span class="n">weight</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">()</span>
+<span class="o">------------------------------------------------</span>
+<span class="n">파라미터</span> <span class="n">명</span><span class="p">:</span> <span class="n">conv1</span><span class="p">.</span><span class="n">weight</span>
+<span class="n">파라미터</span> <span class="n">크기</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">파라미터</span> <span class="n">값</span><span class="p">:</span> <span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([[[[</span><span class="mf">0.9726</span><span class="p">]]],</span>
+        <span class="p">[[[</span><span class="mf">0.2617</span><span class="p">]]],</span>
+        <span class="p">[[[</span><span class="mf">0.4475</span><span class="p">]]]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">파라미터</span> <span class="n">명</span><span class="p">:</span> <span class="n">conv1</span><span class="p">.</span><span class="n">bias</span>
+<span class="n">파라미터</span> <span class="n">크기</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">파라미터</span> <span class="n">값</span><span class="p">:</span> <span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([</span><span class="mf">0.4027</span><span class="p">,</span> <span class="mf">0.9123</span><span class="p">,</span> <span class="mf">0.1270</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">파라미터</span> <span class="n">명</span><span class="p">:</span> <span class="n">bn1</span><span class="p">.</span><span class="n">weight</span>
+<span class="n">파라미터</span> <span class="n">크기</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">파라미터</span> <span class="n">값</span><span class="p">:</span> <span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">파라미터</span> <span class="n">명</span><span class="p">:</span> <span class="n">bn1</span><span class="p">.</span><span class="n">bias</span>
+<span class="n">파라미터</span> <span class="n">크기</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">파라미터</span> <span class="n">값</span><span class="p">:</span> <span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">파라미터</span> <span class="n">명</span><span class="p">:</span> <span class="n">conv2</span><span class="p">.</span><span class="n">weight</span>
+<span class="n">파라미터</span> <span class="n">크기</span><span class="p">:</span> <span class="n">torch</span><span class="p">.</span><span class="n">Size</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">파라미터</span> <span class="n">값</span><span class="p">:</span> <span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([[[[</span><span class="o">-</span><span class="mf">0.3509</span><span class="p">]],</span>
+            <span class="p">...</span>
+         <span class="p">[[</span><span class="o">-</span><span class="mf">0.4782</span><span class="p">]]]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>직접 파라미터에 접근할 수도 있다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span><span class="p">.</span><span class="n">conv1</span><span class="p">.</span><span class="n">weight</span>
+<span class="o">--------------------------</span>
+<span class="n">Parameter</span> <span class="n">containing</span><span class="p">:</span>
+<span class="n">tensor</span><span class="p">([[[[</span><span class="mf">0.9726</span><span class="p">]]],</span>
+        <span class="p">[[[</span><span class="mf">0.2617</span><span class="p">]]],</span>
+        <span class="p">[[[</span><span class="mf">0.4475</span><span class="p">]]]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>torchvision (또는 torchinfo)를 사용하면 조금 더 보기 좋게 프린트 해볼 수도 있다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">summary</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="o">----------------------------------------------------------------</span>
+        <span class="n">Layer</span> <span class="p">(</span><span class="nb">type</span><span class="p">)</span>               <span class="n">Output</span> <span class="n">Shape</span>         <span class="n">Param</span> <span class="c1">#
+</span><span class="o">================================================================</span>
+            <span class="n">Conv2d</span><span class="o">-</span><span class="mi">1</span>              <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>               <span class="mi">6</span>
+       <span class="n">BatchNorm2d</span><span class="o">-</span><span class="mi">2</span>              <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>               <span class="mi">6</span>
+            <span class="n">Conv2d</span><span class="o">-</span><span class="mi">3</span>              <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>              <span class="mi">15</span>
+<span class="o">================================================================</span>
+<span class="n">Total</span> <span class="n">params</span><span class="p">:</span> <span class="mi">27</span>
+<span class="n">Trainable</span> <span class="n">params</span><span class="p">:</span> <span class="mi">27</span>
+<span class="n">Non</span><span class="o">-</span><span class="n">trainable</span> <span class="n">params</span><span class="p">:</span> <span class="mi">0</span>
+<span class="o">----------------------------------------------------------------</span>
+<span class="n">Input</span> <span class="n">size</span> <span class="p">(</span><span class="n">MB</span><span class="p">):</span> <span class="mf">0.00</span>
+<span class="n">Forward</span><span class="o">/</span><span class="n">backward</span> <span class="k">pass</span> <span class="n">size</span> <span class="p">(</span><span class="n">MB</span><span class="p">):</span> <span class="mf">0.00</span>
+<span class="n">Params</span> <span class="n">size</span> <span class="p">(</span><span class="n">MB</span><span class="p">):</span> <span class="mf">0.00</span>
+<span class="n">Estimated</span> <span class="n">Total</span> <span class="n">Size</span> <span class="p">(</span><span class="n">MB</span><span class="p">):</span> <span class="mf">0.00</span>
+<span class="o">----------------------------------------------------------------</span>
+</code></pre></div></div>
+
+<h1 id="pretrained-모델">Pretrained 모델</h1>
+
+<ul>
+  <li>딥러닝 모델은 일반적으로 파라미터가 많은 대용량 크기의 모델을 풍부한 대용량 데이터로 학습할수록 더 성능이 뛰어나다</li>
+  <li>하지만 이런 모델을 학습하는데에는 많은 비용이 들어가기 때문에 쉽지 않다</li>
+  <li>그래서 구글, 네이버 등과 같은 기업에서는 이러한 큰 시간과 비용을 들여 학습시킨 모델을 제공하는데 이러한 모델들을 사전 학습된 모델 (pre-trained model)이라고 한다</li>
+  <li>예를 들어, 대용량의 언어 데이터를 학습한 모델은 다양한 자연어 관련 태스크에 범용적으로 사용될 수 있고, 대량의 이미지 데이터를 학습한 모델은 여러 컴퓨터 비전 관련 태스크에 사용될 수 있다</li>
+  <li>이렇게 사전 학습된 모델은 그대로 사용할 수도 있고, 우리가 가지고 있는 데이터로 특별한 목적에 더 특화된 모델을 만들기 위해 파인 튜닝(fine-tuning) 할 수도 있다</li>
+</ul>
+
+<h2 id="사전학습된-모델-불러오기">사전학습된 모델 불러오기</h2>
+
+<ul>
+  <li>파이토치는 비전, 자연어와 같은 각 분야에 특화된 라이브러리를 제공한다. 이러한 라이브러리에는 유명한 모델들을 사전학습된 모델로 제공해준다</li>
+  <li>뿐만 아니라 허깅페이스(huggingface) 같은 곳에서도 사전학습된 모델을 제공한다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torchvision.models</span> <span class="k">as</span> <span class="n">models</span>
+
+<span class="n">alexnet</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">alexnet</span><span class="p">(</span><span class="n">pretrained</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># alexnet = models.alexnet() # 가중치는 학습되지 않은 껍데기만 가져온다
+</span>
+<span class="n">alexnet</span>
+<span class="o">---------------------------------------------------------------------------------</span>
+<span class="n">AlexNet</span><span class="p">(</span>
+  <span class="p">(</span><span class="n">features</span><span class="p">):</span> <span class="n">Sequential</span><span class="p">(</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">):</span> <span class="n">Conv2d</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="n">Conv2d</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">):</span> <span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="n">Conv2d</span><span class="p">(</span><span class="mi">192</span><span class="p">,</span> <span class="mi">384</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">(</span><span class="mi">7</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">):</span> <span class="n">Conv2d</span><span class="p">(</span><span class="mi">384</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">(</span><span class="mi">9</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">10</span><span class="p">):</span> <span class="n">Conv2d</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">(</span><span class="mi">11</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">12</span><span class="p">):</span> <span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ceil_mode</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+  <span class="p">)</span>
+  <span class="p">(</span><span class="n">avgpool</span><span class="p">):</span> <span class="n">AdaptiveAvgPool2d</span><span class="p">(</span><span class="n">output_size</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+  <span class="p">(</span><span class="n">classifier</span><span class="p">):</span> <span class="n">Sequential</span><span class="p">(</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">):</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">9216</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">5</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">alexnet</span><span class="p">.</span><span class="n">classifier</span>
+<span class="o">--------------------------------------------------------------------</span>
+<span class="n">Sequential</span><span class="p">(</span>
+  <span class="p">(</span><span class="mi">0</span><span class="p">):</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+  <span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">9216</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="p">(</span><span class="mi">3</span><span class="p">):</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+  <span class="p">(</span><span class="mi">4</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="p">(</span><span class="mi">5</span><span class="p">):</span> <span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="p">(</span><span class="mi">6</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4096</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="사전학습된-모델-커스텀-하기">사전학습된 모델 커스텀 하기</h2>
+
+<ul>
+  <li>사전학습된 모델은 보통 입력층과 출력층은 우리가 원하는 형태와 다를 수 있다</li>
+  <li>예를 들어 사전 학습된 모델은 이미지 클래스 100개를 분류할 수 있는 모델이지만, 우리의 태스크는 10개만 분류하면 되는 경우가 있다</li>
+  <li>
+    <p>그래서 이런 문제를 해결하기 위해서 우리는 사전 학습된 모델의 일부를 추가, 수정, 삭제할 수 있어야 한다</p>
+  </li>
+  <li>임의의 모듈에 접근하는 방법은 다음과 같다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">alexnet</span><span class="p">.</span><span class="n">classifier</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">alexnet</span><span class="p">.</span><span class="n">get_submodule</span><span class="p">(</span><span class="s">"classifier"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">alexnet</span><span class="p">.</span><span class="n">get_submodule</span><span class="p">(</span><span class="s">"classifier.0"</span><span class="p">)</span>
+<span class="n">alexnet</span><span class="p">.</span><span class="n">_modules</span><span class="p">[</span><span class="s">"classifier"</span><span class="p">].</span><span class="n">_modules</span><span class="p">[</span><span class="s">"0"</span><span class="p">]</span>
+<span class="o">---------------------------------------------</span>
+<span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>모듈의 이름을 모를 때는 다음과 같이 <code class="language-plaintext highlighter-rouge">named_modules()</code> 메서드를 사용해 확인해 볼 수 있다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">alexnet</span><span class="p">.</span><span class="n">named_modules</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"이름: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">------------------------------------------------</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">features</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">features</span><span class="p">.</span><span class="mi">0</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">features</span><span class="p">.</span><span class="mi">1</span>
+<span class="p">...(</span><span class="n">생략</span><span class="p">)</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">features</span><span class="p">.</span><span class="mi">11</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">features</span><span class="p">.</span><span class="mi">12</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">avgpool</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">classifier</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">classifier</span><span class="p">.</span><span class="mi">0</span>
+<span class="p">...(</span><span class="n">생략</span><span class="p">)</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">classifier</span><span class="p">.</span><span class="mi">5</span>
+<span class="n">이름</span><span class="p">:</span> <span class="n">classifier</span><span class="p">.</span><span class="mi">6</span>
+</code></pre></div></div>
+
+<ul>
+  <li>모듈을 수정/삭제 하는 방법은 다음과 같다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 모듈 삭제
+</span><span class="n">alexnet</span><span class="p">.</span><span class="n">classifier</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Identity</span><span class="p">()</span>
+<span class="c1"># alexnet.classifier.pop(6)
+</span>
+<span class="c1"># 모듈 수정
+</span><span class="n">alexnet</span><span class="p">.</span><span class="n">classifier</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">4096</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>모듈을 추가하는 방법은 다음과 같다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 특정 모듈의 자식 모듈로 추가하는 방법
+</span><span class="n">alexnet</span><span class="p">.</span><span class="n">features</span><span class="p">[</span><span class="mi">11</span><span class="p">].</span><span class="n">add_module</span><span class="p">(</span><span class="s">'100'</span><span class="p">,</span> <span class="n">nn</span><span class="p">.</span><span class="n">BatchNorm2d</span><span class="p">(</span><span class="mi">256</span><span class="p">))</span>
+
+<span class="c1"># 자식 모듈이 아닌 그냥 모듈 추가하는 방법
+</span><span class="n">alexnet</span><span class="p">.</span><span class="n">features</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nn</span><span class="p">.</span><span class="n">Identity</span><span class="p">())</span>
+</code></pre></div></div>
+
+<h2 id="사전학습된-모델-파인튜닝-하기">사전학습된 모델 파인튜닝 하기</h2>
+
+<ul>
+  <li>특정 부분만 학습하기 위해서는 다른 부분은 학습에서 제외해야 한다(freeze)
+    <ul>
+      <li>Weight freeze 란 해당 모듈의 graident 는 역전파 하지 않아 학습을 하지 않는다는 의미입니다.</li>
+      <li>예를 들어, 우리가 하려는 태스크가 pretrain 한 태스크와 매우 유사하다면, feature 파트는 freeze 하여 학습하지 않고 새로 정의한 task specific 파트만 학습하는 것이 좋은 방법일 수 있습니다.</li>
+    </ul>
+  </li>
+  <li>모듈 객체의 <code class="language-plaintext highlighter-rouge">requires_grad_()</code> 메서드 사용하면 된다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">alexnet</span><span class="p">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="c1"># 또는
+</span><span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">alexnet</span><span class="p">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">parameters</span><span class="p">():</span>
+    <span class="n">param</span><span class="p">.</span><span class="n">requires_grad</span><span class="o">=</span><span class="bp">False</span>
+</code></pre></div></div>
+
+<ul>
+  <li>제외되었는지(frozen) 확인해보자</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">alexnet</span><span class="p">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">weight</span><span class="p">.</span><span class="n">requires_grad</span>
+<span class="n">alexnet</span><span class="p">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">bias</span><span class="p">.</span><span class="n">requires_grad</span>
+<span class="o">-----------------------------------------------</span>
+<span class="bp">False</span>
+<span class="bp">False</span>
+</code></pre></div></div>
+
+<ul>
+  <li>만약 특정 커스텀 태스크를 위해 모듈을 새로 추가했다면, 해당 모듈의 weight initialization을 해주는게 좋다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch.nn.init</span> <span class="k">as</span> <span class="n">init</span>
+
+<span class="k">def</span> <span class="nf">initialize_weights</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="s">"""
+    Xavier uniform 분포로 모든 weight 를 초기화합니다.
+    더 많은 weight 초기화 방법은 다음 문서에서 참고해주세요. https://pytorch.org/docs/stable/nn.init.html
+    """</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="p">.</span><span class="n">modules</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="p">.</span><span class="n">Conv2d</span><span class="p">):</span>
+            <span class="n">init</span><span class="p">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">m</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">zero_</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="p">.</span><span class="n">BatchNorm2d</span><span class="p">):</span>
+            <span class="n">m</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">m</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">zero_</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="p">.</span><span class="n">Linear</span><span class="p">):</span>
+            <span class="n">m</span><span class="p">.</span><span class="n">weight</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">normal_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+            <span class="n">m</span><span class="p">.</span><span class="n">bias</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">zero_</span><span class="p">()</span>
+
+<span class="c1"># 이렇게 새로 추가한 모듈만 가중치 초기화를 해준다
+</span><span class="n">initialize_weights</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">myclassifier</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="모델-저장하기--불러오기">모델 저장하기 / 불러오기</h1>
+
+<h2 id="모델-저장하기">모델 저장하기</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">torch.save(model.state_dict(), save_path)</code></li>
+  <li><code class="language-plaintext highlighter-rouge">state_dict()</code>는 모델을 사용하는데 필요한 모든 파라미터와 버퍼를 저장하고 있다</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">save_folder</span> <span class="o">=</span> <span class="s">"./runs/"</span>
+<span class="n">save_path</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_folder</span><span class="p">,</span> <span class="s">"best.pth"</span><span class="p">)</span>   <span class="c1"># ./runs/best.pth
+</span><span class="n">os</span><span class="p">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>  
+
+<span class="n">torch</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="n">save_path</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s"> 폴더에 모델이 성공적으로 저장되었습니다."</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"해당 폴더의 파일 리스트: </span><span class="si">{</span><span class="n">os</span><span class="p">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">save_folder</span><span class="p">)</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">.</span><span class="o">/</span><span class="n">runs</span><span class="o">/</span><span class="n">best</span><span class="p">.</span><span class="n">pth</span> <span class="n">폴더에</span> <span class="n">모델이</span> <span class="n">성공적으로</span> <span class="n">저장되었습니다</span><span class="p">.</span>
+<span class="n">해당</span> <span class="n">폴더의</span> <span class="n">파일</span> <span class="n">리스트</span><span class="p">:</span> <span class="p">[</span><span class="s">'best.pth'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="저장된-모델-불러오기">저장된 모델 불러오기</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">model.load_state_dict(torch.load(save_path))</code></li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">new_model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="n">new_model</span><span class="p">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">save_path</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"</span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s"> 에서 성공적으로 모델을 load 하였습니다."</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------</span>
+<span class="p">.</span><span class="o">/</span><span class="n">runs</span><span class="o">/</span><span class="n">best</span><span class="p">.</span><span class="n">pth</span> <span class="n">에서</span> <span class="n">성공적으로</span> <span class="n">모델을</span> <span class="n">load</span> <span class="n">하였습니다</span><span class="p">.</span>
+</code></pre></div></div>
+
+:ET

@@ -1,0 +1,62 @@
+I"0<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#원시-값과-객체의-비교" id="markdown-toc-원시-값과-객체의-비교">원시 값과 객체의 비교</a>    <ul>
+      <li><a href="#원시-값" id="markdown-toc-원시-값">원시 값</a></li>
+      <li><a href="#객체" id="markdown-toc-객체">객체</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="원시-값과-객체의-비교">원시 값과 객체의 비교</h1>
+
+<ul>
+  <li>원시 타입의 값, 즉 원시 값은 변경 불가능한 값이다</li>
+  <li>원시 값을 변수에 할당하면 메모리에는 실제 값이 저장된다</li>
+  <li>원시 값을 갖는 변수를 다른 변수에 할당하면 원본의 원시 값이 복사되어 전달된다. 이를 <strong>값에 의한 전달</strong>이라 한다</li>
+  <li>
+    <p>원시 값을 <code class="language-plaintext highlighter-rouge">let</code>, <code class="language-plaintext highlighter-rouge">var</code>로 선언하면 재할당 할 수 있는데, 재할당은 원본 값을 변경하는 것이 아니고 새로운 메모리 공간에 값을 저장한 후, 변수가 참조하던 메모리 공간의 주소를 변경한다</p>
+  </li>
+  <li>객체는 변경 가능한 값이다.</li>
+  <li>객체를 변수에 할당하면 메모리에는 참조 값이 저장된다</li>
+  <li>객체를 가리키는 변수를 다른 변수에 할당하면 원본의 참조 값이 복사되어 전달된다. 이를 <strong>참조에 의한 전달</strong>이라 한다</li>
+</ul>
+
+<h2 id="원시-값">원시 값</h2>
+
+<ul>
+  <li>원시 값을 저장하려면 먼저 확보해야 하는 메모리 공간의 크기를 결정해야 한다.</li>
+  <li>단 ECMAScript 사양에 문자열(2바이트)과 숫자(8바이트) 이외의 원시 타입은 크기를 명확히 규정하지 않아, 브라우저에 따라 다를 수 있다</li>
+  <li>(문자열은 문자 1개당 2바이트. 숫자는 어떤 크기의 숫자든 8바이트이다)</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">score</span> <span class="o">=</span> <span class="mi">80</span>
+<span class="kd">const</span> <span class="nx">copy</span> <span class="o">=</span> <span class="nx">score</span>
+
+<span class="c1">// copy에는 score에 할당된 원시 값 80이 새로운 메모리 공간에 복사되어 새로운 메모리 공간의 주소와 바인딩 된다</span>
+<span class="c1">// 이를 값에 의한 전달이라 한다</span>
+<span class="c1">// score 변수와 copy 변수의 값 80은 다른 메모리 공간에 저장된 별개의 값이다</span>
+</code></pre></div></div>
+
+<h2 id="객체">객체</h2>
+
+<ul>
+  <li>객체를 할당한 변수에는 실제 객체를 저장하고 있는 메모리의 메모리 주소를 저장하고 있다</li>
+  <li>참조값은 이렇게 객체가 저장된 메모리 공간의 주소를 말한다</li>
+  <li>(이렇게 객체를 메모리 주소를 저장하는 방식으로 설계한 이유는, 복사할 때 객체 전체를 복사하면 메모리 낭비가 커질 수 있어서이다)</li>
+  <li>이러한 방식의 단점은 원시값과는 다르게 여러 개의 식별자가 하나의 객체를 공유하게 되어서 예상치 못한 문제가 발생할 수 있다</li>
+  <li>객체 값 자체를 복사하고 싶으면 깊은 복사를 사용해야 한다.</li>
+  <li>깊은 복사를 지원하는 lodash 와 같은 라이브러리를 사용하면 된다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Lee</span><span class="dl">'</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">copy</span> <span class="o">=</span> <span class="nx">person</span>
+</code></pre></div></div>
+
+<p><img src="/images/js_primitive_and_object_1.png" alt="" /></p>
+:ET

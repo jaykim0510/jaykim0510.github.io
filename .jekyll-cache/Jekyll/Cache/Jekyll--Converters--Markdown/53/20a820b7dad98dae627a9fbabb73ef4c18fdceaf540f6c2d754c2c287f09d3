@@ -1,0 +1,61 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+<hr />
+
+<ul>
+  <li>ssh 설치
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">apt update</code></li>
+      <li><code class="language-plaintext highlighter-rouge">apt install openssh-server</code> (양쪽 다 서버로 설치하면 됨)</li>
+    </ul>
+  </li>
+  <li>접속을 시도할 클라이언트에서 개인키/공용키를 만든다
+    <ul>
+      <li>클라이언트: <code class="language-plaintext highlighter-rouge">ssh-keygen -t rsa</code></li>
+    </ul>
+  </li>
+  <li>만약 접속할 서버의 종류가 점점 늘어난다면 config 파일로 관리하는 것도 좋은 방법이다
+    <ul>
+      <li>클라이언트: <code class="language-plaintext highlighter-rouge">vim ~/.ssh/config</code>
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host spark-worker1 (ssh 명령어 뒤에 붙일 호스트 ex. ssh spark-worker1)
+    HostName worker1 (실제 호스트명)
+    IdentityFile ~/.ssh/id_rsa (내가 가지고 있는 개인키)
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>이제 서버에 .ssh 폴더를 만들고 그 안에 authorized_keys 라는 파일에 공용키를 복사해 붙여넣는다
+    <ul>
+      <li>접속할 서버: <code class="language-plaintext highlighter-rouge">mkdir ~/.ssh</code></li>
+      <li>접속할 서버: <code class="language-plaintext highlighter-rouge">vim authorized_keys</code></li>
+      <li>접속할 서버: 클라이언트의 <code class="language-plaintext highlighter-rouge">~/.ssh/id_rsa.pub</code> (공용키) 복사해 붙여넣는다</li>
+    </ul>
+  </li>
+  <li>이제 클라이언트에서 <code class="language-plaintext highlighter-rouge">ssh &lt;호스트&gt;</code> 또는 <code class="language-plaintext highlighter-rouge">ssh &lt;호스트명&gt;:&lt;포트번호&gt;</code> 로 접속되면 성공</li>
+  <li>에러가 나면 일단 양쪽 다 <code class="language-plaintext highlighter-rouge">.ssh</code> 폴더는 700, <code class="language-plaintext highlighter-rouge">authorized_keys</code> 는 600 권한을 맞춰준다</li>
+  <li>만약 ssh: <code class="language-plaintext highlighter-rouge">connect to host 192.168.0.6 port 22: Connection refused</code> 에러가 뜬다면 서버의 22번 포트를 열어줘야 한다
+    <ul>
+      <li>접속할 서버: <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> 파일에서 Port 22 앞에 #을 제거한다</li>
+      <li>접속할 서버: <code class="language-plaintext highlighter-rouge">netstat -ntl</code> 로 22번 포트 LISTEN 중인지 확인 (설치는 <code class="language-plaintext highlighter-rouge">apt update</code> 후 <code class="language-plaintext highlighter-rouge">apt install net-tools</code>)</li>
+      <li>접속할 서버: <code class="language-plaintext highlighter-rouge">/etc/init.d/ssh restart</code> 로 ssh 재시작</li>
+    </ul>
+  </li>
+  <li>만약 패스워드를 물어본다면 서버의 PubkeyAuthentication 설정을 바꿔줘야 한다
+    <ul>
+      <li>접속할 서버: <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> 파일에서 <code class="language-plaintext highlighter-rouge">PubkeyAuthentication yes</code>를 추가해 준다</li>
+      <li>접속할 서버: <code class="language-plaintext highlighter-rouge">/etc/init.d/ssh restart</code> 로 ssh 재시작</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="http://taewan.kim/post/ssh_config/">TAEWAN.KIM ssh config 설정 방법</a></li>
+  <li><a href="https://butteryoon.github.io/tools/2021/01/12/ssh_publickey.html">JAMES YOON, sh 공개키 인증시 Permission denied (publickey,password) 오류 해결</a></li>
+  <li><a href="https://www.ibm.com/support/pages/configuring-ssh-login-without-password">IBM Support, Configuring an SSH login without password</a></li>
+</ul>
+:ET
