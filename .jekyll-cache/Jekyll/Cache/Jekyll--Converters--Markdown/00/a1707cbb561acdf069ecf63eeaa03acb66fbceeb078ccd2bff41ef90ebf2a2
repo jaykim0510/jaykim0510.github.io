@@ -1,0 +1,284 @@
+I"�T<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#타입" id="markdown-toc-타입">타입</a></li>
+  <li><a href="#기초-타입" id="markdown-toc-기초-타입">기초 타입</a>    <ul>
+      <li><a href="#숫자" id="markdown-toc-숫자">숫자</a></li>
+      <li><a href="#문자열" id="markdown-toc-문자열">문자열</a></li>
+      <li><a href="#불린" id="markdown-toc-불린">불린</a></li>
+      <li><a href="#배열" id="markdown-toc-배열">배열</a></li>
+      <li><a href="#튜플" id="markdown-toc-튜플">튜플</a></li>
+    </ul>
+  </li>
+  <li><a href="#부가적인-타입" id="markdown-toc-부가적인-타입">부가적인 타입</a>    <ul>
+      <li><a href="#any" id="markdown-toc-any">any</a></li>
+      <li><a href="#unknown" id="markdown-toc-unknown">unknown</a></li>
+      <li><a href="#never" id="markdown-toc-never">never</a></li>
+      <li><a href="#void" id="markdown-toc-void">void</a></li>
+    </ul>
+  </li>
+  <li><a href="#집합-연산자를-통해-확장된-새로운-타입" id="markdown-toc-집합-연산자를-통해-확장된-새로운-타입">집합 연산자를 통해 확장된 새로운 타입</a>    <ul>
+      <li><a href="#union" id="markdown-toc-union">union</a></li>
+      <li><a href="#intersection" id="markdown-toc-intersection">intersection</a></li>
+    </ul>
+  </li>
+  <li><a href="#null과-undefined" id="markdown-toc-null과-undefined">null과 undefined</a>    <ul>
+      <li><a href="#null" id="markdown-toc-null">null</a></li>
+      <li><a href="#undefined" id="markdown-toc-undefined">undefined</a></li>
+    </ul>
+  </li>
+  <li><a href="#타입-지정할-때의-팁" id="markdown-toc-타입-지정할-때의-팁">타입 지정할 때의 팁</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+<h1 id="타입">타입</h1>
+
+<ul>
+  <li><span class="very__important">타입의 범위는 좁힐수록 좋다</span></li>
+  <li>타입스크립트 컴파일러는 <span class="very__important">확실하게 타입을 알 수 있는 경우에는 자동으로 타입을 추론(Type Inference)한다</span></li>
+  <li>타입은 <strong>변수, 함수의 매개변수, 함수의 반환 값</strong>에 지정한다</li>
+  <li><code class="language-plaintext highlighter-rouge">:</code>을 이용해 코드에 타입을 정의하는 방식을 타입 표기(Type Annotation)라고 한다</li>
+</ul>
+
+<h1 id="기초-타입">기초 타입</h1>
+
+<ul>
+  <li>숫자는 <code class="language-plaintext highlighter-rouge">number</code>, 문자열은 <code class="language-plaintext highlighter-rouge">string</code>, 불린은 <code class="language-plaintext highlighter-rouge">boolean</code> 타입이다</li>
+</ul>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">String</code>, <code class="language-plaintext highlighter-rouge">Number</code>, <code class="language-plaintext highlighter-rouge">Boolean</code>와 같은 (대문자로 시작하는) 타입은 유효한 타입이지만, 코드상에서 이러한 특수 내장 타입을 사용하는 경우는 극히 드뭅니다. 항상 <code class="language-plaintext highlighter-rouge">string</code>, <code class="language-plaintext highlighter-rouge">number</code>, <code class="language-plaintext highlighter-rouge">boolean</code> 타입을 사용하세요.</p>
+</blockquote>
+
+<h2 id="숫자">숫자</h2>
+
+<ul>
+  <li>숫자 타입은 <code class="language-plaintext highlighter-rouge">number</code>로 표기한다</li>
+  <li>
+    <p>잘 쓰진 않지만 더 구체적으로 표기하기 위해 <code class="language-plaintext highlighter-rouge">3</code>, <code class="language-plaintext highlighter-rouge">5</code> 처럼 리터럴로 표기할 수도 있다.</p>
+  </li>
+  <li>아래와 같이 변수 <code class="language-plaintext highlighter-rouge">x</code>에 <code class="language-plaintext highlighter-rouge">3</code>을 할당한다고 해보자</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">x</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>여기에 타입을 지정할 필요가 없다. 컴파일러가 <code class="language-plaintext highlighter-rouge">x</code>의 타입은 <code class="language-plaintext highlighter-rouge">number</code>이며, 더 정확히는 리터럴 <code class="language-plaintext highlighter-rouge">3</code>이라는 것을 추론할 수 있기 때문이다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 이렇게 표기해도 되지만, 어차피 컴파일러가 타입 추론을 하기 때문에 굳이 이렇게 적을 필요는 없다</span>
+<span class="kd">const</span> <span class="nx">x</span><span class="p">:</span> <span class="mi">3</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="c1">// 타입은 좁힐수록 좋다는 사실을 생각해보면, 이 방식은 잘못된 방식이다. 리터럴 3으로 추론할 수 있는데 굳이 범위를 number로 넓히는 것은 바람직 하지 않다</span>
+<span class="kd">const</span> <span class="nx">x</span><span class="p">:</span> <span class="kr">number</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">let</code> 이라는 키워드로 재할당 가능한 변수를 만든 경우에는 타입을 어떻게 지정해야 할까?</li>
+  <li>여기서 자바스크립트에서는 오류가 안나지만, 타입스크립트에서는 오류가 발생하는 부분이 있다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// number로 추론</span>
+
+<span class="c1">// 자바스크립트에서는 이렇게 해도 오류가 생기지 않지만 타입스크립트는 number에 string을 할당했기 때문에 에러가 난다</span>
+<span class="nx">count</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span>
+</code></pre></div></div>
+
+<ul>
+  <li>반면 아래는 자바스크립트, 타입스크립트에서 모두 오류가 안난다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">count</span><span class="p">;</span> <span class="c1">// any로 추론</span>
+
+<span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nx">count</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>하지만 이러한 코드는 문맥상으로도 결코 바람직하지 않다. 그래서 최종적으로 아래와 같은 방법으로 코드를 작성하는게 좋다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="nx">count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="c1">// 또는</span>
+
+<span class="kd">let</span> <span class="nx">count</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+
+<span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nx">count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h2 id="문자열">문자열</h2>
+
+<ul>
+  <li>문자열 타입은 <code class="language-plaintext highlighter-rouge">string</code>으로 표기한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">menu</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">chicken</span><span class="dl">'</span><span class="p">;</span> <span class="c1">// 문자열 리터럴 'chicken'으로 타입 추론</span>
+<span class="kd">let</span> <span class="nx">menu</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">chicken</span><span class="dl">'</span><span class="p">;</span> <span class="c1">// 재할당 가능하기 때문에 string으로 타입 추론</span>
+
+<span class="kd">let</span> <span class="nx">menu</span><span class="p">;</span> <span class="c1">// any로 타입 추론</span>
+<span class="kd">let</span> <span class="nx">menu</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span> <span class="c1">// string으로 타입 추론</span>
+</code></pre></div></div>
+
+<h2 id="불린">불린</h2>
+
+<ul>
+  <li>불린 타입은 <code class="language-plaintext highlighter-rouge">boolean</code>으로 표기한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">isGood</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// 불린 리터럴 true로 타입 추론</span>
+<span class="kd">let</span> <span class="nx">isGood</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span> <span class="c1">// 재할당 가능하기 때문에 boolean으로 타입 추론</span>
+
+<span class="kd">let</span> <span class="nx">isGood</span><span class="p">;</span> <span class="c1">// any로 타입 추론</span>
+<span class="kd">let</span> <span class="nx">isGood</span><span class="p">:</span> <span class="nx">boolean</span><span class="p">;</span> <span class="c1">// boolean으로 타입 추론</span>
+</code></pre></div></div>
+
+<h2 id="배열">배열</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Array&lt;원소 타입&gt;</code> (ex. <code class="language-plaintext highlighter-rouge">Array&lt;number&gt;</code>) 또는 <code class="language-plaintext highlighter-rouge">원소 타입[]</code> (ex. <code class="language-plaintext highlighter-rouge">number[]</code>)로 표기한다</li>
+  <li>(<code class="language-plaintext highlighter-rouge">&lt;&gt;</code>는 제네릭 표기법이다)</li>
+  <li>(자바스크립트에서 배열을 <code class="language-plaintext highlighter-rouge">typeof</code> 해도 <code class="language-plaintext highlighter-rouge">object</code>가 나오지만, 타입스크립트에서는 <code class="language-plaintext highlighter-rouge">object</code>가 아니다)</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">arr</span><span class="p">:</span> <span class="kr">number</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+
+<span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+<span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+
+<span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">2</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">3</span><span class="dl">'</span><span class="p">];</span> <span class="c1">// 안됨</span>
+<span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="dl">'</span><span class="s1">4</span><span class="dl">'</span><span class="p">);</span> <span class="c1">// 안됨</span>
+</code></pre></div></div>
+
+<h2 id="튜플">튜플</h2>
+
+<ul>
+  <li>튜플은 길이가 고정되고 각 요소의 타입이 지정되어 있는 배열이다</li>
+  <li><code class="language-plaintext highlighter-rouge">[첫 번째 요소의 타입, 두 번째 요소의 타입, ...]</code>(ex. <code class="language-plaintext highlighter-rouge">[string, number]</code>) 이런식으로 표기한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">arr</span><span class="p">:</span> <span class="p">[</span><span class="kr">string</span><span class="p">,</span> <span class="kr">number</span><span class="p">];</span>
+
+<span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">,</span> <span class="mi">3</span><span class="p">];</span>
+
+<span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">];</span> <span class="c1">// 안됨</span>
+<span class="nx">arr</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">hello</span><span class="dl">'</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="dl">'</span><span class="s1">foo</span><span class="dl">'</span><span class="p">];</span> <span class="c1">// 안됨</span>
+</code></pre></div></div>
+
+<h1 id="부가적인-타입">부가적인 타입</h1>
+
+<h2 id="any">any</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">any</code>는 타입 검사를 원하지 않는 경우에 사용한다</li>
+  <li>어떠한 타입의 값을 할당하더라도 에러가 발생하지 않는다</li>
+  <li>코드를 작성하면서 지금 당장 타입을 모르겠으나 당장의 컴파일러 에러를 면하고 싶은 경우, 아니면 정말 어떠한 타입이 와도 상관없는 경우에 사용한다</li>
+  <li>처음에 코드를 작성할 때 <code class="language-plaintext highlighter-rouge">any</code>로 모두 작성하고, 점진적으로 타입을 지정하는 식으로 개발하기도 한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">myVariable</span><span class="p">:</span> <span class="kr">any</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+<span class="nx">myVariable</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">chicken</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="nx">myVariable</span> <span class="o">=</span> <span class="kc">true</span>
+
+<span class="nx">myVariable</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+
+<span class="nx">myVariable</span><span class="p">.</span><span class="nx">foo</span><span class="p">()</span> <span class="c1">// 이런 잘못된 코드를 사전에 잡아내지 못한다</span>
+</code></pre></div></div>
+
+<h2 id="unknown">unknown</h2>
+
+<ul>
+  <li>지금은 타입을 알 수 없지만, 나중에 사용할 때는 반드시 타입을 지정하도록 하고 싶은 경우에 쓴다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">unknownVar</span><span class="p">:</span> <span class="nx">unknown</span><span class="p">;</span>
+
+<span class="nx">unknownVar</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 이렇게 1을 할당해도 여전히 컴파일러는 타입을 unknown으로 추론한다</span>
+<span class="nx">unknownVar</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span> <span class="c1">// unknown 타입이기 때문에 에러가 난다</span>
+</code></pre></div></div>
+
+<ul>
+  <li>아래와 같은 방법으로 타입을 명확하게 할 수 있다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">unknownVar</span><span class="p">:</span> <span class="nx">unknown</span><span class="p">;</span>
+
+<span class="nx">unknownVar</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">abc</span><span class="dl">'</span> <span class="c1">// 여전히 unknown 타입이다</span>
+
+
+<span class="c1">// 이렇게 타입 가드 방식으로 타입을 명확하게 할 수 있다</span>
+<span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">unknownVar</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">number</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">unknownVar</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">unknownVar</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">unknownVar</span><span class="p">.</span><span class="nx">length</span>
+<span class="p">}</span>
+
+
+<span class="c1">// 또는 as 를 써서 타입을 명확하게 할 수도 있다</span>
+<span class="p">(</span><span class="nx">unknownVar</span> <span class="k">as</span> <span class="kr">string</span><span class="p">).</span><span class="nx">length</span>
+</code></pre></div></div>
+
+<h2 id="never">never</h2>
+
+<ul>
+  <li>
+    <p>(never 타입은 잘 모르겠다)</p>
+  </li>
+  <li>never는 어떠한 값도 올 수 없는 영역</li>
+  <li>‘apple’은 string 이라는 영역에 속하고, 15는 number 라는 영역에 속한다. 어떤 영역에도 속할 수 없으면 그 값은 논리적으로 never 영역에 속한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// foo 함수는 인자로 string 또는 number만 받을 수 있다</span>
+<span class="c1">// 근데 if 문으로 string을 받고, else if 문으로 number를 받고나면, else 문으로는 갈 수 있는 값이 없다</span>
+<span class="c1">// 이러한 영역에 존재하는 값의 타입을 never라고 한다</span>
+
+<span class="kd">function</span> <span class="nx">foo</span><span class="p">(</span><span class="nx">param</span><span class="p">:</span><span class="kr">string</span> <span class="o">|</span> <span class="kr">number</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">param</span><span class="o">===</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">문자열입니다.</span><span class="dl">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">param</span><span class="o">===</span><span class="dl">'</span><span class="s1">number</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">숫자입니다.</span><span class="dl">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="void">void</h2>
+
+<h1 id="집합-연산자를-통해-확장된-새로운-타입">집합 연산자를 통해 확장된 새로운 타입</h1>
+
+<h2 id="union">union</h2>
+
+<h2 id="intersection">intersection</h2>
+
+<h1 id="null과-undefined">null과 undefined</h1>
+
+<h2 id="null">null</h2>
+
+<h2 id="undefined">undefined</h2>
+
+<h1 id="타입-지정할-때의-팁">타입 지정할 때의 팁</h1>
+
+<ul>
+  <li>우선 타입 추론할 수 있는지 확인하기 위해 그냥 자바스크립트로 코드를 쓴다</li>
+  <li>컴파일러가 알아서 추론했다면 마우스를 식별자 위에 올려 컴파일러가 어떻게 추론했는지 확인한다</li>
+  <li>더 좁히고 싶은 경우에는 별도로 타입을 지정해 타입을 좁힌다</li>
+  <li>컴파일러가 추론에 실패했으면 우리가 직접 타입을 지정해주면 된다</li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://ui.toast.com/posts/ko_20220323">타입스크립트의 Never 타입 완벽 가이드, TOAST UI</a></li>
+  <li><a href="https://witch.work/posts/typescript-never-type">TS 탐구생활 - TS의 never 타입, Witch-Work</a></li>
+</ul>
+:ET
