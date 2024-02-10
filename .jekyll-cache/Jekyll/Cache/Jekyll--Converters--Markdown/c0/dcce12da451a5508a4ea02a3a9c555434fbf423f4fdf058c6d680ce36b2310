@@ -1,0 +1,166 @@
+I"�0<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#클래스" id="markdown-toc-클래스">클래스</a></li>
+  <li><a href="#클래스-생성" id="markdown-toc-클래스-생성">클래스 생성</a></li>
+  <li><a href="#클래스-상속" id="markdown-toc-클래스-상속">클래스 상속</a>    <ul>
+      <li><a href="#extends" id="markdown-toc-extends">extends</a></li>
+      <li><a href="#implements" id="markdown-toc-implements">implements</a></li>
+    </ul>
+  </li>
+  <li><a href="#접근-제어자" id="markdown-toc-접근-제어자">접근 제어자</a>    <ul>
+      <li><a href="#public" id="markdown-toc-public">public</a></li>
+      <li><a href="#protected" id="markdown-toc-protected">protected</a></li>
+      <li><a href="#private" id="markdown-toc-private">private</a></li>
+    </ul>
+  </li>
+  <li><a href="#추상화" id="markdown-toc-추상화">추상화</a>    <ul>
+      <li><a href="#abstract" id="markdown-toc-abstract">abstract</a></li>
+      <li><a href="#interface" id="markdown-toc-interface">interface</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="클래스">클래스</h1>
+
+<ul>
+  <li>자바스크립트는 클래스가 필요없는 프로토타입 기반 객체지향 언어다</li>
+  <li>ES6부터 자바나 C#과 같은 클래스 기반 객체지향 프로그래밍 언어와 매우 유사한 객체 생성 메커니즘을 제공해줬다</li>
+  <li>그리고 <span class="very__important">타입스크립트에서는 여기에</span> <code class="language-plaintext highlighter-rouge">public</code>, <code class="language-plaintext highlighter-rouge">private</code><span class="very__important">과 같은 접근 제어자와 추상 클래스, 인터페이스를 추가로 도입했다</span></li>
+</ul>
+
+<h1 id="클래스-생성">클래스 생성</h1>
+
+<ul>
+  <li>클래스를 하나 만들어보자</li>
+  <li>클래스는 타입(<code class="language-plaintext highlighter-rouge">type</code>), 인터페이스(<code class="language-plaintext highlighter-rouge">interface</code>) 처럼 객체 타입을 정의하는 것을 넘어, <span class="very__important">인스턴스를 생성하는 생성자 역할을 할 수 있다</span>는 점이 클래스만의 특징이다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Car</span> <span class="p">{</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="nx">velocity</span><span class="p">:</span> <span class="kr">number</span>
+
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">c</span><span class="p">:</span> <span class="kr">string</span><span class="p">,</span> <span class="nx">v</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">c</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">velocity</span> <span class="o">=</span> <span class="nx">v</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">car</span><span class="p">:</span> <span class="nx">Car</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Car</span><span class="p">(</span><span class="dl">'</span><span class="s1">red</span><span class="dl">'</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>주의할 점은, 타입 어노테이션에 <code class="language-plaintext highlighter-rouge">Car</code>를 붙이면 이는 클래스 <code class="language-plaintext highlighter-rouge">Car</code>가 아니라, 객체 <code class="language-plaintext highlighter-rouge">new Car()</code>를 의미한다는 것이다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">getInstanceFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">car</span><span class="p">:</span> <span class="nx">Car</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">car</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">getClassFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">car</span><span class="p">:</span> <span class="k">typeof</span> <span class="nx">Car</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">car</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">getInstanceFunc</span><span class="p">(</span><span class="nx">car</span><span class="p">)</span>
+<span class="nx">getClassFunc</span><span class="p">(</span><span class="nx">Car</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="클래스-상속">클래스 상속</h1>
+
+<ul>
+  <li>타입스크립트에서는 자바스크립트에서 제공하는 <code class="language-plaintext highlighter-rouge">extends</code>와, 타입스크립트에서 제공하는 <code class="language-plaintext highlighter-rouge">implements</code> 방식으로 상속 관계를 정의할 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">extends</code>는 자바스크립트로 변환된 후에도 남아있지만, <code class="language-plaintext highlighter-rouge">implements</code>는 자바스크립트로 변환된 후에는 사라진다</li>
+  <li>클래스 기반 객체지향 프로그래밍에서 인터페이스는 의존 관계를 나타내는 역할, 클래스는 실제 객체를 생성하는 구현체 역할을 한다</li>
+  <li>(추상적 형태인 인터페이스로 관계를 나타냄으로써 최대한 의존 관계를 느슨하게 만들어준다)</li>
+</ul>
+
+<p><img src="/images/typescript_1.png" alt="" /></p>
+
+<h2 id="extends">extends</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">extends</code>는 클래스와 클래스간의 상속 관계 또는 인터페이스와 인터페이스간의 상속 관계를 정의할 때 사용한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">HyundaiCar</span> <span class="kd">extends</span> <span class="nx">Car</span> <span class="p">{</span>
+
+    <span class="nl">maxVelocity</span><span class="p">:</span> <span class="kr">number</span>
+    
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">color</span><span class="p">:</span> <span class="kr">string</span><span class="p">,</span> <span class="nx">velocity</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">maxVelocity</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">super</span><span class="p">(</span><span class="nx">color</span><span class="p">,</span> <span class="nx">velocity</span><span class="p">)</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">maxVelocity</span> <span class="o">=</span> <span class="nx">maxVelocity</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">hCar</span><span class="p">:</span> <span class="nx">HyundaiCar</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HyundaiCar</span><span class="p">(</span><span class="dl">'</span><span class="s1">red</span><span class="dl">'</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">120</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">HyundaiCar</code>는 <code class="language-plaintext highlighter-rouge">Car</code>를 상속받기 때문에, <code class="language-plaintext highlighter-rouge">Car</code>로서 갖춰야 할 것들은 모두 갖추고 있다. 그래서 타입 어노테이션을 <code class="language-plaintext highlighter-rouge">Car</code>로 해도 괜찮다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">hCar</span><span class="p">:</span> <span class="nx">Car</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HyundaiCar</span><span class="p">(</span><span class="dl">'</span><span class="s1">black</span><span class="dl">'</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">130</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>인터페이스간의 상속 관계도 나타낼 수 있다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kr">interface</span> <span class="nx">Car</span> <span class="p">{</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="nx">velocity</span><span class="p">:</span> <span class="kr">number</span>
+
+<span class="p">}</span>
+
+<span class="kr">interface</span> <span class="nx">HyundaiCar</span> <span class="kd">extends</span> <span class="nx">Car</span> <span class="p">{</span>
+
+    <span class="nl">color</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="nx">velocity</span><span class="p">:</span> <span class="kr">number</span>
+    <span class="nx">maxVelocity</span><span class="p">:</span> <span class="kr">number</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="implements">implements</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">Car</code>를 인터페이스로 만든 경우 <code class="language-plaintext highlighter-rouge">implements</code>를 사용해야 한다</li>
+  <li>인터페이스는 구현체가 자신의 속성을 모두 구현(implement)하도록 유도한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Car</span> <span class="p">{</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="nx">velocity</span><span class="p">:</span> <span class="kr">number</span>
+
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nx">HyundaiCar</span> <span class="k">implements</span> <span class="nx">Car</span> <span class="p">{</span>
+
+    <span class="nl">color</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="nx">velocity</span><span class="p">:</span> <span class="kr">number</span>
+    <span class="nx">maxVelocity</span><span class="p">:</span> <span class="kr">number</span>
+    
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">color</span><span class="p">:</span> <span class="kr">string</span><span class="p">,</span> <span class="nx">velocity</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">maxVelocity</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">color</span> <span class="o">=</span> <span class="nx">color</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">velocity</span> <span class="o">=</span> <span class="nx">velocity</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">maxVelocity</span> <span class="o">=</span> <span class="nx">maxVelocity</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="접근-제어자">접근 제어자</h1>
+
+<h2 id="public">public</h2>
+
+<h2 id="protected">protected</h2>
+
+<h2 id="private">private</h2>
+
+<h1 id="추상화">추상화</h1>
+
+<h2 id="abstract">abstract</h2>
+
+<h2 id="interface">interface</h2>
+:ET

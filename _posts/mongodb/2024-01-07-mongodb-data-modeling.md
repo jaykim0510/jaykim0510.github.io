@@ -58,4 +58,25 @@ tag: mongodb
 
 
 
-## 스키마 변경
+
+
+
+
+- 도큐먼트가 가지는 필드가 달라도 된다
+- 도큐먼트마다 같은 필드에 다른 타입의 데이터를 가질 수도 있다
+
+
+- 관련 데이터를 저장하는 방법
+  - 하나의 도큐먼트에 내장
+  - 각각 컬렉션에 따로 저장하고 reference로 연결
+
+
+- 데이터 모델을 계획하는 방법에 영향을 미칠 수 있는 요소는 다음과 같습니다
+  - Data Duplication and Consistency
+  - Indexing
+  - Hardware Constraints
+  - Single Document Atomicity
+
+- 스키마 디자인 할 때
+  - 자주 사용되는 쿼리에 맞춰서 설계하는 것 좋은 방법이다
+  - 관련 데이터는 embedding 하는 방식으로 할지 reference 방식으로 할지 고려한다
