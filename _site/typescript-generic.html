@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>[Typescript] 제네릭 타입</title>
-  <meta name='description' content='Menca personal blogging theme for Jekyll'>
+  <meta name='description' content='제네릭 타입을 배우고 타입에 따른 동적인 컴포넌트를 만들 수 있다'>
 
   <link rel="canonical" href="http://localhost:4000/typescript-generic">
   <link rel="alternate" type="application/rss+xml" title="Jay&#39;s Cookbook" href="/feed.xml">
@@ -15,16 +15,12 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="[Typescript] 제네릭 타입 – Jay's Cookbook">
-  <meta name="twitter:description" content="
-Table of Contents
-">
+  <meta name="twitter:description" content="제네릭 타입을 배우고 타입에 따른 동적인 컴포넌트를 만들 수 있다">
   <meta name="twitter:image:src" content="http://localhost:4000/images/typescript_logo.png">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="[Typescript] 제네릭 타입 – Jay's Cookbook">
-  <meta property="og:description" content="
-Table of Contents
-">
+  <meta property="og:description" content="제네릭 타입을 배우고 타입에 따른 동적인 컴포넌트를 만들 수 있다">
   <meta property="og:image" content="http://localhost:4000/images/typescript_logo.png">
 
   <!-- Fonts -->
@@ -353,6 +349,14 @@ Table of Contents
               
                 
                   
+                  <li class="nav__item">
+                    <a href="/_pages/tags/data_engineering/redis.html" class="nav__link">Redis</a>
+                  </li>
+                  
+                
+              
+                
+                  
                 
               
                 
@@ -368,6 +372,10 @@ Table of Contents
                   <li class="nav__item">
                     <a href="/_pages/tags/language/typescript.html" class="nav__link">Typescript</a>
                   </li>
+                  
+                
+              
+                
                   
                 
               
@@ -926,6 +934,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -940,7 +950,7 @@ Table of Contents
       <a href="/typescript-class" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Typescript] 클래스 기반의 객체지향 프로그래밍</a>
     
     
-      <a href="/typescript-type-manipulation" class="pagination__next pagination__item"><span class="prev_next"></span>[Typescript] 타입 조작<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/typescript-keyof-typeof" class="pagination__next pagination__item"><span class="prev_next"></span>[Typescript] keyof / typeof / indexed access type / mapped types<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -951,8 +961,92 @@ Table of Contents
     <div class="post__content">
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#제네릭" id="markdown-toc-제네릭">제네릭</a></li>
+  <li><a href="#간단한-제네릭-만들어보기" id="markdown-toc-간단한-제네릭-만들어보기">간단한 제네릭 만들어보기</a></li>
+  <li><a href="#제네릭-제약" id="markdown-toc-제네릭-제약">제네릭 제약</a></li>
+  <li><a href="#제네릭-타입의-특징" id="markdown-toc-제네릭-타입의-특징">제네릭 타입의 특징</a></li>
+</ul>
 
 <hr />
+
+<h1 id="제네릭">제네릭</h1>
+
+<ul>
+  <li><strong>타입을 변수처럼 동적으로 정하는 방법을 의미한다</strong></li>
+  <li>타입을 변수화하면 어떤 컴포넌트가 하나의 타입에만 잘 동작하는 것이 아니라, <strong>타입이 동적으로 변할 때 그에 맞게 동작하는 재사용성 높은 컴포넌트를 만들 수 있다</strong></li>
+</ul>
+
+<h1 id="간단한-제네릭-만들어보기">간단한 제네릭 만들어보기</h1>
+
+<ul>
+  <li>타입을 변수화 한다</li>
+  <li>타입을 <code class="language-plaintext highlighter-rouge">T</code>로 변수화 해보자 (T는 x처럼 흔한 표기법중 하나일 뿐 꼭 T로 써야할 필요는 없다)</li>
+  <li>하나의 값을 받아 배열로 만들어 리턴하는 함수를 만든다고 해보자</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">arraify</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="nx">T</span><span class="p">):</span> <span class="nx">T</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">x</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="nx">arraify</span><span class="o">&lt;</span><span class="kr">number</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1">// [5]</span>
+<span class="nx">arraify</span><span class="o">&lt;</span><span class="kr">string</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">'</span><span class="s1">apple</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// ['apple']</span>
+</code></pre></div></div>
+
+<h1 id="제네릭-제약">제네릭 제약</h1>
+
+<ul>
+  <li>위에서 우리는 <code class="language-plaintext highlighter-rouge">T</code>에 <code class="language-plaintext highlighter-rouge">number</code> 타입도 할당 가능했고, <code class="language-plaintext highlighter-rouge">string</code> 타입도 할당 가능했다</li>
+  <li>하지만 함수 안에서 <code class="language-plaintext highlighter-rouge">x.length</code>와 같이 특정 타입일 때만 가지는 속성을 이용한다면, <code class="language-plaintext highlighter-rouge">T</code>에 할당할 수 있는 타입도 그에 맞게 제약을 해줘야 한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">returnLengthFn</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="nx">T</span><span class="p">):</span> <span class="kr">number</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">x</span><span class="p">.</span><span class="nx">length</span> <span class="c1">// 'T' 형식에 'length' 속성이 없습니다</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>제네릭 타입 <code class="language-plaintext highlighter-rouge">T</code>를 <code class="language-plaintext highlighter-rouge">length</code> 속성을 가지는 타입으로 제약해보자</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Lengthwise</span> <span class="p">{</span>
+    <span class="nl">length</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">returnLengthFn</span><span class="o">&lt;</span><span class="nx">T</span> <span class="kd">extends</span> <span class="nx">Lengthwise</span><span class="o">&gt;</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="nx">T</span><span class="p">):</span> <span class="kr">number</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">x</span><span class="p">.</span><span class="nx">length</span>
+<span class="p">}</span>
+
+<span class="nx">returnLengthFn</span><span class="o">&lt;</span><span class="kr">string</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">'</span><span class="s1">apple</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">returnLengthFn</span><span class="o">&lt;</span><span class="kr">number</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1">// 'number' 형식이 'Lengthwise' 제약 조건을 만족하지 않습니다</span>
+</code></pre></div></div>
+
+<h1 id="제네릭-타입의-특징">제네릭 타입의 특징</h1>
+
+<ul>
+  <li>콤마(,)로 구분해 여러 개의 제네릭 타입을 사용할 수도 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">keyof</code>와 같은 연산자를 이용할 수도 있다</li>
+  <li>사용할 때 꼭 타입을 명시하지 않아도 되며, 이 때는 컴파일러가 타입을 추론해 준다</li>
+  <li>사용할 때 타입을 명시하지 않은 경우, 디폴트를 할당하도록 해줄 수도 있다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">SmartPhonePicker</span> <span class="p">{</span>
+    <span class="nl">a</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Apple</span><span class="dl">'</span><span class="p">;</span>
+    <span class="nl">s</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Samsung</span><span class="dl">'</span><span class="p">;</span>
+    <span class="nl">m</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Shaomi</span><span class="dl">'</span><span class="p">;</span>
+    <span class="nl">n</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Sony</span><span class="dl">'</span><span class="p">;</span>
+  <span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">pickSmartPhone</span><span class="o">&lt;</span><span class="nx">T</span> <span class="kd">extends</span> <span class="nx">SmartPhonePicker</span><span class="p">,</span> <span class="nx">K</span> <span class="kd">extends</span> <span class="kr">keyof</span> <span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">picker</span><span class="p">:</span> <span class="nx">T</span><span class="p">,</span> <span class="nx">key</span><span class="p">:</span> <span class="nx">K</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">picker</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">picker</span><span class="p">:</span> <span class="nx">SmartPhonePicker</span> <span class="o">=</span> <span class="p">{</span> <span class="na">a</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Apple</span><span class="dl">'</span><span class="p">,</span> <span class="na">s</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Samsung</span><span class="dl">'</span><span class="p">,</span> <span class="na">m</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Shaomi</span><span class="dl">'</span><span class="p">,</span> <span class="na">n</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Sony</span><span class="dl">'</span> <span class="p">};</span>
+
+<span class="nx">pickSmartPhone</span><span class="p">(</span><span class="nx">picker</span><span class="p">,</span> <span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">pickSmartPhone</span><span class="p">(</span><span class="nx">picker</span><span class="p">,</span> <span class="dl">'</span><span class="s1">x</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// '"x"' 형식의 인수는 'keyof SmartPhonePicker' 형식의 매개 변수에 할당될 수 없습니다</span>
+</code></pre></div></div>
 
     </div>
   </article>
@@ -971,6 +1065,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -985,7 +1081,7 @@ Table of Contents
       <a href="/typescript-class" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Typescript] 클래스 기반의 객체지향 프로그래밍</a>
     
     
-      <a href="/typescript-type-manipulation" class="pagination__next pagination__item"><span class="prev_next"></span>[Typescript] 타입 조작<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/typescript-keyof-typeof" class="pagination__next pagination__item"><span class="prev_next"></span>[Typescript] keyof / typeof / indexed access type / mapped types<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 

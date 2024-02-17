@@ -1,0 +1,75 @@
+I"\<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#keyof" id="markdown-toc-keyof">keyof</a></li>
+  <li><a href="#typeof" id="markdown-toc-typeof">typeof</a></li>
+  <li><a href="#indexed-access-type" id="markdown-toc-indexed-access-type">Indexed Access Type</a></li>
+  <li><a href="#mapped-types" id="markdown-toc-mapped-types">Mapped Types</a></li>
+</ul>
+
+<hr />
+
+<h1 id="keyof">keyof</h1>
+
+<ul>
+  <li>객체타입의 키(key)값으로 이루어진 유니언 타입을 반환한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">interface</span> <span class="nx">Car</span> <span class="p">{</span>
+    <span class="nl">brand</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="nx">color</span><span class="p">:</span> <span class="kr">string</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">CarPropertiesType</span> <span class="o">=</span> <span class="kr">keyof</span> <span class="nx">Car</span> <span class="c1">// 'brand' | 'color'</span>
+
+<span class="kd">const</span> <span class="nx">brand</span><span class="p">:</span> <span class="nx">CarPropertiesType</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">brand</span><span class="dl">'</span>
+<span class="kd">const</span> <span class="nx">color</span><span class="p">:</span> <span class="nx">CarPropertiesType</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">color</span><span class="dl">'</span>
+</code></pre></div></div>
+
+<h1 id="typeof">typeof</h1>
+
+<ul>
+  <li>피연산자의 타입을 반환한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">car</span><span class="p">:</span> <span class="nx">Car</span> <span class="o">=</span> <span class="p">{</span> <span class="na">brand</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Tesla</span><span class="dl">'</span><span class="p">,</span> <span class="na">color</span><span class="p">:</span> <span class="dl">'</span><span class="s1">red</span><span class="dl">'</span> <span class="p">}</span>
+
+<span class="k">typeof</span> <span class="nx">car</span> <span class="c1">// 'object'</span>
+</code></pre></div></div>
+
+<h1 id="indexed-access-type">Indexed Access Type</h1>
+
+<ul>
+  <li>다른 객체 타입의 프로퍼티의 타입을 타입화하는 것을 말한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">Person</span> <span class="o">=</span> <span class="p">{</span> <span class="na">age</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span> <span class="nl">name</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span> <span class="nl">alive</span><span class="p">:</span> <span class="nx">boolean</span> <span class="p">};</span>
+
+<span class="kd">type</span> <span class="nx">Age</span> <span class="o">=</span> <span class="nx">Person</span><span class="p">[</span><span class="dl">"</span><span class="s2">age</span><span class="dl">"</span><span class="p">];</span> <span class="c1">// number</span>
+<span class="kd">type</span> <span class="nx">AgeOrName</span> <span class="o">=</span> <span class="nx">Person</span><span class="p">[</span><span class="dl">"</span><span class="s2">age</span><span class="dl">"</span><span class="o">|</span> <span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">];</span> <span class="c1">// number | string</span>
+<span class="kd">type</span> <span class="nx">KeyofPerson</span> <span class="o">=</span> <span class="nx">Person</span><span class="p">[</span><span class="kr">keyof</span> <span class="nx">Person</span><span class="p">];</span> <span class="c1">// number | string | boolean</span>
+</code></pre></div></div>
+
+<h1 id="mapped-types">Mapped Types</h1>
+
+<ul>
+  <li>다른 타입의 속성을 순회하여 새로운 타입을 만드는 것을 말한다</li>
+  <li>맵드 타입에서 <code class="language-plaintext highlighter-rouge">in</code>은 마치 자바스크립트의 <code class="language-plaintext highlighter-rouge">for in</code> 문법과 유사하게 동작한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="na">age</span><span class="p">:</span> <span class="kr">number</span>
+    <span class="na">address</span><span class="p">:</span> <span class="kr">string</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">UpdateUser</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">[</span><span class="nx">key</span> <span class="k">in</span> <span class="kr">keyof</span> <span class="nx">T</span><span class="p">]?:</span> <span class="nx">T</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="kd">let</span> <span class="nx">updateBody</span><span class="p">:</span> <span class="nx">UpdateUser</span><span class="o">&lt;</span><span class="nx">User</span><span class="o">&gt;</span>
+
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Park</span><span class="dl">'</span> <span class="p">}</span>
+</code></pre></div></div>
+:ET

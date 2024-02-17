@@ -1,0 +1,104 @@
+I"�#<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#utility-type" id="markdown-toc-utility-type">Utility Type</a></li>
+  <li><a href="#partial" id="markdown-toc-partial">Partial</a></li>
+  <li><a href="#pick" id="markdown-toc-pick">Pick</a></li>
+  <li><a href="#omit" id="markdown-toc-omit">Omit</a></li>
+  <li><a href="#record" id="markdown-toc-record">Record</a></li>
+  <li><a href="#await" id="markdown-toc-await">Await</a></li>
+</ul>
+
+<hr />
+
+<h1 id="utility-type">Utility Type</h1>
+
+<ul>
+  <li>유틸리티 타입은 기존 타입을 변환하여 새로운 타입을 만드는데 유용한 기능을 제공한다</li>
+</ul>
+
+<h1 id="partial">Partial</h1>
+
+<ul>
+  <li>파셜(Partial) 타입은 기존 타입의 모든 가능한 부분집합을 의미하는 타입이다</li>
+  <li>기존 타입의 모든 프로퍼티를 옵셔널(optional)로 만든다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="na">age</span><span class="p">:</span> <span class="kr">number</span>
+    <span class="na">address</span><span class="p">:</span> <span class="kr">string</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">UpdateUser</span> <span class="o">=</span> <span class="nb">Partial</span><span class="o">&lt;</span><span class="nx">User</span><span class="o">&gt;</span>
+
+
+<span class="kd">let</span> <span class="nx">updateBody</span><span class="p">:</span> <span class="nx">UpdateUser</span>
+
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">// OK</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Kim</span><span class="dl">'</span> <span class="p">}</span> <span class="c1">// OK</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Lee</span><span class="dl">'</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="na">address</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Seoul</span><span class="dl">'</span> <span class="p">}</span> <span class="c1">// OK</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">foo</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bar</span><span class="dl">'</span> <span class="p">}</span> <span class="c1">// Error</span>
+</code></pre></div></div>
+
+<h1 id="pick">Pick</h1>
+
+<ul>
+  <li>픽(Pick) 타입은 기존 타입의 특정 속성만 명시적으로 골라 정의한 새로운 타입이다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="na">age</span><span class="p">:</span> <span class="kr">number</span>
+    <span class="na">address</span><span class="p">:</span> <span class="kr">string</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">UpdateUser</span> <span class="o">=</span> <span class="nb">Pick</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">,</span> <span class="dl">'</span><span class="s1">age</span><span class="dl">'</span> <span class="o">|</span> <span class="dl">'</span><span class="s1">address</span><span class="dl">'</span><span class="o">&gt;</span>
+
+
+<span class="kd">let</span> <span class="nx">updateBody</span><span class="p">:</span> <span class="nx">UpdateUser</span>
+
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">// Error</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Kim</span><span class="dl">'</span> <span class="p">}</span> <span class="c1">// Error</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">age</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="na">address</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Seoul</span><span class="dl">'</span> <span class="p">}</span> <span class="c1">// OK</span>
+</code></pre></div></div>
+
+<h1 id="omit">Omit</h1>
+
+<ul>
+  <li>오밋(Omit) 타입은 기존 타입의 특정 속성만 명시적으로 제외한 타입이다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">User</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="kr">string</span>
+    <span class="na">age</span><span class="p">:</span> <span class="kr">number</span>
+    <span class="na">address</span><span class="p">:</span> <span class="kr">string</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">UpdateUser</span> <span class="o">=</span> <span class="nx">Omit</span><span class="o">&lt;</span><span class="nx">User</span><span class="p">,</span> <span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="o">&gt;</span>
+
+
+<span class="kd">let</span> <span class="nx">updateBody</span><span class="p">:</span> <span class="nx">UpdateUser</span>
+
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">// Error</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Kim</span><span class="dl">'</span> <span class="p">}</span> <span class="c1">// Error</span>
+<span class="nx">updateBody</span> <span class="o">=</span> <span class="p">{</span> <span class="na">age</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="na">address</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Seoul</span><span class="dl">'</span> <span class="p">}</span> <span class="c1">// OK</span>
+</code></pre></div></div>
+
+<h1 id="record">Record</h1>
+
+<ul>
+  <li>키와 값의 타입을 정의한 객체를 의미하는 타입이다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">user</span><span class="p">:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="kr">string</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Kim</span><span class="dl">'</span><span class="p">,</span> <span class="na">address</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Seoul</span><span class="dl">'</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">UserKey</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">name</span><span class="dl">'</span> <span class="o">|</span> <span class="dl">'</span><span class="s1">age</span><span class="dl">'</span> <span class="o">|</span> <span class="dl">'</span><span class="s1">address</span><span class="dl">'</span>
+<span class="kd">type</span> <span class="nx">UserValue</span> <span class="o">=</span> <span class="kr">string</span> <span class="o">|</span> <span class="kr">number</span>
+
+<span class="kd">const</span> <span class="nx">user</span><span class="p">:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="nx">UserKey</span><span class="p">,</span> <span class="nx">UserValue</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Kim</span><span class="dl">'</span><span class="p">,</span> <span class="na">age</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="na">address</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Seoul</span><span class="dl">'</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="await">Await</h1>
+:ET

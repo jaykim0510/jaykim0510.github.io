@@ -1,0 +1,77 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커" id="markdown-toc-도커">도커</a></li>
+  <li><a href="#도커의-장점" id="markdown-toc-도커의-장점">도커의 장점</a></li>
+  <li><a href="#도커의-구성요소" id="markdown-toc-도커의-구성요소">도커의 구성요소</a></li>
+  <li><a href="#이미지와-컨테이너" id="markdown-toc-이미지와-컨테이너">이미지와 컨테이너</a>    <ul>
+      <li><a href="#이미지" id="markdown-toc-이미지">이미지</a></li>
+      <li><a href="#컨테이너" id="markdown-toc-컨테이너">컨테이너</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="도커">도커</h1>
+
+<ul>
+  <li>컨테이너 기술은 <span class="very__important">인프라 환경에 상관없이 모든 애플리케이션을 독립적으로 배포, 실행</span> 가능하도록 해준다</li>
+  <li>컨테이너 기술은 운영체제를 제외한 애플리케이션 실행에 필요한 모든 파일(라이브러리, 바이너리, 구성 파일 등)을 패키지로 묶어 배포하는 것이다</li>
+  <li>도커 이전에도 이러한 컨테이너 기술은 존재했었지만 기술적으로 높은 진입 장벽 때문에 대중화되지 못하고 있었다</li>
+  <li><span class="very__important">도커의 등장으로 컨테이너 기술에 대한 접근성이 훨씬 좋아지게 되면서 컨테이너 기술이 대중화</span> 되었다</li>
+</ul>
+
+<h1 id="도커의-장점">도커의 장점</h1>
+
+<ul>
+  <li>도커는 <strong>애플리케이션을 컨테이너화</strong> 하도록 도와주고, <strong>컨테이너를 실행시킬 런타임을 제공</strong>해준다</li>
+  <li>도커 컨테이너는 별도의 게스트 OS 없이, <strong>호스트 머신 커널의 namespace와 cgroups를 이용해 독립적인 OS와 같은 환경을 제공하기 때문에 훨씬 빠르고 가볍다</strong></li>
+</ul>
+
+<h1 id="도커의-구성요소">도커의 구성요소</h1>
+
+<ul>
+  <li>도커의 아키텍처는 클라이언트-서버 아키텍처이다</li>
+  <li><strong>도커 클라이언트</strong>(<code class="language-plaintext highlighter-rouge">docker</code>)
+    <ul>
+      <li>사용자는 REST API를 사용해 도커 데몬(<code class="language-plaintext highlighter-rouge">dockerd</code>)에게 도커 관련 명령어를 전달할 수 있다</li>
+      <li><code class="language-plaintext highlighter-rouge">docker run</code>과 같은 명령을 사용하면 도커 클라이언트는 해당 명령을 도커 데몬에게 전송하고 도커 데몬은 명령을 수행하게 된다</li>
+    </ul>
+  </li>
+  <li><strong>도커 데몬</strong>(<code class="language-plaintext highlighter-rouge">dockerd</code>)
+    <ul>
+      <li>도커 데몬은 도커 클라이언트로부터 요청을 받으면 이미지, 컨테이너, 네트워크, 볼륨과 같은 도커 오브젝트를 생성하고 관리한다</li>
+    </ul>
+  </li>
+  <li><strong>도커 레지스트리</strong>
+    <ul>
+      <li>도커 레지스트리는 도커 이미지 오브젝트를 저장, 관리하는 곳이다</li>
+      <li>public한 곳(docker hub)도 있고, private(AWS의 ECR)한 곳도 있다</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/images/docker_3.png" alt="" /></p>
+
+<h1 id="이미지와-컨테이너">이미지와 컨테이너</h1>
+
+<h2 id="이미지">이미지</h2>
+
+<ul>
+  <li>도커 이미지는 도커 컨테이너를 생성하기 위한 읽기 전용 템플릿이다</li>
+  <li>도커는 애플리케이션을 컨테이너화하기 위해 이미지로 만든다</li>
+  <li>기본 이미지 위에 원하는 커스터마이징을 통해 새로운 이미지를 만들 수도 있고, 이렇게 만들어진 이미지는 도커 레지스트리에 공유할 수 있다</li>
+  <li>이미지를 만들 때에는 Dockerfile에 필요한 명령어를 정의하여 만들 수 있다</li>
+  <li>Dockerfile에 정의된 각각의 명령어들은 이미지의 레이어를 생성하며, 이러한 레이어들이 모여 이미지를 구성한다</li>
+</ul>
+
+<h2 id="컨테이너">컨테이너</h2>
+
+<ul>
+  <li>컨테이너는 도커 이미지를 기반으로 실행되는 프로세스를 말한다</li>
+  <li>컨테이너는 Docker API 사용하여 생성, 시작, 중지, 이동 또는 삭제 할 수 있는 이미지의 실행 가능한 인스턴스를 나타낸다</li>
+  <li>컨테이너가 제거될 때는 영구 저장소에 저장되지 않은 변경 사항은 모두 해당 컨테이너와 같이 사라진다</li>
+</ul>
+:ET
