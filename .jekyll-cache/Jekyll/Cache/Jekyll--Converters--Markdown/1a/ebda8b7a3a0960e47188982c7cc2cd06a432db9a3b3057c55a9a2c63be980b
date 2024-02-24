@@ -1,0 +1,102 @@
+I"o<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#shell-form-exec-form" id="markdown-toc-shell-form-exec-form">shell form exec form</a>    <ul>
+      <li><a href="#exec-form" id="markdown-toc-exec-form">exec form</a></li>
+      <li><a href="#shell-form" id="markdown-toc-shell-form">shell form</a></li>
+    </ul>
+  </li>
+  <li><a href="#run" id="markdown-toc-run">RUN</a></li>
+  <li><a href="#cmd" id="markdown-toc-cmd">CMD</a></li>
+  <li><a href="#entrypoint" id="markdown-toc-entrypoint">ENTRYPOINT</a></li>
+  <li><a href="#정리" id="markdown-toc-정리">정리</a></li>
+</ul>
+
+<hr />
+
+<h1 id="shell-form-exec-form">shell form exec form</h1>
+
+<p><code class="language-plaintext highlighter-rouge">RUN</code>, <code class="language-plaintext highlighter-rouge">CMD</code>, 그리고 <code class="language-plaintext highlighter-rouge">ENTRYPOINT</code> 인스트럭션은 두 가지 작성법이 있다</p>
+
+<ul>
+  <li><strong>exec form</strong>: <code class="language-plaintext highlighter-rouge">INSTRUCTION ["executable","param1","param2"]</code></li>
+  <li>
+    <p><strong>shell form</strong>: <code class="language-plaintext highlighter-rouge">INSTRUCTION command param1 param2</code></p>
+  </li>
+  <li>The shell form automatically uses a command shell, whereas the exec form does not.</li>
+</ul>
+
+<h2 id="exec-form">exec form</h2>
+
+<ul>
+  <li>안의 값들은 반드시 쌍따옴표로 감싸줘야 한다
+<!-- - exec form은 `ENTRYPOINT` 인스트럭션에 `CMD` 인스트럭션의 디폴트 인자를 설정하기에 가장 적합한 형태이다 --></li>
+  <li>shell processing이 안 일어나기 때문에 $HOME 과 같은 변수의 치환이 발생하지 않는다. 필요하면 쉘을 직접 표기해야 한다 (<code class="language-plaintext highlighter-rouge">[ "sh", "-c", "echo $HOME" ]</code>)</li>
+</ul>
+
+<h2 id="shell-form">shell form</h2>
+
+<ul>
+  <li>shell form은 자동으로 커맨드 쉘(<code class="language-plaintext highlighter-rouge">/bin/sh -c</code>)을 적용한다</li>
+  <li>백슬래쉬(╲)로 하나의 인스트럭션을 여러 줄에 걸쳐 쓸 수 있다</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">RUN </span><span class="nb">source</span> <span class="nv">$HOME</span>/.bashrc <span class="o">&amp;&amp;</span> ╲
+echo $HOME
+
+<span class="c"># They're equivalent to the following line:</span>
+
+<span class="k">RUN </span><span class="nb">source</span> <span class="nv">$HOME</span>/.bashrc <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="nv">$HOME</span>
+</code></pre></div></div>
+
+<ul>
+  <li>SHELL 인스트럭션으로 기본 쉘을 바꿀 수 있다</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SHELL ["/bin/bash", "-c"]
+RUN echo hello
+</code></pre></div></div>
+
+<h1 id="run">RUN</h1>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">RUN </span>apt-get update
+<span class="k">RUN </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> curl
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">RUN</code> 인스트럭션은 빌드 단계에 실행할 명령어를 정의한다</li>
+  <li><code class="language-plaintext highlighter-rouge">RUN</code> 인스트럭션은 새로운 레이어를 만든다</li>
+  <li>shell form이 주로 사용된다</li>
+  <li>주로 패키지 설치, 빌드 명령어 등에 사용된다</li>
+  <li>Dockerfile에서 처음 빌드될 때 실행된 <code class="language-plaintext highlighter-rouge">RUN</code> 인스트럭션은 캐시되었다가 다음 빌드 때 사용된다. 캐시를 무효화 시키려면 <code class="language-plaintext highlighter-rouge">docker build --no-cache</code> 이런 식으로 <code class="language-plaintext highlighter-rouge">--no-cache</code> 플래그를 써줘야 한다</li>
+</ul>
+
+<h1 id="cmd">CMD</h1>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">CMD</code> 인스트럭션은 컨테이너가 실행될 때 실행할 명령어를 정의한다</li>
+  <li><code class="language-plaintext highlighter-rouge">CMD</code> 인스트럭션은 Dockerfile에 하나만 있을 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">CMD</code>의 주목적은 실행중인 컨테이너에 디폴트를 제공하기 위함이다</li>
+  <li>컨테이너가 생성될 때 실행된다 (stop되었다가 start될 때는 실행되지 않는다)</li>
+  <li>디폴트에는 실행 가능한 것도 포함될 수도 있고, 생략한다면 <code class="language-plaintext highlighter-rouge">ENTRYPOINT</code> 인스트럭션에 반드시 포함시켜야 한다</li>
+  <li><code class="language-plaintext highlighter-rouge">CMD</code>의 디폴트는 <code class="language-plaintext highlighter-rouge">docker run</code>에 의해 덮어씌어질 수도 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">CMD</code>가 <code class="language-plaintext highlighter-rouge">ENTRYPOINT</code>에 디폴트를 제공하기 위한 용도로 사용된다면 둘 다 exec form으로 작성해야 한다</li>
+</ul>
+
+<h1 id="entrypoint">ENTRYPOINT</h1>
+
+<ul>
+  <li>컨테이너가 실행될 때마다 실행된다 (stop되었다가 start 될 때마다 실행된다)</li>
+  <li>exec form이 선호된다 (shell form 쓰면 ₩ 인스트럭션이 사용되지 않는다)</li>
+  <li><code class="language-plaintext highlighter-rouge">ENTRYPOINT</code> 인스트럭션은 <code class="language-plaintext highlighter-rouge">CMD</code>나 <code class="language-plaintext highlighter-rouge">docker run</code>과 다르게 덮어씌어지지 않는다</li>
+</ul>
+
+<h1 id="정리">정리</h1>
+
+<ul>
+  <li>빌드 타임에만 필요한 명령어는 RUN 인스트럭션에 shell form으로 정의한다</li>
+  <li>메인 프로세스와 같은 컨테이너가 실행될 때마다 같이 실행되어야할 명령어는 ENTRYPOINT에 exec form으로 정의한다</li>
+  <li>디폴트로 전달하고 싶은 인자는 CMD에 exec form으로 정의한다</li>
+</ul>
+:ET

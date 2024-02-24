@@ -2,7 +2,7 @@
 layout: post
 title:  '[Javascript]: var, let, const 키워드'
 description: 이웅모님의 모던 자바스크립트 Deep Dive 책을 읽고 정리한 내용이다
-date:   2024-01-24 15:01:35 +0300
+date:   2024-01-25 15:01:35 +0300
 image:  '/images/js_logo.png'
 logo_image: '/images/js_logo.png'
 category: language
