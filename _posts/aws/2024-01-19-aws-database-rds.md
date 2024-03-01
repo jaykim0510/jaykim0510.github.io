@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '[AWS] 데이터베이스(1) RDS'
+title:  '[AWS] 데이터베이스(1) RDS (준비중)'
 description: 
 date:   2024-01-19 15:01:35 +0300
 image:  '/images/aws_logo.png'
