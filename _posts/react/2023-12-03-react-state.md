@@ -21,3 +21,6 @@ tag: react
 # 참고
 
 - [Adding Interactivity, react.dev](https://react.dev/learn/adding-interactivity)
+- [React re-renders guide: everything, all at once, Developer Way](https://www.developerway.com/posts/react-re-renders-guide#part2)
+- [Re-rendering Components in ReactJS, Geeksforgeeks](https://www.geeksforgeeks.org/re-rendering-components-in-reactjs/)
+- [How and when to force a React component to re-render, LogRocket](https://blog.logrocket.com/how-when-to-force-react-component-re-render/)

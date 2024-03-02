@@ -20,4 +20,4 @@ tag: react
 
 # 참고
 
-- [Adding Interactivity, react.dev](https://react.dev/learn/adding-interactivity)
+- [Built-in React Hooks, react.dev](https://react.dev/reference/react/hooks)
