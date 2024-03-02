@@ -25,9 +25,12 @@ tag: docker
 
 # WORKDIR
 
-WORKDIR 명령은 Docker 파일에서 이어지는 모든 RUN, CMD, ENTRIPOINT, COPY 및 ADD 명령에 대한 **작업 디렉토리를 설정**합니다. WORKDIR이 존재하지 않으면 이후 Dockerfile 명령어에 사용되지 않더라도 생성됩니다.
+- `WORKDIR` 인스트럭션은 Docker 파일에서 이어지는 모든 `RUN`, `CMD`, `ENTRIPOINT`, `COPY` 및 `ADD` 인스트럭션에 대한 **작업 디렉토리를 설정**한다
+- `WORKDIR`을 명시하지 않은 경우, 베이스 이미지의 `WORKDIR`을 이어받는다. 베이스 이미지에도 없으면 디폴트로 루트 경로(`/`)가 된다
+- 명시한 경로가 없으면 경로에 필요한 디렉터리를 만든다
 
-WORKDIR 명령은 Docker 파일에서 여러 번 사용할 수 있습니다. 상대 경로가 제공되는 경우 이전 WORKDIR 명령의 경로에 상대적입니다. 예를 들어 다음 명령어의 결과는 `/a/b/c`입니다.  
+- `WORKDIR` 명령은 Docker 파일에서 여러 번 사용할 수 있다
+- 상대 경로가 제공되는 경우 이전 `WORKDIR` 명령의 경로에 상대적이다. 예를 들어 다음 `RUN` 인스트럭션의 작업 디렉토리는 `/a/b/c`이다 
 
 ```dockerfile
 WORKDIR /a
@@ -36,7 +39,8 @@ WORKDIR c
 RUN pwd
 ```  
 
-또한 ENV를 이용해 Dockerfile에서 명시한 환경 변수의 경우 WORKDIR 명령어에서 해석할 수 있습니다. 아래 예를 보면 DIRPATH는 Dockerfile에서 정의를 했기 때문에 `/path`로 인식되고, DIRNAME은 해석되지 않아 `/path/$DIRNAME`과 같은 결과가 나옵니다. 
+- 또한 `ENV`를 이용해 Dockerfile에서 명시한 환경 변수의 경우 `WORKDIR` 명령어에서 해석할 수 있다
+- 아래의 `$DIRPATH/$DIRNAME`은 `/path/$DIRNAME`으로 해석된다
 
 ```dockerfile
 ENV DIRPATH=/path
@@ -46,19 +50,19 @@ RUN pwd
 
 # VOLUME  
 
-VOLUME 명령은 **지정된 이름으로 마운트 지점을 생성하고 네이티브 호스트 또는 다른 컨테이너와 마운트**됩니다.  
+- 컨테이너의 마운트 지점을 생성한다
+- 데이터베이스 같은 유상태 애플리케이션의 경우 사용자가 볼륨을 지정하지 않더라도 데이터를 유실하지 않기 위한 안전장치 용도이다
 
-docker run 명령어를 실행하면 기본 이미지 내의 디렉토리 중 명시된 디렉토리에 있는 파일들로 마운트된 디렉토리를 초기화합니다. 
-
-VOLUME 명령어로 볼륨을 생성한 뒤 이후의 빌드과정에서 생기는 볼륨의 변경값은 모두 무시됩니다.  
-
-**호스트 디렉터리는 컨테이너를 생성하거나 실행할 때 지정해야 합니다**.  호스트 디렉토리(마운트 지점)는 본질적으로 호스트에 종속됩니다. 이는 지정된 호스트 디렉토리를 모든 호스트에서 사용할 수 있다고 보장할 수 없기 때문에 이미지 이식성을 유지하기 위한 것입니다. 따라서 Dockerfile 내에서 호스트 디렉토리를 마운트할 수 없습니다.    
+```dockerfile
+VOLUME /data
+```
 
 # COPY
 
-The COPY instruction copies new files or directories from <src> and adds them to the filesystem of the container at the path <dest>.   
-
-The <dest> is an absolute path, or a path relative to WORKDIR, into which the source will be copied inside the destination container.  
+- `COPY` 인스트럭션은 호스트 파일 시스템의 파일을 컨테이너에 복사한다
+- `COPY <source> <target>`
+  - source에는 파일 하나가 올 수도 있고, 와일드카드로 여러 파일을 매치할 수도 있다
+  - target에는 절대경로가 올 수도 있고, 상대경로가 올 수도 있다. 상대경로가 올 경우 `WORKDIR`에 대한 상대경로가 된다
 
 ```dockerfile
 # t로 시작하는 모든 txt파일을 <WORKDIR>/relativeDir/ 로 복사한다
@@ -72,6 +76,17 @@ COPY tes?.txt /absoluteDir/
 
 # ADD
 
+- `COPY` 인스트럭션과 비슷하다
+- `ADD`는 추가로 URL을 통해 파일을 다운로드할 수 있고, 압축된 파일을 자동으로 추출할 수 있는 기능도 가지고 있다
+- `COPY`가 더욱 명료하고 예측 가능하다는 점 때문에 도커에서 권장한다. 특별한 경우에만 `ADD`를 사용하는 것이 좋다
+
+- 아래 예시는 `big.tar.xz` 파일을 `http://example.com`에서 다운로드하고, `/container_directory`에 압축 해제하여 추가한다
+
+```dockerfile
+ADD http://example.com/big.tar.xz /container_directory
+```
+
 # 참고
 
-- [Docker 공식문서](https://docs.docker.com/engine/reference/builder/#cmd){:target="_blank"}  
+- [Docker 공식문서](https://docs.docker.com/reference/dockerfile/){:target="_blank"}  
+- [[Docker] Dockerfile의 COPY와 ADD 명령어 비교, 김징어의 Devlog](https://kimjingo.tistory.com/240)

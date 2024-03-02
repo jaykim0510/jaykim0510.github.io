@@ -1017,9 +1017,15 @@
 
 <h1 id="workdir">WORKDIR</h1>
 
-<p>WORKDIR 명령은 Docker 파일에서 이어지는 모든 RUN, CMD, ENTRIPOINT, COPY 및 ADD 명령에 대한 <strong>작업 디렉토리를 설정</strong>합니다. WORKDIR이 존재하지 않으면 이후 Dockerfile 명령어에 사용되지 않더라도 생성됩니다.</p>
-
-<p>WORKDIR 명령은 Docker 파일에서 여러 번 사용할 수 있습니다. 상대 경로가 제공되는 경우 이전 WORKDIR 명령의 경로에 상대적입니다. 예를 들어 다음 명령어의 결과는 <code class="language-plaintext highlighter-rouge">/a/b/c</code>입니다.</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">WORKDIR</code> 인스트럭션은 Docker 파일에서 이어지는 모든 <code class="language-plaintext highlighter-rouge">RUN</code>, <code class="language-plaintext highlighter-rouge">CMD</code>, <code class="language-plaintext highlighter-rouge">ENTRIPOINT</code>, <code class="language-plaintext highlighter-rouge">COPY</code> 및 <code class="language-plaintext highlighter-rouge">ADD</code> 인스트럭션에 대한 <strong>작업 디렉토리를 설정</strong>한다</li>
+  <li><code class="language-plaintext highlighter-rouge">WORKDIR</code>을 명시하지 않은 경우, 베이스 이미지의 <code class="language-plaintext highlighter-rouge">WORKDIR</code>을 이어받는다. 베이스 이미지에도 없으면 디폴트로 루트 경로(<code class="language-plaintext highlighter-rouge">/</code>)가 된다</li>
+  <li>
+    <p>명시한 경로가 없으면 경로에 필요한 디렉터리를 만든다</p>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">WORKDIR</code> 명령은 Docker 파일에서 여러 번 사용할 수 있다</li>
+  <li>상대 경로가 제공되는 경우 이전 <code class="language-plaintext highlighter-rouge">WORKDIR</code> 명령의 경로에 상대적이다. 예를 들어 다음 <code class="language-plaintext highlighter-rouge">RUN</code> 인스트럭션의 작업 디렉토리는 <code class="language-plaintext highlighter-rouge">/a/b/c</code>이다</li>
+</ul>
 
 <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">WORKDIR</span><span class="s"> /a</span>
 <span class="k">WORKDIR</span><span class="s"> b</span>
@@ -1027,7 +1033,10 @@
 <span class="k">RUN </span><span class="nb">pwd</span>
 </code></pre></div></div>
 
-<p>또한 ENV를 이용해 Dockerfile에서 명시한 환경 변수의 경우 WORKDIR 명령어에서 해석할 수 있습니다. 아래 예를 보면 DIRPATH는 Dockerfile에서 정의를 했기 때문에 <code class="language-plaintext highlighter-rouge">/path</code>로 인식되고, DIRNAME은 해석되지 않아 <code class="language-plaintext highlighter-rouge">/path/$DIRNAME</code>과 같은 결과가 나옵니다.</p>
+<ul>
+  <li>또한 <code class="language-plaintext highlighter-rouge">ENV</code>를 이용해 Dockerfile에서 명시한 환경 변수의 경우 <code class="language-plaintext highlighter-rouge">WORKDIR</code> 명령어에서 해석할 수 있다</li>
+  <li>아래의 <code class="language-plaintext highlighter-rouge">$DIRPATH/$DIRNAME</code>은 <code class="language-plaintext highlighter-rouge">/path/$DIRNAME</code>으로 해석된다</li>
+</ul>
 
 <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> DIRPATH=/path</span>
 <span class="k">WORKDIR</span><span class="s"> $DIRPATH/$DIRNAME</span>
@@ -1063,7 +1072,7 @@
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://docs.docker.com/engine/reference/builder/#cmd" target="_blank">Docker 공식문서</a></li>
+  <li><a href="https://docs.docker.com/reference/dockerfile/" target="_blank">Docker 공식문서</a></li>
 </ul>
 
     </div>
@@ -1252,7 +1261,7 @@
       
 
       
-      <a class="article__image" href="/docker-series8">
+      <a class="article__image" href="/docker-volume">
         <img class="lazy" data-src="/images/docker_logo.png" alt="Docker의 볼륨 이해하기">
       </a>
       
@@ -1273,7 +1282,7 @@
       </div>
 
       <h2 class="article__title">
-        <a href="/docker-series8">Docker의 볼륨 이해하기</a>
+        <a href="/docker-volume">Docker의 볼륨 이해하기</a>
       </h2>
 
       
