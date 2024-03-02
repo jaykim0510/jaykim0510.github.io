@@ -17,12 +17,6 @@ tag: docker
 
 ---
 
-- [x] COPY: 로컬에 있는 파일을 컨테이너로 복사
-- [ ] ADD: 로컬에 있는 파일의 압축을 풀고 컨테이너로 복사
-- [x] VOLUME: 볼륨 마운트 (거의 안씀)
-- [x] WORKDIR: 명령어를 실행할 작업 디렉터리 지정 (디렉터리 없으면 생성)
-
-
 # WORKDIR
 
 - `WORKDIR` 인스트럭션은 Docker 파일에서 이어지는 모든 `RUN`, `CMD`, `ENTRIPOINT`, `COPY` 및 `ADD` 인스트럭션에 대한 **작업 디렉토리를 설정**한다
