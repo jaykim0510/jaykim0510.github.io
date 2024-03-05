@@ -1,0 +1,91 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#인증과-인가" id="markdown-toc-인증과-인가">인증과 인가</a></li>
+  <li><a href="#인증authentication" id="markdown-toc-인증authentication">인증(Authentication)</a>    <ul>
+      <li><a href="#세션-인증-방식" id="markdown-toc-세션-인증-방식">세션 인증 방식</a></li>
+      <li><a href="#json-토큰-인증-방식" id="markdown-toc-json-토큰-인증-방식">JSON 토큰 인증 방식</a></li>
+      <li><a href="#oauth-인증-방식" id="markdown-toc-oauth-인증-방식">OAuth 인증 방식</a></li>
+    </ul>
+  </li>
+  <li><a href="#인가authorization" id="markdown-toc-인가authorization">인가(Authorization)</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="인증과-인가">인증과 인가</h1>
+
+<ul>
+  <li><strong>인증(Authentication)</strong>
+    <ul>
+      <li>유효한 사용자인지를 확인한다</li>
+      <li>ex. 로그인 여부를 확인한다</li>
+    </ul>
+  </li>
+  <li><strong>인가(Authorization)</strong>
+    <ul>
+      <li>권한이 있는지를 확인하고 있으면 특정 행동을 허가한다</li>
+      <li>인가는 인증 절차를 거친 후에 진행된다</li>
+      <li>ex. 불법 광고 영상을 올린 사용자를 탈퇴시키려 할 때, 먼저 관리자 권한이 있는지 확인하고 있는 경우 허가한다</li>
+      <li>ex. 자신이 작성했던 댓글을 수정하려 할 때, 댓글 작성자가 맞는지 확인하고 맞는 경우 허가한다</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/images/backend_theory_2.png" alt="" /></p>
+
+<h1 id="인증authentication">인증(Authentication)</h1>
+
+<ul>
+  <li>보통 인증은 웹 서비스에서 로그인한 유저에게만 제공하는 정보에 접근하려고 할 때 요구된다</li>
+  <li>이 때 HTTP는 무상태(stateless)한 특성 때문에 로그인한 정보를 저장하고 있지 않으면, 매번 인증 절차를 진행해야 된다</li>
+  <li>그래서 백엔드에서 인증 절차를 구현할 때는 사용자의 로그인 정보를 어디에 저장할지 고민해야 한다</li>
+  <li>아래의 세가지 주요 인증 방식을 살펴보자</li>
+</ul>
+
+<h2 id="세션-인증-방식">세션 인증 방식</h2>
+
+<ul>
+  <li>서버에 포함된 세션 저장소에서 사용자의 로그인 정보를 관리한다</li>
+  <li>사용자가 로그인 성공시 세션 저장소에 (세션ID-사용자정보)라는 키-밸류 형태의 데이터가 저장되고, 사용자의 웹 브라우저 쿠키에 세션ID가 저장된다</li>
+  <li>사용자는 매번 로그인 인증 절차를 거치지 않고, 쿠키에 저장된 세션ID를 요청(request)과 함께 보냄으로써 인증된 사용자임을 증명할 수 있다</li>
+</ul>
+
+<p><img src="/images/backend_theory_3.png" alt="" /></p>
+
+<div class="bell-para">
+    <div class="bell-bar">
+      <i class="fa-solid fa-bell"></i>
+      세션 인증 방식의 장단점
+    </div>
+    <div class="bell-content">
+      <ul>
+        <li>장점
+          <ul>
+            <li>사용자 민감 정보는 서버에 저장하고, 세션 ID만으로 인증이 가능하다</li>
+            <li>쿠키에는 세션 ID 정보만 있기 때문에, 탈취되어도 세션 ID만 무효화하면 사용자 정보는 안전하다는 점에서 사후대처가 된다</li>
+          </ul>
+        </li>
+        <li>단점
+          <ul>
+            <li>해커가 세션 ID를 탈취하여 위장 접근할 수 있다.(하이재킹 공격)</li>
+            <li>서버를 스케일아웃 시킬 경우 모든 서버가 세션 정보를 가지고 있어야 하므로, 서버의 확장성을 떨어트린다 <a href="https://www.youtube.com/watch?v=BotXDfBPvDA">(유튜브 7분 30초 참고)</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+</div>
+
+<h2 id="json-토큰-인증-방식">JSON 토큰 인증 방식</h2>
+
+<h2 id="oauth-인증-방식">OAuth 인증 방식</h2>
+
+<h1 id="인가authorization">인가(Authorization)</h1>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://www.tosspayments.com/blog/articles/dev-2">Basic 인증과 Bearer 인증의 모든, 토스 페이먼츠</a></li>
+</ul>
+:ET

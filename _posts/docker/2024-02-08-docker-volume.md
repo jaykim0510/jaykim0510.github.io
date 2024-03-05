@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  'Docker의 볼륨 이해하기'
-description: FROM은 빌드를 위한 stage를 초기화하고 이후의 명령어를 위한 기본 이미지를 만듭니다.
+title:  '[Docker] 퍼시스턴시한 어플리케이션 만들기'
+description: 도커에서 데이터를 영구적으로 저장하는 방법에 대해 배운다
 date:   2024-02-08 15:01:35 +0300
 image:  '/images/docker_logo.png'
 logo_image:  '/images/docker_logo.png'

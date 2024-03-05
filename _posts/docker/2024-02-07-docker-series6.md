@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  '[Docker] 컨테이너에 저장된 데이터는 어떻게 될까?'
-description: 새로운 소프트웨어를 설치하거나 파일을 생성하는 등의 작업은 Container Layer 위에서 이루어집니다.
+description: 도커 컨테이너의 파일 시스템 생성 원리에 대해 배운다
 date:   2024-02-07 15:01:35 +0300
 image:  '/images/docker_logo.png'
 logo_image:  '/images/docker_logo.png'

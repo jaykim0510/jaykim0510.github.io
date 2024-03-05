@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  'Docker의 네트워크 이해하기'
-description: 이러한 개념(CNM)으로 네트워크를 구현해 놓은 것이 libnetwork이고 사용자가 사용할 수 있도록 기능을 제공하는 드라이버가 Networkdriver입니다.
+title:  '[Docker] 네트워크 이해하기'
+description: 도커에서 외부와의 통신, 컨테이너 간 통신 방법에 대해 배운다
 date:   2024-02-09 15:01:35 +0300
 image:  '/images/docker_logo.png'
 logo_image:  '/images/docker_logo.png'
