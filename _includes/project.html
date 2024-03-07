@@ -1,0 +1,35 @@
+<div class="article">
+  <div class="article__inner">
+    <div class="article__head">
+      <button disabled class="article__date">{{ post.period }}</button>
+
+
+      {% if post.image %}
+      <a class="article__image" href="{{post.url | prepend: site.baseurl}}">
+        <img class="lazy" data-src="{{site.baseurl}}{{post.image}}" alt="{{post.title}}">
+      </a>
+      {% endif %}
+
+    </div>
+
+    <div class="article__content">
+
+      <h2 class="article__title">
+        <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </h2>
+
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          {% for stack in post.stacks %}
+            <button disabled class="project__stack">{{ stack }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if post.description %}
+      <p class="article__excerpt">{{ post.description }}</p>
+      {% endif %}
+
+    </div>
+  </div>
+</div>

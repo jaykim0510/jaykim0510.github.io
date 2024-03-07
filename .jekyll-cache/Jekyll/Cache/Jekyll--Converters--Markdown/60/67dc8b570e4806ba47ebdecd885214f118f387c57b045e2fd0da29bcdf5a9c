@@ -1,0 +1,72 @@
+I"T<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#sharing-state-between-components" id="markdown-toc-sharing-state-between-components">Sharing state between components</a></li>
+  <li><a href="#passing-data-deeply-with-context" id="markdown-toc-passing-data-deeply-with-context">Passing Data Deeply with Context</a></li>
+  <li><a href="#responding-to-events" id="markdown-toc-responding-to-events">Responding to Events</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="sharing-state-between-components">Sharing state between components</h1>
+
+<p><img src="/images/react_props_3.png" alt="" /></p>
+
+<ul>
+  <li>부모 컴포넌트에서 자식 컴포넌트로 속성을 전달할 수 있다</li>
+  <li>하나의 상태 변수로 두 개의 컴포넌트가 함께 변하도록 하려면, 두 컴포넌트의 공통 부모 컴포넌트에서 상태 변수를 정의하고, 상태 변수를 두 자식 컴포넌트에게 속성(props)으로 전달하면 된다</li>
+  <li>Finally, pass the event handlers down so that the children can change the parent’s state.</li>
+</ul>
+
+<h1 id="passing-data-deeply-with-context">Passing Data Deeply with Context</h1>
+
+<ul>
+  <li>Usually, you will pass information from a parent component to a child component via props</li>
+  <li>passing props can become verbose and inconvenient if you have to pass them through many components in the middle, or if many components in your app need the same information.</li>
+</ul>
+
+<p><img src="/images/react_props_1.png" alt="" /></p>
+
+<ul>
+  <li>Context lets the parent component make some information available to any component in the tree below it without passing it explicitly through props</li>
+</ul>
+
+<p><img src="/images/react_props_1.png" alt="" /></p>
+
+<ul>
+  <li>Context lets a component provide some information to the entire tree below it.</li>
+  <li>To pass context:
+    <ul>
+      <li>Create and export it with export const MyContext = createContext(defaultValue).</li>
+      <li>Pass it to the useContext(MyContext) Hook to read it in any child component, no matter how deep.</li>
+      <li>Wrap children into &lt;MyContext.Provider value={…}&gt; to provide it from a parent.</li>
+    </ul>
+  </li>
+  <li>Context passes through any components in the middle.</li>
+  <li>Context lets you write components that “adapt to their surroundings”.</li>
+  <li>Before you use context, try passing props or passing JSX as children.</li>
+</ul>
+
+<h1 id="responding-to-events">Responding to Events</h1>
+
+<ul>
+  <li>React lets you add event handlers to your JSX. Event handlers are your own functions that will be triggered in response to interactions like clicking, hovering, focusing form inputs, and so on.</li>
+  <li>You can handle events by passing a function as a prop to an element like <code class="language-plaintext highlighter-rouge">&lt;button&gt;</code>.</li>
+  <li>Event handlers must be passed, not called! <code class="language-plaintext highlighter-rouge">onClick={handleClick}</code>, not <code class="language-plaintext highlighter-rouge">onClick={handleClick()}</code>.</li>
+  <li>You can define an event handler function separately or inline.</li>
+  <li>Event handlers are defined inside a component, so they can access props.</li>
+  <li>You can declare an event handler in a parent and pass it as a prop to a child.</li>
+  <li>You can define your own event handler props with application-specific names.</li>
+  <li>Events propagate upwards. Call <code class="language-plaintext highlighter-rouge">e.stopPropagation()</code> on the first argument to prevent that.</li>
+  <li>Events may have unwanted default browser behavior. Call <code class="language-plaintext highlighter-rouge">e.preventDefault()</code> to prevent that.</li>
+  <li>Explicitly calling an event handler prop from a child handler is a good alternative to propagation.</li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://react.dev/learn/adding-interactivity">Adding Interactivity, react.dev</a></li>
+  <li><a href="https://react.dev/learn/responding-to-events">Responding to Events, react.dev</a></li>
+</ul>
+:ET
