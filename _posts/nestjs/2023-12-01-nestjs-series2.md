@@ -24,11 +24,11 @@ tag: NestJS
 
 # Express와 비교
 
-- Express를 래핑한 NestJS를 통해 얻을 수 있는게 무엇이 있을까?
-- 구조화되어 있는 아키텍처
-- Typescript 친화적
-- 강력한 CLI 제공
-- OOP 개발의 핵심 개념인 제어의 역전을 위해 필요한 의존성 주입 기능을 제공
+- Express를 래핑한 NestJS를 통해 얻게 되는 이점은 다음과 같다
+  - 구조화되어 있는 아키텍처
+  - Typescript 친화적
+  - 강력한 CLI 제공
+  - OOP 개발의 핵심 개념인 제어의 역전을 위해 필요한 의존성 주입 기능을 제공
 
 
 # NestJS 시작하기
