@@ -1,6 +1,6 @@
 ---
 layout: project_post
-title:  'Ecommerce 프로젝트'
+title:  '이커머스 프로젝트'
 description: 이커머스 웹 서비스의 프론트엔드, 백엔드, CI/CD, 모니터링이 포함된 프로젝트
 date:   2024-02-03 15:01:35 +0300
 period: 2024.01.01 - 2024.02.14
@@ -8,7 +8,7 @@ image:  '/images/ecommerce_logo.jpeg'
 logo_image: '/images/ecommerce_logo.jpeg'
 category: project
 tag: ecommerce
-stacks: [Next.js, NestJS, Docker, Github Action]
+stacks: [Next.js, NestJS, MySQL]
 
 ---
 
