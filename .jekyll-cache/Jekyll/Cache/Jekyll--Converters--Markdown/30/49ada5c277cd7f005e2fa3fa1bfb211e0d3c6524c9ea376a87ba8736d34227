@@ -1,0 +1,157 @@
+I"�6<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#provider" id="markdown-toc-provider">Provider</a>    <ul>
+      <li><a href="#service" id="markdown-toc-service">Service</a></li>
+      <li><a href="#repository" id="markdown-toc-repository">Repository</a></li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="provider">Provider</h1>
+
+<ul>
+  <li>NestJS 어플리케이션에서 의존성으로서 주입될 수 있는 클래스들 (ex. Service, Repository 등)</li>
+  <li><code class="language-plaintext highlighter-rouge">@Injectable()</code> 데코레이터를 이용하면 Nest IoC Container에 의해 클래스가 관리됨</li>
+  <li>별도의 스코프를 지정해주지 않으면 일반적으로 싱글턴 인스턴스가 생성</li>
+  <li>Nest는 typescript의 type을 이용해 클래스들간의 의존성 관계를 쉽게 파악하고, 필요한 인스턴스를 생성, 리턴함</li>
+  <li>(일반적으로 사용되는 싱글턴의 경우, 다른 곳에서 이미 인스턴스가 생성됐으면, 새로 생성되지 않고, 다른 곳에서 만들었던 인스턴스를 리턴)</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">@</span><span class="nd">Controller</span><span class="p">(</span><span class="dl">'</span><span class="s1">cats</span><span class="dl">'</span><span class="p">)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">CatsController</span> <span class="p">{</span>
+  <span class="c1">// 컨트롤러에서는 서비스 프로바이더를 생성자 함수를 통해 주입한다</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="k">private</span> <span class="nx">catsService</span><span class="p">:</span> <span class="nx">CatsService</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="p">@</span><span class="nd">Post</span><span class="p">()</span>
+  <span class="k">async</span> <span class="nx">create</span><span class="p">(@</span><span class="nd">Body</span><span class="p">()</span> <span class="nx">createCatDto</span><span class="p">:</span> <span class="nx">CreateCatDto</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">catsService</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">createCatDto</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">Get</span><span class="p">()</span>
+  <span class="k">async</span> <span class="nx">findAll</span><span class="p">():</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">Cat</span><span class="p">[]</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">catsService</span><span class="p">.</span><span class="nx">findAll</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>? Strategy, Guard 도 <code class="language-plaintext highlighter-rouge">@Injectable()</code> 붙는데 프로바이더인가? 근데 왜 Module의 <code class="language-plaintext highlighter-rouge">providers</code>에 등록하지 않아도 별다른 에러가 없는걸까?</p>
+
+<h2 id="service">Service</h2>
+
+<ul>
+  <li>비즈니스 로직을 수행하는 프로바이더의 일종</li>
+  <li>또한 Service 프로바이더는 Repository 프로바이더를 의존성으로 가지고 있음</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// items.service.ts</span>
+
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ItemService</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(@</span><span class="nd">InjectRepository</span><span class="p">(</span><span class="nx">ItemEntity</span><span class="p">)</span> <span class="k">private</span> <span class="nx">itemRepo</span><span class="p">:</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">ItemEntity</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="k">async</span> <span class="nx">readItem</span><span class="p">(</span><span class="nx">id</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemRepo</span><span class="p">.</span><span class="nx">findOneBy</span><span class="p">({</span> <span class="nx">id</span> <span class="p">})</span>
+    <span class="k">return</span> <span class="nx">item</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// item.controller.ts</span>
+
+<span class="p">@</span><span class="nd">Controller</span><span class="p">(</span><span class="dl">'</span><span class="s1">items</span><span class="dl">'</span><span class="p">)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ItemController</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="k">private</span> <span class="nx">itemService</span><span class="p">:</span> <span class="nx">ItemService</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="p">@</span><span class="nd">Get</span><span class="p">(</span><span class="dl">'</span><span class="s1">:id</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">readItem</span><span class="p">(@</span><span class="nd">Param</span><span class="p">(</span><span class="dl">'</span><span class="s1">id</span><span class="dl">'</span><span class="p">)</span> <span class="nx">id</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemService</span><span class="p">.</span><span class="nx">readItem</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">item</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// items.module.ts</span>
+
+<span class="p">@</span><span class="nd">Module</span><span class="p">(</span>
+  <span class="p">{</span>
+    <span class="na">controllers</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemController</span><span class="p">],</span>
+    <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemService</span><span class="p">],</span>
+    <span class="na">exports</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemService</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ItemModule</span> <span class="p">{}</span>
+
+
+<span class="c1">// app.module.ts</span>
+
+<span class="p">@</span><span class="nd">Module</span><span class="p">(</span>
+  <span class="p">{</span>
+    <span class="na">imports</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemModule</span><span class="p">],</span>
+    <span class="na">controllers</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppController</span><span class="p">],</span>
+    <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppServie</span><span class="p">],</span>
+    <span class="na">exports</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppService</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<h2 id="repository">Repository</h2>
+
+<ul>
+  <li>데이터베이스와 관련된 작업을 담당하는 프로바이더의 일종</li>
+  <li>리포지토리 프로바이더를 제공하는 모듈을 직접 만들어도 되지만, 이미 해당 ORM에서 훌륭한 모듈 제공해줌</li>
+  <li>여기서는 TypeORM을 사용할 예정이므로, <code class="language-plaintext highlighter-rouge">TypeOrmModule</code> 사용</li>
+  <li><code class="language-plaintext highlighter-rouge">TypeOrmModule</code>에서는 엔티티 정의, CRUD 메서드, 관계 정의 등 DB와 관련된 기능들을 제공해줌</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// items.service.ts</span>
+
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ItemService</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(@</span><span class="nd">InjectRepository</span><span class="p">(</span><span class="nx">ItemEntity</span><span class="p">)</span> <span class="k">private</span> <span class="nx">itemRepo</span><span class="p">:</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">ItemEntity</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="k">async</span> <span class="nx">readItem</span><span class="p">(</span><span class="nx">id</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">item</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">itemRepo</span><span class="p">.</span><span class="nx">findOneBy</span><span class="p">({</span> <span class="nx">id</span> <span class="p">})</span>
+    <span class="k">return</span> <span class="nx">item</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// items.module.ts</span>
+
+
+<span class="p">@</span><span class="nd">Module</span><span class="p">({</span>
+  <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
+    <span class="nx">TypeOrmModule</span><span class="p">.</span><span class="nx">forFeature</span><span class="p">([</span><span class="nx">ItemEntity</span><span class="p">]),</span>
+  <span class="p">],</span>
+  <span class="na">controllers</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemController</span><span class="p">],</span>
+  <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemService</span><span class="p">],</span>
+  <span class="na">exports</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemService</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ItemModule</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app.module.ts</span>
+
+<span class="p">@</span><span class="nd">Module</span><span class="p">({</span>
+  <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
+    <span class="nx">TypeOrmModule</span><span class="p">.</span><span class="nx">forRoot</span><span class="p">({</span>
+      <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mysql</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">host</span><span class="p">:</span> <span class="dl">'</span><span class="s1">localhost</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">port</span><span class="p">:</span> <span class="mi">3300</span><span class="p">,</span>
+      <span class="na">username</span><span class="p">:</span> <span class="dl">'</span><span class="s1">admin</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">password</span><span class="p">:</span> <span class="dl">'</span><span class="s1">admin</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">database</span><span class="p">:</span> <span class="dl">'</span><span class="s1">mydb</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">entities</span><span class="p">:</span> <span class="p">[</span><span class="nx">ItemEntity</span><span class="p">]</span>
+    <span class="p">}),</span>
+    <span class="nx">ItemModule</span>
+  <span class="p">],</span>
+  <span class="na">controllers</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppController</span><span class="p">],</span>
+  <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">AppService</span><span class="p">],</span>
+<span class="p">})</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span>
+</code></pre></div></div>
+:ET

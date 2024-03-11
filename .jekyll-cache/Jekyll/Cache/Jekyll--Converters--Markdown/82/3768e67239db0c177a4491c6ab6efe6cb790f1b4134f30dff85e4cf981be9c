@@ -1,0 +1,183 @@
+I"<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#도커-이미지-만들기" id="markdown-toc-도커-이미지-만들기">도커 이미지 만들기</a></li>
+  <li><a href="#dockerfile" id="markdown-toc-dockerfile">Dockerfile</a></li>
+  <li><a href="#from" id="markdown-toc-from">FROM</a></li>
+  <li><a href="#label" id="markdown-toc-label">LABEL</a></li>
+  <li><a href="#arg" id="markdown-toc-arg">ARG</a></li>
+  <li><a href="#env" id="markdown-toc-env">ENV</a></li>
+</ul>
+
+<hr />
+
+<h1 id="도커-이미지-만들기">도커 이미지 만들기</h1>
+
+<ul>
+  <li>도커 이미지는 우리가 원하는 애플리케이션을 실행하는데 필요한 변수, 명령어, 파일 등이 정의되어 있는 프로그램과 같다</li>
+  <li>도커 컨테이너는 도커 이미지가 실행된 프로세스와 같다</li>
+</ul>
+
+<p><img src="/images/docker_4.png" alt="" width="70%" /></p>
+
+<h1 id="dockerfile">Dockerfile</h1>
+
+<ul>
+  <li>도커 이미지는 Dockerfile 이라는 파일로 만들 수 있다</li>
+  <li>Dockerfile에 도커 이미지를 만들기 위한 인스트럭션을 작성한 후, <code class="language-plaintext highlighter-rouge">docker build</code> 명령어를 이용하면 도커 이미지가 만들어진다</li>
+  <li>도커 인스트럭션 목록은 아래와 같다</li>
+</ul>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Instruction</strong></td>
+      <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+      <td><strong>ADD</strong></td>
+      <td>Add local or remote files and directories.</td>
+    </tr>
+    <tr>
+      <td><strong>ARG</strong></td>
+      <td>Use build-time variables.</td>
+    </tr>
+    <tr>
+      <td><strong>CMD</strong></td>
+      <td>Specify default commands.</td>
+    </tr>
+    <tr>
+      <td><strong>COPY</strong></td>
+      <td>Copy files and directories.</td>
+    </tr>
+    <tr>
+      <td><strong>ENTRYPOINT</strong></td>
+      <td>Specify default executable.</td>
+    </tr>
+    <tr>
+      <td><strong>ENV</strong></td>
+      <td>Set environment variables.</td>
+    </tr>
+    <tr>
+      <td><strong>EXPOSE</strong></td>
+      <td>Describe which ports your application is listening on.</td>
+    </tr>
+    <tr>
+      <td><strong>FROM</strong></td>
+      <td>Create a new build stage from a base image.</td>
+    </tr>
+    <tr>
+      <td><strong>HEALTHCHECK</strong></td>
+      <td>Check a container’s health on startup.</td>
+    </tr>
+    <tr>
+      <td><strong>LABEL</strong></td>
+      <td>Add metadata to an image.</td>
+    </tr>
+    <tr>
+      <td><strong>ONBUILD</strong></td>
+      <td>Specify instructions for when the image is used in a build.</td>
+    </tr>
+    <tr>
+      <td><strong>RUN</strong></td>
+      <td>Execute build commands.</td>
+    </tr>
+    <tr>
+      <td><strong>SHELL</strong></td>
+      <td>Set the default shell of an image.</td>
+    </tr>
+    <tr>
+      <td><strong>STOPSIGNAL</strong></td>
+      <td>Specify the system call signal for exiting a container.</td>
+    </tr>
+    <tr>
+      <td><strong>USER</strong></td>
+      <td>Set user and group ID.</td>
+    </tr>
+    <tr>
+      <td><strong>VOLUME</strong></td>
+      <td>Create volume mounts.</td>
+    </tr>
+    <tr>
+      <td><strong>WORKDIR</strong></td>
+      <td>Change working directory.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="from">FROM</h1>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> [--platform=&lt;platform&gt;] &lt;image&gt;[:&lt;tag&gt;] [AS &lt;name&gt;]</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">FROM</code>은 빌드를 위한 stage를 초기화하고 이후의 인스트럭션을 위한 기본 이미지를 설정한다</li>
+  <li>그렇기 때문에 유효한 Dockerfile은 반드시 <code class="language-plaintext highlighter-rouge">FROM</code> 명령어로부터 시작해야 한다</li>
+  <li><code class="language-plaintext highlighter-rouge">AS</code> 뒤에 이름을 설정함으로써 이후 나오는 <code class="language-plaintext highlighter-rouge">FROM</code> 인스트럭션이 만드는 stage에 <code class="language-plaintext highlighter-rouge">COPY --from=&lt;name&gt;</code> 인스트럭션을 통해 데이터를 전달할 수 있다</li>
+  <li>이 때 각각의 <code class="language-plaintext highlighter-rouge">FROM</code>은 이전 인스트럭션이 만든 상태를 없앤다</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> &lt;image&gt; AS apple</span>
+...
+
+<span class="k">FROM</span><span class="s"> &lt;image2&gt;</span>
+...
+# &lt;image&gt;의 빌드 결과로 생성된 파일 중 원하는 파일만 복사
+<span class="k">COPY</span><span class="s"> --from=apple /dir/you/want/from/apple /dir/of/image2</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">FROM</code> 앞에 올 수 있는 유일한 인스트럭션은 <code class="language-plaintext highlighter-rouge">ARG</code>로, <code class="language-plaintext highlighter-rouge">ARG</code>는 이미지 빌드 시간동안 사용될 임시 변수를 저장할 수 있다</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ARG</span><span class="s">  CODE_VERSION=latest</span>
+<span class="k">FROM</span><span class="s"> base:${CODE_VERSION}</span>
+<span class="k">CMD</span><span class="s">  /code/run-app</span>
+</code></pre></div></div>
+
+<h1 id="label">LABEL</h1>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">LABEL</span><span class="s"> &lt;key&gt;=&lt;value&gt; &lt;key&gt;=&lt;value&gt; &lt;key&gt;=&lt;value&gt; ...</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">LABEL</code> 인스트럭션은 이미지에 메타데이터를 추가하기 위해 사용된다</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">LABEL</span><span class="s"> "com.example.vendor"="ACME Incorporated" ╲</span>
+com.example.label-with-value="foo" ╲
+version="1.0" 
+</code></pre></div></div>
+
+<h1 id="arg">ARG</h1>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ARG</span><span class="s"> &lt;name&gt;[=&lt;default value&gt;]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>이미지 빌드 단계에서 사용될 변수를 정의한다</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ARG</span><span class="s"> author=kim</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">docker build --build-arg author=lee</code> 이런식으로 빌드 명령어에서 덮어쓸 수도 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">ENV</code> 인스트럭션에서 같은 이름의 변수를 정의하면, <code class="language-plaintext highlighter-rouge">ENV</code>가 덮어쓰게 된다</li>
+</ul>
+
+<h1 id="env">ENV</h1>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> &lt;key&gt;=&lt;value&gt; ...</span>
+</code></pre></div></div>
+
+<ul>
+  <li>환경변수를 정의한다</li>
+  <li>지정한 환경변수는 빌드 단계와 컨테이너 실행 단계에서 사용 가능한 변수다</li>
+</ul>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ENV</span><span class="s"> MY_NAME="John Doe"</span>
+<span class="k">ENV</span><span class="s"> MY_CAT=fluffy</span>
+</code></pre></div></div>
+:ET

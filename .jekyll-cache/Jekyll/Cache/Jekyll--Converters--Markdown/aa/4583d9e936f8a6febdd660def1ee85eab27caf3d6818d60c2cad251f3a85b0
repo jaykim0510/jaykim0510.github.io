@@ -1,0 +1,383 @@
+I"do<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#view" id="markdown-toc-view">View</a>    <ul>
+      <li><a href="#장점" id="markdown-toc-장점">장점</a></li>
+      <li><a href="#단점" id="markdown-toc-단점">단점</a></li>
+      <li><a href="#생성" id="markdown-toc-생성">생성</a></li>
+      <li><a href="#수정" id="markdown-toc-수정">수정</a></li>
+      <li><a href="#삭제" id="markdown-toc-삭제">삭제</a></li>
+      <li><a href="#정보-확인" id="markdown-toc-정보-확인">정보 확인</a></li>
+    </ul>
+  </li>
+  <li><a href="#ctecommon-table-expression" id="markdown-toc-ctecommon-table-expression">CTE(Common Table Expression)</a>    <ul>
+      <li><a href="#recursive-cte" id="markdown-toc-recursive-cte">RECURSIVE CTE</a></li>
+      <li><a href="#table-vs-view" id="markdown-toc-table-vs-view">Table vs View</a></li>
+      <li><a href="#view-vs-cte" id="markdown-toc-view-vs-cte">View vs CTE</a></li>
+      <li><a href="#cte-vs-subquery" id="markdown-toc-cte-vs-subquery">CTE vs Subquery</a></li>
+    </ul>
+  </li>
+  <li><a href="#trigger" id="markdown-toc-trigger">Trigger</a>    <ul>
+      <li><a href="#delete-예시" id="markdown-toc-delete-예시">DELETE 예시</a></li>
+      <li><a href="#update-예시" id="markdown-toc-update-예시">UPDATE 예시</a></li>
+    </ul>
+  </li>
+  <li><a href="#variables" id="markdown-toc-variables">Variables</a>    <ul>
+      <li><a href="#사용자-정의-변수" id="markdown-toc-사용자-정의-변수">사용자 정의 변수</a></li>
+      <li><a href="#지역-변수" id="markdown-toc-지역-변수">지역 변수</a></li>
+      <li><a href="#서버-시스템-변수" id="markdown-toc-서버-시스템-변수">서버 시스템 변수</a></li>
+    </ul>
+  </li>
+  <li><a href="#stored-function" id="markdown-toc-stored-function">Stored Function</a></li>
+  <li><a href="#stored-procedure" id="markdown-toc-stored-procedure">Stored Procedure</a></li>
+  <li><a href="#cursor" id="markdown-toc-cursor">Cursor</a></li>
+  <li><a href="#script" id="markdown-toc-script">Script</a>    <ul>
+      <li><a href="#if" id="markdown-toc-if">IF</a></li>
+      <li><a href="#case" id="markdown-toc-case">CASE</a></li>
+      <li><a href="#while" id="markdown-toc-while">WHILE</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="view">View</h1>
+<ul>
+  <li>뷰(view)는 데이터베이스에 존재하는 일종의 가상 테이블로, 실제로 데이터를 저장하고 있지는 않음</li>
+  <li>테이블은 실제 데이터를 저장, 뷰는 그저 SELECT문이 실행되고 난 후의 이미지 같은 느낌</li>
+  <li>때에 따라 서브쿼리가 이중 중첩, 삼중 중첩되는 경우, 이 때 생기는 SELECT문의 복잡성을 줄이고자 뷰를 사용</li>
+  <li>특정 역할을 하는 SELECT문들을 뷰로 저장해서, 코드 스니펫처럼 필요할 때마다 가져와서 사용</li>
+  <li>뷰는 백엔드 개발자들의 자산</li>
+</ul>
+
+<h2 id="장점">장점</h2>
+<ul>
+  <li>특정 사용자에게 테이블 전체가 아닌 필요한 필드만을 보여줄 수 있음</li>
+  <li>쿼리의 재사용성</li>
+  <li>이미 실행된 서브쿼리라는 점에서 더 빠르다고 할 수 있음</li>
+</ul>
+
+<h2 id="단점">단점</h2>
+<ul>
+  <li>뷰는 수정할 수 없는 경우가 많음
+    <ul>
+      <li>SUM, AVG와 같은 집계 함수가 있는 경우, UNION ALL, DISTINCT, GROUP BY가 포함된 경우</li>
+    </ul>
+  </li>
+  <li>삽입, 삭제, 갱신 작업에 제한 사항이 많음</li>
+</ul>
+
+<h2 id="생성">생성</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">VIEW</span> <span class="o">&lt;</span><span class="err">뷰</span> <span class="err">이름</span><span class="o">&gt;</span> <span class="k">AS</span>
+  <span class="k">SELECT</span> <span class="err">필드</span><span class="mi">1</span><span class="p">,</span> <span class="err">필드</span><span class="mi">2</span><span class="p">,</span> <span class="p">...</span>
+  <span class="k">FROM</span> <span class="err">테이블</span>
+  <span class="k">WHERE</span> <span class="err">조건</span>
+</code></pre></div></div>
+
+<h2 id="수정">수정</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">VIEW</span> <span class="o">&lt;</span><span class="err">뷰</span> <span class="err">이름</span><span class="o">&gt;</span> <span class="k">AS</span>
+  <span class="k">SELECT</span> <span class="err">필드</span><span class="mi">1</span><span class="p">,</span> <span class="err">필드</span><span class="mi">2</span><span class="p">,</span> <span class="p">...</span>
+  <span class="k">FROM</span> <span class="err">테이블</span>
+</code></pre></div></div>
+<h2 id="삭제">삭제</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">VIEW</span> <span class="o">&lt;</span><span class="err">뷰</span> <span class="err">이름</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h2 id="정보-확인">정보 확인</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">TABLES</span>
+<span class="k">SHOW</span> <span class="k">CREATE</span> <span class="k">VIEW</span> <span class="o">&lt;</span><span class="err">뷰</span> <span class="err">이름</span><span class="o">&gt;</span>
+<span class="k">DESC</span> <span class="o">&lt;</span><span class="err">뷰</span> <span class="err">이름</span><span class="o">&gt;</span>
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">views</span>
+ <span class="k">WHERE</span> <span class="n">table_schema</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">DB</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h1 id="ctecommon-table-expression">CTE(Common Table Expression)</h1>
+
+<ul>
+  <li>메모리에 임시 결과로 올려놓고 재사용</li>
+  <li>쿼리가 실행중인 동안에만 데이터가 메모리에 올라와 있음</li>
+  <li>순차적으로 쿼리 작성 가능</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- CTE 한 개 생성</span>
+<span class="k">WITH</span> <span class="o">&lt;</span><span class="n">CTE</span> <span class="err">테이블명</span><span class="o">&gt;</span> <span class="k">AS</span> 
+<span class="p">(</span><span class="k">SELECT</span> <span class="p">...)</span> 
+
+<span class="c1">-- CTE 여러 개 생성</span>
+<span class="k">WITH</span> 
+<span class="o">&lt;</span><span class="n">CTE</span> <span class="err">테이블명</span><span class="mi">1</span><span class="o">&gt;</span> <span class="k">AS</span> <span class="p">(</span><span class="k">SELECT</span> <span class="p">...),</span>
+<span class="o">&lt;</span><span class="n">CTE</span> <span class="err">테이블명</span><span class="mi">2</span><span class="o">&gt;</span> <span class="k">AS</span> <span class="p">(</span><span class="k">SELECT</span> <span class="p">...),</span>
+</code></pre></div></div>
+
+<h2 id="recursive-cte">RECURSIVE CTE</h2>
+
+<ul>
+  <li>스스로 추가적인 Record를 생성할 수 있음</li>
+  <li>그래서 반드시 UNION 사용해야함</li>
+</ul>
+
+<p><img src="/images/mysql_40.png" alt="" /></p>
+
+<h2 id="table-vs-view">Table vs View</h2>
+
+<ul>
+  <li>테이블은 데이터와 RDBMS에 관한 정보를 영구적으로 저장하는 저장소</li>
+  <li>뷰는 어떤 쿼리에 의해 생성된 가상의 테이블. 인덱싱 해놓지 않으면 데이터베이스에 별도로 저장되지 않음</li>
+</ul>
+
+<h2 id="view-vs-cte">View vs CTE</h2>
+
+<ul>
+  <li>뷰는 데이터베이스에 존재하는 일종의 오브젝트(Object)
+    <ul>
+      <li>다른 곳에서도 쓰일 일이 있는 쿼리라면 뷰</li>
+      <li>다른 사용자들에게 데이터의 일부만 제공하고자 하는 경우 뷰</li>
+    </ul>
+  </li>
+  <li>CTE는 쿼리가 실행되는 동안에만 존재하는 임시 테이블
+    <ul>
+      <li>Ad-hoc하게 사용하려는 경우 CTE</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="cte-vs-subquery">CTE vs Subquery</h2>
+
+<ul>
+  <li>CTE와 서브쿼리는 성능이나 결과적인 측면에서 다른 점이 없다</li>
+  <li>차이점은 CTE가 가독성이 더 좋다는 것, CTE는 재귀적으로 호출해 완전히 새로운 테이블을 만들 수 있다</li>
+</ul>
+
+<h1 id="trigger">Trigger</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">Trigger</span> <span class="o">&lt;</span><span class="k">trigger</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+ <span class="p">{</span> <span class="k">BEFORE</span> <span class="o">|</span> <span class="k">AFTER</span> <span class="p">}</span> <span class="p">{</span> <span class="k">INSERT</span> <span class="o">|</span> <span class="k">UPDATE</span> <span class="o">|</span> <span class="k">DELETE</span> <span class="p">}</span>
+ <span class="p">{</span> <span class="n">PRECEDES</span> <span class="o">|</span> <span class="n">FOLLOWS</span> <span class="p">}</span> <span class="o">&lt;</span><span class="n">other</span><span class="o">-</span><span class="k">trigger</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+ <span class="k">ON</span> <span class="o">&lt;</span><span class="k">table</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span> <span class="k">FOR</span> <span class="k">EACH</span> <span class="k">ROW</span>
+<span class="k">BEGIN</span>
+  <span class="k">OLD</span><span class="p">.</span><span class="o">&lt;</span><span class="n">col</span><span class="o">&gt;</span> <span class="p">...</span> <span class="c1">-- OLD: UPDATE 이거나 DELETE일 때 적용된 레코드</span>
+  <span class="k">NEW</span><span class="p">.</span><span class="o">&lt;</span><span class="n">col</span><span class="o">&gt;</span> <span class="p">...</span> <span class="c1">-- NEW: UPDATE 이거나 INSERT일 때 새로 추가된 레코드</span>
+<span class="k">END</span>
+</code></pre></div></div>
+
+<h2 id="delete-예시">DELETE 예시</h2>
+
+<ul>
+  <li>Emp 테이블에서 직원 한 명이 나갔을 때</li>
+  <li>해당 직원 부서의 인원을 1 감소시킨다</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">Trigger</span> <span class="n">Emp_AFTER_DELETE</span> <span class="k">AFTER</span> <span class="k">DELETE</span> <span class="k">ON</span> <span class="n">Emp</span> <span class="k">FOR</span> <span class="k">EACH</span> <span class="k">ROW</span>
+<span class="k">BEGIN</span>
+
+  <span class="k">UPDATE</span> <span class="n">Dept</span> <span class="k">SET</span> <span class="n">empcnt</span> <span class="o">=</span> <span class="n">empcnt</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="k">OLD</span><span class="p">.</span><span class="n">dept</span><span class="p">;</span>
+
+<span class="k">END</span>
+</code></pre></div></div>
+
+<h2 id="update-예시">UPDATE 예시</h2>
+
+<ul>
+  <li>Emp 테이블에서 개발부서 직원이 마케팅부서로 옮겼을 때</li>
+  <li>(직원의 연봉이 업데이트된 경우에는 트리거 되면 안된다 -&gt; IF OLD.dept != NEW.dept THEN 추가)</li>
+  <li>개발 부서의 직원 수는 1 감소, 마케팅 부서의 직원 수는 1 증가</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELIMITER</span> <span class="err">$$</span>
+<span class="k">CREATE</span> <span class="k">Trigger</span> <span class="n">Emp_AFTER_UPDATE</span> <span class="k">AFTER</span> <span class="k">UPDATE</span> <span class="k">ON</span> <span class="n">Emp</span> <span class="k">FOR</span> <span class="k">EACH</span> <span class="k">ROW</span>
+<span class="k">BEGIN</span>
+
+  <span class="n">IF</span> <span class="k">OLD</span><span class="p">.</span><span class="n">dept</span> <span class="o">!=</span> <span class="k">NEW</span><span class="p">.</span><span class="n">dept</span> <span class="k">THEN</span>    
+    <span class="k">UPDATE</span> <span class="n">Dept</span> <span class="k">SET</span> <span class="n">empcnt</span> <span class="o">=</span> <span class="n">empcnt</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="k">OLD</span><span class="p">.</span><span class="n">dept</span><span class="p">;</span>
+
+    <span class="k">UPDATE</span> <span class="n">Dept</span> <span class="k">SET</span> <span class="n">empcnt</span> <span class="o">=</span> <span class="n">empcnt</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="k">NEW</span><span class="p">.</span><span class="n">dept</span><span class="p">;</span>
+  <span class="k">END</span> <span class="n">IF</span><span class="p">;</span>
+
+<span class="k">END</span> <span class="err">$$</span>
+</code></pre></div></div>
+
+<h1 id="variables">Variables</h1>
+
+<ul>
+  <li>변수는 기본적으로 세션 단위로 실행</li>
+</ul>
+
+<h2 id="사용자-정의-변수">사용자 정의 변수</h2>
+
+<ul>
+  <li>세션 내에 있는 여러 쿼리에서 사용 가능</li>
+  <li><code class="language-plaintext highlighter-rouge">@</code> 접두사 붙여야함</li>
+  <li>변수는 크게 <code class="language-plaintext highlighter-rouge">SET</code> 또는 <code class="language-plaintext highlighter-rouge">SELECT</code> 로 선언 가능</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="o">@</span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="c1">-- @x는 5로 초기화</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">@</span><span class="n">x</span><span class="p">;</span> <span class="c1">-- @x는 NULL로 초기화</span>
+
+<span class="k">SELECT</span> <span class="o">@</span><span class="n">x</span> <span class="p">:</span><span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="c1">-- @x는 5로 초기화</span>
+</code></pre></div></div>
+
+<h2 id="지역-변수">지역 변수</h2>
+
+<ul>
+  <li>사용자 정의 변수보다 더 범위가 좁은 변수</li>
+  <li>지역의 범위는 <code class="language-plaintext highlighter-rouge">BEGIN</code> 과 <code class="language-plaintext highlighter-rouge">END</code> 사이를 의미</li>
+  <li>(<code class="language-plaintext highlighter-rouge">BEGIN</code> 과 <code class="language-plaintext highlighter-rouge">END</code>는 프로시저나 함수 또는 트리거 안에 여러 문(Statement)을 작성하기 위한 용도로 사용된다)</li>
+  <li><code class="language-plaintext highlighter-rouge">DECLARE</code>로 선언</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">-- 프로시저나, 함수, 트리거와 같은 스토어드 프로그램은 여러 실행문이 ;로 끝나지만 하나로 묶어줘야 한다. </span>
+ <span class="c1">-- 그래서 구분자를 //로 임시 변경</span>
+<span class="k">DELIMITER</span> <span class="o">//</span>
+
+<span class="k">CREATE</span> <span class="k">PROCEDURE</span> <span class="n">sp_test</span><span class="p">()</span>
+<span class="k">BEGIN</span>
+    <span class="k">DECLARE</span> <span class="k">start</span> <span class="nb">INT</span><span class="p">;</span> <span class="c1">-- 선언만 할 수도 있다</span>
+    <span class="k">DECLARE</span> <span class="k">end</span> <span class="nb">INT</span> <span class="k">DEFAULT</span> <span class="mi">10</span><span class="p">;</span> <span class="c1">-- 기본값을 설정할 수 있다</span>
+
+    <span class="c1">-- 변수에 값을 할당하는 두 가지 방법</span>
+    <span class="k">SET</span> <span class="k">start</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="c1">-- 선언된 지역 변수에 값을 할당</span>
+    <span class="k">SELECT</span> <span class="n">num</span> <span class="k">INTO</span> <span class="k">start</span> <span class="k">FROM</span> <span class="n">num_table</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">-- 이런식으로 SELECT문으로 가져온 값을 넣을 수도 있다</span>
+
+<span class="k">END</span> <span class="o">//</span>
+</code></pre></div></div>
+
+<h2 id="서버-시스템-변수">서버 시스템 변수</h2>
+
+<ul>
+  <li>서버에 이미 저장된 시스템 변수</li>
+  <li><code class="language-plaintext highlighter-rouge">@@</code> 접두사를 통해 값에 접근 가능</li>
+  <li><code class="language-plaintext highlighter-rouge">SELECT를</code> 통해 값을 읽을 수도 있고, <code class="language-plaintext highlighter-rouge">SET</code>을 통해 값을 새로 할당할 수도 있다</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">@@</span><span class="n">sort_buffer_size</span><span class="p">;</span> <span class="c1">-- 이미 서버에 저장된 변수기 때문에 할당없이 바로 읽어올 수 있다</span>
+
+<span class="k">SET</span> <span class="o">@@</span><span class="n">sort_buffer_size</span><span class="o">=</span><span class="mi">1000000</span><span class="p">;</span> <span class="c1">-- SET을 통해 값을 새로 할당할 수도 있다</span>
+</code></pre></div></div>
+
+<h1 id="stored-function">Stored Function</h1>
+
+<ul>
+  <li>일련의 문을 실행한 뒤 값을 리턴하고 싶은 경우</li>
+  <li>사용할 때는 내장함수 처럼 <code class="language-plaintext highlighter-rouge">SELECT function-name(col1) FROM table-name;</code> 이렇게 사용하면 됌</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELIMITER</span> <span class="err">$$</span>
+<span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="o">&lt;</span><span class="k">function</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&lt;</span><span class="n">param</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">..)</span>
+<span class="k">RETURNS</span> <span class="o">&lt;</span><span class="k">return</span><span class="o">-</span><span class="k">type</span><span class="o">&gt;</span>
+<span class="k">BEGIN</span>
+  <span class="p">...</span>
+  <span class="k">RETURN</span> <span class="o">&lt;</span><span class="k">return</span><span class="o">-</span><span class="n">value</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">END</span> <span class="err">$$</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELIMITER</span> <span class="err">$$</span>
+<span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">ts_to_dt</span><span class="p">(</span><span class="n">_ts</span> <span class="nb">TIMESTAMP</span><span class="p">)</span>
+<span class="k">RETURNS</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">31</span><span class="p">)</span>
+<span class="k">BEGIN</span>
+  <span class="k">RETURN</span> <span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">_ts</span><span class="p">,</span> <span class="s1">'%m/%d %H:%i'</span><span class="p">);</span>
+<span class="k">END</span> <span class="err">$$</span>
+
+<span class="n">ts_to_dt</span><span class="p">(</span><span class="k">CURRENT_TIMESTAMP</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h1 id="stored-procedure">Stored Procedure</h1>
+
+<ul>
+  <li>프로시저는 함수와 비슷</li>
+  <li>차이점은 함수는 뭔가를 변환하고 리턴하는 것에 초점</li>
+  <li>프로시저는 그냥 실행하는 것에 초점</li>
+  <li>실행 중간에 멈추고 싶으면 <code class="language-plaintext highlighter-rouge">LEAVE</code> 사용</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">Procedure</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="o">&lt;</span><span class="k">procedure</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">DELIMITER</span> <span class="err">$$</span>
+<span class="k">CREATE</span> <span class="k">Procedure</span> <span class="o">&lt;</span><span class="k">procedure</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">([</span><span class="k">IN</span> <span class="o">|</span> <span class="k">OUT</span> <span class="o">|</span> <span class="k">INOUT</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">param</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="k">type</span><span class="o">&gt;</span><span class="p">,</span> <span class="p">..)</span>
+<span class="k">BEGIN</span>
+  <span class="p">...</span>
+<span class="k">END</span> <span class="err">$$</span>
+
+<span class="k">CALL</span> <span class="o">&lt;</span><span class="k">procedure</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">([</span><span class="k">IN</span> <span class="k">parameters</span><span class="p">,</span> <span class="k">OUT</span> <span class="n">variables</span><span class="p">]);</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELIMITER</span> <span class="err">$$</span>
+<span class="k">CREATE</span> <span class="k">Procedure</span> <span class="n">plus_ten_procedure</span><span class="p">(</span><span class="k">IN</span> <span class="n">i_1</span> <span class="nb">INT</span><span class="p">,</span> <span class="k">OUT</span> <span class="n">o_1</span> <span class="nb">INT</span><span class="p">)</span>
+<span class="k">BEGIN</span>
+  <span class="k">SET</span> <span class="n">o_1</span> <span class="o">=</span> <span class="n">i_1</span> <span class="o">+</span> <span class="mi">10</span>
+<span class="k">END</span> <span class="err">$$</span>
+
+<span class="c1">-- CALL 을 통해 프로시저 호출</span>
+<span class="k">CALL</span> <span class="n">plus_ten_procedure</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">@</span><span class="n">a</span><span class="p">);</span> <span class="c1">-- @a 변수에 값이 저장됨</span>
+
+<span class="k">SET</span> <span class="o">@</span><span class="n">b</span> <span class="o">=</span> <span class="o">@</span><span class="n">a</span><span class="p">;</span> <span class="c1">-- 이런식으로 써도 되고,</span>
+<span class="k">SELECT</span> <span class="o">@</span><span class="n">a</span><span class="p">,</span> <span class="o">@</span><span class="n">b</span><span class="p">;</span> <span class="c1">-- 이런식으로 써도 되고,</span>
+<span class="k">CALL</span> <span class="n">plus_ten_procedure</span><span class="p">(</span><span class="o">@</span><span class="n">a</span><span class="p">);</span> <span class="c1">-- 이런식으로 써도 된다</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">Procedure</span> <span class="o">&lt;</span><span class="k">procedure</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="n">stepA</span><span class="p">:</span><span class="k">BEGIN</span> <span class="c1">-- BEGIN ~ END 블록을 stepA 이런식으로 명명할 수 있음</span>
+  <span class="p">...</span>
+  <span class="n">IF</span> <span class="o">&lt;</span><span class="n">condition</span><span class="o">&gt;</span> <span class="k">THEN</span>
+    <span class="n">LEAVE</span> <span class="n">stepA</span><span class="p">;</span> <span class="c1">-- LEAVE를 통해 stepA 를 종료시킬 수 있음. stepA 안에 포함된 쿼리문의 부하가 굉장히 큰 경우 유용하다</span>
+  <span class="k">END</span> <span class="n">IF</span><span class="p">;</span>
+  <span class="p">...</span>
+<span class="k">END</span>
+</code></pre></div></div>
+
+<h1 id="cursor">Cursor</h1>
+
+<ul>
+  <li>SELECT문으로 뽑아온 테이블의 ROW에 한 개씩 접근하고 싶을 때</li>
+</ul>
+
+<h1 id="script">Script</h1>
+
+<h2 id="if">IF</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IF</span> <span class="p">...</span> <span class="k">THEN</span>
+  <span class="p">...</span>
+<span class="k">ELSE</span> <span class="n">IF</span> <span class="p">...</span> <span class="k">THEN</span>
+  <span class="p">...</span>
+<span class="k">ELSE</span>
+  <span class="p">...</span>
+<span class="k">END</span> <span class="n">IF</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h2 id="case">CASE</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CASE</span> 
+  <span class="k">WHEN</span> <span class="p">...</span> <span class="k">THEN</span> <span class="p">...;</span>
+  <span class="k">WHEN</span> <span class="p">...</span> <span class="k">THEN</span> <span class="p">...;</span>
+  <span class="p">...</span>
+  <span class="k">ELSE</span> <span class="p">...</span>
+<span class="k">END</span> <span class="k">CASE</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h2 id="while">WHILE</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">WHILE</span> <span class="p">(...)</span> <span class="k">DO</span>
+  <span class="p">...</span>
+<span class="k">END</span> <span class="n">WHILE</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://stackoverflow.com/questions/6015175/difference-between-view-and-table-in-sql" target="_blank">stackoverflow, Difference between View and table in sql</a></li>
+  <li><a href="https://stackoverflow.com/questions/6026842/cte-vs-view-performance-in-sql-server" target="_blank">stackoverflow, CTE vs View Performance in SQL Server</a></li>
+  <li><a href="https://learnsql.com/blog/difference-between-sql-cte-and-view/" target="_blank">LearnSQL, What’s the Difference Between SQL CTEs and Views?</a></li>
+  <li><a href="https://stackoverflow.com/questions/52771879/is-there-any-performance-difference-btw-using-cte-view-and-subquery" target="_blank">stackoverflow, Is there any performance difference btw using CTE, view and subquery?</a></li>
+  <li><a href="https://inpa.tistory.com/entry/MYSQL-%F0%9F%93%9A-WITH-%EC%9E%84%EC%8B%9C-%ED%85%8C%EC%9D%B4%EB%B8%94?category=890808" target="_blank">인파, [MYSQL] 📚 WITH (임시 테이블 생성)</a></li>
+  <li><a href="https://velog.io/@inyong_pang/MySQL-MySQL-variables%EB%B3%80%EC%88%98-%EB%A7%8C%EB%93%A4%EC%96%B4%EC%84%9C-%EC%9D%91%EC%9A%A9%ED%95%98%EA%B8%B0getidPK" target="_blank">inyong_pang, [MySQL] MySQL Variables(변수) 만들기</a></li>
+</ul>
+:ET

@@ -1,0 +1,96 @@
+I"t<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#context-manager" id="markdown-toc-context-manager">Context Manager</a></li>
+  <li><a href="#with-statement" id="markdown-toc-with-statement">with statement</a></li>
+  <li><a href="#open" id="markdown-toc-open">open()</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="context-manager">Context Manager</h1>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">__enter__()</code>와 <code class="language-plaintext highlighter-rouge">__exit__()</code> 메서드를 구현한 객체
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">__enter__()</code>: 획득한 자원에 대한 디스크립터를 리턴하는 역할</li>
+      <li><code class="language-plaintext highlighter-rouge">__exit__(</code>): 획득한 자원에 대한 락을 풀어주는 역할</li>
+      <li>디스크립터(descriptor): 요청된 자원에 대해 접근하기 위해 필요한 OS에서 제공해주는 핸들</li>
+    </ul>
+  </li>
+  <li>자원 관리, 예외 처리와 같은 것들이 필요한 코드를 더 깔끔하고, 버그 발생 가능성을 줄이기 위해 사용</li>
+  <li><code class="language-plaintext highlighter-rouge">__enter__()</code>, <code class="language-plaintext highlighter-rouge">__exit__()</code>를 정의만 하는 것은 반쪽짜리 결과. 이것들이 자동적으로 호출되어야 진정한 의미가 있음 -&gt; <code class="language-plaintext highlighter-rouge">with</code>문</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyContextManager</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"컨텍스트 매니저가 만들어졌습니다"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="s">"자원 관리를 필요로 하는 디스크립터"</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">x</span>
+    
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">ex_value</span><span class="p">,</span> <span class="n">ex_traceback</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"컨텍스트 매니저를 삭제합니다"</span><span class="p">)</span>
+
+
+<span class="n">cm</span> <span class="o">=</span> <span class="n">MyContextManager</span><span class="p">()</span>
+
+<span class="c1"># 이것만으로는 아무런 의미가 없음
+# with문으로 자동적으로 호출되도록 해야 의미가 있음
+</span></code></pre></div></div>
+
+<h1 id="with-statement">with statement</h1>
+
+<ul>
+  <li>컨텍스트 매니저의 <code class="language-plaintext highlighter-rouge">__enter__()</code>와 <code class="language-plaintext highlighter-rouge">__exit__()</code>를 자동으로 호출</li>
+  <li>컨텍스트 매니저가 자신의 역할을 하기 위해 반드시 사용해야 하는 문</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyContextManager</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"컨텍스트 매니저가 만들어졌습니다"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="s">"자원 관리를 필요로 하는 디스크립터"</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">x</span>
+    
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">ex_value</span><span class="p">,</span> <span class="n">ex_traceback</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"컨텍스트 매니저를 삭제합니다"</span><span class="p">)</span>
+
+
+
+<span class="k">with</span> <span class="n">MyContextManager</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="o">--------------------------------------------------------------------</span>
+<span class="n">컨텍스트</span> <span class="n">매니저가</span> <span class="n">만들어졌습니다</span>
+<span class="n">자원</span> <span class="n">관리를</span> <span class="n">필요로</span> <span class="n">하는</span> <span class="n">디스크립터</span>
+<span class="n">컨텍스트</span> <span class="n">매니저를</span> <span class="n">삭제합니다</span>
+</code></pre></div></div>
+
+<h1 id="open">open()</h1>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">open()</code> 함수는 컨텍스트 매니저가 될 수 있는 파일 디스크립터를 리턴</li>
+  <li>파일을 다 사용하고 난 후에는 반드시 닫아주는 것이 좋음
+    <ul>
+      <li>이를 위해 직접 <code class="language-plaintext highlighter-rouge">f.close()</code> 하지말고 <code class="language-plaintext highlighter-rouge">with</code>문으로 알아서 열고 종료하도록 권장하기 위해 <code class="language-plaintext highlighter-rouge">__enter__()</code>와 <code class="language-plaintext highlighter-rouge">__exit__()</code>를 구현해놓음</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'python_test/test.txt'</span><span class="p">,</span> <span class="s">'w'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">'Hello world!'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<pre><code class="language-txt"># test.txt
+
+Hello world!
+</code></pre>
+
+<p><img src="/images/context_manager_1.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://kimziont.github.io/intermediate/python-intermediate-context_manager/" target="_blank">Jay’s Blog, Context manager</a></li>
+  <li><a href="https://www.geeksforgeeks.org/with-statement-in-python/" target="_blank">GeeksforGeeks, with statement in Python</a></li>
+</ul>
+:ET

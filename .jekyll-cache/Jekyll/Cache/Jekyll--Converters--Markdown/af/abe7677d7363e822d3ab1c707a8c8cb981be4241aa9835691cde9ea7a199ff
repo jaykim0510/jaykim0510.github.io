@@ -1,0 +1,131 @@
+I"�(<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#interceptors" id="markdown-toc-interceptors">Interceptors</a>    <ul>
+      <li><a href="#interceptor-기능" id="markdown-toc-interceptor-기능">Interceptor 기능</a></li>
+      <li><a href="#interceptor-만들기" id="markdown-toc-interceptor-만들기">Interceptor 만들기</a></li>
+      <li><a href="#interceptor-적용하기" id="markdown-toc-interceptor-적용하기">Interceptor 적용하기</a>        <ul>
+          <li><a href="#컨트롤러에-적용하고-싶은-경우" id="markdown-toc-컨트롤러에-적용하고-싶은-경우">컨트롤러에 적용하고 싶은 경우</a></li>
+          <li><a href="#라우트-핸들러에-적용하고-싶은-경우" id="markdown-toc-라우트-핸들러에-적용하고-싶은-경우">라우트 핸들러에 적용하고 싶은 경우</a></li>
+          <li><a href="#글로벌하게-적용하고-싶은-경우" id="markdown-toc-글로벌하게-적용하고-싶은-경우">글로벌하게 적용하고 싶은 경우</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h1 id="interceptors">Interceptors</h1>
+
+<ul>
+  <li>미들웨어와 비슷한 용도</li>
+  <li><code class="language-plaintext highlighter-rouge">NestInterceptor</code> 를 implements 하면 됨</li>
+  <li>인터셉터 또한 <code class="language-plaintext highlighter-rouge">constructor()</code> 생성자 함수로 의존성 주입할 수 있음</li>
+</ul>
+
+<h2 id="interceptor-기능">Interceptor 기능</h2>
+
+<ul>
+  <li>메서드 실행 전/후로 추가적인 로직을 실행하도록 해줌</li>
+  <li>함수로부터 리턴 받은 결과를 변환하도록 해줌</li>
+  <li>함수로부터 던져진 예외를 변환하도록 해줌</li>
+  <li>특별한 상황에서 함수를 완전 오버라이딩 하도록 해줌 (ex. 캐싱)</li>
+</ul>
+
+<h2 id="interceptor-만들기">Interceptor 만들기</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">NestInterceptor</code> 를 implements -&gt; <code class="language-plaintext highlighter-rouge">intercept()</code> 메서드 구현해야함</li>
+  <li><code class="language-plaintext highlighter-rouge">intercept()</code> 는 두 개의 인자 제공됨 (Execution Context, Call Handler)
+    <ul>
+      <li><strong>Execution Context</strong>
+        <ul>
+          <li>현재 상태에 대한 정보를 가지고 있는 utility class(helper class)</li>
+          <li>컨트롤러, 메서드, 실행 문맥 등 다양한 환경에 제네릭한 execution process를 제공</li>
+        </ul>
+      </li>
+      <li><strong>Call Handler</strong>
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">handle()</code> 메서드를 호출함으로써 Observable을 리턴하고, 핸들러를 트리거</li>
+          <li>핸들러의 response stream이 Observable 안에서 흐르게 되고, Observable 안에서는 이 response에 추가적인 연산을 수행할 수 있음</li>
+          <li>(Observable을 쓰는 이유는 RxJS 라이브러리의 강력한 연산들을 사용할 수 있기 때문)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Injectable</span><span class="p">,</span> <span class="nx">NestInterceptor</span><span class="p">,</span> <span class="nx">ExecutionContext</span><span class="p">,</span> <span class="nx">CallHandler</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/common</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Observable</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">rxjs</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">tap</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">rxjs/operators</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">LoggingInterceptor</span> <span class="k">implements</span> <span class="nx">NestInterceptor</span> <span class="p">{</span>
+  <span class="nx">intercept</span><span class="p">(</span><span class="nx">context</span><span class="p">:</span> <span class="nx">ExecutionContext</span><span class="p">,</span> <span class="nx">next</span><span class="p">:</span> <span class="nx">CallHandler</span><span class="p">):</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="kr">any</span><span class="o">&gt;</span> <span class="p">{</span>
+
+    <span class="c1">// context 통해 요청객체(req)에 접근할 수 있음</span>
+    <span class="kd">const</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">switchToHttp</span><span class="p">().</span><span class="nx">getRequest</span><span class="p">()</span>
+
+    <span class="c1">// 응답객체에 별다른 작업이 필요 없다면, next.handle()만 호출하면 됨</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">.</span><span class="nx">handle</span><span class="p">()</span>
+
+    <span class="c1">// 응답객체에 별도의 작업을 원하면, handle.pipe(map( data =&gt; data + 1 )) 이런식으로 map() 함수 사용</span>
+    <span class="c1">// 응답객체에 별다른 작업 필요 없지만, 별개의 함수 실행 원하면, handle.pipe(tap( () =&gt; console.log('tap! tap!') )) 이런식으로 tap() 함수 사용</span>
+    <span class="k">return</span> <span class="nx">next</span><span class="p">.</span><span class="nx">handle</span><span class="p">().</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">tap</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`After... </span><span class="p">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">-</span> <span class="nx">now</span><span class="p">}</span><span class="s2">ms`</span><span class="p">)),);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="interceptor-적용하기">Interceptor 적용하기</h2>
+
+<h3 id="컨트롤러에-적용하고-싶은-경우">컨트롤러에 적용하고 싶은 경우</h3>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">@</span><span class="nd">UseInterceptors</span><span class="p">(</span><span class="nx">LoggingInterceptor</span><span class="p">)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">UserController</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<h3 id="라우트-핸들러에-적용하고-싶은-경우">라우트 핸들러에 적용하고 싶은 경우</h3>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">class</span> <span class="nx">UserController</span> <span class="p">{</span>
+
+  <span class="p">@</span><span class="nd">UseInterceptors</span><span class="p">(</span><span class="nx">LoggingInterceptor</span><span class="p">)</span>
+  <span class="p">@</span><span class="nd">Get</span><span class="p">()</span>
+  <span class="nx">readUser</span><span class="p">()</span> <span class="p">{}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="글로벌하게-적용하고-싶은-경우">글로벌하게 적용하고 싶은 경우</h3>
+
+<ul>
+  <li>의존성 주입이 적용되지 않은 방법</li>
+  <li>모듈 밖에서 인터셉터가 등록되었기 때문에 의존성 주입이 적용되지 않음</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// main.ts</span>
+
+<span class="kd">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">NestFactory</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">)</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">useGlobalInterceptors</span><span class="p">(</span><span class="k">new</span> <span class="nx">LoggingInterceptor</span><span class="p">()</span> <span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>의존성 주입이 적용되는 방법</li>
+  <li>아무 모듈중 하나에 다음과 같은 방법으로 의존성 주입할 수 있음</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// app.module.ts</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Module</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/common</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">APP_INTERCEPTOR</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/core</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">Module</span><span class="p">({</span>
+  <span class="na">providers</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="na">provide</span><span class="p">:</span> <span class="nx">APP_INTERCEPTOR</span><span class="p">,</span>
+      <span class="na">useClass</span><span class="p">:</span> <span class="nx">LoggingInterceptor</span><span class="p">,</span>
+    <span class="p">},</span>
+  <span class="p">],</span>
+<span class="p">})</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">AppModule</span> <span class="p">{}</span>
+</code></pre></div></div>
+:ET

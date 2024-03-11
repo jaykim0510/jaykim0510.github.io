@@ -1,0 +1,95 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+
+<hr />
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./kafka/bin/zookeeper-server-start.sh [-daemon] ./kafka/config/zookeeper.properties
+./kafka/bin/kafka-server-start.sh ./kafka/config/server.properties
+./kafka/bin/connect-distributed.sh ./kafka/config/connect-distributed.properties
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c"># 등록 가능한 커넥터 플러그인 목록</span>
+curl <span class="nt">-X</span> GET http://localhost:8083/connector-plugins
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># connect-distributed.properties</span>
+
+<span class="c"># 이렇게 추가하면 FileStreamSinkConnector, FileStreamSourceConnector 커넥터 클래스가 추가됨 (아래와 같은 경로가 없음에도 불구하고.. 그래서 이해가 안됨)</span>
+plugin.path<span class="o">=</span>/usr/local/share/java,/usr/local/share/kafka/plugins,/opt/connectors
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 현재 등록된 커넥터 목록</span>
+curl <span class="nt">-X</span> GET http://localhost:8083/connectors
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># FileStreamSinkConnector 커넥터 등록 (토픽 메세지를 파일에 쓴다)</span>
+curl <span class="nt">-X</span> POST http://localhost:8083/connectors <span class="nt">-H</span> <span class="s1">'Content-Type: application/json'</span> <span class="nt">-d</span> <span class="s1">'{ "name": "file-sink-test", "config": { "topics": "test", "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector", "tasks.max": 1, "file": "./connect-test.txt"}}'</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 커넥터 상태 조회</span>
+curl <span class="nt">-X</span> GET http://localhost:8083/connectors/file-sink-test/status
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>요청 메서드</th>
+      <th>경로</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GET</td>
+      <td>/connector-plugins</td>
+      <td>사용 가능한 커넥터 플러그인 목록</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/</td>
+      <td>커넥트 정보</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/connectors</td>
+      <td>커넥터 목록</td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/connectors</td>
+      <td>커넥터 등록</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/connectors/<커넥터 이름=""></커넥터></td>
+      <td>커넥터 정보 확인</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/connectors/<커넥터 이름="">/config</커넥터></td>
+      <td>커넥터 설정값 확인</td>
+    </tr>
+    <tr>
+      <td>PUT</td>
+      <td>/connectors/<커넥터 이름="">/config</커넥터></td>
+      <td>커넥터 설정값 변경</td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/connectors/<커넥터 이름="">/status</커넥터></td>
+      <td>커넥터 상태 확인</td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/connectors/<커넥터 이름="">/restart</커넥터></td>
+      <td>커넥터 재실행</td>
+    </tr>
+    <tr>
+      <td>DELETE</td>
+      <td>/connectors/<커넥터 이름=""></커넥터></td>
+      <td>커넥터 삭제</td>
+    </tr>
+  </tbody>
+</table>
+:ET

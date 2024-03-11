@@ -1,0 +1,185 @@
+I"VE<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#타입-가드" id="markdown-toc-타입-가드">타입 가드</a>    <ul>
+      <li><a href="#typeof" id="markdown-toc-typeof">typeof</a></li>
+      <li><a href="#instanceof" id="markdown-toc-instanceof">instanceof</a></li>
+      <li><a href="#in" id="markdown-toc-in">in</a></li>
+      <li><a href="#동등-연산자" id="markdown-toc-동등-연산자">동등 연산자</a></li>
+      <li><a href="#사용자-정의-타입-가드" id="markdown-toc-사용자-정의-타입-가드">사용자 정의 타입 가드</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="타입-가드">타입 가드</h1>
+
+<ul>
+  <li>올 수 있는 타입이 여러 가지가 될 수 있는 상황에서 <strong>타입을 제한시키는 것</strong>을 의미한다</li>
+  <li>(정확히 한 가지로 제한할 수도 있고, 예를 들어 ‘<code class="language-plaintext highlighter-rouge">flying</code> 속성을 가지는 객체 타입’처럼 몇가지로 축약 제한할 수도 있다)</li>
+</ul>
+
+<h2 id="typeof">typeof</h2>
+
+<ul>
+  <li>타입스크립트에서 <code class="language-plaintext highlighter-rouge">typeof</code> 연산자는 다음중 하나로 타입을 제한할 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">string</code>, <code class="language-plaintext highlighter-rouge">number</code>, <code class="language-plaintext highlighter-rouge">bigint</code>, <code class="language-plaintext highlighter-rouge">boolean</code>, <code class="language-plaintext highlighter-rouge">symbol</code>, <code class="language-plaintext highlighter-rouge">undefined</code>, <code class="language-plaintext highlighter-rouge">object</code>, <code class="language-plaintext highlighter-rouge">function</code></li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 배열 string[] 을 typeof 연산자 결과는 object 이다 (배열도 객체이므로)</span>
+<span class="kd">const</span> <span class="nx">myFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="kr">string</span> <span class="o">|</span> <span class="kr">string</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">'</span><span class="s1">, </span><span class="dl">'</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">typeof</code> 연산자를 이용한 타입 가드에는 한계점이 있다. 객체는 모두 <code class="language-plaintext highlighter-rouge">object</code> 타입으로 간주하기 때문에 객체간의 구분이 불가능하다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyObject</span> <span class="p">{</span>
+    <span class="nl">message</span><span class="p">:</span> <span class="kr">string</span>
+
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">message</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">message</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// MyObject, string[] 둘 다 typeof 연산자의 결과가 object이기 때문에 구분이 안된다</span>
+<span class="kd">const</span> <span class="nx">myFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="nx">MyObject</span> <span class="o">|</span> <span class="kr">string</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">x</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">object</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>이럴 때는 <code class="language-plaintext highlighter-rouge">instanceof</code> 를 사용하면 된다</li>
+</ul>
+
+<h2 id="instanceof">instanceof</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">instanceof</code> 연산자는 좌변의 타입을 좌변 객체의 프로토타입 체인이 우변의 프로토타입을 포함하는 타입으로 제한할 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">object</code> 타입간에도 구분이 가능해진다</li>
+  <li><code class="language-plaintext highlighter-rouge">instanceof</code> 체크는 런타임에 일어난다. 그래서 우변의 값이 자바스크립트로 변환된 후에도 살아있어야 한다 (<code class="language-plaintext highlighter-rouge">type</code> 연산자로 정의하면 런타임에 사라진다)</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">MyObject</span> <span class="p">{</span>
+    <span class="nl">message</span><span class="p">:</span> <span class="kr">string</span>
+
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">message</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">message</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 이렇게 정의하면 에러남. instanceof 연산자는 런타임에 체크하기 때문에</span>
+<span class="c1">// type MyObject = {</span>
+<span class="c1">//     message: string</span>
+<span class="c1">// }</span>
+
+<span class="kd">const</span> <span class="nx">myFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="nx">MyObject</span> <span class="o">|</span> <span class="kr">string</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="k">instanceof</span> <span class="nx">MyObject</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>클래스(<code class="language-plaintext highlighter-rouge">class</code>) 말고 타입(<code class="language-plaintext highlighter-rouge">type</code>)을 쓰고 싶다면 <code class="language-plaintext highlighter-rouge">in</code> 연산자를 사용하면 된다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">MyObject</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">message</span><span class="p">:</span> <span class="kr">string</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">myFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="nx">MyObject</span> <span class="o">|</span> <span class="kr">string</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="dl">'</span><span class="s1">message</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="in">in</h2>
+
+<ul>
+  <li>어떤 타입의 객체 또는 그 프로토타입 체인이 특정 속성을 가지는 타입으로 제한한다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">MyObject</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">message</span><span class="p">:</span> <span class="kr">string</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">myFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="nx">MyObject</span> <span class="o">|</span> <span class="kr">string</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="dl">'</span><span class="s1">message</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">x</span><span class="p">.</span><span class="nx">message</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="동등-연산자">동등 연산자</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">===</code>, <code class="language-plaintext highlighter-rouge">!==</code>, <code class="language-plaintext highlighter-rouge">==</code>, <code class="language-plaintext highlighter-rouge">!=</code> 연산자를 이용해 타입을 제한한다</li>
+  <li>자바스크립트에서 <code class="language-plaintext highlighter-rouge">typeof null</code>은 <code class="language-plaintext highlighter-rouge">'object'</code>이다. 그래서 <code class="language-plaintext highlighter-rouge">null</code>을 구분할 때도 유용하다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">type</span> <span class="nx">Hyundai</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">brand</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Hyundai</span><span class="dl">'</span>
+    <span class="na">hyundaiVelocity</span><span class="p">:</span> <span class="kr">number</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">Tesla</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">brand</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Tesla</span><span class="dl">'</span>
+    <span class="na">teslaVelocity</span><span class="p">:</span> <span class="kr">number</span>
+<span class="p">}</span>
+
+
+<span class="kd">const</span> <span class="nx">myFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">car</span><span class="p">:</span> <span class="nx">Hyundai</span> <span class="o">|</span> <span class="nx">Tesla</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">car</span><span class="p">.</span><span class="nx">brand</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">Hyundai</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">car</span><span class="p">.</span><span class="nx">hyundaiVelocity</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">car</span><span class="p">.</span><span class="nx">brand</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">Tesla</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">car</span><span class="p">.</span><span class="nx">teslaVelocity</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">myCar</span><span class="p">:</span> <span class="nx">Hyundai</span> <span class="o">=</span> <span class="p">{</span> <span class="na">brand</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Hyundai</span><span class="dl">'</span><span class="p">,</span> <span class="na">hyundaiVelocity</span><span class="p">:</span> <span class="mi">100</span> <span class="p">}</span>
+<span class="nx">myFunc</span><span class="p">(</span><span class="nx">myCar</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="사용자-정의-타입-가드">사용자 정의 타입 가드</h2>
+
+<ul>
+  <li>커스텀 타입, 인터페이스 등의 복잡한 타입은 <code class="language-plaintext highlighter-rouge">typeof</code>, <code class="language-plaintext highlighter-rouge">instanceof</code> 등을 활용하기 어렵다</li>
+  <li>이때 사용자 정의 타입 가드를 사용하면 좋다</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 사용자 정의 타입 가드</span>
+<span class="kd">const</span> <span class="nx">isTesla</span> <span class="o">=</span> <span class="p">(</span><span class="nx">car</span><span class="p">:</span> <span class="nx">Hyundai</span> <span class="o">|</span> <span class="nx">Tesla</span><span class="p">):</span> <span class="nx">car</span> <span class="k">is</span> <span class="nx">Tesla</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">car</span><span class="p">.</span><span class="nx">brand</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">Tesla</span><span class="dl">'</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">myFunc</span> <span class="o">=</span> <span class="p">(</span><span class="nx">car</span><span class="p">:</span> <span class="nx">Hyundai</span> <span class="o">|</span> <span class="nx">Tesla</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="nx">isTesla</span><span class="p">(</span><span class="nx">car</span><span class="p">)</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">car</span><span class="p">.</span><span class="nx">teslaVelocity</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">car</span><span class="p">.</span><span class="nx">hyundaiVelocity</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://radlohead.gitbook.io/typescript-deep-dive/type-system/typeguard#null-undefined-strictnullchecks">Typescript Deep Dive</a></li>
+  <li><a href="https://seokzin.tistory.com/entry/TypeScript-%ED%83%80%EC%9E%85-%EA%B0%80%EB%93%9C-Type-Guard#--%--%EC%--%AC%EC%-A%A-%EC%-E%--%--%EC%A-%--%EC%-D%--%--%ED%--%--%EC%-E%--%--%EA%B-%--%EB%--%-C">[TypeScript] 타입 가드 (Type Guard), SO’s CODE</a></li>
+</ul>
+:ET

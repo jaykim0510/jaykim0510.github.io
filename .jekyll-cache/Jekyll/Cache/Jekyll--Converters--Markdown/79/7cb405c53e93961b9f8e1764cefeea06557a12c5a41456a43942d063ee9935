@@ -1,0 +1,230 @@
+I"6�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#data-loader" id="markdown-toc-data-loader">Data Loader</a>    <ul>
+      <li><a href="#데이터셋" id="markdown-toc-데이터셋">데이터셋</a></li>
+      <li><a href="#데이터-로더" id="markdown-toc-데이터-로더">데이터 로더</a></li>
+    </ul>
+  </li>
+  <li><a href="#학습" id="markdown-toc-학습">학습</a></li>
+</ul>
+
+<hr />
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">import</span> <span class="nn">torchvision.transforms</span> <span class="k">as</span> <span class="n">transforms</span>
+<span class="kn">import</span> <span class="nn">torchvision.models</span> <span class="k">as</span> <span class="n">models</span>
+<span class="kn">import</span> <span class="nn">torchvision.datasets</span> <span class="k">as</span> <span class="n">datasets</span>
+
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="n">optim</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="n">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">random_split</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="n">image</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+</code></pre></div></div>
+
+<h1 id="data-loader">Data Loader</h1>
+
+<h2 id="데이터셋">데이터셋</h2>
+
+<ul>
+  <li>기본적으로 파이토치에서 데이터셋을 구성할 때는 PyTorch의 <code class="language-plaintext highlighter-rouge">torch.utils.data</code>에서 <code class="language-plaintext highlighter-rouge">Dataset</code> 클래스를 상속해서 만든다</li>
+  <li>이렇게 생성된 <code class="language-plaintext highlighter-rouge">Dataset</code> 클래스는 크게 아래와 같이 3가지 메서드로 구성된다
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">__init__</code>: 일반적으로 해당 메서드에서는 데이터의 위치나 파일명과 같은 초기화 작업을 위해 동작합니다. 일반적으로 CSV파일이나 XML파일과 같은 데이터를 이때 불러옵니다. 이렇게 함으로써 모든 데이터를 메모리에 로드하지 않고 효율적으로 사용할 수 있습니다. 여기에 이미지를 처리할 transforms들을 Compose해서 정의해둡니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">__len__</code>: 해당 메서드는 Dataset의 최대 요소 수를 반환하는데 사용됩니다. 해당 메서드를 통해서 현재 불러오는 데이터의 인덱스가 적절한 범위 안에 있는지 확인할 수 있습니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">__getitem__</code>: 해당 메서드는 데이터셋의 idx번째 데이터를 반환하는데 사용됩니다. 일반적으로 원본 데이터를 가져와서 전처리하고 데이터 증강하는 부분이 모두 여기에서 진행될 겁니다. 이는 이후 transform 하는 방법들에 대해서 간단히 알려드리겠습니다.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">BasicDataset</span><span class="p">(</span><span class="n">torch</span><span class="p">.</span><span class="n">utils</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">image_df</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">label_df</span> <span class="o">=</span> <span class="n">y</span>
+    
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">image_df</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">image_df</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="bp">self</span><span class="p">.</span><span class="n">label_df</span><span class="p">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h2 id="데이터-로더">데이터 로더</h2>
+
+<ul>
+  <li>데이터 로더는 모델 학습을 위해서 데이터를 미니 배치(Mini batch)단위로 제공해주는 역할을 합니다.</li>
+  <li>dataset은 앞서 우리가 만든 Dataset을 인자로 넣어주시면 됩니다!</li>
+  <li>보통 batch_size나 collate_fn와 같은 인자를 주로 사용할겁니다!
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">batch_size</code>: 인자가 나타내고 있는 뜻 그대로 배치 사이즈를 의미합니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">shuffle</code>: 데이터를 DataLoader에서 섞어서 사용하겠는지를 설정할 수 있습니다. 앞선 경우와 다르게 데이터가 섞인 것을 확인하실 수 있습니다.</li>
+      <li><code class="language-plaintext highlighter-rouge">sampler / batch_sampler</code>: sampler는 index를 컨트롤하는 방법입니다. 데이터의 index를 원하는 방식대로 조정합니다. 즉 index를 컨트롤하기 때문에 설정하고 싶다면 shuffle 파라미터는 False(기본값)여야 합니다. 불균형 데이터셋의 경우, 클래스의 비율에 맞게끔 데이터를 제공해야할 필요가 있습니다. 이럴 때 사용하는 옵션이 sampler입니다.
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">SequentialSampler</code> : 항상 같은 순서</li>
+          <li><code class="language-plaintext highlighter-rouge">RandomSampler</code> : 랜덤, replacemetn 여부 선택 가능, 개수 선택 가능</li>
+          <li><code class="language-plaintext highlighter-rouge">SubsetRandomSampler</code> : Samples elements randomly from a given list of indices, without replacement. (랜덤 리스트, 위와 두 조건 불가능)</li>
+          <li><code class="language-plaintext highlighter-rouge">WeigthRandomSampler</code> : 가중치에 따른 확률</li>
+          <li><code class="language-plaintext highlighter-rouge">BatchSampler</code> : batch단위로 sampling 가능</li>
+        </ul>
+      </li>
+      <li><code class="language-plaintext highlighter-rouge">collate_fn</code>: 생각보다 많이 쓰는 옵션입니다. 보통 map-style 데이터셋에서 sample list를 batch 단위로 바꾸기 위해 필요한 기능입니다. zero-padding이나 Variable Size 데이터 등 데이터 사이즈를 맞추기 위해 많이 사용합니다. 데이터가 로더에 의해 return 되기 전에 collate_fn을 거쳐서 그 결과가 return된다</li>
+      <li><code class="language-plaintext highlighter-rouge">drop_last</code>: batch 단위로 데이터를 불러온다면, batch_size에 따라 마지막 batch의 길이가 달라질 수 있습니다. batch의 길이가 다른 경우에 따라 loss를 구하기 귀찮은 경우가 생기고, batch의 크기에 따른 의존도 높은 함수를 사용할 때 걱정이 되는 경우 마지막 batch를 사용하지 않을 수 있습니다.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="학습">학습</h1>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">train</span><span class="p">():</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[Epoch: </span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s"> - Training]'</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">running_corrects</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">):</span>
+        <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">labels</span><span class="p">.</span><span class="n">cuda</span><span class="p">()</span>
+
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+        <span class="n">optimizer</span><span class="p">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        
+        <span class="n">loss</span><span class="p">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="p">.</span><span class="n">step</span><span class="p">()</span>
+        
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">labels</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">running_corrects</span> <span class="o">+=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">preds</span> <span class="o">==</span> <span class="n">labels</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">log_step</span> <span class="o">==</span> <span class="n">log_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[Batch: </span><span class="si">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s">] running train loss: </span><span class="si">{</span><span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">, running train accuracy: </span><span class="si">{</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'train loss: </span><span class="si">{</span><span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">, accuracy: </span><span class="si">{</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"elapsed time:"</span><span class="p">,</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="p">(</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="p">).</span><span class="n">item</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">validate</span><span class="p">():</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[Epoch: </span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s"> - Validation]'</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">running_corrects</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">val_dataloader</span><span class="p">):</span>
+        <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">labels</span><span class="p">.</span><span class="n">cuda</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">labels</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">running_corrects</span> <span class="o">+=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">preds</span> <span class="o">==</span> <span class="n">labels</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">log_step</span> <span class="o">==</span> <span class="n">log_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[Batch: </span><span class="si">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s">] running val loss: </span><span class="si">{</span><span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">, running val accuracy: </span><span class="si">{</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'val loss: </span><span class="si">{</span><span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">, accuracy: </span><span class="si">{</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"elapsed time:"</span><span class="p">,</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="p">(</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="p">).</span><span class="n">item</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[Test]'</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">.</span><span class="nb">eval</span><span class="p">()</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">running_corrects</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">test_dataloader</span><span class="p">):</span>
+        <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">imgs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">labels</span><span class="p">.</span><span class="n">cuda</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="p">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">preds</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+
+        <span class="n">total</span> <span class="o">+=</span> <span class="n">labels</span><span class="p">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="p">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">running_corrects</span> <span class="o">+=</span> <span class="n">torch</span><span class="p">.</span><span class="nb">sum</span><span class="p">(</span><span class="n">preds</span> <span class="o">==</span> <span class="n">labels</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">log_step</span> <span class="o">==</span> <span class="n">log_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'[Batch: </span><span class="si">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s">] running test loss: </span><span class="si">{</span><span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">, running test accuracy: </span><span class="si">{</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">'test loss: </span><span class="si">{</span><span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">, accuracy: </span><span class="si">{</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="si">}</span><span class="s">'</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"elapsed time:"</span><span class="p">,</span> <span class="n">time</span><span class="p">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">running_loss</span> <span class="o">/</span> <span class="n">total</span><span class="p">,</span> <span class="p">(</span><span class="n">running_corrects</span> <span class="o">/</span> <span class="n">total</span><span class="p">).</span><span class="n">item</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">adjust_learning_rate</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+    <span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">lr</span> <span class="o">/=</span> <span class="mi">10</span>
+    <span class="k">if</span> <span class="n">epoch</span> <span class="o">&gt;=</span> <span class="mi">7</span><span class="p">:</span>
+        <span class="n">lr</span> <span class="o">/=</span> <span class="mi">10</span>
+    <span class="k">for</span> <span class="n">param_group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="p">.</span><span class="n">param_groups</span><span class="p">:</span>
+        <span class="n">param_group</span><span class="p">[</span><span class="s">'lr'</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+</code></pre></div></div>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">log_step</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model1</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">cuda</span><span class="p">()</span>
+
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="p">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="p">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+
+<span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">best_val_acc</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">best_epoch</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
+    <span class="n">adjust_learning_rate</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+    <span class="n">train_loss</span><span class="p">,</span> <span class="n">train_acc</span> <span class="o">=</span> <span class="n">train</span><span class="p">()</span>
+    <span class="n">val_loss</span><span class="p">,</span> <span class="n">val_acc</span> <span class="o">=</span> <span class="n">validate</span><span class="p">()</span>
+    <span class="n">history</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">train_loss</span><span class="p">,</span> <span class="n">val_loss</span><span class="p">))</span>
+    <span class="n">accuracy</span><span class="p">.</span><span class="n">append</span><span class="p">((</span><span class="n">train_acc</span><span class="p">,</span> <span class="n">val_acc</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">val_acc</span> <span class="o">&gt;</span> <span class="n">best_val_acc</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"[Info] best validation accuracy!"</span><span class="p">)</span>
+        <span class="n">best_val_acc</span> <span class="o">=</span> <span class="n">val_acc</span>
+        <span class="n">best_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
+        <span class="n">torch</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="sa">f</span><span class="s">"best_checkpoint_epoch_</span><span class="si">{</span><span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s">.pth"</span><span class="p">)</span>
+
+<span class="n">torch</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="sa">f</span><span class="s">"last_checkpoint_epoch_</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s">.pth"</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">accuracy</span><span class="p">],</span> <span class="s">'b'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'train'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">accuracy</span><span class="p">],</span> <span class="s">'r--'</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">'validation'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">"Epochs"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">"Accuracy"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">test_loss</span><span class="p">,</span> <span class="n">test_accuracy</span> <span class="o">=</span> <span class="n">test</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Test loss: </span><span class="si">{</span><span class="n">test_loss</span><span class="p">:.</span><span class="mi">8</span><span class="n">f</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Test accuracy: </span><span class="si">{</span><span class="n">test_accuracy</span> <span class="o">*</span> <span class="mf">100.</span><span class="p">:.</span><span class="mi">2</span><span class="n">f</span><span class="si">}</span><span class="s">%"</span><span class="p">)</span>
+</code></pre></div></div>
+:ET

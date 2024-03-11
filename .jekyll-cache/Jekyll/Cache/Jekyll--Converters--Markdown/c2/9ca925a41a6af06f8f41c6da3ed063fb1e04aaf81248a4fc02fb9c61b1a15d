@@ -1,0 +1,268 @@
+I"1J<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#인덱스-확인" id="markdown-toc-인덱스-확인">인덱스 확인</a></li>
+  <li><a href="#인덱스-통계-정보-확인" id="markdown-toc-인덱스-통계-정보-확인">인덱스 통계 정보 확인</a></li>
+  <li><a href="#인덱스-생성" id="markdown-toc-인덱스-생성">인덱스 생성</a>    <ul>
+      <li><a href="#create-table-내" id="markdown-toc-create-table-내">Create Table 내</a></li>
+      <li><a href="#create-index-문" id="markdown-toc-create-index-문">Create Index 문</a></li>
+      <li><a href="#alter-table-add-index-문" id="markdown-toc-alter-table-add-index-문">ALTER TABLE ADD INDEX 문</a></li>
+    </ul>
+  </li>
+  <li><a href="#인덱스-삭제" id="markdown-toc-인덱스-삭제">인덱스 삭제</a>    <ul>
+      <li><a href="#보조인덱스-삭제" id="markdown-toc-보조인덱스-삭제">보조인덱스 삭제</a></li>
+      <li><a href="#클러스터-인덱스-삭제" id="markdown-toc-클러스터-인덱스-삭제">클러스터 인덱스 삭제</a></li>
+    </ul>
+  </li>
+  <li><a href="#execution-plan" id="markdown-toc-execution-plan">Execution Plan</a></li>
+  <li><a href="#sargable-query" id="markdown-toc-sargable-query">Sargable Query</a></li>
+  <li><a href="#full-text-index" id="markdown-toc-full-text-index">Full-Text Index</a></li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
+
+<hr />
+
+<h1 id="인덱스-확인">인덱스 확인</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="k">INDEX</span>
+<span class="k">FROM</span> <span class="o">&lt;</span><span class="err">테이블</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>Table</strong>: 테이블의 이름을 표시함.</li>
+  <li><strong>Non_unique</strong>: 인덱스가 중복된 값을 저장할 수 있으면 1, 저장할 수 없으면 0을 표시함.</li>
+  <li><strong>Key_name</strong>: 인덱스의 이름을 표시하며, 인덱스가 해당 테이블의 기본 키라면 PRIMARY로 표시함.</li>
+  <li><strong>Seq_in_index</strong>: 인덱스에서의 해당 필드의 순서를 표시함.</li>
+  <li><strong>Column_name</strong>: 해당 필드의 이름을 표시함.</li>
+  <li><strong>Collation</strong>: 인덱스에서 해당 필드가 정렬되는 방법을 표시함.</li>
+  <li><strong>Cardinality</strong>: 인덱스에 저장된 유일한 값들의 수를 표시함.</li>
+  <li><strong>Sub_part</strong>: 인덱스 접두어를 표시함.</li>
+  <li><strong>Packed</strong>: 키가 압축되는(packed) 방법을 표시함.</li>
+  <li><strong>Null</strong>: 해당 필드가 NULL을 저장할 수 있으면 YES를 표시하고, 저장할 수 없으면 ‘‘를 표시함.</li>
+  <li><strong>Index_type</strong>: 인덱스에 사용되는 메소드(method)를 표시함.</li>
+  <li><strong>Comment</strong>: 해당 필드를 설명하는 것이 아닌 인덱스에 관한 기타 정보를 표시함.</li>
+  <li><strong>Index_comment</strong>: 인덱스에 관한 모든 기타 정보를 표시함.</li>
+</ul>
+
+<h1 id="인덱스-통계-정보-확인">인덱스 통계 정보 확인</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="k">TABLE</span> <span class="n">STATUS</span> <span class="k">LIKE</span> <span class="o">&lt;</span><span class="err">테이블</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<h1 id="인덱스-생성">인덱스 생성</h1>
+
+<h2 id="create-table-내">Create Table 내</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">books</span> <span class="p">(</span>
+  <span class="c1">-- 같이 지정</span>
+  <span class="n">id</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span> <span class="c1">-- 기본키 지정 (클러스터 인덱스)</span>
+  <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">unique</span><span class="p">,</span> <span class="c1">-- 인덱스 생성 (유니크 보조 인덱스)</span>
+  <span class="n">writer</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+  
+  <span class="k">INDEX</span> <span class="n">idx_test</span> <span class="p">(</span><span class="n">writer</span> <span class="k">asc</span><span class="p">)</span> <span class="c1">-- 인덱스 생성 (보조 인덱스)</span>
+<span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_50.png" alt="" /></p>
+
+<h2 id="create-index-문">Create Index 문</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="p">);</span> <span class="c1">-- 보조 인덱스 생성 (중복 허용)</span>
+ 
+<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="p">);</span> <span class="c1">-- 유니크 보조 인덱스 생성 (중복 비허용)</span>
+ 
+<span class="k">CREATE</span> <span class="n">FULLTEXT</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="p">);</span> <span class="c1">-- 클러스터 인덱스 생성</span>
+ 
+<span class="k">CREATE</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="err">인덱스명</span> <span class="k">ON</span> <span class="err">테이블명</span> <span class="p">(</span><span class="err">컬럼명</span><span class="mi">1</span><span class="p">,</span> <span class="err">컬러명</span><span class="mi">2</span><span class="p">);</span> <span class="c1">-- 다중 컬럼 인덱스 생성</span>
+ 
+<span class="k">ANALYZE</span> <span class="k">TABLE</span> <span class="err">테이블명</span><span class="p">;</span> <span class="c1">-- !! 생성한 인덱스 적용 !!</span>
+</code></pre></div></div>
+
+<h2 id="alter-table-add-index-문">ALTER TABLE ADD INDEX 문</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="err">테이블이름</span>
+<span class="k">ADD</span> <span class="k">INDEX</span> <span class="err">인덱스이름</span> <span class="p">(</span><span class="err">필드이름</span><span class="p">)</span>
+<span class="c1">-- 중복을 허용하는 인덱스.</span>
+<span class="c1">-- 보조 인덱스.</span>
+<span class="c1">-- 가장 느리지만 인덱스 안한 컬럼 조회하는 것보다 인덱스 붙인 컬럼 조회하는게 더 빠르다. 여러개 노멀키 를 지정할수 있다.</span>
+ 
+ 
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="err">테이블이름</span>
+<span class="k">ADD</span> <span class="k">UNIQUE</span> <span class="k">INDEX</span> <span class="err">인덱스이름</span> <span class="p">(</span><span class="err">필드이름</span><span class="p">)</span>
+<span class="c1">-- 중복을 허용하지 않는 유일한 키. null 허용. </span>
+<span class="c1">-- 보조 인덱스.</span>
+<span class="c1">-- 고속으로 조회 가능</span>
+ 
+ 
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="err">테이블이름</span>
+<span class="k">ADD</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="k">INDEX</span> <span class="err">인덱스이름</span> <span class="p">(</span><span class="err">필드이름</span><span class="p">)</span>
+<span class="c1">-- 중복되지 않은 유일한 키. null 비허용. </span>
+<span class="c1">-- 클러스터 인덱스</span>
+<span class="c1">-- where로 데이터를 조회할때 가장 고속으로 조회</span>
+ 
+ 
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="err">테이블이름</span>
+<span class="k">ADD</span> <span class="n">FULLTEXT</span> <span class="k">INDEX</span> <span class="err">인덱스이름</span> <span class="p">(</span><span class="err">필드이름</span><span class="p">)</span>
+<span class="c1">-- 풀텍스트 인덱스</span>
+<span class="c1">-- 긴 문자열 데이터를 인덱스로 검색할 때 사용.</span>
+</code></pre></div></div>
+
+<h1 id="인덱스-삭제">인덱스 삭제</h1>
+
+<h2 id="보조인덱스-삭제">보조인덱스 삭제</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="err">테이블이름</span>
+<span class="k">DROP</span> <span class="k">INDEX</span> <span class="err">인덱스이름</span>
+</code></pre></div></div>
+
+<h2 id="클러스터-인덱스-삭제">클러스터 인덱스 삭제</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="err">테이블이름</span>
+<span class="k">DROP</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">;</span> <span class="c1">-- 만일 외래키와 연결이 되어있을 경우 제약조건에 의해 삭제가 안될수 있음</span>
+</code></pre></div></div>
+
+<h1 id="execution-plan">Execution Plan</h1>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="p">...</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_51.png" alt="" /></p>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>구분</strong></td>
+      <td><strong>설명</strong></td>
+    </tr>
+    <tr>
+      <td><strong>id</strong></td>
+      <td>select 아이디로 SELECT를 구분하는 번호</td>
+    </tr>
+    <tr>
+      <td><strong>select_type</strong></td>
+      <td>select에 대한 타입</td>
+    </tr>
+    <tr>
+      <td><strong>table</strong></td>
+      <td>참조하는 테이블</td>
+    </tr>
+    <tr>
+      <td><strong>type</strong></td>
+      <td>조인 혹은 조회 타입</td>
+    </tr>
+    <tr>
+      <td><strong>possible_keys</strong></td>
+      <td>데이터를 조회할 때 DB에서 사용할 수 있는 인덱스 리스트</td>
+    </tr>
+    <tr>
+      <td><strong>key</strong></td>
+      <td>실제로 사용할 인덱스</td>
+    </tr>
+    <tr>
+      <td><strong>key_len</strong></td>
+      <td>실제로 사용할 인덱스의 길이</td>
+    </tr>
+    <tr>
+      <td><strong>ref</strong></td>
+      <td>Key 안의 인덱스와 비교하는 컬럼(상수)</td>
+    </tr>
+    <tr>
+      <td><strong>rows</strong></td>
+      <td>쿼리 실행 시 조회하는 행 (통계에 기반한 추정)</td>
+    </tr>
+    <tr>
+      <td><strong>filtered</strong></td>
+      <td>조회되지 않은 행 (통계에 기반한 추정)</td>
+    </tr>
+    <tr>
+      <td><strong>extra</strong></td>
+      <td>추가 정보</td>
+    </tr>
+  </tbody>
+</table>
+
+<h1 id="sargable-query">Sargable Query</h1>
+
+<ul>
+  <li>인덱스를 효율적으로 사용할 수 없는 경우: 인덱스 풀 스캔하는 경우</li>
+  <li>
+    <p><strong>인덱스를 효율적으로 사용하는 경우</strong>: 인덱스 레인지 스캔, 루스 인덱스 스캔을 사용 -&gt; <strong>사거블(Sargable)</strong> 하다고 함</p>
+  </li>
+  <li>where, order by, group by 등에는 가능한 index가 걸린 컬럼 사용.</li>
+  <li>where 절에 함수, 연산, Like(시작 부분 %)문은 사거블하지 않다!</li>
+  <li>between, like, 대소비교(&gt;, &lt; 등)는 범위가 크면 사거블하지 않다.</li>
+  <li>or 연산자는 필터링의 반대 개념(로우수를 늘려가는)이므로 사거블이 아니다.</li>
+  <li>offset이 길어지면 사거블하지 않는다.</li>
+  <li>범위 보다는 in 절을 사용하는 게 좋고, in 보다는 exists가 더 좋다.</li>
+  <li>꼭 필요한 경우가 아니라면 서브 쿼리보다는 조인(Join)을 사용하자.</li>
+</ul>
+
+<h1 id="full-text-index">Full-Text Index</h1>
+
+<ul>
+  <li>contents 컬럼에서 ‘무궁화’라는 단어를 가지는 레코드를 찾고 싶을 때</li>
+  <li><code class="language-plaintext highlighter-rouge">SELECT * FROM table WHERE contents LIKE '%무궁화%';</code> 라고 하면 인덱스 없이 풀 테이블 스캔 하게된다</li>
+  <li>Full-Text 인덱스를 만들면 contents 컬럼의 문자열을 파싱해서 인덱스로 저장하고, 그 인덱스를 이용해 찾아준다</li>
+  <li>여러 컬럼을 이용해 인덱스를 만들 수도 있다</li>
+  <li>인덱스를 이용해 SELECT 할 때는 <code class="language-plaintext highlighter-rouge">MATCH</code>와 <code class="language-plaintext highlighter-rouge">AGAINST</code>를 사용하면 된다</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="k">INDEX</span> <span class="k">FROM</span> <span class="n">Product</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_1.png" alt="" /></p>
+
+<p>풀 텍스트 인덱스를 하나 만들어보자.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="n">FULLTEXT</span> <span class="k">INDEX</span> <span class="o">&lt;</span><span class="k">index</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+<span class="k">ON</span> <span class="o">&lt;</span><span class="k">table</span><span class="o">&gt;</span><span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="p">..)</span>
+
+<span class="k">CREATE</span> <span class="n">FULLTEXT</span> <span class="k">INDEX</span> <span class="n">ft_idx_Product_name_category</span>
+<span class="k">ON</span> <span class="n">Product</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">category</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_2.png" alt="" /></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">Product</span> <span class="k">WHERE</span> <span class="k">MATCH</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">category</span><span class="p">)</span> <span class="n">AGAINST</span><span class="p">(</span><span class="s1">'아이폰'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_3.png" alt="" /></p>
+
+<p>IN BOOLEAN MODE를 사용하면 조건을 더 디테일하게 걸 수 있다.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>*: partial search ex. 아이폰* -&gt; 아이폰, 아이폰은, 아이폰을, .. 다 매치해준다
++: required search ex. +스페이스 -&gt; 아이폰 13 스페이스 그레이와 같이 스페이스가 무조건 포함되는 레코드만 매치해준다
+-: excluded search ex. -스페이스 -&gt; 아이폰 13 그린라이트와 같이 스페이스가 포함된 레코드를 제외시켜준다
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">Product</span> <span class="k">WHERE</span> <span class="k">MATCH</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">category</span><span class="p">)</span> <span class="n">AGAINST</span><span class="p">(</span><span class="s1">'아이폰 -스페이스'</span> <span class="k">IN</span> <span class="nb">BOOLEAN</span> <span class="k">MODE</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_4.png" alt="" /></p>
+
+<p>단어가 어떤식으로 인덱싱되어 있는지 보기 위해 테이블을 하나 만들 수도 있다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="k">GLOBAL</span> <span class="n">innodb_ft_aux_table</span> <span class="o">=</span> <span class="s1">'carrot/Product'</span><span class="p">;</span> <span class="c1">-- 스키마/테이블</span>
+
+<span class="k">SET</span> <span class="k">GLOBAL</span> <span class="n">innodb_optimize_fulltext_only</span> <span class="o">=</span> <span class="k">ON</span><span class="p">;</span>
+<span class="n">OPTIMIZE</span> <span class="k">TABLE</span> <span class="n">Product</span><span class="p">;</span>
+<span class="k">SET</span> <span class="k">GLOBAL</span> <span class="n">innodb_optimize_fulltext_only</span> <span class="o">=</span> <span class="k">OFF</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">innodb_ft_index_table</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_5.png" alt="" /></p>
+
+<p>풀텍스트 관련 서버 설정값은 다음으로 확인할 수 있다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">VARIABLES</span> <span class="k">LIKE</span> <span class="s1">'innodb_ft%'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/images/mysql_ft_6.png" alt="" /></p>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://inpa.tistory.com/entry/MYSQL-%F0%9F%93%9A-%EC%9D%B8%EB%8D%B1%EC%8A%A4index-%ED%95%B5%EC%8B%AC-%EC%84%A4%EA%B3%84-%EC%82%AC%EC%9A%A9-%EB%AC%B8%EB%B2%95-%F0%9F%92%AF-%EC%B4%9D%EC%A0%95%EB%A6%AC?category=890808#%EC%9D%B8%EB%8D%B1%EC%8A%A4_%EB%AC%B8%EB%B2%95_%EC%A0%95%EB%A6%AC" target="_blank">인파, [MYSQL] 📚 인덱스(index) 핵심 설계 &amp; 사용 문법 💯 총정리</a></li>
+</ul>
+:ET

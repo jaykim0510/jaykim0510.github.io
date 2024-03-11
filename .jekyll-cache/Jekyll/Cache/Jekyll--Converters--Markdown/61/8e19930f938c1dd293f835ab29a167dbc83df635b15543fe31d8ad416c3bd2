@@ -1,0 +1,97 @@
+I"�<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#commonjs-모듈" id="markdown-toc-commonjs-모듈">CommonJS 모듈</a></li>
+  <li><a href="#es-모듈" id="markdown-toc-es-모듈">ES 모듈</a></li>
+</ul>
+
+<hr />
+
+<ul>
+  <li>모듈: 특정한 기능을 하는 함수나 변수들의 집합</li>
+  <li>모듈로 만들면 여러 프로그램에서 재사용 가능</li>
+</ul>
+
+<h1 id="commonjs-모듈">CommonJS 모듈</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">odd</span><span class="p">,</span>
+    <span class="nx">even</span>
+<span class="p">}</span>
+
+<span class="c1">// module.exports = odd</span>
+<span class="c1">// module.exports = [odd, even]</span>
+<span class="c1">// module.exports 는 파일에서 한 번만 쓸 수 있음</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="p">{</span> <span class="nx">odd</span><span class="p">,</span> <span class="nx">even</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./var.js</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="c1">// const { myOdd: odd, myEven: even } = require('./var.js')</span>
+
+<span class="c1">// const mynumbers = require('./var.js')</span>
+<span class="c1">// mynumbers.odd</span>
+<span class="c1">// mynumbers.even</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">module.exports</code> 외에도 <code class="language-plaintext highlighter-rouge">exports</code>로 모듈을 만들 수 있음</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">exports</span><span class="p">.</span><span class="nx">odd</span> <span class="o">=</span> <span class="nx">odd</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">even</span> <span class="o">=</span> <span class="nx">even</span>
+
+<span class="c1">// module.exports와 exports를 같이 쓸 수는 없음</span>
+</code></pre></div></div>
+
+<p><img src="/images/node_module_1.png" alt="" /></p>
+
+<ul>
+  <li>node.js에서 최상위 스코프의 <code class="language-plaintext highlighter-rouge">this</code>는 <code class="language-plaintext highlighter-rouge">module.exports</code>를 가리킴</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span> <span class="o">===</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">)</span> <span class="c1">// true</span>
+
+<span class="kd">function</span> <span class="nx">a</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span> <span class="o">===</span> <span class="nb">global</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">a</span><span class="p">()</span> <span class="c1">// true</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">require('./var.js')</code> 실행만 하고 변수에 할당 안하면, <code class="language-plaintext highlighter-rouge">var.js</code> 파일 실행은 하지만, 모듈은 가져와서 사용하지 않음</li>
+</ul>
+
+<h1 id="es-모듈">ES 모듈</h1>
+
+<ul>
+  <li>자바스크립트 진영에서 표준으로 채택한 모듈화 방법</li>
+  <li><code class="language-plaintext highlighter-rouge">mjs</code> 확장자를 사용하거나 package.json에 <code class="language-plaintext highlighter-rouge">type: “module”</code>을 추가해야 함</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">const</span> <span class="nx">odd</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">홀수</span><span class="dl">'</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">even</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">짝수</span><span class="dl">'</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">export default</code> 는 모듈에서 한 번만 사용할 수 있다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="k">default</span> <span class="kd">const</span> <span class="nx">odd</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">홀수</span><span class="dl">'</span>
+<span class="c1">// export default const even = '짝수' X</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="kd">const</span> <span class="nx">mynumbers</span> <span class="o">=</span> <span class="p">{</span> <span class="na">odd</span><span class="p">:</span> <span class="dl">'</span><span class="s1">홀수</span><span class="dl">'</span><span class="p">,</span> <span class="na">even</span><span class="p">:</span> <span class="dl">'</span><span class="s1">짝수</span><span class="dl">'</span> <span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>모듈을 임포트할 때 <code class="language-plaintext highlighter-rouge">export</code> 사용한 모듈은 구조 분해 할당 형태로 불러온다</li>
+  <li><code class="language-plaintext highlighter-rouge">export default</code> 사용한 모듈은 구조 분해 할당이 필요없고, 다른 이름으로 불러올 수도 있다</li>
+  <li>확장자(ex. <code class="language-plaintext highlighter-rouge">.js</code>, <code class="language-plaintext highlighter-rouge">.mjs</code> 등)를 생략하면 안된다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">odd</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./var.js</span><span class="dl">'</span>
+
+<span class="k">import</span> <span class="nx">mynumbers</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./var.js</span><span class="dl">'</span>
+<span class="k">import</span> <span class="nx">mymymy</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./var.js</span><span class="dl">'</span> <span class="c1">// export default는 임포트할 요소가 유일하기 때문에 불러올 때 이름이 달라도 된다</span>
+</code></pre></div></div>
+:ET

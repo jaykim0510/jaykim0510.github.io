@@ -1,0 +1,92 @@
+I"�<hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#this" id="markdown-toc-this">this</a></li>
+  <li><a href="#일반-함수-호출" id="markdown-toc-일반-함수-호출">일반 함수 호출</a></li>
+  <li><a href="#메서드-호출" id="markdown-toc-메서드-호출">메서드 호출</a></li>
+  <li><a href="#생성자-함수-호출" id="markdown-toc-생성자-함수-호출">생성자 함수 호출</a></li>
+  <li><a href="#functionprototypeapplycallbind-메서드에-의한-간접-호출" id="markdown-toc-functionprototypeapplycallbind-메서드에-의한-간접-호출">Function.prototype.apply/call/bind 메서드에 의한 간접 호출</a></li>
+  <li><a href="#결론" id="markdown-toc-결론">결론</a></li>
+</ul>
+
+<hr />
+
+<h1 id="this">this</h1>
+
+<ul>
+  <li>객체에서 동작을 나타내는 메서드는 자신의 상태를 참조하고 변경할 수 있어야 한다. 이 때 메서드가 자신이 속한 객체의 프로퍼티를 참조하려면 먼저 자신이 속한 객체를 가리키는 식별자를 참조할 수 있어야 한다</li>
+  <li>자바스크립트는 자신이 생성할 인스턴스를 가리키는 this라는 특수한 식별자를 제공한다</li>
+  <li>this는 자신이 속한 객체 또는 자신이 생성할 인스턴스를 가리키는 자기 참조 변수다</li>
+  <li>
+    <p>단 자바스크립트에서 <span class="very__important">this 바인딩은 함수 호출 방식에 의해 동적으로 결정</span>된다</p>
+  </li>
+  <li>동일한 함수도 다양한 방식으로 호출할 수 있다. 함수를 호출하는 방식은 다음과 같다
+    <ul>
+      <li>일반 함수 호출</li>
+      <li>메서드 호출</li>
+      <li>생성자 함수 호출</li>
+      <li><code class="language-plaintext highlighter-rouge">Function.prototype.apply/call/bind</code> 메서드에 의한 간접 호출</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="일반-함수-호출">일반 함수 호출</h1>
+
+<ul>
+  <li>일반함수로 호출된 모든 함수(중첩함수, 콜백 함수 포함) 내부의 <code class="language-plaintext highlighter-rouge">this</code>에는 전역 객체가 바인딩된다</li>
+  <li>하지만 메서드 내에서 정의한 중첩 함수 또는 메서드에게 전달한 콜백 함수가  일반 함수로 호출될 때 <code class="language-plaintext highlighter-rouge">this</code>가 전역 객체를 바인딩하는 것은 문제가 있다</li>
+  <li>이 문제를 해결하는 가장 깔끔한 방법은 <span class="very__important">화살표 함수를 사용하는 것</span>이다</li>
+  <li>화살표 함수 내부의 <code class="language-plaintext highlighter-rouge">this</code>는 상위 스코프의 this를 가리킨다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">value</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="nx">foo</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">value</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="메서드-호출">메서드 호출</h1>
+
+<ul>
+  <li>메서드 내부의 <code class="language-plaintext highlighter-rouge">this</code>는 <span class="very__important">메서드를 호출한 객체</span>가 바인딩 된다</li>
+</ul>
+
+<h1 id="생성자-함수-호출">생성자 함수 호출</h1>
+
+<ul>
+  <li>생성자 함수 내부의 <code class="language-plaintext highlighter-rouge">this</code>에는 생성자 함수가 <span class="very__important">미래에 생성할 인스턴스</span>가 바인딩 된다</li>
+</ul>
+
+<h1 id="functionprototypeapplycallbind-메서드에-의한-간접-호출">Function.prototype.apply/call/bind 메서드에 의한 간접 호출</h1>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">apply</code>, <code class="language-plaintext highlighter-rouge">call</code>, <code class="language-plaintext highlighter-rouge">bind</code> 메서드는 <code class="language-plaintext highlighter-rouge">Function.prototype</code>의 메서드다. 즉 이들 메서드는 모든 함수가 상속받아 사용할 수 있다</li>
+  <li><code class="language-plaintext highlighter-rouge">apply</code>와 <code class="language-plaintext highlighter-rouge">call</code> 메서드는 함수를 호출하면서 첫 번째 인수로 전달한 특정 객체를 호출한 함수의 this에 바인딩한다</li>
+  <li>(<code class="language-plaintext highlighter-rouge">apply</code>는 전달할 인수를 배열 형식으로 전달, <code class="language-plaintext highlighter-rouge">call</code>은 쉼표로 구분하여 전달하는 차이다)</li>
+  <li><code class="language-plaintext highlighter-rouge">bind</code> 메서드는 함수를 호출하지 않는다</li>
+  <li><code class="language-plaintext highlighter-rouge">bind</code> 메서드는 첫 번째 인수로 전달한 객체에 바인딩된 새로 생성된 함수를 반환한다</li>
+  <li>위에서 일반 함수의 <code class="language-plaintext highlighter-rouge">this</code>가 전역 객체에 바인딩되는 문제를 화살표 함수로 해결했었는데, 이 문제를 <code class="language-plaintext highlighter-rouge">apply/call/bind</code>로 해결할 수도 있었다</li>
+  <li>콜백함수 안에 사용된 함수가 일반 함수로 정의된 함수가 전달될 수 있기 때문에 <code class="language-plaintext highlighter-rouge">bind</code> 메서드를 사용해 이 문제를 사전에 방지할 수 있다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">person</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Lee</span><span class="dl">'</span><span class="p">,</span>
+    <span class="nx">foo</span><span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">setTimeout</span><span class="p">(</span><span class="nx">callback</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 이렇게 일반 함수가 전달되어도 사전에 bind 메서드를 사용해서 문제를 사전에 방지했기 때문에 괜찮다</span>
+<span class="nx">person</span><span class="p">.</span><span class="nx">foo</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Hi my name is </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="s2">`</span><span class="p">)</span> <span class="p">})</span>
+</code></pre></div></div>
+
+<h1 id="결론">결론</h1>
+
+<ul>
+  <li>메서드나 생성자 함수는 크게 걱정할 문제가 없다</li>
+  <li>만약 콜백함수로 사용될 가능성이 있는 함수는 일반 함수로 정의하는 것보다는, 화살표 함수로 정의하는게 낫다</li>
+  <li>콜백함수가 일반함수로 정의되었다면, 콜백함수를 참조하는 곳에서 <code class="language-plaintext highlighter-rouge">bind</code> 메서드를 사용해 바인딩 해야 한다</li>
+</ul>
+:ET
