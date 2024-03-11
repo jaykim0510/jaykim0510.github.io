@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Experimental Series [Part4] SQL 문제'
+title:  '[MySQL] SQL 문제'
 description: 
 date:   2022-07-11 15:01:35 +0300
 image:  '/images/mysql_logo.png'

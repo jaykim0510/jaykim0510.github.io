@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Experimental Series [Part1] MySQL 쿼리 튜닝/최적화하기'
+title:  '[MySQL] 쿼리 튜닝/최적화하기'
 description: 
 date:   2022-07-01 15:01:35 +0300
 image:  '/images/mysql_logo.png'

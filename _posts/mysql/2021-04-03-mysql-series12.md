@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Command Series [Part12] 내장 함수 모음'
+title:  '[MySQL] 내장 함수 모음'
 description: 
 date:   2021-04-03 15:01:35 +0300
 image:  '/images/mysql_logo.png'

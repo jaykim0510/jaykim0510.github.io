@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Experimental Series [Part2] MySQL 성능 점검/튜닝하기'
+title:  '[MySQL] 성능 최적화'
 description: 
 date:   2022-07-02 15:01:35 +0300
 image:  '/images/mysql_logo.png'

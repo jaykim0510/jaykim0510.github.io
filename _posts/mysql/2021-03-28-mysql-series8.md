@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Command Series [Part8] 유틸리티(View, CTE, Trigger, Function, Procedure, Cursor)'
+title:  '[MySQL] 유틸리티(View, CTE, Trigger, Function, Procedure, Cursor)'
 description: 
 date:   2021-03-28 15:01:35 +0300
 image:  '/images/mysql_logo.png'

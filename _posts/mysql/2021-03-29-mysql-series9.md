@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Command Series [Part9] 인덱스 명령어'
+title:  '[MySQL] 인덱스 명령어'
 description: 
 date:   2021-03-29 15:01:35 +0300
 image:  '/images/mysql_logo.png'

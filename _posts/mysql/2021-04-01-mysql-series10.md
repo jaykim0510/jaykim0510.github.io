@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Command Series [Part10] 백업, 복제 명령어'
+title:  '[MySQL] 백업, 복제 명령어'
 description: 
 date:   2021-04-01 15:01:35 +0300
 image:  '/images/mysql_logo.png'

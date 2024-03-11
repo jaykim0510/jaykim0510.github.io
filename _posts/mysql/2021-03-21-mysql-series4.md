@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Command Series [Part4] DML(4): INSERT, UPDATE, DELETE'
+title:  '[MySQL] DML(4): INSERT, UPDATE, DELETE'
 description: 
 date:   2021-03-21 15:01:35 +0300
 image:  '/images/mysql_logo.png'

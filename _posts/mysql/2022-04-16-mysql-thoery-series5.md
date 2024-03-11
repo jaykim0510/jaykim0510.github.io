@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'MySQL Thoery Series [Part5] 데이터베이스 모델링'
+title:  '[MySQL] 데이터베이스 모델링 (이론)'
 description: 
 date:   2022-04-16 15:01:35 +0300
 image:  '/images/mysql_logo.png'
