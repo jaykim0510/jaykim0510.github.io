@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '[node.js] Intro'
+title:  '[Node.js] Intro'
 description: 노드의 구조, 장단점, 특징에 대해 배운다
 date:   2024-01-22 15:01:35 +0300
 image:  '/images/node_logo.png'

@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>[node.js] 웹서버</title>
+  <title>[Node.js] 웹서버</title>
   <meta name='description' content='Menca personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/nodejs-web-server">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="[node.js] 웹서버 – Jay's Cookbook">
+  <meta name="twitter:title" content="[Node.js] 웹서버 – Jay's Cookbook">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/node_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="[node.js] 웹서버 – Jay's Cookbook">
+  <meta property="og:title" content="[Node.js] 웹서버 – Jay's Cookbook">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/node_logo.png">
@@ -951,7 +951,7 @@
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/node_logo.png" alt="[node.js] 웹서버">
+          <img class="lazy" data-src="/images/node_logo.png" alt="[Node.js] 웹서버">
         </div>
       </div>
       
@@ -975,7 +975,7 @@
             
           </div>
             
-          <h1 class="post__title">[node.js] 웹서버</h1>
+          <h1 class="post__title">[Node.js] 웹서버</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -1016,10 +1016,10 @@
 
   <div class="post_pagination">
     
-      <a href="/nodejs-module" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[node.js] 모듈</a>
+      <a href="/nodejs-module" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Node.js] 모듈</a>
     
     
-      <a href="/nodejs-web-os-path" class="pagination__next pagination__item"><span class="prev_next"></span>[node.js] os, path 모듈<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/nodejs-web-os-path" class="pagination__next pagination__item"><span class="prev_next"></span>[Node.js] 노드에서 제공하는 기본 기능<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1031,8 +1031,124 @@
       <hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#http-모듈-불러오기" id="markdown-toc-http-모듈-불러오기">http 모듈 불러오기</a></li>
+  <li><a href="#서버-생성하기" id="markdown-toc-서버-생성하기">서버 생성하기</a></li>
+  <li><a href="#서버-포트-열기" id="markdown-toc-서버-포트-열기">서버 포트 열기</a></li>
+  <li><a href="#클라이언트로부터-요청-받기" id="markdown-toc-클라이언트로부터-요청-받기">클라이언트로부터 요청 받기</a></li>
+  <li><a href="#전체-코드" id="markdown-toc-전체-코드">전체 코드</a></li>
+  <li><a href="#express-프레임워크" id="markdown-toc-express-프레임워크">Express 프레임워크</a></li>
+</ul>
 
 <hr />
+
+<ul>
+  <li>Node.js는 백엔드 서버용 코드를 작성하는데 유용한 <code class="language-plaintext highlighter-rouge">http</code> 모듈을 기본 제공한다</li>
+</ul>
+
+<h1 id="http-모듈-불러오기">http 모듈 불러오기</h1>
+
+<ul>
+  <li>CommonJS 방식과, ESModule 방식이 있다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// CommonJS 방식</span>
+<span class="kd">const</span> <span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">http</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="c1">// ESModule 방식</span>
+<span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">http</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">http</span><span class="dl">'</span>
+</code></pre></div></div>
+
+<h1 id="서버-생성하기">서버 생성하기</h1>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">createServer([options][, requestListener])</code></li>
+  <li>requestListener는 요청(request) 이벤트가 발생했을 때 실행될 콜백 함수를 말한다</li>
+  <li>여기서 작성해도 되지만 나는 역할 구분을 명확히 하기 위해 뒤에서 <code class="language-plaintext highlighter-rouge">server.on('request', 콜백함수)</code> 방식으로 따로 분리해서 작성했다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">http</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">http</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">htttp</span><span class="p">.</span><span class="nx">createServer</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h1 id="서버-포트-열기">서버 포트 열기</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">8000</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="클라이언트로부터-요청-받기">클라이언트로부터 요청 받기</h1>
+
+<ul>
+  <li>Node.js는 이벤트 방식으로 동작한다</li>
+  <li>‘요청(request)’이라는 이벤트가 들어왔을 때 실행할 콜백함수를 등록하면 된다</li>
+  <li>요청은 크게 경로(path)와 메서드(method)로 분기한다</li>
+  <li>요청에 대한 응답은 스트림 형식 또는 파일 형식으로 반환할 수 있다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">url</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">url</span><span class="dl">'</span>
+
+<span class="nx">server</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">request</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    
+    <span class="kd">const</span> <span class="nx">pathname</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">pathname</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pathname</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;h1&gt;Hello Node !&lt;/h1&gt;</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">pathname</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">/items</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">GET</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;h1&gt;All Items&lt;/h1&gt;</span><span class="dl">'</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;h1&gt;Create Item&lt;/h1&gt;</span><span class="dl">'</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+<span class="p">})</span>
+
+</code></pre></div></div>
+
+<h1 id="전체-코드">전체 코드</h1>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">http</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">http</span><span class="dl">'</span>
+<span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">url</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">url</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">()</span>
+
+
+<span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">8000</span><span class="p">)</span>
+
+
+<span class="nx">server</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">request</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+
+    <span class="c1">// http://localhost:8000/foo/bar?a=z 에 대하여,</span>
+    <span class="c1">// req.url -&gt; '/foo/bar?a=z'</span>
+    <span class="c1">// url.parse(req.url).pathname -&gt; '/foo/bar'</span>
+    <span class="c1">// url.parse(req.url).path -&gt; '/foo/bar?a=z'</span>
+    <span class="c1">// url.parse(req.url).href -&gt; '/foo/bar?a=z'</span>
+    <span class="kd">const</span> <span class="nx">pathname</span> <span class="o">=</span> <span class="nx">url</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">pathname</span>
+
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pathname</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;h1&gt;Hello Node !&lt;/h1&gt;</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">pathname</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">/items</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">GET</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;h1&gt;All Items&lt;/h1&gt;</span><span class="dl">'</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">res</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;h1&gt;Create Item&lt;/h1&gt;</span><span class="dl">'</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">()</span>
+    
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h1 id="express-프레임워크">Express 프레임워크</h1>
+
+<ul>
+  <li>위에서 http 모듈로도 충분히 백엔드 서버를 만들 수 있음을 확인했다</li>
+  <li>하지만 요청 분기, 응답 반환 방식이 코드 규모가 커지면 점점 가독성이 떨어진다</li>
+  <li>이러한 단점을 해결하기 위해 Express 프레임워크를 사용할 예정이다</li>
+</ul>
 
     </div>
   </article>
@@ -1056,10 +1172,10 @@
 
   <div class="post_pagination">
     
-      <a href="/nodejs-module" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[node.js] 모듈</a>
+      <a href="/nodejs-module" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Node.js] 모듈</a>
     
     
-      <a href="/nodejs-web-os-path" class="pagination__next pagination__item"><span class="prev_next"></span>[node.js] os, path 모듈<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/nodejs-web-os-path" class="pagination__next pagination__item"><span class="prev_next"></span>[Node.js] 노드에서 제공하는 기본 기능<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1351,7 +1467,7 @@
 
       
       <a class="article__image" href="/nodejs-express">
-        <img class="lazy" data-src="/images/node_logo.png" alt="[node.js] Express 사용하기">
+        <img class="lazy" data-src="/images/node_logo.png" alt="[Node.js] Express 사용하기">
       </a>
       
 
@@ -1371,7 +1487,7 @@
       </div>
 
       <h2 class="article__title">
-        <a href="/nodejs-express">[node.js] Express 사용하기</a>
+        <a href="/nodejs-express">[Node.js] Express 사용하기</a>
       </h2>
 
       
@@ -1407,7 +1523,7 @@
 
       
       <a class="article__image" href="/nodejs-web-os-path">
-        <img class="lazy" data-src="/images/node_logo.png" alt="[node.js] os, path 모듈">
+        <img class="lazy" data-src="/images/node_logo.png" alt="[Node.js] 노드에서 제공하는 기본 기능">
       </a>
       
 
@@ -1427,7 +1543,7 @@
       </div>
 
       <h2 class="article__title">
-        <a href="/nodejs-web-os-path">[node.js] os, path 모듈</a>
+        <a href="/nodejs-web-os-path">[Node.js] 노드에서 제공하는 기본 기능</a>
       </h2>
 
       
@@ -1470,7 +1586,7 @@
 
       
       <a class="article__image" href="/nodejs-module">
-        <img class="lazy" data-src="/images/node_logo.png" alt="[node.js] 모듈">
+        <img class="lazy" data-src="/images/node_logo.png" alt="[Node.js] 모듈">
       </a>
       
 
@@ -1490,7 +1606,7 @@
       </div>
 
       <h2 class="article__title">
-        <a href="/nodejs-module">[node.js] 모듈</a>
+        <a href="/nodejs-module">[Node.js] 모듈</a>
       </h2>
 
       

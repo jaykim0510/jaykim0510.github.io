@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '[node.js] 모듈'
+title:  '[Node.js] 모듈'
 description: 
 date:   2024-01-23 15:01:35 +0300
 image:  '/images/node_logo.png'

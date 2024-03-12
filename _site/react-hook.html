@@ -1029,10 +1029,156 @@
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#훅hook" id="markdown-toc-훅hook">훅(Hook)</a></li>
+  <li><a href="#state-hooks" id="markdown-toc-state-hooks">State Hooks</a>    <ul>
+      <li><a href="#usestate" id="markdown-toc-usestate">useState</a></li>
+    </ul>
+  </li>
+  <li><a href="#context-hooks" id="markdown-toc-context-hooks">Context Hooks</a>    <ul>
+      <li><a href="#usecontext" id="markdown-toc-usecontext">useContext</a></li>
+    </ul>
+  </li>
+  <li><a href="#ref-hook" id="markdown-toc-ref-hook">Ref Hook</a>    <ul>
+      <li><a href="#useref" id="markdown-toc-useref">useRef</a></li>
+    </ul>
+  </li>
+  <li><a href="#effect-hook" id="markdown-toc-effect-hook">Effect Hook</a>    <ul>
+      <li><a href="#useeffect" id="markdown-toc-useeffect">useEffect</a></li>
+    </ul>
+  </li>
+  <li><a href="#performance-hooks" id="markdown-toc-performance-hooks">Performance Hooks</a>    <ul>
+      <li><a href="#usememo" id="markdown-toc-usememo">useMemo</a></li>
+      <li><a href="#usecallback" id="markdown-toc-usecallback">useCallback</a></li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
+
+<h1 id="훅hook">훅(Hook)</h1>
+
+<ul>
+  <li>훅은 리액트에서 제공하는 여러 특징들을 사용할 수 있도록 도와준다</li>
+</ul>
+
+<h1 id="state-hooks">State Hooks</h1>
+
+<ul>
+  <li>상태(state)는 컴포넌트가 어떤 값을 기억하도록 한다</li>
+</ul>
+
+<h2 id="usestate">useState</h2>
+
+<ul>
+  <li>상태(state) 변수를 선언할 때 <code class="language-plaintext highlighter-rouge">useState</code> 훅을 사용한다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">ImageGallery</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="p">[</span><span class="nx">index</span><span class="p">,</span> <span class="nx">setIndex</span><span class="p">]</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="c1">// ...</span>
+</code></pre></div></div>
+
+<h1 id="context-hooks">Context Hooks</h1>
+
+<ul>
+  <li>컨텍스트(context)는 부모 컴포넌트가 멀리 떨어져 있는 자식 컴포넌트에게 값을 전달하도록 해준다</li>
+</ul>
+
+<h2 id="usecontext">useContext</h2>
+
+<ul>
+  <li>정의한 컨텍스트를 읽고 구독할 때 <code class="language-plaintext highlighter-rouge">useContext</code> 훅을 쓴다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Button</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">theme</span> <span class="o">=</span> <span class="nx">useContext</span><span class="p">(</span><span class="nx">ThemeContext</span><span class="p">);</span>
+  <span class="c1">// ...</span>
+</code></pre></div></div>
+
+<h1 id="ref-hook">Ref Hook</h1>
+
+<ul>
+  <li>참조(ref)는 상태(state)처럼 어떤 값을 저장하는 목적으로 쓰인다</li>
+  <li>하지만 상태(state)와 다르게 참조(ref)가 바뀌어도 컴포넌트가 리렌더링 되지는 않는다</li>
+  <li>(When you change the <code class="language-plaintext highlighter-rouge">ref.current</code> property, React does not re-render your component)</li>
+</ul>
+
+<h2 id="useref">useRef</h2>
+
+<ul>
+  <li>참조(ref)를 정의할 때 <code class="language-plaintext highlighter-rouge">useRef</code> 훅을 쓴다</li>
+  <li>어떤 값도 저장할 수 있지만, 대부분의 경우 DOM 노드를 참조하는 목적으로 쓴다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">Form</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">inputRef</span> <span class="o">=</span> <span class="nx">useRef</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+  <span class="c1">// ...</span>
+</code></pre></div></div>
+
+<h1 id="effect-hook">Effect Hook</h1>
+
+<ul>
+  <li>효과(effect)는 컴포넌트를 다른 외부 시스템과 동기화되도록 연결시켜 준다</li>
+  <li>네트워크, 브라우저의 DOM, 애니메이션 등 non-React 코드를 다룰 때 사용한다</li>
+</ul>
+
+<h2 id="useeffect">useEffect</h2>
+
+<ul>
+  <li>컴포넌트를 다른 외부 시스템과 연결할 때 <code class="language-plaintext highlighter-rouge">useEffect</code> 훅을 사용한다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">useEffect</span><span class="p">(</span><span class="nx">setup</span><span class="p">,</span> <span class="nx">dependencies</span><span class="p">?)</span>
+</code></pre></div></div>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">ChatRoom</span><span class="p">({</span> <span class="nx">roomId</span> <span class="p">})</span> <span class="p">{</span>
+  <span class="nx">useEffect</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">connection</span> <span class="o">=</span> <span class="nx">createConnection</span><span class="p">(</span><span class="nx">roomId</span><span class="p">);</span>
+    <span class="nx">connection</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+    <span class="k">return</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">connection</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+  <span class="p">},</span> <span class="p">[</span><span class="nx">roomId</span><span class="p">]);</span>
+  <span class="c1">// ...</span>
+</code></pre></div></div>
+
+<ul>
+  <li>setup
+    <ul>
+      <li>optionally return a cleanup function</li>
+      <li>컴포넌트가 처음 DOM에 추가될 때 setup 함수가 실행된다</li>
+      <li>dependencies 변화로 리렌더링 될 때마다 cleanup 함수 실행 with old props and state</li>
+      <li>그리고 setup 함수 실행 with new props and state</li>
+      <li>컴포넌트가 DOM 에서 제거될 때 cleanup 함수 실행</li>
+    </ul>
+  </li>
+  <li>dependencies
+    <ul>
+      <li>setup 함수 안에서 참조된 reactive values 를 목록으로 가지는 배열</li>
+      <li>(reactive values: props, state, variables, 컴포넌트 안에서 정의된 함수)</li>
+      <li>리액트는 배열안의 값들을 하나씩 비교해서 변경된 경우 setup 함수 실행</li>
+    </ul>
+  </li>
+  <li>If some of your dependencies are objects or functions defined inside the component, there is a risk that they will cause the Effect to re-run more often than needed. To fix this, remove unnecessary object and function dependencies. You can also extract state updates and non-reactive logic outside of your Effect.</li>
+  <li>Effects only run on the client. They don’t run during server rendering.</li>
+</ul>
+
+<h1 id="performance-hooks">Performance Hooks</h1>
+
+<ul>
+  <li>리액트에서는 리렌더링을 최적화 하기 위해 캐시된 계산 결과를 재사용해서 불필요한 리렌더링을 방지한다</li>
+</ul>
+
+<h2 id="usememo">useMemo</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">useMemo</code>는 어떤 계산 결과를 캐시하도록 해준다</li>
+</ul>
+
+<h2 id="usecallback">useCallback</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">useCallback</code> lets you cache a function definition before passing it down to an optimized component.</li>
+</ul>
 
 <h1 id="참고">참고</h1>
 

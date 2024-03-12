@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '[node.js] Express 사용하기'
+title:  '[Node.js] Express 사용하기'
 description: 
 date:   2024-01-25 15:01:35 +0300
 image:  '/images/node_logo.png'

@@ -1,0 +1,157 @@
+I"�"<hr />
+
+<p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#process" id="markdown-toc-process">process</a></li>
+  <li><a href="#fs" id="markdown-toc-fs">fs</a></li>
+  <li><a href="#os" id="markdown-toc-os">os</a></li>
+  <li><a href="#path" id="markdown-toc-path">path</a></li>
+  <li><a href="#url" id="markdown-toc-url">url</a></li>
+  <li><a href="#util" id="markdown-toc-util">util</a></li>
+  <li><a href="#worker_threads" id="markdown-toc-worker_threads">worker_threads</a></li>
+  <li><a href="#child_process" id="markdown-toc-child_process">child_process</a></li>
+  <li><a href="#동기-비동기" id="markdown-toc-동기-비동기">동기 비동기</a></li>
+  <li><a href="#버퍼와-스트림" id="markdown-toc-버퍼와-스트림">버퍼와 스트림</a></li>
+  <li><a href="#쿠키" id="markdown-toc-쿠키">쿠키</a></li>
+  <li><a href="#세션" id="markdown-toc-세션">세션</a></li>
+</ul>
+
+<hr />
+
+<h1 id="process">process</h1>
+
+<ul>
+  <li>현재 실행중인 노드 프로세스에 대한 정보를 담고 있는 노드 내장 객체</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 설치되 노드의 버전</span>
+<span class="nx">process</span><span class="p">.</span><span class="nx">version</span>
+
+<span class="c1">// 프로세스 아이디</span>
+<span class="nx">process</span><span class="p">.</span><span class="nx">pid</span>
+
+<span class="c1">// 프로세스 경과 시간</span>
+<span class="nx">process</span><span class="p">.</span><span class="nx">uptime</span><span class="p">()</span>
+
+<span class="c1">// 현재 프로세스가 실행되는 위치</span>
+<span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">()</span>
+
+<span class="c1">// 시스템 환경 변수들이 들어있는 객체</span>
+<span class="c1">// 비밀키(데이터베이스 비밀번호, 서드파티 앱 키 등)를 보관하는 용도로도 쓰임</span>
+<span class="nx">process</span><span class="p">.</span><span class="nx">env</span>
+</code></pre></div></div>
+
+<h1 id="fs">fs</h1>
+
+<h1 id="os">os</h1>
+
+<ul>
+  <li>운영체제의 정보를 담고 있는 내장 모듈</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 홈 디렉터리 경로</span>
+<span class="nx">os</span><span class="p">.</span><span class="nx">homedir</span><span class="p">()</span>
+
+<span class="c1">// 컴퓨터의 코어 정보</span>
+<span class="nx">os</span><span class="p">.</span><span class="nx">cpus</span><span class="p">()</span>
+
+<span class="c1">// 사용 가능한 메모리(RAM)</span>
+<span class="nx">os</span><span class="p">.</span><span class="nx">freemem</span><span class="p">()</span>
+
+<span class="c1">// 전체 메모리 용량</span>
+<span class="nx">os</span><span class="p">.</span><span class="nx">totalmem</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h1 id="path">path</h1>
+
+<ul>
+  <li>폴더와 파일의 경로를 쉽게 조작하도록 도와주는 내장 모듈</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 파일이 위치한 폴더 경로</span>
+<span class="nx">path</span><span class="p">.</span><span class="nx">dirname</span><span class="p">(</span><span class="nx">경로</span><span class="p">)</span>
+
+<span class="c1">// 파일의 확장자</span>
+<span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">경로</span><span class="p">)</span>
+
+<span class="c1">// 파일의 이름(확장자 포함)</span>
+<span class="nx">path</span><span class="p">.</span><span class="nx">basename</span><span class="p">(</span><span class="nx">경로</span><span class="p">)</span>
+
+<span class="c1">// 여러 경로를 하나로 합쳐준다</span>
+<span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">경로1</span><span class="p">,</span> <span class="nx">경로2</span><span class="p">,</span> <span class="p">..)</span>
+</code></pre></div></div>
+
+<h1 id="url">url</h1>
+
+<ul>
+  <li>URL 주소를 파싱해서 쉽게 조작하도록 도와주는 내장 모듈</li>
+</ul>
+
+<p><img src="/images/node_basic_1.png" alt="" /></p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">url</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">url</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">myUrl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">url</span><span class="p">.</span><span class="nx">URL</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://www.google.com/search?q=apple</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">myUrl</span><span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>URL {
+  href: 'https://www.google.com/search?q=apple',
+  origin: 'https://www.google.com',
+  protocol: 'https:',
+  username: '',
+  password: '',
+  host: 'www.google.com',
+  hostname: 'www.google.com',
+  port: '',
+  pathname: '/search',
+  search: '?q=apple',
+  searchParams: URLSearchParams { 'q' =&gt; 'apple' },
+  hash: ''
+}
+</code></pre></div></div>
+
+<h1 id="util">util</h1>
+
+<ul>
+  <li>util.deprecate()</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">util</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">util</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">addFn</span> <span class="o">=</span> <span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">deprecatedAddFn</span> <span class="o">=</span> <span class="nx">util</span><span class="p">.</span><span class="nx">deprecate</span><span class="p">(</span><span class="nx">addFn</span><span class="p">,</span> <span class="dl">'</span><span class="s1">addFn을 쓰지 마세요</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">addFn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">deprecatedAddFn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</code></pre></div></div>
+
+<ul>
+  <li>util.promisify()</li>
+  <li>프로미스의 등장 이전에는 비동기 함수의 실행 결과에 대한 후속 처리를 콜백함수로 했다</li>
+  <li>콜백함수의 콜백 헬 문제, 에러 처리 불가 문제 등을 해결하기 위해 프로미스가 등장했다</li>
+  <li><code class="language-plaintext highlighter-rouge">util.promisify()</code>가 콜백 패턴을 프로미스 패턴으로 바꿔준다</li>
+  <li>단 콜백이 <code class="language-plaintext highlighter-rouge">(err, data) =&gt; {}</code> 형태여야 한다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">promisifiedRandomBytes</span> <span class="o">=</span> <span class="nx">util</span><span class="p">.</span><span class="nx">promisify</span><span class="p">(</span><span class="nx">crypto</span><span class="p">.</span><span class="nx">randomBytes</span><span class="p">)</span>
+
+<span class="nx">promisifiedRandomBytes</span><span class="p">(</span><span class="mi">64</span><span class="p">).</span><span class="nx">then</span><span class="p">().</span><span class="k">catch</span><span class="p">()...</span>
+</code></pre></div></div>
+
+<h1 id="worker_threads">worker_threads</h1>
+
+<h1 id="child_process">child_process</h1>
+
+<h1 id="동기-비동기">동기 비동기</h1>
+
+<h1 id="버퍼와-스트림">버퍼와 스트림</h1>
+
+<h1 id="쿠키">쿠키</h1>
+
+<h1 id="세션">세션</h1>
+:ET
