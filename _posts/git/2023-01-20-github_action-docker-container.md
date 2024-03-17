@@ -7,6 +7,7 @@ image:  '/images/git_logo.png'
 logo_image: '/images/git_logo.png'
 category: devops
 tag: git
+related_tags: [Github_Action]
 ---
 ---
 

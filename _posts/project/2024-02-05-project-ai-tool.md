@@ -7,7 +7,7 @@ period: 2024.01.01 - 2024.02.14
 image:  '/images/ai_project_logo.png'
 logo_image: '/images/ai_project_logo.png'
 category: project
-tag: AI
+subject: AI
 stacks: [Next.js, NestJS, MongoDB]
 
 ---

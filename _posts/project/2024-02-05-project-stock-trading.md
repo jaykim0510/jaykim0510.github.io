@@ -7,7 +7,7 @@ period: 2024.01.01 - 2024.02.14
 image:  '/images/stock_logo_2.jpeg'
 logo_image: '/images/stock_logo_2.jpeg'
 category: project
-tag: Stock
+subject: Stock
 stacks: [Next.js, NestJS, MongoDB]
 
 ---

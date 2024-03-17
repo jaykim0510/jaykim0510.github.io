@@ -7,7 +7,7 @@ period: 2024.01.01 - 2024.02.14
 image:  '/images/ecommerce_logo.jpeg'
 logo_image: '/images/ecommerce_logo.jpeg'
 category: project
-tag: ecommerce
+subject: ecommerce
 stacks: [Next.js, NestJS, MySQL]
 
 ---

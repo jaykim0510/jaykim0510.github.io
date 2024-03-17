@@ -7,7 +7,7 @@ period: 2024.01.01 - 2024.02.14
 image:  '/images/sns_project_logo.png'
 logo_image: '/images/sns_project_logo.png'
 category: project
-tag: SNS
+subject: SNS
 stacks: [Next.js, NestJS, MongoDB]
 
 ---

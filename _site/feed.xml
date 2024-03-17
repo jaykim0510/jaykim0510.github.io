@@ -5,9 +5,258 @@
         <description>Menca personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 13 Mar 2024 00:45:11 +0900</pubDate>
-        <lastBuildDate>Wed, 13 Mar 2024 00:45:11 +0900</lastBuildDate>
+        <pubDate>Fri, 15 Mar 2024 13:58:49 +0900</pubDate>
+        <lastBuildDate>Fri, 15 Mar 2024 13:58:49 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>[Javascript]: 비동기 프로그래밍</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#비동기-함수&quot; id=&quot;markdown-toc-비동기-함수&quot;&gt;비동기 함수&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#프로미스&quot; id=&quot;markdown-toc-프로미스&quot;&gt;프로미스&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#프로미스의-생성&quot; id=&quot;markdown-toc-프로미스의-생성&quot;&gt;프로미스의 생성&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#프로미스의-후속-처리-메서드&quot; id=&quot;markdown-toc-프로미스의-후속-처리-메서드&quot;&gt;프로미스의 후속 처리 메서드&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#promiseprototypethen&quot; id=&quot;markdown-toc-promiseprototypethen&quot;&gt;Promise.prototype.then&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#promiseprototypecatch&quot; id=&quot;markdown-toc-promiseprototypecatch&quot;&gt;Promise.prototype.catch&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#promiseprototypefinally&quot; id=&quot;markdown-toc-promiseprototypefinally&quot;&gt;Promise.prototype.finally&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#프로미스의-에러-처리&quot; id=&quot;markdown-toc-프로미스의-에러-처리&quot;&gt;프로미스의 에러 처리&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#fetch&quot; id=&quot;markdown-toc-fetch&quot;&gt;fetch&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#asyncawait&quot; id=&quot;markdown-toc-asyncawait&quot;&gt;async/await&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#async&quot; id=&quot;markdown-toc-async&quot;&gt;async&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#await&quot; id=&quot;markdown-toc-await&quot;&gt;await&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#에러-처리&quot; id=&quot;markdown-toc-에러-처리&quot;&gt;에러 처리&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;비동기-함수&quot;&gt;비동기 함수&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;함수의 실행 순서는 실행 컨텍스트 스택(콜 스택)으로 관리한다&lt;/li&gt;
+  &lt;li&gt;자바스크립트 엔진은 하나의 실행 컨텍스트 스택만을 갖는다&lt;/li&gt;
+  &lt;li&gt;이는 함수를 실행할 수 있는 창구가 단 하나이며, 동시에 2개 이상의 함수를 동시에 실행할 수 없다는 것을 의미한다&lt;/li&gt;
+  &lt;li&gt;이처럼 자바스크립트 엔진은 한 번에 하나의 태스크만 실행할 수 있는 싱글 스레드 방식으로 동작한다&lt;/li&gt;
+  &lt;li&gt;싱글 스레드 방식은 한 번에 하나의 태스크만 실행할 수 있기 때문에 처리에 시간이 걸리는 태스크를 실행할 경우 블로킹이 발생한다&lt;/li&gt;
+  &lt;li&gt;이처럼 현재 실행 중인 태스크가 종료할 때까지 다음 실행될 태스크가 대기하는 방식을 동기(synchronous) 처리라고 한다&lt;/li&gt;
+  &lt;li&gt;동기 처리 방식은 실행 순서가 보장된다는 장점이 있지만, 앞선 태스크가 종료될 때까지 이후 태스크들이 블로킹되는 단점이 있다&lt;/li&gt;
+  &lt;li&gt;반면에 현재 실행 중인 태스크가 종료되지 않은 상태라 해도 다음 태스크를 곧바로 실행하는 방식을 비동기(asynchronous) 처리라고 한다&lt;/li&gt;
+  &lt;li&gt;비동기 처리를 수행하는 비동기 함수는 전통적으로 콜백 패턴을 사용한다. 하지만 콜백 패턴은 콜백 헬을 발생시켜 가독성을 나쁘게 하고, 비동기 처리 중 발생한 에러의 예외 처리가 곤란하며, 여러 개의 비동기 처리를 한 번에 처리하는 데도 한계가 있다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setTimeout&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setInterval&lt;/code&gt;, HTTP 요청, 이벤트 핸들러는 비동기 처리 방식으로 동작한다&lt;/li&gt;
+  &lt;li&gt;자바스크립트는 이벤트 루프를 통해 동시성을 지원한다&lt;/li&gt;
+  &lt;li&gt;비동기 함수의 콜백 함수 또는 이벤트 핸들러는 태스크 큐에 일시적으로 보관된다&lt;/li&gt;
+  &lt;li&gt;이벤트 루프는 콜 스택에 현재 실행 중인 실행 컨텍스트가 있는지, 그리고 태스크 큐에 대기 중인 함수(콜백 함수, 이벤트 핸들러 등)가 있는지 반복해서 확인한다&lt;/li&gt;
+  &lt;li&gt;만약 콜 스택이 비어있고, 태스크 큐에 대기 중인 함수가 있다면 이벤트 루프는 순차적으로 태스크 큐에 대기 중인 함수를 콜 스택으로 이동시킨다&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;이때 콜 스택으로 이동한 함수는 실행된다. 즉, 태스크 큐에 일시 보관된 함수들은 비동기 처리 방식으로 동작한다&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;자바스크립트 엔진은 싱글 스레드로 동작하지만, 브라우저는 멀티 스레드로 동작한다&lt;/li&gt;
+  &lt;li&gt;브라우저에 있는 태스크 큐와 이벤트 루프가 비동기 처리를 돕는 것이다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;프로미스&quot;&gt;프로미스&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ES6에서 비동기 처리를 위한 또 다른 패턴으로 프로미스(Promise)를 도입했다&lt;/li&gt;
+  &lt;li&gt;프로미스는 전통적인 콜백 패턴이 가진 단점을 보완하며 비동기 처리 시점을 명확하게 표현할 수 있다는 장점이 있다&lt;/li&gt;
+  &lt;li&gt;비동기 함수를 호출하면 함수 내부의 비동기로 동작하는 코드가 완료되지 않았다 해도 기다리지 않고 즉시 종료된다&lt;/li&gt;
+  &lt;li&gt;즉, 비동기 함수 내부의 비동기로 동작하는 코드는 비동기 함수가 종료된 후, 나중에 완료된다&lt;/li&gt;
+  &lt;li&gt;따라서 비동기 함수 내부의 비동기로 동작하는 코드에서 처리 결과를 외부로 반환하거나 상위 스코프의 변수에 할당하면 기대한 대로 동작하지 않는다&lt;/li&gt;
+  &lt;li&gt;예를 들어, 비동기 함수인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setTimeout&lt;/code&gt; 함수의 콜백 함수는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setTimeout&lt;/code&gt; 함수가 종료된 이후에 호출된다&lt;/li&gt;
+  &lt;li&gt;비동기 함수는 비동기 처리 결과를 외부에 반환할 수 없고, 상위 스코프의 변수에 할당할 수도 없다&lt;/li&gt;
+  &lt;li&gt;따라서 비동기 함수의 처리 결과(ex. 서버의 응답)에 대한 후속 처리는 비동기 함수 내부에서 수행해야 한다&lt;/li&gt;
+  &lt;li&gt;이때 비동기 처리 결과에 대한 후속 처리를 수행하는 콜백 함수를 전달하는 것이 일반적이다&lt;/li&gt;
+  &lt;li&gt;하지만 콜백 함수는 콜백 헬 문제와 에러 처리를 못한다는 문제가 있다&lt;/li&gt;
+  &lt;li&gt;이를 극복하기 위해 ES6에서 프로미스가 도입되었다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;프로미스의-생성&quot;&gt;프로미스의 생성&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Promise&lt;/code&gt; 생성자 함수는 비동기 처리를 수행할 콜백 함수를 인수로 전달 받는데 이 콜백 함수는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reject&lt;/code&gt; 함수를 인수로 전달받는다&lt;/li&gt;
+  &lt;li&gt;비동기 처리는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Promise&lt;/code&gt; 생성자 함수가 인수로 전달받는 콜백 함수 내부에서 수행한다. 만약 비동기 처리가 성공하면 비동기 처리 결과를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve&lt;/code&gt; 함수에 인수로 전달하면서 호출하고, 실패하면 에러를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reject&lt;/code&gt; 함수에 인수로 전달하면서 호출한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;프로미스의 상태 정보&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;의미&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;상태 변경 조건&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pending&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;비동기 처리가 아직 수행되지 않은 상태&lt;/td&gt;
+      &lt;td&gt;프로미스가 생성된 직후 기본 상태&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fulfilled&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;비동기 처리가 수행된 상태 (성공)&lt;/td&gt;
+      &lt;td&gt;resolve 함수 호출&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rejected&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;비동기 처리가 수행된 상태 (실패)&lt;/td&gt;
+      &lt;td&gt;reject 함수 호출&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;생성된 직후의 프로미스는 기본적으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pending&lt;/code&gt; 상태다&lt;/li&gt;
+  &lt;li&gt;이후 비동기 처리가 수행되면 처리 결과에 따라 다음과 같이 프로미스의 상태가 변경된다
+    &lt;ul&gt;
+      &lt;li&gt;성공: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve&lt;/code&gt; 함수를 호출해 프로미스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fulfilled&lt;/code&gt; 상태로 변경한다&lt;/li&gt;
+      &lt;li&gt;실패: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reject&lt;/code&gt; 함수를 호출해 프로미스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rejected&lt;/code&gt; 상태로 변경한다&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;이처럼 프로미스의 상태는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve&lt;/code&gt; 또는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reject&lt;/code&gt; 함수를 호출하는 것으로 결정된다&lt;/li&gt;
+  &lt;li&gt;프로미스는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pending&lt;/code&gt; 상태에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fulfilled&lt;/code&gt; 또는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rejected&lt;/code&gt; 상태가 되면 더는 다른 상태로 변화할 수 없다&lt;/li&gt;
+  &lt;li&gt;프로미스는 비동기 처리 상태와 더불어 비동기 처리 결과도 갖는다&lt;/li&gt;
+  &lt;li&gt;성공하면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resolve()&lt;/code&gt; 함수의 첫 번째 인자로 넘겨준 값을 처리 결과 값으로 한다&lt;/li&gt;
+  &lt;li&gt;실패하면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reject()&lt;/code&gt; 함수의 첫 번째 인자로 넘겨준 에러 객체를 결과 값으로 한다&lt;/li&gt;
+  &lt;li&gt;즉, 프로미스는 비동기 처리 상태와 처리 결과를 관리하는 객체다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;프로미스의-후속-처리-메서드&quot;&gt;프로미스의 후속 처리 메서드&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;프로미스가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fulfilled&lt;/code&gt; 또는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rejected&lt;/code&gt;가 되면 처리 결과를 가지고 무언가를 해야한다&lt;/li&gt;
+  &lt;li&gt;이를 위해 프로미스는 후속 메서드 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;finally&lt;/code&gt;를 제공한다&lt;/li&gt;
+  &lt;li&gt;프로미스의 비동기 처리 상태가 변화하면 후속 처리 메서드에 인수로 전달한 콜백 함수가 선택적으로 호출된다&lt;/li&gt;
+  &lt;li&gt;모든 후속 처리 메서드는 프로미스를 반환하며, 비동기로 동작한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;promiseprototypethen&quot;&gt;Promise.prototype.then&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt; 메서드는 두 개의 콜백 함수를 인수로 전달받는다&lt;/li&gt;
+  &lt;li&gt;첫 번째 콜백 함수는 프로미스가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fulfilled&lt;/code&gt; 상태가 되면 호출된다. 이때 콜백 함수는 프로미스의 비동기 처리 결과를 인수로 전달받는다&lt;/li&gt;
+  &lt;li&gt;두 번째 콜백 함수는 프로미스가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rejected&lt;/code&gt; 상태가 되면 호출된다. 이때 콜백 함수는 프로미스의 에러를 인수로 전달받는다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt; 메서드는 언제나 프로미스를 반환한다. 만약 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt; 메서드의 콜백 함수가 프로미스를 반환하면 그 프로미스를 그대로 반환하고, 값을 반환하면 그 값을 암묵적으로 resolve 또는 reject 하여 프로미스를 생성해 반환한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;promiseprototypecatch&quot;&gt;Promise.prototype.catch&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt; 메서드는 한 개의 콜백 함수를 인수로 전달받는다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt; 메서드의 콜백 함수는 프로미스가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rejected&lt;/code&gt; 상태인 경우에만 호출된다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt; 메서드는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then(undefined, onRejected)&lt;/code&gt;과 동일하게 동작한다&lt;/li&gt;
+  &lt;li&gt;마찬가지로 언제나 프로미스를 반환한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;promiseprototypefinally&quot;&gt;Promise.prototype.finally&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;finally&lt;/code&gt; 메서드는 한 개의 콜백 함수를 인수로 전달받는다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;finally&lt;/code&gt; 메서드의 콜백 함수는 프로미스의 성공, 실패와 상관없이 무조건 한 번 호출된다&lt;/li&gt;
+  &lt;li&gt;프로미스의 상태와 상관없이 수행해야 할 처리 내용이 있을 때 유용하다&lt;/li&gt;
+  &lt;li&gt;마찬가지로 언제나 프로미스를 반환한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;프로미스의-에러-처리&quot;&gt;프로미스의 에러 처리&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt;를 이용해 에러를 처리할 수 있다&lt;/li&gt;
+  &lt;li&gt;단, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt; 메서드의 두 번째 콜백 함수가 첫 번째 콜백 함수에서 발생한 에러를 캐치하지는 않는다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt;이 단 한번만 나온다면 두 번째 콜백함수를 사용해 그 안에서 에러 처리를 해도 괜찮다&lt;/li&gt;
+  &lt;li&gt;하지만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt;이 여러 번에 걸쳐 체이닝 되는 경우에는 두 번째 콜백 함수를 쓰지 않고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt; 로 에러를 처리하는게 가독성이 좋다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;fetch&quot;&gt;fetch&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fetch&lt;/code&gt; 함수는 HTTP 요청 전송 기능을 제공하는 클라이언트 사이드 Web API다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fetch&lt;/code&gt; 함수는 프로미스를 지원하기 때문에 비동기 처리가 훨씬 자유롭다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fetch&lt;/code&gt; 함수는 HTTP 응답을 나타내는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Response&lt;/code&gt; 객체를 래핑한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Promise&lt;/code&gt; 객체를 반환한다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fetch&lt;/code&gt; 함수는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Response&lt;/code&gt; 객체를 래핑한 프로미스를 반환하므로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;then&lt;/code&gt;을 통해 프로미스가 resolve한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Response&lt;/code&gt; 객체를 전달 받을 수 있다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fetch&lt;/code&gt; 함수가 반환하는 프로미스는 404와 같은 HTTP 에러가 발생해도 에러를 reject 하지 않고 불리언 타입의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ok&lt;/code&gt; 상태를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;false&lt;/code&gt;로 설정한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Response&lt;/code&gt; 객체를 resolve 한다&lt;/li&gt;
+  &lt;li&gt;오프라인 등의 네트워크 장애나 CORS 에러에 의해 요청이 완료되지 못한 경우에만 프로미스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reject&lt;/code&gt; 한다&lt;/li&gt;
+  &lt;li&gt;따라서 HTTP 에러는 프로미스가 resolve한 불리언 타입의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ok&lt;/code&gt; 상태를 확인해 명시적으로 처리해야 한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;asyncawait&quot;&gt;async/await&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ES8 에서 비동기 처리를 동기 처리처럼 동작하도록 구현할 수 있는 async/await이 도입되었다&lt;/li&gt;
+  &lt;li&gt;async/await은 프로미스를 기반으로 동작한다&lt;/li&gt;
+  &lt;li&gt;async/await을 사용하면 프로미스의 then/catch/finally과 같은 후속 처리 메서드를 사용하지 않고도 마치 동기 처리처럼 프로미스를 사용할 수 있다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;async&quot;&gt;async&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;async&lt;/code&gt;는 함수 정의문 앞에 붙는 키워드로, 함수가 비동기적으로 실행되도록 한다. 즉 비동기 함수를 정의할 때 사용하는 키워드이다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;async&lt;/code&gt; 함수는 언제나 프로미스를 반환한다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;async&lt;/code&gt; 함수는 암묵적으로 반환값을 resolve하는 프로미스를 반환한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;await&quot;&gt;await&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;await&lt;/code&gt; 키워드는 프로미스가 settled 상태(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fulfilled&lt;/code&gt; 또는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rejected&lt;/code&gt;)가 될 때까지 대기하다가 settled 상태가 되면 프로미스가 resolve한 처리 결과를 반환한다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;await&lt;/code&gt; 키워드는 반드시 프로미스 앞에서 사용해야 한다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;await&lt;/code&gt; 키워드는 다음 실행을 일시 중지시켰다가 프로미스가 settled상태가 되면 다시 재개한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;에러-처리&quot;&gt;에러 처리&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;async/await 에서 에러 처리는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;try...catch&lt;/code&gt; 문을 사용할 수 있다&lt;/li&gt;
+  &lt;li&gt;콜백 함수를 인자로 전달받는 비동기 함수와는 달리 프로미스를 반환하는 비동기 함수는 명시적으로 호출할 수 있기 때문에 호출자가 명확하다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;wrongUrl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;https://wrong.url&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fetch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;wrongUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// TypeError: Failed to fetch&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt; 문은 HTTP 통신에서 발생한 네트워크 에러뿐 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;try&lt;/code&gt; 코드 블록 내의 모든 문에서 발생한 에러까지 모두 캐치할 수 있다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;async&lt;/code&gt; 함수 내에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;catch&lt;/code&gt; 문을 사용해서 에러 처리를 하지 않으면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;async&lt;/code&gt; 함수는 발생한 에러를 reject 하는 프로미스를 반환한다&lt;/li&gt;
+  &lt;li&gt;따라서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;async&lt;/code&gt; 함수를 호출하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Promise.prototype.catch&lt;/code&gt; 후속 처리 메서드를 사용해 에러를 캐치할 수도 있다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;wrongUrl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;https://wrong.url&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fetch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;wrongUrl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;foo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// TypeError: Failed to fetch&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+</description>
+                <pubDate>Sat, 10 Feb 2024 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/js-asynchronous</link>
+                <guid isPermaLink="true">http://localhost:4000/js-asynchronous</guid>
+                
+                <category>javascript</category>
+                
+                
+                <category>language</category>
+                
+            </item>
         
             <item>
                 <title>[Docker]: 진화하는 컨테이너 표준</title>
@@ -845,26 +1094,6 @@ Storage Driver는 사용자에게 최적의 통합된 파일 시스템을 제공
                 
                 
                 <category>language</category>
-                
-            </item>
-        
-            <item>
-                <title>[Docker] Docker Compose</title>
-                <description>&lt;hr /&gt;
-
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-&lt;p&gt;#&lt;/p&gt;
-</description>
-                <pubDate>Tue, 06 Feb 2024 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/docker-docker-compose</link>
-                <guid isPermaLink="true">http://localhost:4000/docker-docker-compose</guid>
-                
-                <category>docker</category>
-                
-                
-                <category>devops</category>
                 
             </item>
         

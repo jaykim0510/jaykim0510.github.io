@@ -2,7 +2,7 @@
 layout: post
 title:  '[Javascript]: 비동기 프로그래밍'
 description: 이웅모님의 모던 자바스크립트 Deep Dive 책을 읽고 정리한 내용이다
-date:   2024-01-28 15:01:35 +0300
+date:   2024-02-10 15:01:35 +0300
 image:  '/images/js_logo.png'
 logo_image: '/images/js_logo.png'
 category: language
