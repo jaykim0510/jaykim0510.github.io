@@ -1,7 +1,7 @@
 ---
 layout: project_post
 title:  '영어 교육 프로젝트'
-description: 이커머스 웹 서비스의 프론트엔드, 백엔드, CI/CD, 모니터링이 포함된 프로젝트
+description: 
 date:   2024-02-03 15:01:35 +0300
 period: 2024.01.01 - 2024.02.14
 image:  '/images/english_project_logo.png'
