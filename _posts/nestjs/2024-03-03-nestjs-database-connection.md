@@ -22,4 +22,3 @@ tag: NestJS
 
 - [NestJS 공식문서](https://docs.nestjs.com/techniques/database#database)
 - [Nest.js TypeORM과 Entity, 개발하는 기획자](https://blog.naver.com/gi_balja/223054972094)
-- [[Nest.js] typeORM0.3 적용하기, bshunter](https://velog.io/@bshunter/Nest.js-typeORM0.3-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
