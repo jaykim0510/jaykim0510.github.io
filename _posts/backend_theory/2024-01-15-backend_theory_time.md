@@ -63,3 +63,4 @@ tag: backend_theory
 
 - [UTC, GMT 차이, jjhwqqq](https://jjhwqqq.tistory.com/292)
 - [TimeZone, 어렵지 않게 이해하기, ENFJ.dev:티스토리](https://gngsn.tistory.com/167)
+- [typeORM 시간대 설정에 관한 고찰 - typeORM의 dateStrings와 timezone 옵션에 따른 시간대 혼란, inchan.dev](https://inchan.dev/posts/202403010802/)
