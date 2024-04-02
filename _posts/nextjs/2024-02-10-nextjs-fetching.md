@@ -436,3 +436,11 @@ function Projects() {
 ```js
 <List onEndReached={() => !isFetching && fetchNextPage()} />
 ```
+
+
+
+# 참고
+
+- [Tanstack Query 공식문서](https://tanstack.com/query/latest/docs/framework/react/overview)
+- [next.js에서 react query가 필요할까?, xionwcfm](https://xionwcfm.tistory.com/339)
+- [How to Setup React Query in Next.js 13 App Directory, codevoweb](https://codevoweb.com/setup-react-query-in-nextjs-13-app-directory/)
