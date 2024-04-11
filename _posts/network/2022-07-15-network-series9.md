@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part9]: 네트워크 활용편(3) Linux Network 관련 명령어'
+title:  '[Network] 네트워크 활용편(3) Linux Network 관련 명령어'
 description: 
 date:   2022-07-15 15:01:35 +0300
 image:  '/images/network_logo.png'

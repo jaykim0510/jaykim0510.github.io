@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part4]: 네트워크 프로토콜(1) HTTP'
+title:  '[Network] 네트워크 프로토콜(1) HTTP'
 description: 
 date:   2022-02-10 15:01:35 +0300
 image:  '/images/network_logo.png'
@@ -203,7 +203,7 @@ URL에서 유의할 점은 **URL은 자원을 식별하는 용도로만 써야 �
 |429 Too Many Requests|요청을 너무 많이한 경우|
 
 
-# 쿠키, 캐시, 프록시, 세션
+# 쿠키, 캐시, 세션
 
 ## 쿠키
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part8]: 네트워크 활용편(2) REST API'
+title:  '[Network] 네트워크 활용편(2) REST API'
 description: 
 date:   2022-07-14 15:01:35 +0300
 image:  '/images/network_logo.png'

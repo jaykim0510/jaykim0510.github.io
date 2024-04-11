@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part7]: 네트워크 활용편(1) 웹 브라우저'
+title:  '[Network] 네트워크 활용편(1) 웹 브라우저'
 description: 
 date:   2022-07-13 15:01:35 +0300
 image:  '/images/network_logo.png'

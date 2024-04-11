@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part14]: 네트워크 용어(4): DNS'
+title:  '[Network] 네트워크 용어(4): DNS'
 description: 
 date:   2022-07-17 15:01:35 +0300
 image:  '/images/network_logo.png'

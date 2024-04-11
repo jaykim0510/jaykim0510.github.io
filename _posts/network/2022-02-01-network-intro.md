@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  'Network Series [Part1]: 네트워크 용어'
+title:  '[Network] 네트워크 용어'
 description: 
 date:   2022-02-01 15:01:35 +0300
 image:  '/images/network_logo.png'
