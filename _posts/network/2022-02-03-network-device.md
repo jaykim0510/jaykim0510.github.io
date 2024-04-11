@@ -2,7 +2,7 @@
 layout: post
 title:  'Network Series [Part2]: 네트워크 장비'
 description: 
-date:   2022-02-01 15:01:35 +0300
+date:   2022-02-03 15:01:35 +0300
 image:  '/images/network_logo.png'
 logo_image: '/images/network_logo.png'
 category: CS

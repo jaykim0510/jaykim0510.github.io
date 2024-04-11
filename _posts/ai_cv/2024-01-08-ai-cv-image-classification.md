@@ -339,3 +339,10 @@ for inputs, labels in test_dataloader:
 - 또 그림체처럼 학습시 잘 못본 데이터의 경우에도 예측을 잘 못하게 된다
 
 ![](/images/ai_cv_cat_dog_5.png)
+
+
+
+# 참고
+
+- [Training a Classifier, 파이토치 공식문서](https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html#training-an-image-classifier)
+- [nn.Conv2d, 머신러닝 파이토치 다루기 기초](https://wikidocs.net/194946)
