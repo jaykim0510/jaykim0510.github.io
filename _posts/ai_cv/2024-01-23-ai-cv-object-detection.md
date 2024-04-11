@@ -2,7 +2,7 @@
 layout: post
 title:  '[Computer Vision] Object detection (준비중)'
 description: 
-date:   2024-01-09 15:01:35 +0300
+date:   2024-01-23 15:01:35 +0300
 image:  '/images/cv_logo.png'
 logo_image:  '/images/cv_logo.png'
 category: AI
