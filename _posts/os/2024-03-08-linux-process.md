@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Linux Series [Part2]: 리눅스 프로세스 관리'
+title:  '[Linux]: 리눅스 프로세스'
 description: 
-date:   2024-03-13 15:01:35 +0300
+date:   2024-03-08 15:01:35 +0300
 image:  '/images/linux_logo.png'
 logo_image:  '/images/linux_logo.png'
 category: CS

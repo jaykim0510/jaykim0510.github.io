@@ -1,8 +1,8 @@
 ---
 layout: post
-title:  'Linux Series [Part1]: 리눅스 커널'
+title:  '[Linux]: 리눅스 커널'
 description: 
-date:   2024-03-12 15:01:35 +0300
+date:   2024-03-02 15:01:35 +0300
 image:  '/images/linux_logo.png'
 logo_image:  '/images/linux_logo.png'
 category: CS
