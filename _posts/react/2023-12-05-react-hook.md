@@ -119,3 +119,5 @@ function ChatRoom({ roomId }) {
 # 참고
 
 - [Built-in React Hooks, react.dev](https://react.dev/reference/react/hooks)
+- [Rules of Hooks, react.dev](https://legacy.reactjs.org/docs/hooks-rules.html)
+- [React — Uncaught TypeError: destroy is not a function](https://medium.com/geekculture/react-uncaught-typeerror-destroy-is-not-a-function-192738a6e79b)

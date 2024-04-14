@@ -216,6 +216,8 @@ tensor([[[[0.9726]]],
 - torchvision (또는 torchinfo)를 사용하면 조금 더 보기 좋게 프린트 해볼 수도 있다
 
 ```py
+from torchinfo import summary
+
 summary(model, input_size=(1, 1, 1))
 
 ----------------------------------------------------------------
