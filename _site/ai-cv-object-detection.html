@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>[Computer Vision] Object detection (준비중)</title>
+  <title>[Computer Vision] Object detection</title>
   <meta name='description' content='Menca personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/ai-cv-object-detection">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="[Computer Vision] Object detection (준비중) – Jay's Cookbook">
+  <meta name="twitter:title" content="[Computer Vision] Object detection – Jay's Cookbook">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/cv_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="[Computer Vision] Object detection (준비중) – Jay's Cookbook">
+  <meta property="og:title" content="[Computer Vision] Object detection – Jay's Cookbook">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/cv_logo.png">
@@ -992,7 +992,7 @@
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/cv_logo.png" alt="[Computer Vision] Object detection (준비중)">
+          <img class="lazy" data-src="/images/cv_logo.png" alt="[Computer Vision] Object detection">
         </div>
       </div>
       
@@ -1016,7 +1016,7 @@
             
           </div>
             
-          <h1 class="post__title">[Computer Vision] Object detection (준비중)</h1>
+          <h1 class="post__title">[Computer Vision] Object detection</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -1070,8 +1070,174 @@
       <hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#object-detection" id="markdown-toc-object-detection">Object Detection</a></li>
+  <li><a href="#특징" id="markdown-toc-특징">특징</a></li>
+  <li><a href="#분류" id="markdown-toc-분류">분류</a>    <ul>
+      <li><a href="#two-stage-detector" id="markdown-toc-two-stage-detector">Two-stage detector</a></li>
+      <li><a href="#one-stage-detector" id="markdown-toc-one-stage-detector">One-stage detector</a></li>
+    </ul>
+  </li>
+  <li><a href="#yolo-모델-분석" id="markdown-toc-yolo-모델-분석">YOLO 모델 분석</a>    <ul>
+      <li><a href="#데이터-형태" id="markdown-toc-데이터-형태">데이터 형태</a>        <ul>
+          <li><a href="#입력-데이터" id="markdown-toc-입력-데이터">입력 데이터</a></li>
+          <li><a href="#레이블-데이터" id="markdown-toc-레이블-데이터">레이블 데이터</a></li>
+        </ul>
+      </li>
+      <li><a href="#모델" id="markdown-toc-모델">모델</a></li>
+      <li><a href="#손실-함수" id="markdown-toc-손실-함수">손실 함수</a></li>
+      <li><a href="#성능-평가" id="markdown-toc-성능-평가">성능 평가</a></li>
+    </ul>
+  </li>
+</ul>
 
 <hr />
+
+<h1 id="object-detection">Object Detection</h1>
+
+<ul>
+  <li>이미지 내에서 오브젝트를 찾고 해당 오브젝트의 클래스를 분류하는 태스크를 말한다</li>
+</ul>
+
+<p><img src="/images/ai_cv_obj_1.png" alt="" width="80%" /></p>
+
+<h1 id="특징">특징</h1>
+
+<ul>
+  <li>실생활에서 짧은 시간 동안 여러 입력 이미지가 주어지는 경우가 많기 때문에 <strong>빠른 추론을 요구</strong> 한다</li>
+  <li><strong>박스의 좌표값을 예측하는 regression</strong> 문제와, <strong>오브젝트의 클래스를 판별하는 classification</strong> 문제가 합쳐져 있다</li>
+</ul>
+
+<h1 id="분류">분류</h1>
+
+<p><img src="/images/ai_cv_obj_2.png" alt="" /></p>
+
+<h2 id="two-stage-detector">Two-stage detector</h2>
+
+<ul>
+  <li>오브젝트가 있는 박스를 먼저 찾은 후, 박스 안의 오브젝트 클래스를 분류하는 방식</li>
+  <li>성능은 높지만, 추론 시간이 오래 걸린다</li>
+</ul>
+
+<h2 id="one-stage-detector">One-stage detector</h2>
+
+<ul>
+  <li>박스를 찾는 태스크와 박스 안의 오브젝트 클래스를 분류하는 <strong>두 가지 태스크를 동시에 진행하는 방식</strong></li>
+  <li>추론 시간이 빠르고, SSD(Single Shot Detector) 모델 부터 성능이 높아졌고 이러한 특성들이 YOLO2 부터 반영되면서 One-stage detector의 인기가 높아졌다</li>
+</ul>
+
+<h1 id="yolo-모델-분석">YOLO 모델 분석</h1>
+
+<ul>
+  <li><strong>Y</strong>ou <strong>O</strong>nly <strong>L</strong>ook <strong>O</strong>nce</li>
+</ul>
+
+<h2 id="데이터-형태">데이터 형태</h2>
+
+<h3 id="입력-데이터">입력 데이터</h3>
+
+<ul>
+  <li>일반적인 이미지 데이터</li>
+  <li>이미지 데이터는 리사이즈(resize)와 텐서로 바꾸는 정도면 충분하다</li>
+</ul>
+
+<h3 id="레이블-데이터">레이블 데이터</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">( S, S, (C + B*5) )</code> 형태의 데이터
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">S</code>: 그리드 크기 (기본값 7)</li>
+      <li><code class="language-plaintext highlighter-rouge">C</code>: 클래스 수</li>
+      <li><code class="language-plaintext highlighter-rouge">B</code>: 박스 수 (기본값 2)</li>
+      <li><code class="language-plaintext highlighter-rouge">5</code>: 오브젝트 유무, 박스 중심의 x좌표, 박스 중심의 y좌표, 박스의 너비, 의박스 높이</li>
+    </ul>
+  </li>
+  <li>레이블(y) 데이터를 구하는 방법은 다음과 같다
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">torch.zeros((S, S, C + 5 * B))</code> 로 영벡터를 만든다</li>
+      <li>실제 오브젝트가 있는 박스의 <code class="language-plaintext highlighter-rouge">(x, y, w, h)</code> 정보를 담고 있는 리스트를 for문으로 돌며
+        <ul>
+          <li>클래스의 확률 값을 해당 클래스만 1 나머지는 0으로 하도록 한다</li>
+          <li>각 박스의 오브젝트 유무를 1로 한다</li>
+          <li>각 박스의 <code class="language-plaintext highlighter-rouge">(x, y, w, h)</code> 값을 그리드 단위로 바꾼다 <code class="language-plaintext highlighter-rouge">(x_cell, y_cell, width_cell, height_cell)</code></li>
+          <li>(박스가 2개면 뒤에 하나 더 concat 하면 된다)</li>
+          <li><img src="/images/ai_cv_obj_4.png" alt="" /></li>
+        </ul>
+      </li>
+      <li>박스에 포함되지 않는 (즉, 오브젝트가 없는) 그리드는 영벡터로 초기화 했기 때문에 자연스럽게 모두 0인 값이 된다</li>
+      <li><img src="/images/ai_cv_obj_5.png" alt="" /></li>
+      <li>모든 그리드에 대해 (즉, 이미지 하나에 대해) 레이블 데이터의 모습을 보면 다음과 같다</li>
+      <li><img src="/images/ai_cv_obj_6.png" alt="" /></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="모델">모델</h2>
+
+<ul>
+  <li>모델은 크게 이미지의 특성을 추출하는 Feature Extractor 역할을 하는 Backbone과 레이블의 형태에 맞게 값을 출력하는 역할을 하는 Head로 이루어져 있다</li>
+  <li>아래 그림은 정확히 YOLO 모델은 아니지만 Object Detection 모델의 일반적인 구조를 나타낸다</li>
+</ul>
+
+<p><img src="/images/ai_cv_obj_7.png" alt="" width="60%" /></p>
+
+<ul>
+  <li>나는 모델 개발이 아닌 모델 사용에만 관심이 있기 때문에 출력의 형태만 살펴보면 아래 그림과 같다</li>
+</ul>
+
+<p><img src="/images/ai_cv_obj_3.png" alt="" /></p>
+
+<h2 id="손실-함수">손실 함수</h2>
+
+<ul>
+  <li>모델이 출력하는 값과 레이블의 형태는 <code class="language-plaintext highlighter-rouge">( S, S, (C + B*5) )</code> 이다</li>
+  <li>각 그리드의 첫 번째 박스의 IoU 값과, 두 번째 박스의 IoU 값을 계산해, 더 높은 IoU 값을 가지는 박스를 하나 선택한다</li>
+  <li>
+    <p>박스를 선택했으면 아래 식처럼 손실 함수를 정의한다</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  모든 그리드에 대해,
+      박스가 얼마나 정확한지 MSE
+      + 박스 안에 오브젝트가 있을 때 얼마나 자신감이 있는지 MSE
+      + 박스 안에 오브젝트가 없을 때 얼마나 자신감이 없는지 MSE
+      + 클래스가 얼마나 정확한지 MSE
+</code></pre></div>    </div>
+  </li>
+  <li>IoU (Intersection over Union)</li>
+</ul>
+
+<p><img src="/images/ai_cv_obj_8.png" alt="" /></p>
+
+<h2 id="성능-평가">성능 평가</h2>
+
+<ul>
+  <li>검증 데이터에 대해 bbox를 모두 구한다 ( 7 * 7 그리드에 2개의 박스를 구하도록 한다면, 98개의 박스가 구해진다)</li>
+  <li><strong>NMS(Non Max Suppression)</strong>를 수행한다</li>
+  <li>박스를 confidence score를 기준으로 내림차순 정렬한다</li>
+  <li>각 박스에 대해
+    <ul>
+      <li>현재 박스와 같은 클래스를 가지는 박스 제거 (현재 박스가 같은 클래스에 대해 confidence score가 더 높으므로)</li>
+      <li>현재 박스와 IoU가 특정 임계값 이상인 박스 제거 (박스 주변에서 가장 확실한 오브젝트 하나만 선택하기 위해, 너무 겹쳐진 박스는 제거한다)</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/images/ai_cv_obj_9.png" alt="" /></p>
+
+<ul>
+  <li>가장 확실한 박스들만 남았으므로 이제 이 박스들에 대해 <strong>mAP(mean Average Precision)</strong> 성능 평가를 한다</li>
+  <li>모든 클래스에 대해
+    <ul>
+      <li>해당 클래스의 박스들 중에서 confidence score 값에 따른 precision 값을 구한 후 평균한다 -&gt; AP</li>
+    </ul>
+  </li>
+  <li>모든 클래스에서 얻어진 AP 값을 평균하면 mAP가 된다</li>
+</ul>
+
+<p><img src="/images/ai_cv_obj_10.png" alt="" /></p>
+
+<p><img src="/images/ai_cv_obj_11.png" alt="" /></p>
+
+<p><img src="/images/ai_cv_obj_12.png" alt="" /></p>
 
     </div>
   </article>

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '[NLP] Seq2Seq (준비중)'
+title:  '[NLP] Seq2Seq'
 description: 
 date:   2024-01-13 15:01:35 +0300
 image:  '/images/nlp_logo.png'

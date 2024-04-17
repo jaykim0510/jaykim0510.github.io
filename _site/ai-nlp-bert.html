@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>[NLP] BERT (준비중)</title>
+  <title>[NLP] BERT</title>
   <meta name='description' content='Menca personal blogging theme for Jekyll'>
 
   <link rel="canonical" href="http://localhost:4000/ai-nlp-bert">
@@ -14,13 +14,13 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="[NLP] BERT (준비중) – Jay's Cookbook">
+  <meta name="twitter:title" content="[NLP] BERT – Jay's Cookbook">
   <meta name="twitter:description" content="
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/nlp_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="[NLP] BERT (준비중) – Jay's Cookbook">
+  <meta property="og:title" content="[NLP] BERT – Jay's Cookbook">
   <meta property="og:description" content="
 ">
   <meta property="og:image" content="http://localhost:4000/images/nlp_logo.png">
@@ -992,7 +992,7 @@
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/nlp_logo.png" alt="[NLP] BERT (준비중)">
+          <img class="lazy" data-src="/images/nlp_logo.png" alt="[NLP] BERT">
         </div>
       </div>
       
@@ -1016,7 +1016,7 @@
             
           </div>
             
-          <h1 class="post__title">[NLP] BERT (준비중)</h1>
+          <h1 class="post__title">[NLP] BERT</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -1080,8 +1080,159 @@
       <hr />
 
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#bert" id="markdown-toc-bert">BERT</a></li>
+  <li><a href="#특징" id="markdown-toc-특징">특징</a></li>
+  <li><a href="#pre-training" id="markdown-toc-pre-training">Pre-Training</a>    <ul>
+      <li><a href="#mlm" id="markdown-toc-mlm">MLM</a></li>
+      <li><a href="#nsp" id="markdown-toc-nsp">NSP</a></li>
+    </ul>
+  </li>
+  <li><a href="#fine-tuning" id="markdown-toc-fine-tuning">Fine-Tuning</a>    <ul>
+      <li><a href="#텍스트-분류-태스크" id="markdown-toc-텍스트-분류-태스크">텍스트 분류 태스크</a></li>
+      <li><a href="#qa-태스크" id="markdown-toc-qa-태스크">QA 태스크</a></li>
+      <li><a href="#파인-튜닝할-때-신경써야-할-요소" id="markdown-toc-파인-튜닝할-때-신경써야-할-요소">파인 튜닝할 때 신경써야 할 요소</a></li>
+    </ul>
+  </li>
+  <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
+</ul>
 
 <hr />
+
+<h1 id="bert">BERT</h1>
+
+<ul>
+  <li><strong>B</strong>idirectional <strong>E</strong>ncoder <strong>R</strong>epresentations from <strong>T</strong>ransformers</li>
+  <li>2018년에 구글이 공개한 사전 훈련(Pre-trained)된 모델이다</li>
+  <li>트랜스포머의 인코더를 여러 층 쌓아올린 구조이다</li>
+</ul>
+
+<p><img src="/images/ai_nlp_bert_1.png" alt="" /></p>
+
+<h1 id="특징">특징</h1>
+
+<ul>
+  <li>대량의 unlabeled data 코퍼스로 먼저 사전 학습(pre-training) 하고, 이 후 특정 태스크에 대해 추가 학습(fine-tuning) 할 수 있는 모델이다</li>
+  <li>(그래서 사전학습된 BERT 모델을 다운받은 후, 개발자가 원하는 태스크에 추가 학습 시키면 된다)</li>
+  <li>양방향 구조로 토큰 임베딩이 학습 되어, 앞뒤 문맥이 잘 반영된 임베딩 벡터를 얻었으며, 결과적으로 자연어에 대한 이해도가 높은 모델이 얻어졌다</li>
+</ul>
+
+<h1 id="pre-training">Pre-Training</h1>
+
+<ul>
+  <li>모델을 바로 태스크에 적용한다면 사전 훈련에 대해 자세히 알아야 될 필요는 없다</li>
+  <li>하지만 사전 훈련이 어떻게 이뤄졌는지 알게 되면,
+    <ul>
+      <li>대량의 <strong>unlabeled data</strong> 코퍼스로 어떻게 모델을 학습시켰는지</li>
+      <li>BERT가 어떻게 <strong>양방향 구조</strong>를 얻게 되었는지</li>
+      <li><strong>여러 태스크에 대해 높은 성능</strong>을 보일 수 있는 이유가 무엇인지</li>
+      <li>우리의 태스크에 적용하기 위해 입력을 어떻게 처리하고, 출력을 어떻게 활용할지 알 수 있게 된다</li>
+    </ul>
+  </li>
+  <li>BERT의 사전 훈련은 크게 다음 두 가지 문제를 푸는 방법으로 진행된다
+    <ul>
+      <li><strong>MLM(Masked Language Model)</strong>: 마스킹된 단어를 예측하는 문제</li>
+      <li><strong>NSP(Next Sentence Prediction)</strong>: 두 문장이 이어지는지를 예측하는 문제</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="mlm">MLM</h2>
+
+<ul>
+  <li><strong>M</strong>asked <strong>L</strong>anguage <strong>M</strong>odel</li>
+  <li>unlabeled data 코퍼스에서 가져온 문장의 일부(15%)를 마스킹해서, 마스킹된 단어를 예측하도록 한다</li>
+</ul>
+
+<p><img src="/images/ai_nlp_bert_2.png" alt="" /></p>
+
+<ul>
+  <li>근데 15%를 모두 <code class="language-plaintext highlighter-rouge">[MASK]</code> 로만 하지는 않고, 일부는 의도적으로 다른 단어를 넣거나, 그대로 넣기도 한다
+    <ul>
+      <li>80%의 단어들은 <code class="language-plaintext highlighter-rouge">[MASK]</code>로 변경한다.
+        <ul>
+          <li>ex. The man went to the store → The man went to the <code class="language-plaintext highlighter-rouge">[MASK]</code></li>
+        </ul>
+      </li>
+      <li>10%의 단어들은 랜덤으로 단어가 변경된다.
+        <ul>
+          <li>ex. The man went to the store → The man went to the dog</li>
+        </ul>
+      </li>
+      <li>10%의 단어들은 동일하게 둔다.
+        <ul>
+          <li>ex. The man went to the store → The man went to the store</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>이렇게 하는 이유는, 파인 튜닝 단계에서는 <code class="language-plaintext highlighter-rouge">[MASK]</code> 토큰이 없기 때문에, 파인 튜닝 단계와의 데이터 불일치 문제를 완화하기 위해서이다</li>
+</ul>
+
+<p><img src="/images/ai_nlp_bert_3.png" alt="" /></p>
+
+<ul>
+  <li>여기서 마스킹된 단어를 예측하기 위해 BERT 모델은 앞뒤 단어를 이용하게 된다. 결론적으로 <strong>셀프 어텐션을 사용하는 트랜스포머의 인코더</strong> 구조와, <strong>마스크드 언어 모델(MLM)</strong>이 BERT를 양방향 구조로 만들었다고 할 수 있다</li>
+</ul>
+
+<p><img src="/images/ai_nlp_bert_4.png" alt="" /></p>
+
+<h2 id="nsp">NSP</h2>
+
+<ul>
+  <li><strong>N</strong>ext <strong>S</strong>entence <strong>P</strong>rediction</li>
+  <li>BERT는 사전훈련 때 두 개의 문장을 준 후에 서로 이어지는 문장인지 맞추는 방식으로 훈련된다</li>
+  <li>5:5 비율로 실제 이어지는 두 개의 문장과 랜덤으로 이어붙인 두 개의 문장을 주고 훈련시킨다</li>
+</ul>
+
+<p><img src="/images/ai_nlp_bert_5.png" alt="" /></p>
+
+<ul>
+  <li>BERT의 입력으로 넣을 때에는 <code class="language-plaintext highlighter-rouge">[SEP]</code>라는 특별 토큰을 사용해서 문장을 구분한다</li>
+  <li>첫번째 문장의 끝에 <code class="language-plaintext highlighter-rouge">[SEP]</code> 토큰을 넣고, 두번째 문장이 끝나면 역시 <code class="language-plaintext highlighter-rouge">[SEP]</code> 토큰을 붙여준다</li>
+  <li>그리고 이 두 문장이 실제 이어지는 문장인지 아닌지를 <code class="language-plaintext highlighter-rouge">[CLS]</code> 토큰의 위치의 출력층에서 이진 분류 문제를 풀도록 한다</li>
+  <li>최종적으로 loss 값은 마스크드 언어 모델과 다음 문장 예측의 loss를 합하여 학습이 동시에 이루어지게 된다</li>
+  <li>BERT가 다음 문장 예측이라는 태스크를 학습하는 이유는 BERT가 풀고자 하는 태스크 중에서는 Question Answering 같이 두 문장의 관계를 이해하는 것이 중요한 태스크들이 있기 때문이다</li>
+  <li>(파인 튜닝할 때는 문장 하나만 필요한 태스크인 경우 그냥 문장 하나만 입력으로 써도 된다)</li>
+</ul>
+
+<h1 id="fine-tuning">Fine-Tuning</h1>
+
+<ul>
+  <li>우리의 태스크에 맞게 파인튜닝하는 방법에 대해 알아보자</li>
+  <li>우리의 태스크가 분류 문제라면 출력의 <code class="language-plaintext highlighter-rouge">[CLS]</code> 토큰 값을 활용한다</li>
+  <li>단어마다 어떤 값을 예측해야 한다면 그외의 출력 토큰을 활용한다</li>
+</ul>
+
+<h2 id="텍스트-분류-태스크">텍스트 분류 태스크</h2>
+
+<ul>
+  <li>스팸 메일인지 아닌지, 긍정인지 부정인지 같은 분류 문제의 경우 아래 그림과 같다</li>
+</ul>
+
+<p><img src="/images/ai_nlp_bert_6.png" alt="" /></p>
+
+<h2 id="qa-태스크">QA 태스크</h2>
+
+<ul>
+  <li>질문에 대한 답변을 문단 내에서 일부 추출하는 방식이다</li>
+</ul>
+
+<p><img src="/images/ai_nlp_bert_7.png" alt="" /></p>
+
+<h2 id="파인-튜닝할-때-신경써야-할-요소">파인 튜닝할 때 신경써야 할 요소</h2>
+
+<ul>
+  <li>Token Embedding을 위해 <code class="language-plaintext highlighter-rouge">vocabulary_size</code>를 알려줘야 한다</li>
+  <li>한 개의 문장만 이용하는 태스크라면 Segment Embedding을 하나의 값으로, 두 개의 문장을 이용하는 태스크라면 Segment Embedding을 두 개의 값을 써서 문장을 구분해줘야 한다</li>
+</ul>
+
+<h1 id="참고">참고</h1>
+
+<ul>
+  <li><a href="https://github.com/codertimo/BERT-pytorch/tree/master">BERT 구현 코드, codertimo</a></li>
+  <li><a href="https://wikidocs.net/115055">BERT, 딥 러닝을 이용한 자연어 처리 입문</a></li>
+</ul>
 
     </div>
   </article>
