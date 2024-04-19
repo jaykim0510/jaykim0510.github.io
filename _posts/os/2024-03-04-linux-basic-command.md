@@ -51,6 +51,9 @@ ls -al
 
 ```sh
 rm -rf [삭제할 디렉터리 이름]
+
+# r: recursive
+# f: force
 ```
 
 ![](/images/os_linux_basic_4.png)
