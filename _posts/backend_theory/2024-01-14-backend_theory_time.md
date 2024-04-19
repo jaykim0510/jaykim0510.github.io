@@ -2,7 +2,7 @@
 layout: post
 title:  '[Backend Thoery] Datetime, Timestamp, Timezone'
 description: 
-date:   2023-12-20 15:01:35 +0300
+date:   2024-01-14 15:01:35 +0300
 image:  '/images/backend_theory_logo.png'
 logo_image: '/images/backend_theory_logo.png'
 category: backend
