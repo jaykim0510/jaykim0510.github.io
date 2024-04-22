@@ -107,6 +107,23 @@ tag: NLP
 - Token Embedding을 위해 `vocabulary_size`를 알려줘야 한다
 - 한 개의 문장만 이용하는 태스크라면 Segment Embedding을 하나의 값으로, 두 개의 문장을 이용하는 태스크라면 Segment Embedding을 두 개의 값을 써서 문장을 구분해줘야 한다
 
+
+# QA 모델 실습
+
+## AutoClasses
+
+- AutoClasses are here to do this job for you so that you automatically retrieve the relevant model given the name/path to the pretrained weights/config/vocabulary
+
+## Tokenizer 
+
+- A tokenizer is in charge of preparing the inputs for a model
+
+- 주요 역할
+  - Tokenizing
+  - Add new tokens to vocabulary
+  - Managing special tokens
+
+
 # 참고
 
 - [BERT 구현 코드, codertimo](https://github.com/codertimo/BERT-pytorch/tree/master)

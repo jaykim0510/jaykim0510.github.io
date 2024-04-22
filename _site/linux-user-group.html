@@ -1083,7 +1083,79 @@ Table of Contents
     <div class="post__content">
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#사용자와-그룹" id="markdown-toc-사용자와-그룹">사용자와 그룹</a>    <ul>
+      <li><a href="#시스템-관리자" id="markdown-toc-시스템-관리자">시스템 관리자</a></li>
+    </ul>
+  </li>
+  <li><a href="#파일-권한" id="markdown-toc-파일-권한">파일 권한</a>    <ul>
+      <li><a href="#파일에-권한-설정하는-방법" id="markdown-toc-파일에-권한-설정하는-방법">파일에 권한 설정하는 방법</a></li>
+    </ul>
+  </li>
+</ul>
 <hr />
+
+<h1 id="사용자와-그룹">사용자와 그룹</h1>
+
+<ul>
+  <li>리눅스는 여러명의 사용자와 그룹을 지원하는 운영체제이다</li>
+</ul>
+
+<h2 id="시스템-관리자">시스템 관리자</h2>
+
+<ul>
+  <li>루트 사용자는 관리자 권한을 가지며 모든 파일에 접근 가능</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 사용자 추가</span>
+<span class="nb">sudo </span>adduser
+<span class="nb">sudo </span>adduser <span class="o">[</span>사용자명]
+
+<span class="c"># 사용자 확인</span>
+<span class="nb">whoami</span>
+
+<span class="c"># 사용자 변경(=다른 사용자 계정의 쉘 사용)</span>
+su - <span class="o">[</span>다른 사용자명]
+
+<span class="c"># 원래 사용자로 돌아오기(=다른 사용자 계정 쉘에서 빠져나오기)</span>
+<span class="nb">exit</span>
+
+<span class="c"># 사용자 지우기</span>
+deluser <span class="o">[</span>사용자명]
+<span class="nb">sudo </span>deluser <span class="o">[</span>사용자명] <span class="nt">--remove-home</span> <span class="o">(</span>홈 디렉토리 함께 제거 -&gt; 깔끔<span class="o">)</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 그룹 생성</span>
+<span class="nb">sudo </span>addgroup <span class="o">[</span>그룹명]
+
+<span class="c"># 그룹에 사용자 추가</span>
+<span class="nb">sudo </span>adduser <span class="o">[</span>사용자명] <span class="nt">--ingroup</span> <span class="o">[</span>그룹명]
+</code></pre></div></div>
+
+<h1 id="파일-권한">파일 권한</h1>
+
+<ul>
+  <li>파일의 소유자, 그룹에 따라 유저는 owner, group, others 중 하나에 속하고 해당 범위 만큼의 권한을 가지게 된다</li>
+</ul>
+
+<p><img src="/images/os_linux_user_1.png" alt="" /></p>
+
+<p><img src="/images/os_linux_user_2.png" alt="" /></p>
+
+<p><img src="/images/os_linux_user_3.png" alt="" /></p>
+
+<h2 id="파일에-권한-설정하는-방법">파일에 권한 설정하는 방법</h2>
+
+<ul>
+  <li>파일의 권한은 소유자 또는 시스템 관리자가 변경할 수 있다</li>
+</ul>
+
+<p><img src="/images/os_linux_user_4.png" alt="" /></p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod </span>664 <span class="o">[</span>파일명]
+<span class="nb">chmod </span>g+w <span class="o">[</span>파일명] <span class="c"># group에 해당하는 유저들에게 쓰기(w)권한 부여</span>
+<span class="nb">chmod </span>go+rx <span class="o">[</span>파일명] <span class="c"># group과 ohters에 헤당하는 유저들에게 읽기(r) 실행(x) 권한 부여</span>
+</code></pre></div></div>
 
     </div>
   </article>

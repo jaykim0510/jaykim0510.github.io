@@ -1081,6 +1081,113 @@ Table of Contents
 <p id="toc"><strong>Table of Contents</strong></p>
 <hr />
 
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">head</span> <span class="o">[</span>파일명]
+
+<span class="nb">head</span> <span class="o">[</span>파일명] <span class="nt">-n</span> <span class="o">[</span>보고 싶은 상위 줄 개수]
+
+<span class="nb">head</span> <span class="o">[</span>파일명] <span class="nt">-n</span> -[밑에서 제외하고 싶은 줄 개수]
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tail</span> <span class="o">[</span>파일명]
+
+<span class="nb">tail</span> <span class="o">[</span>파일명] <span class="nt">-n</span> <span class="o">[</span>보고 싶은 하위 줄 개수]
+
+<span class="nb">tail</span> <span class="o">[</span>파일명] <span class="nt">-n</span> +[출력을 시작하고 싶은 줄 숫자] <span class="c"># ex. tail /etc/password -n +5 --&gt; 5번 째 줄부터 끝까지 출력</span>
+
+<span class="nb">tail</span> <span class="o">[</span>파일명] <span class="nt">-f</span> <span class="c"># follow 를 뜻하는 옵션으로, 뒤에 추가되는 내용을 기다렸다가 계속 출력한다</span>
+
+<span class="nb">tail</span> <span class="o">[</span>파일명] <span class="nt">-F</span> <span class="c"># -f와 비슷하다. 추가되는 점은, 파일이 삭제되었다가 다시 열리는 상황 까지도 기다려준다는 것이다</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">wc</span> <span class="o">[</span>파일명] <span class="c"># 기본적으로 줄 / 단어 / 바이트 크기를 출력한다</span>
+
+<span class="nb">wc</span> <span class="o">[</span>파일명] <span class="nt">-l</span> <span class="c"># 줄 수만 출력</span>
+
+<span class="nb">wc</span> <span class="o">[</span>파일명] <span class="o">[</span>파일명] <span class="c"># 여러 파일에 대해 조회할 수도 있다</span>
+
+<span class="nb">wc</span> <span class="k">*</span>.py <span class="c"># py 파일에 대해 조회한다</span>
+
+<span class="nb">wc</span> <span class="nt">-l</span> <span class="o">[</span>파일명] | <span class="nb">awk</span> <span class="s1">'{ print $1 }'</span> <span class="c"># 줄 수 값만 출력</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">nl</span> <span class="o">[</span>파일명] <span class="c"># 줄 숫자와 파일 내용을 함께 출력 (공백에 대해서는 줄 카운팅 안함)</span>
+
+<span class="nb">nl</span> <span class="nt">-ba</span> <span class="o">[</span>파일명] <span class="c"># 공백에 대해서도 줄 카운팅 -&gt; 전체 줄 수가 wc가 카운팅한 줄 수와 같아짐</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sort</span> <span class="o">[</span>파일명]
+
+<span class="nb">sort</span> <span class="o">[</span>파일명] <span class="nt">-t</span> <span class="o">[</span>필드 구분자] <span class="c"># 하나의 로우를 여러 필드로 나누고, 특정 필드에 대해 정렬하고 싶을 때 (기본값은 공백문자)</span>
+
+<span class="nb">sort</span> <span class="o">[</span>파일명] <span class="nt">-t</span> <span class="o">[</span>필드 구분자] <span class="nt">-k</span> <span class="o">[</span>키로 사용할 필드 지정]
+
+<span class="c"># cat /etc/password | sort -t : -k 3 -n    </span>
+<span class="c"># : 로 구분된 필드중 3번째 이후 모든 컬럼에 대해 numeric 정렬</span>
+<span class="c"># 3번째 컬럼에 대해서만 정렬하려면, cat/etc/password | sort -t : -k 3,3</span>
+
+<span class="c"># 3번 째 컬럼에 대해 정렬 후 2번 째 컬럼에 대해 정렬하고 싶으면, cat/etc/password | sort -t : -k 3,3, -k 2,2</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">uniq</span> <span class="o">[</span>파일명]
+
+<span class="nb">uniq</span> <span class="o">[</span>파일명] <span class="nt">-d</span> <span class="c"># 중복된 내용만 출력</span>
+<span class="nb">uniq</span> <span class="o">[</span>파일명] <span class="nt">-u</span> <span class="c"># 중복되지 않은 내용만 출력</span>
+<span class="nb">uniq</span> <span class="o">[</span>파일명] <span class="nt">-i</span> <span class="c"># 대소문자 무시</span>
+
+<span class="c"># uniq는 sort 명령문 이후에 많이 쓰는데, 그 이유는 uniq는 연속된 내용에 대해서만 중복 여부 체크한다</span>
+<span class="c"># A A B C 이렇게 하면 A가 중복된 거 발견하는데, A B A C 이렇게 하면 A가 중복됐다고 판단 안함 -&gt; 정렬(sort) 먼저 많이 함</span>
+
+
+<span class="nb">sort</span> <span class="o">[</span>파일명] | <span class="nb">uniq</span> <span class="nt">-u</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cut</span> <span class="o">[</span>파일명] <span class="nt">-d</span> <span class="o">[</span>구분자] <span class="nt">-f</span> <span class="o">[</span>잘라낼 컬럼]
+
+<span class="c"># ex. cut /etc/password -d ':' -f 1,7</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tr</span> <span class="o">[</span>파일명] <span class="o">[</span>치환될 원래 문자] <span class="o">[</span>치환 문자]
+
+<span class="nb">tr</span> <span class="o">[</span>파일명] <span class="nt">-d</span> <span class="o">[</span>삭제할 문자]
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 줄단위 작업</span>
+<span class="c"># ex. 특정 범위의 줄 출력/삭제, 특정 패턴에 매칭되는 줄 출력/삭제</span>
+
+<span class="nb">cat</span> <span class="o">[</span>파일명] | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"1,3p"</span> <span class="c"># 출력된 파일의 첫 번째 ~ 세 번째 줄 출력</span>
+
+<span class="c"># -n 옵션은 앞의 파이프라인의 출력문을 출력하지 않도록 함</span>
+
+<span class="nb">cat</span> <span class="o">[</span>파일명] | <span class="nb">sed</span> <span class="s2">"1,3d"</span> <span class="c"># cat 에서의 출력문 한 줄식 출력하다가 범위 내의 줄들은 삭제</span>
+
+<span class="nb">cat</span> <span class="o">[</span>파일명] | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"/game/p"</span> <span class="c"># game 과 일치하는 줄만 출력</span>
+
+<span class="nb">cat</span> <span class="o">[</span>파일명] | <span class="nb">sed</span> <span class="s2">"s/root/ROOT/"</span> <span class="c"># 각 줄에서 첫 root 부분 ROOT로 변경</span>
+
+<span class="nb">cat</span> <span class="o">[</span>파일명] | <span class="nb">sed</span> <span class="s2">"s/root/ROOT/g"</span> <span class="c"># 각 줄에서 모든 root 부분 ROOT로 변경</span>
+
+<span class="nb">cat</span> <span class="o">[</span>파일명] | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"/game/,10p"</span> <span class="c"># game 매칭된 줄 부터 ~ 열 번째 줄 까지 출력</span>
+
+<span class="nb">cat</span> <span class="o">[</span>파일명] | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"/game/,+3p"</span> <span class="c"># game 매칭된 줄 부터 ~ 뒤에 세 줄 출력</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">awk</span> <span class="s1">'[script]'</span> <span class="o">[</span>파일명]
+
+<span class="nb">awk</span> <span class="s1">'{ print }'</span> /etc/password <span class="c"># 그냥 모두 출력</span>
+
+<span class="nb">awk</span> <span class="nt">-F</span> : <span class="s1">'{ print $1 }'</span> /etc/password <span class="c"># 각 줄의 첫 번째 필드만 출력</span>
+
+<span class="nb">awk</span> <span class="nt">-F</span> : <span class="s1">'{ print NR "===&gt;" $1 }'</span> /etc/password
+
+<span class="c"># 주요 내장 변수</span>
+<span class="c"># $1: 첫 번째 필드</span>
+<span class="c"># NR: 줄 수</span>
+<span class="c"># NF: 필드 수</span>
+<span class="c"># FS: 필드 구분자</span>
+
+
+</code></pre></div></div>
+
     </div>
   </article>
   <!--첫 번째 문단-->

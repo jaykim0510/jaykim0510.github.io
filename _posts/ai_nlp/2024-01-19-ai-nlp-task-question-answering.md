@@ -16,3 +16,10 @@ tag: NLP
 {:toc}
 
 ---
+
+
+
+
+# 참고
+
+- [How to Train A Question-Answering Machine Learning Model (BERT), Paperspace](https://blog.paperspace.com/how-to-train-question-answering-machine-learning-models/)

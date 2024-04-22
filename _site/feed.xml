@@ -5,8 +5,8 @@
         <description>Menca personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Fri, 19 Apr 2024 03:34:47 +0900</pubDate>
-        <lastBuildDate>Fri, 19 Apr 2024 03:34:47 +0900</lastBuildDate>
+        <pubDate>Mon, 22 Apr 2024 18:51:58 +0900</pubDate>
+        <lastBuildDate>Mon, 22 Apr 2024 18:51:58 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
         
             <item>
@@ -539,6 +539,50 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;hr /&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 파일 찾는데 사용할 수 있는 옵션&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-regex&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;정규표현식] &lt;span class=&quot;c&quot;&gt;# 정규표현식에 매치되는 파일들&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-empty&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 빈 파일 또는 빈 디렉터리&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-type&lt;/span&gt; d &lt;span class=&quot;c&quot;&gt;# d: 디렉터리, f: 파일, l: 소프트링크, s: 소켓&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# [최상위 경로] 에 . 과 같은 상대 경로 형태로 입력하면 출력도 상대 경로 형태&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# [최상위 경로] 에 `pwd` 과 같은 절대 경로 형태로 입력하면 출력도 절대 경로 형태로 나온다&lt;/span&gt;
+
+
+&lt;span class=&quot;c&quot;&gt;# 찾았을 때 할 수 있는 행동&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 디폴트는 -print&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-exec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;실행할 명령어] &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# {}에 찾은 파일명이 차례로 하나씩 들어간다. 항상 끝에는 \; 붙여준다&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# ex. find . -name '*.py' -exec stat {} \;&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-execdir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;실행할 명령어] &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# -exec 와 비슷하다. 차이점은 -execdir은 해당 파일이 있는 위치로 이동해서 명령어를 실행한다&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-ok&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;실행할 명령어] &lt;span class=&quot;o&quot;&gt;{}&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# -exec와 비슷하다. 차이점은 실행 전에 물어본다 ok?&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# ex. find . -name '*.py' -exec rm -f {} \;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+
+&lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;찾고 싶은 문자열] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 파일 내용중 찾는 문자열을 포함한 줄을 출력한다&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# grep &quot;shm_open&quot; *.c --&amp;gt; c 파일에서 shm_open 문자열이 포함된 부분 출력&lt;/span&gt;
+
+
+&lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;찾고 싶은 문자열] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 대소문자 무시한다&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;찾고 싶은 문자열] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 매치되는 줄을 출력하는게 아니고, 오히려 제외하고 나머지 부분을 출력한다 (invert match)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# [찾고 싶은 문자열] 과 정확히 매치되는 줄만 출력하고 싶은 경우 \&amp;lt;[찾고 싶은 문자열]\&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# grep &quot;\&amp;lt;for\&amp;gt;&quot; *.c 이렇게 하면 for ~ 는 출력하지만, fork, ford 같은 단어를 포함한 줄은 출력하지 않는다&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
                 <pubDate>Mon, 18 Mar 2024 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/linux-search</link>
@@ -556,6 +600,113 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;hr /&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;보고 싶은 상위 줄 개수]
+
+&lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; -[밑에서 제외하고 싶은 줄 개수]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;보고 싶은 하위 줄 개수]
+
+&lt;span class=&quot;nb&quot;&gt;tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; +[출력을 시작하고 싶은 줄 숫자] &lt;span class=&quot;c&quot;&gt;# ex. tail /etc/password -n +5 --&amp;gt; 5번 째 줄부터 끝까지 출력&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# follow 를 뜻하는 옵션으로, 뒤에 추가되는 내용을 기다렸다가 계속 출력한다&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-F&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# -f와 비슷하다. 추가되는 점은, 파일이 삭제되었다가 다시 열리는 상황 까지도 기다려준다는 것이다&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;wc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 기본적으로 줄 / 단어 / 바이트 크기를 출력한다&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;wc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 줄 수만 출력&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;wc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 여러 파일에 대해 조회할 수도 있다&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;wc&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;*&lt;/span&gt;.py &lt;span class=&quot;c&quot;&gt;# py 파일에 대해 조회한다&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;wc&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-l&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{ print $1 }'&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 줄 수 값만 출력&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;nl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 줄 숫자와 파일 내용을 함께 출력 (공백에 대해서는 줄 카운팅 안함)&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;nl&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ba&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 공백에 대해서도 줄 카운팅 -&amp;gt; 전체 줄 수가 wc가 카운팅한 줄 수와 같아짐&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;필드 구분자] &lt;span class=&quot;c&quot;&gt;# 하나의 로우를 여러 필드로 나누고, 특정 필드에 대해 정렬하고 싶을 때 (기본값은 공백문자)&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;필드 구분자] &lt;span class=&quot;nt&quot;&gt;-k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;키로 사용할 필드 지정]
+
+&lt;span class=&quot;c&quot;&gt;# cat /etc/password | sort -t : -k 3 -n    &lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# : 로 구분된 필드중 3번째 이후 모든 컬럼에 대해 numeric 정렬&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 3번째 컬럼에 대해서만 정렬하려면, cat/etc/password | sort -t : -k 3,3&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 3번 째 컬럼에 대해 정렬 후 2번 째 컬럼에 대해 정렬하고 싶으면, cat/etc/password | sort -t : -k 3,3, -k 2,2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 중복된 내용만 출력&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 중복되지 않은 내용만 출력&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 대소문자 무시&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# uniq는 sort 명령문 이후에 많이 쓰는데, 그 이유는 uniq는 연속된 내용에 대해서만 중복 여부 체크한다&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# A A B C 이렇게 하면 A가 중복된 거 발견하는데, A B A C 이렇게 하면 A가 중복됐다고 판단 안함 -&amp;gt; 정렬(sort) 먼저 많이 함&lt;/span&gt;
+
+
+&lt;span class=&quot;nb&quot;&gt;sort&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;uniq&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-u&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cut&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;구분자] &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;잘라낼 컬럼]
+
+&lt;span class=&quot;c&quot;&gt;# ex. cut /etc/password -d ':' -f 1,7&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;tr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;치환될 원래 문자] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;치환 문자]
+
+&lt;span class=&quot;nb&quot;&gt;tr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;삭제할 문자]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 줄단위 작업&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# ex. 특정 범위의 줄 출력/삭제, 특정 패턴에 매칭되는 줄 출력/삭제&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1,3p&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 출력된 파일의 첫 번째 ~ 세 번째 줄 출력&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# -n 옵션은 앞의 파이프라인의 출력문을 출력하지 않도록 함&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1,3d&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# cat 에서의 출력문 한 줄식 출력하다가 범위 내의 줄들은 삭제&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/game/p&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# game 과 일치하는 줄만 출력&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;s/root/ROOT/&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 각 줄에서 첫 root 부분 ROOT로 변경&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;s/root/ROOT/g&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 각 줄에서 모든 root 부분 ROOT로 변경&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/game/,10p&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# game 매칭된 줄 부터 ~ 열 번째 줄 까지 출력&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;sed&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/game/,+3p&quot;&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# game 매칭된 줄 부터 ~ 뒤에 세 줄 출력&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'[script]'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'{ print }'&lt;/span&gt; /etc/password &lt;span class=&quot;c&quot;&gt;# 그냥 모두 출력&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-F&lt;/span&gt; : &lt;span class=&quot;s1&quot;&gt;'{ print $1 }'&lt;/span&gt; /etc/password &lt;span class=&quot;c&quot;&gt;# 각 줄의 첫 번째 필드만 출력&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;awk&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-F&lt;/span&gt; : &lt;span class=&quot;s1&quot;&gt;'{ print NR &quot;===&amp;gt;&quot; $1 }'&lt;/span&gt; /etc/password
+
+&lt;span class=&quot;c&quot;&gt;# 주요 내장 변수&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# $1: 첫 번째 필드&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# NR: 줄 수&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# NF: 필드 수&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# FS: 필드 구분자&lt;/span&gt;
+
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
                 <pubDate>Sat, 16 Mar 2024 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/linux-text-processing</link>
@@ -589,7 +740,79 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
                 <title>[Linux]: 사용자와 그룹</title>
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#사용자와-그룹&quot; id=&quot;markdown-toc-사용자와-그룹&quot;&gt;사용자와 그룹&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#시스템-관리자&quot; id=&quot;markdown-toc-시스템-관리자&quot;&gt;시스템 관리자&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#파일-권한&quot; id=&quot;markdown-toc-파일-권한&quot;&gt;파일 권한&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#파일에-권한-설정하는-방법&quot; id=&quot;markdown-toc-파일에-권한-설정하는-방법&quot;&gt;파일에 권한 설정하는 방법&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 &lt;hr /&gt;
+
+&lt;h1 id=&quot;사용자와-그룹&quot;&gt;사용자와 그룹&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;리눅스는 여러명의 사용자와 그룹을 지원하는 운영체제이다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;시스템-관리자&quot;&gt;시스템 관리자&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;루트 사용자는 관리자 권한을 가지며 모든 파일에 접근 가능&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 사용자 추가&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명]
+
+&lt;span class=&quot;c&quot;&gt;# 사용자 확인&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;whoami&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 사용자 변경(=다른 사용자 계정의 쉘 사용)&lt;/span&gt;
+su - &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;다른 사용자명]
+
+&lt;span class=&quot;c&quot;&gt;# 원래 사용자로 돌아오기(=다른 사용자 계정 쉘에서 빠져나오기)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# 사용자 지우기&lt;/span&gt;
+deluser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명]
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;deluser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명] &lt;span class=&quot;nt&quot;&gt;--remove-home&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;홈 디렉토리 함께 제거 -&amp;gt; 깔끔&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 그룹 생성&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;addgroup &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;그룹명]
+
+&lt;span class=&quot;c&quot;&gt;# 그룹에 사용자 추가&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명] &lt;span class=&quot;nt&quot;&gt;--ingroup&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;그룹명]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;파일-권한&quot;&gt;파일 권한&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;파일의 소유자, 그룹에 따라 유저는 owner, group, others 중 하나에 속하고 해당 범위 만큼의 권한을 가지게 된다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;파일에-권한-설정하는-방법&quot;&gt;파일에 권한 설정하는 방법&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;파일의 권한은 소유자 또는 시스템 관리자가 변경할 수 있다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;664 &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+&lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;g+w &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# group에 해당하는 유저들에게 쓰기(w)권한 부여&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;go+rx &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# group과 ohters에 헤당하는 유저들에게 읽기(r) 실행(x) 권한 부여&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
                 <pubDate>Tue, 12 Mar 2024 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/linux-user-group</link>
@@ -698,25 +921,57 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
 &lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#리눅스-파일시스템의-주요-디렉토리&quot; id=&quot;markdown-toc-리눅스-파일시스템의-주요-디렉토리&quot;&gt;리눅스 파일시스템의 주요 디렉토리&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#파일-타입&quot; id=&quot;markdown-toc-파일-타입&quot;&gt;파일 타입&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#스토리지-사용량-명령어&quot; id=&quot;markdown-toc-스토리지-사용량-명령어&quot;&gt;스토리지 사용량 명령어&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#df&quot; id=&quot;markdown-toc-df&quot;&gt;df&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#du&quot; id=&quot;markdown-toc-du&quot;&gt;du&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr /&gt;
 
 &lt;h1 id=&quot;리눅스-파일시스템의-주요-디렉토리&quot;&gt;리눅스 파일시스템의 주요 디렉토리&lt;/h1&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;/bin: 모든 사용자에게 제공하는 명령어 바이너리 (cat, ls, cp 등)&lt;/li&gt;
-  &lt;li&gt;/sbin: 필수 시스템 바이너리 (init, ip, mount 등)&lt;/li&gt;
-  &lt;li&gt;/usr/bin: 대부분의 명령과 실행 파일&lt;/li&gt;
-  &lt;li&gt;/opt: 선택 가능한 응용 프로그램 패키지&lt;/li&gt;
-  &lt;li&gt;/usr/local: 로컬 프로그램이나 환경설정 데이터&lt;/li&gt;
-  &lt;li&gt;/etc: 시스템에 필수적인 시작 및 설정 파일&lt;/li&gt;
-  &lt;li&gt;/var/log: 시스템 로그 파일&lt;/li&gt;
-  &lt;li&gt;/tmp: 재부팅 시 삭제 될 수 있는 임시 파일&lt;/li&gt;
+  &lt;li&gt;/bin:
+    &lt;ul&gt;
+      &lt;li&gt;모든 사용자에게 제공하는 명령어 바이너리 (cat, ls, cp 등)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/sbin:
+    &lt;ul&gt;
+      &lt;li&gt;필수 시스템 바이너리 (init, ip, mount 등)&lt;/li&gt;
+      &lt;li&gt;시스템 관리자 권한으로 실행해야함&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/usr/bin:
+    &lt;ul&gt;
+      &lt;li&gt;대부분의 명령과 실행 파일&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/opt:
+    &lt;ul&gt;
+      &lt;li&gt;선택 가능한 응용 프로그램 패키지&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/usr/local:
+    &lt;ul&gt;
+      &lt;li&gt;로컬 프로그램이나 환경설정 데이터&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/etc:
+    &lt;ul&gt;
+      &lt;li&gt;시스템에 필수적인 시작 및 설정 파일&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/var/log:
+    &lt;ul&gt;
+      &lt;li&gt;시스템 로그 파일&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/tmp:
+    &lt;ul&gt;
+      &lt;li&gt;재부팅 시 삭제 될 수 있는 임시 파일&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;/lib&lt;/li&gt;
+  &lt;li&gt;/procs&lt;/li&gt;
+  &lt;li&gt;/sys&lt;/li&gt;
+  &lt;li&gt;/dev&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h1 id=&quot;파일-타입&quot;&gt;파일 타입&lt;/h1&gt;
@@ -726,27 +981,47 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
     &lt;p&gt;크게 일반 파일, 디렉토리, 하드링크, 소프트링크&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;하드링크는 디스크에 저장된 데이터를 직접 가리킴&lt;/li&gt;
-  &lt;li&gt;소프트링크는 원본 파일의 이름을 가리키는 링크&lt;/li&gt;
+  &lt;li&gt;소프트링크는 원본 파일의 이름을 가리키는 링크 (소프트 링크 == 심볼릭 링크)
+    &lt;ul&gt;
+      &lt;li&gt;파일의 이름을 가리키기 때문에, 소프트링크 또는 원본 파일을 다른 위치로 옮길 때 참조 관계가 깨지지 않도록 유의해야 한다&lt;/li&gt;
+      &lt;li&gt;(소프트링크 파일만 따로 위치 이동시킬 때는, 원본 파일을 절대 경로로 참조하는게 낫다. )&lt;/li&gt;
+      &lt;li&gt;(소프트링크 파일과 원본 파일이 함께 이동할 때는, 원본 파일을 상대 경로로 참조하는게 낫다)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;아이노드는 정규 파일, 디렉터리 등 파일 시스템에 관한 정보(소유자 그룹, 접근 모드, 파일 형태 등)를 가지고 있다&lt;/li&gt;
+  &lt;li&gt;파일시스템 내의 파일들은 고유한 아이노드 넘버를 통해 식별 가능하다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&amp;lt;/br&amp;gt;&lt;/p&gt;
+
+&lt;ul&gt;
   &lt;li&gt;파일의 수정은 원본, 하드링크, 소프트링크 어느 곳에 하더라도 다른 파일에 다 같이 적용됨&lt;/li&gt;
   &lt;li&gt;원본 파일의 삭제는 하드링크에는 영향을 주지 않음. 소프트링크는 더 이상 가르킬 원본 파일이 없음&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&quot;/images/os_62.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_file_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;h1 id=&quot;스토리지-사용량-명령어&quot;&gt;스토리지 사용량 명령어&lt;/h1&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt;
 
-&lt;h2 id=&quot;df&quot;&gt;df&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;디스크 여유 용량 확인&lt;/li&gt;
-  &lt;li&gt;df -h&lt;/li&gt;
-&lt;/ul&gt;
+&lt;span class=&quot;nb&quot;&gt;ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-ali&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h2 id=&quot;du&quot;&gt;du&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;디스크 사용량 확인&lt;/li&gt;
-  &lt;li&gt;du -h -d 1&lt;/li&gt;
-  &lt;li&gt;h: 사람이 읽기 쉬운 방식, d: depth를 의미. 현재 위치에서 얼마나 파일을 세분화하여 볼 것인지 의미&lt;/li&gt;
-&lt;/ul&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;하드링크 파일을 만들고 싶은 타겟 파일의 이름] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;만들어질 하드링크 파일의 이름]
+
+&lt;span class=&quot;nb&quot;&gt;ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;소프트링크 파일을 만들고 싶은 타겟 파일의 이름] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;만들어질 소프트링크 파일의 이름] 
+&lt;span class=&quot;c&quot;&gt;# 보통 대부분 소프트링크 많이 사용&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# 하드링크는 만들어도 표가 별로 안남&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;stat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 파일에 관한 정보 출력&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;nb&quot;&gt;ls
+touch
+mv&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
                 <pubDate>Wed, 06 Mar 2024 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/linux-file</link>
@@ -780,13 +1055,24 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
           &lt;li&gt;&lt;a href=&quot;#파일-복사&quot; id=&quot;markdown-toc-파일-복사&quot;&gt;파일 복사&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#파일-이동-잘라내기&quot; id=&quot;markdown-toc-파일-이동-잘라내기&quot;&gt;파일 이동 (잘라내기)&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#파일-이름-변경&quot; id=&quot;markdown-toc-파일-이름-변경&quot;&gt;파일 이름 변경&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#파일-내용-수정&quot; id=&quot;markdown-toc-파일-내용-수정&quot;&gt;파일 내용 수정&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#파일-편집&quot; id=&quot;markdown-toc-파일-편집&quot;&gt;파일 편집&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#파일-내용에서-원하는-문자열-찾기&quot; id=&quot;markdown-toc-파일-내용에서-원하는-문자열-찾기&quot;&gt;파일 내용에서 원하는 문자열 찾기&lt;/a&gt;&lt;/li&gt;
           &lt;li&gt;&lt;a href=&quot;#파일-찾기&quot; id=&quot;markdown-toc-파일-찾기&quot;&gt;파일 찾기&lt;/a&gt;&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#압축-관련-명령어&quot; id=&quot;markdown-toc-압축-관련-명령어&quot;&gt;압축 관련 명령어&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#패키지-매니저-관련-명령어&quot; id=&quot;markdown-toc-패키지-매니저-관련-명령어&quot;&gt;패키지 매니저 관련 명령어&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#압축-관련-명령어&quot; id=&quot;markdown-toc-압축-관련-명령어&quot;&gt;압축 관련 명령어&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#파일-압축&quot; id=&quot;markdown-toc-파일-압축&quot;&gt;파일 압축&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#압축-풀기&quot; id=&quot;markdown-toc-압축-풀기&quot;&gt;압축 풀기&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#파일-묶기&quot; id=&quot;markdown-toc-파일-묶기&quot;&gt;파일 묶기&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#파일-풀기&quot; id=&quot;markdown-toc-파일-풀기&quot;&gt;파일 풀기&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#파일-묶어서-압축하기&quot; id=&quot;markdown-toc-파일-묶어서-압축하기&quot;&gt;파일 묶어서 압축하기&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#묶여서-압축된-파일-풀기&quot; id=&quot;markdown-toc-묶여서-압축된-파일-풀기&quot;&gt;묶여서 압축된 파일 풀기&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#패키지-매니저-관련-명령어&quot; id=&quot;markdown-toc-패키지-매니저-관련-명령어&quot;&gt;패키지 매니저 관련 명령어&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#debian-계열-ubuntu&quot; id=&quot;markdown-toc-debian-계열-ubuntu&quot;&gt;Debian 계열 (Ubuntu)&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
@@ -805,7 +1091,7 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
 
 &lt;h3 id=&quot;디렉터리-생성&quot;&gt;디렉터리 생성&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;생성할 디렉터리 이름
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mkdir&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;생성할 디렉터리 이름]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;디렉터리-내에-있는-목록-조회&quot;&gt;디렉터리 내에 있는 목록 조회&lt;/h3&gt;
@@ -820,14 +1106,17 @@ ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-al&lt;/span&gt;
 
 &lt;h3 id=&quot;디렉터리-삭제&quot;&gt;디렉터리 삭제&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; 삭제할 디렉터리 이름
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-rf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;삭제할 디렉터리 이름]
+
+&lt;span class=&quot;c&quot;&gt;# r: recursive&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# f: force&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;디렉터리-이동&quot;&gt;디렉터리 이동&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;디렉터리 이름
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;디렉터리 이름]
 
 &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; .. &lt;span class=&quot;c&quot;&gt;# 상위 디렉터리로 이동&lt;/span&gt;
 
@@ -844,58 +1133,164 @@ ls&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-al&lt;/span&gt;
 
 &lt;h3 id=&quot;파일-생성&quot;&gt;파일 생성&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;touch &lt;/span&gt;생성할 파일의 이름 &lt;span class=&quot;c&quot;&gt;# 파일 생성 (이미 존재하면 실행하지 않음)&lt;/span&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;touch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;생성할 파일의 이름] &lt;span class=&quot;c&quot;&gt;# 파일 생성 (이미 존재하면 실행하지 않음)&lt;/span&gt;
 
-&lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;원하는 문자열 &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; 생성할 파일의 이름 &lt;span class=&quot;c&quot;&gt;# 문자열 내용을 담은 파일 생성&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;원하는 문자열] &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;생성할 파일의 이름] &lt;span class=&quot;c&quot;&gt;# 문자열 내용을 담은 파일 생성 (이미 존재하면 덮어씀)&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;원하는 문자열] &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;생성할 파일의 이름] &lt;span class=&quot;c&quot;&gt;# 문자열 내용을 담은 파일 생성 (이미 존재하면 뒤에 내용 덧붙임)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_8.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_10.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
 &lt;h3 id=&quot;파일-삭제&quot;&gt;파일 삭제&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;rm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;삭제하고 싶은 파일의 이름]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_11.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;파일-내용-출력&quot;&gt;파일 내용 출력&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;head&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;tail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_12.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;파일-복사&quot;&gt;파일 복사&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;복사하고 싶은 파일의 이름] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;새로 만들 파일의 이름]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_13.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;파일-이동-잘라내기&quot;&gt;파일 이동 (잘라내기)&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;이동시키고 싶은 파일의 이름] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;이동할 디렉터리] &lt;span class=&quot;c&quot;&gt;# 같은 이름의 파일이 있으면 덮어씀&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;이동시키고 싶은 파일의 이름] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;이동할 디렉터리]/[새로운 파일 이름] &lt;span class=&quot;c&quot;&gt;# 이동시키면서 파일명을 바꿀 수도 있음. 그래서 그냥 파일명 바꾸는 용도로 사용하기도 함&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_14.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_15.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;파일-이름-변경&quot;&gt;파일 이름 변경&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;새로운 파일명]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;파일-내용-수정&quot;&gt;파일 내용 수정&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_16.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;h3 id=&quot;파일-편집&quot;&gt;파일 편집&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;문자열] &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;편집할 파일의 이름] &lt;span class=&quot;c&quot;&gt;# 간단하게 문자열을 기존 파일의 내용 뒤에 추가만 하고 싶은 경우&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;편집할 파일의 이름] &lt;span class=&quot;c&quot;&gt;# 표준입력으로 파일에 내용 추가. 종료는 Ctrl + D&lt;/span&gt;
+
+nano &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;편집할 파일의 이름] &lt;span class=&quot;c&quot;&gt;# nano 에디터를 통한 파일 편집 (nano는 리눅스 기본 에디터)&lt;/span&gt;
+vim &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;편집할 파일의 이름] &lt;span class=&quot;c&quot;&gt;# vim 에디터를 통한 파일 편집 (vim 에디터는 설치해야함) (vim 에디터는 따로 다룰 예정)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;파일-내용에서-원하는-문자열-찾기&quot;&gt;파일 내용에서 원하는 문자열 찾기&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;찾고 싶은 문자열] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;찾고 싶은 문자열]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_17.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_18.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;파일-찾기&quot;&gt;파일 찾기&lt;/h3&gt;
 
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;find &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 현재 디렉터리와 모든 하위 디렉터리에 있는 디렉터리/파일명 출력&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;탐색할 최상위 경로] &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# 하위 경로에 대해서도 모두 탐색함&lt;/span&gt;
+
+find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;탐색할 최상위 경로] &lt;span class=&quot;nt&quot;&gt;-name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;nt&quot;&gt;-depth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;깊이]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_19.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_20.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;압축-관련-명령어&quot;&gt;압축 관련 명령어&lt;/h2&gt;
 
+&lt;h3 id=&quot;파일-압축&quot;&gt;파일 압축&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;gzip&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_21.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;압축-풀기&quot;&gt;압축 풀기&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;gzip&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명].gz
+
+&lt;span class=&quot;nb&quot;&gt;gunzip&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명].gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_26.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;파일-묶기&quot;&gt;파일 묶기&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-cvf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명].tar &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;묶고 싶은 파일/디렉터리]
+
+&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-cvf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명].tar &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;묶고 싶은 파일/디렉터리] &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;묶고 싶은 파일/디렉터리] &lt;span class=&quot;c&quot;&gt;# 여러 개 나열해도됨&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_22.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;파일-풀기&quot;&gt;파일 풀기&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-xvf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명].tar
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_23.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;파일-묶어서-압축하기&quot;&gt;파일 묶어서 압축하기&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-zcvf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명].tar.gz &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;묶어서 압축하고 싶은 파일/디렉터리]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_24.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;묶여서-압축된-파일-풀기&quot;&gt;묶여서 압축된 파일 풀기&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;tar&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-zxvf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명].tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# tar 관련 옵션
+-c : tar 로 묶는다
+-x : tar 를 푼다
+-z : gzip 압축/푸는 경우
+-v : 진행 상황을 자세히 본다
+-f : 압축을 풀 파일을 지정한다
+-C : 압축을 풀 위치를 지정한다
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/os_linux_basic_25.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
 &lt;h2 id=&quot;패키지-매니저-관련-명령어&quot;&gt;패키지 매니저 관련 명령어&lt;/h2&gt;
+
+&lt;h3 id=&quot;debian-계열-ubuntu&quot;&gt;Debian 계열 (Ubuntu)&lt;/h3&gt;
+
+&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;apt &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;설치할 패키지명]
+apt remove &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;삭제할 패키지명]
+
+apt update &lt;span class=&quot;c&quot;&gt;# 패키지들 업데이트&lt;/span&gt;
+
+apt list &lt;span class=&quot;nt&quot;&gt;--installed&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# 설치된 패키지 목록&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 </description>
                 <pubDate>Mon, 04 Mar 2024 21:01:35 +0900</pubDate>
                 <link>http://localhost:4000/linux-basic-command</link>

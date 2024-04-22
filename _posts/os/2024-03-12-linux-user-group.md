@@ -72,6 +72,6 @@ sudo adduser [사용자명] --ingroup [그룹명]
 
 ```sh
 chmod 664 [파일명]
-chomod g+w [파일명] # group에 해당하는 유저들에게 쓰기(w)권한 부여
+chmod g+w [파일명] # group에 해당하는 유저들에게 쓰기(w)권한 부여
 chmod go+rx [파일명] # group과 ohters에 헤당하는 유저들에게 읽기(r) 실행(x) 권한 부여
 ```
