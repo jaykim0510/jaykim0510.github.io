@@ -22,7 +22,7 @@ tag: nextjs
 - 데이터 패칭은 데이터를 불러(fetch)오는 것을 말한다
 - 데이터 패칭은 클라이언트 단에서 할 수도 있고, 서버 단에서 할 수도 있다
 
-</br>
+<br>
 
 - Next.js의 확장된 `fetch` 함수를 통해서도 데이터 패칭을 할 수 있지만, Tanstack Query 라이브러리를 이용하면 더 세밀한 적용이 가능하며 무한스크롤과 같은 기능을 쉽게 구현할 수 있다는 장점이 있다
 - 또한 Tanstack Query는 리액트뿐만 아니라 Vue, Svelte, Angulary 같은 다른 프론트엔드 프레임워크도 지원하기 때문에, Tanstack Query를 잘 배워두면 어떤 프레임워크에서든 데이터 패칭을 일관되게 사용할 수 있다
@@ -37,7 +37,7 @@ npm i @tanstack/react-query@5
 - 클라이언트의 요청에 의해 데이터를 불러올 수 있는데, Tanstack Query에서는 이를 쿼리(query)라고 한다
 - Next.js의 클라이언트 컴포넌트에서 데이터 패칭은 쿼리를 통해 이루어진다
 
-</br>
+<br>
 
 - Tanstack Query는 요청 함수(queryFn)가 패칭한 데이터를 유니크 키(queryKey) 값을 통해 식별한다
 - 키(queryKey)는 반드시 배열 형태여야 한다
@@ -251,7 +251,7 @@ export default function Posts() {
 
 - Let's assume we are using the default gcTime of 5 minutes and the default staleTime of 0.
 
-</br>
+<br>
 
 - A new instance of `useQuery({ queryKey: ['todos'], queryFn: fetchTodos })` mounts.
   - Since no other queries have been made with the `['todos']` query key, this query will show a hard loading state and make a network request to fetch the data.

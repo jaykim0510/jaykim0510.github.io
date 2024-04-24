@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>[Backend Thoery] 실시간 통신</title>
+  <title>[Backend Thoery] 웹 소켓</title>
   <meta name='description' content='Menca personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/backend_theory-sse">
+  <link rel="canonical" href="http://localhost:4000/backend_theory-message-web-socket">
   <link rel="alternate" type="application/rss+xml" title="Jay&#39;s Cookbook" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="[Backend Thoery] 실시간 통신 – Jay's Cookbook">
+  <meta name="twitter:title" content="[Backend Thoery] 웹 소켓 – Jay's Cookbook">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/backend_theory_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="[Backend Thoery] 실시간 통신 – Jay's Cookbook">
+  <meta property="og:title" content="[Backend Thoery] 웹 소켓 – Jay's Cookbook">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -994,7 +994,7 @@ Table of Contents
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/backend_theory_logo.png" alt="[Backend Thoery] 실시간 통신">
+          <img class="lazy" data-src="/images/backend_theory_logo.png" alt="[Backend Thoery] 웹 소켓">
         </div>
       </div>
       
@@ -1018,7 +1018,7 @@ Table of Contents
             
           </div>
             
-          <h1 class="post__title">[Backend Thoery] 실시간 통신</h1>
+          <h1 class="post__title">[Backend Thoery] 웹 소켓</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -1027,7 +1027,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2023-12-30T21:01:35+09:00">30 Dec 2023</time>
+              <time class="post__date" datetime="2024-03-25T21:01:35+09:00">25 Mar 2024</time>
             </div>
           </div>
   
@@ -1044,16 +1044,6 @@ Table of Contents
 
 
   
-
-  
-
-  
-
-  
-
-  
-
-  
   	
   	
   	
@@ -1065,10 +1055,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/backend_theory-pagination" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Backend Thoery] 페이지네이션</a>
+      <a href="/backend_theory-message-queue" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Backend Thoery] 메세지 큐</a>
     
     
-      <a href="/backend_theory-security" class="pagination__next pagination__item"><span class="prev_next"></span>[Backend Thoery] 웹서비스 보안<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">끝</a>
     
   </div>
 
@@ -1080,89 +1070,301 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
-  <li><a href="#실시간-통신" id="markdown-toc-실시간-통신">실시간 통신</a></li>
-  <li><a href="#polling" id="markdown-toc-polling">Polling</a></li>
-  <li><a href="#long-polling" id="markdown-toc-long-polling">Long Polling</a></li>
-  <li><a href="#websocket" id="markdown-toc-websocket">WebSocket</a></li>
-  <li><a href="#sse-server-sent-event" id="markdown-toc-sse-server-sent-event">SSE (Server-Sent-Event)</a></li>
-  <li><a href="#use-cases" id="markdown-toc-use-cases">Use Cases</a></li>
+  <li><a href="#웹소켓-기초-지식" id="markdown-toc-웹소켓-기초-지식">웹소켓 기초 지식</a>    <ul>
+      <li><a href="#tcp" id="markdown-toc-tcp">TCP</a></li>
+      <li><a href="#소켓" id="markdown-toc-소켓">소켓</a></li>
+      <li><a href="#웹소켓" id="markdown-toc-웹소켓">웹소켓</a></li>
+    </ul>
+  </li>
+  <li><a href="#socketio" id="markdown-toc-socketio">Socket.IO</a>    <ul>
+      <li><a href="#이벤트-기반" id="markdown-toc-이벤트-기반">이벤트 기반</a></li>
+      <li><a href="#구성-요소" id="markdown-toc-구성-요소">구성 요소</a>        <ul>
+          <li><a href="#서버-객체" id="markdown-toc-서버-객체">서버 객체</a></li>
+          <li><a href="#소켓-객체" id="markdown-toc-소켓-객체">소켓 객체</a>            <ul>
+              <li><a href="#id" id="markdown-toc-id">id</a></li>
+              <li><a href="#rooms" id="markdown-toc-rooms">rooms</a></li>
+              <li><a href="#connected" id="markdown-toc-connected">connected</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#트래픽-구분" id="markdown-toc-트래픽-구분">트래픽 구분</a>        <ul>
+          <li><a href="#broadcasting" id="markdown-toc-broadcasting">Broadcasting</a></li>
+          <li><a href="#rooms-1" id="markdown-toc-rooms-1">Rooms</a></li>
+          <li><a href="#namespaces" id="markdown-toc-namespaces">Namespaces</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
   <li><a href="#참고" id="markdown-toc-참고">참고</a></li>
 </ul>
 
 <hr />
 
-<h1 id="실시간-통신">실시간 통신</h1>
+<h1 id="웹소켓-기초-지식">웹소켓 기초 지식</h1>
+
+<h2 id="tcp">TCP</h2>
 
 <ul>
-  <li>새로운 데이터 또는 변경된 데이터가 발생할 때마다 <strong>클라이언트의 요청 없이도</strong> 서버에서 데이터를 보내고 싶은 경우가 있다</li>
-  <li>ex. 주식 가격, 실시간 알림, 채팅 메세지 등</li>
-  <li>실시간 통신을 구현하는 방법에는 대표적으로 Polling, WebSocket, SSE 방식이 있다</li>
+  <li>웹 소켓은 전송 계층(Transport Layer, L4)으로 TCP를 사용한다</li>
+  <li>TCP는 연결 지향적이다</li>
+  <li>TCP는 데이터의 순서를 보장한다는 특징이 있다</li>
 </ul>
 
-<h1 id="polling">Polling</h1>
+<h2 id="소켓">소켓</h2>
 
 <ul>
-  <li>간단하게, 클라이언트가 서버에게 주기적으로 요청을 보내 새로운 데이터를 받아오는 방식이다</li>
-  <li>하지만, 실시간성을 위해 너무 자주 요청을 보내면 서버에 부하가 생기게 되고, 요청 간격이 길어지면 또 실시간성이 떨어진다는 단점이 있다</li>
+  <li>소켓은 프로세스간의 통신을 위한 엔드포인트 역할을 하는 가상의 네트워크 장비 또는 소프트웨어를 말한다</li>
 </ul>
 
-<h1 id="long-polling">Long Polling</h1>
+<h2 id="웹소켓">웹소켓</h2>
 
 <ul>
-  <li>Polling과 비슷하게 클라이언트가 주기적으로 요청을 보낸다</li>
-  <li>차이점은, 서버가 유효한 응답을 보낼 때 까지 클라이언트는 연결을 유지하고 대기한다</li>
-  <li>클라이언트는 서버로 부터 응답을 받으면 다시 다음 응답을 위해 요청을 보낸다</li>
-  <li>(무지성으로 요청을 보내는 방식에서, 유효한 응답을 받은 경우에만 요청을 보내는 방식으로 발전됐다)</li>
+  <li>웹소켓은 <strong>소켓 프로그래밍을 통해</strong> 응용 계층(Application Layer, L7)의 프로토콜 역할을 대신할 수 있다</li>
+  <li>웹소켓은 <strong>양방향 통신을 위해 사용하는 대표적인 응용 계층의 프로토콜</strong>이다</li>
+  <li>이러한 프로토콜을 <strong>WS 프로토콜</strong>(cf. HTTP 프로토콜)이라 한다</li>
+  <li>WS 프로토콜은 서버 또는 클라이언트가 연결을 끊기 전까지 <strong>연결이 계속 유지</strong>된다</li>
 </ul>
 
-<h1 id="websocket">WebSocket</h1>
+<h1 id="socketio">Socket.IO</h1>
 
 <ul>
-  <li>웹소켓은 단방향이 아닌 양방향 통신 방식이다</li>
-  <li>다른 방식들은 모두 응용 계층에서 HTTP 프로토콜을 사용하지만, 웹소켓은 그 자체로 하나의 프로토콜이며 WS 프로토콜이라 한다</li>
-  <li>웹소켓의 전송 계층은 TCP이다</li>
+  <li>양방향, 이벤트 기반의 웹소켓 통신을 제공해주는 라이브러리이다</li>
+  <li>클라이언트에서의 WebSocket API, 서버에서의 ws 라이브러리 조합은 조금 더 low-level 에서 다룰 수 있지만, 그만큼 더 복잡하다</li>
+  <li>또 Socket.IO는 다양한 프로그래밍 언어를 지원하기 때문에 활용성 측면에서도 좋다</li>
+  <li>Socket.IO는 WebSocket 프로토콜에 추가로 몇 가지 메타데이터가 더해지기 때문에, WebSocket 클라이언트로 Socket.IO 서버와 연결이 불가능하다. 그래서 Socket.IO를 사용한다면 클라이언트, 서버 모두 Socket.IO 라이브러리로 구현해야 한다</li>
 </ul>
 
-<p><img src="/images/socket_2.png" alt="" /></p>
+<h2 id="이벤트-기반">이벤트 기반</h2>
 
-<div class="bell-para">
-    <div class="bell-bar">
-      <i class="fa-solid fa-bell"></i>
-      소켓(Socket)
-    </div>
-    <div class="bell-content">
-      <ul>
-        <li>소켓은 응용 계층에서 프로세스간의 통신을 위한 엔드포인트를 제공하는 소프트웨어다</li>
-        <li>프로세스는 같은 서버에 있을 수도 있고 서로 다른 서버에 있을 수도 있다</li>
-        <li>클라이언트-서버는 서로 다른 서버의 프로세스간 통신이 된다</li>
-        <li>유닉스에서의 IPC는 같은 서버의 프로세스간 통신이 된다</li>
-        <li>소켓은 결국 어떤 종류의 통신이든 필요로 하는 가상의 네트워크 장비이다</li>
-        <li>SSH, FTP, HTTP, 웹소켓 통신과 같은 모든 응용 계층에서의 통신은 결국 소켓을 사용한다</li>
-        <li>소켓 프로그래밍을 통해 HTTP와 같은 단방향 통신이 아닌 양방향 통신을 가능하게 하는 프로토콜을 직접 만들어 쓸 수도 있다(ex. 웹소켓)</li>
-        <li>각 소켓은 IP주소와 Port번호로 이루어진 특정 주소를 가지고 있다</li>
-      </ul>
-    </div>
-</div>
-
-<h1 id="sse-server-sent-event">SSE (Server-Sent-Event)</h1>
+<p><img src="/images/backend_theory_ws_1.png" alt="" /></p>
 
 <ul>
-  <li>서버에서 발생(publish)한 이벤트를 클라이언트에서 구독(subscribe)하는 방식이다</li>
-  <li>최초의 연결만 클라이언트의 요청에 의해 발생되고, 이 후에는 클라이언트의 요청을 통한 폴링(polling)방식이 아닌, 서버가 알아서 이벤트를 푸싱(pushing)하는 방식으로  통신이 이루어진다</li>
+  <li>Socket.IO는 이벤트 기반 통신이다</li>
+  <li>서버가 클라이언트의 특정 이벤트에 데이터를 보내려면, 클라이언트에는 해당 이벤트가 등록되어 있어야 한다</li>
+  <li>반대로 클라이언트가 서버의 특정 이벤트에 데이터를 보내려면, 서버에 해당 이벤트가 등록되어 있어야 한다</li>
+  <li>그래서 만약 서버와 클라이언트가 서로 송수신하는 구조라면, 양쪽에 모두 해당 이벤트를 등록해야 한다</li>
 </ul>
 
-<h1 id="use-cases">Use Cases</h1>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 서버</span>
+
+<span class="k">import</span> <span class="nx">express</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">express</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">http</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">http</span><span class="dl">'</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Server</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">socket.io</span><span class="dl">"</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">()</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">port</span> <span class="o">=</span> <span class="mi">8000</span>
+
+<span class="kd">const</span> <span class="nx">io</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span><span class="p">(</span><span class="nx">server</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">cors</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">origin</span><span class="p">:</span> <span class="dl">'</span><span class="s1">http://127.0.0.1:5500</span><span class="dl">'</span>
+    <span class="p">}</span>
+<span class="p">});</span>
+  
+<span class="c1">// c)</span>
+<span class="nx">io</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">connect</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">// connect 이벤트의 콜백함수는 socket을 인자로 받는다</span>
+    <span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">sayHello</span><span class="dl">'</span><span class="p">,</span> <span class="s2">`Hello </span><span class="p">${</span><span class="nx">socket</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="s2"> from. Server`</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="nx">server</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="nx">port</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">`Listening`</span><span class="p">)</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- 클라이언트 --&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"module"</span><span class="nt">&gt;</span>
+  <span class="k">import</span> <span class="p">{</span> <span class="nx">io</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">https://cdn.socket.io/4.7.5/socket.io.esm.min.js</span><span class="dl">"</span><span class="p">;</span>
+  
+  <span class="c1">// a)</span>
+  <span class="kd">const</span> <span class="nx">socket</span> <span class="o">=</span> <span class="nx">io</span><span class="p">(</span><span class="dl">"</span><span class="s2">http://localhost:8000</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span>
+  <span class="p">});</span>
+  
+  <span class="c1">// b)</span>
+  <span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">connect</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Connected!, from. Client</span><span class="dl">"</span><span class="p">)</span>
+  <span class="p">})</span>
+  
+  <span class="c1">// d)</span>
+  <span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">sayHello</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+  <span class="p">})</span>
+  
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
 
 <ul>
-  <li>채팅 시스템처럼 데이터를 양방향으로 주고 받아야 하는 경우에는 웹소켓을 사용한다</li>
-  <li>주식 가격처럼 데이터를 받기만 하고, 업데이트가 잦은 경우에는 SSE를 사용한다</li>
+  <li>a) 클라이언트에서 <code class="language-plaintext highlighter-rouge">socket</code> 객체가 생성되면, Socket.IO는 연결 요청을 서버에 보낸다</li>
+  <li>b) 연결에 성공하면 클라이언트에서의 <code class="language-plaintext highlighter-rouge">connect</code> 이벤트가 트리거 되고 <code class="language-plaintext highlighter-rouge">console.log("Connected!, from. Client")</code> 가 실행된다</li>
+  <li>c) 마찬가지로 서버에서도 <code class="language-plaintext highlighter-rouge">connect</code> 이벤트가 트리거 되고 <code class="language-plaintext highlighter-rouge">sayHello</code> 이벤트를 리슨하고 있는 클라이언트에 메세지를 전송한다</li>
+  <li>d) 클라이언트에는 <code class="language-plaintext highlighter-rouge">sayHello</code> 이벤트를 등록해뒀다. 메세지를 출력한다</li>
 </ul>
+
+<p><img src="/images/backend_theory_ws_2.png" alt="" /></p>
+
+<p><br /></p>
+
+<ul>
+  <li>이렇게 Socket.IO 에서는 클라이언트와 서버가 서로의 이벤트를 트리거 하는 방식으로 통신한다</li>
+</ul>
+
+<h2 id="구성-요소">구성 요소</h2>
+
+<h3 id="서버-객체">서버 객체</h3>
+
+<ul>
+  <li>보통 <code class="language-plaintext highlighter-rouge">io</code> 라고 변수명을 정한다</li>
+  <li>서버 객체를 생성할 때, 포트번호, cors 등의 설정을 추가할 수 있다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">Server</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">socket.io</span><span class="dl">"</span><span class="p">;</span>
+
+<span class="kd">const</span> <span class="nx">io</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Server</span><span class="p">({</span> <span class="cm">/* options */</span> <span class="p">});</span>
+</code></pre></div></div>
+
+<h3 id="소켓-객체">소켓 객체</h3>
+
+<ul>
+  <li>서버 사이드 소켓 객체가 있고, 클라이언트 사이드 소켓 객체가 있다</li>
+  <li>공통적인 속성(ex. <code class="language-plaintext highlighter-rouge">id</code>), 메서드(ex. <code class="language-plaintext highlighter-rouge">emit</code>, <code class="language-plaintext highlighter-rouge">on</code>, <code class="language-plaintext highlighter-rouge">once</code>)도 있고, 각각이 별도로 가지는 속성, 메서드도 있다</li>
+  <li>소켓 객체에 원하는 어떤 속성도 추가할 수 있다 (ex. user)</li>
+  <li>연결(connect), 연결 실패(connect_error) 또는 연결 끊기(disconnect, disconnecting)과 같은 예약된 이벤트가 있다</li>
+</ul>
+
+<h4 id="id">id</h4>
+
+<ul>
+  <li>소켓 식별자</li>
+  <li>공통적인 속성이다</li>
+  <li>소켓은 연결시 랜덤 문자열의 <code class="language-plaintext highlighter-rouge">id</code>를 가지며 이 값은 서버 사이드와 클라이언트 사이드의 소켓 객체가 서로 동기화된다</li>
+  <li>연결 상태 복구가 활성화되지 않은 경우, 재연결 될 때마다 새로운 <code class="language-plaintext highlighter-rouge">id</code> 값을 부여받는다</li>
+  <li>브라우저 탭마다 서로 다른 <code class="language-plaintext highlighter-rouge">id</code>를 가진다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// server-side</span>
+<span class="nx">io</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">connection</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">socket</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span> <span class="c1">// ojIckSD2jqNzOqIrAGzL</span>
+<span class="p">});</span>
+
+<span class="c1">// client-side</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">connect</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">socket</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span> <span class="c1">// ojIckSD2jqNzOqIrAGzL</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h4 id="rooms">rooms</h4>
+
+<ul>
+  <li>소켓이 현재 속해있는 방들의 목록(rooms)을 가지는 Set 자료구조</li>
+  <li>서버 사이드 소켓 객체가 가지는 속성이다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">io</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">connection</span><span class="dl">"</span><span class="p">,</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">socket</span><span class="p">.</span><span class="nx">rooms</span><span class="p">);</span> <span class="c1">// Set { &lt;socket.id&gt; }</span>
+  <span class="nx">socket</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="dl">"</span><span class="s2">room1</span><span class="dl">"</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">socket</span><span class="p">.</span><span class="nx">rooms</span><span class="p">);</span> <span class="c1">// Set { &lt;socket.id&gt;, "room1" }</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<h4 id="connected">connected</h4>
+
+<ul>
+  <li>소켓이 연결되어 있는지를 나타내는 불린(boolean) 자료구조</li>
+  <li>클라이언트 사이드 소켓 객체가 가지는 속성이다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">connect</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connected</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="p">});</span>
+
+<span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">"</span><span class="s2">disconnect</span><span class="dl">"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">socket</span><span class="p">.</span><span class="nx">connected</span><span class="p">);</span> <span class="c1">// false</span>
+<span class="p">});</span>
+</code></pre></div></div>
+
+<table>
+  <tbody>
+    <tr>
+      <td>위치</td>
+      <td>서버</td>
+      <td>클라이언트</td>
+    </tr>
+    <tr>
+      <td>속성</td>
+      <td>id, handshake, rooms, data, conn</td>
+      <td>id, connected, io</td>
+    </tr>
+    <tr>
+      <td>메서드</td>
+      <td>emit, on, once, removeListener</td>
+      <td>emit, on, once, off</td>
+    </tr>
+    <tr>
+      <td>이벤트</td>
+      <td>disconnect, disconnecting</td>
+      <td>connect, connect_error, disconnect</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="트래픽-구분">트래픽 구분</h2>
+
+<h3 id="broadcasting">Broadcasting</h3>
+
+<ul>
+  <li>위에서는 지금까지 이벤트를 트리거한 소켓과 통신하는 방법에 대해서 봤다
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">// 서버</span>
+    
+  <span class="nx">io</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">connect</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">socket</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">sayHello</span><span class="dl">'</span><span class="p">,</span> <span class="s2">`Hello </span><span class="p">${</span><span class="nx">socket</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="s2"> from. Server`</span><span class="p">)</span>
+  <span class="p">})</span>
+</code></pre></div>    </div>
+  </li>
+  <li>모든 소켓에게 데이터를 전송할 수도 있다
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">// 서버</span>
+    
+  <span class="nx">io</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">connect</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">io</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">sayHello</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Hello everyone~ Newbie is connected. from. Server</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">})</span>
+</code></pre></div>    </div>
+  </li>
+  <li>이벤트를 트리거한 소켓을 제외한 모든 소켓에게 데이터를 전송할 수도 있다
+    <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">// 서버</span>
+    
+  <span class="nx">io</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="dl">'</span><span class="s1">connect</span><span class="dl">'</span><span class="p">,</span> <span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">socket</span><span class="p">.</span><span class="nx">broadcast</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">sayHello</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Hello previous members~ Newbie is connected. from. Server</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">})</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><img src="/images/backend_theory_ws_3.png" alt="" /></p>
+
+<h3 id="rooms-1">Rooms</h3>
+
+<ul>
+  <li>모든 소켓에게 브로드캐스팅 하는 방식이 아닌, 특정 방(room)에 속해있는 소켓들에만 브로드캐스팅 할수도 있다</li>
+  <li>카카오톡의 대화방과 비슷하다</li>
+  <li>방 만들기(create-room)/방 삭제하기(delete-room)/방 입장하기(join-room)/방 나가기(leave-room)</li>
+  <li>방에 메세지 전송하는 방법은 <code class="language-plaintext highlighter-rouge">emit()</code> 앞에 <code class="language-plaintext highlighter-rouge">to('방 이름')</code> 만 붙여주면 된다</li>
+</ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">io</span><span class="p">.</span><span class="nx">to</span><span class="p">(</span><span class="dl">'</span><span class="s1">방 이름</span><span class="dl">'</span><span class="p">).</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">sayHello</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Hello everyone~ Newbie is connected. from. Server</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// Broadcasting</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">to</span><span class="p">(</span><span class="dl">'</span><span class="s1">방 이름</span><span class="dl">'</span><span class="p">).</span><span class="nx">emit</span><span class="p">(</span><span class="dl">'</span><span class="s1">sayHello</span><span class="dl">'</span><span class="p">,</span> <span class="s2">`Hello </span><span class="p">${</span><span class="nx">socket</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="s2"> from. Server`</span><span class="p">)</span> <span class="c1">// Broadcasting except sender</span>
+</code></pre></div></div>
+
+<h3 id="namespaces">Namespaces</h3>
 
 <h1 id="참고">참고</h1>
 
 <ul>
-  <li><a href="https://amaran-th.github.io/Spring/[Spring]%20Server-Sent%20Events(SSE)/">[Spring] Server-Sent Events(SSE), Amaranth</a></li>
-  <li><a href="https://ko.javascript.info/server-sent-events">Server Sent Events, javascript.info</a></li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">The WebSocket API (WebSockets), mozilla</a></li>
+  <li><a href="https://www.npmjs.com/package/ws">ws: a Node.js WebSocket library, npm</a></li>
+  <li><a href="https://socket.io/">Socket.IO</a></li>
+  <li><a href="https://velog.io/@fejigu/Socket.IO-client#-socketio%EB%9E%80">Socket.IO - client(주요 개념, 작동방식, 트래픽 격리 구분, 이벤트 송수신), fejigu</a></li>
 </ul>
 
     </div>
@@ -1170,16 +1372,6 @@ Table of Contents
   <!--첫 번째 문단-->
 
 
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
   	
@@ -1193,10 +1385,10 @@ Table of Contents
 
   <div class="post_pagination">
     
-      <a href="/backend_theory-pagination" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Backend Thoery] 페이지네이션</a>
+      <a href="/backend_theory-message-queue" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[Backend Thoery] 메세지 큐</a>
     
     
-      <a href="/backend_theory-security" class="pagination__next pagination__item"><span class="prev_next"></span>[Backend Thoery] 웹서비스 보안<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="#" class="pagination__next pagination__item disabled">끝</a>
     
   </div>
 
@@ -1275,6 +1467,62 @@ Table of Contents
             
       
             
+            
+            
+            
+      
+            
+      
+            
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article">
+  <div class="article__inner">
+    <div class="article__head">
+      <time class="article__date" datetime="2024-03-15T21:01:35+09:00">15 Mar 2024</time>
+
+      
+
+      
+      <a class="article__image" href="/backend_theory-message-queue">
+        <img class="lazy" data-src="/images/backend_theory_logo.png" alt="[Backend Thoery] 메세지 큐">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          <a href="/_pages/categories/backend">
+            <div class="article__category_text">
+              backend
+            </div>
+          </a>
+          <a href="/_pages/tags/backend/backend_theory" class="article__tag">backend_theory</a>
+          
+        </div>
+      </div>
+
+      <h2 class="article__title">
+        <a href="/backend_theory-message-queue">[Backend Thoery] 메세지 큐</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
             
             
             
@@ -1936,97 +2184,6 @@ Table of Contents
 
       <h2 class="article__title">
         <a href="/backend_theory-batch">[Backend Thoery] 배치 처리</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article">
-  <div class="article__inner">
-    <div class="article__head">
-      <time class="article__date" datetime="2024-01-14T21:01:35+09:00">14 Jan 2024</time>
-
-      
-
-      
-      <a class="article__image" href="/backend_theory_time">
-        <img class="lazy" data-src="/images/backend_theory_logo.png" alt="[Backend Thoery] Datetime, Timestamp, Timezone">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-      <div class="article__category">
-        <div class="article__category_tag_container">
-          <a href="/_pages/categories/backend">
-            <div class="article__category_text">
-              backend
-            </div>
-          </a>
-          <a href="/_pages/tags/backend/backend_theory" class="article__tag">backend_theory</a>
-          
-        </div>
-      </div>
-
-      <h2 class="article__title">
-        <a href="/backend_theory_time">[Backend Thoery] Datetime, Timestamp, Timezone</a>
       </h2>
 
       
