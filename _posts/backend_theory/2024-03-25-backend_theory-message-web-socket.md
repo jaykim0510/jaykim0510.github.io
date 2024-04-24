@@ -226,6 +226,18 @@ socket.on("disconnect", () => {
 - 모든 소켓에게 브로드캐스팅 하는 방식이 아닌, 특정 방(room)에 속해있는 소켓들에만 브로드캐스팅 할수도 있다
 - 카카오톡의 대화방과 비슷하다
 - 방 만들기(create-room)/방 삭제하기(delete-room)/방 입장하기(join-room)/방 나가기(leave-room)
+
+```js
+io.on("join", (socket) => {
+  socket.join("some room");
+});
+
+io.on("leave", (socket) => {
+  socket.leave("some room");
+});
+```
+
+
 - 방에 메세지 전송하는 방법은 `emit()` 앞에 `to('방 이름')` 만 붙여주면 된다
 
 ```js
