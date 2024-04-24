@@ -248,6 +248,12 @@ socket.to('방 이름').emit('sayHello', `Hello ${socket.id} from. Server`) // B
 
 ### Namespaces
 
+- Room과 비슷하다
+- 차이점은, Room 보다 더 넓은 범위를 가진다. 즉 namespace -> room 순으로 트래픽이 분기된다
+- 예를 들어, authorization이 있는 유저와 없는 유저를 구분하기 위해 namespace를 사용할 수 있다
+
+
+
 # 참고
 
 - [The WebSocket API (WebSockets), mozilla](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
