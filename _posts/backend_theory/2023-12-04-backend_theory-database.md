@@ -25,4 +25,6 @@ tag: backend_theory
 
 # 쿼리문 작성
 
+# 인덱싱
+
 # 마이그레이션

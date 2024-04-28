@@ -5,9 +5,93 @@
         <description>Menca personal blogging theme for Jekyll</description>
         <link>http://localhost:4000/</link>
         <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 24 Apr 2024 18:23:38 +0900</pubDate>
-        <lastBuildDate>Wed, 24 Apr 2024 18:23:38 +0900</lastBuildDate>
+        <pubDate>Sun, 28 Apr 2024 19:40:15 +0900</pubDate>
+        <lastBuildDate>Sun, 28 Apr 2024 19:40:15 +0900</lastBuildDate>
         <generator>Jekyll v4.2.1</generator>
+        
+            <item>
+                <title>[Backend Thoery] Datetime, Timestamp, Timezone</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#datetime&quot; id=&quot;markdown-toc-datetime&quot;&gt;DateTime&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#unix-timestamp&quot; id=&quot;markdown-toc-unix-timestamp&quot;&gt;Unix TimeStamp&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#time-zone&quot; id=&quot;markdown-toc-time-zone&quot;&gt;Time Zone&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#gmt&quot; id=&quot;markdown-toc-gmt&quot;&gt;GMT&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#utc&quot; id=&quot;markdown-toc-utc&quot;&gt;UTC&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#local-time-zone&quot; id=&quot;markdown-toc-local-time-zone&quot;&gt;Local Time Zone&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;datetime&quot;&gt;DateTime&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;날짜/시간 정보를 표현하는 일반적인 표기법이다&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1000-01-01 00:00:00.000000&lt;/code&gt; ~ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;9999-12-31 23:59:59.999999&lt;/code&gt; 까지 표기할 수 있다&lt;/li&gt;
+  &lt;li&gt;문자열이며 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;8bytes&lt;/code&gt; 크기를 차지한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;unix-timestamp&quot;&gt;Unix TimeStamp&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;UTC 기준으로 1970년 1월 1일 자정부터 시간이 얼마나 흘렀는지를 밀리세컨(ms) 단위의 정수로 표현한 값이다&lt;/li&gt;
+  &lt;li&gt;(UTC 기준이란 말은 사실상 영국의 현지 시간을 기준으로 했다는 말)&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;1970-01-01 00:00:00.000000&lt;/code&gt; ~ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2038-01-19 03:14:07.000000&lt;/code&gt; 까지 표기할 수 있다&lt;/li&gt;
+  &lt;li&gt;숫자형이며 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;4bytes&lt;/code&gt; 크기를 차지한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;time-zone&quot;&gt;Time Zone&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;시간대(타임존)는 영국의 그리니치 천문대(본초 자오선, 경도 0도)를 기준으로 한 지역에 따른 시간의 차이입니다&lt;/li&gt;
+  &lt;li&gt;협정세계시는 그리니치 표준시(GMT)와 협정 세계시(UTC)로, 교환되서 사용돼 헷갈리는 경우가 있습니다. 실제로 GMT와 UTC는 동일한 시간입니다. 그러나 GMT는 시간대이고 UTC는 시간 표준을 뜻합니다&lt;/li&gt;
+  &lt;li&gt;GMT는 일부 유럽 및 아프리카 국가에서 공식적으로 사용되는 시간대 입니다.&lt;/li&gt;
+  &lt;li&gt;UTC는 어떤 지역의 시간대가 아닙니다. 전 세계 시간대의 기본이 되는 시간 표준입니다. 그래서 공식적으로 UTC를 현지 시간으로 사용하는 국가 나 지역은 없습니다.
+타임존은 동일한 로컬 시간을 따르는 지역을 의미하며, 해당 국가에 의해 법적으로 지정됩니다. &lt;/li&gt;
+  &lt;li&gt;시간대는 지구의 자전에 따른, 지역 사이에 생기는 낮과 밤의 차이를 인위적으로 조정하기 위해 고안된 시간의 구분선을 말하는데요.  이는 영국의 그리니치 천문대를 기준으로 지역에 따른 시간의 차이를 계산하여 적용합니다.&lt;/li&gt;
+  &lt;li&gt;UTC, Asia/Seoul 등의 표기법을 많이 보셨을 텐데, 이 표기법이 바로 해당 시간이 어느 로컬 기준으로 작성했는지를 명시하기 위함입니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;gmt&quot;&gt;GMT&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;영국 런던의 그리니치 천문대에서 측정한 평균태양시를 의미한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;utc&quot;&gt;UTC&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;협정 세계시: &lt;strong&gt;U&lt;/strong&gt;niversal &lt;strong&gt;T&lt;/strong&gt;ime &lt;strong&gt;C&lt;/strong&gt;oordinated&lt;/li&gt;
+  &lt;li&gt;1972년 1월 1일부터 시행된 국제 표준시이며, 1970년 1월 1일 자정을 0 밀리초로 설정하여 기준을 삼아 그 후로 시간의 흐름을 밀리초로 계산한다&lt;/li&gt;
+  &lt;li&gt;영국을 기준(UTC+0:00)으로 각 지역의 시차를 규정한 것이다.&lt;/li&gt;
+  &lt;li&gt;한국은 영국보다 9시간 빠르므로 UTC+9:00이라고 표시한다. 미국 뉴욕은 영국보다 5시간 느리므로 UTC-5:00라고 표시한다&lt;/li&gt;
+  &lt;li&gt;GMT의 기준은 태양이다. 지구의 공전궤도가 타원이고, 지구의 자전축이 기울어져 있기 때문에 하루의 길이는 일정하지가 않다. 그래서 UTC는 태양 대신에 원자시계를 기준으로 한다. 전 세계에 400여개의 원자시계가 서로 데이터를 비교하면서 GMT 오차를 보정해나간다. 이 시간 체계를 ‘국제원자시’(International Atomic Time · IAT 또는 TAI)라고 한다&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;local-time-zone&quot;&gt;Local Time Zone&lt;/h2&gt;
+
+&lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jjhwqqq.tistory.com/292&quot;&gt;UTC, GMT 차이, jjhwqqq&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gngsn.tistory.com/167&quot;&gt;TimeZone, 어렵지 않게 이해하기, ENFJ.dev:티스토리&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://inchan.dev/posts/202403010802/&quot;&gt;typeORM 시간대 설정에 관한 고찰 - typeORM의 dateStrings와 timezone 옵션에 따른 시간대 혼란, inchan.dev&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Fri, 12 Apr 2024 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/backend_theory_time</link>
+                <guid isPermaLink="true">http://localhost:4000/backend_theory_time</guid>
+                
+                <category>backend_theory</category>
+                
+                
+                <category>backend</category>
+                
+            </item>
         
             <item>
                 <title>[Linux]: 리눅스 쉘 스크립트</title>
@@ -495,297 +579,87 @@ This is test3 &lt;span class=&quot;k&quot;&gt;function
             </item>
         
             <item>
-                <title>[Backend Thoery] 웹 소켓</title>
+                <title>[Backend Thoery] 의존성 주입(Dependency Injection)</title>
+                <description>&lt;hr /&gt;
+&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Wed, 10 Apr 2024 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/backend_theory-dependency-injection</link>
+                <guid isPermaLink="true">http://localhost:4000/backend_theory-dependency-injection</guid>
+                
+                <category>backend_theory</category>
+                
+                
+                <category>backend</category>
+                
+            </item>
+        
+            <item>
+                <title>[Backend Thoery] 대용량 트래픽</title>
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
 &lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#웹소켓-기초-지식&quot; id=&quot;markdown-toc-웹소켓-기초-지식&quot;&gt;웹소켓 기초 지식&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#tcp&quot; id=&quot;markdown-toc-tcp&quot;&gt;TCP&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#소켓&quot; id=&quot;markdown-toc-소켓&quot;&gt;소켓&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#웹소켓&quot; id=&quot;markdown-toc-웹소켓&quot;&gt;웹소켓&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#socketio&quot; id=&quot;markdown-toc-socketio&quot;&gt;Socket.IO&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#이벤트-기반&quot; id=&quot;markdown-toc-이벤트-기반&quot;&gt;이벤트 기반&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#구성-요소&quot; id=&quot;markdown-toc-구성-요소&quot;&gt;구성 요소&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#서버-객체&quot; id=&quot;markdown-toc-서버-객체&quot;&gt;서버 객체&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#소켓-객체&quot; id=&quot;markdown-toc-소켓-객체&quot;&gt;소켓 객체&lt;/a&gt;            &lt;ul&gt;
-              &lt;li&gt;&lt;a href=&quot;#id&quot; id=&quot;markdown-toc-id&quot;&gt;id&lt;/a&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;a href=&quot;#rooms&quot; id=&quot;markdown-toc-rooms&quot;&gt;rooms&lt;/a&gt;&lt;/li&gt;
-              &lt;li&gt;&lt;a href=&quot;#connected&quot; id=&quot;markdown-toc-connected&quot;&gt;connected&lt;/a&gt;&lt;/li&gt;
-            &lt;/ul&gt;
-          &lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#트래픽-구분&quot; id=&quot;markdown-toc-트래픽-구분&quot;&gt;트래픽 구분&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#broadcasting&quot; id=&quot;markdown-toc-broadcasting&quot;&gt;Broadcasting&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#rooms-1&quot; id=&quot;markdown-toc-rooms-1&quot;&gt;Rooms&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#namespaces&quot; id=&quot;markdown-toc-namespaces&quot;&gt;Namespaces&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#대용량-트래픽-처리&quot; id=&quot;markdown-toc-대용량-트래픽-처리&quot;&gt;대용량 트래픽 처리&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#대용량-트래픽-처리-개요&quot; id=&quot;markdown-toc-대용량-트래픽-처리-개요&quot;&gt;대용량 트래픽 처리 개요&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#서버-모니터링&quot; id=&quot;markdown-toc-서버-모니터링&quot;&gt;서버 모니터링&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#병목지점과-해결-방법&quot; id=&quot;markdown-toc-병목지점과-해결-방법&quot;&gt;병목지점과 해결 방법&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#참고&quot; id=&quot;markdown-toc-참고&quot;&gt;참고&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;
 
-&lt;h1 id=&quot;웹소켓-기초-지식&quot;&gt;웹소켓 기초 지식&lt;/h1&gt;
-
-&lt;h2 id=&quot;tcp&quot;&gt;TCP&lt;/h2&gt;
+&lt;h1 id=&quot;대용량-트래픽-처리&quot;&gt;대용량 트래픽 처리&lt;/h1&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;웹 소켓은 전송 계층(Transport Layer, L4)으로 TCP를 사용한다&lt;/li&gt;
-  &lt;li&gt;TCP는 연결 지향적이다&lt;/li&gt;
-  &lt;li&gt;TCP는 데이터의 순서를 보장한다는 특징이 있다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;소켓&quot;&gt;소켓&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;소켓은 프로세스간의 통신을 위한 엔드포인트 역할을 하는 가상의 네트워크 장비 또는 소프트웨어를 말한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;웹소켓&quot;&gt;웹소켓&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;웹소켓은 &lt;strong&gt;소켓 프로그래밍을 통해&lt;/strong&gt; 응용 계층(Application Layer, L7)의 프로토콜 역할을 대신할 수 있다&lt;/li&gt;
-  &lt;li&gt;웹소켓은 &lt;strong&gt;양방향 통신을 위해 사용하는 대표적인 응용 계층의 프로토콜&lt;/strong&gt;이다&lt;/li&gt;
-  &lt;li&gt;이러한 프로토콜을 &lt;strong&gt;WS 프로토콜&lt;/strong&gt;(cf. HTTP 프로토콜)이라 한다&lt;/li&gt;
-  &lt;li&gt;WS 프로토콜은 서버 또는 클라이언트가 연결을 끊기 전까지 &lt;strong&gt;연결이 계속 유지&lt;/strong&gt;된다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;socketio&quot;&gt;Socket.IO&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;양방향, 이벤트 기반의 웹소켓 통신을 제공해주는 라이브러리이다&lt;/li&gt;
-  &lt;li&gt;클라이언트에서의 WebSocket API, 서버에서의 ws 라이브러리 조합은 조금 더 low-level 에서 다룰 수 있지만, 그만큼 더 복잡하다&lt;/li&gt;
-  &lt;li&gt;또 Socket.IO는 다양한 프로그래밍 언어를 지원하기 때문에 활용성 측면에서도 좋다&lt;/li&gt;
-  &lt;li&gt;Socket.IO는 WebSocket 프로토콜에 추가로 몇 가지 메타데이터가 더해지기 때문에, WebSocket 클라이언트로 Socket.IO 서버와 연결이 불가능하다. 그래서 Socket.IO를 사용한다면 클라이언트, 서버 모두 Socket.IO 라이브러리로 구현해야 한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;이벤트-기반&quot;&gt;이벤트 기반&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/backend_theory_ws_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Socket.IO는 이벤트 기반 통신이다&lt;/li&gt;
-  &lt;li&gt;서버가 클라이언트의 특정 이벤트에 데이터를 보내려면, 클라이언트에는 해당 이벤트가 등록되어 있어야 한다&lt;/li&gt;
-  &lt;li&gt;반대로 클라이언트가 서버의 특정 이벤트에 데이터를 보내려면, 서버에 해당 이벤트가 등록되어 있어야 한다&lt;/li&gt;
-  &lt;li&gt;그래서 만약 서버와 클라이언트가 서로 송수신하는 구조라면, 양쪽에 모두 해당 이벤트를 등록해야 한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// 서버&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Server&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;socket.io&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;express&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;server&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createServer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8000&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;cors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;origin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;http://127.0.0.1:5500&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-  
-&lt;span class=&quot;c1&quot;&gt;// c)&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// connect 이벤트의 콜백함수는 socket을 인자로 받는다&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;emit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;sayHello&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;`Hello &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; from. Server`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-
-&lt;span class=&quot;nx&quot;&gt;server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;listen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`Listening`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;&amp;lt;!-- 클라이언트 --&amp;gt;&lt;/span&gt;
-
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;script &lt;/span&gt;&lt;span class=&quot;na&quot;&gt;type=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;module&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;https://cdn.socket.io/4.7.5/socket.io.esm.min.js&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-  
-  &lt;span class=&quot;c1&quot;&gt;// a)&lt;/span&gt;
-  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;http://localhost:8000&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-  
-  &lt;span class=&quot;c1&quot;&gt;// b)&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Connected!, from. Client&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-  
-  &lt;span class=&quot;c1&quot;&gt;// d)&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;sayHello&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-  
-&lt;span class=&quot;nt&quot;&gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;a) 클라이언트에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;socket&lt;/code&gt; 객체가 생성되면, Socket.IO는 연결 요청을 서버에 보낸다&lt;/li&gt;
-  &lt;li&gt;b) 연결에 성공하면 클라이언트에서의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;connect&lt;/code&gt; 이벤트가 트리거 되고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;console.log(&quot;Connected!, from. Client&quot;)&lt;/code&gt; 가 실행된다&lt;/li&gt;
-  &lt;li&gt;c) 마찬가지로 서버에서도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;connect&lt;/code&gt; 이벤트가 트리거 되고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sayHello&lt;/code&gt; 이벤트를 리슨하고 있는 클라이언트에 메세지를 전송한다&lt;/li&gt;
-  &lt;li&gt;d) 클라이언트에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sayHello&lt;/code&gt; 이벤트를 등록해뒀다. 메세지를 출력한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/backend_theory_ws_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&amp;lt;/br&amp;gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;이렇게 Socket.IO 에서는 클라이언트와 서버가 서로의 이벤트를 트리거 하는 방식으로 통신한다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;구성-요소&quot;&gt;구성 요소&lt;/h2&gt;
-
-&lt;h3 id=&quot;서버-객체&quot;&gt;서버 객체&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;보통 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;io&lt;/code&gt; 라고 변수명을 정한다&lt;/li&gt;
-  &lt;li&gt;서버 객체를 생성할 때, 포트번호, cors 등의 설정을 추가할 수 있다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Server&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;socket.io&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Server&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/* options */&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;소켓-객체&quot;&gt;소켓 객체&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;서버 사이드 소켓 객체가 있고, 클라이언트 사이드 소켓 객체가 있다&lt;/li&gt;
-  &lt;li&gt;공통적인 속성(ex. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id&lt;/code&gt;), 메서드(ex. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;emit&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;on&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;once&lt;/code&gt;)도 있고, 각각이 별도로 가지는 속성, 메서드도 있다&lt;/li&gt;
-  &lt;li&gt;소켓 객체에 원하는 어떤 속성도 추가할 수 있다 (ex. user)&lt;/li&gt;
-  &lt;li&gt;연결(connect), 연결 실패(connect_error) 또는 연결 끊기(disconnect, disconnecting)과 같은 예약된 이벤트가 있다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&quot;id&quot;&gt;id&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;소켓 식별자&lt;/li&gt;
-  &lt;li&gt;공통적인 속성이다&lt;/li&gt;
-  &lt;li&gt;소켓은 연결시 랜덤 문자열의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id&lt;/code&gt;를 가지며 이 값은 서버 사이드와 클라이언트 사이드의 소켓 객체가 서로 동기화된다&lt;/li&gt;
-  &lt;li&gt;연결 상태 복구가 활성화되지 않은 경우, 재연결 될 때마다 새로운 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id&lt;/code&gt; 값을 부여받는다&lt;/li&gt;
-  &lt;li&gt;브라우저 탭마다 서로 다른 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id&lt;/code&gt;를 가진다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// server-side&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;connection&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ojIckSD2jqNzOqIrAGzL&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;// client-side&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ojIckSD2jqNzOqIrAGzL&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h4 id=&quot;rooms&quot;&gt;rooms&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;소켓이 현재 속해있는 방들의 목록(rooms)을 가지는 Set 자료구조&lt;/li&gt;
-  &lt;li&gt;서버 사이드 소켓 객체가 가지는 속성이다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;connection&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rooms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Set { &amp;lt;socket.id&amp;gt; }&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;room1&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rooms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Set { &amp;lt;socket.id&amp;gt;, &quot;room1&quot; }&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h4 id=&quot;connected&quot;&gt;connected&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;소켓이 연결되어 있는지를 나타내는 불린(boolean) 자료구조&lt;/li&gt;
-  &lt;li&gt;클라이언트 사이드 소켓 객체가 가지는 속성이다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;connected&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// true&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-
-&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;disconnect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;connected&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// false&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;table&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;위치&lt;/td&gt;
-      &lt;td&gt;서버&lt;/td&gt;
-      &lt;td&gt;클라이언트&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;속성&lt;/td&gt;
-      &lt;td&gt;id, handshake, rooms, data, conn&lt;/td&gt;
-      &lt;td&gt;id, connected, io&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;메서드&lt;/td&gt;
-      &lt;td&gt;emit, on, once, removeListener&lt;/td&gt;
-      &lt;td&gt;emit, on, once, off&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;이벤트&lt;/td&gt;
-      &lt;td&gt;disconnect, disconnecting&lt;/td&gt;
-      &lt;td&gt;connect, connect_error, disconnect&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h2 id=&quot;트래픽-구분&quot;&gt;트래픽 구분&lt;/h2&gt;
-
-&lt;h3 id=&quot;broadcasting&quot;&gt;Broadcasting&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;위에서는 지금까지 이벤트를 트리거한 소켓과 통신하는 방법에 대해서 봤다
-    &lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;c1&quot;&gt;// 서버&lt;/span&gt;
-    
-  &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;emit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;sayHello&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;`Hello &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; from. Server`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;li&gt;대용량 트래픽 처리란 다음과 같은 상황에 발생하는 트래픽을 어떻게 처리할 것인지에 관한 분야이다
+    &lt;ul&gt;
+      &lt;li&gt;서비스 사용자의 증가로 인한 &lt;strong&gt;항시적 대용량 트래픽&lt;/strong&gt;: ex. 사용자 수가 많은 서비스를 운영하는 경우&lt;/li&gt;
+      &lt;li&gt;특정 시간에 &lt;strong&gt;일시적으로 급격히 증가하는 트래픽&lt;/strong&gt;: ex. 타임이벤트&lt;/li&gt;
+    &lt;/ul&gt;
   &lt;/li&gt;
-  &lt;li&gt;모든 소켓에게 데이터를 전송할 수도 있다
-    &lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;c1&quot;&gt;// 서버&lt;/span&gt;
-    
-  &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;emit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;sayHello&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Hello everyone~ Newbie is connected. from. Server&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;이벤트를 트리거한 소켓을 제외한 모든 소켓에게 데이터를 전송할 수도 있다
-    &lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;c1&quot;&gt;// 서버&lt;/span&gt;
-    
-  &lt;span class=&quot;nx&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;connect&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;broadcast&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;emit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;sayHello&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Hello previous members~ Newbie is connected. from. Server&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
+  &lt;li&gt;대용량 트래픽을 처리하지 못하면 서비스의 가용성과 사용자 경험이 저하되며, 이는 직접적으로 서비스의 실패로 이어질 수 있다&lt;/li&gt;
+  &lt;li&gt;따라서 대용량 트래픽을 효과적으로 처리하기 위한 백엔드 시스템 설계 전략을 이해하는 것은 매우 중요하다&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;rooms-1&quot;&gt;Rooms&lt;/h3&gt;
+&lt;h1 id=&quot;대용량-트래픽-처리-개요&quot;&gt;대용량 트래픽 처리 개요&lt;/h1&gt;
 
-&lt;h3 id=&quot;namespaces&quot;&gt;Namespaces&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;트래픽을 확인할 수 있는 모니터링 시스템을 갖춘다&lt;/li&gt;
+  &lt;li&gt;부하가 어디서 걸리는지 병목지점을 확인한다&lt;/li&gt;
+  &lt;li&gt;부하 해결한다&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&quot;서버-모니터링&quot;&gt;서버 모니터링&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;서비스 모니터링, 시스템 모니터링&lt;/li&gt;
+  &lt;li&gt;CPU, 메모리, 디스크, 네트워크 사용량&lt;/li&gt;
+  &lt;li&gt;Traffic, Latency, Error, Saturation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;병목지점과-해결-방법&quot;&gt;병목지점과 해결 방법&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;코드 리팩터링&lt;/li&gt;
+  &lt;li&gt;캐시, 메세지 큐&lt;/li&gt;
+  &lt;li&gt;DB 튜닝, 인덱스, 쿼리 성능 개선&lt;/li&gt;
+  &lt;li&gt;MSA&lt;/li&gt;
+  &lt;li&gt;스케일-업, 스케일-아웃&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&quot;참고&quot;&gt;참고&lt;/h1&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API&quot;&gt;The WebSocket API (WebSockets), mozilla&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.npmjs.com/package/ws&quot;&gt;ws: a Node.js WebSocket library, npm&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://socket.io/&quot;&gt;Socket.IO&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://velog.io/@fejigu/Socket.IO-client#-socketio%EB%9E%80&quot;&gt;Socket.IO - client(주요 개념, 작동방식, 트래픽 격리 구분, 이벤트 송수신), fejigu&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://kyungyeon.dev/posts/96&quot;&gt;대용량 트래픽 처리를 위한 대규모 시스템 설계하기, Eric’s DevLog&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://f-lab.kr/insight/backend-system-design-for-high-traffic&quot;&gt;대용량 트래픽 처리를 위한 백엔드 시스템 설계 전략, f-lab&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=b4Ro_2cK9V8&quot;&gt;신입이 어떻게 대규모 트래픽 처리 경험을 쌓아요? ,Youtube JSCODE 박재성 채널 &lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-                <pubDate>Mon, 25 Mar 2024 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/backend_theory-message-web-socket</link>
-                <guid isPermaLink="true">http://localhost:4000/backend_theory-message-web-socket</guid>
+                <pubDate>Fri, 05 Apr 2024 21:01:35 +0900</pubDate>
+                <link>http://localhost:4000/backend_theory-large-traffic</link>
+                <guid isPermaLink="true">http://localhost:4000/backend_theory-large-traffic</guid>
                 
                 <category>backend_theory</category>
                 
@@ -1037,199 +911,41 @@ find &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;최상위 경로] &lt;span cl
             </item>
         
             <item>
-                <title>[Backend Thoery] 메세지 큐</title>
+                <title>[Backend Thoery] 코드의 유지∙보수</title>
                 <description>&lt;hr /&gt;
 &lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#원칙&quot; id=&quot;markdown-toc-원칙&quot;&gt;원칙&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#테스트-코드&quot; id=&quot;markdown-toc-테스트-코드&quot;&gt;테스트 코드&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#정적-분석기&quot; id=&quot;markdown-toc-정적-분석기&quot;&gt;정적 분석기&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#영역-분리&quot; id=&quot;markdown-toc-영역-분리&quot;&gt;영역 분리&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#읽기--쓰기-분리&quot; id=&quot;markdown-toc-읽기--쓰기-분리&quot;&gt;읽기 / 쓰기 분리&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;hr /&gt;
 
+&lt;h1 id=&quot;원칙&quot;&gt;원칙&lt;/h1&gt;
+
+&lt;h1 id=&quot;테스트-코드&quot;&gt;테스트 코드&lt;/h1&gt;
+
+&lt;h1 id=&quot;정적-분석기&quot;&gt;정적 분석기&lt;/h1&gt;
+
+&lt;h1 id=&quot;영역-분리&quot;&gt;영역 분리&lt;/h1&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Local - Dev - QA - Stage - Prod&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;읽기--쓰기-분리&quot;&gt;읽기 / 쓰기 분리&lt;/h1&gt;
 </description>
                 <pubDate>Fri, 15 Mar 2024 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/backend_theory-message-queue</link>
-                <guid isPermaLink="true">http://localhost:4000/backend_theory-message-queue</guid>
+                <link>http://localhost:4000/backend_theory-code-quality</link>
+                <guid isPermaLink="true">http://localhost:4000/backend_theory-code-quality</guid>
                 
                 <category>backend_theory</category>
                 
                 
                 <category>backend</category>
-                
-            </item>
-        
-            <item>
-                <title>[Linux]: 사용자와 그룹</title>
-                <description>&lt;hr /&gt;
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#사용자와-그룹&quot; id=&quot;markdown-toc-사용자와-그룹&quot;&gt;사용자와 그룹&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#시스템-관리자&quot; id=&quot;markdown-toc-시스템-관리자&quot;&gt;시스템 관리자&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#파일-권한&quot; id=&quot;markdown-toc-파일-권한&quot;&gt;파일 권한&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#파일에-권한-설정하는-방법&quot; id=&quot;markdown-toc-파일에-권한-설정하는-방법&quot;&gt;파일에 권한 설정하는 방법&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;사용자와-그룹&quot;&gt;사용자와 그룹&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;리눅스는 여러명의 사용자와 그룹을 지원하는 운영체제이다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;시스템-관리자&quot;&gt;시스템 관리자&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;루트 사용자는 관리자 권한을 가지며 모든 파일에 접근 가능&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 사용자 추가&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser
-&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명]
-
-&lt;span class=&quot;c&quot;&gt;# 사용자 확인&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;whoami&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# 사용자 변경(=다른 사용자 계정의 쉘 사용)&lt;/span&gt;
-su - &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;다른 사용자명]
-
-&lt;span class=&quot;c&quot;&gt;# 원래 사용자로 돌아오기(=다른 사용자 계정 쉘에서 빠져나오기)&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;exit&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# 사용자 지우기&lt;/span&gt;
-deluser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명]
-&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;deluser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명] &lt;span class=&quot;nt&quot;&gt;--remove-home&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;홈 디렉토리 함께 제거 -&amp;gt; 깔끔&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 그룹 생성&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;addgroup &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;그룹명]
-
-&lt;span class=&quot;c&quot;&gt;# 그룹에 사용자 추가&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;adduser &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;사용자명] &lt;span class=&quot;nt&quot;&gt;--ingroup&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;그룹명]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h1 id=&quot;파일-권한&quot;&gt;파일 권한&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;파일의 소유자, 그룹에 따라 유저는 owner, group, others 중 하나에 속하고 해당 범위 만큼의 권한을 가지게 된다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_1.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_2.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_3.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;파일에-권한-설정하는-방법&quot;&gt;파일에 권한 설정하는 방법&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;파일의 권한은 소유자 또는 시스템 관리자가 변경할 수 있다&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_linux_user_4.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;664 &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명]
-&lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;g+w &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# group에 해당하는 유저들에게 쓰기(w)권한 부여&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;chmod &lt;/span&gt;go+rx &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;파일명] &lt;span class=&quot;c&quot;&gt;# group과 ohters에 헤당하는 유저들에게 읽기(r) 실행(x) 권한 부여&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-</description>
-                <pubDate>Tue, 12 Mar 2024 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/linux-user-group</link>
-                <guid isPermaLink="true">http://localhost:4000/linux-user-group</guid>
-                
-                <category>OS</category>
-                
-                
-                <category>CS</category>
-                
-            </item>
-        
-            <item>
-                <title>[Linux]: 리눅스 프로세스</title>
-                <description>&lt;hr /&gt;
-&lt;p id=&quot;toc&quot;&gt;&lt;strong&gt;Table of Contents&lt;/strong&gt;&lt;/p&gt;
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#프로세스와-스레드&quot; id=&quot;markdown-toc-프로세스와-스레드&quot;&gt;프로세스와 스레드&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#프로세스-관련-명령어&quot; id=&quot;markdown-toc-프로세스-관련-명령어&quot;&gt;프로세스 관련 명령어&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#ps&quot; id=&quot;markdown-toc-ps&quot;&gt;ps&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#htop&quot; id=&quot;markdown-toc-htop&quot;&gt;htop&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#kill&quot; id=&quot;markdown-toc-kill&quot;&gt;kill&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;프로세스와-스레드&quot;&gt;프로세스와 스레드&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;프로세스
-    &lt;ul&gt;
-      &lt;li&gt;실행중인 프로그램&lt;/li&gt;
-      &lt;li&gt;커널 공간에서는 프로세스 디스크립터&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_58.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;스레드
-    &lt;ul&gt;
-      &lt;li&gt;프로세스 내의 실행 흐름 (프로세스당 최소 1개 이상의 스레드가 존재)&lt;/li&gt;
-      &lt;li&gt;리눅스에서는 스레드를 경량 프로세스라고도 함 -&amp;gt; 리눅스에서는 스레드 단위로 스케줄링&lt;/li&gt;
-      &lt;li&gt;스레드는 주소 공간이나 열린 파일 등 여러 자원을 공유할 수 있음 -&amp;gt; 공유자원을 접근할 때 동기화 요구됨&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_59.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;프로세스-관련-명령어&quot;&gt;프로세스 관련 명령어&lt;/h1&gt;
-
-&lt;h2 id=&quot;ps&quot;&gt;ps&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;프로세스 상태 모니터링&lt;/li&gt;
-  &lt;li&gt;ps aux&lt;/li&gt;
-  &lt;li&gt;a: 모든 프로세스, u: 사용자 지향적 출력, x: 터미널이 없는 프로세스도 표시&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_60.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;htop&quot;&gt;htop&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;3초 동안 수집한 리눅프 프로세스 정보를 지속적으로 제공&lt;/li&gt;
-  &lt;li&gt;top 명령어도 있으나 htop이 더 나은 인터페이스 제공&lt;/li&gt;
-  &lt;li&gt;ps, htop과 같은 명령어는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/proc/&lt;/code&gt; 에서 커널 정보를 가져옴&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/os_61.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;kill&quot;&gt;kill&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;프로세스 종료&lt;/li&gt;
-  &lt;li&gt;kill -번호 pid&lt;/li&gt;
-  &lt;li&gt;ex. kill -15 4324&lt;/li&gt;
-  &lt;li&gt;번호는 시그널 의미
-    &lt;ul&gt;
-      &lt;li&gt;15 (SIGTERM): 실행을 완전하게 종료하라는 요청&lt;/li&gt;
-      &lt;li&gt;9 (SIGKILL): 프로세스를 커널 수준에서 종료&lt;/li&gt;
-      &lt;li&gt;2 (SIGINT): 터미널에 Ctrl + C 와 같이 인터럽트 요청&lt;/li&gt;
-      &lt;li&gt;15번 우선적으로 사용. 안되면 9번&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Fri, 08 Mar 2024 21:01:35 +0900</pubDate>
-                <link>http://localhost:4000/linux-process</link>
-                <guid isPermaLink="true">http://localhost:4000/linux-process</guid>
-                
-                <category>OS</category>
-                
-                
-                <category>CS</category>
                 
             </item>
         
