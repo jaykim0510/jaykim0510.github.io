@@ -1511,6 +1511,16 @@
     } ,
   
     {
+      "title"    : "[Backend Thoery] ORM",
+      "category" : "backend",
+      "tags"     : "backend_theory",
+      "url"      : "/backend_theory-orm",
+      "date"     : "Dec 4, 2023",
+      "content"  : "Table of Contents  N+1 문제  SQL vs ORMN+1 문제  ORM을 사용해 데이터베이스의 데이터를 조회할 때, 쿼리 결과로 N개의 데이터를 반환하고, N개의 데이터 각각에 대해 연관 관계를 가지는 다른 테이블에서 데이터를 가져오기 위해 N번의 쿼리를 추가로 실행하게 되는 문제를 말한다  위의 예시를 봤을 때, User를 쿼리할 때, 유저가 작성한 Review 데이터를 가져오기 위해 추가로 N번의 쿼리를 실행한다  쿼리에 따라 User 목록만 필요한 경우가 있고, User 와 유저가 작성한 Reivew 까지 필요한 쿼리가 있을 수 있다  또 Review가 필요할 때 위와 같이 N개의 쿼리를 추가로 실행하는 것이 아니라, 조인 방식으로 처음부터 같이 읽어오고 싶을 수도 있다  정리하면 가장 좋은 방식은, 연관 관계의 데이터는 필요할 때만 가져오고, 가져올 때는 조인 방식으로 가져오도록 하고 싶다  TypeORM은 이를 지원한다  find 메서드의 relations 옵션을 사용하거나, QueryBuilder의 leftJoinAndSelect 메서드를 사용하면 된다  다른 ORM 에서는 Lazy loading, Eager loading 이라는게 있는데, N+1 문제는 Lazy loading 때문에 일어나는 문제이다  그러면 그냥 무조건 Eager loading 하면 되잖아? 라고 할 수 있지만, 각각의 장단점이 있다          Lazy: 초기에 데이터를 빨리 읽어오지만, 이 후 연관 데이터 읽어오려면 추가로 쿼리 요청해야 하기 때문에 이 때 비교적 느리다      Eager: 처음부터 연관 데이터 다 조인 방식으로 읽어와서 느리지만, 이 후 연관 데이터 읽어올 때 추가적인 쿼리가 필요없어서 빠르다        TypeORM의 경우          find 메서드와 QueryBuilder 모두 lazy, eager 다 아니다      lazy가 아닌 이유는, lazy는 연관 관계 데이터 접근하면 추가로 쿼리 요청 보내서 읽어온다      하지만 TypeORM은 추가 쿼리 보내지 않고 그냥 undefined 반환한다      하지만 find + relations, QueryBuilder + leftJoinAndSelect 조합은 eager loading 이다      (relations 없이, 엔티티 정의할 때 OneToMany 데코레이터에 eager: true 옵션 추가해도 되지만 이렇게 하면 eager loading을 쿼리마다 선택적으로 적용한게 아니라, 모든 쿼리에 일괄 적용되기 때문에 좋은 방법처럼 보이진 않는다)      lazy loading은 아래와 같은 방법으로 사용 가능하다. 하지만 lazy loading은 N+1 문제를 야기한다        // Pseudo code    @Entity()class User {  @OneToMany(() =&amp;gt; Review, (reviews) =&amp;gt; reviews.user)  reviews: Promise&amp;lt;Review[]&amp;gt; // 이렇게 Promise를 타입으로 하는 것이 lazy loading을 나타낸다}    ...    const user = await User.find() // 1    const reviews = await user?.reviews // N                    SQL vs ORM  ORM은 추가적인 레이어가 들어간 것이기에 성능의 손해가 발생할 수 있다  또한 ORM이 작성해주는 SQL문이, 개발자가 직접 작성하는 SQL보다 성능이 떨어질 수도 있다",
+      "article"  : "<div class='article animate'> <div class='article__inner'> <div class='article__head'> <time class='article__date' datetime='2023-12-04T21:01:35+09:00'>04 Dec 2023</time><a class='article__image' href='/backend_theory-orm'> <img src='/images/backend_theory_logo.png' alt='[Backend Thoery] ORM'> </a></div><div class='article__content'> <h2 class='article__title'> <a href='/backend_theory-orm'>[Backend Thoery] ORM</a> </h2></div></div></div>"
+    } ,
+  
+    {
       "title"    : "[Backend Thoery] 데이터베이스",
       "category" : "backend",
       "tags"     : "backend_theory",
