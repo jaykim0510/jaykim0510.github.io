@@ -1110,6 +1110,7 @@ Table of Contents
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
 <ul id="markdown-toc">
+  <li><a href="#백엔드를-위한-데이터베이스" id="markdown-toc-백엔드를-위한-데이터베이스">백엔드를 위한 데이터베이스</a></li>
   <li><a href="#데이터베이스-선택" id="markdown-toc-데이터베이스-선택">데이터베이스 선택</a>    <ul>
       <li><a href="#rdbms" id="markdown-toc-rdbms">RDBMS</a></li>
       <li><a href="#nosql" id="markdown-toc-nosql">NoSQL</a>        <ul>
@@ -1118,13 +1119,33 @@ Table of Contents
       </li>
     </ul>
   </li>
-  <li><a href="#쿼리문-작성" id="markdown-toc-쿼리문-작성">쿼리문 작성</a></li>
-  <li><a href="#인덱싱" id="markdown-toc-인덱싱">인덱싱</a></li>
-  <li><a href="#트랜잭션" id="markdown-toc-트랜잭션">트랜잭션</a></li>
+  <li><a href="#쿼리-성능" id="markdown-toc-쿼리-성능">쿼리 성능</a>    <ul>
+      <li><a href="#모니터링" id="markdown-toc-모니터링">모니터링</a></li>
+      <li><a href="#쿼리-분석" id="markdown-toc-쿼리-분석">쿼리 분석</a></li>
+      <li><a href="#인덱스" id="markdown-toc-인덱스">인덱스</a></li>
+      <li><a href="#트랜잭션" id="markdown-toc-트랜잭션">트랜잭션</a></li>
+      <li><a href="#쿼리문" id="markdown-toc-쿼리문">쿼리문</a></li>
+      <li><a href="#서버-튜닝" id="markdown-toc-서버-튜닝">서버 튜닝</a></li>
+      <li><a href="#비정규화" id="markdown-toc-비정규화">비정규화</a></li>
+    </ul>
+  </li>
   <li><a href="#마이그레이션" id="markdown-toc-마이그레이션">마이그레이션</a></li>
 </ul>
 
 <hr />
+
+<h1 id="백엔드를-위한-데이터베이스">백엔드를 위한 데이터베이스</h1>
+
+<ul>
+  <li>백엔드에서 데이터베이스를 신경쓰게 되는 순간은 크게 다음과 같다
+    <ul>
+      <li>데이터베이스 종류</li>
+      <li>쿼리 성능</li>
+      <li>마이그레이션</li>
+      <li>보안</li>
+    </ul>
+  </li>
+</ul>
 
 <h1 id="데이터베이스-선택">데이터베이스 선택</h1>
 
@@ -1159,11 +1180,78 @@ Table of Contents
     </div>
 </div>
 
-<h1 id="쿼리문-작성">쿼리문 작성</h1>
+<h1 id="쿼리-성능">쿼리 성능</h1>
 
-<h1 id="인덱싱">인덱싱</h1>
+<ul>
+  <li>백엔드에서 핵심은 쿼리 성능을 높이는 것이다</li>
+  <li>쿼리 성능을 높일 수 있는 요소에는 여러 가지가 있다
+    <ul>
+      <li><strong>데이터베이스 모델링, 인덱스, SQL 쿼리문, 서버 설정</strong> 등</li>
+    </ul>
+  </li>
+  <li>하지만, 모든 요소를 쿼리 성능을 높이는 데만 초점을 맞출 수는 없다
+    <ul>
+      <li>어떤 경우에는 <strong>트랜잭션 처리를 요구</strong>하기 때문에 쿼리 성능을 감수해야 하는 경우도 있고,</li>
+      <li>어떤 경우에는 읽기 보다 <strong>쓰기 성능이 더 중요한 경우</strong>도 있다</li>
+      <li>그리고 단순히 <strong>서버에 사용할 수 있는 비용</strong>도 한계가 있다</li>
+    </ul>
+  </li>
+</ul>
 
-<h1 id="트랜잭션">트랜잭션</h1>
+<h2 id="모니터링">모니터링</h2>
+
+<ul>
+  <li>쿼리 성능을 개선하는 방법에는 여러 가지가 있지만, 일단 <strong>어떤 쿼리가 자주 사용되고, 어떤 쿼리가 느린지 파악하기 위해서는 모니터링</strong>을 해야 한다</li>
+</ul>
+
+<h2 id="쿼리-분석">쿼리 분석</h2>
+
+<ul>
+  <li>최적화가 필요한 쿼리가 선택됐다면 이제 해당 쿼리가 어떻게 실행되고 있는지 쿼리의 실행 계획을 분석을 해야 한다</li>
+</ul>
+
+<h2 id="인덱스">인덱스</h2>
+
+<ul>
+  <li>보통 쿼리의 성능 개선은 인덱스를 추가하는 것만으로도 쉽게 이루어진다</li>
+  <li>쿼리가 사용하는 테이블이 읽기 작업의 비율이 높다면 인덱스를 추가하면 좋다</li>
+  <li>(인덱스는 정렬되어 있어야 되기 때문에, 쓰기 작업의 성능은 떨어트린다)</li>
+  <li>인덱스 설계는 쿼리문의 <code class="language-plaintext highlighter-rouge">WHERE</code>, <code class="language-plaintext highlighter-rouge">JOIN</code>, <code class="language-plaintext highlighter-rouge">ORDER BY</code>문에 어떤 컬럼이 사용되고 있는지를 통해 결정된다</li>
+</ul>
+
+<h2 id="트랜잭션">트랜잭션</h2>
+
+<ul>
+  <li>쿼리의 성능을 높이기 위해서는, 동시에 여러 쿼리 요청을 처리할 수 있어야 한다</li>
+  <li>이 때 가장 중요한 것이 바로 레코드 잠금의 최소화이다</li>
+  <li>그리고 레코드 잠금의 최소화를 방해하는 것이 바로 트랜잭션이 포함된 쿼리다</li>
+  <li>(트랜잭션은 잠금의 범위를 늘리고, 인덱스는 잠금의 범위를 줄인다. 그래서 트랜잭션은 쿼리 성능을 떨어트리고, 인덱스는 쿼리 성능을 높이는 것이다)</li>
+  <li>불필요한 트랜잭션은 없애고, 트랜잭션 작업이 필요하다면 트랜잭션 단위를 최소화 하는 것이 좋다</li>
+</ul>
+
+<h2 id="쿼리문">쿼리문</h2>
+
+<ul>
+  <li>그래도 성능에 아쉬움이 있다면, 이제 쿼리문을 직접 건드려야 할 때이다</li>
+  <li><code class="language-plaintext highlighter-rouge">SELECT</code>절에 와일드카드(<code class="language-plaintext highlighter-rouge">*</code>)를 없애고 꼭 필요한 컬럼만 포함시킨다</li>
+  <li><code class="language-plaintext highlighter-rouge">WHERE</code>절에 <code class="language-plaintext highlighter-rouge">%</code> 를 맨 앞에 쓰지 말고, 함수를 쓰지 말고, <code class="language-plaintext highlighter-rouge">BETWEEN</code>, <code class="language-plaintext highlighter-rouge">IN</code>, <code class="language-plaintext highlighter-rouge">&lt;</code>, <code class="language-plaintext highlighter-rouge">&gt;</code> 보다는 <code class="language-plaintext highlighter-rouge">EXISTS</code> 쓴다</li>
+  <li><code class="language-plaintext highlighter-rouge">JOIN</code>절의 방법, 순서 등을 잘 선택한다</li>
+  <li>Subquery, CTE 등을 쓸 수도 있다</li>
+</ul>
+
+<h2 id="서버-튜닝">서버 튜닝</h2>
+
+<ul>
+  <li>백엔드 개발자도 간단한 서버 튜닝을 할 줄 아는 것이 좋다</li>
+  <li>메모리, 커넥션, 스토리지 엔진의 종류 등 고려해볼만한 요소가 몇 가지 있다</li>
+</ul>
+
+<h2 id="비정규화">비정규화</h2>
+
+<ul>
+  <li>어떤 두 테이블이 높은 비율로 같이 사용되고, 읽기 비율이 높은 경우에는 두 테이블을 하나로 합치는 비정규화 과정을 통해 쿼리의 성능을 높일 수 있다</li>
+  <li>비정규화는 마이그레이션 작업을 요구하고, 전체 시스템에 꽤나 큰 변화를 일으키기 때문에 신중하게 하는 것이 좋다</li>
+</ul>
 
 <h1 id="마이그레이션">마이그레이션</h1>
 

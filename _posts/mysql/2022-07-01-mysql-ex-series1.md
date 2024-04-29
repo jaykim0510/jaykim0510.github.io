@@ -153,6 +153,7 @@ tag: mysql
 
 
 |**방법**|**장점**|**단점**|
+|:---|:---|:---|
 |**인덱스 이용**|SELECT 문을 실행할 때 이미 인덱스가 정렬돼 있어 순서대로 읽기만 하면 되므로 매우 빠르다|INSERT, UPDATE, DELETE 작업시 부가적인 인덱스 추가/삭제 작업이 필요하므로 느리다|
 |**Filesort 이용**|인덱스 이용과 반대로 INSERT, UPDATE, DELETE 작업이 빠르다|정렬 작업이 쿼리 실행 시 처리되어 쿼리의 응답 속도가 느려진다|
 
@@ -310,12 +311,14 @@ WHERE first_name='ABC';
 ```
 
 |id|select_type|table|partitions|type|possible_keys|key|key_len|ref|rows|filtered|Extra|
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
 |1|SIMPLE|e|NULL|ref|PRIMARY,ix_firstname|ix_firstname|58|const|1|100.00|NULL|
 |1|SIMPLE|s|NULL|ref|PRIMARY|PRIMARY|4|employees.e.emp_no|10|100.00|NULL|
 
 표의 각 라인은 쿼리 문장에서 사용된 테이블의 개수만큼 출력된다. 실행 순서는 위에서 아래로 순서대로 표시된다  
 
 |**구분**|**설명**|
+|:---|:---|
 |**id**|select 아이디로 SELECT를 구분하는 번호|
 |**select_type**|select에 대한 타입|
 |**table**|참조하는 테이블|
@@ -340,6 +343,7 @@ WHERE first_name='ABC';
 - select에 대한 타입
 
 |**구분**|**설명**|
+|:---|:---|
 |**SIMPLE**|단순 SELECT (Union 이나 Sub Query 가 없는 SELECT 문)|
 |**PRIMARY**|메인 쿼리 (첫 번째 쿼리)|
 |**UNION**|UNION 쿼리에서 Primary를 제외한 나머지 SELECT|
@@ -366,6 +370,7 @@ WHERE first_name='ABC';
 - 아래의 접근 방식은 성능이 빠른 순서대로 나열된 것
 
 |**구분**|**설명**|
+|:---|:---|
 |**system**|1개 이하의 레코드를 가지는 테이블을 참조하는 경우|
 |**const**|쿼리의 WHERE 조건절에 프라이머리 키 또는 유니크 키 컬럼을 이용해 1건의 레코드를 반환하는 경우|
 |**eq_ref**|조인이 포함된 쿼리에서 조인할 때 이용한 컬럼이 프라이머리 키인 경우 -> 1건의 레코드만 존재 -> const만큼 빠름|
@@ -407,6 +412,7 @@ WHERE first_name='ABC';
 - 추가 정보
 
 |**구분**|**설명**|
+|:---|:---|
 |**using index**|커버링 인덱스라고 하며 인덱스 자료 구조를 이용해서 데이터를 추출|
 |**using where**|where 조건으로 데이터를 추출. type이 ALL 혹은 Indx 타입과 함께 표현되면 성능이 좋지 않다는 의미|
 |**using filesort**|데이터 정렬이 필요한 경우로 메모리 혹은 디스크상에서의 정렬을 모두 포함. 결과 데이터가 많은 경우 성능에 직접적인 영향을 줌|
