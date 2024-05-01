@@ -2,7 +2,7 @@
 layout: post
 title:  '[Backend Thoery] 인증/인가'
 description: 세션, JWT, OAuth 방식의 인증과 인가에 대해 배운다
-date:   2023-12-06 15:01:35 +0300
+date:   2023-12-08 15:01:35 +0300
 image:  '/images/backend_theory_logo.png'
 logo_image: '/images/backend_theory_logo.png'
 category: backend
