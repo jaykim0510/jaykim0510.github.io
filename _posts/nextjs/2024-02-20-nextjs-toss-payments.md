@@ -88,6 +88,14 @@ tag: nextjs
 - **시크릿 키**: 결제 승인/취소/조회 같은 코어 API를 사용할 때 필요하다 (노출되면 안된다)
 
 
+<br>
+
+- 결제위젯 연동 키가 안보인다면, 결제위젯 연동 키는 토스페이먼츠 전자결제 신청 이후에만 확인할 수 있어요. 신청 전에는 [**문서에 있는 테스트 키**](https://docs.tosspayments.com/guides/payment-widget/integration)로 결제위젯을 연동해보세요.
+
+```
+test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm
+test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
+```
 
 ## 결제위젯 SDK 설치
 
