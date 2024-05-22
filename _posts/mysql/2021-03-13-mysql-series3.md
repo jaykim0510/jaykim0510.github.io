@@ -3,8 +3,8 @@ layout: post
 title:  '[MySQL] DML(3): SELECT 중급 WINDOW'
 description: 
 date:   2021-03-13 15:01:35 +0300
-image:  '/images/mysql_logo.png'
-logo_image: '/images/mysql_logo.png'
+image:  '/images/mysql_practical_logo.png'
+logo_image: '/images/mysql_practical_logo.png'
 category: data_engineering
 tag: mysql
 ---

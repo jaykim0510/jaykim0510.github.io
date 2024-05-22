@@ -3,8 +3,8 @@ layout: post
 title:  '[MySQL] 유틸리티(View, CTE, Trigger, Function, Procedure, Cursor)'
 description: 
 date:   2021-03-28 15:01:35 +0300
-image:  '/images/mysql_logo.png'
-logo_image: '/images/mysql_logo.png'
+image:  '/images/mysql_practical_logo.png'
+logo_image: '/images/mysql_practical_logo.png'
 category: data_engineering
 tag: mysql
 ---

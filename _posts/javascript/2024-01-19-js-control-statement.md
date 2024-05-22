@@ -84,15 +84,17 @@ for (변수 할당문; 조건식; 증감식) {
 for (let i = 0; i < 10; i++) {
   console.log(i)
 }
-
+```
+```js
 // 이터러블의 원소들을 순회할 때
 const arr = [1, 2, 3, 4, 5]
 
 for (let num of arr) {
   console.log(num) // 1, 2, 3, 4, 5
 }
+```
 
-
+```js
 // 객체의 프로퍼티들을 순회할 때
 const person = {
   name: 'Kim'
@@ -109,8 +111,9 @@ for (let k in person) {
 while (조건식) {
   실행할 문
 }
+```
 
-
+```js
 // do..while은 먼저 실행할 문을 한 번 실행한 후에 조건에 따라 반복 실행할지를 결정한다
 do {
   실행할 문

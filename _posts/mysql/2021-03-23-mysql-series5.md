@@ -3,8 +3,8 @@ layout: post
 title:  '[MySQL] DDL: CREATE, ALTER, RENAME, DROP, TRUNCATE'
 description: 
 date:   2021-03-23 15:01:35 +0300
-image:  '/images/mysql_logo.png'
-logo_image: '/images/mysql_logo.png'
+image:  '/images/mysql_practical_logo.png'
+logo_image: '/images/mysql_practical_logo.png'
 category: data_engineering
 tag: mysql
 ---
