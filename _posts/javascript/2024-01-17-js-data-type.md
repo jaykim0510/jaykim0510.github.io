@@ -849,6 +849,113 @@ const sum = [1, 2, 3, 4].reduce((acc, cur, idx, arr) => acc + cur, 0)
 - 배열의 모든 요소를 순회하며 콜백 함수를 반복 호출한다
 - 콜백 함수의 반환값이 `true`인 첫 번째 요소의 인덱스를 반환한다
 
+## Set과 Map
+
+### Set
+
+- Set 객체는 중복되지 않는 유일한 값들의 집합이다
+- 집합은 요소들의 순서가 없고, 인덱스로 접근할 수 없다
+- 이터러블을 인수로 받는다
+
+```js
+const set = new Set()
+
+const set = new Set([1, 2, 3, 3])
+set // Set(3) {1, 2, 3}
+
+set.size // 3
+```
+
+```js
+const set = new Set()
+
+set.add(1)
+
+set.add(2).add(3)
+```
+
+```js
+const set = new Set()
+
+set.add(1)
+   .add('a')
+   .add(true)
+   .add(undefined)
+   .add(null)
+   .add({})
+   .add([])
+   .add(() => {})
+```
+
+```js
+const set = new Set([1, 2, 3])
+
+set.has(2) // true
+set.has(4) // false
+```
+
+```js
+cont set = new Set([1, 2, 3])
+
+set.delete(2)
+
+set // Set(2) { 1, 3 }
+
+set.delete(0)
+
+set // Set(2) { 1, 3 }
+```
+
+```js
+const set = new Set([1, 2, 3])
+
+set.clear()
+```
+
+```js
+const set = new Set([1, 2, 3])
+
+// Set 객체는 forEach 메서드를 갖는다
+set.forEach((v, _, set) => console.log(v, set)) // 두 번째 인수는 첫 번째 인수와 같다. 배열의 forEach와 인터페이스 통일을 위해서일 뿐 의미는 없다
+
+
+// Set 객체는 이터러블이기 때문에 for문으로 순회할 수 있다
+for (let value of set) {
+  console.log(value)
+}
+
+
+// 스프레드와 디스트럭처링을 이용해 배열로 만들 수 있다
+[ ...set ]
+```
+
+### Map
+
+- Map 객체는 키와 값의 쌍으로 이루어진 컬렉션이다
+- 인수로 이터러블을 전달할 수 있으며, 이 때 이터러블의 요소는, 키와 값의 쌍으로 이루어져야 한다
+- Map 객체는 키 타입에 제한이 없다 (일반 객체는 문자열 또는 심벌 값만 키로 사용할 수 있다)
+- Set과 마찬가지로 `has`, `delete`, `clear` 메서드를 가진다
+
+```js
+const map = new Map([['k1', 'v1'], ['k2', 'v2']])
+
+map.size // 2
+```
+
+```js
+const map = new Map()
+
+map.set('k1', 'v1')
+
+map.get('k1')
+```
+
+```js
+map.keys()
+map.values()
+map.entries()
+```
+
 
 ## 날짜
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  '[Node.js] 노드에서 제공하는 기본 기능'
+title:  '[Node.js] 노드의 내장 객체와 기본 모듈'
 description: 
 date:   2024-01-24 15:01:35 +0300
 image:  '/images/node_logo.png'
@@ -38,8 +38,6 @@ process.cwd()
 // 비밀키(데이터베이스 비밀번호, 서드파티 앱 키 등)를 보관하는 용도로도 쓰임
 process.env
 ```
-
-# fs
 
 # os
 
@@ -137,14 +135,110 @@ const promisifiedRandomBytes = util.promisify(crypto.randomBytes)
 promisifiedRandomBytes(64).then().catch()...
 ```
 
-# worker_threads
+# fs
 
-# child_process
+```js
+import * as fs from 'fs'
 
-# 동기 비동기
+(function() {
+    const filePath = path.join(process.cwd(), 'myFolder', 'myFile.txt')
+    
+    fs.readFile(filePath, (err, fileBuffer) => {
+        if (err) {
+            throw err
+        }
+        console.log(fileBuffer)
+    })
+}())
+```
 
-# 버퍼와 스트림
+```js
+import * as fs from 'fs'
 
-# 쿠키
+(function () {
+    const filePath = path.join(process.cwd(), 'myFolder', 'myFile.txt')
+    
+    const fileBuffer = fs.readFileSync(filePath)
+    console.log(fileBuffer)
+}())
+```
 
-# 세션
+```js
+import * as fs from 'fs/promises'
+
+(function() {
+    const filePath = path.join(process.cwd(), 'myFolder', 'myFile.txt')
+    
+    fs.readFile(path.join(filePath)
+        .then((fileBuffer) => {
+            console.log(fileBuffer)
+        })
+        .catch((err) => {
+            throw err
+        })
+}())
+```
+
+```js
+import * as fs from 'fs/promises'
+
+(async function () {
+    const filePath = path.join(process.cwd(), 'myFolder', 'myFile.txt')
+    
+    const fileBuffer = await fs.readFile(filePath)
+    console.log(fileBuffer)
+}())
+```
+
+```js
+fileBuffer // <Buffer 48 65 6c 6c 6f 20 4a 61 76 61 73 63 72 69 70 74>
+
+fileBuffer.toString() // Hello Javascript
+```
+
+```js
+(async function () {
+    const filePath = path.join(process.cwd(), 'file_study', 'hello.txt')
+    await fs.appendFile(filePath, '\tHello NodeJS')
+    const fileBuffer = await fs.readFile(filePath)
+    console.log(fileBuffer.toString()) // Hello Javascript        Hello NodeJS
+}())
+```
+
+```js
+(async function () {
+    const srcPath = path.join(process.cwd(), 'file_study', 'hello.txt')
+    const destPath = path.join(process.cwd(), 'file_study', 'goodbye.txt')
+    await fs.copyFile(srcPath, destPath)
+}())
+```
+
+```js
+(async function () {
+    const folder = path.join(process.cwd(), 'file_study', 'myNewFolder', 'myNewFolderFolder')
+    await fs.mkdir(folder, { recursive: true })
+}())
+```
+
+```js
+(async function () {
+
+    const filePath = path.join(process.cwd(), 'file_study', 'hello.txt')
+    
+    const fileHandle = await fs.open(filePath)
+    const fileContent = await fileHandle.readFile()
+    console.log(fileContent.toString())
+    
+}())
+```
+
+```js
+(async function () {
+
+    const filePath = path.join(process.cwd(), 'file_study', 'hello.txt')
+    
+    await fs.writeFile(filePath, 'Hello NodeJS')
+    const file = await fs.readFile(filePath)
+    console.log(file.toString()) // Hello NodeJS
+}())
+```

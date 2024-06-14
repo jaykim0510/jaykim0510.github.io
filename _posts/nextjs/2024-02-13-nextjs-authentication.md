@@ -19,6 +19,11 @@ tag: nextjs
 
 # NextAuth
 
+```
+<!-- v5 -->
+npm install next-auth@beta
+```
+
 - The main entry point of NextAuth.js is the `NextAuth` method that you import from `next-auth`. It handles different types of requests, as defined in the REST API section.
 
 - In Next.js, you can define an API route that will catch all requests that begin with a certain path. Conveniently, this is called Catch all API routes.
