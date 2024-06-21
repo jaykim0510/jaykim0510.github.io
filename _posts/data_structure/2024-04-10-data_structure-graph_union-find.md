@@ -3,8 +3,8 @@ layout: post
 title:  '[Data Structure] Graph (3): Union-Find'
 description: 
 date:   2024-04-10 15:01:35 +0300
-image:  '/images/algorithm_logo.webp'
-logo_image:  '/images/algorithm_logo.webp'
+image:  '/images/data-structure_logo.png'
+logo_image:  '/images/data-structure_logo.png'
 categories: computer_science
 tags: Coding_Test
 ---
