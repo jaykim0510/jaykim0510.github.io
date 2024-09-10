@@ -6,7 +6,7 @@ date:   2024-04-10 15:01:35 +0300
 image:  '/images/data-structure_logo.png'
 logo_image:  '/images/data-structure_logo.png'
 categories: computer_science
-tags: Coding_Test
+tags: Data-Structure
 ---
 ---
 

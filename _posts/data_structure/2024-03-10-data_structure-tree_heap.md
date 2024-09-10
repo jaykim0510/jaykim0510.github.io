@@ -2,7 +2,7 @@
 layout: post
 title:  '[Data Structure] Binary tree (3): 힙(Heap)'
 description: 
-date:   2024-03-08 15:01:35 +0300
+date:   2024-03-10 15:01:35 +0300
 image:  '/images/data-structure_logo.png'
 logo_image: '/images/data-structure_logo.png'
 category: CS
