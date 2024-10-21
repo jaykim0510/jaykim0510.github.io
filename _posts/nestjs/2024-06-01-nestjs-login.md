@@ -1,10 +1,10 @@
 ---
 layout: post
 title:  '[NestJS] 로그인'
-description: 
+description: 'NestJS를 이용해 회원가입, 로그인, 인증/인가 기능을 구현하는 방법에 대해 공부합니다' 
 date:   2024-06-01 15:01:35 +0300
-image:  '/images/nest_logo.png'
-logo_image: '/images/nest_logo.png'
+image:  '/images/nestjs_practice_logo.png'
+logo_image: '/images/nestjs_practice_logo.png'
 category: backend
 tag: NestJS
 ---
@@ -17,18 +17,76 @@ tag: NestJS
 
 ---
 
+# Setup
 
-```js
+## 프로젝트 생성
+
+```
+pwd
+----------------
+/Users/peter/train/nestjs/ecommerce
+```
+
+```
 nest new .
 ```
 
-```js
+## 데이터베이스 생성 및 연결
+
+```
+CREATE DATABASE train_nestjs_ecommerce
+```
+
+```
+npm install --save @nestjs/typeorm typeorm mysql2
+```
+
+```ts
+import { Module } from '@nestjs/common';
+import {TypeOrmModule} from "@nestjs/typeorm";
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({ // here
+      type: 'mysql',
+      database: 'train_nestjs_ecommerce',
+      host: 'localhost',
+      port: 3316,
+      username: 'client',
+      password: 'client',
+      autoLoadEntities: true,
+      synchronize: true,
+    })
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+
+```
+
+```
+// 개발용 로컬 서버를 실행했을 때, Connection Error 가 뜨지 않으면 성공
+npm run start:dev
+```
+
+```
+git commit -m "configuration for mysql database"
+```
+
+## User, Auth 모듈 생성
+
+```
+git checkout -b login
+```
+
+```
 nest g mo user
 nest g co user
 nest g s user
 ```
 
-```js
+```
 nest g mo auth
 nest g co auth
 nest g s auth
@@ -37,88 +95,46 @@ nest g s auth
 ![](/images/nest_login_1.png)
 
 
-```
-npm install --save @nestjs/typeorm typeorm mysql2
-```
+## 유저 엔티티 생성
 
-```
-CREATE DATABASE study_login
-```
-
-```js
-// app.module.ts
-
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
-@Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3316,
-      username: 'client',
-      password: 'client',
-      database: 'study_login',
-      autoLoadEntities: true,
-      synchronize: true
-    }),
-    UserModule,
-    AuthModule
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
-
-
-```
-
-
-```js
+```ts
 // src/user/entities/user.entity.ts
 
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {Exclude} from "class-transformer";
 
 @Entity('tb_user')
-export default class UserEntity {
-    
-    @PrimaryGeneratedColumn()
-    id?: number
-    
-    @Column()
-    name: string
-    
-    @Column()
-    email: string
-    
-    @Column({ name: 'hashed_password' })
-    hashedPassword?: string
-    
-    @Column({ default: 'client' })
-    role?: 'admin' | 'client'
-    
-    @CreateDateColumn({ name: 'created_at', type: 'datetime' })
-    createdAt?: Date
+export class UserEntity {
+  @PrimaryGeneratedColumn()
+  id?: number;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
-    updatedAt?: Date
+  @Column()
+  email: string;
+
+  @Exclude({ toPlainOnly: true }) // plain 형태로 네트워크를 통해 프론트엔드에 전달될 때는 제외되도록
+  @Column()
+  password: string;
+
+  @Column({ default: 'client' })
+  role?: 'admin' | 'client'
+
+  @CreateDateColumn({ name: 'created_at', type: 'datetime' })
+  createdAt?: Date
+
+  @UpdateDateColumn({ name: 'updated_at', type: 'datetime' })
+  updatedAt?: Date
 }
+
 ```
 
-
-```js
+```ts
 // src/user/user.module.ts
 
 import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import UserEntity from './entities/user.entity';
+import {TypeOrmModule} from "@nestjs/typeorm";
+import {UserEntity} from "./entities/user.entity";
 
 @Module({
   imports: [
@@ -126,328 +142,166 @@ import UserEntity from './entities/user.entity';
   ],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService, TypeOrmModule.forFeature([UserEntity])]
+  exports: [TypeOrmModule, UserService]
 })
 export class UserModule {}
-
-
 ```
 
-![](/images/nest_login_2.png)
+## 회원가입 로직
 
-```js
+```
+npm i class-validator class-transformer
+```
+
+```ts
 // src/auth/auth.module.ts
 
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UserModule } from 'src/user/user.module';
+import {UserModule} from "../user/user.module";
 
 @Module({
-  imports: [
-    UserModule
-  ],
+  imports: [UserModule],
   controllers: [AuthController],
   providers: [AuthService]
 })
 export class AuthModule {}
 
+```
+```ts
+// src/auth/dtos/auth.signup.dto.ts
+
+import {IsEmail, IsString} from "class-validator";
+
+export default class SignupDto {
+
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  password: string;
+}
 
 ```
 
-
-```
-npm i bcrypt
-npm i -D @types/bcrypt
-```
-
-```js
+```ts
 // src/auth/auth.controller.ts
 
-import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import SignupDto from './dtos/auth.signup.dto';
+import {Body, Controller, Post} from '@nestjs/common';
+import {AuthService} from "./auth.service";
+import AuthSignupDto from "./dtos/auth.signup.dto";
 
 @Controller('auth')
 export class AuthController {
+  constructor(private readonly authService: AuthService) {}
 
-    constructor(private authService: AuthService) {}
+  @Post('signup')
+  async signup(@Body() signupDto: SignupDto) {
+    return await this.authService.signup(signupDto)
+  }
+}
 
-    @Post('signup')
-    async signup(@Body() signupDto: SignupDto) {
-        const { email, password } = signupDto
-        
-        // 이메일 중복 확인
-        const isUniqueEmail = await this.authService.isUniqueEmail(email)
-        if (!isUniqueEmail) {
-            throw new HttpException('이미 등록된 이메일입니다', HttpStatus.BAD_REQUEST)
-        }
-        
-        // 비밀번호 해싱
-        const hashedPassword = await this.authService.hashing(password)
-        
-        // 회원가입
-        const body = { ...signupDto, hashedPassword }
-        delete body['password']
-        const newUser = await this.authService.signup(body)
-        
-        if (!newUser) {
-            throw new HttpException('회원가입에 실패했습니다', HttpStatus.BAD_REQUEST)
-        }
-        
-        return newUser
+```
+
+```ts
+// src/auth/auth.service.ts
+
+@Injectable()
+export class AuthService {
+  constructor(
+          @InjectRepository(UserEntity) private readonly userRepo: Repository<UserEntity>,
+  ) {}
+
+  async signup(body: UserEntity) {
+    const { email, password } = body;
+    const isEmailExists = await this.isEmailExists(email);
+
+    if (isEmailExists) {
+      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
     }
+
+    const hashedPassword = await this.hashing(password)
+
+    const user = this.userRepo.create({ ...body, password: hashedPassword });
+    return this.userRepo.save(user); // here
+  }
+
+  async isEmailExists(email: string) {
+    return this.userRepo.existsBy({ email });
+  }
+
+  async hashing(plain: string) {
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    return bcrypt.hash(plain, salt);
+  }
 }
-```
-
-- 유저를 읽어보면, 유저가 회원가입을 한 날짜 `createdAt`의 값이 UTC 기준시간으로 되어 있다
-
-```js
-// src/user/user.controller.ts
-
-import { Controller, Get, Param } from '@nestjs/common';
-import { UserService } from './user.service';
-
-@Controller('users')
-export class UserController {
-
-    constructor(private userService: UserService) {}
-    
-    @Get(':id')
-    async readUser(@Param('id') id: number) {
-        const user = await this.userService.readUserById(id)
-        return user
-    }
-}
-```
-
-![](/images/nest_login_3.png)
-
-
-```js
-{
-    "id": 1,
-    "name": "Michel",
-    "email": "michel55@example.com",
-    "hashedPassword": "$2b$10$GK/Ze7dItv1LaxBsaXJwfuHCeNpzP/UgiWshuukmCLSSCi44X79QC",
-    "role": "client",
-    "createdAt": "2024-06-10T07:38:04.438Z",
-    "updatedAt": "2024-06-10T07:38:04.438Z"
-}
-```
-
-- `createdAt`의 값이 `"2024-06-10T07:38:04.438Z"` 이라고 나오지만, 내가 실제로 저장한 시점은 `T16:38:04.438`이다
-- 가장 간단한 해결책은, DB에 설정된 타임존(timezone)을 가져와서 우리의 애플리케이션에 똑같이 적용되도록 하는 것이다
-
-```js
-@Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      ...
-      timezone: 'Z' // here
-    }),
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
 
 ```
 
-- 이렇게 하면 문제는 나는 한국인인데 DB가 미국에 있으면, 나의 가입날짜를 확인했을 때 미국 시간 기준으로 나올 것이다
-- `user.createdAt.toLocaleString()` 또는 `user.createdAt.getHours()` 이렇게 읽어오면 UTC 값을 타임존에 맞게 변환되어 나온다
-- 그래서 만약 여기서 말하는 타임존이 요청을 보낸 유저의 위치가 기준이라면 더 고민할게 없다. 이렇게 하면 된다
-- 하지만 여기서 말하는 타임존이 애플리케이션이 실행되고 있는 서버의 위치가 기준이라면 아직 문제가 해결된게 아니다
-- (DB가 미국에 있는데, 애플리케이션이 실행되고 있는 서버가 인도에 있다면, 한국에 사는 내가 가입날짜를 확인하면 인도시간이 기준이 되어 있을 것이다)
-
-<br>
-
-- 일단 이부분은 나중에 다른 포스트에서 다루기로 하고, 여기서는 로그인에 계속 집중하자
-- 일단 지금까지 회원가입은 잘됐다
-- 하지만 여기도 문제가 있다. 데이터 검증이다 `IsEnum(['admin', 'client'])`라고 했지만, 'foo' 이런 식으로 다른 값을 요청에 넣어도 요청이 허용된다
-- `app.useGlobalPipes(new ValidationPipe())` 가 필요하다
-
-```js
-// src/main.ts
-
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe()) // here
-  await app.listen(3000);
-}
-bootstrap();
-```
-
-- 이제 DTO 클래스에 맞지 않는 데이터를 바디에 넣어 보내면 HTTP 400 예외가 발생한다
-
-```js
-// 요청 바디
-{
-    "name": 123,
-    "email": 123,
-    "password": "admin",
-    "role": "admins"
-}
-
-// 응답 바디
-{
-    "message": [
-        "name must be a string",
-        "email must be an email",
-        "role must be one of the following values: "
-    ],
-    "error": "Bad Request",
-    "statusCode": 400
-}
-```
+- `insert()` 는 이미 존재하는지 조회하지 않고 바로 레코드를 생성하지만, 반환되는 값이 레코드가 아닌 메타데이터이다
+- `save()` 는 이미 존재하면 업데이트 하는 로직을 포함해 성능상 단점이 있지만, 반환되는 값이 레코드이기 때문에 깔끔하다
+- 그래서 일단은 레코드를 반환하는게 코드가 명확하다고 생각해 `save()` 메서드를 사용했다. 만약 성능상 개선이 필요하다면 `insert()` 를 사용해도 괜찮을 것 같다
 
 # Login
 
 - 이메일, 비밀번호 기반의 로그인의 경우, 이메일이 존재하는지 먼저 확인하고, 존재하면 이메일로 유저를 찾아 해당 유저의 비밀번호가 일치하는지 확인한다
 - 유저의 이메일과 비밀번호가 알맞은 경우, 로그인 상태를 유지하기 위해, jwt 토큰을 쿠키로 저장해둔다
 
-
 ```
 npm install --save @nestjs/jwt
 ```
 
-```js
-// src/auth/auth.module.ts
 
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { UserModule } from 'src/user/user.module';
-import { JwtModule } from '@nestjs/jwt';
+```ts
 
-@Module({
-  imports: [
-    UserModule,
-    JwtModule // here
-  ],
-  controllers: [AuthController],
-  providers: [AuthService]
-})
-export class AuthModule {}
-
-```
-
-```js
-// src/auth/auth.controller.ts
-
-import { Body, Controller, HttpException, HttpStatus, Post, Res } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
-import { AuthService } from './auth.service';
-import { UserService } from 'src/user/user.service';
-
-@Controller('auth')
-export class AuthController {
-
-    constructor(
-        private authService: AuthService,
-        private userService: UserService,
-        private jwtService: JwtService
-    ) {}
-    
-    @Post('login')
-    async login(@Body('email') email: string, @Body('password') password: string, @Res({ passthrough: true }) res: Response) {
-        // 이메일 확인
-        const user = await this.userService.readUserByEmail(email)
-        
-        if (!user) {
-            throw new HttpException('등록된 이메일이 없습니다', HttpStatus.NOT_FOUND)
-        }
-        
-        // 비밀번호 확인
-        const isValidUser = this.authService.isValidUser(user, password)
-        if (!isValidUser) {
-            throw new HttpException('비밀번호가 일치하지 않습니다', HttpStatus.BAD_REQUEST)
-        }
-
-        // JWT 토큰 생성
-        const payload = { sub: user.id, email: user.email }
-
-        const token = {
-            access_token: this.jwtService.sign(payload, { secret: 'tHIsisSECreT' }),
-            refresh_token: '12345'
-        }
-
-        // 토큰 응답에 부착
-        res.cookie('jwt', JSON.stringify(token))
-        
-        const result = {
-            id: user.id,
-            email: user.email,
-            role: user.role
-        }
-
-        return result
-    }
-}
-
-```
-
-```js
-// src/auth/auth.service.ts
-
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {InjectRepository} from "@nestjs/typeorm";
+import {UserEntity} from "../user/entities/user.entity";
+import {Repository} from "typeorm";
 import * as bcrypt from 'bcrypt';
-import UserEntity from 'src/user/entities/user.entity';
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
-    
-    constructor(
-        @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
-    ) {}
-    
-    isValidUser(user: UserEntity, plainPassword: string) {
-        const isValid = bcrypt.compareSync(plainPassword, user.hashedPassword)
-        return isValid
+  constructor(
+    @InjectRepository(UserEntity) private readonly userRepo: Repository<UserEntity>,
+    private readonly jwtService: JwtService,
+  ) {}
+  
+  async getVerifiedUser(email: string, password: string) {
+    const user = await this.userRepo.findOneBy({ email })
+    if (user) {
+      const isVerified = await bcrypt.compare(password, user.password);
+      if (isVerified) {
+        return user;
+      }
     }
+    throw new HttpException('Email or password is wrong', HttpStatus.UNAUTHORIZED);
+  }
+
+  getToken(user: UserEntity) {
+    const payload = { sub: user.id, email: user.email }
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' })
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' })
+    return { accessToken, refreshToken };
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.getVerifiedUser(email, password);
+
+    return this.getToken(user)
+  }
 }
-
 ```
-
-```js
-// src/user/user.service.ts
-
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import UserEntity from './entities/user.entity';
-import { Repository } from 'typeorm';
-
-@Injectable()
-export class UserService {
-
-    constructor(@InjectRepository(UserEntity) private userRepo: Repository<UserEntity>) {}
-    
-    async readUserByEmail(email: string) {
-        const user = await this.userRepo.findOneBy({ email })
-        return user
-    }
-}
-
-```
-
-
-![](/images/nest_login_4.png)
-
-
 
 # Authentication
 
+- 이제 로그인에 성공했으므로, 로그인 여부를 확인해야 하는 경우에 대해 살펴보자
 - 대부분의 서비스에는 로그인 여부를 확인해야 하는 라우트가 있다 (ex. 결제, 글 올리기 등)
-- 로그인 여부를 확인하는 방법은, 쿠키의 jwt 값을 확인하는 것이다
+- 로그인 여부를 확인하는 방법은, 쿠키의 jwt 토큰 값을 확인하는 것이다
+- 클라이언트는 jwt 토큰을 `Cookies` 헤더 또는 `Authorization` 헤더에 포함시키면 된다
 - jwt가 없거나, 유효하지 않은 경우 로그인이 필요한 상황이라 간주한다
 - 유효한 jwt를 가진 경우 로그인 됐다고 간주한다
 
@@ -460,196 +314,143 @@ npm i cookie-parser
 npm i -D @types/cookie-parser
 ```
 
-```js
-// src/main.ts
-
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  
-  app.use(cookieParser()); // here
-  
-  app.useGlobalPipes(new ValidationPipe())
-  await app.listen(3000);
-}
-bootstrap();
-
-```
-
-```js
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, Res } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import SignupDto from './dtos/auth.signup.dto';
-import { UserService } from 'src/user/user.service';
-import { Request, Response } from 'express';
-import { JwtService } from '@nestjs/jwt';
-
-@Controller('auth')
-export class AuthController {
-
-    constructor(
-        private authService: AuthService,
-        private userService: UserService,
-        private jwtService: JwtService
-    ) {}
-    
-    @Get('myprofile')
-    async readMyProfile(@Req() req: Request) {
-        
-        const jwt = req.cookies['jwt']
-        if (!jwt) {
-            throw new HttpException('로그인이 필요합니다', HttpStatus.FORBIDDEN)
-        }
-        
-        // Verify
-        const jwtObject = JSON.parse(jwt)
-        const accessToken = jwtObject['access_token']
-        const userPayload = await this.jwtService.verifyAsync(accessToken, { secret: 'tHIsisSECreT' })
-        if (!userPayload) {
-            throw new HttpException('로그인 정보가 유효하지 않습니다', HttpStatus.FORBIDDEN)
-        }
-        
-        // Business Logic
-        const userId = userPayload['sub']
-        const user = await this.authService.readMyProfile(userId)
-        return user
-    }
-}
-
-```
 
 ## Guard
 
-- 위와 같이 요청(request) 객체에서 쿠키에 저장된 jwt 값을 읽어오고 유효성을 판단함으로써 로그인 여부를 확인할 수 있다
-- 하지만 로그인 여부를 확인해야 하는 라우트가 여러개라면 위와 같은 코드를 해당 라우트들에 모두 작성해야 한다
-- 위와 같은 반복을 피하기 위해 미들웨어로 만들어 필요한 라우트 앞에서 실행되도록 하면 좋다
-- 이를 위해 NestJS에서는 `Guard` 라는 인증/인가를 위한 용도의 클래스를 제공한다
+- Authentication 이 필요한 라우트마다, 쿠키에 저장된 jwt 값을 읽고, 검증하는 과정을 반복하는 것은 좋지 않다
+- NestJS에서는 `Guard` 라는 인증/인가를 위한 용도의 클래스를 제공한다
+- NestJS의 Guard 클래스 안에 이러한 로직을 작성해주면, Guard가 라우트 안의 코드가 실행되기 전에 먼저 Authentication 을 한다
 
+```ts
+// src/auth/guards/auth.jwt.guard.ts
 
-```js
-// src/auth/guards/jwt.guard.ts
-
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { Request } from "express";
-import { Observable } from "rxjs";
-
-@Injectable()
-export default class JwtGuard implements CanActivate {
-
-    constructor(private jwtService: JwtService) {}
-    
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const request: Request = context.switchToHttp().getRequest()
-        try {
-            const jwt = request.cookies['jwt']
-            const jwtObj = JSON.parse(jwt)
-            const accessToken = jwtObj['access_token']
-            this.jwtService.verify(accessToken, { secret: 'tHIsisSECreT' })
-            return true
-        } catch(e) {
-            console.log(e)
-            return false
-        }
-    }
-}
-```
-
-```js
-// src/auth/auth.controller.ts
-
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import JwtGuard from 'src/auth/guards/jwt.guard';
-
-@Controller('auth')
-export class AuthController {
-    
-    @UseGuards(JwtGuard)
-    @Get('myprofile')
-    async readMyProfile() {
-        ...
-    }
-}
-
-```
-
-- `Guard`는 요청을 처리할지 아니면 거부할지에 대해 true/false를 리턴하는 역할을 한다
-  - true를 리턴하면, 해당 요청을 라우트 핸들러가 계속 처리하고, 
-  - false를 리턴하면 라우트 핸들러를 만나기 전에 거부하고, 아래와 같은 메세지를 리턴한다
-
-```js
-{
-    "message": "Forbidden resource",
-    "error": "Forbidden",
-    "statusCode": 403
-}
-```
-
-- 근데 보통 로그인 여부를 확인하는 라우트는 비즈니스 로직에 유저의 정보를 필요로 하는 경우가 많다
-- 예를 들어, '나의 프로필 읽기'의 경우 자신의 정보를 필요로 하고, '글 올리기'의 경우도 작성자가 누구인지 저장하기 위해 자신의 정보가 필요하다
-- 그래서 위의 경우, 결국 라우트 핸들러 안에서 다시 jwt 정보를 가져와 유저의 식별 정보(ex. id, email)를 통해 유저 정보를 가져와야 한다
-- 이러한 반복 작업을 없애기 위해, Guard에서 요청(request) 객체의 속성으로 유저 정보를 붙여줄 수도 있다
-
-```js
-// src/auth/guards/jwt.guard.ts
-
-import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { Request } from "express";
-import { UserService } from "src/user/user.service";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+} from '@nestjs/common'
+import { Request, Response } from 'express'
+import {AuthService} from "../auth.service";
 
 @Injectable()
 export default class JwtGuard implements CanActivate {
+  constructor(private readonly authService: AuthService) {}
 
-    constructor(
-        private jwtService: JwtService,
-        private userService: UserService
-    ) {}
-    
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request: Request = context.switchToHttp().getRequest()
-        try {
-            const jwt = request.cookies['jwt']
-            const jwtObj = JSON.parse(jwt)
-            const accessToken = jwtObj['access_token']
-            const payload = this.jwtService.verify(accessToken, { secret: 'tHIsisSECreT' })
-            const userId = payload['sub']
-            const user = await this.userService.readUserById(userId)
-            request['user'] = user // here
-            return true
-        } catch(e) {
-            console.log(e)
-            return false
-        }
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request: Request = context.switchToHttp().getRequest()
+    const response: Response = context.switchToHttp().getResponse()
+
+    const accessToken = request?.cookies?.accessToken
+
+    const user = await this.authService.getVerifiedUserByJwt(accessToken)
+    if (user) {
+      console.log('액세스 토큰 있음')
+      request['user'] = user
+      return true
+    } else {
+      const refreshToken = request?.cookies?.refreshToken
+      const user = await this.authService.getVerifiedUserByJwt(refreshToken)
+      if (user) {
+        console.log('액세스 토큰 만료됨. 리프레쉬 토큰으로 액세스 토큰 재발급')
+        const { accessToken } = this.authService.getToken(user)
+        response.cookie('accessToken', accessToken)
+        request['user'] = user
+        return true
+      } else {
+        console.log('리프레쉬 토큰 만료. 로그인 필요')
+        return false
+      }
     }
+  }
 }
 ```
 
-```js
+- `jwtService.verify(token)` 는 토큰이 유효하면 `payload`, 유효하지 않거나 만료된 토큰이면 500 에러가 발생한다
+- 이를 try-catch 문으로 적절하게 처리해줘야 한다
+
+```ts
+// src/auth/auth.service.ts
+
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {InjectRepository} from "@nestjs/typeorm";
+import {UserEntity} from "../user/entities/user.entity";
+import {Repository} from "typeorm";
+import {JwtService} from "@nestjs/jwt";
+
+@Injectable()
+export class AuthService {
+  constructor(
+    @InjectRepository(UserEntity) private readonly userRepo: Repository<UserEntity>,
+    private readonly jwtService: JwtService,
+  ) {}
+
+
+  async getVerifiedUserByJwt(token: string) {
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(token);
+      return await this.userRepo.findOneBy({ id: payload.sub });
+    } catch (error) {
+      if (error.name === 'TokenExpiredError' || error.name === 'JsonWebTokenError') {
+        return null
+      } else {
+        throw new HttpException('An error occurred while verifying the token', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    }
+  }
+}
+```
+
+```ts
 // src/auth/auth.controller.ts
 
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
-import JwtGuard from 'src/auth/guards/jwt.guard';
-import { Request } from 'express';
+import {Body, Controller, Get, Post, Req, Res, UseGuards} from '@nestjs/common';
+import {AuthService} from "./auth.service";
+import AuthSignupDto from "./dtos/auth.signup.dto";
+import { Response } from 'express';
+import JwtGuard from "./guards/auth.jwt.guard";
 
 @Controller('auth')
 export class AuthController {
-    
-    @UseGuards(JwtGuard)
-    @Get('myprofile')
-    async readMyProfile(@Req() req: Request) {
-        const user = req['user'] // here
-        return user
-    }
+  constructor(
+    private readonly authService: AuthService) {}
+
+  @UseGuards(JwtGuard)
+  @Get('test')
+  async authTest(@Req() req: Request) {
+    return req['user']
+  }
 }
+```
+
+- JwtGuard 는 AuthService 를 주입받고 있다. 그래서 JwtGuard 를 쓰려면 사용하는 곳에서 AuthModule 을 임포트 해야 한다
+- JwtGuard 는 여러 곳에서 사용되기 때문에, AuthModule 은 글로벌 모듈로 만들어도 좋다
+
+```ts
+// src/auth/auth.module.ts
+
+import {Global, Module} from '@nestjs/common';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import {UserModule} from "../user/user.module";
+import {JwtModule} from "@nestjs/jwt";
+
+@Global()
+@Module({
+  imports: [
+    JwtModule.register({
+      secret: 'tHIsISsECret'
+    }),
+    UserModule
+  ],
+  controllers: [AuthController],
+  providers: [AuthService],
+  exports: [AuthService],
+})
+export class AuthModule {}
 
 ```
 
-## Passport
+# Passport
 
 - Passport 라이브러리는 node.js 인증 라이브러리 중 하나로 많은 운영 단계의 애플리케이션들에서 성공적으로 사용되고 있다
 - 위에서 유저의 유효성을 검증하고, 요청(request) 객체의 속성에 유저 정보를 추가하는 과정을 표준 패턴으로 추상화하여 제공해준다
@@ -671,93 +472,6 @@ npm install passport-local
 npm install -D @types/passport-local
 ```
 
-```js
-// src/auth/aut.module.ts
-
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { UserModule } from 'src/user/user.module';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import LocalStrategy from './guards/local.strategy';
-import JwtStrategy from './guards/jwt.strategy';
-
-@Module({
-  imports: [
-    UserModule,
-    JwtModule,
-  ],
-  controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy]
-})
-export class AuthModule {}
-
-```
-
-```js
-// src/auth/guards/local.strategy.ts
-
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { Strategy } from "passport-local";
-import { UserService } from "src/user/user.service";
-import { AuthService } from "../auth.service";
-
-@Injectable()
-export default class LocalStrategy extends PassportStrategy(Strategy) {
-    constructor(
-        private userService: UserService,
-        private authService: AuthService
-    ) {
-        super({ usernameField: 'email' })
-    }
-    
-    async validate(username: string, password: string) {
-        const user = await this.userService.readUserByEmail(username)
-        if (!user) {
-            throw new HttpException('등록된 이메일이 없습니다', HttpStatus.NOT_FOUND)
-        }
-        
-        const isValid = this.authService.isValidUser(user, password)
-        if (!isValid) {
-            throw new HttpException('비밀번호가 일치하지 않습니다', HttpStatus.BAD_REQUEST)
-        }
-        
-        return user
-    }
-}
-```
-
-```js
-// src/auth/guards/local.guard.ts
-
-import { Injectable } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-
-@Injectable()
-export default class LocalGuard extends AuthGuard('local') {}
-```
-
-```js
-// src/auth/auth.controller.ts
-
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
-import LocalGuard from './guards/local.guard';
-
-@Controller('auth')
-export class AuthController {
-    
-    @UseGuards(LocalGuard)
-    @Post('local-login')
-    async localLogin(@Req() req: Request) {
-        const user = req['user']
-        return user
-    }
-}
-
-```
 
 ### JWT Strategy
 
@@ -767,64 +481,7 @@ npm install passport-jwt
 npm install -D @types/passport-jwt
 ```
 
-```js
-// src/auth/guards/jwt.strategy.ts
-
-import { Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { ExtractJwt, Strategy } from "passport-jwt";
-import { UserService } from "src/user/user.service";
-
-@Injectable()
-export default class JwtStrategy extends PassportStrategy(Strategy) {
-
-    constructor(private userService: UserService) {
-    
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ignoreExpiration: false,
-            secretOrKey: 'tHIsisSECreT'
-        })
-    }
-    
-    async validate(payload: any) {
-        const userId = payload['sub']
-        const user = this.userService.readUserById(userId)
-        return user
-    }
-
-}
-```
-
-```js
-// src/auth/guards/jwt.guard.ts
-
-import { Injectable } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-
-@Injectable()
-export default class JwtGuard extends AuthGuard('jwt') {}
-```
-
-```js
-// src/auth/auth.controller.ts
-
-import { Controller, Get, UseGuards, Req } from '@nestjs/common';
-import JwtGuard from 'src/auth/guards/jwt.guard';
-import { Request } from 'express';
-
-@Controller('auth')
-export class AuthController {
-    
-    @UseGuards(JwtGuard)
-    @Get('myprofile')
-    async readMyProfile(@Req() req: Request) {
-        const user = req['user'] // here
-        return user
-    }
-}
-```
-
+# 소셜 로그인
 
 # 참고
 
