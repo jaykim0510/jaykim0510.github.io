@@ -2,7 +2,7 @@
 layout: post
 title:  '[NestJS] 검색'
 description: 'NestJS와 Elasticsearch를 활용해 검색 기능을 구현하는 방법에 대해 공부합니다'
-date:   2024-10-03 15:01:35 +0300
+date:   2024-10-02 15:01:35 +0300
 image:  '/images/nestjs_practice_logo.png'
 logo_image: '/images/nestjs_practice_logo.png'
 category: backend

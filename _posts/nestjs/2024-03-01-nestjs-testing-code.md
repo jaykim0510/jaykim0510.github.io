@@ -186,6 +186,16 @@ describe('first describe', () => {
 
 - 모킹(mocking)은 단위 테스트를 작성할 때, 해당 코드가 의존하는 부분을 가짜(mock)로 대체하는 방법을 말한다
 - 특정 기능만을 테스트 하겠다는 단위 테스트 본연의 목적에만 집중하도록 해준다
+- **비즈니스 로직이 테스트 대상**이 되며, **데이터베이스와 같은 외부 의존성 작업은 모킹**한다
+
+### 무엇을 모킹해야 하나
+
+- 외부 의존성을 차단할 때
+  - 데이터베이스, API 호출, 파일 시스템 등 외부에 의존하는 코드가 테스트에 영향을 미치는 것을 막기 위해 모킹을 사용한다
+  - 이렇게 하면 테스트 환경을 독립적으로 만들 수 있다
+- 테스트 범위를 좁히기 위해
+  - 특정 함수의 내부 로직만 테스트하고 싶을 때, 의존하는 다른 함수들은 모킹할 수 있다
+
 
 ###  함수 모킹
 
@@ -376,6 +386,234 @@ describe("AuthService", () => {
 
 # Nest 테스트 코드 작성하기
 
+```ts
+// src/user/user.controller.spec.ts
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
+
+describe('UserController', () => {
+  let userController: UserController;
+  let userService: UserService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UserController],
+      providers: [
+        {
+          provide: UserService,
+          useValue: {
+            readUsers: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    userController = module.get<UserController>(UserController);
+    userService = module.get<UserService>(UserService);
+  });
+
+  // 컨트롤러 클래스에 대한 테스트
+  it('should be defined', () => {
+    expect(userController).toBeDefined();
+  });
+
+  // 컨트롤러가 가지는 각각의 라우트에 대한 테스트
+  describe('readUsers', () => {
+    test('이메일 정보만 이용해 유저 목록을 불러오는 함수를 호출할 때 잘 넘겨주는지 테스트', async () => {
+      const email = 'kim@naver.com';
+      const username = undefined;
+
+      (userService.readUsers as jest.Mock).mockResolvedValue([
+        { email, username: 'kim' },
+      ]);
+
+      const result = await userController.readUsers(email, username);
+
+      expect(userService.readUsers).toHaveBeenCalledWith(email, username);
+      expect(result).toStrictEqual([{ email, username: 'kim' }]);
+    });
+
+    test('유저명 정보만 이용해 유저 목록을 불러오는 함수를 호출할 때 잘 넘겨주는지 테스트', async () => {
+      const email = undefined;
+      const username = 'kim';
+
+      (userService.readUsers as jest.Mock).mockResolvedValue([
+        { email: 'kim@naver.com', username },
+      ]);
+
+      const result = await userController.readUsers(email, username);
+
+      expect(userService.readUsers).toHaveBeenCalledWith(email, username);
+      expect(result).toStrictEqual([{ email: 'kim@naver.com', username }]);
+    });
+
+    test('이메일과 유저명 정보를 이용해 유저 목록을 불러오는 함수를 호출할 때 잘 넘겨주는지 테스트', async () => {
+      const email = 'kim@naver.com';
+      const username = 'kim';
+
+      (userService.readUsers as jest.Mock).mockResolvedValue([
+        { email, username },
+      ]);
+
+      const result = await userController.readUsers(email, username);
+
+      expect(userService.readUsers).toHaveBeenCalledWith(email, username);
+      expect(result).toStrictEqual([{ email, username }]);
+    });
+
+    test('존재하지 않는 유저의 정보를 이용해 유저 목록을 불러오는 함수를 호출할 때 잘 넘겨주는지 테스트', async () => {
+      const email = 'fake@naver.com';
+      const username = 'fake';
+
+      (userService.readUsers as jest.Mock).mockResolvedValue([]);
+
+      const result = await userController.readUsers(email, username);
+
+      expect(userService.readUsers).toHaveBeenCalledWith(email, username);
+      expect(result).toStrictEqual([]);
+    });
+  });
+});
+```
+
+```ts
+// src/user/user.service.spec.ts
+
+import { Test, TestingModule } from '@nestjs/testing';
+import { UserService } from './user.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { UserEntity } from './entities/user.entity';
+import { Repository } from 'typeorm';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
+describe('UserService', () => {
+  let userService: UserService;
+  let userRepo: Repository<UserEntity>;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UserService,
+        {
+          provide: getRepositoryToken(UserEntity),
+          useClass: Repository,
+        },
+      ],
+    }).compile();
+
+    userService = module.get<UserService>(UserService);
+    userRepo = module.get<Repository<UserEntity>>(
+      getRepositoryToken(UserEntity),
+    );
+  });
+
+  it('should be defined', () => {
+    expect(userService).toBeDefined();
+  });
+
+  describe('readUsers', () => {
+    test('이메일과 유저명을 받았을 때 쿼리를 올바르게 실행하는지 테스트', async () => {
+      const email = 'kim@naver.com';
+      const username = 'kim';
+
+      const createQueryBuilderMock = {
+        andWhere: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue([{ email, username }]),
+      };
+      jest
+        .spyOn(userRepo, 'createQueryBuilder')
+        .mockReturnValue(createQueryBuilderMock as any);
+
+      const result = await userService.readUsers(email, username);
+
+      expect(createQueryBuilderMock.andWhere).toHaveBeenCalledWith(
+        'email = :email',
+        { email },
+      );
+
+      expect(createQueryBuilderMock.andWhere).toHaveBeenCalledWith(
+        'username = :username',
+        { username },
+      );
+
+      expect(result).toStrictEqual([{ email, username }]);
+    });
+  });
+
+  test('이메일만 받았을 때 쿼리를 올바르게 실행하는지 테스트', async () => {
+    const email = 'kim@naver.com';
+    const username = undefined;
+
+    const createQueryBuilderMock = {
+      andWhere: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue([{ email, username: 'kim' }]),
+    };
+    jest
+      .spyOn(userRepo, 'createQueryBuilder')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    const result = await userService.readUsers(email, username);
+
+    expect(createQueryBuilderMock.andWhere).toHaveBeenCalledWith(
+      'email = :email',
+      { email },
+    );
+
+    expect(createQueryBuilderMock.andWhere).not.toHaveBeenCalledWith(
+      'username = :username',
+      { username },
+    );
+
+    expect(result).toStrictEqual([{ email, username: 'kim' }]);
+  });
+
+  test('유저명만 받았을 때 쿼리를 올바르게 실행하는지 테스트', async () => {
+    const email = undefined;
+    const username = 'kim';
+
+    const createQueryBuilderMock = {
+      andWhere: jest.fn().mockReturnThis(),
+      getMany: jest
+        .fn()
+        .mockResolvedValue([{ email: 'kim@naver.com', username }]),
+    };
+    jest
+      .spyOn(userRepo, 'createQueryBuilder')
+      .mockReturnValue(createQueryBuilderMock as any);
+
+    const result = await userService.readUsers(email, username);
+
+    expect(createQueryBuilderMock.andWhere).not.toHaveBeenCalledWith(
+      'email = :email',
+      { email },
+    );
+
+    expect(createQueryBuilderMock.andWhere).toHaveBeenCalledWith(
+      'username = :username',
+      { username },
+    );
+
+    expect(result).toStrictEqual([{ email: 'kim@naver.com', username }]);
+  });
+
+  test('아무것도 들어오지 않았을 때 400 예외를 발생시키는지 테스트', async () => {
+    await expect(userService.readUsers(undefined, undefined)).rejects.toThrow(
+      new HttpException(
+        'At least email or username is required',
+        HttpStatus.NOT_FOUND,
+      ),
+    );
+  });
+});
+
+
+```
+
+```
+npm run test
+```
 
 # 참고
 
