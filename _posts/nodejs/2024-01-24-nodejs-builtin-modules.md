@@ -2,7 +2,7 @@
 layout: post
 title:  '[Node.js] 노드의 내장 객체와 기본 모듈'
 description: 
-date:   2024-01-24 15:01:35 +0300
+date:   2024-01-24 12:01:35 +0300
 image:  '/images/node_logo.png'
 logo_image:  '/images/node_logo.png'
 category: backend
@@ -17,7 +17,9 @@ tag: nodejs
 
 ---
 
-# process
+# 내장 객체
+
+## process
 
 - 현재 실행중인 노드 프로세스에 대한 정보를 담고 있는 노드 내장 객체
 
@@ -39,11 +41,15 @@ process.cwd()
 process.env
 ```
 
-# os
+# 내장 모듈
+
+## os
 
 - 운영체제의 정보를 담고 있는 내장 모듈
 
 ```js
+import * as os from 'os';
+
 // 홈 디렉터리 경로
 os.homedir()
 
@@ -57,11 +63,13 @@ os.freemem()
 os.totalmem()
 ```
 
-# path
+## path
 
 - 폴더와 파일의 경로를 쉽게 조작하도록 도와주는 내장 모듈
 
 ```js
+import * as path from 'path';
+
 // 파일이 위치한 폴더 경로
 path.dirname(경로)
 
@@ -75,7 +83,7 @@ path.basename(경로)
 path.join(경로1, 경로2, ..)
 ```
 
-# url
+## url
 
 - URL 주소를 파싱해서 쉽게 조작하도록 도와주는 내장 모듈
 
@@ -106,7 +114,7 @@ URL {
 }
 ```
 
-# util
+## util
 
 - util.deprecate()
 
@@ -135,7 +143,7 @@ const promisifiedRandomBytes = util.promisify(crypto.randomBytes)
 promisifiedRandomBytes(64).then().catch()...
 ```
 
-# fs
+## fs
 
 ```js
 import * as fs from 'fs'

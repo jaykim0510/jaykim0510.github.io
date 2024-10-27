@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>[NestJS] 검색</title>
-  <meta name='description' content='Menca personal blogging theme for Jekyll'>
+  <meta name='description' content='NestJS와 Elasticsearch를 활용해 검색 기능을 구현하는 방법에 대해 공부합니다'>
 
   <link rel="canonical" href="http://localhost:4000/nestjs-search">
   <link rel="alternate" type="application/rss+xml" title="Jay&#39;s Cookbook" href="/feed.xml">
@@ -15,16 +15,12 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="[NestJS] 검색 – Jay's Cookbook">
-  <meta name="twitter:description" content="
-Table of Contents
-">
+  <meta name="twitter:description" content="NestJS와 Elasticsearch를 활용해 검색 기능을 구현하는 방법에 대해 공부합니다">
   <meta name="twitter:image:src" content="http://localhost:4000/images/nestjs_practice_logo.png">
 
   <!-- Facebook OpenGraph -->
   <meta property="og:title" content="[NestJS] 검색 – Jay's Cookbook">
-  <meta property="og:description" content="
-Table of Contents
-">
+  <meta property="og:description" content="NestJS와 Elasticsearch를 활용해 검색 기능을 구현하는 방법에 대해 공부합니다">
   <meta property="og:image" content="http://localhost:4000/images/nestjs_practice_logo.png">
 
   <!-- Fonts -->
@@ -1115,7 +1111,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2024-10-01T21:01:35+09:00">01 Oct 2024</time>
+              <time class="post__date" datetime="2024-10-02T21:01:35+09:00">02 Oct 2024</time>
             </div>
           </div>
   
@@ -1130,8 +1126,6 @@ Table of Contents
   <!--첫 번째 문단-->
 
 
-
-  
 
   
 
@@ -1175,16 +1169,422 @@ Table of Contents
     <div class="post__content">
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#엘라스틱서치-모듈-설치" id="markdown-toc-엘라스틱서치-모듈-설치">엘라스틱서치 모듈 설치</a></li>
+  <li><a href="#엘라스틱서치-사용" id="markdown-toc-엘라스틱서치-사용">엘라스틱서치 사용</a></li>
+  <li><a href="#mysql의-데이터-생성수정삭제가-발생할-때-elasticsearch-동기화-시키기" id="markdown-toc-mysql의-데이터-생성수정삭제가-발생할-때-elasticsearch-동기화-시키기">MySQL의 데이터 생성/수정/삭제가 발생할 때 Elasticsearch 동기화 시키기</a></li>
+</ul>
 
 <hr />
+
+<h2 id="엘라스틱서치-모듈-설치">엘라스틱서치 모듈 설치</h2>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm i @nestjs/elasticsearch
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/search/decorators/search.module.ts</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Module</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/common</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">SearchController</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./search.controller</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span> <span class="nx">SearchService</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">./search.service</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">ElasticsearchModule</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/elasticsearch</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">ProductModule</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../product/product.module</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">EventEmitterModule</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/event-emitter</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">SearchEventService</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">./search.event.listener</span><span class="dl">"</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">Module</span><span class="p">({</span>
+  <span class="na">imports</span><span class="p">:</span> <span class="p">[</span>
+    <span class="nx">ElasticsearchModule</span><span class="p">.</span><span class="nx">register</span><span class="p">({</span>
+      <span class="na">node</span><span class="p">:</span> <span class="dl">'</span><span class="s1">http://localhost:9200</span><span class="dl">'</span>
+    <span class="p">}),</span>
+    <span class="nx">EventEmitterModule</span><span class="p">.</span><span class="nx">forRoot</span><span class="p">(),</span>
+    <span class="nx">ProductModule</span>
+  <span class="p">],</span>
+  <span class="na">controllers</span><span class="p">:</span> <span class="p">[</span><span class="nx">SearchController</span><span class="p">],</span>
+  <span class="na">providers</span><span class="p">:</span> <span class="p">[</span><span class="nx">SearchService</span><span class="p">,</span> <span class="nx">SearchEventService</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">SearchModule</span> <span class="p">{}</span>
+
+</code></pre></div></div>
+
+<h2 id="엘라스틱서치-사용">엘라스틱서치 사용</h2>
+
+<ul>
+  <li>인덱스 없으면 생성</li>
+  <li>초기에 MySQL에 저장된 데이터 인덱싱할 때 <code class="language-plaintext highlighter-rouge">search/init-indexing</code> API 실행</li>
+  <li><code class="language-plaintext highlighter-rouge">search</code> API 로 통합 검색</li>
+</ul>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/search/decorators/search.controller.ts</span>
+
+<span class="k">import</span> <span class="p">{</span><span class="nx">Controller</span><span class="p">,</span> <span class="nx">Get</span><span class="p">,</span> <span class="nx">Query</span><span class="p">,</span> <span class="nx">UseInterceptors</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/common</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">SearchService</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">./search.service</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">SearchEventInterceptor</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">./interceptors/search.event.interceptor</span><span class="dl">"</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">UseInterceptors</span><span class="p">(</span><span class="nx">SearchEventInterceptor</span><span class="p">)</span>
+<span class="p">@</span><span class="nd">Controller</span><span class="p">(</span><span class="dl">'</span><span class="s1">search</span><span class="dl">'</span><span class="p">)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">SearchController</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="k">private</span> <span class="k">readonly</span> <span class="nx">searchService</span><span class="p">:</span> <span class="nx">SearchService</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="p">@</span><span class="nd">Get</span><span class="p">(</span><span class="dl">'</span><span class="s1">init-indexing</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">indexAllProducts</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">searchService</span><span class="p">.</span><span class="nx">initIndexAllProducts</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">Get</span><span class="p">()</span>
+  <span class="k">async</span> <span class="nx">search</span><span class="p">(@</span><span class="nd">Query</span><span class="p">()</span> <span class="nx">query</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">searchService</span><span class="p">.</span><span class="nx">searchProducts</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/search/decorators/search.service.ts</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">Injectable</span><span class="p">,</span> <span class="nx">OnApplicationBootstrap</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/common</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">ElasticsearchService</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/elasticsearch</span><span class="dl">'</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">ProductEntity</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../product/entities/product.entity</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">InjectRepository</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/typeorm</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">Repository</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">typeorm</span><span class="dl">"</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">SearchService</span> <span class="k">implements</span> <span class="nx">OnApplicationBootstrap</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="k">private</span> <span class="k">readonly</span>  <span class="nx">esService</span><span class="p">:</span> <span class="nx">ElasticsearchService</span><span class="p">,</span>
+    <span class="p">@</span><span class="nd">InjectRepository</span><span class="p">(</span><span class="nx">ProductEntity</span><span class="p">)</span> <span class="k">private</span> <span class="k">readonly</span> <span class="nx">productRepo</span><span class="p">:</span> <span class="nx">Repository</span><span class="o">&lt;</span><span class="nx">ProductEntity</span><span class="o">&gt;</span><span class="p">,</span>
+  <span class="p">)</span> <span class="p">{}</span>
+
+  <span class="nx">onApplicationBootstrap</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">indexObjArr</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="na">indexName</span><span class="p">:</span> <span class="dl">"</span><span class="s2">train.ecommerce.products</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">indexSetting</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">index</span><span class="p">:</span> <span class="dl">"</span><span class="s2">train.ecommerce.products</span><span class="dl">"</span><span class="p">,</span>
+          <span class="na">settings</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">number_of_replicas</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="na">index</span><span class="p">:</span> <span class="p">{</span>
+              <span class="na">analysis</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">tokenizer</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="na">korean_nori_tokenizer</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">nori_tokenizer</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">decompound_mode</span><span class="p">:</span> <span class="dl">"</span><span class="s2">mixed</span><span class="dl">"</span>
+                  <span class="p">},</span>
+                  <span class="na">korean_ngram_tokenizer</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">ngram</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">token_chars</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">letter</span><span class="dl">"</span><span class="p">],</span>
+                    <span class="na">min_gram</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                    <span class="na">max_gram</span><span class="p">:</span> <span class="mi">3</span>
+                  <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="na">filter</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="na">stopwords</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">stop</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">stopwords</span><span class="p">:</span> <span class="dl">"</span><span class="s2"> </span><span class="dl">"</span>
+                  <span class="p">}</span>
+                <span class="p">},</span>
+                <span class="na">analyzer</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="na">korean_nori_analyzer</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">custom</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">tokenizer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">korean_nori_tokenizer</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">filter</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">lowercase</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">stop</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">trim</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">stopwords</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">nori_part_of_speech</span><span class="dl">"</span><span class="p">],</span>
+                    <span class="na">char_filter</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">html_strip</span><span class="dl">"</span><span class="p">]</span>
+                  <span class="p">},</span>
+                  <span class="na">korean_ngram_analyzer</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">custom</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">tokenizer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">korean_ngram_tokenizer</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">filter</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">lowercase</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">stop</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">trim</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">stopwords</span><span class="dl">"</span><span class="p">,</span>  <span class="dl">"</span><span class="s2">nori_part_of_speech</span><span class="dl">"</span><span class="p">],</span>
+                    <span class="na">char_filter</span><span class="p">:</span> <span class="p">[</span><span class="dl">"</span><span class="s2">html_strip</span><span class="dl">"</span><span class="p">]</span>
+                  <span class="p">}</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">},</span>
+          <span class="na">mappings</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">properties</span><span class="p">:</span> <span class="p">{</span>
+              <span class="na">name</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">copy_to</span><span class="p">:</span> <span class="dl">"</span><span class="s2">unified_field</span><span class="dl">"</span>
+              <span class="p">},</span>
+              <span class="na">description</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">copy_to</span><span class="p">:</span> <span class="dl">"</span><span class="s2">unified_field</span><span class="dl">"</span>
+              <span class="p">},</span>
+              <span class="na">category</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">copy_to</span><span class="p">:</span> <span class="dl">"</span><span class="s2">unified_field</span><span class="dl">"</span>
+              <span class="p">},</span>
+              <span class="na">brand</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">copy_to</span><span class="p">:</span> <span class="dl">"</span><span class="s2">unified_field</span><span class="dl">"</span>
+              <span class="p">},</span>
+              <span class="dl">"</span><span class="s2">unified_field</span><span class="dl">"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">analyzer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">standard</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">search_analyzer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">standard</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">fields</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="na">nori</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">analyzer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">korean_nori_analyzer</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">search_analyzer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">korean_nori_analyzer</span><span class="dl">"</span>
+                  <span class="p">},</span>
+                  <span class="na">ngram</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">text</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">analyzer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">korean_ngram_analyzer</span><span class="dl">"</span><span class="p">,</span>
+                    <span class="na">search_analyzer</span><span class="p">:</span> <span class="dl">"</span><span class="s2">korean_ngram_analyzer</span><span class="dl">"</span>
+                  <span class="p">}</span>
+                <span class="p">}</span>
+              <span class="p">}</span>
+            <span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">},</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">index</span> <span class="k">of</span> <span class="nx">indexObjArr</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">indexInit</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">indexInit</span><span class="p">(</span><span class="nx">indexObj</span><span class="p">:</span> <span class="nx">object</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">index</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">esService</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">exists</span><span class="p">({</span> <span class="na">index</span><span class="p">:</span> <span class="nx">indexObj</span><span class="p">[</span><span class="dl">"</span><span class="s2">indexName</span><span class="dl">"</span><span class="p">]</span> <span class="p">})</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">esService</span><span class="p">.</span><span class="nx">indices</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">indexObj</span><span class="p">[</span><span class="dl">"</span><span class="s2">indexSetting</span><span class="dl">"</span><span class="p">])</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">인덱스 추가</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">searchProducts</span><span class="p">(</span><span class="nx">q</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">englishPattern</span> <span class="o">=</span> <span class="sr">/</span><span class="se">[</span><span class="sr">a-zA-Z</span><span class="se">]</span><span class="sr">/</span>
+    <span class="kd">const</span> <span class="nx">isEnglish</span> <span class="o">=</span> <span class="nx">englishPattern</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">q</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">searchRequest</span> <span class="o">=</span> <span class="nx">isEnglish</span> <span class="p">?</span> <span class="p">{</span>
+      <span class="na">index</span><span class="p">:</span> <span class="dl">'</span><span class="s1">train.ecommerce.products</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">body</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">query</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">bool</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">must</span><span class="p">:</span> <span class="p">[</span>
+              <span class="p">{</span> <span class="na">match</span><span class="p">:</span> <span class="p">{</span> <span class="dl">"</span><span class="s2">unified_field</span><span class="dl">"</span><span class="p">:</span> <span class="nx">q</span> <span class="p">}</span> <span class="p">}</span>
+            <span class="p">]</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span> <span class="p">:</span> <span class="p">{</span>
+      <span class="na">index</span><span class="p">:</span> <span class="dl">'</span><span class="s1">train.ecommerce.products</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">body</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">query</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">bool</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">must</span><span class="p">:</span> <span class="p">[</span>
+              <span class="p">{</span> <span class="na">bool</span><span class="p">:</span> <span class="p">{</span> <span class="na">should</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span> <span class="na">match</span><span class="p">:</span> <span class="p">{</span> <span class="dl">"</span><span class="s2">unified_field</span><span class="dl">"</span><span class="p">:</span> <span class="nx">q</span> <span class="p">}</span> <span class="p">},</span>
+                    <span class="p">{</span> <span class="na">match</span><span class="p">:</span> <span class="p">{</span> <span class="dl">"</span><span class="s2">unified_field.nori</span><span class="dl">"</span><span class="p">:</span> <span class="nx">q</span> <span class="p">}</span> <span class="p">},</span>
+                    <span class="p">{</span> <span class="na">match</span><span class="p">:</span> <span class="p">{</span> <span class="dl">"</span><span class="s2">unified_field.ngram</span><span class="dl">"</span><span class="p">:</span> <span class="nx">q</span> <span class="p">}</span> <span class="p">},</span>
+                  <span class="p">]</span> <span class="p">}</span> <span class="p">}</span>
+
+            <span class="p">]</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kd">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">esService</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="nx">searchRequest</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">hits</span> <span class="o">=</span> <span class="nx">res</span><span class="p">.</span><span class="nx">hits</span><span class="p">.</span><span class="nx">hits</span>
+
+    <span class="k">return</span> <span class="nx">hits</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">hit</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="na">body</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">id</span><span class="p">:</span> <span class="nx">hit</span><span class="p">.</span><span class="nx">_id</span><span class="p">,</span>
+          <span class="na">name</span><span class="p">:</span> <span class="nx">hit</span><span class="p">.</span><span class="nx">_source</span><span class="p">[</span><span class="dl">"</span><span class="s2">name</span><span class="dl">"</span><span class="p">],</span>
+          <span class="na">description</span><span class="p">:</span> <span class="nx">hit</span><span class="p">.</span><span class="nx">_source</span><span class="p">[</span><span class="dl">"</span><span class="s2">description</span><span class="dl">"</span><span class="p">],</span>
+          <span class="na">category</span><span class="p">:</span> <span class="nx">hit</span><span class="p">.</span><span class="nx">_source</span><span class="p">[</span><span class="dl">"</span><span class="s2">category</span><span class="dl">"</span><span class="p">],</span>
+          <span class="na">brand</span><span class="p">:</span> <span class="nx">hit</span><span class="p">.</span><span class="nx">_source</span><span class="p">[</span><span class="dl">"</span><span class="s2">brand</span><span class="dl">"</span><span class="p">],</span>
+        <span class="p">},</span>
+        <span class="na">score</span><span class="p">:</span> <span class="nx">hit</span><span class="p">.</span><span class="nx">_score</span>
+      <span class="p">}</span>
+    <span class="p">})</span>
+
+  <span class="p">}</span>
+
+  <span class="k">async</span> <span class="nx">initIndexAllProducts</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">products</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">productRepo</span>
+      <span class="p">.</span><span class="nx">createQueryBuilder</span><span class="p">(</span><span class="dl">'</span><span class="s1">product</span><span class="dl">'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">leftJoinAndSelect</span><span class="p">(</span><span class="dl">'</span><span class="s1">product.category</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">category</span><span class="dl">'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">leftJoinAndSelect</span><span class="p">(</span><span class="dl">'</span><span class="s1">product.brand</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">brand</span><span class="dl">'</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">getMany</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">product</span> <span class="k">of</span> <span class="nx">products</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">esService</span><span class="p">.</span><span class="nx">index</span><span class="p">({</span>
+        <span class="na">index</span><span class="p">:</span> <span class="dl">'</span><span class="s1">train.ecommerce.products</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">id</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span>
+        <span class="na">document</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">name</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+          <span class="na">description</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">description</span><span class="p">,</span>
+          <span class="na">category</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">category</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+          <span class="na">brand</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">brand</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+        <span class="p">}</span>
+      <span class="p">})</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="mysql의-데이터-생성수정삭제가-발생할-때-elasticsearch-동기화-시키기">MySQL의 데이터 생성/수정/삭제가 발생할 때 Elasticsearch 동기화 시키기</h2>
+
+<ul>
+  <li>비동기로 처리하기 위해 이벤트로 등록</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm i --save @nestjs/event-emitter
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/search/decorators/search.event.listener.ts</span>
+
+<span class="k">import</span> <span class="p">{</span><span class="nx">Injectable</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/common</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">ElasticsearchService</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/elasticsearch</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">OnEvent</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/event-emitter</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">ProductEntity</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../product/entities/product.entity</span><span class="dl">"</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">SearchEventService</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="k">private</span> <span class="k">readonly</span> <span class="nx">esService</span><span class="p">:</span> <span class="nx">ElasticsearchService</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="p">@</span><span class="nd">OnEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">create</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">handleCreate</span><span class="p">(</span><span class="nx">product</span><span class="p">:</span> <span class="nx">ProductEntity</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">esService</span><span class="p">.</span><span class="nx">index</span><span class="p">({</span>
+      <span class="na">index</span><span class="p">:</span> <span class="dl">'</span><span class="s1">train.ecommerce.products</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">id</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span>
+      <span class="na">document</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">name</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+        <span class="na">description</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">description</span><span class="p">,</span>
+        <span class="na">category</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">category</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+        <span class="na">brand</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">brand</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+      <span class="p">}</span>
+    <span class="p">})</span>
+    <span class="k">return</span> <span class="nx">product</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">OnEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">update</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">handleUpdate</span><span class="p">(</span><span class="nx">product</span><span class="p">:</span> <span class="nb">Partial</span><span class="o">&lt;</span><span class="nx">ProductEntity</span><span class="o">&gt;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">esService</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span>
+      <span class="na">index</span><span class="p">:</span> <span class="dl">'</span><span class="s1">train.ecommerce.products</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">id</span><span class="p">:</span> <span class="nx">product</span><span class="p">.</span><span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span>
+      <span class="na">doc</span><span class="p">:</span> <span class="nx">product</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">OnEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">delete</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">handleDelete</span><span class="p">(</span><span class="nx">id</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">esService</span><span class="p">.</span><span class="k">delete</span><span class="p">({</span>
+      <span class="na">index</span><span class="p">:</span> <span class="dl">'</span><span class="s1">train.ecommerce.products</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">id</span><span class="p">:</span> <span class="nx">id</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/search/interceptors/search.event.interceptor.ts</span>
+
+<span class="k">import</span> <span class="p">{</span><span class="nx">CallHandler</span><span class="p">,</span> <span class="nx">ExecutionContext</span><span class="p">,</span> <span class="nx">Injectable</span><span class="p">,</span> <span class="nx">NestInterceptor</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/common</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">Observable</span><span class="p">,</span> <span class="nx">tap</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">rxjs</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">EventEmitter2</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/event-emitter</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">Reflector</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">@nestjs/core</span><span class="dl">"</span><span class="p">;</span>
+
+<span class="p">@</span><span class="nd">Injectable</span><span class="p">()</span>
+<span class="k">export</span> <span class="k">default</span> <span class="kd">class</span> <span class="nx">SearchEventInterceptor</span> <span class="k">implements</span> <span class="nx">NestInterceptor</span> <span class="p">{</span>
+
+  <span class="kd">constructor</span><span class="p">(</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="nx">reflector</span><span class="p">:</span> <span class="nx">Reflector</span><span class="p">,</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="nx">eventEmitter</span><span class="p">:</span> <span class="nx">EventEmitter2</span>
+  <span class="p">)</span> <span class="p">{}</span>
+
+  <span class="nx">intercept</span><span class="p">(</span><span class="nx">context</span><span class="p">:</span> <span class="nx">ExecutionContext</span><span class="p">,</span> <span class="nx">next</span><span class="p">:</span> <span class="nx">CallHandler</span><span class="o">&lt;</span><span class="kr">any</span><span class="o">&gt;</span><span class="p">):</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="kr">any</span><span class="o">&gt;</span> <span class="o">|</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">Observable</span><span class="o">&lt;</span><span class="kr">any</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+
+    <span class="kd">const</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">getHandler</span><span class="p">();</span>
+    <span class="kd">const</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">reflector</span><span class="p">.</span><span class="kd">get</span><span class="o">&lt;</span><span class="kr">string</span><span class="o">&gt;</span><span class="p">(</span><span class="dl">'</span><span class="s1">event</span><span class="dl">'</span><span class="p">,</span> <span class="nx">target</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">eventName</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">next</span><span class="p">.</span><span class="nx">handle</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">next</span><span class="p">.</span><span class="nx">handle</span><span class="p">().</span><span class="nx">pipe</span><span class="p">(</span>
+      <span class="nx">tap</span><span class="p">((</span><span class="nx">product</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">eventEmitter</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">eventName</span><span class="p">,</span> <span class="nx">product</span><span class="p">);</span>
+      <span class="p">}),</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// src/search/decorators/search.emit.event.decorator.ts</span>
+
+<span class="k">import</span> <span class="p">{</span> <span class="nx">SetMetadata</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@nestjs/common</span><span class="dl">'</span><span class="p">;</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">EmitEvent</span> <span class="o">=</span> <span class="p">(</span><span class="nx">eventName</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">SetMetadata</span><span class="p">(</span><span class="dl">'</span><span class="s1">event</span><span class="dl">'</span><span class="p">,</span> <span class="nx">eventName</span><span class="p">);</span>
+
+</code></pre></div></div>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span><span class="nx">EmitEvent</span><span class="p">}</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../search/decorators/search.emit.event.decorator</span><span class="dl">"</span><span class="p">;</span>
+<span class="k">import</span> <span class="nx">SearchEventInterceptor</span> <span class="k">from</span> <span class="dl">"</span><span class="s2">../search/interceptors/search.event.interceptor</span><span class="dl">"</span><span class="p">;</span>
+
+
+<span class="p">@</span><span class="nd">Controller</span><span class="p">(</span><span class="dl">'</span><span class="s1">products</span><span class="dl">'</span><span class="p">)</span>
+<span class="k">export</span> <span class="kd">class</span> <span class="nx">ProductController</span> <span class="p">{</span>
+  <span class="kd">constructor</span><span class="p">(</span><span class="k">private</span> <span class="k">readonly</span> <span class="nx">productService</span><span class="p">:</span> <span class="nx">ProductService</span><span class="p">)</span> <span class="p">{}</span>
+
+  <span class="p">@</span><span class="nd">Get</span><span class="p">(</span><span class="dl">'</span><span class="s1">query</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">getProducts</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">productService</span><span class="p">.</span><span class="nx">getResults</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">EmitEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">create</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">@</span><span class="nd">Post</span><span class="p">()</span>
+  <span class="p">@</span><span class="nd">UseInterceptors</span><span class="p">(</span>
+    <span class="nx">SearchEventInterceptor</span><span class="p">,</span>
+    <span class="nx">FilesInterceptor</span><span class="p">(</span><span class="dl">'</span><span class="s1">files</span><span class="dl">'</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">storage</span><span class="p">:</span> <span class="nx">diskStorage</span><span class="p">({</span>
+        <span class="na">destination</span><span class="p">:</span> <span class="dl">'</span><span class="s1">./uploads</span><span class="dl">'</span><span class="p">,</span> <span class="c1">// 파일 저장 경로</span>
+        <span class="na">filename</span><span class="p">:</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">file</span><span class="p">,</span> <span class="nx">cb</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="kd">const</span> <span class="nx">filename</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()}</span><span class="s2">-</span><span class="p">${</span><span class="nx">file</span><span class="p">.</span><span class="nx">originalname</span><span class="p">}</span><span class="s2">`</span><span class="p">;</span>
+          <span class="nx">cb</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">filename</span><span class="p">);</span>
+        <span class="p">},</span>
+      <span class="p">}),</span>
+    <span class="p">}),</span>
+  <span class="p">)</span>
+  <span class="k">async</span> <span class="nx">createProduct</span><span class="p">(</span>
+    <span class="p">@</span><span class="nd">UploadedFiles</span><span class="p">()</span> <span class="nx">files</span><span class="p">:</span> <span class="nx">Express</span><span class="p">.</span><span class="nx">Multer</span><span class="p">.</span><span class="nx">File</span><span class="p">[],</span>
+    <span class="p">@</span><span class="nd">Body</span><span class="p">(</span><span class="k">new</span> <span class="nx">PlainToInstancePipe</span><span class="p">(</span><span class="nx">CreateProductDto</span><span class="p">))</span> <span class="nx">createProductDto</span><span class="p">:</span> <span class="nx">CreateProductDto</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">productService</span><span class="p">.</span><span class="nx">createProduct</span><span class="p">(</span><span class="nx">createProductDto</span><span class="p">,</span> <span class="nx">files</span><span class="p">)</span>
+    <span class="c1">// return await this.productService.createProduct(createProductDto)</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">Get</span><span class="p">()</span>
+  <span class="k">async</span> <span class="nx">readProducts</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">productService</span><span class="p">.</span><span class="nx">readProducts</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">Get</span><span class="p">(</span><span class="dl">'</span><span class="s1">:id</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">readProduct</span><span class="p">(@</span><span class="nd">Param</span><span class="p">(</span><span class="dl">'</span><span class="s1">id</span><span class="dl">'</span><span class="p">)</span> <span class="nx">id</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">productService</span><span class="p">.</span><span class="nx">readProduct</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">EmitEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">update</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">@</span><span class="nd">UseInterceptors</span><span class="p">(</span><span class="nx">SearchEventInterceptor</span><span class="p">)</span>
+  <span class="p">@</span><span class="nd">Patch</span><span class="p">(</span><span class="dl">'</span><span class="s1">:id</span><span class="dl">'</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">updateProduct</span><span class="p">(@</span><span class="nd">Param</span><span class="p">(</span><span class="dl">'</span><span class="s1">id</span><span class="dl">'</span><span class="p">)</span> <span class="nx">id</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="p">@</span><span class="nd">Body</span><span class="p">()</span> <span class="nx">updateProductDto</span><span class="p">:</span> <span class="nx">UpdateProductDto</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">productService</span><span class="p">.</span><span class="nx">updateProduct</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">updateProductDto</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="p">@</span><span class="nd">EmitEvent</span><span class="p">(</span><span class="dl">'</span><span class="s1">delete</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">@</span><span class="nd">Delete</span><span class="p">(</span><span class="dl">'</span><span class="s1">:id</span><span class="dl">'</span><span class="p">)</span>
+  <span class="p">@</span><span class="nd">UseInterceptors</span><span class="p">(</span><span class="nx">SearchEventInterceptor</span><span class="p">)</span>
+  <span class="k">async</span> <span class="nx">deleteProduct</span><span class="p">(@</span><span class="nd">Param</span><span class="p">(</span><span class="dl">'</span><span class="s1">id</span><span class="dl">'</span><span class="p">)</span> <span class="nx">id</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">productService</span><span class="p">.</span><span class="nx">deleteProduct</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nx">id</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
     </div>
   </article>
   <!--첫 번째 문단-->
 
 
-
-  
 
   
 
@@ -1265,55 +1665,6 @@ Table of Contents
               <div class="article">
   <div class="article__inner">
     <div class="article__head">
-      <time class="article__date" datetime="2024-10-16T06:01:35+09:00">16 Oct 2024</time>
-
-      
-
-      
-      <a class="article__image" href="/nestjs-test">
-        <img class="lazy" data-src="/images/nestjs_practice_logo.png" alt="[NestJS] 테스트 코드">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-      <div class="article__category">
-        <div class="article__category_tag_container">
-          <a href="/_pages/categories/backend">
-            <div class="article__category_text">
-              backend
-            </div>
-          </a>
-          <a href="/_pages/tags/backend/nestjs" class="article__tag">NestJS</a>
-          
-        </div>
-      </div>
-
-      <h2 class="article__title">
-        <a href="/nestjs-test">[NestJS] 테스트 코드</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article">
-  <div class="article__inner">
-    <div class="article__head">
       <time class="article__date" datetime="2024-10-14T21:01:35+09:00">14 Oct 2024</time>
 
       
@@ -1363,7 +1714,7 @@ Table of Contents
               <div class="article">
   <div class="article__inner">
     <div class="article__head">
-      <time class="article__date" datetime="2024-10-08T21:01:35+09:00">08 Oct 2024</time>
+      <time class="article__date" datetime="2024-10-09T21:01:35+09:00">09 Oct 2024</time>
 
       
 
@@ -1390,6 +1741,55 @@ Table of Contents
 
       <h2 class="article__title">
         <a href="/nestjs-sse">[NestJS] SSE</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
+
+              <div class="article">
+  <div class="article__inner">
+    <div class="article__head">
+      <time class="article__date" datetime="2024-10-08T21:01:35+09:00">08 Oct 2024</time>
+
+      
+
+      
+      <a class="article__image" href="/nestjs-web-socket">
+        <img class="lazy" data-src="/images/nestjs_practice_logo.png" alt="[NestJS] 웹 소켓">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          <a href="/_pages/categories/backend">
+            <div class="article__category_text">
+              backend
+            </div>
+          </a>
+          <a href="/_pages/tags/backend/nestjs" class="article__tag">NestJS</a>
+          
+        </div>
+      </div>
+
+      <h2 class="article__title">
+        <a href="/nestjs-web-socket">[NestJS] 웹 소켓</a>
       </h2>
 
       
