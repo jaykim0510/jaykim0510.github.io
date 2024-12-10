@@ -5,8 +5,8 @@ description:
 date:   2022-01-20 15:01:35 +0300
 image:  '/images/matplotlib_logo.png'
 logo_image:  '/images/matplotlib_logo.png'
-categories: data_analytics
-tags: matplotlib
+category: data_analytics
+tag: matplotlib
 ---
 ---
 **Table of Contents**
