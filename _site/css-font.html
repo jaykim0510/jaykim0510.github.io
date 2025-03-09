@@ -6,22 +6,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>[HTML/CSS]: Intro</title>
+  <title>[CSS]: 폰트(font)</title>
   <meta name='description' content='Menca personal blogging theme for Jekyll'>
 
-  <link rel="canonical" href="http://localhost:4000/htmlcss-intro">
+  <link rel="canonical" href="http://localhost:4000/css-font">
   <link rel="alternate" type="application/rss+xml" title="Jay&#39;s Cookbook" href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="[HTML/CSS]: Intro – Jay's Cookbook">
+  <meta name="twitter:title" content="[CSS]: 폰트(font) – Jay's Cookbook">
   <meta name="twitter:description" content="
 Table of Contents
 ">
   <meta name="twitter:image:src" content="http://localhost:4000/images/htmlcss_logo.png">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="[HTML/CSS]: Intro – Jay's Cookbook">
+  <meta property="og:title" content="[CSS]: 폰트(font) – Jay's Cookbook">
   <meta property="og:description" content="
 Table of Contents
 ">
@@ -490,6 +490,14 @@ Table of Contents
                   <li class="nav__item">
                     <a href="/_pages/tags/language/typescript.html" class="nav__link">Typescript</a>
                   </li>
+                  
+                
+              
+                
+                  
+                
+              
+                
                   
                 
               
@@ -1206,7 +1214,7 @@ Table of Contents
       
       <div class="col col-6 col-d-12">
         <div class="post-image">
-          <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[HTML/CSS]: Intro">
+          <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS]: 폰트(font)">
         </div>
       </div>
       
@@ -1230,7 +1238,7 @@ Table of Contents
             
           </div>
             
-          <h1 class="post__title">[HTML/CSS]: Intro</h1>
+          <h1 class="post__title">[CSS]: 폰트(font)</h1>
   
           <div class="post__meta">
             <a href="/about/" class="post__author-image">
@@ -1239,7 +1247,7 @@ Table of Contents
 
             <div class="post__meta-bottom">
               <a class="post__author" href="/about/">Jay Kim</a>
-              <time class="post__date" datetime="2023-12-03T21:01:35+09:00">03 Dec 2023</time>
+              <time class="post__date" datetime="2024-02-10T21:01:35+09:00">10 Feb 2024</time>
             </div>
           </div>
   
@@ -1256,88 +1264,10 @@ Table of Contents
 
 
   
-  	
-  	
-  	
-  	
-  	
 
-<!--두 번째 문단-->
+  
 
-
-  <article class="post">
-
-    <div class="post__content">
-      <hr />
-<p id="toc"><strong>Table of Contents</strong></p>
-<ul id="markdown-toc">
-  <li><a href="#dto" id="markdown-toc-dto">DTO</a>    <ul>
-      <li><a href="#dto-사용에-필요한-라이브러리" id="markdown-toc-dto-사용에-필요한-라이브러리">DTO 사용에 필요한 라이브러리</a></li>
-      <li><a href="#dto-만들기" id="markdown-toc-dto-만들기">DTO 만들기</a></li>
-    </ul>
-  </li>
-</ul>
-
-<hr />
-
-<h1 id="dto">DTO</h1>
-
-<ul>
-  <li>Data Transfer Object의 약자</li>
-  <li>들어오고 나가는 데이터의 형태를 애플리케이션에서 규격화한 클래스(DTO)에 맞는지 검증하는 데이터 검증 방식</li>
-  <li>(DTO는 Nest에서 정해진 형태로 제공하는 구성요소는 아니지만, 여러 백엔드 애플리케이션에서 데이터 검증 목적으로 많이 사용)</li>
-</ul>
-
-<h2 id="dto-사용에-필요한-라이브러리">DTO 사용에 필요한 라이브러리</h2>
-
-<ul>
-  <li>Nest에서 DTO를 적용하려면 아래의 라이브러리를 설치해야함</li>
-  <li><strong>class-validator</strong>: DTO 클래스에서 프로퍼티를 검증할 때 사용할 유용한 데코레이터를 제공해줌</li>
-  <li><strong>class-transformer</strong>: plain json과 class object 간의 직렬화/역직렬화에 유용한 기능을 제공</li>
-</ul>
-
-<p>? Nest에서 제공하는 빌트인 파이프인 ValidationPipe가 직렬화/역직렬화 기능을 함. 그래서 class-transformer가 꼭 필요한 건 아닌 것 같음. (하지만 여전히 다른 유용한 기능도 많이 제공하기 때문에 설치해두면 좋음)</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm i class-validator class-transformer
-</code></pre></div></div>
-
-<h2 id="dto-만들기">DTO 만들기</h2>
-
-<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// create-cat.dto.ts</span>
-
-<span class="k">import</span> <span class="p">{</span> <span class="nx">IsString</span><span class="p">,</span> <span class="nx">IsInt</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">class-validator</span><span class="dl">'</span><span class="p">;</span>
-
-<span class="k">export</span> <span class="kd">class</span> <span class="nx">CreateCatDto</span> <span class="p">{</span>
-  <span class="p">@</span><span class="nd">IsString</span><span class="p">()</span>
-  <span class="nx">name</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
-
-  <span class="p">@</span><span class="nd">IsInt</span><span class="p">()</span>
-  <span class="nx">age</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
-
-  <span class="p">@</span><span class="nd">IsString</span><span class="p">()</span>
-  <span class="nx">breed</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// main.ts</span>
-
-<span class="kd">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">NestFactory</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">AppModule</span><span class="p">);</span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">useGlobalPipes</span><span class="p">(</span><span class="k">new</span> <span class="nx">ValidationPipe</span><span class="p">())</span>
-</code></pre></div></div>
-
-<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// controller.ts</span>
-
-<span class="p">@</span><span class="nd">Post</span><span class="p">()</span>
-<span class="nx">create</span><span class="p">(@</span><span class="nd">Body</span><span class="p">()</span> <span class="nx">createCatDto</span><span class="p">:</span> <span class="nx">CreateCatDto</span><span class="p">)</span> <span class="p">{</span>
-  <span class="p">...</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-    </div>
-  </article>
-  <!--첫 번째 문단-->
-
-
+  
 
   
   	
@@ -1347,6 +1277,58 @@ Table of Contents
   	
 
 <!--두 번째 문단-->
+
+
+  <div class="post_pagination">
+    
+      <a href="/css-color" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[CSS]: 색상(color)</a>
+    
+    
+      <a href="/css-size" class="pagination__next pagination__item"><span class="prev_next"></span>[CSS]: 크기(size)<i class="ion ion-ios-arrow-forward"></i></a>
+    
+  </div>
+
+
+
+  <article class="post">
+
+    <div class="post__content">
+      <hr />
+<p id="toc"><strong>Table of Contents</strong></p>
+
+<hr />
+
+    </div>
+  </article>
+  <!--첫 번째 문단-->
+
+
+
+  
+
+  
+
+  
+
+  
+  	
+  	
+  	
+  	
+  	
+
+<!--두 번째 문단-->
+
+
+  <div class="post_pagination">
+    
+      <a href="/css-color" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[CSS]: 색상(color)</a>
+    
+    
+      <a href="/css-size" class="pagination__next pagination__item"><span class="prev_next"></span>[CSS]: 크기(size)<i class="ion ion-ios-arrow-forward"></i></a>
+    
+  </div>
+
 
 
 </div>
@@ -1360,7 +1342,7 @@ Table of Contents
 
 <!-- begin related posts -->
 <div class="container">
-  <section class="related-posts  animate">
+  <section class="related-posts is-related animate">
     <div class="row">
       <div class="col col-12">
         <div class="container__inner">
@@ -1709,2015 +1691,48 @@ Table of Contents
             
       
             
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
+
+              <div class="article">
+  <div class="article__inner">
+    <div class="article__head">
+      <time class="article__date" datetime="2024-03-01T21:01:35+09:00">01 Mar 2024</time>
+
       
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
+
       
-            
-      
-            
-            
-            
-            
-      
-            
+      <a class="article__image" href="/css-layout-flex">
+        <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS] Layout: 플렉스(flex)">
+      </a>
       
-            
-            
-            
-            
+
+    </div>
+
+    <div class="article__content">
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          <a href="/_pages/categories/frontend">
+            <div class="article__category_text">
+              frontend
+            </div>
+          </a>
+          <a href="/_pages/tags/frontend/html-css" class="article__tag">HTML-CSS</a>
+          
+        </div>
+      </div>
+
+      <h2 class="article__title">
+        <a href="/css-layout-flex">[CSS] Layout: 플렉스(flex)</a>
+      </h2>
+
       
+
+    </div>
+  </div>
+</div>
+
             
-      
-            
+                
+              
             
             
             
@@ -3759,21 +1774,49 @@ Table of Contents
       
             
       
-            
-            
             
-            
+
+              <div class="article">
+  <div class="article__inner">
+    <div class="article__head">
+      <time class="article__date" datetime="2024-02-20T21:01:35+09:00">20 Feb 2024</time>
+
       
-            
+
       
-            
-            
-            
-            
+      <a class="article__image" href="/css-selector">
+        <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS]: 선택자(selector)">
+      </a>
       
-            
+
+    </div>
+
+    <div class="article__content">
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          <a href="/_pages/categories/frontend">
+            <div class="article__category_text">
+              frontend
+            </div>
+          </a>
+          <a href="/_pages/tags/frontend/html-css" class="article__tag">HTML-CSS</a>
+          
+        </div>
+      </div>
+
+      <h2 class="article__title">
+        <a href="/css-selector">[CSS]: 선택자(selector)</a>
+      </h2>
+
       
+
+    </div>
+  </div>
+</div>
+
             
+                
+              
             
             
             
@@ -3794,22 +1837,49 @@ Table of Contents
       
             
       
-            
             
-            
-            
+
+              <div class="article">
+  <div class="article__inner">
+    <div class="article__head">
+      <time class="article__date" datetime="2024-02-15T21:01:35+09:00">15 Feb 2024</time>
+
       
-            
+
       
-            
-            
-            
-            
+      <a class="article__image" href="/css-size">
+        <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS]: 크기(size)">
+      </a>
       
-            
+
+    </div>
+
+    <div class="article__content">
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          <a href="/_pages/categories/frontend">
+            <div class="article__category_text">
+              frontend
+            </div>
+          </a>
+          <a href="/_pages/tags/frontend/html-css" class="article__tag">HTML-CSS</a>
+          
+        </div>
+      </div>
+
+      <h2 class="article__title">
+        <a href="/css-size">[CSS]: 크기(size)</a>
+      </h2>
+
       
-            
+
+    </div>
+  </div>
+</div>
+
             
+                
+                  
           </div>
         </div>
       </div>
