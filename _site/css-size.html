@@ -1268,6 +1268,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -1282,7 +1284,7 @@ Table of Contents
       <a href="/css-font" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[CSS]: 폰트(font)</a>
     
     
-      <a href="/css-selector" class="pagination__next pagination__item"><span class="prev_next"></span>[CSS]: 선택자(selector)<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/css-func" class="pagination__next pagination__item"><span class="prev_next"></span>[CSS]: 함수(func)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1293,8 +1295,306 @@ Table of Contents
     <div class="post__content">
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#css-size-단위-가이드" id="markdown-toc-css-size-단위-가이드">CSS Size 단위 가이드</a>    <ul>
+      <li><a href="#1-절대-단위-vs-상대-단위" id="markdown-toc-1-절대-단위-vs-상대-단위">1. 절대 단위 vs 상대 단위</a>        <ul>
+          <li><a href="#-절대-단위-absolute-units" id="markdown-toc--절대-단위-absolute-units">✅ 절대 단위 (Absolute Units)</a></li>
+          <li><a href="#-상대-단위-relative-units" id="markdown-toc--상대-단위-relative-units">✅ 상대 단위 (Relative Units)</a></li>
+        </ul>
+      </li>
+      <li><a href="#2-주요-단위별-특징-및-사용-사례" id="markdown-toc-2-주요-단위별-특징-및-사용-사례">2. 주요 단위별 특징 및 사용 사례</a>        <ul>
+          <li><a href="#-px-픽셀" id="markdown-toc--px-픽셀">🔹 <code class="language-plaintext highlighter-rouge">px</code> (픽셀)</a></li>
+          <li><a href="#--퍼센트" id="markdown-toc---퍼센트">🔹 <code class="language-plaintext highlighter-rouge">%</code> (퍼센트)</a></li>
+          <li><a href="#-em-vs-rem" id="markdown-toc--em-vs-rem">🔹 <code class="language-plaintext highlighter-rouge">em</code> vs <code class="language-plaintext highlighter-rouge">rem</code></a>            <ul>
+              <li><a href="#-em-부모-폰트-크기-기준" id="markdown-toc--em-부모-폰트-크기-기준">🔹 <code class="language-plaintext highlighter-rouge">em</code> (부모 폰트 크기 기준)</a></li>
+              <li><a href="#-rem-루트-폰트-크기-기준" id="markdown-toc--rem-루트-폰트-크기-기준">🔹 <code class="language-plaintext highlighter-rouge">rem</code> (루트 폰트 크기 기준)</a></li>
+            </ul>
+          </li>
+          <li><a href="#-vw-vh-뷰포트-기준-단위" id="markdown-toc--vw-vh-뷰포트-기준-단위">🔹 <code class="language-plaintext highlighter-rouge">vw</code>, <code class="language-plaintext highlighter-rouge">vh</code> (뷰포트 기준 단위)</a></li>
+          <li><a href="#-calc-함수-활용" id="markdown-toc--calc-함수-활용">🔹 <code class="language-plaintext highlighter-rouge">calc()</code> 함수 활용</a></li>
+        </ul>
+      </li>
+      <li><a href="#3-단위-선택-가이드" id="markdown-toc-3-단위-선택-가이드">3. 단위 선택 가이드</a></li>
+      <li><a href="#4-결론" id="markdown-toc-4-결론">4. 결론</a></li>
+    </ul>
+  </li>
+</ul>
 
 <hr />
+
+<h1 id="css-size-단위-가이드">CSS Size 단위 가이드</h1>
+
+<p>CSS에서 크기를 지정할 때 다양한 단위를 사용할 수 있다. <code class="language-plaintext highlighter-rouge">px</code>, <code class="language-plaintext highlighter-rouge">em</code>, <code class="language-plaintext highlighter-rouge">rem</code>, <code class="language-plaintext highlighter-rouge">%</code>, <code class="language-plaintext highlighter-rouge">vw</code>, <code class="language-plaintext highlighter-rouge">vh</code> 등의 단위가 있으며, 각각의 특징과 사용법을 이해하는 것이 중요하다. 이번 글에서는 CSS의 크기 단위를 정리하고 언제 어떤 단위를 사용하면 좋은지 알아보자.</p>
+
+<hr />
+
+<h2 id="1-절대-단위-vs-상대-단위">1. 절대 단위 vs 상대 단위</h2>
+
+<p>CSS에서 크기 단위는 크게 <strong>절대 단위(Absolute Units)</strong> 와 <strong>상대 단위(Relative Units)</strong> 로 나뉜다.</p>
+
+<h3 id="-절대-단위-absolute-units">✅ 절대 단위 (Absolute Units)</h3>
+
+<p>절대 단위는 고정된 크기를 가지며, 환경에 따라 변하지 않는다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>단위</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">px</code></td>
+      <td>픽셀 (가장 일반적인 단위)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">cm</code></td>
+      <td>센티미터</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">mm</code></td>
+      <td>밀리미터</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">in</code></td>
+      <td>인치 (1in = 2.54cm)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pt</code></td>
+      <td>포인트 (1pt = 1/72인치)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">pc</code></td>
+      <td>파이카 (1pc = 12pt)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>예제</strong>:</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.box</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">200px</span><span class="p">;</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">100px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>💡 <strong>절대 단위는 일반적으로 웹보다는 인쇄 디자인에서 사용됨.</strong></p>
+
+<h3 id="-상대-단위-relative-units">✅ 상대 단위 (Relative Units)</h3>
+
+<p>상대 단위는 부모 요소나 뷰포트 크기에 따라 크기가 변한다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>단위</th>
+      <th>기준</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">%</code></td>
+      <td>부모 요소의 크기에 대한 백분율</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">em</code></td>
+      <td>부모 요소의 폰트 크기 기준 (1em = 부모 폰트 크기)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">rem</code></td>
+      <td>루트 요소(<code class="language-plaintext highlighter-rouge">&lt;html&gt;</code>)의 폰트 크기 기준 (기본 16px)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vw</code></td>
+      <td>뷰포트 너비(Viewport Width)의 백분율 (1vw = 1%)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vh</code></td>
+      <td>뷰포트 높이(Viewport Height)의 백분율 (1vh = 1%)</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vmin</code></td>
+      <td><code class="language-plaintext highlighter-rouge">vw</code>와 <code class="language-plaintext highlighter-rouge">vh</code> 중 작은 값 기준</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">vmax</code></td>
+      <td><code class="language-plaintext highlighter-rouge">vw</code>와 <code class="language-plaintext highlighter-rouge">vh</code> 중 큰 값 기준</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>예제</strong>:</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>  <span class="c">/* 부모 요소의 절반 크기 */</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">2em</span><span class="p">;</span>  <span class="c">/* 부모 폰트 크기의 2배 */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="2-주요-단위별-특징-및-사용-사례">2. 주요 단위별 특징 및 사용 사례</h2>
+
+<h3 id="-px-픽셀">🔹 <code class="language-plaintext highlighter-rouge">px</code> (픽셀)</h3>
+
+<ul>
+  <li>화면 해상도에 따라 고정된 크기를 가짐</li>
+  <li>웹에서 가장 일반적으로 사용됨</li>
+  <li>반응형 디자인에서는 유연성이 떨어질 수 있음</li>
+</ul>
+
+<p>💡 <strong>사용 예시:</strong> 버튼, 아이콘 크기 등 픽셀 단위가 필요한 요소</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.button</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">120px</span><span class="p">;</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">40px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="--퍼센트">🔹 <code class="language-plaintext highlighter-rouge">%</code> (퍼센트)</h3>
+
+<ul>
+  <li>부모 요소의 크기에 상대적으로 변함</li>
+  <li>반응형 디자인에서 유용하게 사용됨</li>
+</ul>
+
+<p>💡 <strong>사용 예시:</strong> 레이아웃 배치, 이미지 크기 조정 등</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">80%</span><span class="p">;</span> <span class="c">/* 부모 요소의 80% 크기 */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="-em-vs-rem">🔹 <code class="language-plaintext highlighter-rouge">em</code> vs <code class="language-plaintext highlighter-rouge">rem</code></h3>
+
+<h4 id="-em-부모-폰트-크기-기준">🔹 <code class="language-plaintext highlighter-rouge">em</code> (부모 폰트 크기 기준)</h4>
+
+<ul>
+  <li>부모 요소의 <code class="language-plaintext highlighter-rouge">font-size</code>를 기준으로 크기 결정</li>
+  <li>부모 요소에 따라 크기가 계속 변경될 수 있음 (중첩 시 주의 필요)</li>
+</ul>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.parent</span> <span class="p">{</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">16px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.child</span> <span class="p">{</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">2em</span><span class="p">;</span> <span class="c">/* 32px (16px × 2) */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="-rem-루트-폰트-크기-기준">🔹 <code class="language-plaintext highlighter-rouge">rem</code> (루트 폰트 크기 기준)</h4>
+
+<ul>
+  <li>HTML <code class="language-plaintext highlighter-rouge">&lt;html&gt;</code> 요소의 <code class="language-plaintext highlighter-rouge">font-size</code>를 기준으로 크기 결정</li>
+  <li>부모 요소에 영향받지 않아 예측하기 쉬움</li>
+</ul>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">html</span> <span class="p">{</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">16px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.box</span> <span class="p">{</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">1.5rem</span><span class="p">;</span> <span class="c">/* 24px (16px × 1.5) */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>💡 <strong><code class="language-plaintext highlighter-rouge">rem</code>이 <code class="language-plaintext highlighter-rouge">em</code>보다 유지보수가 쉬운 경우가 많음</strong></p>
+
+<h3 id="-vw-vh-뷰포트-기준-단위">🔹 <code class="language-plaintext highlighter-rouge">vw</code>, <code class="language-plaintext highlighter-rouge">vh</code> (뷰포트 기준 단위)</h3>
+
+<ul>
+  <li>뷰포트 크기에 상대적인 크기를 가짐</li>
+  <li>화면 크기에 따라 자동으로 조정됨</li>
+</ul>
+
+<p>💡 <strong>사용 예시:</strong> 전체 화면을 채우는 요소</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.fullscreen</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">100vw</span><span class="p">;</span>  <span class="c">/* 뷰포트 너비 100% */</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">100vh</span><span class="p">;</span> <span class="c">/* 뷰포트 높이 100% */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="-calc-함수-활용">🔹 <code class="language-plaintext highlighter-rouge">calc()</code> 함수 활용</h3>
+
+<p><code class="language-plaintext highlighter-rouge">calc()</code> 함수는 서로 다른 단위를 조합하여 크기를 동적으로 계산할 수 있게 해준다.</p>
+
+<p>💡 <strong>사용 예시:</strong> 가변 크기 요소의 너비 설정</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.dynamic-box</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="n">calc</span><span class="p">(</span><span class="m">100%</span> <span class="n">-</span> <span class="m">50px</span><span class="p">);</span> <span class="c">/* 전체 크기에서 50px을 뺀 값 */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.header</span> <span class="p">{</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="n">calc</span><span class="p">(</span><span class="m">100vh</span> <span class="n">-</span> <span class="m">80px</span><span class="p">);</span> <span class="c">/* 뷰포트 높이에서 헤더 크기 제외 */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>✅ <code class="language-plaintext highlighter-rouge">calc()</code>를 사용하면 유연한 레이아웃을 만들 수 있어 반응형 디자인에 유용하다!</p>
+
+<hr />
+
+<h2 id="3-단위-선택-가이드">3. 단위 선택 가이드</h2>
+
+<p>어떤 단위를 사용해야 할까?</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>상황</th>
+      <th>추천 단위</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>고정 크기가 필요한 경우</td>
+      <td><code class="language-plaintext highlighter-rouge">px</code></td>
+    </tr>
+    <tr>
+      <td>반응형 레이아웃</td>
+      <td><code class="language-plaintext highlighter-rouge">%</code>, <code class="language-plaintext highlighter-rouge">vw</code>, <code class="language-plaintext highlighter-rouge">vh</code></td>
+    </tr>
+    <tr>
+      <td>폰트 크기 조정</td>
+      <td><code class="language-plaintext highlighter-rouge">rem</code> (혹은 <code class="language-plaintext highlighter-rouge">em</code>)</td>
+    </tr>
+    <tr>
+      <td>요소의 크기를 폰트에 맞추려면</td>
+      <td><code class="language-plaintext highlighter-rouge">em</code></td>
+    </tr>
+    <tr>
+      <td>전체 화면을 채우는 경우</td>
+      <td><code class="language-plaintext highlighter-rouge">vw</code>, <code class="language-plaintext highlighter-rouge">vh</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>✅ <strong>팁:</strong></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">px</code>은 고정 크기가 필요할 때 사용</li>
+  <li><code class="language-plaintext highlighter-rouge">rem</code>을 기본 폰트 크기로 사용하면 유지보수가 쉬움</li>
+  <li><code class="language-plaintext highlighter-rouge">vw</code>, <code class="language-plaintext highlighter-rouge">vh</code>를 활용하면 반응형 디자인을 간단하게 구현 가능</li>
+  <li><code class="language-plaintext highlighter-rouge">calc()</code>를 활용하여 유연한 크기 조정 가능</li>
+</ul>
+
+<hr />
+
+<h2 id="4-결론">4. 결론</h2>
+
+<p>CSS에서 크기를 지정할 때 다양한 단위를 사용할 수 있으며, 목적에 따라 적절한 단위를 선택하는 것이 중요하다.</p>
+
+<ul>
+  <li><strong>픽셀(<code class="language-plaintext highlighter-rouge">px</code>)</strong>은 고정 크기가 필요한 경우 사용</li>
+  <li><strong>퍼센트(<code class="language-plaintext highlighter-rouge">%</code>)</strong>는 부모 요소에 비례하는 크기를 설정할 때 유용</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">em</code>과 <code class="language-plaintext highlighter-rouge">rem</code></strong>은 텍스트 크기와 함께 조정이 필요한 경우 효과적</li>
+  <li><strong>뷰포트 단위(<code class="language-plaintext highlighter-rouge">vw</code>, <code class="language-plaintext highlighter-rouge">vh</code>)</strong>는 반응형 레이아웃에서 강력한 도구</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">calc()</code></strong>를 활용하면 유연한 크기 조정이 가능</li>
+</ul>
+
+<p>각 단위의 특성을 이해하고, 프로젝트의 요구사항에 맞게 적절히! 🚀</p>
+
 
     </div>
   </article>
@@ -1307,6 +1607,8 @@ Table of Contents
   
 
   
+
+  
   	
   	
   	
@@ -1321,7 +1623,7 @@ Table of Contents
       <a href="/css-font" class="pagination__prev pagination__item"><i class="ion ion-ios-arrow-back"></i><span class="prev_next"></span>[CSS]: 폰트(font)</a>
     
     
-      <a href="/css-selector" class="pagination__next pagination__item"><span class="prev_next"></span>[CSS]: 선택자(selector)<i class="ion ion-ios-arrow-forward"></i></a>
+      <a href="/css-func" class="pagination__next pagination__item"><span class="prev_next"></span>[CSS]: 함수(func)<i class="ion ion-ios-arrow-forward"></i></a>
     
   </div>
 
@@ -1820,80 +2122,17 @@ Table of Contents
             
       
             
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
 
               <div class="article">
   <div class="article__inner">
     <div class="article__head">
-      <time class="article__date" datetime="2024-02-10T21:01:35+09:00">10 Feb 2024</time>
+      <time class="article__date" datetime="2024-02-17T21:01:35+09:00">17 Feb 2024</time>
 
       
 
       
-      <a class="article__image" href="/css-font">
-        <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS]: 폰트(font)">
+      <a class="article__image" href="/css-func">
+        <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS]: 함수(func)">
       </a>
       
 
@@ -1913,7 +2152,7 @@ Table of Contents
       </div>
 
       <h2 class="article__title">
-        <a href="/css-font">[CSS]: 폰트(font)</a>
+        <a href="/css-func">[CSS]: 함수(func)</a>
       </h2>
 
       

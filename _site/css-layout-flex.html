@@ -1289,8 +1289,225 @@ Table of Contents
     <div class="post__content">
       <hr />
 <p id="toc"><strong>Table of Contents</strong></p>
+<ul id="markdown-toc">
+  <li><a href="#css-flexbox-완벽-가이드" id="markdown-toc-css-flexbox-완벽-가이드">CSS Flexbox 완벽 가이드</a>    <ul>
+      <li><a href="#1-flexbox-기본-개념" id="markdown-toc-1-flexbox-기본-개념">1. Flexbox 기본 개념</a></li>
+      <li><a href="#2-flex-컨테이너-속성" id="markdown-toc-2-flex-컨테이너-속성">2. Flex 컨테이너 속성</a>        <ul>
+          <li><a href="#-flex-direction-배치-방향" id="markdown-toc--flex-direction-배치-방향">✅ <code class="language-plaintext highlighter-rouge">flex-direction</code> (배치 방향)</a></li>
+          <li><a href="#-justify-content-주-축-정렬" id="markdown-toc--justify-content-주-축-정렬">✅ <code class="language-plaintext highlighter-rouge">justify-content</code> (주 축 정렬)</a></li>
+          <li><a href="#-align-items-교차-축-정렬" id="markdown-toc--align-items-교차-축-정렬">✅ <code class="language-plaintext highlighter-rouge">align-items</code> (교차 축 정렬)</a></li>
+          <li><a href="#-align-content-여러-줄-정렬" id="markdown-toc--align-content-여러-줄-정렬">✅ <code class="language-plaintext highlighter-rouge">align-content</code> (여러 줄 정렬)</a></li>
+        </ul>
+      </li>
+      <li><a href="#3-flex-아이템-속성" id="markdown-toc-3-flex-아이템-속성">3. Flex 아이템 속성</a>        <ul>
+          <li><a href="#-flex-grow-확장-비율" id="markdown-toc--flex-grow-확장-비율">✅ <code class="language-plaintext highlighter-rouge">flex-grow</code> (확장 비율)</a></li>
+          <li><a href="#-flex-shrink-축소-비율" id="markdown-toc--flex-shrink-축소-비율">✅ <code class="language-plaintext highlighter-rouge">flex-shrink</code> (축소 비율)</a></li>
+          <li><a href="#-flex-basis-기본-크기" id="markdown-toc--flex-basis-기본-크기">✅ <code class="language-plaintext highlighter-rouge">flex-basis</code> (기본 크기)</a></li>
+          <li><a href="#-flex-축약형-속성" id="markdown-toc--flex-축약형-속성">✅ <code class="language-plaintext highlighter-rouge">flex</code> (축약형 속성)</a></li>
+          <li><a href="#-order-정렬-순서-변경" id="markdown-toc--order-정렬-순서-변경">✅ <code class="language-plaintext highlighter-rouge">order</code> (정렬 순서 변경)</a></li>
+          <li><a href="#-align-self-개별-아이템-정렬" id="markdown-toc--align-self-개별-아이템-정렬">✅ <code class="language-plaintext highlighter-rouge">align-self</code> (개별 아이템 정렬)</a></li>
+        </ul>
+      </li>
+      <li><a href="#4-실전-예제" id="markdown-toc-4-실전-예제">4. 실전 예제</a>        <ul>
+          <li><a href="#-기본적인-가로-정렬" id="markdown-toc--기본적인-가로-정렬">✅ 기본적인 가로 정렬</a></li>
+          <li><a href="#-세로-정렬과-비율-조정" id="markdown-toc--세로-정렬과-비율-조정">✅ 세로 정렬과 비율 조정</a></li>
+        </ul>
+      </li>
+      <li><a href="#결론" id="markdown-toc-결론">결론</a></li>
+    </ul>
+  </li>
+</ul>
 
 <hr />
+
+<h1 id="css-flexbox-완벽-가이드">CSS Flexbox 완벽 가이드</h1>
+
+<p>Flexbox(Flexible Box)는 CSS에서 레이아웃을 구성하는 강력한 도구로, 컨테이너 내부의 요소들을 쉽게 정렬하고 배치할 수 있도록 도와준다. 특히 가변적인 화면 크기에 유연하게 대응할 수 있어 반응형 웹 디자인에서 자주 사용된다.</p>
+
+<hr />
+
+<h2 id="1-flexbox-기본-개념">1. Flexbox 기본 개념</h2>
+<p>Flexbox는 부모 요소(컨테이너)와 자식 요소(아이템)로 구성되며, <code class="language-plaintext highlighter-rouge">display: flex;</code>를 사용하여 활성화된다.</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">display</span><span class="p">:</span> <span class="n">flex</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>💡 <code class="language-plaintext highlighter-rouge">display: flex;</code>를 적용하면 컨테이너의 자식 요소들이 자동으로 Flex 아이템이 된다.</p>
+
+<hr />
+
+<h2 id="2-flex-컨테이너-속성">2. Flex 컨테이너 속성</h2>
+<p>Flexbox의 부모 요소(컨테이너)에서 사용할 수 있는 주요 속성들을 살펴보자.</p>
+
+<h3 id="-flex-direction-배치-방향">✅ <code class="language-plaintext highlighter-rouge">flex-direction</code> (배치 방향)</h3>
+<p>아이템을 정렬할 방향을 결정한다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">flex-direction</span><span class="p">:</span> <span class="n">row</span><span class="p">;</span> <span class="c">/* 기본값 */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>옵션:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">row</code> (기본값): 왼쪽 → 오른쪽 (가로 정렬)</li>
+  <li><code class="language-plaintext highlighter-rouge">row-reverse</code>: 오른쪽 → 왼쪽</li>
+  <li><code class="language-plaintext highlighter-rouge">column</code>: 위 → 아래 (세로 정렬)</li>
+  <li><code class="language-plaintext highlighter-rouge">column-reverse</code>: 아래 → 위</li>
+</ul>
+
+<h3 id="-justify-content-주-축-정렬">✅ <code class="language-plaintext highlighter-rouge">justify-content</code> (주 축 정렬)</h3>
+<p>아이템을 주 축(main axis) 방향으로 정렬한다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">justify-content</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>옵션:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">flex-start</code> (기본값): 왼쪽 정렬 (row) 또는 위쪽 정렬 (column)</li>
+  <li><code class="language-plaintext highlighter-rouge">flex-end</code>: 오른쪽 정렬 (row) 또는 아래쪽 정렬 (column)</li>
+  <li><code class="language-plaintext highlighter-rouge">center</code>: 중앙 정렬</li>
+  <li><code class="language-plaintext highlighter-rouge">space-between</code>: 첫 요소와 마지막 요소를 양 끝에 배치하고, 나머지는 동일한 간격</li>
+  <li><code class="language-plaintext highlighter-rouge">space-around</code>: 요소들 사이와 양 끝에 동일한 여백을 부여</li>
+  <li><code class="language-plaintext highlighter-rouge">space-evenly</code>: 모든 요소 사이 간격을 동일하게 설정</li>
+</ul>
+
+<h3 id="-align-items-교차-축-정렬">✅ <code class="language-plaintext highlighter-rouge">align-items</code> (교차 축 정렬)</h3>
+<p>아이템을 교차 축(cross axis) 방향으로 정렬한다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">align-items</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>옵션:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">stretch</code> (기본값): 컨테이너 높이에 맞춰 늘어남</li>
+  <li><code class="language-plaintext highlighter-rouge">flex-start</code>: 위쪽 정렬 (row 기준)</li>
+  <li><code class="language-plaintext highlighter-rouge">flex-end</code>: 아래쪽 정렬 (row 기준)</li>
+  <li><code class="language-plaintext highlighter-rouge">center</code>: 중앙 정렬</li>
+  <li><code class="language-plaintext highlighter-rouge">baseline</code>: 텍스트 기준선(baseline)에 맞춰 정렬</li>
+</ul>
+
+<h3 id="-align-content-여러-줄-정렬">✅ <code class="language-plaintext highlighter-rouge">align-content</code> (여러 줄 정렬)</h3>
+<p>여러 줄의 아이템을 정렬할 때 사용한다. (단일 줄에서는 <code class="language-plaintext highlighter-rouge">align-items</code>와 동일)</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">align-content</span><span class="p">:</span> <span class="n">space-between</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>옵션:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">flex-start</code></li>
+  <li><code class="language-plaintext highlighter-rouge">flex-end</code></li>
+  <li><code class="language-plaintext highlighter-rouge">center</code></li>
+  <li><code class="language-plaintext highlighter-rouge">space-between</code></li>
+  <li><code class="language-plaintext highlighter-rouge">space-around</code></li>
+  <li><code class="language-plaintext highlighter-rouge">stretch</code></li>
+</ul>
+
+<hr />
+
+<h2 id="3-flex-아이템-속성">3. Flex 아이템 속성</h2>
+<p>Flexbox의 자식 요소(아이템)에서 사용할 수 있는 주요 속성들을 살펴보자.</p>
+
+<h3 id="-flex-grow-확장-비율">✅ <code class="language-plaintext highlighter-rouge">flex-grow</code> (확장 비율)</h3>
+<p>사용 가능한 공간을 아이템이 얼마나 차지할지 결정한다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">flex-grow</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>💡 모든 아이템의 <code class="language-plaintext highlighter-rouge">flex-grow</code> 값을 동일하게 설정하면, 같은 비율로 공간을 차지한다.</p>
+
+<h3 id="-flex-shrink-축소-비율">✅ <code class="language-plaintext highlighter-rouge">flex-shrink</code> (축소 비율)</h3>
+<p>아이템이 축소될 때 비율을 설정한다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">flex-shrink</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>💡 <code class="language-plaintext highlighter-rouge">0</code>으로 설정하면 아이템이 줄어들지 않는다.</p>
+
+<h3 id="-flex-basis-기본-크기">✅ <code class="language-plaintext highlighter-rouge">flex-basis</code> (기본 크기)</h3>
+<p>아이템의 기본 크기를 설정한다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">flex-basis</span><span class="p">:</span> <span class="m">100px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>💡 <code class="language-plaintext highlighter-rouge">flex-basis: auto;</code>는 원래 크기 기준이며, <code class="language-plaintext highlighter-rouge">flex-basis: 0;</code>은 기본 크기를 무시하고 <code class="language-plaintext highlighter-rouge">flex-grow</code> 비율만 적용된다.</p>
+
+<h3 id="-flex-축약형-속성">✅ <code class="language-plaintext highlighter-rouge">flex</code> (축약형 속성)</h3>
+<p>위 속성들을 한 줄로 작성할 수 있다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">flex</span><span class="p">:</span> <span class="m">1</span> <span class="m">1</span> <span class="nb">auto</span><span class="p">;</span> <span class="c">/* flex-grow, flex-shrink, flex-basis */</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="-order-정렬-순서-변경">✅ <code class="language-plaintext highlighter-rouge">order</code> (정렬 순서 변경)</h3>
+<p>아이템의 순서를 변경할 수 있다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">order</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>💡 기본값은 <code class="language-plaintext highlighter-rouge">0</code>이며, 숫자가 작을수록 앞에 배치된다.</p>
+
+<h3 id="-align-self-개별-아이템-정렬">✅ <code class="language-plaintext highlighter-rouge">align-self</code> (개별 아이템 정렬)</h3>
+<p>각 아이템의 개별 정렬을 설정한다.</p>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">align-self</span><span class="p">:</span> <span class="n">flex-end</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>💡 <code class="language-plaintext highlighter-rouge">align-items</code>와 동일한 값을 가질 수 있으며, 특정 아이템에만 다르게 적용할 때 사용한다.</p>
+
+<hr />
+
+<h2 id="4-실전-예제">4. 실전 예제</h2>
+
+<h3 id="-기본적인-가로-정렬">✅ 기본적인 가로 정렬</h3>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">display</span><span class="p">:</span> <span class="n">flex</span><span class="p">;</span>
+    <span class="nl">justify-content</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+    <span class="nl">align-items</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">100vh</span><span class="p">;</span>
+    <span class="nl">background-color</span><span class="p">:</span> <span class="n">lightgray</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">100px</span><span class="p">;</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">100px</span><span class="p">;</span>
+    <span class="nl">background-color</span><span class="p">:</span> <span class="no">blue</span><span class="p">;</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="no">white</span><span class="p">;</span>
+    <span class="nl">display</span><span class="p">:</span> <span class="n">flex</span><span class="p">;</span>
+    <span class="nl">justify-content</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+    <span class="nl">align-items</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>1<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>2<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>3<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+<p>💡 컨테이너 안의 아이템들이 가운데 정렬된다.</p>
+
+<h3 id="-세로-정렬과-비율-조정">✅ 세로 정렬과 비율 조정</h3>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.container</span> <span class="p">{</span>
+    <span class="nl">display</span><span class="p">:</span> <span class="n">flex</span><span class="p">;</span>
+    <span class="nl">flex-direction</span><span class="p">:</span> <span class="n">column</span><span class="p">;</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">300px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">flex</span><span class="p">:</span> <span class="m">1</span><span class="p">;</span>
+    <span class="nl">background-color</span><span class="p">:</span> <span class="no">coral</span><span class="p">;</span>
+    <span class="nl">margin</span><span class="p">:</span> <span class="m">5px</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>A<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>B<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>C<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</code></pre></div></div>
+<p>💡 세 개의 아이템이 세로로 배치되며, 동일한 비율로 공간을 차지한다.</p>
+
+<hr />
+
+<h2 id="결론">결론</h2>
+<p>Flexbox는 복잡한 레이아웃을 쉽고 직관적으로 만들 수 있는 강력한 도구이다. <code class="language-plaintext highlighter-rouge">flex-direction</code>, <code class="language-plaintext highlighter-rouge">justify-content</code>, <code class="language-plaintext highlighter-rouge">align-items</code> 등의 속성을 조합하여 다양한 UI를 만들 수 있다. 실제 프로젝트에서 활용하면서 Flexbox의 강력함을 경험해 보자! 🚀</p>
+
 
     </div>
   </article>
@@ -1770,6 +1987,55 @@ Table of Contents
             
       
             
+
+              <div class="article">
+  <div class="article__inner">
+    <div class="article__head">
+      <time class="article__date" datetime="2024-02-17T21:01:35+09:00">17 Feb 2024</time>
+
+      
+
+      
+      <a class="article__image" href="/css-func">
+        <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS]: 함수(func)">
+      </a>
+      
+
+    </div>
+
+    <div class="article__content">
+      <div class="article__category">
+        <div class="article__category_tag_container">
+          <a href="/_pages/categories/frontend">
+            <div class="article__category_text">
+              frontend
+            </div>
+          </a>
+          <a href="/_pages/tags/frontend/html-css" class="article__tag">HTML-CSS</a>
+          
+        </div>
+      </div>
+
+      <h2 class="article__title">
+        <a href="/css-func">[CSS]: 함수(func)</a>
+      </h2>
+
+      
+
+    </div>
+  </div>
+</div>
+
+            
+                
+              
+            
+            
+            
+      
+            
+      
+            
             
             
             
@@ -1815,97 +2081,6 @@ Table of Contents
 
       <h2 class="article__title">
         <a href="/css-size">[CSS]: 크기(size)</a>
-      </h2>
-
-      
-
-    </div>
-  </div>
-</div>
-
-            
-                
-              
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-            
-            
-            
-      
-            
-      
-            
-
-              <div class="article">
-  <div class="article__inner">
-    <div class="article__head">
-      <time class="article__date" datetime="2024-02-10T21:01:35+09:00">10 Feb 2024</time>
-
-      
-
-      
-      <a class="article__image" href="/css-font">
-        <img class="lazy" data-src="/images/htmlcss_logo.png" alt="[CSS]: 폰트(font)">
-      </a>
-      
-
-    </div>
-
-    <div class="article__content">
-      <div class="article__category">
-        <div class="article__category_tag_container">
-          <a href="/_pages/categories/frontend">
-            <div class="article__category_text">
-              frontend
-            </div>
-          </a>
-          <a href="/_pages/tags/frontend/html-css" class="article__tag">HTML-CSS</a>
-          
-        </div>
-      </div>
-
-      <h2 class="article__title">
-        <a href="/css-font">[CSS]: 폰트(font)</a>
       </h2>
 
       
